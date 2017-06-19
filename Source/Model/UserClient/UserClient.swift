@@ -232,12 +232,11 @@ public class UserClient: ZMManagedObject, UserClientType {
     private func conversation(for user: ZMUser, in context: NSManagedObjectContext) -> ZMConversation? {
         if user.isSelfUser {
             return ZMConversation.selfConversation(in: context)
-        } else if let team = user.teams.first {
+        } else if let team = user.team {
             return user.oneToOneConversation(in: team)
         } else {
             return user.oneToOneConversation(in: nil)
         }
-
     }
 
 }
@@ -574,7 +573,7 @@ extension UserClient {
                 return $0.union(user.activeConversations.array as! [ZMConversation])
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchivedInAllTeams()
+            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
             let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
             return $0.union(conversations)
         }

@@ -19,41 +19,36 @@
 
 public extension ZMUser {
 
-    public var hasTeams: Bool {
-        return memberships?.any { $0.team != nil } ?? false
+    public var hasTeam: Bool {
+        return nil != team
     }
 
-    public var teams: Set<Team> {
-        guard let memberships = memberships else { return Set() }
-        return Set(memberships.flatMap { $0.team })
+    public var team: Team? {
+        return membership?.team
     }
     
-    static func keyPathsForValuesAffectingTeams() -> Set<String> {
-        return Set([#keyPath(ZMUser.memberships)])
+    static func keyPathsForValuesAffectingTeam() -> Set<String> {
+         return [#keyPath(ZMUser.membership)]
     }
-    
-    public var activeTeams: Set<Team> {
-        return Set(teams.filter { $0.isActive })
-    }
-    
-    public func permissions(in team: Team) -> Permissions? {
-        return membership(in: team)?.permissions
+
+    public var permissions: Permissions? {
+        return membership?.permissions
     }
 
     @objc(canAddUserToConversation:)
     public func canAddUser(to conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
-        return conversation.team.flatMap(permissions)?.contains(.addConversationMember) ?? true
+        return permissions?.contains(.addConversationMember) ?? true
     }
 
     @objc(canRemoveUserFromConversation:)
     public func canRemoveUser(from conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
-        return conversation.team.flatMap(permissions)?.contains(.removeConversationMember) ?? true
+        return permissions?.contains(.removeConversationMember) ?? true
     }
 
-    public func canCreateConversation(in team: Team) -> Bool {
-        return permissions(in: team)?.contains(.createConversation) ?? false
+    public var canCreateConversation: Bool {
+        return permissions?.contains(.createConversation) ?? true
     }
 
     public func isGuest(in conversation: ZMConversation) -> Bool {
@@ -62,16 +57,12 @@ public extension ZMUser {
             // return a 404 when fetching said team and we will delete the team.
             // We store the teamRemoteIdentifier of the team to check if we don't have a local team,
             // but received a teamId in the conversation payload, which means we are a guest in the conversation.
-            return conversation.team == nil && conversation.teamRemoteIdentifier != nil
+            return conversation.team == nil
+                && conversation.teamRemoteIdentifier != nil
         } else {
             return conversation.otherActiveParticipants.contains(self)
-                && conversation.team != nil
-                && !isMember(of: conversation.team!)
+                && membership == nil
         }
-    }
-
-    public func membership(in team: Team) -> Member? {
-        return memberships?.first { team.isEqual($0.team) }
     }
 
 }

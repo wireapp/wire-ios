@@ -103,7 +103,7 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         // then
         let fetchedUser = ZMUser.fetch(withRemoteIdentifier: userId, in: uiMOC)
         XCTAssertEqual(fetchedUser, user)
-        XCTAssertEqual(fetchedUser?.memberships.isEmpty, true)
+        XCTAssertNil(fetchedUser?.membership)
     }
 
     func testThatItDoesNotDeleteATeamWhenAMemberOfItGetsDeleted() {
@@ -160,10 +160,6 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         member1.user = user
         member1.team = team
 
-        let member2 = Member.insertNewObject(in: uiMOC)
-        member2.user = user
-        member2.team = team
-
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
@@ -205,7 +201,7 @@ class TeamDeletionRuleTests: BaseZMClientMessageTests {
         // then
         do {
             guard let user = ZMUser.fetch(withRemoteIdentifier: userId, in: uiMOC) else { return XCTFail("No user") }
-            XCTAssertTrue(user.memberships.isEmpty)
+            XCTAssertNil(user.membership)
             guard let team = Team.fetch(withRemoteIdentifier: teamId, in: uiMOC) else { return XCTFail("No team") }
             XCTAssertTrue(team.members.isEmpty)
         }

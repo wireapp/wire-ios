@@ -49,6 +49,8 @@
 @property (nonatomic, readonly) NSString *imageSmallProfileIdentifier;
 @property (nonatomic, readonly) NSString *imageMediumIdentifier;
 
+@property (nonatomic, readonly) BOOL isTeamMember;
+
 
 /// Is @c YES if we can send a connection request to this user.
 @property (nonatomic, readonly) BOOL canBeConnected;
@@ -62,11 +64,6 @@
 /// You should stop from observing the searchUser and start observing the user from there on
 - (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
 
-/// Returns YES if the user is a member of the team
-- (BOOL)isMemberOf:(Team *)team;
-
-/// Returns an array of teams where the user is a guest in any team conversation
-@property (nonatomic, readonly) NSArray<Team *>* guestInTeams;
 
 @property (nonatomic, readonly, copy) NSString *connectionRequestMessage;
 @property (nonatomic, readonly) NSUInteger totalCommonConnections;

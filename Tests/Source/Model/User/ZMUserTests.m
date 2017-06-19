@@ -985,7 +985,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
                                             @"imageSmallProfileData",
                                             @"smallProfileRemoteIdentifier_data",
                                             @"mediumRemoteIdentifier_data",
-                                            @"imageCorrelationIdentifier_data",
                                             @"name",
                                             @"phoneNumber"]];
     

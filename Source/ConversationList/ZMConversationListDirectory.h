@@ -46,6 +46,6 @@
 
 @interface NSManagedObjectContext (ZMConversationListDirectory)
 
-- (nonnull ZMConversationListDirectory *)conversationListDirectoryForTeam:(nullable Team *)team;
+- (nonnull ZMConversationListDirectory *)conversationListDirectory;
 
 @end

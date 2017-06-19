@@ -59,7 +59,7 @@
     c3.conversationType = ZMConversationTypeGroup;
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 2u);
     NSArray *expected = @[c2, c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -76,7 +76,7 @@
     c3.conversationType = ZMConversationTypeGroup;
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c1, c2, c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -94,7 +94,7 @@
     c3.isArchived = YES;
     
     // then
-    NSArray *list = [ZMConversation archivedConversationsInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation archivedConversationsInContext:self.uiMOC];
     XCTAssertEqual(list.count, 1u);
     NSArray *expected = @[c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -111,7 +111,7 @@
     connection.status = ZMConnectionStatusIgnored;
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 0u);
 }
 
@@ -131,7 +131,7 @@
     c4.connection.status = ZMConnectionStatusBlocked;
     
     // then
-    NSArray *list = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 2u);
     NSArray *expected = @[c1, c2];
     AssertArraysContainsSameObjects(list, expected);
@@ -151,7 +151,7 @@
     c3.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:-10];
     
     // then
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c2, c1, c3];
     XCTAssertEqualObjects(list, expected);
@@ -164,7 +164,7 @@
     c1.conversationType = ZMConversationTypeGroup;
     c1.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:10];
     
-    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     ConversationListChangeObserver *obs = [[ConversationListChangeObserver alloc] initWithConversationList:(ZMConversationList *)list];
     ZMConversation *c2;
     
@@ -220,7 +220,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
 
     // then
-    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c1, c2, c3];
     AssertArraysContainsSameObjects(list, expected);
@@ -253,7 +253,7 @@
     c3.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:-10];
     
     // then
-    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 3u);
     NSArray *expected = @[c2, c1, c3];
     XCTAssertEqualObjects(list, expected);
@@ -286,7 +286,7 @@
 
     
     // then
-    ZMConversationList *list = [ZMConversation pendingConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *list = [ZMConversation pendingConversationsInContext:self.uiMOC];
     XCTAssertEqual(list.count, 1u);
     NSArray *expected = @[conversation];
     XCTAssertEqualObjects(list, expected);
@@ -316,7 +316,7 @@
     conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC team:nil];
+    ZMConversationList *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(list.count, 1u);
     NSArray *expected = @[conversation];
     XCTAssertEqualObjects(list, expected);
@@ -346,8 +346,8 @@
     conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
-    ZMConversationList *pendingList = [ZMConversation pendingConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *pendingList = [ZMConversation pendingConversationsInContext:self.uiMOC];
     XCTAssertEqual(normalList.count, 0u);
     XCTAssertEqualObjects(normalList, @[]);
     XCTAssertEqual(pendingList.count, 1u);
@@ -384,7 +384,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
 
     // then
-    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
+    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
     XCTAssertEqual(normalList.count, 0u);
     XCTAssertEqualObjects(normalList, @[]);
 
@@ -418,8 +418,8 @@
     conversation2.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
-    ZMConversationList *pendingList = [ZMConversation pendingConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *pendingList = [ZMConversation pendingConversationsInContext:self.uiMOC];
     NSArray *conversations = @[conversation2, conversation1];
     XCTAssertEqual(normalList.count, 0u);
     XCTAssertEqualObjects(normalList, @[]);
@@ -459,8 +459,8 @@
     conversation.connection.to = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // then
-    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
-    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *normalList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
     XCTAssertEqual(normalList.count, 1u);
     XCTAssertEqualObjects(normalList, @[conversation]);
     XCTAssertEqual(archivedList.count, 0u);
@@ -495,9 +495,9 @@
     
     c1.lastServerTimeStamp = message.serverTimestamp;
     
-    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
-    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC team:nil];
-    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
+    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
     
     XCTAssertEqual(activeList.count, 1u);
     XCTAssertEqualObjects(activeList.firstObject, c1);
@@ -531,9 +531,9 @@
     
     [c1 clearMessageHistory];
 
-    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC team:nil];
-    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC team:nil];
-    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC team:nil];
+    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
+    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
     
     XCTAssertEqual(activeList.count, 0u);
     XCTAssertEqual(archivedList.count, 0u);
@@ -564,7 +564,7 @@
 - (void)testThatTheSortedIsAffected;
 {
     // given
-    ZMConversationList *list = [self.uiMOC conversationListDirectoryForTeam:nil].conversationsIncludingArchived;
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     
     // then
     XCTAssertTrue([list sortingIsAffectedByConversationKeys:[NSSet setWithObject:ZMConversationListIndicatorKey]]);
@@ -576,7 +576,7 @@
 - (void)testThatTheSortedIsNotAffected;
 {
     // given
-    ZMConversationList *list = [self.uiMOC conversationListDirectoryForTeam:nil].conversationsIncludingArchived;
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     
     NSEntityDescription *conversationEntity = self.uiMOC.persistentStoreCoordinator.managedObjectModel.entitiesByName[ZMConversation.entityName];
     

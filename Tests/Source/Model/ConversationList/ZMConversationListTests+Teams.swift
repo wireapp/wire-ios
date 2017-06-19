@@ -51,32 +51,27 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         selfConversation.conversationType = .self
 
         // when
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
         XCTAssertEqual(sut.count, 1)
         XCTAssertEqual(sut.setValue, [group])
     }
 
-    func testThatItDoesNotReturnConversationsOfADifferentTeam() {
+    func testThatItReturnConversationsNotInTheCurrentTeam() {
         // given
         let group = ZMConversation.insertNewObject(in: uiMOC)
         group.team = team
         group.conversationType = .group
-        let otherTeamGroup = ZMConversation.insertNewObject(in: uiMOC)
-        otherTeamGroup.team = otherTeam
-        otherTeamGroup.conversationType = .group
+        let otherGroup = ZMConversation.insertNewObject(in: uiMOC)
+        otherGroup.conversationType = .group
 
         // when
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
-        let otherSut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: otherTeam)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
-        XCTAssertEqual(sut.count, 1)
-        XCTAssertEqual(sut.setValue, [group])
-
-        XCTAssertEqual(otherSut.count, 1)
-        XCTAssertEqual(otherSut.setValue, [otherTeamGroup])
+        XCTAssertEqual(sut.count, 2)
+        XCTAssertEqual(sut.setValue, [group, otherGroup])
     }
 
     func testThatItReturnsAllConversationsOfATeam() {
@@ -87,7 +82,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let archived2 = createGroupConversation(in: team, archived: true)
 
         // when
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
         XCTAssertEqual(sut.count, 4)
@@ -102,7 +97,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let archived2 = createGroupConversation(in: team, archived: true)
 
         // when
-        let sut = ZMConversation.archivedConversations(in: uiMOC, team: team)
+        let sut = ZMConversation.archivedConversations(in: uiMOC)
 
         // then
         XCTAssertEqual(sut.count, 2)
@@ -117,7 +112,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         createGroupConversation(in: team, archived: true)
 
         // when
-        let sut = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsExcludingArchived(in: uiMOC)
 
         // then
         XCTAssertEqual(sut.count, 2)
@@ -135,7 +130,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         conversation3.lastModifiedDate = startDate.addingTimeInterval(-200)
 
         // when
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
 
         // then
         XCTAssertEqual(sut.arrayValue, [conversation2, conversation1, conversation3])
@@ -147,7 +142,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         let observer = ConversationListChangeObserver(conversationList: sut)
 
         // when inserting a new conversation while in the background
@@ -181,7 +176,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         let observer = ConversationListChangeObserver(conversationList: sut)
 
         // when inserting a new conversation
@@ -194,13 +189,13 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssertEqual(observer.notifications.count, 1)
     }
 
-    func testThatDoesNotUpdateWhenAConversationInADifferentTeamIsInserted() {
+    func testThatDoesUpdateWhenAConversationInADifferentTeamIsInserted() {
         // given
         let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
 
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
@@ -212,8 +207,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
-        XCTAssertEqual(sut.arrayValue, [conversation1])
-        XCTAssertEqual(observer.notifications.count, 0)
+        XCTAssertEqual(sut.arrayValue, [conversation1, conversation2])
+        XCTAssertEqual(observer.notifications.count, 1)
     }
 
     func testThatItUpdatesWhenNewConversationLastModifiedChangesThroughTheNotificationDispatcher() {
@@ -225,12 +220,11 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         conversation2.lastModifiedDate = startDate.addingTimeInterval(20)
         let conversation3 = createGroupConversation(in: team)
         conversation3.lastModifiedDate = startDate.addingTimeInterval(-20)
-        createGroupConversation(in: otherTeam)
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         XCTAssertEqual(sut.count, 3)
         XCTAssertEqual(sut.arrayValue, [conversation2, conversation1, conversation3])
         let observer = ConversationListChangeObserver(conversationList: sut)
@@ -252,14 +246,13 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation2 = createGroupConversation(in: team)
         let conversation3 = createGroupConversation(in: team)
         let conversation4 = createGroupConversation(in: team, archived: true)
-        createGroupConversation(in: otherTeam)
 
         // then
-        let unarchivedList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let unarchivedList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssertEqual(unarchivedList.count, 3)
         XCTAssertEqual(unarchivedList.setValue, [conversation2, conversation1, conversation3])
 
-        let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
+        let archivedList = ZMConversation.archivedConversations(in: uiMOC)
         XCTAssertEqual(archivedList.count, 1)
         XCTAssertEqual(archivedList.arrayValue, [conversation4])
 
@@ -290,9 +283,9 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         message.serverTimestamp = Date()
 
         // then
-        let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
-        let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
-        let clearedList = ZMConversation.clearedConversations(in: uiMOC, team: team)
+        let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
+        let archivedList = ZMConversation.archivedConversations(in: uiMOC)
+        let clearedList = ZMConversation.clearedConversations(in: uiMOC)
 
         XCTAssertEqual(activeList.count, 1)
         XCTAssertEqual(activeList.arrayValue, [conversation1])
@@ -318,8 +311,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         // then
         do {
-            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
-            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC)
+            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
             XCTAssertEqual(archivedList.arrayValue, [conversation])
             XCTAssertEqual(activeList.count, 0)
         }
@@ -330,8 +323,8 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
 
         // then
         do {
-            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
-            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC)
+            let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
             XCTAssertEqual(activeList.arrayValue, [conversation])
             XCTAssertEqual(archivedList.count, 0)
         }

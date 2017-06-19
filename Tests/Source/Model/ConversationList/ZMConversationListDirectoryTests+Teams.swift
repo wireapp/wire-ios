@@ -63,29 +63,29 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItReturnsConversationsInATeam() {
         // given
-        let sut = uiMOC.conversationListDirectory(for: team)
+        let sut = uiMOC.conversationListDirectory()
 
         // when
         let conversations = sut.conversationsIncludingArchived
 
         // then
-        XCTAssertEqual(conversations.setValue, [teamConversation1, teamConversation2, archivedTeamConversation])
+        XCTAssertEqual(conversations.setValue, [teamConversation1, teamConversation2, archivedTeamConversation, conversationWithoutTeam, otherTeamConversation, otherTeamArchivedConversation])
     }
 
     func testThatItReturnsArchivedConversationsInATeam() {
         // given
-        let sut = uiMOC.conversationListDirectory(for: team)
+        let sut = uiMOC.conversationListDirectory()
 
         // when
         let conversations = sut.archivedConversations
 
         // then
-        XCTAssertEqual(conversations.setValue, [archivedTeamConversation])
+        XCTAssertEqual(conversations.setValue, [archivedTeamConversation, otherTeamArchivedConversation])
     }
 
     func testThatItReturnsClearedConversationsInATeam() {
         // given
-        let sut = uiMOC.conversationListDirectory(for: team)
+        let sut = uiMOC.conversationListDirectory()
 
         // when
         let conversations = sut.clearedConversations
@@ -96,32 +96,13 @@ final class ZMConversationListDirectoryTests_Teams: ZMBaseManagedObjectTest {
 
     func testThatItDoesNotIncludeClearedConversationsInConversationsIncludingArchived() {
         // given
-        let sut = uiMOC.conversationListDirectory(for: team)
+        let sut = uiMOC.conversationListDirectory()
 
         // when
         let conversations = sut.conversationsIncludingArchived
 
         // then
         XCTAssertFalse(conversations.setValue.contains(clearedTeamConversation))
-    }
-
-    func testThatItDoesNotIncludePendingConnectionRequestsInTeamsConversationLists() {
-        // given
-        let connectionConversation = ZMConversation.insertNewObject(in: uiMOC)
-        connectionConversation.lastServerTimeStamp = Date()
-        connectionConversation.lastReadServerTimeStamp = connectionConversation.lastServerTimeStamp
-        connectionConversation.remoteIdentifier = .create()
-        connectionConversation.conversationType = .connection
-        connectionConversation.connection = .insertNewObject(in: uiMOC)
-        connectionConversation.connection?.status = .pending
-
-        // when
-        let pendingConversations = uiMOC.conversationListDirectory(for: nil).pendingConnectionConversations
-        let teamPendingConversations = uiMOC.conversationListDirectory(for: team).pendingConnectionConversations
-
-        // then
-        XCTAssert(teamPendingConversations.setValue.isEmpty)
-        XCTAssertEqual(pendingConversations.setValue, [connectionConversation])
     }
 
     // MARK: - Helper

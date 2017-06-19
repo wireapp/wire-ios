@@ -23,7 +23,6 @@ public protocol TeamType: class {
     var name: String? { get }
     var pictureAssetId: String? { get }
     var pictureAssetKey: String? { get }
-    var isActive: Bool { get set }
     var remoteIdentifier: UUID? { get }
 
 }
@@ -36,7 +35,6 @@ public class Team: ZMManagedObject, TeamType {
     @NSManaged public var name: String?
     @NSManaged public var pictureAssetId: String?
     @NSManaged public var pictureAssetKey: String?
-    @NSManaged public var isActive: Bool
     @NSManaged public var creator: ZMUser?
 
     @NSManaged public var needsToRedownloadMembers: Bool
@@ -84,7 +82,7 @@ public enum TeamError: Error {
 extension Team {
 
     public func addConversation(with participants: Set<ZMUser>) throws -> ZMConversation? {
-        guard ZMUser.selfUser(in: managedObjectContext!).canCreateConversation(in: self) else { throw TeamError.insufficientPermissions }
+        guard ZMUser.selfUser(in: managedObjectContext!).canCreateConversation else { throw TeamError.insufficientPermissions }
         switch participants.count {
         case 1: return ZMConversation.fetchOrCreateTeamConversation(in: managedObjectContext!, withParticipant: participants.first!, team: self)
         default: return ZMConversation.insertGroupConversation(into: managedObjectContext!, withParticipants: Array(participants), in: self)
@@ -100,24 +98,10 @@ extension Team {
 
         return members.filter({ member in
             guard let user = member.user else { return false }
-            
             return !user.isSelfUser && searchPredicate.evaluate(with: user)
         }).sorted(by: { (first, second) -> Bool in
             return first.user?.normalizedName < second.user?.normalizedName
         })
-    }
-    
-    public static func predicateTeamsWithGuestUserInAnyConversation(guestUser: ZMUser) -> NSPredicate {
-        let notInThisTeam = NSPredicate(format: "NOT (SELF IN %@)", guestUser.teams)
-        let participantInAnyConversation = NSPredicate(format: "SUBQUERY(%K, $conversation, ANY $conversation.%K == %@).@count > 0", #keyPath(Team.conversations), #keyPath(ZMConversation.otherActiveParticipants), guestUser)
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [notInThisTeam, participantInAnyConversation])
-    }
-    
-    public static func teamsWithGuestInAnyConversation(inContext context: NSManagedObjectContext, guestUser: ZMUser) -> [Team] {
-        let predicate = self.predicateTeamsWithGuestUserInAnyConversation(guestUser: guestUser)
-        let fetchRequest = Team.sortedFetchRequest(with: predicate)
-        guard let teams = context.executeFetchRequestOrAssert(fetchRequest) as? [Team] else { return [] }
-        return teams
     }
     
 }

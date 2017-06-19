@@ -49,7 +49,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     
     func testThatItDeallocates(){
         // given
-        let conversationList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         // when
@@ -64,7 +64,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItNotifiesObserversWhenANewConversationIsInsertedThatMatchesListPredicate()
     {
         // given
-        let conversationList = ZMConversation.pendingConversations(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.pendingConversations(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -95,7 +95,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItDoesNotNotifyObserversWhenANewConversationIsInsertedThatDoesNotMatchListPredicate()
     {
         // given
-        let conversationList = ZMConversation.archivedConversations(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.archivedConversations(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -117,7 +117,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -144,7 +144,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -183,7 +183,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.conversationType = .group
         conversation.isArchived = true
         self.uiMOC.saveOrRollback()
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         XCTAssertEqual(conversationList.count, 0)
         
         self.uiMOC.saveOrRollback()
@@ -212,7 +212,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         conversation.isArchived = true
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -265,7 +265,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation3.lastModifiedDate = Date(timeIntervalSince1970: 1400)
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssertEqual(conversationList.map{ ($0 as! ZMConversation).objectID},
                        [conversation3, conversation2, conversation1].map{$0.objectID}, file: file, line: line)
 
@@ -307,7 +307,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation2.lastModifiedDate = Date(timeIntervalSince1970: 100)
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         let testObserver = TestObserver()
 
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -335,7 +335,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation1 = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation1.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         self.uiMOC.saveOrRollback()
         
@@ -362,8 +362,8 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.connection!.status = .pending
         conversation.conversationType = .connection
         
-        let pendingList = ZMConversation.pendingConversations(in: self.uiMOC, team: nil)
-        let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC, team: nil)
+        let pendingList = ZMConversation.pendingConversations(in: self.uiMOC)
+        let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
         
         let pendingObserver = TestObserver()
         let token1 = ConversationListChangeInfo.add(observer: pendingObserver, for: pendingList)
@@ -408,7 +408,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -435,7 +435,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         
@@ -465,7 +465,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.mutableOtherActiveParticipants.add(user)
         conversation.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
         user.name = "Foo"
@@ -495,7 +495,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -535,7 +535,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         message.serverTimestamp = Date()
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         defer { ConversationListChangeInfo.remove(observer: token, for:conversationList) }
 
@@ -565,7 +565,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
@@ -590,7 +590,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.connection?.to = user
         self.uiMOC.saveOrRollback()
         
-        let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC, team: nil)
+        let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
         
         let token = ConversationListChangeInfo.add(observer:testObserver, for:normalList)
         
@@ -623,7 +623,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.mutableMessages.add(message)
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
@@ -649,7 +649,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.conversationType = .group
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         
         // when
@@ -677,7 +677,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.mutableMessages.add(message)
         self.uiMOC.saveOrRollback()
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
         ConversationListChangeInfo.remove(observer: token, for:conversationList)
         
@@ -693,7 +693,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItSendsTheCorrectUpdatesWhenRegisteringAnObserverDuringInsertAndUpdate(){
         
         // given
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         var conversation : ZMConversation!
         syncMOC.performGroupedBlockAndWait {
             conversation = ZMConversation.insertNewObject(in:self.syncMOC)
@@ -739,7 +739,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation1.team = team
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         let testObserver = TestObserver()
 
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -788,7 +788,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.conversationType = .group
         conversation.team = team
         conversation.remoteIdentifier = .create()
-        let conversationList = ZMConversation.conversationsIncludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -809,12 +809,12 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
             XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
             XCTAssertEqual(movedIndexes(first), [])
 
-            let archivedList = ZMConversation.archivedConversations(in: uiMOC, team: team)
+            let archivedList = ZMConversation.archivedConversations(in: uiMOC)
             XCTAssertEqual(archivedList.firstObject as? ZMConversation, conversation)
         }
     }
 
-    func testThatItOnlyNotifiesTheObserverWhenTheTeamMatches() {
+    func testThatItOnlyNotifiesTheObserverIrregardlessOfTheTeam() {
         // given
         let team = Team.insertNewObject(in: uiMOC)
         let teamId = UUID.create()
@@ -822,7 +822,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.team = team
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -849,7 +849,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         if let first = testObserver.changes.first {
-            XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(first.insertedIndexes, IndexSet(integersIn: 0...1))
             XCTAssertEqual(first.deletedIndexes, IndexSet())
             XCTAssertEqual(first.updatedIndexes, IndexSet())
             XCTAssertEqual(movedIndexes(first), [])
@@ -863,7 +863,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.conversationType = .group
         conversation.team = team
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
@@ -883,32 +883,6 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         }
     }
 
-    func testThatItDoesNotNotifyAnObserversWhenAConversationUpdatesUserDefinedNameInADifferentTeam() {
-        // given
-        let team = Team.insertNewObject(in: uiMOC)
-        team.remoteIdentifier = .create()
-        let otherTeam = Team.insertNewObject(in: uiMOC)
-        otherTeam.remoteIdentifier = .create()
-        let teamConversation = ZMConversation.insertNewObject(in:uiMOC)
-        teamConversation.conversationType = .group
-        teamConversation.team = team
-        let otherTeamConversation = ZMConversation.insertNewObject(in:uiMOC)
-        otherTeamConversation.conversationType = .group
-        otherTeamConversation.team = otherTeam
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
-        XCTAssert(uiMOC.saveOrRollback())
-
-        let token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList)
-        defer { ConversationListChangeInfo.remove(observer: token, for:conversationList) }
-
-        // when
-        otherTeamConversation.userDefinedName = "New Name"
-        XCTAssert(uiMOC.saveOrRollback())
-
-        // then
-        XCTAssertEqual(testObserver.changes.count, 0)
-    }
-
     func testThatItNotifiesObserversWhenAUserInAConversationOfATeamChangesTheirName() {
         // given
         let team = Team.insertNewObject(in: uiMOC)
@@ -918,7 +892,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.team = team
         let user = ZMUser.insertNewObject(in: uiMOC)
         conversation.mutableOtherActiveParticipants.add(user)
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         user.name = "Old Name"
@@ -947,7 +921,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         team.remoteIdentifier = .create()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
 
         XCTAssert(uiMOC.saveOrRollback())
 
@@ -961,9 +935,9 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         // then
         XCTAssertEqual(testObserver.changes.count, 1)
         guard let first = testObserver.changes.first else { return }
-        XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
+        XCTAssertEqual(first.insertedIndexes, IndexSet())
         XCTAssertEqual(first.deletedIndexes, IndexSet())
-        XCTAssertEqual(first.updatedIndexes, IndexSet())
+        XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
         XCTAssertEqual(movedIndexes(first), [])
     }
 
@@ -974,7 +948,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
         conversation.team = team
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: team)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
 
         XCTAssert(uiMOC.saveOrRollback())
 
@@ -989,8 +963,8 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         XCTAssertEqual(testObserver.changes.count, 1)
         guard let first = testObserver.changes.first else { return }
         XCTAssertEqual(first.insertedIndexes, IndexSet())
-        XCTAssertEqual(first.deletedIndexes, IndexSet(integer: 0))
-        XCTAssertEqual(first.updatedIndexes, IndexSet())
+        XCTAssertEqual(first.deletedIndexes, IndexSet())
+        XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
         XCTAssertEqual(movedIndexes(first), [])
     }
     
@@ -1015,7 +989,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
             conversationObjectID = conversation.objectID
         }
         
-        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC, team: nil)
+        let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
 
         XCTAssert(uiMOC.saveOrRollback())
         
@@ -1023,7 +997,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         defer { ConversationListChangeInfo.remove(observer: token, for: conversationList) }
         
         // then
-        XCTAssertEqual(conversationList.count, 0)
+        XCTAssertEqual(conversationList.count, 1)
         
         // when
         let team = uiMOC.object(with: teamObjectID)
@@ -1035,9 +1009,9 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.count, 1)
         XCTAssertEqual(testObserver.changes.count, 1)
         guard let first = testObserver.changes.first else { return }
-        XCTAssertEqual(first.insertedIndexes, IndexSet(integer: 0))
+        XCTAssertEqual(first.insertedIndexes, IndexSet())
         XCTAssertEqual(first.deletedIndexes, IndexSet())
-        XCTAssertEqual(first.updatedIndexes, IndexSet())
+        XCTAssertEqual(first.updatedIndexes, IndexSet(integer: 0))
         XCTAssertEqual(movedIndexes(first), [])
     }
 

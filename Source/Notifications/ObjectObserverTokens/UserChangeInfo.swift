@@ -28,21 +28,23 @@ protocol ObjectInSnapshot {
 extension ZMUser : ObjectInSnapshot {
     
     static public var observableKeys : Set<String> {
-        return Set([#keyPath(ZMUser.name),
-                    #keyPath(ZMUser.accentColorValue),
-                    #keyPath(ZMUser.imageMediumData),
-                    #keyPath(ZMUser.imageSmallProfileData),
-                    #keyPath(ZMUser.emailAddress),
-                    #keyPath(ZMUser.phoneNumber),
-                    #keyPath(ZMUser.canBeConnected),
-                    #keyPath(ZMUser.isConnected),
-                    #keyPath(ZMUser.isPendingApprovalByOtherUser),
-                    #keyPath(ZMUser.isPendingApprovalBySelfUser),
-                    #keyPath(ZMUser.clients),
-                    #keyPath(ZMUser.handle),
-                    #keyPath(ZMUser.teams)])
+        return [
+            #keyPath(ZMUser.name),
+            #keyPath(ZMUser.accentColorValue),
+            #keyPath(ZMUser.imageMediumData),
+            #keyPath(ZMUser.imageSmallProfileData),
+            #keyPath(ZMUser.emailAddress),
+            #keyPath(ZMUser.phoneNumber),
+            #keyPath(ZMUser.canBeConnected),
+            #keyPath(ZMUser.isConnected),
+            #keyPath(ZMUser.isPendingApprovalByOtherUser),
+            #keyPath(ZMUser.isPendingApprovalBySelfUser),
+            #keyPath(ZMUser.clients),
+            #keyPath(ZMUser.handle),
+            #keyPath(ZMUser.team)
+        ]
     }
-    
+
     public var notificationName : Notification.Name {
         return .UserChange
     }
@@ -121,7 +123,7 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     public var teamsChanged : Bool {
-        return changedKeys.contains(#keyPath(ZMUser.teams))
+        return changedKeys.contains(#keyPath(ZMUser.team))
     }
 
     open let user: ZMBareUser

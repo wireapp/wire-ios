@@ -41,13 +41,13 @@ class MemberTests: BaseTeamTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
 
         // when
-        let (team, _) = createTeamAndMember(for: user, with: .member)
+        createTeamAndMember(for: user, with: .member)
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertEqual(user.permissions(in: team), .member)
+        XCTAssertEqual(user.permissions, .member)
     }
 
     func testThatItReturnsIfAUserIsMemberOfATeam() {
@@ -55,15 +55,13 @@ class MemberTests: BaseTeamTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
 
         // when
-        let (team1, _) = createTeamAndMember(for: user, with: .member)
-        let team2 = Team.insertNewObject(in: uiMOC)
+        createTeamAndMember(for: user, with: .member)
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertTrue(user.isMember(of: team1))
-        XCTAssertFalse(user.isMember(of: team2))
+        XCTAssertTrue(user.isTeamMember)
     }
 
     func testThatItReturnsIfAUserIsNotAMemberOfATeam() {
@@ -75,7 +73,7 @@ class MemberTests: BaseTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertFalse(user.hasTeams)
+        XCTAssertFalse(user.hasTeam)
     }
 
     func testThatItReturnsIfAUserHasTeams() {
@@ -89,55 +87,24 @@ class MemberTests: BaseTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertTrue(user.hasTeams)
+        XCTAssertTrue(user.hasTeam)
     }
 
-    func testThatItReturnsTheTeamsOfAUser() {
+    func testThatItReturnsTheTeamOfAUser() {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
 
         // when
-        let (team1, _) = createTeamAndMember(for: user, with: .member)
-        let (team2, _) = createTeamAndMember(for: user, with: .admin)
+        let (team, _) = createTeamAndMember(for: user, with: .member)
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertTrue(user.isMember(of: team1))
-        XCTAssertTrue(user.isMember(of: team2))
-        XCTAssertEqual(user.teams, [team1, team2])
-        XCTAssertTrue(user.hasTeams)
-        XCTAssertEqual(user.permissions(in: team1), .member)
-        XCTAssertEqual(user.permissions(in: team2), .admin)
-    }
-
-    func testThatItReturnsActiveTeams() {
-        // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        let (team1, _) = createTeamAndMember(for: user)
-        let (team2, _) = createTeamAndMember(for: user)
-
-        XCTAssert(uiMOC.saveOrRollback())
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-
-        // when
-        team1.isActive = true
-
-        // then
-        XCTAssertEqual(user.activeTeams, [team1])
-
-        // when
-        team2.isActive = true
-
-        // then
-        XCTAssertEqual(user.activeTeams, [team1, team2])
-
-        // when
-        team1.isActive = false
-
-        // then
-        XCTAssertEqual(user.activeTeams, [team2])
+        XCTAssertTrue(user.isTeamMember)
+        XCTAssertEqual(user.team, team)
+        XCTAssertTrue(user.hasTeam)
+        XCTAssertEqual(user.permissions, .member)
     }
 
     func testThatItReturnsExistingMemberOfAUserInATeam() {

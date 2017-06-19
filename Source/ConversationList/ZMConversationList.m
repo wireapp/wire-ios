@@ -71,12 +71,11 @@
                       filteringPredicate:(NSPredicate *)filteringPredicate
                                      moc:(NSManagedObjectContext *)moc
                              description:(NSString *)description
-                                    team:(Team *)team
 {
     self = [super init];
     if (self) {
         self.moc = moc;
-        _identifier = [self identifierWithDescription:description team:team];
+        _identifier = description;
         self.customDebugDescription = self.identifier;
         self.filteringPredicate = filteringPredicate;
         self.sortDescriptors = [ZMConversation defaultSortDescriptors];
@@ -85,14 +84,6 @@
         [moc.conversationListObserverCenter startObservingList:self];
     }
     return self;
-}
-
-- (NSString *)identifierWithDescription:(NSString *)description team:(Team *)team
-{
-    if (nil != team) {
-        return [description stringByAppendingFormat:@"-%@", team.remoteIdentifier.transportString];
-    }
-    return description;
 }
 
 - (NSManagedObjectContext *)managedObjectContext
@@ -231,45 +222,37 @@
 
 + (void)refetchAllListsInUserSession:(id<ZMManagedObjectContextProvider>)session;
 {
-    ZMUser *selfUser = [ZMUser selfUserInUserSession:session];
-
-    // Refetch all team lists
-    for (Team *team in selfUser.teams) {
-        [[session.managedObjectContext conversationListDirectoryForTeam:team] refetchAllListsInManagedObjectContext:session.managedObjectContext];
-    }
-
-    // Refetch private list
-    [[session.managedObjectContext conversationListDirectoryForTeam:nil] refetchAllListsInManagedObjectContext:session.managedObjectContext];
+    [session.managedObjectContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.managedObjectContext];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
++ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext conversationListDirectoryForTeam:team].conversationsIncludingArchived;
+    return session.managedObjectContext.conversationListDirectory.conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
++ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext conversationListDirectoryForTeam:team].unarchivedConversations;
+    return session.managedObjectContext.conversationListDirectory.unarchivedConversations;
 }
 
-+ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
++ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext conversationListDirectoryForTeam:team].archivedConversations;
+    return session.managedObjectContext.conversationListDirectory.archivedConversations;
 }
 
-+ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
++ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext conversationListDirectoryForTeam:team].pendingConnectionConversations;
+    return session.managedObjectContext.conversationListDirectory.pendingConnectionConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session team:(Team *)team
++ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [session.managedObjectContext conversationListDirectoryForTeam:team].clearedConversations;
+    return session.managedObjectContext.conversationListDirectory.clearedConversations;
 }
 
 @end
