@@ -18,6 +18,7 @@
 
 
 import XCTest
+import WireTesting
 
 class OptionalComparisonTests: XCTestCase {
     

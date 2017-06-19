@@ -54,6 +54,7 @@
 		546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */; };
 		546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */; };
 		54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */; };
+		54B515931EF7F9AC000D3777 /* test-host-ios.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */; };
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
 		54CA31291B74F36B00B820C0 /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31151B74F36B00B820C0 /* Functional.swift */; };
@@ -138,13 +139,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		09F028F41B78BE4500BADDB6 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 3E88BD2A1B1F3E8400232589 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 09F028CD1B78BE2700BADDB6;
-			remoteInfo = "WireUtilities-tests-host";
-		};
 		3E88BD451B1F3EA300232589 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 3E88BD2A1B1F3E8400232589 /* Project object */;
@@ -223,6 +217,7 @@
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+WireUtilitiesTests.m"; path = "Source/NSManagedObjectContext+WireUtilitiesTests.m"; sourceTree = "<group>"; };
 		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
+		54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
 		54B863EF1EF40B12008FDDCE /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54B863F01EF40B12008FDDCE /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54B863F11EF40B12008FDDCE /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -485,6 +480,7 @@
 		546E84FA1B73DCA300532F17 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
+				54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */,
 				54B863EF1EF40B12008FDDCE /* project-common.xcconfig */,
 				54B863F01EF40B12008FDDCE /* project-debug.xcconfig */,
 				54B863F11EF40B12008FDDCE /* project.xcconfig */,
@@ -709,7 +705,6 @@
 			);
 			dependencies = (
 				3E88BD461B1F3EA300232589 /* PBXTargetDependency */,
-				09F028F51B78BE4500BADDB6 /* PBXTargetDependency */,
 			);
 			name = "WireUtilities-tests";
 			productName = WireUtilitiesTests;
@@ -781,6 +776,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				54B515931EF7F9AC000D3777 /* test-host-ios.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -903,11 +899,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		09F028F51B78BE4500BADDB6 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 09F028CD1B78BE2700BADDB6 /* WireUtilities-tests-host */;
-			targetProxy = 09F028F41B78BE4500BADDB6 /* PBXContainerItemProxy */;
-		};
 		3E88BD461B1F3EA300232589 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
@@ -937,7 +928,7 @@
 /* Begin XCBuildConfiguration section */
 		09F028EE1B78BE2800BADDB6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
+			baseConfigurationReference = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -953,7 +944,7 @@
 		};
 		09F028EF1B78BE2800BADDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
+			baseConfigurationReference = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1006,7 +997,9 @@
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=macosx*]" = "";
 			};
 			name = Debug;
 		};
@@ -1017,7 +1010,9 @@
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				"TEST_HOST[sdk=macosx*]" = "";
 			};
 			name = Release;
 		};

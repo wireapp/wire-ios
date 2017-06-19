@@ -16,23 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+SUPPORTED_PLATFORMS = iphoneos iphonesimulator
+ONLY_ACTIVE_ARCH = YES
 
-import XCTest
-import WireUtilities
-#if os(iOS)
-import MobileCoreServices;
-#endif
-
-class String_MIMETypeTests: XCTestCase {
-    
-    func testConformsToUTI() {
-        // This test is only intended to validate that parameters are passed correctly to the underlaying 
-        // function. No need to re-test UTTypeConformsTo from MobileCoreServices.
-        
-        XCTAssertTrue("video/mp4".zm_conforms(to: kUTTypeMPEG4))
-        XCTAssertFalse("video/mp4".zm_conforms(to: kUTTypeQuickTimeMovie))
-        
-        XCTAssertTrue("video/mp4".zm_conforms(to: kUTTypeMovie))
-        XCTAssertFalse("video/mp4".zm_conforms(to: kUTTypeAudio))
-    }
-}
