@@ -158,9 +158,9 @@ class MemberDownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(users.count, 2)
             users.forEach {
                 if $0.remoteIdentifier == member1UserId {
-                    XCTAssertEqual($0.permissions(in: team), [.createConversation, .removeConversationMember])
+                    XCTAssertEqual($0.permissions, [.createConversation, .removeConversationMember])
                 } else {
-                    XCTAssertEqual($0.permissions(in: team), .admin)
+                    XCTAssertEqual($0.permissions, .admin)
                 }
             }
             XCTAssertEqual(Set(users.map { $0.remoteIdentifier! }), [member1UserId, member2UserId])
