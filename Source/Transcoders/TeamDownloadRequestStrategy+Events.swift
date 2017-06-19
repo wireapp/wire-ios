@@ -107,7 +107,7 @@ extension TeamDownloadRequestStrategy: ZMEventConsumer {
         guard let team = Team.fetchOrCreate(with: identifier, create: false, in: managedObjectContext, created: nil) else { return }
         guard let removedUserId = (data[TeamEventPayloadKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
         guard let user = ZMUser(remoteID: removedUserId, createIfNeeded: false, in: managedObjectContext) else { return }
-        if let member = user.membership(in: team) {
+        if let member = user.membership {
             managedObjectContext.delete(member)
             if user.isSelfUser {
                 // We delete the local team in case the members user was the self user
