@@ -32,8 +32,7 @@
 - (instancetype)initWithAllConversations:(NSArray *)conversations
                       filteringPredicate:(NSPredicate *)filteringPredicate
                                      moc:(NSManagedObjectContext *)moc
-                            description:(NSString *)description
-                                    team:(Team *)team NS_DESIGNATED_INITIALIZER;
+                            description:(NSString *)description NS_DESIGNATED_INITIALIZER;
 
 - (instancetype)init NS_DESIGNATED_INITIALIZER;
 - (instancetype)initWithObjects:(const id [])objects count:(NSUInteger)cnt NS_DESIGNATED_INITIALIZER;

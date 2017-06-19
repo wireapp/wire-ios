@@ -1011,29 +1011,29 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableOrderedSetValueForKey:ZMConversationMessagesKey];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc team:(Team *)team;
++ (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
-    return [moc conversationListDirectoryForTeam:team].conversationsIncludingArchived;
+    return moc.conversationListDirectory.conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
++ (ZMConversationList *)archivedConversationsInContext:(NSManagedObjectContext *)moc;
 {
-    return [moc conversationListDirectoryForTeam:team].archivedConversations;
+    return moc.conversationListDirectory.archivedConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
++ (ZMConversationList *)clearedConversationsInContext:(NSManagedObjectContext *)moc;
 {
-    return [moc conversationListDirectoryForTeam:team].clearedConversations;
+    return moc.conversationListDirectory.clearedConversations;
 }
 
-+ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc team:(Team *)team;
++ (ZMConversationList *)conversationsExcludingArchivedInContext:(NSManagedObjectContext *)moc;
 {
-    return [moc conversationListDirectoryForTeam:team].unarchivedConversations;
+    return moc.conversationListDirectory.unarchivedConversations;
 }
 
-+ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc team:(Team *)team;
++ (ZMConversationList *)pendingConversationsInContext:(NSManagedObjectContext *)moc;
 {
-    return [moc conversationListDirectoryForTeam:team].pendingConnectionConversations;
+    return moc.conversationListDirectory.pendingConnectionConversations;
 }
 
 - (void)sortMessages
@@ -1137,7 +1137,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(team != nil);
     VerifyReturnNil(!participant.isSelfUser);
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-    VerifyReturnNil([selfUser canCreateConversationIn:team]);
+    VerifyReturnNil(selfUser.canCreateConversation);
 
     ZMConversation *conversation = [self existingTeamConversationInManagedObjectContext:moc withParticipant:participant team:team];
     if (nil != conversation) {
@@ -1183,7 +1183,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
 
-    if (nil != team && ![selfUser canCreateConversationIn:team]) {
+    if (nil != team && !selfUser.canCreateConversation) {
         return nil;
     }
 

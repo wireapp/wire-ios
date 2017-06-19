@@ -47,47 +47,39 @@ static NSString * const PendingKey = @"Pending";
 
 @implementation ZMConversationListDirectory
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc team:(Team *)team
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
 {
     self = [super init];
     if (self) {
-        self.team = team;
-        NSArray *allConversations = [self fetchAllConversations:moc team:team];
+        NSArray *allConversations = [self fetchAllConversations:moc];
 
         self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                         filteringPredicate:[ZMConversation predicateForConversationsExcludingArchivedInTeam:team]
+                                                                         filteringPredicate:ZMConversation.predicateForConversationsExcludingArchived
                                                                                         moc:moc
-                                                                                description:@"unarchivedConversations"
-                                                                                       team:team];
+                                                                                description:@"unarchivedConversations"];
         self.archivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                       filteringPredicate:[ZMConversation predicateForArchivedConversationsInTeam:team]
+                                                                       filteringPredicate:ZMConversation.predicateForArchivedConversations
                                                                                       moc:moc
-                                                                              description:@"archivedConversations" team:team];
+                                                                              description:@"archivedConversations"];
         self.conversationsIncludingArchived = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                                filteringPredicate:[ZMConversation predicateForConversationsIncludingArchivedInTeam:team]
+                                                                                filteringPredicate:ZMConversation.predicateForConversationsIncludingArchived
                                                                                                moc:moc
-                                                                                       description:@"conversationsIncludingArchived"
-                                                                                              team:team];
-        // There are no connection requests inside of a team, we need
-        // to ensure that we won't show the private ones
-        NSPredicate *pendingConnectionsPredicate = team ? [NSPredicate predicateWithValue:NO] : ZMConversation.predicateForPendingConversations;
+                                                                                       description:@"conversationsIncludingArchived"];
         self.pendingConnectionConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                                filteringPredicate:pendingConnectionsPredicate
+                                                                                filteringPredicate:ZMConversation.predicateForPendingConversations
                                                                                                moc:moc
-                                                                                  description:@"pendingConnectionConversations"
-                                                                                              team:nil];
+                                                                                  description:@"pendingConnectionConversations"];
         self.clearedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                      filteringPredicate:[ZMConversation predicateForClearedConversationsInTeam:team]
+                                                                      filteringPredicate:ZMConversation.predicateForClearedConversations
                                                                                      moc:moc
-                                                                             description:@"clearedConversations"
-                                                                                    team:team];
+                                                                             description:@"clearedConversations"];
     }
     return self;
 }
 
-- (NSArray *)fetchAllConversations:(NSManagedObjectContext *)context team:(Team *)team
+- (NSArray *)fetchAllConversations:(NSManagedObjectContext *)context
 {
-    NSFetchRequest *allConversationsRequest = [ZMConversation sortedFetchRequestWithPredicate:[ZMConversation predicateForConversationsInTeam:team]];
+    NSFetchRequest *allConversationsRequest = [ZMConversation sortedFetchRequest];
     // Since this is extremely likely to trigger the "otherActiveParticipants" and "connection" relationships, we make sure these gets prefetched:
     NSMutableArray *keyPaths = [NSMutableArray arrayWithArray:allConversationsRequest.relationshipKeyPathsForPrefetching];
     [keyPaths addObject:ZMConversationOtherActiveParticipantsKey];
@@ -101,7 +93,7 @@ static NSString * const PendingKey = @"Pending";
 
 - (void)refetchAllListsInManagedObjectContext:(NSManagedObjectContext *)moc
 {
-    NSArray *allConversations = [self fetchAllConversations:moc team:self.team];
+    NSArray *allConversations = [self fetchAllConversations:moc];
     for (ZMConversationList* list in self.allConversationLists){
         [list recreateWithAllConversations:allConversations];
     }
@@ -123,13 +115,12 @@ static NSString * const PendingKey = @"Pending";
 
 @implementation NSManagedObjectContext (ZMConversationListDirectory)
 
-- (ZMConversationListDirectory *)conversationListDirectoryForTeam:(Team *)team;
+- (ZMConversationListDirectory *)conversationListDirectory;
 {
-    NSString *key = team ? [ConversationListDirectoryKey stringByAppendingString:team.remoteIdentifier.transportString] : ConversationListDirectoryKey;
-    ZMConversationListDirectory *directory = self.userInfo[key];
+    ZMConversationListDirectory *directory = self.userInfo[ConversationListDirectoryKey];
     if (directory == nil) {
-        directory = [[ZMConversationListDirectory alloc] initWithManagedObjectContext:self team:team];
-        self.userInfo[key] = directory;
+        directory = [[ZMConversationListDirectory alloc] initWithManagedObjectContext:self];
+        self.userInfo[ConversationListDirectoryKey] = directory;
     }
     return directory;
 }

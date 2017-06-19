@@ -121,7 +121,7 @@
 - (void)testThatItReturnsAllConversations;
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] conversationsIncludingArchived];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     NSSet *exepected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation, self.groupConversation, self.oneToOneConversation]];
     // then
     
@@ -131,7 +131,7 @@
 - (void)testThatItReturnsUnarchivedConversations;
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] unarchivedConversations];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.unarchivedConversations;
     NSSet *exepected = [NSSet setWithArray:@[self.groupConversation, self.oneToOneConversation]];
     
     // then
@@ -141,7 +141,7 @@
 - (void)testThatItReturnsArchivedConversations;
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] archivedConversations];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.archivedConversations;
     NSSet *exepected = [NSSet setWithArray:@[self.archivedGroupConversation, self.archivedOneToOneConversation]];
     
     // then
@@ -151,7 +151,7 @@
 - (void)testThatItReturnsPendingConversations;
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] pendingConnectionConversations];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.pendingConnectionConversations;
     NSSet *exepected = [NSSet setWithArray:@[self.pendingConnectionConversation]];
     
     // then
@@ -161,8 +161,8 @@
 - (void)testThatItKeepsReturningTheSameObject
 {
     // when
-    ZMConversationList * list1 = [[self.uiMOC conversationListDirectoryForTeam:nil] conversationsIncludingArchived];
-    ZMConversationList * list2 = [[self.uiMOC conversationListDirectoryForTeam:nil] conversationsIncludingArchived];
+    ZMConversationList * list1 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
+    ZMConversationList * list2 = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     
     //then
     XCTAssertEqual(list1, list2);
@@ -171,7 +171,7 @@
 - (void)testThatItReturnsClearedConversations
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] clearedConversations];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.clearedConversations;
     NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
     
     // then
@@ -181,7 +181,7 @@
 - (void)testThatItNotReturnsClearedConversationsIn_ConversationsIncludingArchived
 {
     // when
-    ZMConversationList *list = [[self.uiMOC conversationListDirectoryForTeam:nil] conversationsIncludingArchived];
+    ZMConversationList *list = self.uiMOC.conversationListDirectory.conversationsIncludingArchived;
     NSSet *exepected = [NSSet setWithArray:@[self.clearedConversation]];
     
     // then

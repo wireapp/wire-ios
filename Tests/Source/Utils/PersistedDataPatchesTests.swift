@@ -227,10 +227,37 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
             // WHEN
             PersistedDataPatch.applyAll(in: self.syncMOC, fromVersion: "0.0.0")
             self.syncMOC.saveOrRollback()
-            
+
+            // THEN
             XCTAssertEqual(notSecureConversation.securityLevel, .notSecure)
             XCTAssertEqual(secureConversation.securityLevel, .secure)
             XCTAssertEqual(secureWithIgnoredConversation.securityLevel, .notSecure)
+        }
+    }
+
+    func testThatItDeletesLocalTeamsAndMembers() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let moc = self.syncMOC
+            let conversation = ZMConversation.insertNewObject(in: moc)
+            let team = Team.insertNewObject(in: moc)
+            let teamConversation = ZMConversation.insertNewObject(in: moc)
+            teamConversation.team = team
+            let user = ZMUser.insertNewObject(in: moc)
+            user.remoteIdentifier = .create()
+            let member = Member.getOrCreateMember(for: user, in: team, context: moc)
+            XCTAssert(moc.saveOrRollback())
+
+            // when
+            PersistedDataPatch.applyAll(in: moc, fromVersion: "0.0.0")
+            XCTAssert(moc.saveOrRollback())
+
+            // then
+            XCTAssert(team.isZombieObject)
+            XCTAssert(member.isZombieObject)
+            XCTAssertFalse(conversation.isZombieObject)
+            XCTAssertFalse(teamConversation.isZombieObject)
+
         }
     }
 }

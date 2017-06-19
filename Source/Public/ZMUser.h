@@ -34,7 +34,7 @@
 @property (nonatomic, readonly) NSString *phoneNumber;
 @property (nonatomic) AddressBookEntry *addressBookEntry;
 
-@property (nonatomic, readonly) NSSet<Member *> *memberships;
+@property (nonatomic, readonly) Member *membership;
 
 ///
 @property (nonatomic, readonly) NSSet<UserClient *> *clients;

@@ -66,7 +66,6 @@ static NSString *const MediumRemoteIdentifierDataKey = @"mediumRemoteIdentifier_
 static NSString *const MediumRemoteIdentifierKey = @"mediumRemoteIdentifier";
 static NSString *const SmallProfileRemoteIdentifierDataKey = @"smallProfileRemoteIdentifier_data";
 static NSString *const SmallProfileRemoteIdentifierKey = @"smallProfileRemoteIdentifier";
-static NSString *const OriginalProfileImageDataKey = @"originalProfileImageData";
 static NSString *const NameKey = @"name";
 static NSString *const HandleKey = @"handle";
 static NSString *const ImageMediumDataKey = @"imageMediumData";
@@ -77,7 +76,7 @@ static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 static NSString *const UserClientsKey = @"clients";
 static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
-static NSString *const MembershipsKey = @"memberships";
+static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
 
 @interface ZMBoxedSelfUser : NSObject
@@ -180,7 +179,7 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
-@dynamic memberships;
+@dynamic membership;
 
 - (UserClient *)selfClient
 {
@@ -284,22 +283,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     return [self.handle isEqualToString:ZMUser.annaBotHandle] || [self.handle isEqualToString:ZMUser.ottoBotHandle];
 }
 
-- (BOOL)isMemberOf:(Team *)team
-{
-    for (Member *membership in self.memberships) {
-        if (membership.team == team) {
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
-- (NSArray<Team *>*)guestInTeams
-{
-    return [Team teamsWithGuestInAnyConversationInContext:self.managedObjectContext guestUser:self];
-}
-
 - (BOOL)canBeConnected;
 {
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -313,6 +296,11 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 - (NSUInteger)totalCommonConnections
 {
     return 0;
+}
+
+- (BOOL)isTeamMember
+{
+    return nil != self.membership;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsConnected
@@ -430,7 +418,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
                                            LocalSmallProfileRemoteIdentifierDataKey,
                                            NormalizedEmailAddressKey,
                                            NormalizedNameKey,
-                                           OriginalProfileImageDataKey,
                                            SystemMessagesKey,
                                            UserClientsKey,
                                            ShowingUserAddedKey,
@@ -438,7 +425,7 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
                                            ReactionsKey,
                                            AddressBookEntryKey,
                                            HandleKey, // this is not set on the user directly
-                                           MembershipsKey,
+                                           MembershipKey,
                                            CreatedTeamsKey
                                            ]];
         keys = [ignoredKeys copy];

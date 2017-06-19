@@ -16,15 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 
-extension PersistedDataPatch {
 
-    /// List of patches to apply
-    static let allPatchesToApply = [
-        PersistedDataPatch(version: "41.0.0", block: UserClient.migrateAllSessionsClientIdentifiers),
-        PersistedDataPatch(version: "43.0.4", block: ZMConversation.migrateAllSecureWithIgnored),
-        PersistedDataPatch(version: "58.4.1", block: Team.deleteLocalTeamsAndMembers)
-    ]
+extension Team {
+
+    // When moving from the initial teams implementation (multiple teams tied to one account) to
+    // a multi account setup, we need to delete all local teams. Members will be deleted due to the cascade
+    // deletion rule (Team → Member). Conversations will be preserved but their teams realtion will be nullified.
+    static func deleteLocalTeamsAndMembers(in context: NSManagedObjectContext) {
+        guard let teams = context.executeFetchRequestOrAssert(Team.sortedFetchRequest()) as? [NSManagedObject] else { return }
+        teams.forEach(context.delete)
+    }
 
 }
