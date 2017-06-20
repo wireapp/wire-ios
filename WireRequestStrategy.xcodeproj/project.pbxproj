@@ -105,8 +105,6 @@
 		BF7D9BF51D8C355100949267 /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651311D8C2ED50074F367 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BF61D8C355100949267 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F963E8DC1D955D4600098AD3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
-		F963E8DD1D955D4600098AD3 /* ZMAssetRequestFactory.h in Headers */ = {isa = PBXBuildFile; fileRef = F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F963E8DE1D955D4600098AD3 /* ZMAssetRequestFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */; };
 		F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* SharedProtocols.swift */; };
 /* End PBXBuildFile section */
 
@@ -256,8 +254,6 @@
 		BF6651311D8C2ED50074F367 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
 		BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
-		F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetRequestFactory.h; sourceTree = "<group>"; };
-		F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAssetRequestFactory.m; sourceTree = "<group>"; };
 		F963E8E01D955D5500098AD3 /* SharedProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedProtocols.swift; sourceTree = "<group>"; };
 		F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		F9E9FB3E1DA4FFDB00B5B2C5 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
@@ -491,8 +487,6 @@
 			isa = PBXGroup;
 			children = (
 				F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */,
-				F963E8DA1D955D4600098AD3 /* ZMAssetRequestFactory.h */,
-				F963E8DB1D955D4600098AD3 /* ZMAssetRequestFactory.m */,
 			);
 			path = Helper;
 			sourceTree = "<group>";
@@ -528,7 +522,6 @@
 				166901F41D7081C7000FE4AF /* ZMUpstreamRequest.h in Headers */,
 				166901D31D7081C7000FE4AF /* ZMDownstreamObjectSync.h in Headers */,
 				1669016E1D707509000FE4AF /* WireRequestStrategy.h in Headers */,
-				F963E8DD1D955D4600098AD3 /* ZMAssetRequestFactory.h in Headers */,
 				166901D81D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.h in Headers */,
 				1621D2301D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h in Headers */,
 				166901DA1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.h in Headers */,
@@ -658,7 +651,6 @@
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
-				F963E8DE1D955D4600098AD3 /* ZMAssetRequestFactory.m in Sources */,
 				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,
 				F963E8DC1D955D4600098AD3 /* AssetRequestFactory.swift in Sources */,
 				547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */,
