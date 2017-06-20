@@ -29,44 +29,18 @@
 
 @implementation MockTransportSession (Assets)
 
-/// Handles /assets
+#pragma mark - Asset v2 downloading
+
 - (ZMTransportResponse *)processAssetRequest:(ZMTransportRequest *)request;
 {
     if([request matchesWithPath:@"/conversations/*/assets/*" method:ZMMethodGET]) {
         return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:3]];
     }
-    else if([request matchesWithPath:@"/assets/v3/*" method:ZMMethodGET]) {
-        return [self processAssetGetRequestInConversation:request.queryParameters[@"conv_id"] asset:[request RESTComponentAtIndex:2]];
-    }
     else if([request matchesWithPath:@"/assets/*" method:ZMMethodGET]) {
         return [self processAssetGetRequestInConversation:request.queryParameters[@"conv_id"] asset:[request RESTComponentAtIndex:1]];
     }
-    else if ([request matchesWithPath:@"/conversations/*/assets" method:ZMMethodPOST]) {
-        return [self processAssetUploadRequestInConversation:[request RESTComponentAtIndex:1] multipartData:request.multipartBodyItemsFromRequestOrFile];
-    }
-    else if ([request matchesWithPath:@"/assets/v3" method:ZMMethodPOST]) {
-        return [self processAssetUploadRequestFromDisposition:request];
-    }
-    else if ([request matchesWithPath:@"/assets" method:ZMMethodPOST]) {
-        return [self processAssetUploadRequestFromDisposition:request];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/assets" method:ZMMethodPOST]) {
-        return [self processAssetUploadRequestFromDisposition:request];
-    }
     else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET]) {
         return [self processAssetGetRequestInConversation:[request RESTComponentAtIndex:1] asset:[request RESTComponentAtIndex:4]];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets" method:ZMMethodPOST]) {
-        return [self processAddOTRAssetToConversation:[request RESTComponentAtIndex:1]
-                                         mutipartBody:request.multipartBodyItemsFromRequestOrFile
-                                              assetId:nil
-                ];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodPOST]) { // reupload
-        return [self processAddOTRAssetToConversation:[request RESTComponentAtIndex:1]
-                                         mutipartBody:request.multipartBodyItemsFromRequestOrFile
-                                              assetId:[request RESTComponentAtIndex:4]
-                ];
     }
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 }
@@ -74,50 +48,6 @@
 - (ZMTransportResponse *)sampleImageResponse {
     NSData *data =  [NSData dataWithContentsOfURL:[[NSBundle bundleForClass:self.class] URLForResource:@"medium"withExtension:@"jpg"]];
     return [[ZMTransportResponse alloc ] initWithImageData:data HTTPStatus:200 transportSessionError:nil headers:nil];
-}
-
-- (ZMTransportResponse *)processAssetUploadRequestInConversation:(NSString *)conversationID multipartData:(NSArray *)multipartData
-{
-    if (multipartData.count == 2) {
-        ZMMultipartBodyItem *metaDataItem = multipartData.firstObject;
-        ZMMultipartBodyItem *imageDataItem = multipartData.lastObject;
-        
-        NSError *error;
-        NSDictionary *disposition = [NSJSONSerialization JSONObjectWithData:metaDataItem.data options:0 error:&error];
-        if (error) {
-            return [ZMTransportResponse responseWithPayload:@{@"error":@"no-disposition"} HTTPStatus:400 transportSessionError:nil];
-        }
-        
-        return [self processAssetUploadRequestInConversation:conversationID imageData:imageDataItem.data disposition:disposition mimeType:imageDataItem.contentType];
-
-    }
-    else {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-}
-
-- (ZMTransportResponse *)processAssetUploadRequestFromDisposition:(ZMTransportRequest *)request {
-
-    NSDictionary *disposition = request.contentDisposition;
-    NSString *conversationID = disposition[@"conv_id"];
-    return [self processAssetUploadRequestInConversation:conversationID imageData:request.binaryData disposition:disposition mimeType:request.binaryDataTypeAsMIME];
-}
-
-- (ZMTransportResponse *)processAssetUploadRequestInConversation:(NSString *)conversationID imageData:(NSData *)imageData disposition:(NSDictionary *)disposition mimeType:(NSString *)mimeType {
-    
-    BOOL inlineData = [disposition[@"inline"] boolValue];
-    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationID];
-    if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    MockEvent *event = [conversation insertAssetUploadEventForUser:self.selfUser data:imageData disposition:disposition dataTypeAsMIME:mimeType assetID:[NSUUID createUUID].transportString];
-    
-    if(!inlineData) {
-        [self createAssetWithData:imageData identifier:event.data[@"id"] contentType:mimeType forConversation:conversation.identifier];
-    }
-    
-    return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:201 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processAssetGetRequestInConversation:(NSString *)conversationID asset:(NSString *)identifier
@@ -132,158 +62,6 @@
         
     return [ZMTransportResponse responseWithPayload:@{@"error":@"not found"} HTTPStatus:404 transportSessionError:nil];
 }
-
-// POST /conversations/<id>/otr/assets
-- (ZMTransportResponse *)processAddOTRAssetToConversation:(NSString *)conversationId
-                                             mutipartBody:(NSArray *)bodyItems
-                                                  assetId:(NSString *)assetId
-{
-    BOOL containsAsset = assetId == nil;
-    if (((bodyItems.count != 2 && containsAsset) || (bodyItems.count != 1 && !containsAsset))) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    ZMMultipartBodyItem *metaDataItem = bodyItems.firstObject;
-    
-    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
-    NSAssert(conversation, @"No conv found");
-    
-    NSAssert(self.selfUser != nil, @"No self user in mock transport session");
-
-    NSError *error;
-    ZMOtrAssetMeta *otrMetadata;
-    
-    NSDictionary *payload = [NSJSONSerialization JSONObjectWithData:metaDataItem.data options:0 error:&error];
-    if (error) {
-        otrMetadata = (ZMOtrAssetMeta *)[[[ZMOtrAssetMeta builder] mergeFromData:metaDataItem.data] build];
-        if (otrMetadata == nil) {
-            return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-        }
-        else {
-            return [self responseForAddOTRAssetWithProtobufData:otrMetadata
-                                                        assetId:assetId
-                                                   conversation:conversation
-                                                  containsAsset:containsAsset
-                                                      bodyItems:bodyItems];
-        }
-    }
-    else {
-        return [self responseForAddOTRAssetWithJSONPayload:payload
-                                                   assetId:assetId
-                                              conversation:conversation
-                                             containsAsset:containsAsset
-                                                 bodyItems:bodyItems];
-    }
-}
-
-- (ZMTransportResponse *)responseForAddOTRAssetWithJSONPayload:(NSDictionary *)payload
-                                                       assetId:(NSString *)assetId
-                                                  conversation:(MockConversation *)conversation
-                                                 containsAsset:(BOOL)containsAsset
-                                                     bodyItems:(NSArray *)bodyItems
-{
-    MockUserClient *senderClient = [self otrMessageSender:payload];
-    if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    NSDictionary *recipients = payload[@"recipients"];
-    
-    NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:nil];
-    NSDictionary * redundantClients = [self redundantClients:recipients conversation:conversation];
-    
-    BOOL inlineData = [payload[@"inline"] boolValue];
-    
-    NSDictionary *responsePayload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
-    
-    NSUUID *assetID = containsAsset ? [NSUUID createUUID] : [NSUUID uuidWithTransportString:assetId];
-    NSDictionary *headers;
-    
-    NSInteger statusCode = 412;
-    if (missedClients.count == 0) {
-        statusCode = 201;
-        headers = @{@"Location": assetID.transportString};
-        
-        NSData *imageData = payload[@"data"] ? [[NSData alloc] initWithBase64EncodedString:payload[@"data"] options:0]: nil;
-        
-        [self insertOTRMessageEventsToConversation:conversation requestPayload:payload createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData) {
-            return [conversation insertOTRAssetFromClient:senderClient
-                                                 toClient:recipient
-                                                 metaData:messageData
-                                                imageData:imageData
-                                                  assetId:assetID
-                                                 isInline:inlineData];
-        }];
-    }
-    
-    if (!inlineData && containsAsset) {
-        
-        ZMMultipartBodyItem *imageDataItem = bodyItems.lastObject;
-        NSData *imageData = imageDataItem.data;
-        NSString *mimeType = imageDataItem.contentType;
-        
-        [self createAssetWithData:imageData identifier:assetID.transportString contentType:mimeType forConversation:conversation.identifier];
-    }
-    
-    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil headers:headers];
-}
-
-- (ZMTransportResponse *)responseForAddOTRAssetWithProtobufData:(ZMOtrAssetMeta *)otrMetadata
-                                                        assetId:(NSString *)assetId
-                                                   conversation:(MockConversation *)conversation
-                                                  containsAsset:(BOOL)containsAsset
-                                                      bodyItems:(NSArray *)bodyItems
-{
-    MockUserClient *senderClient = [self otrMessageSenderFromClientId:otrMetadata.sender];
-    if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetadata.recipients conversation:conversation sender:senderClient onlyForUserId:nil];
-    NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetadata.recipients conversation:conversation];
-    
-    BOOL inlineData = otrMetadata.isInline;
-    
-    NSDictionary *responsePayload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
-    
-    NSUUID *assetID = containsAsset ? [NSUUID createUUID] : [NSUUID uuidWithTransportString:assetId];
-    NSDictionary *headers;
-    
-    NSInteger statusCode = 412;
-    if (missedClients.count == 0) {
-        statusCode = 201;
-        headers = @{@"Location": assetID.transportString};
-        
-        ZMMultipartBodyItem *imageDataItem = bodyItems.lastObject;
-        NSData *imageData = imageDataItem.data;
-        
-        [self insertOTRMessageEventsToConversation:conversation
-                                 requestRecipients:otrMetadata.recipients
-                                      senderClient:senderClient
-                                  createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData, NSData *decrypted) {
-                                      MockEvent *event = [conversation insertOTRAssetFromClient:senderClient
-                                                                                       toClient:recipient
-                                                                                       metaData:messageData
-                                                                                      imageData:imageData
-                                                                                        assetId:assetID
-                                                                                       isInline:inlineData];
-                                      event.decryptedOTRData = decrypted;
-                                      return event;
-        }];
-    }
-    
-    if (!inlineData && containsAsset) {
-        
-        ZMMultipartBodyItem *imageDataItem = bodyItems.lastObject;
-        NSData *imageData = imageDataItem.data;
-        NSString *mimeType = imageDataItem.contentType;
-        
-        [self createAssetWithData:imageData identifier:assetID.transportString contentType:mimeType forConversation:conversation.identifier];
-    }
-    
-    return [[ZMTransportResponse alloc] initWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil headers:headers];
-}
-
 
 #pragma mark - Asset v3
 
