@@ -109,18 +109,6 @@ static NSString * const IdleString = @"idle";
     {
         return [self processAssetRequest:request];
     }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets" method:ZMMethodPOST])
-    {
-        return [self processAssetRequest:request];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/assets" method:ZMMethodPOST])
-    {
-        return [self processAssetRequest:request];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodPOST])
-    {
-        return [self processAssetRequest:request];
-    }
     else if ([request matchesWithPath:@"/conversations/*/otr/assets/*" method:ZMMethodGET])
     {
         return [self processAssetRequest:request];
