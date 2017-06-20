@@ -37,10 +37,6 @@ public final class ClientMessageRequestFactory: NSObject {
         return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
     }
     
-    public func upstreamRequestForAssetMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage) -> ZMTransportRequest? {
-        return upstreamRequestForEncryptedImageMessage(format, message: message, forConversationWithId: message.conversation!.remoteIdentifier!);
-    }
-    
     fileprivate func upstreamRequestForEncryptedClientMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
         let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
         guard let dataAndMissingClientStrategy = message.encryptedMessagePayloadData() else {
@@ -51,58 +47,23 @@ public final class ClientMessageRequestFactory: NSObject {
         request.addContentDebugInformation(message.debugInfo)
         return request
     }
-
-    fileprivate func upstreamRequestForEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-
-        let genericMessage = format == .medium ? message.imageAssetStorage!.mediumGenericMessage : message.imageAssetStorage!.previewGenericMessage
-        let format = ImageFormatFromString(genericMessage!.imageAssetData!.tag)
-        let isInline = message.imageAssetStorage!.isInline(for: format)
-        let hasAssetId = message.assetId != nil
-        
-        if isInline || !hasAssetId {
-            //inline messsages and new messages should be always posted with image data
-            //and using endpoint for image asset upload
-            return upstreamRequestForInsertedEncryptedImageMessage(format, message: message, forConversationWithId: conversationId);
-        }
-        else if hasAssetId {
-            //not inline messages updated with missing clients should use retry endpoint and not send message data
-            return upstreamRequestForUpdatedEncryptedImageMessage(format, message: message, forConversationWithId: conversationId)
-        }
-        return nil
-    }
-    
-    // request for first upload and reupload inline images
-    fileprivate func upstreamRequestForInsertedEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        if let imageData = message.imageAssetStorage!.imageData(for: format, encrypted: true) {
-            let (metaData, strategy) = message.encryptedMessagePayloadForImageFormat(format)!
-            let originalPath = "/" +  ["conversations", conversationId.transportString(), "otr", "assets"].joined(separator: "/")
-            let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
-            let request = ZMTransportRequest.multipartRequest(withPath: path, imageData: imageData, metaData: metaData.data(), metaDataContentType: protobufContentType, mediaContentType: octetStreamContentType)
-            request.addContentDebugInformation("\(String(describing: message.imageAssetStorage!.genericMessage(for: format)))")
-            request.addContentDebugInformation("\(metaData)")
-            request.forceToBackgroundSession()
-            return request
-        }
-        return nil
-    }
-    
-    // request to reupload image (not inline)
-    fileprivate func upstreamRequestForUpdatedEncryptedImageMessage(_ format: ZMImageFormat, message: ZMAssetClientMessage, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let (metaData, strategy) = message.encryptedMessagePayloadForImageFormat(format)!
-        
-        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "assets", message.assetId!.transportString()].joined(separator: "/")
-        let path = originalPath.pathWithMissingClientStrategy(strategy: strategy)
-        
-        let request = ZMTransportRequest(path: path, method: ZMTransportRequestMethod.methodPOST, binaryData: metaData.data(), type: protobufContentType, contentDisposition: nil)
-        request.addContentDebugInformation("\(String(describing: message.imageAssetStorage!.genericMessage(for: format)))")
-        request.addContentDebugInformation("\(metaData)")
-        request.forceToBackgroundSession()
-        return request
-    }
     
     public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, isEncrypted: Bool) -> ZMTransportRequest {
         let path = "/" + ["conversations", conversationId.transportString(), isEncrypted ? "otr" : "", "assets", assetId].joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path)
+        request.forceToBackgroundSession()
+        return request
+    }
+}
+
+// MARK: - Downloading
+extension ClientMessageRequestFactory {
+    func downstreamRequestForEcryptedOriginalFileMessage(_ message: ZMAssetClientMessage) -> ZMTransportRequest? {
+        guard let conversation = message.conversation, let identifier = conversation.remoteIdentifier else { return nil }
+        let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
+        
+        let request = ZMTransportRequest(getFromPath: path)
+        request.addContentDebugInformation("Downloading file (Asset)\n\(message.dataSetDebugInformation)")
         request.forceToBackgroundSession()
         return request
     }
