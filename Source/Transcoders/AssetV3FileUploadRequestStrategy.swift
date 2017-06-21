@@ -75,7 +75,8 @@ public final class AssetV3FileUploadRequestStrategy: AbstractRequestStrategy, ZM
         assetAnalytics = AssetAnalytics(managedObjectContext: managedObjectContext)
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+        configuration = .allowsRequestsDuringEventProcessing
+
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),

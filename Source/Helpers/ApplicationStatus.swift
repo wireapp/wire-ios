@@ -19,6 +19,14 @@
 import Foundation
 import WireRequestStrategy
 
+@objc public protocol BackgroundNotificationFetchStatusProvider {
+    var status: BackgroundNotificationFetchStatus { get }
+}
+
+@objc public enum BackgroundNotificationFetchStatus: UInt8 {
+    case done, inProgress
+}
+
 @objc(ZMSynchronizationState)
 public enum SynchronizationState : UInt {
     case unauthenticated
@@ -40,4 +48,7 @@ public protocol ApplicationStatus : class {
     var clientRegistrationDelegate : ClientRegistrationDelegate { get }
     var requestCancellation : ZMRequestCancellation { get }
     var deliveryConfirmation : DeliveryConfirmationDelegate { get }
+
+    var notificationFetchStatus: BackgroundNotificationFetchStatus { get }
+
 }

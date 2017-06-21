@@ -45,6 +45,8 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
             return asset.hasUploaded() && asset.uploaded.hasAssetId()
         }
 
+        configuration = .allowsRequestsDuringEventProcessing
+
         self.assetDownstreamObjectSync = ZMDownstreamObjectSync(
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
