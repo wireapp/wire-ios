@@ -59,7 +59,6 @@ NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUnsyncedActiveParticipantsKey = @"unsyncedActiveParticipants";
 NSString *const ZMConversationUnsyncedInactiveParticipantsKey = @"unsyncedInactiveParticipants";
 NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
-NSString *const ZMConversationCallParticipantsKey = @"callParticipants";
 NSString *const ZMIsDimmedKey = @"zmIsDimmed";
 NSString *const ZMNormalizedUserDefinedNameKey = @"normalizedUserDefinedName";
 NSString *const ZMConversationListIndicatorKey = @"conversationListIndicator";
@@ -72,11 +71,6 @@ NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTim
 
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
 
-NSString *const ZMConversationCallDeviceIsActiveKey = @"callDeviceIsActive";
-NSString *const ZMConversationIsSendingVideoKey = @"isSendingVideo";
-NSString *const ZMConversationIsIgnoringCallKey = @"isIgnoringCall";
-
-NSString *const ZMConversationVoiceChannelJoinFailedNotification = @"ZMConversationVoiceChannelJoinFailedNotification";
 NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 
@@ -86,7 +80,6 @@ NSString *const ZMConversationFailedToDecryptMessageNotificationName = @"ZMConve
 NSString *const ZMConversationLastReadDidChangeNotificationName = @"ZMConversationLastReadDidChangeNotification";
 NSString *const SecurityLevelKey = @"securityLevel";
 
-static NSString *const CallStateNeedsToBeUpdatedFromBackendKey = @"callStateNeedsToBeUpdatedFromBackend";
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
 static NSString *const DraftMessageTextKey = @"draftMessageText";
@@ -100,8 +93,6 @@ static NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
 static NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
 static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
-static NSString *const CallDeviceIsActiveKey = @"callDeviceIsActive";
-static NSString *const IsFlowActiveKey = @"isFlowActive";
 
 static NSString *const MessageDestructionTimeoutKey = @"messageDestructionTimeout";
 
@@ -172,7 +163,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic archivedChangedTimestamp;
 @dynamic silencedChangedTimestamp;
 @dynamic messageDestructionTimeout;
-@dynamic callParticipants;
 @dynamic team;
 
 @synthesize tempMaxLastReadServerTimeStamp;
@@ -352,8 +342,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     dispatch_once(&onceToken, ^{
         NSSet *keys = [super ignoredKeys];
         NSString * const KeysIgnoredForTrackingModifications[] = {
-            ZMConversationCallParticipantsKey,
-            CallStateNeedsToBeUpdatedFromBackendKey,
             ZMConversationConnectionKey,
             ZMConversationConversationTypeKey,
             CreatorKey,
@@ -770,12 +758,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if (self.connectedUser.isPendingApprovalByOtherUser) {
         return ZMConversationListIndicatorPending;
     }
-    else if (self.callDeviceIsActive || self.isCallDeviceActiveV3) {
+    else if (self.isCallDeviceActive) {
         return ZMConversationListIndicatorActiveCall;
     }
-    BOOL ignoredV2Call = (self.isIgnoringCall && self.callParticipants.count > 0);
-    BOOL ignoredV3Call = self.isIgnoringCallV3;
-    if ( ignoredV2Call || ignoredV3Call) {
+    else if (self.isIgnoringCall) {
         return ZMConversationListIndicatorInactiveCall;        
     }
     
@@ -902,23 +888,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 }
 
-- (NSSet *)keysThatHaveLocalModifications
-{
-    NSMutableSet *keys = [NSMutableSet setWithSet:super.keysThatHaveLocalModifications];
-    if (!self.isZombieObject) {
-        if(self.hasLocalModificationsForCallDeviceIsActive) {
-            [keys addObject:ZMConversationCallDeviceIsActiveKey];
-        }
-        if (self.hasLocalModificationsForIsSendingVideo) {
-            [keys addObject:ZMConversationIsSendingVideoKey];
-        }
-        if (self.hasLocalModificationsForIsIgnoringCall) {
-            [keys addObject:ZMConversationIsIgnoringCallKey];
-        }
-    }
-    return [keys copy];
-}
-
 - (void)willSave
 {
     [super willSave];
@@ -936,9 +905,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     NSMutableSet *trackedKeys = [superKeys mutableCopy];
     [trackedKeys addObject:ZMConversationUnsyncedInactiveParticipantsKey];
     [trackedKeys addObject:ZMConversationUnsyncedActiveParticipantsKey];
-    [trackedKeys addObject:ZMConversationCallDeviceIsActiveKey];
-    [trackedKeys addObject:ZMConversationIsSendingVideoKey];
-    [trackedKeys addObject:ZMConversationIsIgnoringCallKey];
     return trackedKeys;
 }
 
@@ -957,44 +923,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic creator;
 @dynamic lastModifiedDate;
 @dynamic normalizedUserDefinedName;
-@dynamic callStateNeedsToBeUpdatedFromBackend;
 @dynamic hiddenMessages;
 @dynamic messageDestructionTimeout;
 
 
-+ (NSPredicate *)callConversationPredicate;
-{
-    return [NSPredicate predicateWithFormat:@"(%K != NULL) AND ((%K == %@) OR (%K == %@))",
-            [self remoteIdentifierDataKey],
-            ZMConversationConversationTypeKey, @(ZMConversationTypeOneOnOne),
-            ZMConversationConversationTypeKey, @(ZMConversationTypeGroup)];
-}
-
-+ (NSPredicate *)predicateForObjectsThatNeedCallStateToBeUpdatedUpstream;
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(%K == 0) AND (%K == 0)",
-            CallStateNeedsToBeUpdatedFromBackendKey,
-            NeedsToBeUpdatedFromBackendKey];
-    
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate, [self callConversationPredicate], [super predicateForObjectsThatNeedToBeUpdatedUpstream]]];
-}
-
-+ (NSPredicate *)predicateForUpdatingCallStateDuringSlowSync;
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(%K == 0) AND (%K.@count > 0)",
-                              CallStateNeedsToBeUpdatedFromBackendKey,
-                              ZMConversationCallParticipantsKey];
-    
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate, [self callConversationPredicate]]];
-}
-
-+ (NSPredicate *)predicateForNeedingCallStateToBeUpdatedFromBackend;
-{
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"(%K == 1)",
-                              CallStateNeedsToBeUpdatedFromBackendKey];
-    
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[predicate, [self callConversationPredicate]]];
-}
 
 + (NSSet *)keyPathsForValuesAffectingIsArchived
 {

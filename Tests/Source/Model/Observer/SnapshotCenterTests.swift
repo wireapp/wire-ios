@@ -58,7 +58,6 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                            "hasUnreadUnsentMessage": 0 as Optional<NSObject>,
                                                            "archivedChangedTimestamp": nil,
                                                            "isSelfAnActiveMember": 1 as Optional<NSObject>,
-                                                           "callStateNeedsToBeUpdatedFromBackend": 0 as Optional<NSObject>,
                                                            "draftMessageText": nil,
                                                            "modifiedKeys": nil,
                                                            "securityLevel": 0 as Optional<NSObject>,
@@ -81,8 +80,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
                                            "messages": 0,
-                                           "otherActiveParticipants": 0,
-                                           "callParticipants": 0]
+                                           "otherActiveParticipants": 0]
         
         expectedAttributes.forEach{
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
@@ -116,7 +114,6 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "hasUnreadUnsentMessage": 0 as Optional<NSObject>,
                                                          "archivedChangedTimestamp": nil,
                                                          "isSelfAnActiveMember": 0 as Optional<NSObject>,
-                                                         "callStateNeedsToBeUpdatedFromBackend": 0 as Optional<NSObject>,
                                                          "draftMessageText": nil,
                                                          "modifiedKeys": nil,
                                                          "securityLevel": 0 as Optional<NSObject>,
@@ -139,8 +136,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
                                            "messages": 1,
-                                           "otherActiveParticipants": 0,
-                                           "callParticipants": 0]
+                                           "otherActiveParticipants": 0]
         
         let expectedToOneRelationships = ["team": false,
                                           "connection": false,
@@ -194,8 +190,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union(["hiddenMessages",
                                                                                   "lastServerSyncedActiveParticipants",
                                                                                   "messages",
-                                                                                  "otherActiveParticipants",
-                                                                                  "callParticipants"]))
+                                                                                  "otherActiveParticipants"]))
     }
 
 }

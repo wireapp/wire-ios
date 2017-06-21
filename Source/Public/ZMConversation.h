@@ -73,7 +73,6 @@ extern NSString * _Null_unspecified const ZMConversationIsVerifiedNotificationNa
 @property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSOrderedSet *messages;
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *activeParticipants;
-@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *callParticipants;
 @property (readonly, nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;

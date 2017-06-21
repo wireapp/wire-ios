@@ -18,7 +18,6 @@
 
 
 #import "ZMConversation.h"
-#import "ZMConversation+Trace.h"
 #import "ZMManagedObject+Internal.h"
 #import "ZMMessage.h"
 #import "ZMConnection.h"
@@ -57,7 +56,6 @@ extern NSString *const ZMConversationUnsyncedInactiveParticipantsKey;
 extern NSString *const ZMConversationUserDefinedNameKey;
 extern NSString *const ZMVisibleWindowLowerKey;
 extern NSString *const ZMVisibleWindowUpperKey;
-extern NSString *const ZMConversationCallParticipantsKey;
 extern NSString *const ZMIsDimmedKey;
 extern NSString *const ZMNormalizedUserDefinedNameKey;
 extern NSString *const ZMConversationListIndicatorKey;
@@ -71,11 +69,6 @@ extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
 extern NSString *const ZMNotificationConversationKey;
 
-extern NSString *const ZMConversationIsSendingVideoKey;
-extern NSString *const ZMConversationCallDeviceIsActiveKey;
-extern NSString *const ZMConversationIsIgnoringCallKey;
-
-extern NSString *const ZMConversationVoiceChannelJoinFailedNotification;
 extern NSString *const ZMConversationClearTypingNotificationName;
 extern NSString *const ZMConversationLastReadDidChangeNotificationName;
 
@@ -112,14 +105,6 @@ NS_ASSUME_NONNULL_END
 + (nonnull NSPredicate *)predicateForSearchQuery:(nonnull NSString *)searchQuery team:(nullable Team *)team;
 + (nonnull NSPredicate *)userDefinedNamePredicateForSearchString:(nonnull NSString *)searchString;
 
-
-/// Returns a predicate that will match conversations which need their call state updated from the backend.
-+ (nonnull NSPredicate *)predicateForNeedingCallStateToBeUpdatedFromBackend;
-/// Returns a predicate that will match conversations which need their call state synced to the backend.
-+ (nonnull NSPredicate *)predicateForObjectsThatNeedCallStateToBeUpdatedUpstream;
-/// Returns a predicate that will match conversations which are not marked yet for being updated from the backend.
-+ (nonnull NSPredicate *)predicateForUpdatingCallStateDuringSlowSync;
-
 @property (readonly, nonatomic, nullable) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
 
 @property (nonatomic) BOOL internalIsArchived;
@@ -141,7 +126,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) ZMConversationType conversationType;
 @property (nonatomic, copy, nullable) NSString *normalizedUserDefinedName;
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
-@property (nonatomic) BOOL callStateNeedsToBeUpdatedFromBackend;
 
 /// unreadTimeStamps is created on didAwakeFromFetch:
 /// updated when messages are inserted and the lastReadServerTimeStamp changes

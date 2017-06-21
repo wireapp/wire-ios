@@ -21,9 +21,6 @@
 
 // In this header, you should import all the public headers of your framework using statements like #import <WireDataModel/PublicHeader.h>
 
-#import <WireDataModel/NSError+ZMConversation.h>
-#import <WireDataModel/NSError+ZMConversationInternal.h>
-
 #import <WireDataModel/ZMManagedObject.h>
 #import <WireDataModel/ZMManagedObject+Internal.h>
 
