@@ -50,8 +50,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             "conversationListIndicatorChanged",
             "clearedChanged",
             "securityLevelChanged",
-            "callParticipantsChanged",
-            "videoParticipantsChanged",
             "createdRemotelyChanged"
         ]
     }

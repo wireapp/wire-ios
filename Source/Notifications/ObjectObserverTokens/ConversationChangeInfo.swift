@@ -26,11 +26,8 @@ extension ZMConversation : ObjectInSnapshot {
                     #keyPath(ZMConversation.lastModifiedDate),
                     #keyPath(ZMConversation.isArchived),
                     #keyPath(ZMConversation.conversationListIndicator),
-                    #keyPath(ZMConversation.activeFlowParticipants),
-                    #keyPath(ZMConversation.callParticipants),
                     #keyPath(ZMConversation.isSilenced),
                     #keyPath(ZMConversation.securityLevel),
-                    #keyPath(ZMConversation.otherActiveVideoCallParticipants),
                     #keyPath(ZMConversation.displayName),
                     #keyPath(ZMConversation.estimatedUnreadCount),
                     #keyPath(ZMConversation.clearedTimeStamp),
@@ -106,17 +103,7 @@ extension ZMConversation : ObjectInSnapshot {
     public var securityLevelChanged : Bool {
         return changedKeysContain(keys: SecurityLevelKey)
     }
-    
-    public var callParticipantsChanged : Bool {
-        return changedKeysContain(keys:  #keyPath(ZMConversation.activeFlowParticipants),
-                                  #keyPath(ZMConversation.callParticipants),
-                                  #keyPath(ZMConversation.otherActiveVideoCallParticipants))
-    }
-    
-    public var videoParticipantsChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.otherActiveVideoCallParticipants))
-    }
-    
+        
     public var createdRemotelyChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.remoteIdentifier))
     }
