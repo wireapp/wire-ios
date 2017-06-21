@@ -60,6 +60,33 @@ extension ClientMessageTranscoderTests {
             XCTAssertTrue(message.hasConfirmation())
         }
     }
+
+    func testThatItDoesNotSendAnyConfirmationWhenItIsStillFetchingNotificationsInTheBackground() {
+        syncMOC.performGroupedBlockAndWait {
+
+            // Given
+            let event = self.decryptedUpdateEventFromOtherClient(text: "foo", conversation: self.oneToOneConversation)
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            guard let confirmationMessage = self.lastConfirmationMessage else { return XCTFail() }
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
+
+            // When
+            self.mockApplicationStatus.notificationFetchStatus = .inProgress
+
+            // Then
+            XCTAssertNil(self.sut.nextRequest())
+
+            // When
+            self.mockApplicationStatus.notificationFetchStatus = .done
+            // Then
+            guard let request = self.sut.nextRequest() else { return XCTFail() }
+
+            // THEN
+            guard let message = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else { return XCTFail() }
+            XCTAssertTrue(message.hasConfirmation())
+        }
+    }
     
     func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() {
         

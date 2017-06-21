@@ -31,19 +31,16 @@ fileprivate extension ZMClientMessage {
 
 }
 
-public final class LinkPreviewUploadRequestStrategy: ZMObjectSyncStrategy, RequestStrategy, ZMContextChangeTrackerSource {
+public final class LinkPreviewUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let requestFactory = ClientMessageRequestFactory()
-
-    /// Auth status to know whether we can make requests
-    fileprivate var clientRegistrationDelegate: ClientRegistrationDelegate
 
     /// Upstream sync
     fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync!
 
-    public init(managedObjectContext: NSManagedObjectContext, clientRegistrationDelegate: ClientRegistrationDelegate) {
-        self.clientRegistrationDelegate = clientRegistrationDelegate
-        super.init(managedObjectContext: managedObjectContext)
+    public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        configuration = .allowsRequestsDuringEventProcessing
 
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
@@ -59,10 +56,10 @@ public final class LinkPreviewUploadRequestStrategy: ZMObjectSyncStrategy, Reque
         return [upstreamSync]
     }
 
-    public func nextRequest() -> ZMTransportRequest? {
-        guard self.clientRegistrationDelegate.clientIsReadyForRequests else { return nil }
-        return self.upstreamSync.nextRequest()
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+        return upstreamSync.nextRequest()
     }
+
 }
 
 
@@ -97,7 +94,7 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
 
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let message = managedObject as? ZMClientMessage else { return false }
-        return message.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
+        return message.parseUploadResponse(response, clientRegistrationDelegate: applicationStatus!.clientRegistrationDelegate)
     }
 
     public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {

@@ -22,4 +22,5 @@ typedef NS_OPTIONS(NSUInteger, ZMStrategyConfigurationOption) {
     ZMStrategyConfigurationOptionAllowsRequestsWhileInBackground = 1 << 1,
     ZMStrategyConfigurationOptionAllowsRequestsDuringSync = 1 << 2,
     ZMStrategyConfigurationOptionAllowsRequestsDuringEventProcessing = 1 << 3,
+    ZMStrategyConfigurationOptionAllowsRequestsDuringNotificationStreamFetch = 1 << 4
 };

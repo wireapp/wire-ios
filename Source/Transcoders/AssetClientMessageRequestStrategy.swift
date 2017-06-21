@@ -40,6 +40,7 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         assetAnalytics = AssetAnalytics(managedObjectContext: managedObjectContext)
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        configuration = .allowsRequestsDuringEventProcessing
 
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,

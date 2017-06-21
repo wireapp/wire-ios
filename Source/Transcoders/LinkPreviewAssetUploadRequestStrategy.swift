@@ -87,7 +87,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrate
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker.createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
         
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
         self.assetUpstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
             entityName: ZMClientMessage.entityName(),

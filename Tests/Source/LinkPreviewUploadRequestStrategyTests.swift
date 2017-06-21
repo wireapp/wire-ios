@@ -24,12 +24,13 @@ import WireTransport
 class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 
     private var sut: LinkPreviewUploadRequestStrategy!
-    private var authStatus: MockClientRegistrationStatus!
+    private var applicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
-        authStatus = MockClientRegistrationStatus()
-        sut = LinkPreviewUploadRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: authStatus)
+        applicationStatus = MockApplicationStatus()
+        applicationStatus.mockSynchronizationState = .eventProcessing
+        sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
     }
 
     func testThatItDoesNotCreateARequestInState_Done() {

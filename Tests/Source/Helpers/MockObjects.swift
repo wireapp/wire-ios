@@ -23,6 +23,7 @@ import WireMessageStrategy
 import WireDataModel
 
 public class MockApplicationStatus : NSObject, ApplicationStatus {
+
     
     public var deliveryConfirmation: DeliveryConfirmationDelegate {
         return self.mockConfirmationStatus
@@ -35,7 +36,9 @@ public class MockApplicationStatus : NSObject, ApplicationStatus {
     public var clientRegistrationDelegate : ClientRegistrationDelegate {
         return self.mockClientRegistrationStatus
     }
-    
+
+    public var notificationFetchStatus = BackgroundNotificationFetchStatus.done
+
     public let mockConfirmationStatus = MockConfirmationStatus()
     public let mockTaskCancellationDelegate = MockTaskCancellationDelegate()
     public var mockClientRegistrationStatus = MockClientRegistrationStatus()
