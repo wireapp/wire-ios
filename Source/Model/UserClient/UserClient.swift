@@ -65,9 +65,9 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var remoteIdentifier: String?
     @NSManaged public var user: ZMUser?
     @NSManaged public var missingClients: Set<UserClient>?
-    @NSManaged fileprivate var missedByClient: UserClient?
-    @NSManaged fileprivate var addedOrRemovedInSystemMessages: Set<ZMSystemMessage>?
-    @NSManaged public var messagesMissingRecipient: Set<ZMMessage>?
+    @NSManaged public var missedByClient: UserClient?
+    @NSManaged public var addedOrRemovedInSystemMessages: Set<ZMSystemMessage>
+    @NSManaged public var messagesMissingRecipient: Set<ZMMessage>
     @NSManaged public var numberOfKeysRemaining: Int32
     @NSManaged public var activationAddress: String?
     @NSManaged public var activationDate: Date?
