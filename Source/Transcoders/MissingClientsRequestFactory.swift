@@ -36,6 +36,10 @@ public final class MissingClientsRequestFactory {
     
 }
 
+public func identity<T>(value: T) -> T {
+    return value
+}
+
 public struct MissingClientsMap {
     
     /// The mapping from user-id's to an array of missing clients for that user `{ <user-id>: [<client-id>] }`
@@ -45,21 +49,26 @@ public struct MissingClientsMap {
     
     public init(_ missingClients: [UserClient], pageSize: Int) {
         
-        let addClientIdToMap = { (clientsMap: [String : [String]], missingClient: UserClient) -> [String:[String]] in
+        let addClientIdToMap = { (clientsMap: [String : Set<String>], missingClient: UserClient) -> [String: Set<String>] in
             var clientsMap = clientsMap
             let missingUserId = missingClient.user!.remoteIdentifier!.transportString()
-            clientsMap[missingUserId] = (clientsMap[missingUserId] ?? []) + [missingClient.remoteIdentifier!]
+            var clientSet = clientsMap[missingUserId] ?? Set<String>()
+            clientSet.insert(missingClient.remoteIdentifier!)
+            clientsMap[missingUserId] = clientSet
             return clientsMap
         }
         
         var users = Set<ZMUser>()
         let missing = missingClients.filter {
-            guard let user = $0.user else { return false }
+            guard let user = $0.user,
+                let _ = user.remoteIdentifier else { return false }
             users.insert(user)
             return users.count <= pageSize
         }
         
-        payload = missing.filter { $0.user?.remoteIdentifier != nil } .reduce([String:[String]](), addClientIdToMap)
+        let setPayload = missing.reduce([String: Set<String>](), addClientIdToMap)
+        
+        payload = setPayload.mapKeysAndValues(keysMapping: identity, valueMapping: { return Array($1) })
         userInfo = [MissingClientsRequestUserInfoKeys.clients: missing.map { $0.remoteIdentifier! }]
     }
 }

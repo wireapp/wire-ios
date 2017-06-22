@@ -264,13 +264,11 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     }
     
     fileprivate func expireMessagesMissingRecipient(_ client: UserClient) {
-        guard let messagesMissingRecipient = client.messagesMissingRecipient else { return }
-        messagesMissingRecipient.forEach { $0.expire() }
+        client.messagesMissingRecipient.forEach { $0.expire() }
     }
     
     fileprivate func cleanMessagesMissingRecipient(_ client: UserClient) {
-        guard let messagesMissingRecipient = client.messagesMissingRecipient else { return }
-        messagesMissingRecipient.forEach {
+        client.messagesMissingRecipient.forEach {
             if let message = $0 as? ZMOTRMessage {
                 message.doesNotMissRecipient(client)
             }
