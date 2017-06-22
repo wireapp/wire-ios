@@ -71,6 +71,10 @@ typedef NS_ENUM(uint8_t, ZMTransportResponseStatus) {
 @end
 
 
+@interface ZMTransportResponse (PermanentlyUnavailable)
+- (BOOL)isPermanentylUnavailableError;
+@end
+
 
 @interface NSHTTPURLResponse (ZMTransportResponse)
 
