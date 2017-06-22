@@ -170,6 +170,29 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 @end
 
 
+@implementation ZMTransportResponse (PermanentlyUnavailable)
+
+- (BOOL)isPermanentylUnavailableError
+{
+    static uint16_t const permanentylUnavailableHTTPResponseCodes[] = {400, 403, 404, 405, 406, 410, 412, 451};
+    static size_t const length = sizeof(permanentylUnavailableHTTPResponseCodes)/sizeof(permanentylUnavailableHTTPResponseCodes[0]);
+
+    if (self.result != ZMTransportResponseStatusPermanentError) {
+        return NO;
+    }
+    
+    for (size_t index = 0; index < length; index++) {
+        if (permanentylUnavailableHTTPResponseCodes[index] == self.HTTPStatus) {
+            return YES;
+        }
+    }
+    
+    return NO;
+}
+
+@end
+
+
 
 @implementation NSHTTPURLResponse (ZMTransportResponse)
 

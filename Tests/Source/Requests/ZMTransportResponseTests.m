@@ -53,6 +53,36 @@
     }];
 }
 
+- (void)testThatItReturnsPermanentErrorForCodes
+{
+    [self performIgnoringZMLogError:^{
+        NSArray<NSNumber *> * permanentErrors = @[@(400), @(403), @(404), @(405), @(406), @(410), @(412), @(451)];
+        for (NSNumber *code in permanentErrors) {
+            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil];
+            XCTAssertTrue(response.isPermanentylUnavailableError);
+        }
+    }];
+}
+
+- (void)testThatItReturnsNoPermanentErrorForCodes
+{
+    [self performIgnoringZMLogError:^{
+        NSArray<NSNumber *> * permanentErrors = @[@(401), @(500), @(201), @(302)];
+        for (NSNumber *code in permanentErrors) {
+            ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:code.integerValue transportSessionError:nil];
+            XCTAssertFalse(response.isPermanentylUnavailableError);
+        }
+    }];
+}
+
+- (void)testThatItReturnsNoPermanentErrorForSuccess
+{
+    for(int status = 200; status < 300; ++status) {
+        ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@[] HTTPStatus:status transportSessionError:nil];
+        XCTAssertFalse(response.isPermanentylUnavailableError);
+    }
+}
+
 - (void)testThatItReturnSuccess
 {
     for(int status = 200; status < 300; ++status) {
