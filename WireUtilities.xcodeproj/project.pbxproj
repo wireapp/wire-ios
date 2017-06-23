@@ -146,6 +146,13 @@
 			remoteGlobalIDString = 3E88BD371B1F3EA300232589;
 			remoteInfo = WireUtilities;
 		};
+		540EF2831EFD14AA00C6C6B5 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E88BD2A1B1F3E8400232589 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 09F028CD1B78BE2700BADDB6;
+			remoteInfo = "WireUtilities-tests-host";
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -704,6 +711,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				540EF2841EFD14AA00C6C6B5 /* PBXTargetDependency */,
 				3E88BD461B1F3EA300232589 /* PBXTargetDependency */,
 			);
 			name = "WireUtilities-tests";
@@ -904,6 +912,11 @@
 			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
 			targetProxy = 3E88BD451B1F3EA300232589 /* PBXContainerItemProxy */;
 		};
+		540EF2841EFD14AA00C6C6B5 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 09F028CD1B78BE2700BADDB6 /* WireUtilities-tests-host */;
+			targetProxy = 540EF2831EFD14AA00C6C6B5 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -933,9 +946,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
-				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";
@@ -949,9 +960,7 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
-				GCC_NO_COMMON_BLOCKS = YES;
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
-				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WIRE_BUNDLE_ID = "com.wearezeta.zclient-alpha";
@@ -997,9 +1006,8 @@
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
-				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
-				"TEST_HOST[sdk=macosx*]" = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Debug;
 		};
@@ -1010,9 +1018,8 @@
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
-				"TEST_HOST[sdk=iphoneos*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
-				"TEST_HOST[sdk=iphonesimulator*]" = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
-				"TEST_HOST[sdk=macosx*]" = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Release;
 		};
