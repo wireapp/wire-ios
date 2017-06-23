@@ -58,14 +58,15 @@
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5442AB7E1CA29CC000BC099C /* ZMSAsserts.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSAsserts.swift; sourceTree = "<group>"; };
-		5454D7491EF4022F00E3BBCB /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		5454D74A1EF4022F00E3BBCB /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		5454D74B1EF4022F00E3BBCB /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		5454D74C1EF4022F00E3BBCB /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
-		5454D74D1EF4022F00E3BBCB /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		5454D74F1EF4022F00E3BBCB /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
-		5454D7501EF4022F00E3BBCB /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5457426B1BA9C50C0009409B /* ZMDefinesTest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMDefinesTest.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
+		546BC7D01EFD49B400DDB12A /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		546BC7D21EFD49B400DDB12A /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		546BC7D31EFD49B400DDB12A /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		546BC7D41EFD49B400DDB12A /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
+		546BC7D51EFD49B400DDB12A /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
+		546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		546BC7D71EFD49B400DDB12A /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		5473E7C71B31A95A00C6A937 /* WireSystem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; lineEnding = 0; path = WireSystem.h; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objcpp; };
 		5473E7C81B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMSAppleSystemLoggerWrapper.h; sourceTree = "<group>"; };
 		5473E7C91B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSAppleSystemLoggerWrapper.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
@@ -139,13 +140,14 @@
 		5454D7481EF4022F00E3BBCB /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				5454D7491EF4022F00E3BBCB /* project-common.xcconfig */,
-				5454D74A1EF4022F00E3BBCB /* project-debug.xcconfig */,
-				5454D74B1EF4022F00E3BBCB /* project.xcconfig */,
-				5454D74C1EF4022F00E3BBCB /* simulator.xcconfig */,
-				5454D74D1EF4022F00E3BBCB /* test-target.xcconfig */,
-				5454D74F1EF4022F00E3BBCB /* warnings-debug.xcconfig */,
-				5454D7501EF4022F00E3BBCB /* warnings.xcconfig */,
+				546BC7D01EFD49B400DDB12A /* project-common.xcconfig */,
+				546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */,
+				546BC7D21EFD49B400DDB12A /* project.xcconfig */,
+				546BC7D31EFD49B400DDB12A /* simulator.xcconfig */,
+				546BC7D41EFD49B400DDB12A /* test-host-ios.xcconfig */,
+				546BC7D51EFD49B400DDB12A /* test-target.xcconfig */,
+				546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */,
+				546BC7D71EFD49B400DDB12A /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
 			sourceTree = "<group>";
@@ -393,7 +395,7 @@
 /* Begin XCBuildConfiguration section */
 		3ECC34C81AD430BB0089FD4B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5454D74B1EF4022F00E3BBCB /* project.xcconfig */;
+			baseConfigurationReference = 546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -404,7 +406,7 @@
 		};
 		3ECC34C91AD430BB0089FD4B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5454D74A1EF4022F00E3BBCB /* project-debug.xcconfig */;
+			baseConfigurationReference = 546BC7D21EFD49B400DDB12A /* project.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -439,7 +441,7 @@
 		};
 		54A327361B99A3190004EB95 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5454D74D1EF4022F00E3BBCB /* test-target.xcconfig */;
+			baseConfigurationReference = 546BC7D51EFD49B400DDB12A /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -482,7 +484,7 @@
 		};
 		54A327371B99A3190004EB95 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 5454D74D1EF4022F00E3BBCB /* test-target.xcconfig */;
+			baseConfigurationReference = 546BC7D51EFD49B400DDB12A /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
