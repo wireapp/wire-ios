@@ -42,6 +42,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 @property (nonatomic) NSMapTable *referenceToName;
 @property (atomic) BOOL mayBeReachable;
 @property (atomic) BOOL isMobileConnection;
+@property (atomic) BOOL oldMayBeReachable;
+@property (atomic) BOOL oldIsMobileConnection;
 
 @end
 
@@ -181,6 +183,8 @@ static CFStringRef copyDescription(const void *info)
     
     [self.group enter];
     [self.observerQueue addOperationWithBlock:^{
+        self.oldMayBeReachable = self.mayBeReachable;
+        self.oldIsMobileConnection = self.isMobileConnection;
         self.mayBeReachable = globalReachable;
         self.isMobileConnection = isMobileConnection;
         [self.reachabilityObserver reachabilityDidChange:self];

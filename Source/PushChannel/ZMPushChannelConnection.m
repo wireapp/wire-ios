@@ -100,9 +100,16 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     return (_isClosed == 0);
 }
 
+- (BOOL)didCompleteHandshake
+{
+    return self.webSocket.handshakeCompleted;
+}
+
 - (void)checkConnection;
 {
+    ZM_WEAK(self);
     [self.webSocketGroup asyncOnQueue:self.webSocketQueue block:^{
+        ZM_STRONG(self);
         [self.webSocket sendPingFrame];
     }];
 }
@@ -114,18 +121,24 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     if (OSAtomicCompareAndSwap32Barrier(0, 1, &_isClosed)) {
         
         ZMLogDebug(@"-[%@ %@]", self.class, NSStringFromSelector(_cmd));
-        
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         
         id<ZMSGroupQueue> queue = self.consumerQueue;
         self.consumerQueue = nil;
+        
         [self.webSocket close];
+        
         id<ZMPushChannelConsumer> consumer = self.consumer;
         self.consumer = nil;
+        
+        NSHTTPURLResponse *response = self.closeResponse;
+        self.closeResponse = nil;
+        
         ZMPushChannelConnection *channel = self;
+        
         [self stopPingTimer];
         [queue performGroupedBlock:^{
-            [consumer pushChannelDidClose:channel withResponse:self.closeResponse];
+            [consumer pushChannelDidClose:channel withResponse:response];
         }];
     }
 }
@@ -138,7 +151,12 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)setPingInterval:(NSTimeInterval)pingInterval
 {
+    ZM_WEAK(self);
     [self.webSocketGroup asyncOnQueue:self.webSocketQueue block:^{
+        ZM_STRONG(self);
+        if (nil == self) {
+            return;
+        }
         self->_pingInterval = pingInterval;
         [self startPingTimer];
     }];
@@ -167,8 +185,9 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)sendPing:(NSTimer *)timer
 {
-    NOT_USED(timer);
+    ZM_WEAK(self);
     [self.webSocketGroup asyncOnQueue:self.webSocketQueue block:^{
+        ZM_STRONG(self);
         if (timer == self.pingTimer) {
             [self.webSocket sendPingFrame];
         }
@@ -193,8 +212,9 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 -(void)webSocketDidCompleteHandshake:(ZMWebSocket * __unused)websocket HTTPResponse:(NSHTTPURLResponse *)response
 {
     ZMLogDebug(@"-[%@ %@]", self.class, NSStringFromSelector(_cmd));
-    
+    ZM_WEAK(self);
     [self.consumerQueue performGroupedBlock:^{
+        ZM_STRONG(self);
         [self.consumer pushChannelDidOpen:self withResponse:response];
     }];
 }
@@ -214,7 +234,9 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     if (transportData == nil) {
         ZMLogError(@"Failed to parse data into JSON from push channel: %@", error);
     } else {
+        ZM_WEAK(self);
         [self.consumerQueue performGroupedBlock:^{
+            ZM_STRONG(self);
             [self.consumer pushChannel:self didReceiveTransportData:transportData];
         }];
     }

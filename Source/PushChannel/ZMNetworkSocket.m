@@ -88,16 +88,39 @@ NS_ENUM(int, Trace) {
     // The check for 0 and setting it to 1 happen as a single atomic operation.
     if (OSAtomicCompareAndSwap32Barrier(1, 0, &_isOpen)) {
         [self.streamPairThread cancel];
-        self.inputStream.delegate = nil;
-        self.outputStream.delegate = nil;
-        [self.delegateGroup asyncOnQueue:self.dataBufferIsolation block:^{
-            self.dataBuffer = nil;
+        dispatch_queue_t queue = self.delegateQueue;
+        self.delegateQueue = nil;
+        
+        ZMSDispatchGroup *group = self.delegateGroup;
+        self.delegateGroup = nil;
+        
+        dispatch_queue_t dataBufferIsolation = self.dataBufferIsolation;
+        self.dataBufferIsolation = nil;
+        
+        __block ZMDataBuffer *dataBuffer = self.dataBuffer;
+        self.dataBuffer = nil;
+        
+        [group asyncOnQueue:dataBufferIsolation block:^{
+            dataBuffer = nil;
         }];
-        [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
-            [self.inputStream close];
-            [self.outputStream close];
-            [self.delegate networkSocketDidClose:self];
-            self.delegate = nil;
+        
+        id<ZMNetworkSocketDelegate> delegate = self.delegate;
+        self.delegate = nil;
+        
+        NSStream *outputStream = self.outputStream;
+        self.outputStream.delegate = nil;
+        self.outputStream = nil;
+        
+        NSStream *inputStream = self.inputStream;
+        self.inputStream.delegate = nil;
+        self.inputStream = nil;
+        
+        ZMNetworkSocket *socket = self;
+        
+        [group asyncOnQueue:queue block:^{
+            [inputStream close];
+            [outputStream close];
+            [delegate networkSocketDidClose:socket];
         }];
     }
 }
@@ -194,13 +217,20 @@ NS_ENUM(int, Trace) {
 
 - (void)didReadDataFromNetwork:(dispatch_data_t)data;
 {
+    ZM_WEAK(self);
     [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
+        ZM_STRONG(self);
         [self.delegate networkSocket:self didReceiveData:data];
     }];
 }
 
 - (void)writeToOutputStream;
 {
+    if (self.outputStream.streamStatus == NSStreamStatusError) {
+        [self close];
+        return;
+    }
+    
     // This must only be called on the streamPairThread,
     // e.g. from within the -stream:handleEvent: callback
     dispatch_sync(self.dataBufferIsolation, ^{
@@ -222,7 +252,9 @@ NS_ENUM(int, Trace) {
 
 - (void)writeDataToNetwork:(dispatch_data_t)data;
 {
+    ZM_WEAK(self);
     [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
+        ZM_STRONG(self);
         [self appendDataToOutputBuffer:data];
     }];
 }
@@ -248,7 +280,9 @@ NS_ENUM(int, Trace) {
 {
     if ((eventCode & NSStreamEventOpenCompleted) != NSStreamEventNone) {
         if (aStream == self.outputStream) {
+            ZM_WEAK(self);
             [self.delegateGroup asyncOnQueue:self.delegateQueue block:^{
+                ZM_STRONG(self);
                 [self.delegate networkSocketDidOpen:self];
             }];
         }
@@ -301,6 +335,10 @@ static BOOL checkTrust(ZMNetworkSocket * const socket, NSStream * const stream)
 - (void)spaceAvailableInStream:(NSStream *)aStream;
 {
     if (self.outputStream == aStream) {
+        if (aStream.streamStatus == NSStreamStatusWriting) {
+            ZMLogError(@"Trying to write into output stream, but stream is already writing. Skipping write to avoid crashing.");
+            return;
+        }
         [self writeToOutputStream];
     }
 }

@@ -50,6 +50,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (nonatomic, readonly, weak) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic, readonly) BOOL isOpen;
+@property (nonatomic, readonly) BOOL didCompleteHandshake;
 
 - (void)checkConnection;
 

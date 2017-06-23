@@ -769,6 +769,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.requestScheduler reachabilityDidChange:reachability];
     [self.pushChannel reachabilityDidChange:reachability];
 
+    BOOL didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable;
+    if (didGoOnline && !self.accessTokenHandler.canStartRequestWithAccessToken) {
+        [self sendAccessTokenRequest];
+    }
+    
     id<ZMNetworkStateDelegate> networkStateDelegate = self.weakNetworkStateDelegate;
     if(self.reachability.mayBeReachable) {
         [networkStateDelegate didReceiveData];

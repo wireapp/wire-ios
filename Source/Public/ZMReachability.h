@@ -37,6 +37,8 @@ NS_ASSUME_NONNULL_BEGIN
 /// In reverse, this returns @c YES when there's a chance that we may be able to connect to at least one of the named servers.
 @property (atomic, readonly) BOOL mayBeReachable;
 @property (atomic, readonly) BOOL isMobileConnection;
+@property (atomic, readonly) BOOL oldMayBeReachable;
+@property (atomic, readonly) BOOL oldIsMobileConnection;
 
 @end
 
