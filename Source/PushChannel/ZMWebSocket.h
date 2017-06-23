@@ -38,6 +38,8 @@
 - (void)sendBinaryFrameWithData:(NSData *)data;
 - (void)sendPingFrame;
 
+@property (nonatomic, readonly) BOOL handshakeCompleted;
+
 @end
 
 

@@ -166,9 +166,12 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         [self.networkSocket close];
         NSHTTPURLResponse *response = self.response;
         self.response = nil;
+        id<ZMWebSocketConsumer> consumer = self.consumer;
+        self.consumer = nil;
+        ZMWebSocket *socket = self;
+        
         [group asyncOnQueue:queue block:^{
-            [self.consumer webSocketDidClose:self HTTPResponse:response];
-            self.consumer = nil; // Stop sending anything
+            [consumer webSocketDidClose:socket HTTPResponse:response];
         }];
     }
 }
@@ -203,7 +206,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     dispatch_data_t frameData = frame.frameData;
     if (frameData != nil) {
+        ZM_WEAK(self);
         [self safelyDispatchOnQueue:^{
+            ZM_STRONG(self);
             if (self.handshakeCompleted) {
                 [self.networkSocket writeDataToNetwork:frameData];
             } else {
@@ -212,6 +217,16 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
             }
         }];
     }
+}
+
+- (void)sendHandshakeFrame
+{
+    ZM_WEAK(self);
+    [self safelyDispatchOnQueue:^{
+        ZM_STRONG(self);
+        dispatch_data_t headerData = self.handshakeRequestData;
+        [self.networkSocket writeDataToNetwork:headerData];
+    }];
 }
 
 - (void)didReceivePing;
@@ -233,8 +248,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 - (void)networkSocketDidOpen:(ZMNetworkSocket *)socket;
 {
     VerifyReturn(socket == self.networkSocket);
-    dispatch_data_t headerData = self.handshakeRequestData;
-    [self.networkSocket writeDataToNetwork:headerData];
+    [self sendHandshakeFrame];
 }
 
 - (void)networkSocket:(ZMNetworkSocket *)socket didReceiveData:(dispatch_data_t)data;
@@ -250,7 +264,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
                     NSHTTPURLResponse *response = self.response;
                     self.response = nil;
                     self.handshakeCompleted = YES;
+                    ZM_WEAK(self);
                     [self safelyDispatchOnQueue:^{
+                        ZM_STRONG(self);
                         [self.consumer webSocketDidCompleteHandshake:self HTTPResponse:response];
                         self.response = nil;
                     }];
@@ -290,14 +306,18 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     } else {
         switch (frame.frameType) {
             case ZMWebSocketFrameTypeText: {
+                ZM_WEAK(self);
                 [self safelyDispatchOnQueue:^{
+                    ZM_STRONG(self);
                     NSString *text = [[NSString alloc] initWithData:frame.payload encoding:NSUTF8StringEncoding];
                     [self.consumer webSocket:self didReceiveFrameWithText:text];
                 }];
                 break;
             }
             case ZMWebSocketFrameTypeBinary: {
+                ZM_WEAK(self);
                 [self safelyDispatchOnQueue:^{
+                    ZM_STRONG(self);
                     [self.consumer webSocket:self didReceiveFrameWithData:frame.payload];
                 }];
                 break;

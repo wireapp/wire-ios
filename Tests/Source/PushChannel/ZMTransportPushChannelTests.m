@@ -39,6 +39,7 @@
 @property (nonatomic) NSString *userAgentString;
 @property (nonatomic) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic) BOOL isOpen;
+@property (nonatomic) BOOL didCompleteHandshake;
 
 @property (nonatomic) NSUInteger checkConnectionCounter;
 @property (nonatomic) NSUInteger closeCounter;
@@ -273,16 +274,47 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     XCTAssertNotEqual(firstPushChannel, secondPushChannel);
 }
 
-- (void)testThatItChecksTheConnectionWhenTheReachabilityChanges;
+- (void)testThatItChecksTheConnectionWhenTheReachabilityChanges_PushChannelOpen;
 {
     // given
     [self openPushChannel];
-    
+    currentFakePushChannelConnection.isOpen = YES;
+
     // when
     [self.sut reachabilityDidChange:[OCMockObject niceMockForClass:ZMReachability.class]];
     
     // then
     XCTAssertEqual(currentFakePushChannelConnection.checkConnectionCounter, 1u);
+}
+
+- (void)testThatItDoesNotCheckTheConnectionWhenTheReachabilityChanges_PushChannelClosed;
+{
+    // given
+    [self openPushChannel];
+    currentFakePushChannelConnection.isOpen = NO;
+
+    // when
+    [self.sut reachabilityDidChange:[OCMockObject niceMockForClass:ZMReachability.class]];
+    
+    // then
+    XCTAssertEqual(currentFakePushChannelConnection.checkConnectionCounter, 0u);
+}
+
+- (void)testThatItClosesConnectionWhenPushChannelHandshakeDidNotSucceed
+{
+    // given
+    [self openPushChannel];
+    currentFakePushChannelConnection.didCompleteHandshake = NO;
+    
+    // when
+    OCMockObject* reachability = [OCMockObject niceMockForClass:ZMReachability.class];
+    [[[reachability stub] andReturnValue:@(YES)] mayBeReachable];
+    [[[reachability stub] andReturnValue:@(NO)] oldMayBeReachable];
+    [self.sut reachabilityDidChange:(id)reachability];
+    
+    // then
+    XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 1u);
+    XCTAssertEqual(currentFakePushChannelConnection.checkConnectionCounter, 0u);
 }
 
 - (void)testThatItClosesPushChannelIfTheConsumerHasBeenRemoved
@@ -477,14 +509,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     id mockReachability = [OCMockObject niceMockForClass:[ZMReachability class]];
     [self openPushChannel];
 
-    // we set the connection to mobile
-    [[[mockReachability expect] andReturnValue:@(YES)] isMobileConnection];
-    [self.sut reachabilityDidChange:mockReachability];
-    
     // when
+    [[[mockReachability expect] andReturnValue:@(YES)] oldIsMobileConnection];
     [[[mockReachability expect] andReturnValue:@(NO)] isMobileConnection];
     [self.sut reachabilityDidChange:mockReachability];
-
+    
     // then
     XCTAssertEqual(currentFakePushChannelConnection.closeCounter, 1u);
 }

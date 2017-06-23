@@ -36,7 +36,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic, weak) id<ZMPushChannelConsumer>  consumer;
 @property (nonatomic) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMPushChannelConnection *pushChannel;
-@property (nonatomic) BOOL isUsingMobileNetwork;
 @property (nonatomic, readonly) BOOL shouldBeOpen;
 
 @end
@@ -158,13 +157,19 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)reachabilityDidChange:(ZMReachability *)reachability;
 {
-    BOOL oldIsUsingMobileNetwork = self.isUsingMobileNetwork;
-    self.isUsingMobileNetwork = reachability.isMobileConnection;
+    BOOL didEnterWifi = !reachability.isMobileConnection && reachability.oldIsMobileConnection;
+    BOOL didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable;
     
-    if (oldIsUsingMobileNetwork && !self.isUsingMobileNetwork) {
+    if (didEnterWifi) {
         [self.pushChannel close];
-    } else {
-        [self.pushChannel checkConnection];
+    } else if (self.pushChannel.isOpen) {
+        if (didGoOnline && !self.pushChannel.didCompleteHandshake) {
+            // If we regain internet access after the handshake frame has been sent, but before the channel is closed, we have an improperly working channel
+            // We need to close this one and open a new one (when `pushChannelDidClose:withResponse:` is called)
+            [self.pushChannel close];
+        } else {
+            [self.pushChannel checkConnection];
+        }
     }
 }
 

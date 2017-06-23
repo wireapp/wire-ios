@@ -344,6 +344,7 @@ static XCTestCase *currentTestCase;
 - (void)tearDown;
 
 @property (atomic) BOOL mayBeReachable;
+@property (atomic) BOOL oldMayBeReachable;
 
 @property (nonatomic) BOOL wasTornDown;
 @property (nonatomic, copy) NSArray *names;
@@ -370,6 +371,7 @@ static __weak FakeReachability *currentReachability;
         self.observerQueue = observerQueue;
         self.group = group;
         self.mayBeReachable = YES;
+        self.oldMayBeReachable = YES;
     }
     currentReachability = self;
     return self;
@@ -2182,6 +2184,37 @@ static __weak FakeReachability *currentReachability;
 
 
 @implementation ZMTransportSessionTests (Reachability)
+
+- (void)testThatItSendsAccessTokenRequestWhenRegainingInternetAndTokenExpired
+{
+    // given
+    [[[(id)self.URLSessionSwitch stub] andReturn:self.URLSession] foregroundSession];
+    self.sut.accessToken = self.expiredAccessToken;
+    [self setAuthenticationCookieData];
+    
+    // expect
+    XCTestExpectation *accessToken = [self expectationWithDescription:@"access token requested"];
+    [self mockURLSessionTaskWithResponseGenerator:^(NSURLRequest *request ZM_UNUSED, NSData *data ZM_UNUSED) {
+        XCTAssertEqualObjects(request.URL.path, @"/access");
+        XCTAssertEqualObjects(request.HTTPMethod, @"POST");
+        TestResponse *testResponse = [TestResponse testResponse];
+        [testResponse setBodyFromTransportData:@{@"access_token": @"FakeToken",
+                                                 @"token_type": @"FakeType",
+                                                 @"expires_in": @3000}];
+        [testResponse setStatusCode:200];
+        [accessToken fulfill];
+        return testResponse;
+    }];
+
+    // when
+    FakeReachability *reachability = currentReachability;
+    reachability.mayBeReachable = YES;
+    reachability.oldMayBeReachable = NO;
+    [self.sut reachabilityDidChange:(id)reachability];
+    
+    // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
 
 - (void)testThatItCallsDidReceiveDataOnTheReachabilityDelegate
 {
