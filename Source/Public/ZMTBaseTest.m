@@ -34,10 +34,12 @@
 @property (nonatomic) NSMutableArray *expectations; // Beta3Workaround
 @property (nonatomic) LogHookToken *logHookToken;
 
+@property (nonatomic, strong) id<ZMSGroupQueue> innerFakeUIContext;
+@property (nonatomic, strong) id<ZMSGroupQueue> innerFakeSyncContext;
+
 @end
 
 @implementation ZMTBaseTest
-
 
 - (void)verifyMockLater:(id)mock;
 {
@@ -113,8 +115,8 @@
     
     [self registerLogErrorHook];
     
-    self.fakeUIContext = [FakeGroupContext main];
-    self.fakeSyncContext = [FakeGroupContext sync];
+    self.innerFakeUIContext = [FakeGroupContext main];
+    self.innerFakeSyncContext = [FakeGroupContext sync];
     
     [NSUUID reseedUUID:self.name];
 }
@@ -124,11 +126,19 @@
     [self unregisterLogErrorHook];
     [self verifyMocksNow];
     _logHookToken = nil;
-    _fakeUIContext = nil;
-    _fakeSyncContext = nil;
+    self.innerFakeUIContext = nil;
+    self.innerFakeSyncContext = nil;
     _mocksToBeVerified = nil;
     self.expectations = nil;
     [super tearDown];
+}
+
+- (id<ZMSGroupQueue>)fakeUIContext {
+    return self.innerFakeUIContext;
+}
+
+- (id<ZMSGroupQueue>)fakeSyncContext {
+    return self.innerFakeSyncContext;
 }
 
 - (void)spinMainQueueWithTimeout:(NSTimeInterval)timeout
