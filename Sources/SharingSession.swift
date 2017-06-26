@@ -100,7 +100,7 @@ class AuthenticationStatus : AuthenticationStatusProvider {
 }
 
 class ApplicationStatusDirectory : ApplicationStatus {
-    
+
     let transportSession : ZMTransportSession
     let deliveryConfirmationDummy : DeliveryConfirmationDummy
     
@@ -135,6 +135,8 @@ class ApplicationStatusDirectory : ApplicationStatus {
     public var operationState: OperationState {
         return .foreground
     }
+
+    public let notificationFetchStatus: BackgroundNotificationFetchStatus = .done
     
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return self.clientRegistrationStatus
