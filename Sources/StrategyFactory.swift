@@ -94,7 +94,7 @@ class StrategyFactory {
     }
 
     private func createLinkPreviewUploadRequestStrategy() -> LinkPreviewUploadRequestStrategy {
-        return LinkPreviewUploadRequestStrategy(managedObjectContext: syncContext, clientRegistrationDelegate: applicationStatus.clientRegistrationDelegate)
+        return LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     // MARK: - Asset V3
