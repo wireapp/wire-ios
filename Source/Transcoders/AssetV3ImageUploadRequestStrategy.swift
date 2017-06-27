@@ -112,8 +112,7 @@ public final class AssetV3ImageUploadRequestStrategy: AbstractRequestStrategy, Z
         )
 
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
-        configuration = [.allowsRequestsDuringEventProcessing]
+        configuration = .allowsRequestsDuringEventProcessing
 
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
@@ -126,45 +125,12 @@ public final class AssetV3ImageUploadRequestStrategy: AbstractRequestStrategy, Z
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [preprocessor, upstreamSync, self]
+        return [preprocessor, upstreamSync]
     }
 
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return upstreamSync.nextRequest()
     }
-}
-
-extension AssetV3ImageUploadRequestStrategy: ZMContextChangeTracker {
-
-    // we need to cancel the requests manually as the upstream modified object sync
-    // will not pick up a change to keys which are already being synchronized (uploadState)
-    // WHEN the user cancels a file upload
-    public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let assetClientMessages = object.flatMap { object -> ZMAssetClientMessage? in
-            guard let message = object as? ZMAssetClientMessage,
-                message.version == 3,
-                message.genericAssetMessage?.assetData?.hasPreview() == true,
-                nil != message.fileMessageData && message.transferState == .cancelledUpload
-                else { return nil }
-            return message
-        }
-
-        assetClientMessages.forEach(cancelOutstandingUploadRequests)
-    }
-
-    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        return nil
-    }
-
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        // no op
-    }
-
-    fileprivate func cancelOutstandingUploadRequests(forMessage message: ZMAssetClientMessage) {
-        guard let identifier = message.associatedTaskIdentifier else { return }
-        applicationStatus?.requestCancellation.cancelTask(with: identifier)
-    }
-    
 }
 
 
@@ -224,15 +190,11 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         if message.uploadState == .uploadingThumbnail {
-            request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
+            request.add(ZMCompletionHandler(on: managedObjectContext) { [weak self] response in
                 message.associatedTaskIdentifier = nil
                 if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
-                    self.failUpload(of: message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
+                    self?.failUpload(of: message, keys: [ZMAssetClientMessageUploadedStateKey])
                 }
-            })
-
-            request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
-                message.associatedTaskIdentifier = identifier
             })
         }
 
@@ -256,7 +218,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
         if message.uploadState == .uploadingThumbnail {
-            failUpload(of: message, keys: keys, request: upstreamRequest.transportRequest)
+            failUpload(of: message, keys: keys)
             return true
         } else {
             message.uploadState = .uploadingFailed
@@ -264,7 +226,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         }
     }
 
-    private func failUpload(of message: ZMAssetClientMessage, keys: Set<String>, request: ZMTransportRequest?) {
+    private func failUpload(of message: ZMAssetClientMessage, keys: Set<String>) {
         if message.transferState != .cancelledUpload {
             message.transferState = .failedUpload
             message.expire()
