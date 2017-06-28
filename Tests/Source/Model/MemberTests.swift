@@ -133,4 +133,67 @@ class MemberTests: BaseTeamTests {
         XCTAssertEqual(member.team, team)
     }
     
+    func testThatItSetsTheUsersRemoteIDAsMemberRemoteId() {
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID()
+        let team = Team.insertNewObject(in: uiMOC)
+        
+        // when
+        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+        
+        // then
+        XCTAssertNotNil(member.remoteIdentifier)
+        XCTAssertEqual(member.remoteIdentifier, user.remoteIdentifier)
+    }
+
+}
+
+
+// MARK: - Transport
+
+
+extension MemberTests {
+
+    func testThatItUpdatesAMemberWithResponsePayload() {
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = .create()
+        let team = Team.insertNewObject(in: uiMOC)
+        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+
+        let payload: [String: Any] = [
+            "user": user.remoteIdentifier!.transportString(),
+            "permissions": ["self": 33, "copy": 0]
+        ]
+
+        // when
+        member.updatePermissions(with: payload)
+
+        // then
+        XCTAssertEqual(member.permissions, [.createConversation, .removeConversationMember])
+    }
+
+    func testThatItCreatesAndUpdatesAMemberFromTransportData() {
+        syncMOC.performAndWait {
+            // given
+            let team = Team.insertNewObject(in: self.syncMOC)
+            team.remoteIdentifier = .create()
+            let userId = UUID.create()
+
+            let payload: [String: Any] = [
+                "user": userId.transportString(),
+                "permissions": ["self": 5951, "copy": 0]
+            ]
+
+            // when
+            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC) else { return XCTFail("No member created") }
+
+            // then
+            XCTAssertEqual(member.user?.remoteIdentifier, userId)
+            XCTAssertEqual(member.permissions, .admin)
+            XCTAssertEqual(member.team, team)
+        }
+    }
+    
 }

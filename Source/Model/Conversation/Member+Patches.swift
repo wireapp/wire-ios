@@ -16,16 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 
-extension PersistedDataPatch {
 
-    /// List of patches to apply
-    static let allPatchesToApply = [
-        PersistedDataPatch(version: "41.0.0", block: UserClient.migrateAllSessionsClientIdentifiers),
-        PersistedDataPatch(version: "43.0.4", block: ZMConversation.migrateAllSecureWithIgnored),
-        PersistedDataPatch(version: "58.4.1", block: Team.deleteLocalTeamsAndMembers),
-        PersistedDataPatch(version: "62.1.0", block: Member.migrateRemoteIdentifiers) // TODO: Verify this is the correct version
-    ]
+extension Member {
 
+    // Model version 2.39.0 adds a `remoteIdentifier` attribute to the `Member` entity.
+    // The value should be the same as the `remoteIdentifier` of the members user.
+    static func migrateRemoteIdentifiers(in context: NSManagedObjectContext) {
+        let request = NSFetchRequest<Member>(entityName: Member.entityName())
+        context.fetchOrAssert(request: request).forEach(migrateUserRemoteIdentifer)
+    }
+
+    static private func migrateUserRemoteIdentifer(for member: Member) {
+        member.remoteIdentifier = member.user?.remoteIdentifier
+    }
+    
 }

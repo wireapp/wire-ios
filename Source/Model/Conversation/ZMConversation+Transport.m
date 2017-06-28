@@ -131,16 +131,8 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 - (void)updateTeamWithIdentifier:(NSUUID *)teamId
 {
     VerifyReturn(nil != teamId);
-
-    BOOL created = NO;
     self.teamRemoteIdentifier = teamId;
-    self.team = [Team fetchOrCreateTeamWithRemoteIdentifier:teamId createIfNeeded:YES inContext:self.managedObjectContext created:&created];
-    // If we are added to a conversation in a team than we should have gotten the
-    // team creation update event and fetched the team before.
-    // If not and we just created the team then we need to refetch it.
-    if (!self.team.needsToBeUpdatedFromBackend) {
-        self.team.needsToBeUpdatedFromBackend = created;
-    }
+    self.team = [Team fetchOrCreateTeamWithRemoteIdentifier:teamId createIfNeeded:NO inContext:self.managedObjectContext created:nil];
 }
 
 - (void)updatePotentialGapSystemMessagesIfNeededWithUsers:(NSSet <ZMUser *>*)users

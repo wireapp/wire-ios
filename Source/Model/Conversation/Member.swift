@@ -21,7 +21,7 @@ public class Member: ZMManagedObject {
 
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
-
+    @NSManaged public var remoteIdentifier_data : Data?
     @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: Permissions {
@@ -37,15 +37,28 @@ public class Member: ZMManagedObject {
         return false
     }
 
+    public override static func defaultSortDescriptors() -> [NSSortDescriptor] {
+        return []
+    }
+    
+    public var remoteIdentifier: UUID? {
+        get { return remoteIdentifier_data.flatMap { NSUUID(uuidBytes: $0.withUnsafeBytes(UnsafePointer<UInt8>.init)) } as UUID? }
+        set { remoteIdentifier_data = (newValue as NSUUID?)?.data() }
+    }
+
     @objc(getOrCreateMemberForUser:inTeam:context:)
     public static func getOrCreateMember(for user: ZMUser, in team: Team, context: NSManagedObjectContext) -> Member {
         if let existing = user.membership {
+            return existing
+        }
+        else if let userId = user.remoteIdentifier, let existing = Member.fetch(withRemoteIdentifier: userId, in: context) {
             return existing
         }
 
         let member = insertNewObject(in: context)
         member.team = team
         member.user = user
+        member.remoteIdentifier = user.remoteIdentifier
         return member
     }
 
@@ -54,18 +67,34 @@ public class Member: ZMManagedObject {
 
 // MARK: - Transport
 
+
+fileprivate enum ResponseKey: String {
+    case user, permissions
+
+    enum Permissions: String {
+        case `self`, copy
+    }
+}
+
+
 extension Member {
 
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
-        guard let id = (payload["user"] as? String).flatMap(UUID.init),
-            let user = ZMUser(remoteID: id, createIfNeeded: true, in: context),
-            let permissions = payload["permissions"] as? [String: Any],
-            let selfPermissions = permissions["self"] as? NSNumber else { return nil }
+        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init),
+            let user = ZMUser(remoteID: id, createIfNeeded: true, in: context) else { return nil }
 
         let member = getOrCreateMember(for: user, in: team, context: context)
-        member.permissions = Permissions(rawValue: selfPermissions.int64Value)
+        member.updatePermissions(with: payload)
         return member
+    }
+
+    public func updatePermissions(with payload: [String: Any]) {
+        guard let userID = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return }
+        precondition(remoteIdentifier == userID, "Trying to update member with non-matching payload: \(payload), \(self)")
+        guard let permissionsPayload = payload[ResponseKey.permissions.rawValue] as? [String: Any] else { return }
+        guard let selfPermissions = permissionsPayload[ResponseKey.Permissions.`self`.rawValue] as? NSNumber else { return }
+        permissions = Permissions(rawValue: selfPermissions.int64Value)
     }
 
 }
