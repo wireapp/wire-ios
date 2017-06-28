@@ -708,5 +708,85 @@ extension UserClientTests {
         }
     }
     
+    func testThatItCreatesUserClientIfNeeded() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            // WHEN
+            let client = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: otherUser, createIfNeeded: true)
+            
+            // THEN
+            XCTAssertNotNil(client)
+            XCTAssertEqual(client?.remoteIdentifier, "badf00d")
+            XCTAssertEqual(client?.user, otherUser)
+        }
+    }
+    
+    func testThatItFetchesUserClientWithoutSave() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            // WHEN
+            let client1 = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: otherUser, createIfNeeded: true)
+            let client2 = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: otherUser, createIfNeeded: true)
+            
+            // THEN
+            XCTAssertNotNil(client1)
+            XCTAssertNotNil(client2)
+            
+            XCTAssertEqual(client1, client2)
+        }
+    }
+    
+    func testThatItFetchesUserClient_OtherMOC() {
+        var clientSync: UserClient?
+        let userUI = ZMUser.insertNewObject(in: self.uiMOC)
+        userUI.remoteIdentifier = UUID.create()
+
+        self.uiMOC.saveOrRollback()
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let userSync = try! self.syncMOC.existingObject(with: userUI.objectID) as! ZMUser
+            // WHEN
+            clientSync = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: userSync, createIfNeeded: true)
+            clientSync?.label = "test"
+            // THEN
+            XCTAssertNotNil(clientSync)
+            self.syncMOC.saveOrRollback()
+        }
+        
+        // WHEN
+        let clientUI: UserClient? = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: userUI, createIfNeeded: false)
+        
+        // THEN
+        XCTAssertNotNil(clientUI)
+        XCTAssertEqual(clientUI?.remoteIdentifier, "badf00d")
+        XCTAssertEqual(clientUI?.label, "test")
+    }
+    
+    func testThatItFetchesUserClientWithSave() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            // WHEN
+            let client1 = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: otherUser, createIfNeeded: true)
+            
+            // AND THEN
+            self.syncMOC.saveOrRollback()
+            
+            // WHEN
+            let client2 = UserClient.fetchUserClient(withRemoteId: "badf00d", forUser: otherUser, createIfNeeded: true)
+            
+            // THEN
+            XCTAssertNotNil(client1)
+            XCTAssertNotNil(client2)
+            
+            XCTAssertEqual(client1, client2)
+        }
+    }
 }
 
