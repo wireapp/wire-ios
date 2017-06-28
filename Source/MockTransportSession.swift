@@ -32,18 +32,10 @@ public extension MockTransportSession {
     public func pushEventsForTeams(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, deleted: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
         guard shouldSendEventsToSelfUser else { return [] }
         
-        let insertedEvents = inserted
-            .flatMap { $0 as? MockTeam }
-            .sorted(by: ascendingCreationDate)
-            .filter(selfUserPartOfTeam)
-            .map(MockTeamEvent.inserted)
-            .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
-        
         let updatedEvents =  updated
             .flatMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
-            .filter(selfUserPartOfTeam)
-            .flatMap { self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
+            .flatMap{ self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
         
         let deletedEvents = deleted
             .flatMap { $0 as? MockTeam }
@@ -52,7 +44,7 @@ public extension MockTransportSession {
             .map(MockTeamEvent.deleted)
             .map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         
-        return insertedEvents + updatedEvents + deletedEvents
+        return updatedEvents + deletedEvents
     }
     
     private func pushEventForUpdatedTeam(team: MockTeam, insertedObjects: Set<NSManagedObject>) -> [MockPushEvent] {
@@ -62,7 +54,7 @@ public extension MockTransportSession {
             allEvents.append(MockPushEvent(with: teamUpdateEvent.payload, uuid: UUID.create(), isTransient: false) )
         }
         
-        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues())
+        let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)
         let membersPushEvents = membersEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         allEvents.append(contentsOf: membersPushEvents)
 

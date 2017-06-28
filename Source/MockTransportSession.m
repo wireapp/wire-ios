@@ -878,14 +878,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 #pragma mark - Teams
 
-- (MockTeam *)insertTeamWithName:(nullable NSString *)name
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name isBound:(BOOL)isBound
 {
-    return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
+    return [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil isBound:isBound];
 }
 
-- (MockTeam *)insertTeamWithName:(nullable NSString *)name users:(NSSet<MockUser*> *)users
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name isBound:(BOOL)isBound users:(NSSet<MockUser*> *)users
 {
-    MockTeam *team = [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil];
+    MockTeam *team = [MockTeam insertIn:self.managedObjectContext name:name assetId:nil assetKey:nil isBound:isBound];
     for (MockUser *user in users) {
         [self insertMemberWithUser:user inTeam:team];
     }
@@ -913,8 +913,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     }
 }
 
-- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users {
-    MockConversation *conversation = [MockConversation insertConversationIntoContext:self.managedObjectContext forTeam:team with:users];
+- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users creator:(MockUser *)creator {
+    MockConversation *conversation = [MockConversation insertConversationIntoContext:self.managedObjectContext withCreator:creator forTeam:team users:users];
     NSAssert(self.selfUser.identifier, @"The self user needs to be set");
     if ([conversation.activeUsers containsObject:self.selfUser]) {
         conversation.selfIdentifier = self.selfUser.identifier;

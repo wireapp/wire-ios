@@ -68,8 +68,8 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
 
         // When
         sut.performRemoteChanges { session in
-            team1 = session.insertTeam(withName: name1)
-            team2 = session.insertTeam(withName: name2)
+            team1 = session.insertTeam(withName: name1, isBound: true)
+            team2 = session.insertTeam(withName: name2, isBound: false)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -88,7 +88,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name", users: [selfUser])
+            team = session.insertTeam(withName: "name", isBound: true, users: [selfUser])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
@@ -97,14 +97,15 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // When
-        let payload = team.payload.asDictionary() as? [String : String]
+        let payload = team.payload.asDictionary() as? [String : Any?]
 
         // Then
-        XCTAssertEqual(payload?["id"], team.identifier)
-        XCTAssertEqual(payload?["creator"], creator.identifier)
-        XCTAssertEqual(payload?["name"], team.name)
-        XCTAssertEqual(payload?["icon_key"], team.pictureAssetKey)
-        XCTAssertEqual(payload?["icon"], team.pictureAssetId)
+        XCTAssertEqual(payload?["id"] as? String, team.identifier)
+        XCTAssertEqual(payload?["creator"] as? String, creator.identifier)
+        XCTAssertEqual(payload?["name"] as? String, team.name)
+        XCTAssertEqual(payload?["icon_key"] as? String, team.pictureAssetKey)
+        XCTAssertEqual(payload?["icon"] as? String, team.pictureAssetId)
+        XCTAssertEqual(payload?["binding"] as? Int, 1)
     }
     
     func testThatItFetchesTeam() {
@@ -114,7 +115,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name", users: [selfUser])
+            team = session.insertTeam(withName: "name", isBound: true, users: [selfUser])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
@@ -130,12 +131,14 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertNotNil(response?.payload)
 
         // Then
-        let payload = response?.payload?.asDictionary() as? [String : String]
-        XCTAssertEqual(payload?["id"], team.identifier)
-        XCTAssertEqual(payload?["creator"], creator.identifier)
-        XCTAssertEqual(payload?["name"], team.name)
-        XCTAssertEqual(payload?["icon_key"], team.pictureAssetKey)
-        XCTAssertEqual(payload?["icon"], team.pictureAssetId)
+        let payload = response?.payload?.asDictionary() as? [String : Any?]
+        XCTAssertEqual(payload?["id"] as? String, team.identifier)
+        XCTAssertEqual(payload?["creator"] as? String, creator.identifier)
+        XCTAssertEqual(payload?["name"] as? String, team.name)
+        XCTAssertEqual(payload?["icon_key"] as? String, team.pictureAssetKey)
+        XCTAssertEqual(payload?["icon"] as? String, team.pictureAssetId)
+        XCTAssertEqual(payload?["binding"] as? Int, 1)
+
     }
     
     func testThatItFetchesAllTeams() {
@@ -144,8 +147,9 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         var team2: MockTeam!
 
         sut.performRemoteChanges { session in
-            team1 = session.insertTeam(withName: "some")
-            team2 = session.insertTeam(withName: "other")
+            let selfUser = session.insertSelfUser(withName: "Am I")
+            team1 = session.insertTeam(withName: "some", isBound: true, users: [selfUser])
+            team2 = session.insertTeam(withName: "other", isBound: false, users: [selfUser])
         }
         
         // When
@@ -154,99 +158,6 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         // Then
         checkThat(response: response, contains: [team2, team1], hasMore: false)
-    }
-    
-    func testThatItFetchesTeamsSpecifiedByIdentifiers() {
-        // Given
-        var team1: MockTeam!
-        var team2: MockTeam!
-
-        sut.performRemoteChanges { session in
-            team1 = session.insertTeam(withName: "some")
-            team2 = session.insertTeam(withName: "other")
-            _ = session.insertTeam(withName: "not this")
-        }
-        
-        // When
-        let path = "/teams?ids=" + [team1.identifier, team2.identifier].joined(separator: ",")
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        
-        // Then
-        checkThat(response: response, contains: [team1, team2], hasMore: false)
-    }
-    
-    func testThatItFetchesTeamsAndRespectsStartParameter() {
-        // Given
-        var team1: MockTeam!
-        var team2: MockTeam!
-
-        sut.performRemoteChanges { session in
-            _ = session.insertTeam(withName: "not this")
-            team1 = session.insertTeam(withName: "some")
-            team2 = session.insertTeam(withName: "other")
-        }
-        
-        // When
-        let path = "/teams?start=\(team1.identifier)"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        
-        // Then
-        checkThat(response: response, contains: [team2], hasMore: false)
-    }
-    
-    func testThatItDoesntReturnAnythingWithInvalidStartParameter() {
-        // Given
-        sut.performRemoteChanges { session in
-            _ = session.insertTeam(withName: "not this")
-            _ = session.insertTeam(withName: "some")
-            _ = session.insertTeam(withName: "other")
-        }
-        
-        // When
-        let path = "/teams?start=1231-321"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        
-        // Then
-        checkThat(response: response, contains: [], hasMore: false)
-    }
-    
-    func testThatItLimitsNumberOfTeams() {
-        // Given
-        var team1: MockTeam!
-        var team2: MockTeam!
-
-        sut.performRemoteChanges { session in
-            team1 = session.insertTeam(withName: "other")
-            team2 = session.insertTeam(withName: "some")
-            _ = session.insertTeam(withName: "not this")
-        }
-        
-        // When
-        let path = "/teams?size=2"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        
-        // Then
-        checkThat(response: response, contains: [team1, team2], hasMore: true)
-    }
-    
-    func testThatItLimitsNumberOfTeamsWithStartParameter() {
-        // Given
-        var team1: MockTeam!
-        var team2: MockTeam!
-        
-        sut.performRemoteChanges { session in
-            _ = session.insertTeam(withName: "nope")
-            team1 = session.insertTeam(withName: "other")
-            team2 = session.insertTeam(withName: "some")
-            _ = session.insertTeam(withName: "not this")
-        }
-        
-        // When
-        let path = "/teams?size=1&start=\(team1.identifier)"
-        let response = self.response(forPayload: nil, path: path, method: .methodGET)
-        
-        // Then
-        checkThat(response: response, contains: [team2], hasMore: true)
     }
 }
 
@@ -257,7 +168,7 @@ extension MockTransportSessionTeamTests {
         // Given
         sut.performRemoteChanges { session in
             _ = session.insertSelfUser(withName: "Am I")
-            _ = session.insertTeam(withName: "name")
+            _ = session.insertTeam(withName: "name", isBound: true)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -279,7 +190,7 @@ extension MockTransportSessionTeamTests {
         
         sut.performRemoteChanges { session in
             _ = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name")
+            team = session.insertTeam(withName: "name", isBound: true)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -289,9 +200,9 @@ extension MockTransportSessionTeamTests {
         
         // Then
         XCTAssertNotNil(response)
-        XCTAssertEqual(response?.httpStatus, 403)
+        XCTAssertEqual(response?.httpStatus, 404)
         let payload = response?.payload?.asDictionary() as? [String : String]
-        XCTAssertEqual(payload?["label"], "no-team-member")
+        XCTAssertEqual(payload?["label"], "no-team")
     }
     
     func testThatItReturnsErrorForTeamMembersWhereUserIsNotAMember() {
@@ -300,7 +211,7 @@ extension MockTransportSessionTeamTests {
         
         sut.performRemoteChanges { session in
             _ = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name")
+            team = session.insertTeam(withName: "name", isBound: true)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -321,7 +232,7 @@ extension MockTransportSessionTeamTests {
         
         sut.performRemoteChanges { session in
             let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name")
+            team = session.insertTeam(withName: "name", isBound: true)
             let member = session.insertMember(with: selfUser, in: team)
             member.permissions = []
         }
@@ -348,13 +259,13 @@ extension MockTransportSessionTeamTests {
         var conversation: MockConversation!
         
         sut.performRemoteChanges { session in
-            team = session.insertTeam(withName: "name")
+            team = session.insertTeam(withName: "name", isBound: true)
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
             
             creator = session.insertUser(withName: "creator")
             team.creator = creator
-            conversation = session.insertTeamConversation(to: team, with: [creator, session.insertSelfUser(withName: "Am I")])
+            conversation = session.insertTeamConversation(to: team, with: [creator, session.insertSelfUser(withName: "Am I")], creator: creator)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -377,7 +288,7 @@ extension MockTransportSessionTeamTests {
         let permission2 = Permissions.getTeamConversations
 
         sut.performRemoteChanges { session in
-            let team = session.insertTeam(withName: "name")
+            let team = session.insertTeam(withName: "name", isBound: true)
             user = session.insertUser(withName: "Am I")
             member = session.insertMember(with: user, in: team)
             member.permissions = [permission1, permission2]
@@ -408,7 +319,7 @@ extension MockTransportSessionTeamTests {
             user1 = session.insertSelfUser(withName: "one")
             user2 = session.insertUser(withName: "two")
 
-            team = session.insertTeam(withName: "name", users: [user1, user2])
+            team = session.insertTeam(withName: "name", isBound: true, users: [user1, user2])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
         }
