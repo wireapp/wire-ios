@@ -20,12 +20,13 @@ import Foundation
 import CoreData
 
 extension MockConversation {
-    @objc public static func insertConversationInto(context: NSManagedObjectContext, forTeam team: MockTeam, with users:[MockUser]) -> MockConversation {
+    @objc public static func insertConversationInto(context: NSManagedObjectContext, withCreator creator: MockUser, forTeam team: MockTeam, users:[MockUser]) -> MockConversation {
         let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
         conversation.type = .group
         conversation.team = team
         conversation.identifier = UUID.create().transportString()
         conversation.lastEventTime = Date()
+        conversation.creator = creator
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: users)
         return conversation
     }

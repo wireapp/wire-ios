@@ -21,19 +21,14 @@ import Foundation
 @objc public class MockTeamEvent: NSObject {
     
     public enum Kind: String {
-        case create = "team.create"
         case delete = "team.delete"
         case update = "team.update"
     }
     
-    public let data: [String : String?]
+    public let data: [String : Any?]
     public let teamIdentifier: String
     public let kind: Kind
     public let timestamp = Date()
-    
-    public static func inserted(team: MockTeam) -> MockTeamEvent {
-        return MockTeamEvent(kind: .create, team: team, data: team.payloadValues)
-    }
     
     public static func updated(team: MockTeam, changedValues: [String: Any]) -> MockTeamEvent? {
         var data = [String : String?]()
@@ -64,7 +59,7 @@ import Foundation
         return MockTeamEvent(kind: .delete, team: team, data: [:])
     }
     
-    public init(kind: Kind, team: MockTeam, data: [String : String?]) {
+    public init(kind: Kind, team: MockTeam, data: [String : Any?]) {
         self.kind = kind
         self.teamIdentifier = team.identifier
         self.data = data

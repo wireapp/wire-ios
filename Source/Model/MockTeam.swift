@@ -28,6 +28,7 @@ import CoreData
     @NSManaged public var pictureAssetId: String
     @NSManaged public var identifier: String
     @NSManaged public var createdAt: Date
+    @NSManaged public var isBound: Bool
 
     public static var entityName = "Team"
     
@@ -50,21 +51,23 @@ extension MockTeam {
     }
     
     @objc
-    public static func insert(in context: NSManagedObjectContext, name: String?, assetId: String?, assetKey: String?) -> MockTeam {
+    public static func insert(in context: NSManagedObjectContext, name: String?, assetId: String?, assetKey: String?, isBound: Bool) -> MockTeam {
         let team: MockTeam = insert(in: context)
         team.name = name
         team.pictureAssetId = assetId ?? ""
         team.pictureAssetKey = assetKey
+        team.isBound = isBound
         return team
     }
     
-    var payloadValues: [String : String?] {
+    var payloadValues: [String : Any?] {
         return [
             "id": identifier,
             "name" : name,
             "icon_key" : pictureAssetKey,
             "icon" : pictureAssetId,
-            "creator" : creator?.identifier
+            "creator" : creator?.identifier,
+            "binding" : (isBound ? 1 : 0)
         ]
     }
     

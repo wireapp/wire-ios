@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16F73" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -83,6 +83,7 @@
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isBound" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pictureAssetId" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="pictureAssetKey" optional="YES" attributeType="String" syncable="YES"/>
@@ -141,7 +142,7 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="Team" positionX="9" positionY="153" width="128" height="165"/>
+        <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
         <element name="User" positionX="0" positionY="0" width="128" height="405"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>

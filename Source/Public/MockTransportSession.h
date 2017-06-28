@@ -156,12 +156,13 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 /// Returns the client (if any) for the given remote identifier
 - (nullable MockUserClient *)clientForUser:(MockUser *)user remoteIdentifier:(NSString *)remoteIdentifier;
 
-- (MockTeam *)insertTeamWithName:(nullable NSString *)name;
-- (MockTeam *)insertTeamWithName:(nullable NSString *)name users:(NSSet<MockUser*> *)users;
+/// isBound means the team was created with version2 of teams and is bound to this user account
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name isBound:(BOOL)isBound;
+- (MockTeam *)insertTeamWithName:(nullable NSString *)name isBound:(BOOL)isBound users:(NSSet<MockUser*> *)users;
 - (MockMember *)insertMemberWithUser:(MockUser *)user inTeam:(MockTeam *)team;
 - (void)removeMemberWithUser:(MockUser *)user fromTeam:(MockTeam *)team;
 - (void)deleteTeam:(nonnull MockTeam *)team;
-- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users;
+- (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users creator:(MockUser *)creator;
 - (void)deleteConversation:(nonnull MockConversation *)conversation;
 
 @end
