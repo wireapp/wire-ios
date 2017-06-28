@@ -18,6 +18,8 @@
 
 import Foundation
 
+private var zmLog = ZMSLog(tag: "ZMManagedObjectGrouping")
+
 // Describing the generic storage type that contains the data in the format of
 // Key => [Value, 
 //         Value, 
@@ -78,6 +80,11 @@ extension NSManagedObjectContext {
     // @param keyPath valid keyPath that can be fetched from the disk store (computed properties are not permitted).
     // @return dictionary containing the pairs of value and array of objects containing the value for @keyPath.
     public func findDuplicated<T: ZMManagedObject, ValueForKey>(by keyPath: String) -> [ValueForKey: [T]] {
+        if let storeURL = self.persistentStoreCoordinator?.persistentStores.first?.url,
+            !storeURL.isFileURL {
+                zmLog.error("findDuplicated<T> does not support in-memory store")
+            return [:]
+        }
         
         guard let entity = NSEntityDescription.entity(forEntityName: T.entityName(), in: self),
               let attribute = entity.attributesByName[keyPath] else {

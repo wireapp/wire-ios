@@ -162,3 +162,14 @@ public final class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         XCTAssertEqual(grouped.keys.count, 0)
     }
 }
+
+public final class ZMManagedObjectGroupingTestsInMemory: ZMBaseManagedObjectTest {
+    func testThatItErrorsOnInMemoryStore() throws {
+        // GIVEN && WHEN
+        self.performIgnoringZMLogError {
+            let _: [String: [UserClient]] = self.uiMOC.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        }
+        // THEN
+        // test did not fail
+    }
+}
