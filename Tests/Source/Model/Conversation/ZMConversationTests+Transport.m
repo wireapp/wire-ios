@@ -230,10 +230,8 @@
         XCTAssertNotNil(user2);
 
         XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSOrderedSet orderedSetWithObjects:user1, user2, nil]) );
-        XCTAssertNotNil(conversation.team);
-        XCTAssertTrue(conversation.team.needsToBeUpdatedFromBackend);
-        XCTAssertFalse(conversation.team.needsToRedownloadMembers);
-        XCTAssertEqualObjects(conversation.team.remoteIdentifier, teamID);
+        XCTAssertNil(conversation.team);
+        XCTAssertEqualObjects(conversation.teamRemoteIdentifier, teamID);
 
         XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
         XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);

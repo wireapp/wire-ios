@@ -160,19 +160,8 @@ class ZMConversationTests_Teams: BaseTeamTests {
         }
 
         // then
-        guard let team = Team.fetch(withRemoteIdentifier: teamId, in: uiMOC) else { return XCTFail("No team") }
+        XCTAssertNil(Team.fetch(withRemoteIdentifier: teamId, in: uiMOC))
         XCTAssertNotNil(conversation.teamRemoteIdentifier)
-        XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
-        XCTAssertTrue(team.needsToBeUpdatedFromBackend)
-
-        // when we receive a 403 and delete the team
-        // We need to nil the relationship before deleting the team (otherwise the delete will cascade and delete the conversation as well)
-        conversation.team = nil
-        uiMOC.delete(team)
-        XCTAssert(uiMOC.saveOrRollback())
-
-        // then
-        XCTAssertNil(conversation.team)
         XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
         XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
     }

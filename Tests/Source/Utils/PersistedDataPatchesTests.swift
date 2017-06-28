@@ -260,4 +260,30 @@ class PersistedDataPatchesTests: ZMBaseManagedObjectTest {
 
         }
     }
+
+    func testThatItMigratesUserRemoteIdentifiersToTheirMembers() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let moc = self.syncMOC
+            let userId1 = UUID.create(), userId2 = UUID.create()
+            let user1 = ZMUser.insertNewObject(in: moc), user2 = ZMUser.insertNewObject(in: moc)
+            user1.remoteIdentifier = userId1
+            user2.remoteIdentifier = userId2
+            let team = Team.insertNewObject(in: moc)
+
+            let member1User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
+            let member2User1 = Member.getOrCreateMember(for: user1, in: team, context: moc)
+            let member1User2 = Member.getOrCreateMember(for: user2, in: team, context: moc)
+            XCTAssert(moc.saveOrRollback())
+
+            // when
+            PersistedDataPatch.applyAll(in: moc, fromVersion: "62.0.0")
+            XCTAssert(moc.saveOrRollback())
+
+            // then
+            XCTAssertEqual(member1User1.remoteIdentifier, user1.remoteIdentifier)
+            XCTAssertEqual(member2User1.remoteIdentifier, user1.remoteIdentifier)
+            XCTAssertEqual(member1User2.remoteIdentifier, user2.remoteIdentifier)
+        }
+    }
 }
