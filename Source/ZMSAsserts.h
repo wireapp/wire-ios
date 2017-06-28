@@ -98,6 +98,15 @@
 #endif
 
 
+#define RequireInternal(assertion, frmt, ...) \
+    do { \
+        BOOL appStore = [NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.wearezeta.zclient.ios"]; \
+        if ( __builtin_expect(!appStore && !(assertion), 0) ) { \
+            ZMDebugAssertMessage(@"Assert", #assertion, __FILE__, __LINE__, nil); \
+            ZMCrash(#assertion, __FILE__, __LINE__); \
+        } \
+    } while (0)
+
 
 #define VerifyAction(assertion, action) \
 	do { \
@@ -171,7 +180,6 @@
 		} \
 	} while (0)
 #endif
-
 
 
 #pragma mark -
