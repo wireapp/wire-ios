@@ -186,11 +186,11 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         }
     }
     
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, genericMessage: ZMGenericMessage, senderID: UUID = .create(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
+    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: ZMGenericMessage, senderID: UUID = .create(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
         let payload : [String : Any] = [
             "conversation": conversationID.transportString(),
             "from": senderID.transportString(),
-            "time": Date().transportString(),
+            "time": timestamp.transportString(),
             "data": [
                 "text": genericMessage.data().base64String()
             ],

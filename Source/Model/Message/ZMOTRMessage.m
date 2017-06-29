@@ -255,7 +255,7 @@ NSString * const DeliveredKey = @"delivered";
     
     BOOL needsConfirmation = NO;
     if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
-        needsConfirmation = YES;
+        needsConfirmation = [self shouldConfirmMessage:clientMessage];
     }
     
     
