@@ -282,7 +282,7 @@ final class TeamSyncRequestStrategyTests: MessagingTest {
             "name": name,
             "icon": "",
             "icon_key": NSNull(),
-            "binding" : (isBound ? 1: 0)
+            "binding" : (isBound ? true: false)
             ] as ZMTransportData
     }
     
