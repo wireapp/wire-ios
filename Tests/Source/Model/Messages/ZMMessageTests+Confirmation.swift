@@ -24,7 +24,13 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
 // MARK: - Adding confirmation locally
 extension ZMMessageTests_Confirmation {
     
-    func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(_ conversationType: ZMConversationType, shouldSendConfirmation: Bool){
+    func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(
+        _ conversationType: ZMConversationType,
+        shouldSendConfirmation: Bool,
+        timestamp: Date = .init(),
+        file: StaticString = #file,
+        line: UInt = #line
+        ) {
         // given
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = .create()
@@ -35,20 +41,14 @@ extension ZMMessageTests_Confirmation {
         
         // when
         // other user sends confirmation
-        let sut = insertMessage(conversation)
-        XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        let sut = insertMessage(conversation, timestamp: timestamp)
+        XCTAssertTrue(uiMOC.saveOrRollback(), file: file, line: line)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message)
-        
-        if shouldSendConfirmation {
-            XCTAssertTrue(sut.needsConfirmation)
-        }
-        else {
-            XCTAssertFalse(sut.needsConfirmation)
-        }
+        XCTAssertEqual(conversation.messages.count, 1, file: file, line: line)
+        XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message, file: file, line: line)
+        XCTAssertEqual(shouldSendConfirmation, sut.needsConfirmation, file: file, line: line)
     }
     
     func testThatIt_Inserts_AConfirmationMessageWhenItReceivesAMessageInA_OneOnOne_Conversation(){
@@ -57,6 +57,16 @@ extension ZMMessageTests_Confirmation {
     
     func testThatIt_DoesNotInsert_AConfirmationMessageWhenItReceivesAMessageInA_Group_Conversation(){
         checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation:false)
+    }
+
+    func testThatIt_DoesNotInsert_AConfirmationMessageWhenItReceivesAMessageOlderThan7Days() {
+        guard let olderDate = Calendar.current.date(byAdding: .init(day: -8), to: Date()) else { return XCTFail("No date") }
+        checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation: false, timestamp: olderDate)
+    }
+
+    func testThatIt_DoesInsert_AConfirmationMessageWhenItReceivesAMessageNotOlderThan7Days() {
+        guard let olderDate = Calendar.current.date(byAdding: .init(day: -7), to: Date()) else { return XCTFail("No date") }
+        checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation: false, timestamp: olderDate)
     }
     
     func testThatItDoesNotRequiresAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
@@ -292,10 +302,17 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Helpers
 extension ZMMessageTests_Confirmation {
     
-    func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> MessageUpdateResult {
+    func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> MessageUpdateResult {
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: "foo", nonce: nonce.transportString())
-        let messageEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: fromSender?.remoteIdentifier ?? UUID.create(), eventSource: eventSource)
+        let messageEvent = createUpdateEvent(
+            nonce,
+            conversationID: conversation.remoteIdentifier!,
+            timestamp: timestamp,
+            genericMessage: genericMessage,
+            senderID: fromSender?.remoteIdentifier ?? UUID.create(),
+            eventSource: eventSource
+        )
         
         var messageUpdateResult : MessageUpdateResult!
         let MOC = moc ?? uiMOC
