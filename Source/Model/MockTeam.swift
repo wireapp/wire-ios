@@ -67,7 +67,7 @@ extension MockTeam {
             "icon_key" : pictureAssetKey,
             "icon" : pictureAssetId,
             "creator" : creator?.identifier,
-            "binding" : (isBound ? 1 : 0)
+            "binding" : isBound
         ]
     }
     

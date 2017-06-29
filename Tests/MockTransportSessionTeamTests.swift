@@ -88,7 +88,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             let selfUser = session.insertSelfUser(withName: "Am I")
-            team = session.insertTeam(withName: "name", isBound: true, users: [selfUser])
+            team = session.insertTeam(withName: "name", isBound: false, users: [selfUser])
             team.pictureAssetKey = "1234-abc"
             team.pictureAssetId = "123-1234-abc"
             creator = session.insertUser(withName: "creator")
@@ -105,7 +105,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(payload?["name"] as? String, team.name)
         XCTAssertEqual(payload?["icon_key"] as? String, team.pictureAssetKey)
         XCTAssertEqual(payload?["icon"] as? String, team.pictureAssetId)
-        XCTAssertEqual(payload?["binding"] as? Int, 1)
+        XCTAssertEqual(payload?["binding"] as? Bool, false)
     }
     
     func testThatItFetchesTeam() {
@@ -137,7 +137,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
         XCTAssertEqual(payload?["name"] as? String, team.name)
         XCTAssertEqual(payload?["icon_key"] as? String, team.pictureAssetKey)
         XCTAssertEqual(payload?["icon"] as? String, team.pictureAssetId)
-        XCTAssertEqual(payload?["binding"] as? Int, 1)
+        XCTAssertEqual(payload?["binding"] as? Bool, true)
 
     }
     
