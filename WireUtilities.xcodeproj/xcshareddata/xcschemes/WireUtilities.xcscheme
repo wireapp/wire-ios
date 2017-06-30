@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD371B1F3EA300232589"
                BuildableName = "WireUtilities.framework"
-               BlueprintName = "WireUtilities-ios"
+               BlueprintName = "WireUtilities"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD421B1F3EA300232589"
                BuildableName = "WireUtilities-Tests.xctest"
-               BlueprintName = "WireUtilities-ios-tests"
+               BlueprintName = "WireUtilities-tests"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -49,7 +49,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD421B1F3EA300232589"
                BuildableName = "WireUtilities-Tests.xctest"
-               BlueprintName = "WireUtilities-ios-tests"
+               BlueprintName = "WireUtilities-tests"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -59,7 +59,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
             BuildableName = "WireUtilities.framework"
-            BlueprintName = "WireUtilities-ios"
+            BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -88,7 +88,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
             BuildableName = "WireUtilities.framework"
-            BlueprintName = "WireUtilities-ios"
+            BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -118,7 +118,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "3E88BD371B1F3EA300232589"
             BuildableName = "WireUtilities.framework"
-            BlueprintName = "WireUtilities-ios"
+            BlueprintName = "WireUtilities"
             ReferencedContainer = "container:WireUtilities.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
