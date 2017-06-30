@@ -532,11 +532,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
                       remoteID.transportString.UTF8String,
                       self.remoteIdentifier.transportString.UTF8String);
     }
-    
-    NSUUID *teamID = [transportData optionalUuidForKey:@"team"];
-    if (teamID != nil || authoritative) {
-        [self updateTeamWithRemoteIdentifier:teamID];
-    }
 
     NSString *name = [transportData optionalStringForKey:@"name"];
     if (name != nil || authoritative) {
@@ -582,24 +577,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     }
     
     [self updatePotentialGapSystemMessagesIfNeeded];
-}
-
-- (void)updateTeamWithRemoteIdentifier:(NSUUID *)teamRemoteId
-{
-    if (teamRemoteId == nil) {
-        // We have been removed from the team (and missed the event). Refetching the team from the BE should delete the team locally.
-        self.team.needsToBeUpdatedFromBackend = YES;
-        return;
-    }
-    
-    BOOL wasCreated = NO;
-    Team *team = [Team fetchOrCreateTeamWithRemoteIdentifier:teamRemoteId createIfNeeded:YES inContext:self.managedObjectContext created:&wasCreated];
-    if (wasCreated) {
-        team.needsToBeUpdatedFromBackend = YES;
-        team.needsToRedownloadMembers = YES;
-    }
-    Member *member = [Member getOrCreateMemberForUser:self inTeam:team context:self.managedObjectContext];
-    RequireString([member.team isEqual:team], "Membership was already set to different team.");
 }
 
 - (void)updatePotentialGapSystemMessagesIfNeeded

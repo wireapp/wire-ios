@@ -445,26 +445,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertNil(user.localMediumRemoteIdentifier, @"Must not be set");
 }
 
-- (void)testThatItSetsTheUsersTeam
-{
-    // given
-    NSUUID *teamId = [NSUUID createUUID];
-    NSMutableDictionary *payload = [self samplePayloadForUserID:self.selfUser.remoteIdentifier];
-    payload[@"team"] = teamId.transportString;
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self.selfUser updateWithTransportData:payload authoritative:NO];
-    }];
-    
-    // then
-    XCTAssertNotNil(self.selfUser.team);
-    XCTAssertNotNil(self.selfUser.membership);
-    XCTAssertEqualObjects(self.selfUser.team.remoteIdentifier, teamId);
-    XCTAssertTrue(self.selfUser.team.needsToBeUpdatedFromBackend);
-    XCTAssertTrue(self.selfUser.team.needsToRedownloadMembers);
-}
-
 - (void)testThatItDoesPersistMediumImageDataForNotSelfUserToCache
 {
     // given
