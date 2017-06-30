@@ -67,6 +67,7 @@
              @"team.update" : @(ZMUpdateEventTeamUpdate),
              @"team.member-join" : @(ZMUpdateEventTeamMemberJoin),
              @"team.member-leave" : @(ZMUpdateEventTeamMemberLeave),
+             @"team.member-update" : @(ZMUpdateEventTeamMemberUpdate),
              @"team.conversation-create" : @(ZMUpdateEventTeamConversationCreate),
              @"team.conversation-delete" : @(ZMUpdateEventTeamConversationDelete)
              };
@@ -690,6 +691,7 @@
             case ZMUpdateEventTeamUpdate:
             case ZMUpdateEventTeamMemberJoin:
             case ZMUpdateEventTeamMemberLeave:
+            case ZMUpdateEventTeamMemberUpdate:
             case ZMUpdateEventTeamConversationCreate:
             case ZMUpdateEventTeamConversationDelete:
             case ZMUpdateEvent_LAST:

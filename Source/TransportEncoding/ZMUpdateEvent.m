@@ -206,6 +206,7 @@ struct TypeMap {
     { CFSTR("team.update"), ZMUpdateEventTeamUpdate },
     { CFSTR("team.member-join"), ZMUpdateEventTeamMemberJoin },
     { CFSTR("team.member-leave"), ZMUpdateEventTeamMemberLeave },
+    { CFSTR("team.member-update"), ZMUpdateEventTeamMemberUpdate },
     { CFSTR("team.conversation-create"), ZMUpdateEventTeamConversationCreate },
     { CFSTR("team.conversation-delete"), ZMUpdateEventTeamConversationDelete },
 };
@@ -280,6 +281,7 @@ struct TypeMap {
         case ZMUpdateEventTeamUpdate:
         case ZMUpdateEventTeamMemberJoin:
         case ZMUpdateEventTeamMemberLeave:
+        case ZMUpdateEventTeamMemberUpdate:
         case ZMUpdateEventTeamConversationCreate:
         case ZMUpdateEventTeamConversationDelete:
         case ZMUpdateEvent_LAST:
