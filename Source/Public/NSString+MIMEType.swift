@@ -18,8 +18,10 @@
 
 
 import Foundation
-import MobileCoreServices;
-
+#if os(iOS)
+    import MobileCoreServices
+#endif
+    
 public extension NSString {
     
     /// Returns true if the string represents a valid MIME type and conforms to given uniform type identifier (see UTCoreTypes)

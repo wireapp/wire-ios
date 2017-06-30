@@ -19,7 +19,9 @@
 
 import XCTest
 import WireUtilities
+#if os(iOS)
 import MobileCoreServices;
+#endif
 
 class String_MIMETypeTests: XCTestCase {
     

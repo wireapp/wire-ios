@@ -20,12 +20,7 @@
 #import <Foundation/Foundation.h>
 
 
-#if TARGET_OS_IPHONE
 extern id ZMDeploymentEnvironmentInternalMobileProvisionParserOverride;
-#else
-extern id ZMDeploymentEnvironmentInternalMainBundleOverride;
-#endif
-
 
 
 typedef NS_ENUM(int8_t, ZMDeploymentEnvironmentType) {
