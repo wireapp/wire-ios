@@ -81,6 +81,7 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
     ZMUpdateEventTeamMemberLeave,
     ZMUpdateEventTeamConversationCreate,
     ZMUpdateEventTeamConversationDelete,
+    ZMUpdateEventTeamMemberUpdate,
     
     ZMUpdateEvent_LAST  /// ->->->->->!!! Keep this at the end of this enum !!!<-<-<-<-<-
                         /// It is used to enumerate values. Hardcoding the values of this enums in tests gets very easily out of sync
