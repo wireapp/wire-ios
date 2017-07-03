@@ -2,3 +2,5 @@ framework=WireCryptobox
 organization=wireapp
 repository=wire-ios-cryptobox
 release-name-format=You should never {VERB} in {CITY}
+platforms=ios,osx
+dont_test_platforms=osx

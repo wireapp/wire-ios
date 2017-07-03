@@ -98,6 +98,7 @@
 		5471A6681D24215B0092A9A9 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5471A6731D242D740092A9A9 /* PointerWrapper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PointerWrapper.swift; sourceTree = "<group>"; };
 		5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectory.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		549BEA011F0A9822004E34CE /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		54A1573D1D23C00500EB3B4F /* CryptoboxTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "CryptoboxTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContextTests.swift; sourceTree = "<group>"; };
 		54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSession+Debugging.swift"; sourceTree = "<group>"; };
@@ -166,6 +167,7 @@
 			children = (
 				54B5E1DE1F0A482B001F43A6 /* zmc-config */,
 				0928E3751BA17E300057232E /* WireCryptobox.xcconfig */,
+				549BEA011F0A9822004E34CE /* version.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
