@@ -79,6 +79,24 @@ class TeamTests: BaseTeamTests {
         XCTAssertFalse(guest.isTeamMember)
     }
 
+    func testThatItDoesNotReturnUsersAsGuestsIfThereIsNoTeam() {
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = .create()
+        let otherUser = ZMUser.insertNewObject(in: uiMOC)
+        otherUser.remoteIdentifier = .create()
+        let users = [user, otherUser]
+
+        // when
+        guard let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: users) else { return XCTFail("No conversation") }
+
+        // then
+        users.forEach {
+            XCTAssertFalse($0.isGuest(in: conversation))
+            XCTAssertFalse($0.isTeamMember)
+        }
+    }
+
     func testThatItDoesNotReturnGuestsOfOtherTeams() throws {
             // given
             let (team1, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
