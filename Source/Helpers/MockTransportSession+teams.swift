@@ -37,6 +37,8 @@ extension MockTransportSession {
             response = fetchTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/members":
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1))
+        case "/teams/*/members/*":
+            response = fetchMemberForTeam(withTeamId: request.RESTComponents(index: 1), userId: request.RESTComponents(index: 3))
         default:
             break
         }
@@ -111,6 +113,17 @@ extension MockTransportSession {
         ]
 
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    private func fetchMemberForTeam(withTeamId teamId: String?, userId: String?) -> ZMTransportResponse? {
+        guard let teamId = teamId, let userId = userId else { return nil }
+        let predicate = MockTeam.predicateWithIdentifier(identifier: teamId)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        guard let member = team.members.first(where: {$0.user.identifier == userId}) else { return .notTeamMember }
+        if let permissionError = ensurePermission(.getMemberPermissions, in: team) {
+            return permissionError
+        }
+        return ZMTransportResponse(payload: member.payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     
     private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {

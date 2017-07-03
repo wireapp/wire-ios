@@ -343,4 +343,33 @@ extension MockTransportSessionTeamTests {
         let identifiers = Set(teams.flatMap { $0["user"] as? String })
         XCTAssertEqual(identifiers, [user1.identifier, user2.identifier])
     }
+
+    func testThatItFetchesSingleTeamMembers() {
+        // Given
+        var user1: MockUser!
+        var user2: MockUser!
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            user1 = session.insertSelfUser(withName: "one")
+            user2 = session.insertUser(withName: "two")
+            
+            team = session.insertTeam(withName: "name", isBound: true, users: [user1, user2])
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let path = "/teams/\(team.identifier)/members/\(user1.identifier)"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+        
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : Any]
+        XCTAssertEqual(payload?["user"] as? String, user1.identifier)
+    }
+
 }
