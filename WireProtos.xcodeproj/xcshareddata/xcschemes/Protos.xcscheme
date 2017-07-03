@@ -16,7 +16,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "090837FD1B872DBF00629095"
                BuildableName = "WireProtos.framework"
-               BlueprintName = "WireProtos-ios"
+               BlueprintName = "WireProtos"
                ReferencedContainer = "container:WireProtos.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -58,7 +58,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
             BuildableName = "WireProtos.framework"
-            BlueprintName = "WireProtos-ios"
+            BlueprintName = "WireProtos"
             ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -80,7 +80,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
             BuildableName = "WireProtos.framework"
-            BlueprintName = "WireProtos-ios"
+            BlueprintName = "WireProtos"
             ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
@@ -98,7 +98,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "090837FD1B872DBF00629095"
             BuildableName = "WireProtos.framework"
-            BlueprintName = "WireProtos-ios"
+            BlueprintName = "WireProtos"
             ReferencedContainer = "container:WireProtos.xcodeproj">
          </BuildableReference>
       </MacroExpansion>

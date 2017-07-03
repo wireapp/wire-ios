@@ -60,25 +60,19 @@
 		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = otr.proto; path = "Carthage/Checkouts/backend-api-protobuf/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
 		09B70B331B874177002667A6 /* ProtosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProtosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
-		09B70B501B874390002667A6 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
-		09B70B511B874390002667A6 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		09B70B521B874390002667A6 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		09B70B531B874390002667A6 /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
-		09B70B541B874390002667A6 /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
-		09B70B551B874390002667A6 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		09B70B561B874390002667A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		09B70B571B874390002667A6 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		09B70B591B874390002667A6 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
-		09B70B5A1B874390002667A6 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
-		09B70B5B1B874390002667A6 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		09B70B5C1B874390002667A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
-		09B70B5D1B874390002667A6 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		09B70B5E1B874390002667A6 /* WireProtos-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireProtos-ios.xcconfig"; sourceTree = "<group>"; };
 		09B70B601B874390002667A6 /* WireProtos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireProtos.xcconfig; sourceTree = "<group>"; };
 		09BCDB611BC696460020DCC7 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
 		09E393CE1BAC458900F3EA1B /* Messages.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Messages.pb.h; sourceTree = "<group>"; };
 		09E393CF1BAC458900F3EA1B /* Messages.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Messages.pb.m; sourceTree = "<group>"; };
+		54B5E1F11F0A6B77001F43A6 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		54B5E1F31F0A6B77001F43A6 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
+		54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
+		54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54F538951DB5337900A2F83F /* ProtosTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProtosTests.m; sourceTree = "<group>"; };
 		F184BE851E65CADA0020EBB7 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -181,7 +175,6 @@
 			children = (
 				09B70B4D1B874390002667A6 /* version.xcconfig */,
 				09B70B4E1B874390002667A6 /* zmc-config */,
-				09B70B5E1B874390002667A6 /* WireProtos-ios.xcconfig */,
 				09B70B601B874390002667A6 /* WireProtos.xcconfig */,
 			);
 			path = Configurations;
@@ -190,19 +183,14 @@
 		09B70B4E1B874390002667A6 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				09B70B501B874390002667A6 /* ios-test-host.xcconfig */,
-				09B70B511B874390002667A6 /* ios-test-target.xcconfig */,
-				09B70B521B874390002667A6 /* ios.xcconfig */,
-				09B70B531B874390002667A6 /* osx-test-target.xcconfig */,
-				09B70B541B874390002667A6 /* osx.xcconfig */,
-				09B70B551B874390002667A6 /* project-common.xcconfig */,
-				09B70B561B874390002667A6 /* project-debug.xcconfig */,
-				09B70B571B874390002667A6 /* project.xcconfig */,
-				09B70B591B874390002667A6 /* simulator.xcconfig */,
-				09B70B5A1B874390002667A6 /* swift.xcconfig */,
-				09B70B5B1B874390002667A6 /* tests.xcconfig */,
-				09B70B5C1B874390002667A6 /* warnings-debug.xcconfig */,
-				09B70B5D1B874390002667A6 /* warnings.xcconfig */,
+				54B5E1F11F0A6B77001F43A6 /* project-common.xcconfig */,
+				54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */,
+				54B5E1F31F0A6B77001F43A6 /* project.xcconfig */,
+				54B5E1F41F0A6B77001F43A6 /* simulator.xcconfig */,
+				54B5E1F51F0A6B77001F43A6 /* test-host-ios.xcconfig */,
+				54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */,
+				54B5E1F71F0A6B77001F43A6 /* warnings-debug.xcconfig */,
+				54B5E1F81F0A6B77001F43A6 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
 			sourceTree = "<group>";
@@ -232,9 +220,9 @@
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
-		090837FD1B872DBF00629095 /* WireProtos-ios */ = {
+		090837FD1B872DBF00629095 /* WireProtos */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 090838141B872DC000629095 /* Build configuration list for PBXNativeTarget "WireProtos-ios" */;
+			buildConfigurationList = 090838141B872DC000629095 /* Build configuration list for PBXNativeTarget "WireProtos" */;
 			buildPhases = (
 				090837F91B872DBF00629095 /* Sources */,
 				090837FA1B872DBF00629095 /* Frameworks */,
@@ -245,7 +233,7 @@
 			);
 			dependencies = (
 			);
-			name = "WireProtos-ios";
+			name = WireProtos;
 			productName = Protos;
 			productReference = 090837FE1B872DBF00629095 /* WireProtos.framework */;
 			productType = "com.apple.product-type.framework";
@@ -302,7 +290,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				090837FD1B872DBF00629095 /* WireProtos-ios */,
+				090837FD1B872DBF00629095 /* WireProtos */,
 				090838081B872DBF00629095 /* WireProtosTests */,
 			);
 		};
@@ -350,7 +338,7 @@
 /* Begin PBXTargetDependency section */
 		0908380C1B872DBF00629095 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 090837FD1B872DBF00629095 /* WireProtos-ios */;
+			target = 090837FD1B872DBF00629095 /* WireProtos */;
 			targetProxy = 0908380B1B872DBF00629095 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -358,7 +346,7 @@
 /* Begin XCBuildConfiguration section */
 		090838121B872DC000629095 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B561B874390002667A6 /* project-debug.xcconfig */;
+			baseConfigurationReference = 54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -410,7 +398,7 @@
 		};
 		090838131B872DC000629095 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B571B874390002667A6 /* project.xcconfig */;
+			baseConfigurationReference = 54B5E1F31F0A6B77001F43A6 /* project.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
@@ -455,7 +443,7 @@
 		};
 		090838151B872DC000629095 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B5E1B874390002667A6 /* WireProtos-ios.xcconfig */;
+			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -480,7 +468,7 @@
 		};
 		090838161B872DC000629095 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B5E1B874390002667A6 /* WireProtos-ios.xcconfig */;
+			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -504,7 +492,7 @@
 		};
 		090838181B872DC000629095 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B511B874390002667A6 /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -520,7 +508,7 @@
 		};
 		090838191B872DC000629095 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 09B70B511B874390002667A6 /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "";
@@ -545,7 +533,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		090838141B872DC000629095 /* Build configuration list for PBXNativeTarget "WireProtos-ios" */ = {
+		090838141B872DC000629095 /* Build configuration list for PBXNativeTarget "WireProtos" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				090838151B872DC000629095 /* Debug */,
