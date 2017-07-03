@@ -13,10 +13,10 @@
 		097A22981B8B1AE000D02243 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		099223A41BED06C300668091 /* Otr.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 099223A21BED06C300668091 /* Otr.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		099223A51BED06C300668091 /* Otr.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 099223A31BED06C300668091 /* Otr.pb.m */; };
-		09BCDB631BC696490020DCC7 /* ZMCSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09BCDB611BC696460020DCC7 /* ZMCSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09BCDB6E1BCBE08D0020DCC7 /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */; };
 		09E393D01BAC458900F3EA1B /* Messages.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393CE1BAC458900F3EA1B /* Messages.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393D11BAC458900F3EA1B /* Messages.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393CF1BAC458900F3EA1B /* Messages.pb.m */; };
+		549BE9F61F0A8AF1004E34CE /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549BE9F51F0A8AF1004E34CE /* WireTesting.framework */; };
 		54F538961DB5337900A2F83F /* ProtosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F538951DB5337900A2F83F /* ProtosTests.m */; };
 		F184BE861E65CADA0020EBB7 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F184BE851E65CADA0020EBB7 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
@@ -39,7 +39,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				097A22981B8B1AE000D02243 /* ProtocolBuffers.framework in CopyFiles */,
-				09BCDB631BC696490020DCC7 /* ZMCSystem.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,10 +60,10 @@
 		09B70B331B874177002667A6 /* ProtosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ProtosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09B70B601B874390002667A6 /* WireProtos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireProtos.xcconfig; sourceTree = "<group>"; };
-		09BCDB611BC696460020DCC7 /* ZMCSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ZMCSystem.framework; path = Carthage/Build/iOS/ZMCSystem.framework; sourceTree = "<group>"; };
 		09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };
 		09E393CE1BAC458900F3EA1B /* Messages.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Messages.pb.h; sourceTree = "<group>"; };
 		09E393CF1BAC458900F3EA1B /* Messages.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Messages.pb.m; sourceTree = "<group>"; };
+		549BE9F51F0A8AF1004E34CE /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		54B5E1F11F0A6B77001F43A6 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F31F0A6B77001F43A6 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -82,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				549BE9F61F0A8AF1004E34CE /* WireTesting.framework in Frameworks */,
 				097A22961B8B1A6700D02243 /* ProtocolBuffers.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -198,7 +198,7 @@
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				09BCDB611BC696460020DCC7 /* ZMCSystem.framework */,
+				549BE9F51F0A8AF1004E34CE /* WireTesting.framework */,
 				097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */,
 			);
 			name = Frameworks;
@@ -348,51 +348,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -400,44 +356,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F31F0A6B77001F43A6 /* project.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 3;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.4;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
@@ -446,20 +365,11 @@
 			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				INFOPLIST_FILE = Protos/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
@@ -471,20 +381,11 @@
 			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
-				CLANG_ENABLE_MODULES = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
-				DEFINES_MODULE = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(inherited)",
-					"$(PLATFORM_DIR)/Developer/Library/Frameworks",
-					"$(PROJECT_DIR)/Carthage/Build/iOS",
-				);
-				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				INFOPLIST_FILE = Protos/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_VERSION = 3.0;
 			};
@@ -494,15 +395,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ProtosTests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProtosTests/ProtosTests-Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -510,14 +407,11 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F61F0A6B77001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = ProtosTests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "ProtosTests/ProtosTests-Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
