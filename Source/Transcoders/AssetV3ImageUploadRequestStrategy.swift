@@ -41,8 +41,8 @@ extension ZMAssetClientMessage {
 
     var v3_isReadyToProcessImage: Bool {
         guard let asset = genericAssetMessage?.assetData else { return false }
-        return asset.original.hasImage() && asset.original.image.width == 0
-
+        return asset.original.hasImage()
+            && asset.original.image.width == 0
     }
 
     var v3_isReadyToProcessThumbnail: Bool {
