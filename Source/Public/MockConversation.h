@@ -56,16 +56,12 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, nullable) NSString *statusRef;
 @property (nonatomic, nullable) NSDate *statusTime;
 @property (nonatomic) ZMTConversationType type;
-@property (nonatomic) BOOL callWasDropped;
 /// participants that are not self
 @property (nonatomic, readonly, nonnull) NSOrderedSet *activeUsers;
 /// participants that are not self
 @property (nonatomic, readonly, nonnull) NSSet *inactiveUsers;
-@property (nonatomic, readonly, nonnull) NSOrderedSet *callParticipants;
-@property (nonatomic, nonnull) NSSet *usersIgnoringCall;
 
 @property (nonatomic, readonly, nonnull) NSOrderedSet *events;
-@property (nonatomic) BOOL isVideoCall;
 
 @property (nonatomic, nullable) MockTeam *team;
 
@@ -109,17 +105,10 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (void)insertPreviewImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;
 - (void)insertMediumImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;
 
-- (void)dropCall;
 - (nullable MockEvent *)addUsersByUser:(nonnull MockUser *)byUser addedUsers:(nonnull NSArray *)addedUsers;
 - (nonnull MockEvent *)removeUsersByUser:(nonnull MockUser *)byUser removedUser:(nonnull MockUser *)removedUser;
 - (nonnull MockEvent *)changeNameByUser:(nonnull MockUser *)user name:(nullable NSString *)name;
 - (nonnull MockEvent *)insertAssetUploadEventForUser:(nonnull MockUser *)user data:(nonnull NSData *)data disposition:(nonnull NSDictionary *)disposition dataTypeAsMIME:(nonnull NSString *)dataTypeAsMIME assetID:(nonnull NSString *)assetID;
 - (nonnull MockEvent *)connectRequestByUser:(nonnull MockUser *)byUser toUser:(nonnull MockUser *)user message:(nullable NSString *)message;
-- (nonnull MockEvent *)callEndedEventFromUser:(nonnull MockUser *)user selfUser:(nonnull MockUser *)selfUser;
-
-- (void)ignoreCallByUser:(nonnull MockUser *)user;
-- (void)addUserToCall:(nonnull MockUser *)user;
-- (void)addUserToVideoCall:(nonnull MockUser *)user;
-- (void)removeUserFromCall:(nonnull MockUser *)user;
 
 @end

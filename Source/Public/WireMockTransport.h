@@ -31,7 +31,6 @@ FOUNDATION_EXPORT const unsigned char WireMockTransportVersionString[];
 #import <WireMockTransport/MockConnection.h>
 #import <WireMockTransport/MockConversation.h>
 #import <WireMockTransport/MockEvent.h>
-#import <WireMockTransport/MockFlowManager.h>
 #import <WireMockTransport/MockPicture.h>
 #import <WireMockTransport/MockTransportSession.h>
 #import <WireMockTransport/MockPreKey.h>

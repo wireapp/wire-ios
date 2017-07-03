@@ -27,7 +27,6 @@
 #import "MockAsset.h"
 #import "MockPersonalInvitation.h"
 
-@class MockFlowManager;
 @class MockPushEvent;
 @class MockTeam;
 @class MockMember;
@@ -61,11 +60,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic, copy, nullable) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
 @property (nonatomic, readonly) NSArray *pushTokens;
 @property (nonatomic) BOOL disableEnqueueRequests;
-
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
-
-@property (nonatomic) NSUInteger maxMembersForGroupCall;
-@property (nonatomic) NSUInteger maxCallParticipants;
 
 @property (nonatomic, readonly) NSArray *updateEvents;
 
@@ -167,25 +162,11 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @end
 
-
-
 @interface MockTransportSession (IsTyping)
 
 - (void)sendIsTypingEventForConversation:(MockConversation *)conversation user:(MockUser *)user started:(BOOL)started;
 
 @end
-
-
-
-@interface MockTransportSession (AVSFlowManager)
-
-@property (nonatomic, readonly) id flowManager;
-@property (nonatomic, readonly) MockFlowManager *mockFlowManager;
-
-@end
-
-
-
 
 @interface MockTransportSession (PhoneVerification)
 

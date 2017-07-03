@@ -25,7 +25,6 @@
 #import "MockTransportSession.h"
 #import "MockTransportSession+internal.h"
 #import "MockConnection.h"
-#import "MockFlowManager.h"
 
 
 @interface TestPushChannelEvent : NSObject

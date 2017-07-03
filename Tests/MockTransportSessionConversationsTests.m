@@ -881,15 +881,6 @@
     } expectedPayloadData:expectedPayloadData];
 }
 
-- (void)testThatItInsertingACallEndedEventSetsCorrectValues
-{
-    NSDictionary *expectedPayloadData = @{@"reason":@"missed"};
-    
-    [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> __unused session, MockConversation *conversation) {
-        return [conversation callEndedEventFromUser:self.sut.selfUser selfUser:self.sut.selfUser];
-    } expectedPayloadData:expectedPayloadData];
-}
-
 - (void)testThatItAddsTwoImageEventsToTheConversation
 {
     // GIVEN
@@ -1332,35 +1323,3 @@
 }
 
 @end
-
-
-@implementation MockTransportSessionConversationsTests (IgnoringCall)
-
-- (void)testThatCreatesAnEventForUserIgnoringCall
-{
-    // GIVEN
-    __block MockConversation *conversation;
-    __block MockUser *selfUser;
-    __block NSString *conversationID;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        selfUser = [session insertSelfUserWithName:@"Me Myself"];
-        MockUser *otherUser = [session insertUserWithName:@"The other one"];
-        conversation = [session insertOneOnOneConversationWithSelfUser:selfUser otherUser:otherUser];
-        conversationID = conversation.identifier;
-    }];
-    
-    // WHEN
-    NSUInteger events = self.sut.updateEvents.count;
-    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
-        [conversation ignoreCallByUser:selfUser];
-    }];
-    
-    // THEN
-    XCTAssertGreaterThan(self.sut.updateEvents.count, events);
-    
-    
-}
-
-@end
-
-
