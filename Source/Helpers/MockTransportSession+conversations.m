@@ -28,15 +28,11 @@
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
-#import "MockFlowManager.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 
 static char* const ZMLogTag ZM_UNUSED = "MockTransport";
-
-static NSString * const JoinedString = @"joined";
-static NSString * const IdleString = @"idle";
 
 @implementation MockTransportSession (Conversations)
 
@@ -88,18 +84,6 @@ static NSString * const IdleString = @"idle";
     else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodDELETE])
     {
         return [self processDeleteConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3]];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/call/state" method:ZMMethodPUT])
-    {
-        return [self processCallStateChange:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/call/state" method:ZMMethodGET])
-    {
-        return [self processConversationCallState:[request RESTComponentAtIndex:1]];
-    }
-    else if ([request matchesWithPath:@"/conversations/*/call" method:ZMMethodGET])
-    {
-        return [self processConversationCallRequest:[request RESTComponentAtIndex:1]];
     }
     else if ([request matchesWithPath:@"/conversations/*/typing" method:ZMMethodPOST])
     {
@@ -376,145 +360,6 @@ static NSString * const IdleString = @"idle";
     return conversations.count > 0 ? conversations[0] : nil;
 }
 
-- (ZMTransportResponse *)processCallStateChange:(NSString *)conversationId payload:(NSDictionary *)payload
-{
-    NSDictionary *selfState = payload[@"self"];
-    NSString *incomingState = selfState[@"state"];
-    
-    MockConversation *conversation = [self conversationByIdentifier:conversationId];
-    
-    BOOL isJoining = [incomingState isEqualToString:JoinedString];
-    BOOL isSendingVideo = [selfState[@"videod"] boolValue];
-    if (isSendingVideo && isJoining) {
-        conversation.isVideoCall = YES;
-        self.selfUser.isSendingVideo = YES;
-    } else {
-        self.selfUser.isSendingVideo = NO;
-    }
-    BOOL isIgnoringCall = [selfState[@"ignored"] boolValue];
-    if (isIgnoringCall) {
-        self.selfUser.ignoredCallConversation = conversation;
-    } else {
-        self.selfUser.ignoredCallConversation = nil;
-    }
-
-    NSInteger statusCode;
-    NSDictionary *payLoad;
-    if(conversation == nil) {
-        statusCode = 404;
-    }
-    else if(conversation.type != ZMTConversationTypeOneOnOne && conversation.type != ZMTConversationTypeGroup) {
-        statusCode = 400;
-    }
-    else if ([incomingState isEqualToString:JoinedString] || [incomingState isEqualToString:IdleString]) {
-        statusCode = 200;
-
-        BOOL selfWasJoined = [conversation.callParticipants containsObject:self.selfUser];
-        BOOL generateSuccessPayload = YES;
-        
-        if(!isJoining) {
-            if (conversation.type == ZMTConversationTypeOneOnOne ) {
-                if (selfWasJoined) {
-                    [conversation callEndedEventFromUser:self.selfUser selfUser:self.selfUser];
-                    [self.mockFlowManager resetVideoCalling];
-                    conversation.isVideoCall = NO;
-                }
-            }
-            else {
-                [conversation removeUserFromCall:self.selfUser];
-                if (conversation.callParticipants.count == 1) {
-                    conversation.isVideoCall = NO;
-                    [self.mockFlowManager resetVideoCalling];
-                }
-            }
-        }
-
-        if(isJoining) {
-            if (conversation.type == ZMTConversationTypeGroup && conversation.callParticipants.count >= self.maxCallParticipants) {
-                statusCode = 409;
-                payLoad = @{@"label": @"voice-channel-full", @"max_joined": @(self.maxCallParticipants)};
-                generateSuccessPayload = NO;
-            }
-            else if (conversation.type == ZMTConversationTypeGroup && conversation.activeUsers.count >= self.maxMembersForGroupCall) {
-                statusCode = 409;
-                payLoad = @{@"label": @"conv-too-big", @"max_members": @(self.maxMembersForGroupCall)};
-                generateSuccessPayload = NO;
-            }
-            else {
-                [conversation addUserToCall:self.selfUser];
-            }
-        }
-        if (generateSuccessPayload) {
-            payLoad = [self combinedCallStateForConversation:conversation];
-        }
-    }
-    else {
-        statusCode = 400;
-    }
-    
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payLoad HTTPStatus:statusCode transportSessionError:nil];
-    return response;
-}
-
-- (ZMTransportResponse *)processConversationCallState:(NSString *)conversationId
-{
-    MockConversation *conversation = [self conversationByIdentifier:conversationId];
-    
-    NSInteger statusCode;
-    NSDictionary *payload;
-    if (conversation == nil) {
-        statusCode = 404;
-    }
-    else if(conversation.type != ZMTConversationTypeOneOnOne && conversation.type != ZMTConversationTypeGroup) {
-        statusCode = 400;
-    }
-    else {
-        statusCode = 200;
-        payload = [self combinedCallStateForConversation:conversation];
-    }
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-    return response;
-}
-
-- (ZMTransportResponse *)processConversationCallRequest:(NSString *)conversationId
-{
-    MockConversation *conversation = [self conversationByIdentifier:conversationId];
-    
-    NSInteger statusCode;
-    NSDictionary *payload;
-    if (conversation == nil) {
-        statusCode = 404;
-    }
-    else if(conversation.type != ZMTConversationTypeOneOnOne && conversation.type != ZMTConversationTypeGroup) {
-        statusCode = 400;
-    }
-    else if(conversation.type == ZMTConversationTypeGroup && conversation.activeUsers.count >= self.maxMembersForGroupCall) {
-        statusCode = 409;
-        payload = @{@"label": @"conv-too-big", @"max_members": @(self.maxMembersForGroupCall)};
-    }
-    else if(conversation.type == ZMTConversationTypeGroup && conversation.callParticipants.count >= self.maxCallParticipants) {
-        statusCode = 409;
-        payload = @{@"label": @"voice-channel-full", @"max_joined": @(self.maxCallParticipants)};
-    }
-    else {
-        statusCode = 200;
-        payload = [self combinedCallStateForConversation:conversation];
-    }
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-    return response;
-}
-
-- (NSDictionary *)combinedCallStateForConversation:(MockConversation *)conversation
-{
-    return @{
-             @"participants": [self participantsPayloadForConversation:conversation],
-             @"self": [self callStateForUser:self.selfUser conversation:conversation],
-             };
-}
-
 // POST /conversations/<id>/typing
 - (ZMTransportResponse *)processConversationTyping:(NSString *)conversationId payload:(NSDictionary *)payload
 {
@@ -566,36 +411,6 @@ static NSString * const IdleString = @"idle";
     
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     return response;
-}
-
-- (NSDictionary *)participantsPayloadForConversation:(MockConversation *)conversation
-{
-    NSMutableDictionary *participantsPayload = [NSMutableDictionary dictionary];
-    for(MockUser *user in conversation.activeUsers)
-    {
-        participantsPayload[user.identifier] = [self callStateForUser:user conversation:conversation];
-    }
-    
-    RequireString(self.selfUser != nil, "No self-user in conversation");
-//    RequireString(conversation.callParticipants.count > 0, "No other user in conversation");
-    
-    return participantsPayload;
-}
-
-- (NSDictionary *)callStateForUser:(MockUser*)user conversation:(MockConversation *)conversation
-{
-    BOOL isJoined = [conversation.callParticipants containsObject:user];
-    
-    NSString *stateString = isJoined ? JoinedString : IdleString;
-    BOOL isSendingVideo = conversation.isVideoCall && user.isSendingVideo;
-    NSMutableDictionary *state = [NSMutableDictionary dictionary];
-    state[@"state"] = stateString;
-    state[@"videod"] = isSendingVideo ? @YES : @NO;
-    if (user.ignoredCallConversation != nil) {
-        state[@"ignored"] = @YES;
-    }
-    
-    return state;
 }
 
 @end

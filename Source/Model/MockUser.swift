@@ -35,12 +35,9 @@ import Foundation
     @NSManaged public var previewProfileAssetIdentifier: String?
     
     @NSManaged public var isEmailValidated: Bool
-    @NSManaged public var isSendingVideo: Bool
-    @NSManaged public var ignoredCallConversation: MockConversation?
     
     @NSManaged public var connectionsFrom: NSOrderedSet
     @NSManaged public var connectionsTo: NSOrderedSet
-    @NSManaged public var activeCallConversations: NSOrderedSet
     
     @NSManaged public var createdTeams: Set<MockTeam>?
 

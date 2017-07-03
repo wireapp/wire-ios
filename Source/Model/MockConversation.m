@@ -27,14 +27,10 @@
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
 
-static NSString * const JoinedString = @"joined";
-static NSString * const IdleString = @"idle";
-
 @interface MockConversation ()
 
 @property (nonatomic, readonly) NSMutableOrderedSet *mutableActiveUsers;
 @property (nonatomic, readonly) NSMutableSet *mutableInactiveUsers;
-@property (nonatomic, readonly) NSMutableSet *mutableCallParticipants;
 
 @end
 
@@ -59,10 +55,6 @@ static NSString * const IdleString = @"idle";
 @dynamic activeUsers;
 @dynamic inactiveUsers;
 @dynamic events;
-@dynamic callWasDropped;
-@dynamic callParticipants;
-@dynamic isVideoCall;
-@dynamic usersIgnoringCall;
 @dynamic otrArchived;
 @dynamic otrArchivedRef;
 @dynamic otrMuted;
@@ -159,17 +151,6 @@ static NSString * const IdleString = @"idle";
 {
     return [self mutableOrderedSetValueForKey:@"events"];
 }
-
-- (NSMutableOrderedSet *)mutableCallParticipants
-{
-    return [self mutableOrderedSetValueForKey:@"callParticipants"];
-}
-
-- (NSMutableSet *)mutableUsersIgnoringCall
-{
-    return [self mutableSetValueForKey:@"usersIgnoringCall"];
-}
-
 
 - (NSOrderedSet *)filteredEvents {
     return [self.events filteredOrderedSetUsingPredicate:[NSPredicate predicateWithFormat:@"identifier != NULL"]];
@@ -475,7 +456,6 @@ static NSString * const IdleString = @"idle";
 {
     [self.mutableInactiveUsers addObject:removedUser];
     [self.mutableActiveUsers removeObject:removedUser];
-    [self.mutableCallParticipants removeObject:removedUser];
     
     NSDictionary *data = @{@"user_ids" : @[removedUser.identifier] };
     return [self eventIfNeededByUser:byUser type:ZMTUpdateEventConversationMemberLeave data:data];
@@ -486,85 +466,6 @@ static NSString * const IdleString = @"idle";
     [self setValue:name forKey:@"name"];
     return [self eventIfNeededByUser:user type:ZMTUpdateEventConversationRename data:@{@"name" : name}];
 
-}
-
-- (MockEvent *)callEndedEventFromUser:(MockUser *)user selfUser:(MockUser *)selfUser
-{
-    self.isVideoCall = NO;
-    BOOL isOtherUser = [self.mutableActiveUsers containsObject:user];
-    BOOL selfWasJoined = [self.callParticipants containsObject:selfUser];
-
-    [self.mutableUsersIgnoringCall removeAllObjects];
-    [self.mutableCallParticipants removeAllObjects];
-    
-    BOOL missed = isOtherUser && !selfWasJoined;
-    
-    NSDictionary *data = @{
-                           @"reason" : missed ? @"missed" : @"completed"
-                           };
-    return [self eventIfNeededByUser:user type:ZMTUpdateEventConversationVoiceChannelDeactivate data:data];
-}
-
-- (void)addUserToCall:(MockUser *)user
-{
-    [self.mutableCallParticipants addObject:user];
-    if (self.callParticipants.count == 1) {
-        (void)[self eventIfNeededByUser:user type:ZMTUpdateEventConversationVoiceChannelActivate data:nil];
-    }
-}
-
-- (void)ignoreCallByUser:(MockUser *)user
-{
-    user.ignoredCallConversation = self;
-}
-
-- (void)addUserToVideoCall:(MockUser *)user;
-{
-    if (self.callParticipants.count == 0) {
-        user.isSendingVideo = YES;
-    }
-    self.isVideoCall = YES;
-    [self addUserToCall:user];
-}
-
-- (void)removeUserFromCall:(MockUser *)user
-{
-    NSDictionary *data = [self userLeavedCallEventData];
-    [self.mutableCallParticipants removeObject:user];
-    if (self.callParticipants.count == 1) {
-        [self.mutableCallParticipants removeAllObjects];
-        [self.mutableUsersIgnoringCall removeAllObjects];
-        [self eventIfNeededByUser:user type:ZMTUpdateEventConversationVoiceChannelDeactivate data:data];
-    }
-    if (self.callParticipants.count <= 1) {
-        self.isVideoCall = NO;
-    }
-}
-
-- (NSDictionary *)userLeavedCallEventData
-{
-    NSDictionary *data = @{};
-    
-    if (self.type == ZMTConversationTypeOneOnOne) {
-        data = @{@"reason": (self.callParticipants.count == 1) ? @"missed" : @"completed"};
-    }
-    else if (self.type == ZMTConversationTypeGroup) {
-        if (self.callParticipants.count == 2)  {
-            data = @{@"reason": @"completed"};
-        }
-        //TODO: Sabine group calls missed state
-    }
-    return data;
-}
-
-
-- (void)dropCall;
-{
-    self.callWasDropped = YES;
-    NSDictionary *data = @{
-                           @"reason" : @"lost"
-                           };
-    [self eventIfNeededByUser:self.mutableActiveUsers.firstObject type:ZMTUpdateEventConversationVoiceChannelDeactivate data:data];
 }
 
 - (MockEvent *)insertAssetUploadEventForUser:(MockUser *)user data:(NSData *)data disposition:(NSDictionary *)disposition dataTypeAsMIME:(NSString *)dataTypeAsMIME assetID:(NSString *)assetID

@@ -27,7 +27,6 @@
 #import "MockTransportSession+PushToken.h"
 #import "MockEvent.h"
 #import "MockConnection.h"
-#import "MockFlowManager.h"
 #import "MockPreKey.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
 
@@ -78,7 +77,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @property (nonatomic) NSMutableDictionary <NSNumber *, ZMTransportRequest *> *taskIdentifierMapping;
 
 @property (nonatomic) NSMutableArray *pushTokens;
-@property (nonatomic) MockFlowManager *flowManager;
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
@@ -135,11 +133,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.phoneNumbersWaitingForVerificationForProfile = [NSMutableSet set];
         
         self.pushTokens = [NSMutableArray array];
-        self.flowManager = [[MockFlowManager alloc] initWithMockTransportSession:self];
         _nonCompletedRequests = [NSMutableArray array];
-        
-        _maxCallParticipants = 9;
-        _maxMembersForGroupCall = 25;
     }
     return self;
 }
@@ -947,7 +941,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     NSMutableArray *pushEvents = [NSMutableArray array];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConversations:inserted includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
-    [pushEvents addObjectsFromArray:[self pushEventsForUpdatedConversations:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedEvents:inserted includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
@@ -1023,77 +1016,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     }
     return pushEvents;
 }
-
-
-- (NSArray *)pushEventsForUpdatedConversations:(NSSet *)updated includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    if(!includeEventsForUserThatInitiatedChanges) {
-        return @[];
-    }
-
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    for(NSManagedObject* mo in updated) {
-        if([mo isKindOfClass:MockConversation.class]) {
-            MockConversation *conversation = (MockConversation *)mo;
-            if (conversation.type == ZMTConversationTypeInvalid) {
-                continue; // Conversation that's not visible to the user
-            }
-            
-            NSArray *keys = conversation.changedValues.allKeys;
-            if ([keys containsObject:@"callParticipants"]) {
-                NSDictionary *selfInfo = (id) [NSNull null];
-                MockUser *otherUser = [conversation.activeUsers.array firstObjectMatchingWithBlock:^BOOL(MockUser *obj) {
-                    return ![obj.identifier isEqualToString:self.selfUser.identifier];
-                }];
-                if (![conversation.callParticipants containsObject:otherUser] &&
-                    ![conversation.callParticipants containsObject:self.selfUser])
-                {
-                    BOOL isVideoCall = conversation.isVideoCall && self.selfUser.isSendingVideo;
-                    selfInfo = @{@"reason": conversation.callWasDropped ? @"lost" : @"ended",
-                                 @"state": @"idle",
-                                 @"videod" : isVideoCall ? @YES : @NO
-                                 };
-                }
-                MockPushEvent *event = [self createCallStateEventForConversation:conversation selfInfo:selfInfo];
-                [pushEvents addObject:event];
-            }
-        }
-        if([mo isKindOfClass:MockUser.class]) {
-            MockUser *user = (MockUser *)mo;
-            NSArray *keys = user.changedValues.allKeys;
-            if ([keys containsObject:@"ignoredCallConversation"] && user.ignoredCallConversation != nil) {
-                MockConversation *conversation = user.ignoredCallConversation;
-                NSDictionary *selfInfo = (id)[NSNull null];
-                MockPushEvent *event = [self createCallStateEventForConversation:conversation selfInfo:selfInfo];
-                [pushEvents addObject:event];
-            }
-            if ([keys containsObject:@"isSendingVideo"]) {
-                MockConversation *conversation = user.activeCallConversations.firstObject;
-                if (nil == conversation || conversation.type == ZMTConversationTypeInvalid) {
-                    continue; // Conversation that's not visible to the user
-                }
-                NSDictionary *selfInfo = (id)[NSNull null];
-                MockPushEvent *event = [self createCallStateEventForConversation:conversation selfInfo:selfInfo];
-                [pushEvents addObject:event];
-            }
-        }
-    }
-    return pushEvents;
-}
-
-- (MockPushEvent *)createCallStateEventForConversation:(MockConversation *)conversation selfInfo:(NSDictionary *)selfInfo
-{
-    RequireString(self.selfUser != nil, "SelfUser can't be nil");
-    NSDictionary *payload = @{
-                              @"type" : @"call.state",
-                              @"participants" : [self participantsPayloadForConversation:conversation],
-                              @"self": selfInfo,
-                              @"conversation" : conversation.identifier,
-                              };
-    
-    return [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
-}
-
 
 - (NSArray *)pushEventsForInsertedEvents:(NSSet *)inserted includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
 {
@@ -1209,19 +1131,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
         [self firePushEvents:@[event]];
     }];
-}
-
-@end
-
-
-
-@implementation MockTransportSession (AVSFlowManager)
-
-@dynamic flowManager;
-
-- (MockFlowManager *)mockFlowManager;
-{
-    return self.flowManager;
 }
 
 @end

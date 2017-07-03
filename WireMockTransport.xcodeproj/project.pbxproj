@@ -47,7 +47,6 @@
 		54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A561B78FA43002757E9 /* MockTransportSession+registration.m */; };
 		54AE5A7B1B78FA43002757E9 /* MockTransportSession+users.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A571B78FA43002757E9 /* MockTransportSession+users.h */; };
 		54AE5A7C1B78FA43002757E9 /* MockTransportSession+users.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A581B78FA43002757E9 /* MockTransportSession+users.m */; };
-		54AE5A7D1B78FA43002757E9 /* MockFlowManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A591B78FA43002757E9 /* MockFlowManager.m */; };
 		54AE5A7E1B78FA43002757E9 /* MockTransportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */; };
 		54AE5A7F1B78FA43002757E9 /* MockTransportSession+internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */; };
 		54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A5D1B78FA43002757E9 /* MockAsset.m */; };
@@ -60,17 +59,14 @@
 		54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A681B78FA43002757E9 /* MockConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8A1B78FA43002757E9 /* MockConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A691B78FA43002757E9 /* MockConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8B1B78FA43002757E9 /* MockEvent.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6A1B78FA43002757E9 /* MockEvent.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54AE5A8C1B78FA43002757E9 /* MockFlowManager.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8D1B78FA43002757E9 /* MockPicture.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6C1B78FA43002757E9 /* MockPicture.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A8F1B78FA43002757E9 /* MockTransportSession.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5A911B78FA43002757E9 /* WireMockTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54AE5A701B78FA43002757E9 /* WireMockTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */; };
 		54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */; };
-		54AE5AA31B78FA62002757E9 /* MockTransportSessionCallingTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */; };
 		54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */; };
 		54AE5AA51B78FA62002757E9 /* MockTransportSessionConversationsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */; };
 		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */; };
-		54AE5AA71B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */; };
 		54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */; };
 		54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */; };
 		54AE5AAA1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */; };
@@ -202,7 +198,6 @@
 		54AE5A561B78FA43002757E9 /* MockTransportSession+registration.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+registration.m"; sourceTree = "<group>"; };
 		54AE5A571B78FA43002757E9 /* MockTransportSession+users.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+users.h"; sourceTree = "<group>"; };
 		54AE5A581B78FA43002757E9 /* MockTransportSession+users.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+users.m"; sourceTree = "<group>"; };
-		54AE5A591B78FA43002757E9 /* MockFlowManager.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockFlowManager.m; sourceTree = "<group>"; };
 		54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSession.m; sourceTree = "<group>"; };
 		54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+internal.h"; sourceTree = "<group>"; };
 		54AE5A5D1B78FA43002757E9 /* MockAsset.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockAsset.m; sourceTree = "<group>"; };
@@ -215,17 +210,14 @@
 		54AE5A681B78FA43002757E9 /* MockConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConnection.h; sourceTree = "<group>"; };
 		54AE5A691B78FA43002757E9 /* MockConversation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockConversation.h; sourceTree = "<group>"; };
 		54AE5A6A1B78FA43002757E9 /* MockEvent.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEvent.h; sourceTree = "<group>"; };
-		54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockFlowManager.h; sourceTree = "<group>"; };
 		54AE5A6C1B78FA43002757E9 /* MockPicture.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPicture.h; sourceTree = "<group>"; };
 		54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockTransportSession.h; sourceTree = "<group>"; };
 		54AE5A701B78FA43002757E9 /* WireMockTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireMockTransport.h; sourceTree = "<group>"; };
 		54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAddressBookTests.m; sourceTree = "<group>"; };
 		54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionAPNSTokenTests.m; sourceTree = "<group>"; };
-		54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionCallingTests.m; sourceTree = "<group>"; };
 		54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConnectionsTests.m; sourceTree = "<group>"; };
 		54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionConversationsTests.m; sourceTree = "<group>"; };
 		54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionEmailPhoneVerificationTests.m; sourceTree = "<group>"; };
-		54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionFlowManagerTests.m; sourceTree = "<group>"; };
 		54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionLoginTests.m; sourceTree = "<group>"; };
 		54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = MockTransportSessionPushChannelTests.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockTransportSessionRegistrationTests.m; sourceTree = "<group>"; };
@@ -400,7 +392,6 @@
 				54AE5A681B78FA43002757E9 /* MockConnection.h */,
 				54AE5A691B78FA43002757E9 /* MockConversation.h */,
 				54AE5A6A1B78FA43002757E9 /* MockEvent.h */,
-				54AE5A6B1B78FA43002757E9 /* MockFlowManager.h */,
 				54AE5A6C1B78FA43002757E9 /* MockPicture.h */,
 				54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */,
 				541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */,
@@ -437,7 +428,6 @@
 			isa = PBXGroup;
 			children = (
 				54AE5A4C1B78FA43002757E9 /* Helpers */,
-				54AE5A591B78FA43002757E9 /* MockFlowManager.m */,
 				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
 				F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */,
 				54AE5A5B1B78FA43002757E9 /* MockTransportSession+internal.h */,
@@ -463,11 +453,9 @@
 				545AFFB71CB695040054B665 /* Resources */,
 				54AE5A921B78FA62002757E9 /* MockTransportSessionAddressBookTests.m */,
 				54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */,
-				54AE5A941B78FA62002757E9 /* MockTransportSessionCallingTests.m */,
 				54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */,
 				54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */,
 				54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */,
-				54AE5A981B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m */,
 				54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */,
 				54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */,
 				54AE5A9B1B78FA62002757E9 /* MockTransportSessionRegistrationTests.m */,
@@ -570,7 +558,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */,
-				54AE5A8C1B78FA43002757E9 /* MockFlowManager.h in Headers */,
 				CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */,
 				54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */,
 				54AE5A791B78FA43002757E9 /* MockTransportSession+registration.h in Headers */,
@@ -705,7 +692,6 @@
 				F149F8111ECC7A6E00B05E16 /* MockTransportSession+teams.swift in Sources */,
 				CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */,
 				541797671CE1FC0C00C7646D /* CustomResponseGenerator.swift in Sources */,
-				54AE5A7D1B78FA43002757E9 /* MockFlowManager.m in Sources */,
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				F14741531EC45F8900A3688C /* MockTeam.swift in Sources */,
 				F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */,
@@ -752,7 +738,6 @@
 				09E393FA1BB0485300F3EA1B /* MockTransportSessionClientsTests.m in Sources */,
 				54AE5AA11B78FA62002757E9 /* MockTransportSessionAddressBookTests.m in Sources */,
 				54AE5AAC1B78FA62002757E9 /* MockTransportSessionSearchTests.m in Sources */,
-				54AE5AA71B78FA62002757E9 /* MockTransportSessionFlowManagerTests.m in Sources */,
 				54AE5AAD1B78FA62002757E9 /* MockTransportSessionTests.m in Sources */,
 				54AE5AA51B78FA62002757E9 /* MockTransportSessionConversationsTests.m in Sources */,
 				F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */,
@@ -762,7 +747,6 @@
 				F1782D911ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift in Sources */,
 				541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */,
 				54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */,
-				54AE5AA31B78FA62002757E9 /* MockTransportSessionCallingTests.m in Sources */,
 				54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */,
 				F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */,
 				CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */,
