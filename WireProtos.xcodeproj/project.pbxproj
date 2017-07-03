@@ -9,16 +9,16 @@
 /* Begin PBXBuildFile section */
 		090838041B872DBF00629095 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = 090838031B872DBF00629095 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0908380A1B872DBF00629095 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; };
-		097A22961B8B1A6700D02243 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */; };
-		097A22981B8B1AE000D02243 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		099223A41BED06C300668091 /* Otr.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 099223A21BED06C300668091 /* Otr.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		099223A51BED06C300668091 /* Otr.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 099223A31BED06C300668091 /* Otr.pb.m */; };
 		09BCDB6E1BCBE08D0020DCC7 /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */; };
 		09E393D01BAC458900F3EA1B /* Messages.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393CE1BAC458900F3EA1B /* Messages.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393D11BAC458900F3EA1B /* Messages.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393CF1BAC458900F3EA1B /* Messages.pb.m */; };
-		549BE9F61F0A8AF1004E34CE /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549BE9F51F0A8AF1004E34CE /* WireTesting.framework */; };
+		549BE9FC1F0A9304004E34CE /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549BE9F81F0A92DD004E34CE /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		549BE9FD1F0A9304004E34CE /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549BE9F51F0A8AF1004E34CE /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		549BE9FE1F0A9337004E34CE /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 549BE9FA1F0A92E5004E34CE /* ProtocolBuffers.framework */; };
+		549BEA001F0A935A004E34CE /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 549BE9FA1F0A92E5004E34CE /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54F538961DB5337900A2F83F /* ProtosTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54F538951DB5337900A2F83F /* ProtosTests.m */; };
-		F184BE861E65CADA0020EBB7 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F184BE851E65CADA0020EBB7 /* Cartfile.resolved */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,7 +38,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				097A22981B8B1AE000D02243 /* ProtocolBuffers.framework in CopyFiles */,
+				549BEA001F0A935A004E34CE /* ProtocolBuffers.framework in CopyFiles */,
+				549BE9FC1F0A9304004E34CE /* OCMock.framework in CopyFiles */,
+				549BE9FD1F0A9304004E34CE /* WireTesting.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -51,7 +53,6 @@
 		090838091B872DBF00629095 /* WireProtosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireProtosTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0908380F1B872DC000629095 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = messages.proto; path = "Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
-		097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		099223A01BECF63800668091 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		099223A11BECF65A00668091 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		099223A21BED06C300668091 /* Otr.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Otr.pb.h; sourceTree = "<group>"; };
@@ -64,6 +65,8 @@
 		09E393CE1BAC458900F3EA1B /* Messages.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Messages.pb.h; sourceTree = "<group>"; };
 		09E393CF1BAC458900F3EA1B /* Messages.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Messages.pb.m; sourceTree = "<group>"; };
 		549BE9F51F0A8AF1004E34CE /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
+		549BE9F81F0A92DD004E34CE /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
+		549BE9FA1F0A92E5004E34CE /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		54B5E1F11F0A6B77001F43A6 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54B5E1F31F0A6B77001F43A6 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -81,8 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				549BE9F61F0A8AF1004E34CE /* WireTesting.framework in Frameworks */,
-				097A22961B8B1A6700D02243 /* ProtocolBuffers.framework in Frameworks */,
+				549BE9FE1F0A9337004E34CE /* ProtocolBuffers.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -198,8 +200,9 @@
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				549BE9FA1F0A92E5004E34CE /* ProtocolBuffers.framework */,
+				549BE9F81F0A92DD004E34CE /* OCMock.framework */,
 				549BE9F51F0A8AF1004E34CE /* WireTesting.framework */,
-				097A22951B8B1A6700D02243 /* ProtocolBuffers.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -301,7 +304,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F184BE861E65CADA0020EBB7 /* Cartfile.resolved in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -364,15 +366,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				INFOPLIST_FILE = Protos/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -380,14 +379,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09B70B601B874390002667A6 /* WireProtos.xcconfig */;
 			buildSettings = {
-				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_WARN_IMPLICIT_SIGN_CONVERSION = NO;
 				CLANG_WARN_OBJC_IMPLICIT_ATOMIC_PROPERTIES = NO;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_WARN_UNUSED_PARAMETER = NO;
 				INFOPLIST_FILE = Protos/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
