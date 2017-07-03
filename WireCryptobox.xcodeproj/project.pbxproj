@@ -82,22 +82,7 @@
 		0928E2341BA0777A0057232E /* WireCryptobox.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireCryptobox.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		0928E36C1BA0908F0057232E /* WireCryptobox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireCryptobox.h; sourceTree = "<group>"; };
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireCryptobox-ios.xcconfig"; sourceTree = "<group>"; };
 		0928E3751BA17E300057232E /* WireCryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireCryptobox.xcconfig; sourceTree = "<group>"; };
-		0928E3761BA17E300057232E /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
-		0928E3771BA17E300057232E /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		0928E3781BA17E300057232E /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		0928E3791BA17E300057232E /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
-		0928E37A1BA17E300057232E /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
-		0928E37B1BA17E300057232E /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		0928E37C1BA17E300057232E /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		0928E37D1BA17E300057232E /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		0928E37E1BA17E300057232E /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
-		0928E37F1BA17E300057232E /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
-		0928E3801BA17E300057232E /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
-		0928E3811BA17E300057232E /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
-		0928E3821BA17E300057232E /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
-		0928E3831BA17E300057232E /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5442B4DA1E360195006B5282 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
@@ -117,6 +102,14 @@
 		54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContextTests.swift; sourceTree = "<group>"; };
 		54B224801DBE89FD00FDB35E /* EncryptionSession+Debugging.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSession+Debugging.swift"; sourceTree = "<group>"; };
 		54B224821DBE92E200FDB35E /* EncryptionDebugTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionDebugTests.swift; sourceTree = "<group>"; };
+		54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		54B5E1E21F0A482B001F43A6 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		54B5E1E31F0A482B001F43A6 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		54B5E1E41F0A482B001F43A6 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
+		54B5E1E51F0A482B001F43A6 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
+		54B5E1E61F0A482B001F43A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		54B5E1E71F0A482B001F43A6 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = EncryptionSessionsDirectoryTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContext.swift; sourceTree = "<group>"; };
@@ -171,22 +164,8 @@
 		0928E35B1BA090620057232E /* Configurations */ = {
 			isa = PBXGroup;
 			children = (
-				0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */,
+				54B5E1DE1F0A482B001F43A6 /* zmc-config */,
 				0928E3751BA17E300057232E /* WireCryptobox.xcconfig */,
-				0928E3761BA17E300057232E /* ios-test-host.xcconfig */,
-				0928E3771BA17E300057232E /* ios-test-target.xcconfig */,
-				0928E3781BA17E300057232E /* ios.xcconfig */,
-				0928E3791BA17E300057232E /* osx-test-target.xcconfig */,
-				0928E37A1BA17E300057232E /* osx.xcconfig */,
-				0928E37B1BA17E300057232E /* project-common.xcconfig */,
-				0928E37C1BA17E300057232E /* project-debug.xcconfig */,
-				0928E37D1BA17E300057232E /* project.xcconfig */,
-				0928E37E1BA17E300057232E /* simulator.xcconfig */,
-				0928E37F1BA17E300057232E /* swift.xcconfig */,
-				0928E3801BA17E300057232E /* tests.xcconfig */,
-				0928E3811BA17E300057232E /* version.xcconfig */,
-				0928E3821BA17E300057232E /* warnings-debug.xcconfig */,
-				0928E3831BA17E300057232E /* warnings.xcconfig */,
 			);
 			path = Configurations;
 			sourceTree = "<group>";
@@ -221,6 +200,21 @@
 				5471A6581D24215B0092A9A9 /* main.m */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		54B5E1DE1F0A482B001F43A6 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				54B5E1E01F0A482B001F43A6 /* project-common.xcconfig */,
+				54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */,
+				54B5E1E21F0A482B001F43A6 /* project.xcconfig */,
+				54B5E1E31F0A482B001F43A6 /* simulator.xcconfig */,
+				54B5E1E41F0A482B001F43A6 /* test-host-ios.xcconfig */,
+				54B5E1E51F0A482B001F43A6 /* test-target.xcconfig */,
+				54B5E1E61F0A482B001F43A6 /* warnings-debug.xcconfig */,
+				54B5E1E71F0A482B001F43A6 /* warnings.xcconfig */,
+			);
+			path = "zmc-config";
 			sourceTree = "<group>";
 		};
 		BA7EF9551B7109B600204A8E = {
@@ -401,8 +395,8 @@
 					};
 					5471A6541D24215B0092A9A9 = {
 						CreatedOnToolsVersion = 7.3.1;
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
+						ProvisioningStyle = Manual;
 					};
 					BA7EF9681B7109B600204A8E = {
 						CreatedOnToolsVersion = 6.4;
@@ -562,7 +556,7 @@
 /* Begin XCBuildConfiguration section */
 		0928E2471BA0777A0057232E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */;
+			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -585,7 +579,7 @@
 		};
 		0928E2481BA0777A0057232E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3741BA17E300057232E /* WireCryptobox-ios.xcconfig */;
+			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ALLOW_NON_MODULAR_INCLUDES_IN_FRAMEWORK_MODULES = YES;
@@ -607,6 +601,7 @@
 		};
 		5471A66A1D24215B0092A9A9 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54B5E1E41F0A482B001F43A6 /* test-host-ios.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -629,6 +624,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
@@ -651,6 +647,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -659,6 +656,7 @@
 		};
 		5471A66B1D24215B0092A9A9 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54B5E1E41F0A482B001F43A6 /* test-host-ios.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -681,6 +679,7 @@
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = "";
 				ENABLE_BITCODE = NO;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -698,6 +697,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SDKROOT = iphoneos;
 				SWIFT_VERSION = 3.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -707,7 +707,7 @@
 		};
 		BA7EF9701B7109B600204A8E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E37C1BA17E300057232E /* project-debug.xcconfig */;
+			baseConfigurationReference = 54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -723,7 +723,7 @@
 		};
 		BA7EF9711B7109B600204A8E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E37D1BA17E300057232E /* project.xcconfig */;
+			baseConfigurationReference = 54B5E1E21F0A482B001F43A6 /* project.xcconfig */;
 			buildSettings = {
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
@@ -738,7 +738,7 @@
 		};
 		BA7EF9761B7109B600204A8E /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3771BA17E300057232E /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 54B5E1E51F0A482B001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -759,7 +759,7 @@
 		};
 		BA7EF9771B7109B600204A8E /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0928E3771BA17E300057232E /* ios-test-target.xcconfig */;
+			baseConfigurationReference = 54B5E1E51F0A482B001F43A6 /* test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CLANG_ENABLE_MODULES = YES;
