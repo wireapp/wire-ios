@@ -29,10 +29,13 @@ import WireDataModel
 
 
 @objc public protocol ZMCookieProvider : NSObjectProtocol {
-    var data : Data! { get }
+    var data : Data? { get }
 }
 
-extension ZMCookie : ZMCookieProvider {
+extension ZMPersistentCookieStorage : ZMCookieProvider {
+    public var data : Data? {
+        return authenticationCookieData
+    }
 }
 
 public final class ZMAccountStatus : NSObject, ZMInitialSyncCompletionObserver, ZMAuthenticationObserver, ZMRegistrationObserver {
@@ -118,10 +121,10 @@ public final class ZMAccountStatus : NSObject, ZMInitialSyncCompletionObserver, 
         
         ZMUserSession.addInitalSyncCompletionObserver(self)
         self.authenticationToken = ZMUserSessionAuthenticationNotification.addObserver({ [weak self] (note) in
-            switch note?.type {
-            case .some(let type) where type == .authenticationNotificationAuthenticationDidSuceeded:
+            switch note.type {
+            case .authenticationNotificationAuthenticationDidSuceeded:
                 self?.didAuthenticate()
-            case .some(let type) where type == .authenticationNotificationAuthenticationDidFail:
+            case .authenticationNotificationAuthenticationDidFail:
                 self?.failedToAuthenticate()
             default:
                 return

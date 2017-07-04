@@ -40,13 +40,11 @@
 #import "WireSyncEngineLogs.h"
 #import "ZMAVSBridge.h"
 #import "ZMOnDemandFlowManager.h"
-#import "ZMCookie.h"
 #import "ZMCallFlowRequestStrategy.h"
 #import "ZMCallKitDelegate.h"
 #import "ZMOperationLoop+Private.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
-#import "ZMEnvironmentsSetup.h"
 #import "ZMClientRegistrationStatus.h"
 #import "ZMCallKitDelegate+TypeConformance.h"
 
@@ -205,13 +203,11 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
                            analytics:(id<AnalyticsType>)analytics
+                    transportSession:(ZMTransportSession *)transportSession
+                              userId:(NSUUID * __unused)uuid
                           appVersion:(NSString *)appVersion
                   appGroupIdentifier:(NSString *)appGroupIdentifier;
 {
-    zmSetupEnvironments();
-    ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] initWithUserDefaults:NSUserDefaults.standardUserDefaults];
-    NSURL *backendURL = environment.backendURL;
-    NSURL *websocketURL = environment.backendWSURL;
     self.applicationGroupIdentifier = appGroupIdentifier;
 
     ZMAPNSEnvironment *apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
@@ -227,15 +223,11 @@ ZM_EMPTY_ASSERTING_INIT()
 
     UIApplication *application = [UIApplication sharedApplication];
     
-    ZMTransportSession *session = [[ZMTransportSession alloc] initWithBaseURL:backendURL
-                                                                 websocketURL:websocketURL
-                                                               mainGroupQueue:userInterfaceContext
-                                                           initialAccessToken:[userInterfaceContext accessToken]
-                                                                  application:application
-                                                    sharedContainerIdentifier:nil];
+    [[BackgroundActivityFactory sharedInstance] setApplication:application];
+    [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:userInterfaceContext];
     
     RequestLoopAnalyticsTracker *tracker = [[RequestLoopAnalyticsTracker alloc] initWithAnalytics:analytics];
-    session.requestLoopDetectionCallback = ^(NSString *path) {
+    transportSession.requestLoopDetectionCallback = ^(NSString *path) {
         // The tracker will return NO in case the path should be ignored.
         if (! [tracker tagWithPath:path]) {
             return;
@@ -247,7 +239,7 @@ ZM_EMPTY_ASSERTING_INIT()
     };
     
     
-    self = [self initWithTransportSession:session
+    self = [self initWithTransportSession:transportSession
                      userInterfaceContext:userInterfaceContext
                  syncManagedObjectContext:syncMOC
                              mediaManager:mediaManager
@@ -275,7 +267,7 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     self = [super init];
     if(self) {
-        zmSetupEnvironments();
+        
         [ZMUserSession enableLogsByEnvironmentVariable];
         self.appVersion = appVersion;
         [ZMUserAgent setWireAppVersion:appVersion];
@@ -335,9 +327,8 @@ ZM_EMPTY_ASSERTING_INIT()
         
         [self.syncManagedObjectContext performBlockAndWait:^{
     
-            ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.syncManagedObjectContext cookieStorage:session.cookieStorage];
             self.operationLoop = operationLoop ?: [[ZMOperationLoop alloc] initWithTransportSession:session
-                                                                                             cookie:cookie
+                                                                                             cookieStorage:session.cookieStorage
                                                                         localNotificationdispatcher:self.localNotificationDispatcher
                                                                                        mediaManager:mediaManager
                                                                                 onDemandFlowManager:self.onDemandFlowManager
@@ -382,6 +373,12 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                           userSession:self
                                                                          mediaManager:(AVSMediaManager *)mediaManager];
         }
+        
+        [self.syncManagedObjectContext performBlockAndWait:^{
+            if (self.clientRegistrationStatus.currentPhase != ZMClientRegistrationPhaseRegistered) {
+                [self.clientRegistrationStatus prepareForClientRegistration];
+            }
+        }];
     }
     return self;
 }
@@ -450,7 +447,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (BOOL)isLoggedIn
 {
-    return self.authenticationStatus.currentPhase == ZMAuthenticationPhaseAuthenticated &&
+    return self.authenticationStatus.isAuthenticated &&
     self.clientRegistrationStatus.currentPhase == ZMClientRegistrationPhaseRegistered;
 }
 
@@ -552,14 +549,11 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.syncManagedObjectContext performGroupedBlock:^{
         if (self.isLoggedIn) {
             [ZMUserSessionAuthenticationNotification notifyAuthenticationDidSucceed];
-            return;
-        }
-
-        if (self.authenticationStatus.needsCredentialsToLogin) {
+        } else if (self.authenticationStatus.isAuthenticated) {
+            [self.clientRegistrationStatus prepareForClientRegistration];
+        } else {
             [ZMUserSessionAuthenticationNotification notifyAuthenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionNeedsCredentials
                                                                                                                userInfo:nil]];
-        } else {
-            [self.clientRegistrationStatus prepareForClientRegistration];
         }
     }];
 }
@@ -976,9 +970,9 @@ static BOOL ZMUserSessionUseCallKit = NO;
 
 @implementation ZMUserSession (AuthenticationStatus)
 
-- (ZMAuthenticationStatus *)authenticationStatus;
+- (id<AuthenticationStatusProvider>)authenticationStatus
 {
-    return self.operationLoop.syncStrategy.applicationStatusDirectory.authenticationStatus;
+    return self.transportSession.cookieStorage;
 }
 
 - (UserProfileUpdateStatus *)userProfileUpdateStatus;

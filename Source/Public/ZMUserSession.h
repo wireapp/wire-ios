@@ -32,10 +32,11 @@
 @class ZMProxyRequest;
 @class ZMCallKitDelegate;
 @class CallingRequestStrategy;
+@class AVSMediaManager;
 
 @protocol UserProfile;
 @protocol AnalyticsType;
-@protocol AVSMediaManager;
+//@protocol AVSMediaManager;
 @protocol ZMNetworkAvailabilityObserver;
 @protocol ZMRequestsToOpenViewsDelegate;
 @protocol ZMThirdPartyServicesDelegate;
@@ -84,8 +85,10 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
  @param appVersion: The application version (build number)
  @param appGroupIdentifier: The identifier of the shared application group container that should be used to store databases etc.
 */
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
+- (instancetype)initWithMediaManager:(AVSMediaManager *)mediaManager
                            analytics:(id<AnalyticsType>)analytics
+                    transportSession:(ZMTransportSession *)transportSession
+                              userId:(NSUUID *)uuid
                           appVersion:(NSString *)appVersion
                   appGroupIdentifier:(NSString *)appGroupIdentifier;
 
@@ -131,6 +134,9 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 @property (nonatomic, readonly) NSURL *sharedContainerURL;
 
 @property (nonatomic, readonly) NSURL *storeURL;
+
++ (NSURL *)sharedContainerDirectoryForApplicationGroup:(NSString *)appGroupIdentifier;
++ (NSURL *)storeURLForAppGroupIdentifier:(NSString *)appGroupIdentifier;
 
 @end
 
