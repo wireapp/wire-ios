@@ -200,7 +200,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self setRegisteredOnThisDevice:NO];
     BOOL wasDuplicated = self.duplicateRegistrationPhoneNumber;
     [self resetLoginAndRegistrationStatus];
     if(wasDuplicated && credentials.credentialWithPhone) {
@@ -460,7 +459,7 @@ static NSString * const CookieLabelKey = @"ZMCookieLabel";
     }];
 }
 
-- (BOOL)isRegisteredOnThisDevice
+- (BOOL)registeredOnThisDevice
 {
     return ((NSNumber *)[self persistentStoreMetadataForKey:RegisteredOnThisDeviceKey]).boolValue;
 }
