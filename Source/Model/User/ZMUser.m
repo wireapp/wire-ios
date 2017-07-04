@@ -304,6 +304,12 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     return nil != self.membership;
 }
 
+- (BOOL)isGuestInConversation:(ZMConversation *)conversation
+{
+    // See ZMUser+Teams.swift
+    return [self _isGuestIn:conversation];
+}
+
 + (NSSet *)keyPathsForValuesAffectingIsConnected
 {
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];

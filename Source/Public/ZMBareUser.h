@@ -19,7 +19,7 @@
 
 #import <WireUtilities/ZMAccentColor.h>
 
-@class Team;
+@class ZMConversation;
 
 /// The minimal set of properties and methods that something User-like must include
 @protocol ZMBareUser <NSObject>
@@ -63,6 +63,8 @@
 /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change
 /// You should stop from observing the searchUser and start observing the user from there on
 - (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
+
+- (BOOL)isGuestInConversation:(ZMConversation *)conversation NS_SWIFT_NAME(isGuest(in:));
 
 
 @property (nonatomic, readonly, copy) NSString *connectionRequestMessage;
