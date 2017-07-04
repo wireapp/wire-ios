@@ -133,17 +133,7 @@ extension ZMUser {
         
         if !normalizedQuery.isEmpty {
             let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName) : "%K MATCHES %@"], matchingSearch: normalizedQuery)
-            let normalizedHandle: String
-            if query.hasPrefix("@") {
-                // Use query as provided by the user but strip the @ symbol
-                var withoutAt = query
-                withoutAt.remove(at: query.startIndex)
-                normalizedHandle = withoutAt
-            } else {
-                // User regular normalized query otherwise
-                normalizedHandle = normalizedQuery
-            }
-            
+            let normalizedHandle = normalizedQuery.strippingLeadingAtSign()
             let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), normalizedHandle)
             allPredicates.append([namePredicate, handlePredicate].flatMap {$0})
         }
@@ -156,6 +146,18 @@ extension ZMUser {
         
         return NSCompoundPredicate(andPredicateWithSubpredicates: orPredicates)
     }
+
+}
+
+extension String {
+
+    func strippingLeadingAtSign() -> String {
+        guard hasPrefix("@") else { return self }
+        var copy = self
+        copy.remove(at: startIndex)
+        return copy
+    }
+
 }
 
 extension ZMUser {
