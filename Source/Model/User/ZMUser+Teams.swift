@@ -51,7 +51,7 @@ public extension ZMUser {
         return permissions?.contains(.createConversation) ?? true
     }
 
-    public func isGuest(in conversation: ZMConversation) -> Bool {
+    func _isGuest(in conversation: ZMConversation) -> Bool {
         if isSelfUser {
             // In case the self user is a guest in a team conversation, the backend will
             // return a 404 when fetching said team and we will delete the team.
