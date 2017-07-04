@@ -102,8 +102,6 @@ extension ZMUser {
         return predicateForUsers(withSearch: query, excludingBots: false, connectionStatuses: nil)
     }
     
-    
-    
     /// Retrieves users with name or handle matching search string, having one of given connection statuses
     ///
     /// - Parameters:
