@@ -122,13 +122,14 @@ extension ZMUser {
     /// - Returns: predicate having search query and supplied connection statuses
     @objc(predicateForUsersWithSearchString:excludingBots:connectionStatusInArray:)
     public static func predicateForUsers(withSearch query: String, excludingBots: Bool, connectionStatuses: [Int16]? ) -> NSPredicate {
-        let normalizedQuery = (query.normalizedForSearch() as String?) ?? ""
         var allPredicates = [[NSPredicate]]()
         if let statuses = connectionStatuses {
             let statusPredicate = NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), statuses)
             allPredicates.append([statusPredicate])
         }
-        
+
+        let normalizedQuery = query.normalizedAndTrimmed()
+
         if !normalizedQuery.isEmpty {
             let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName) : "%K MATCHES %@"], matchingSearch: normalizedQuery)
             let normalizedHandle = normalizedQuery.strippingLeadingAtSign()
@@ -147,7 +148,12 @@ extension ZMUser {
 
 }
 
-extension String {
+fileprivate extension String {
+
+    func normalizedAndTrimmed() -> String {
+        guard let normalized = self.normalizedForSearch() as String? else { return "" }
+        return normalized.trimmingCharacters(in: .whitespaces)
+    }
 
     func strippingLeadingAtSign() -> String {
         guard hasPrefix("@") else { return self }
