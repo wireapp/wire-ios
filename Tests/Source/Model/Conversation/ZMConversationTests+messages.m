@@ -74,6 +74,27 @@
     XCTAssertEqualObjects(conversation.lastModifiedDate, msg2.serverTimestamp);
 }
 
+- (void)testThatItDoesNotUpdateTheLastModifiedDateForRenameAndLeaveSystemMessages
+{
+    NSArray<NSNumber *> *types = @[@(ZMSystemMessageTypeTeamMemberLeave), @(ZMSystemMessageTypeConversationNameChanged)];
+    for (NSNumber *type in types) {
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+        NSDate *lastModified = [NSDate dateWithTimeIntervalSince1970:10];
+        conversation.lastModifiedDate = lastModified;
+
+        ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+        systemMessage.systemMessageType = (ZMSystemMessageType)type.intValue;
+        systemMessage.serverTimestamp = [lastModified dateByAddingTimeInterval:100];
+
+        // when
+        [conversation sortedAppendMessage:systemMessage];
+
+        // then
+        XCTAssertEqualObjects(conversation.lastModifiedDate, lastModified);
+    }
+}
+
 - (void)testThatItIsSafeToPassInAMutableStringWhenCreatingATextMessage
 {
     // given

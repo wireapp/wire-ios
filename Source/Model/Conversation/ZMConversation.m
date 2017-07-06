@@ -927,7 +927,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic messageDestructionTimeout;
 
 
-
 + (NSSet *)keyPathsForValuesAffectingIsArchived
 {
     return [NSSet setWithObject:ZMConversationIsArchivedKey];
@@ -1027,7 +1026,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (void)updateWithMessage:(ZMMessage *)message timeStamp:(NSDate *)timeStamp
 {
     [self updateLastServerTimeStampIfNeeded:timeStamp];
-    [self updateLastModifiedDateIfNeeded:timeStamp];
+    if (message.shouldUpdateLastModifiedDate) {
+        [self updateLastModifiedDateIfNeeded:timeStamp];
+    }
     [self updateUnreadMessagesWithMessage:message];
 }
 
@@ -1355,7 +1356,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     NSPredicate *localSystemMessagePredicate = [ZMSystemMessage predicateForSystemMessagesInsertedLocally];
     if ([message.serverTimestamp compare:self.lastModifiedDate] == NSOrderedDescending
-       && ![localSystemMessagePredicate evaluateWithObject:message]) {
+       && ![localSystemMessagePredicate evaluateWithObject:message] && message.shouldUpdateLastModifiedDate) {
         self.lastModifiedDate = message.serverTimestamp;
     }
     
