@@ -165,6 +165,11 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     return YES;
 }
 
+- (BOOL)shouldUpdateLastModifiedDate
+{
+    return YES;
+}
+
 + (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;
 {
     return [NSPredicate predicateWithValue:NO];
@@ -1028,6 +1033,18 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 - (id<ZMSystemMessageData>)systemMessageData
 {
     return self;
+}
+
+- (BOOL)shouldUpdateLastModifiedDate
+{
+    switch (self.systemMessageType) {
+        case ZMSystemMessageTypeParticipantsRemoved:
+        case ZMSystemMessageTypeConversationNameChanged:
+            return NO;
+
+        default:
+            return YES;
+    }
 }
 
 - (BOOL)shouldGenerateUnreadCount;
