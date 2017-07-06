@@ -19,6 +19,7 @@
 
 import Foundation
 import WireDataModel
+import WireMessageStrategy
 
 
 extension ZMConversation: Conversation {
