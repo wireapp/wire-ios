@@ -18,6 +18,7 @@
 
 import Foundation
 import WireDataModel
+import WireMessageStrategy
 
 /// A conversation
 public protocol Conversation : SharingTarget {
@@ -39,12 +40,4 @@ public protocol Conversation : SharingTarget {
     
     /// Do not resend all those messages that caused conversation security degradation
     func doNotResendMessagesThatCausedDegradation()
-}
-
-
-/// Object that can be torn down when not needed anymore
-public protocol TearDownCapable {
-    
-    func tearDown()
-    
 }
