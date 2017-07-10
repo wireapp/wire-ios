@@ -111,9 +111,12 @@ class MemberTests: BaseTeamTests {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         let (team, existingMember) = createTeamAndMember(for: user)
-
-        // when
-        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+        var member: Member!
+        
+        self.performPretendingUiMocIsSyncMoc {
+            // when
+            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+        }
 
         // then
         XCTAssertEqual(member, existingMember)
@@ -123,9 +126,12 @@ class MemberTests: BaseTeamTests {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         let team = Team.insertNewObject(in: uiMOC)
-
-        // when
-        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+        var member: Member!
+        
+        self.performPretendingUiMocIsSyncMoc {
+            // when
+            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+        }
 
         // then
         XCTAssertNotNil(member)
@@ -138,9 +144,12 @@ class MemberTests: BaseTeamTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID()
         let team = Team.insertNewObject(in: uiMOC)
+        var member: Member!
         
-        // when
-        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+        self.performPretendingUiMocIsSyncMoc {
+            // when
+            member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+        }
         
         // then
         XCTAssertNotNil(member.remoteIdentifier)
@@ -156,22 +165,24 @@ class MemberTests: BaseTeamTests {
 extension MemberTests {
 
     func testThatItUpdatesAMemberWithResponsePayload() {
-        // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.remoteIdentifier = .create()
-        let team = Team.insertNewObject(in: uiMOC)
-        let member = Member.getOrCreateMember(for: user, in: team, context: uiMOC)
+        self.performPretendingUiMocIsSyncMoc {
+            // given
+            let user = ZMUser.insertNewObject(in: self.uiMOC)
+            user.remoteIdentifier = .create()
+            let team = Team.insertNewObject(in: self.uiMOC)
+            let member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
 
-        let payload: [String: Any] = [
-            "user": user.remoteIdentifier!.transportString(),
-            "permissions": ["self": 33, "copy": 0]
-        ]
+            let payload: [String: Any] = [
+                "user": user.remoteIdentifier!.transportString(),
+                "permissions": ["self": 33, "copy": 0]
+            ]
 
-        // when
-        member.updatePermissions(with: payload)
+            // when
+            member.updatePermissions(with: payload)
 
-        // then
-        XCTAssertEqual(member.permissions, [.createConversation, .removeConversationMember])
+            // then
+            XCTAssertEqual(member.permissions, [.createConversation, .removeConversationMember])
+        }
     }
 
     func testThatItCreatesAndUpdatesAMemberFromTransportData() {
