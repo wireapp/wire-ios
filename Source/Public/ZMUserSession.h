@@ -64,7 +64,7 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 /**
  Returns YES if data store needs to be migrated.
  */
-+ (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier;
++ (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier accountIdentifier:(NSUUID *)accountIdentifier;
 
 /**
  Should be called <b>before</b> using ZMUserSession when applications is started if +needsToPrepareLocalStore returns YES. 
@@ -72,7 +72,7 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
     When it's done it will call completionHandler on an arbitrary thread. It is the responsability of the caller to switch to the desired thread.
     The local store is not ready to be used (and the ZMUserSession is not ready to be initialized) until the completionHandler has been called.
  */
-+ (void)prepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier completion:(void (^)())completionHandler;
++ (void)prepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier accountIdentifier:(NSUUID *)accountIdentifier completion:(void (^)())completionHandler;
 
 /// Whether the local store is ready to be opened. If it returns false, the user session can't be started yet
 + (BOOL)storeIsReady;

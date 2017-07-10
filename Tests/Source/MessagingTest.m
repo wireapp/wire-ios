@@ -59,9 +59,10 @@
 @property (nonatomic) NSManagedObjectContext *alternativeTestMOC;
 @property (nonatomic) NSManagedObjectContext *searchMOC;
 
-@property (nonatomic) NSString *groupIdentifier;;
-@property (nonatomic) NSURL *storeURL;
-@property (nonatomic) NSURL *keyStoreURL;
+@property (nonatomic) NSString *groupIdentifier;
+@property (nonatomic) NSUUID *accountIdentifier;
+@property (nonatomic) NSURL *sharedContainerURL;
+
 @property (nonatomic) MockTransportSession *mockTransportSession;
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
@@ -101,18 +102,26 @@
     return YES;
 }
 
+- (NSURL *)storeURL
+{
+    return [NSFileManager currentStoreURLForAccountWith:self.accountIdentifier in:self.sharedContainerURL];
+}
+
+- (NSURL *)keyStoreURL
+{
+    return self.sharedContainerURL;
+}
+
 - (void)setUp;
 {
     [super setUp];
     NSFileManager *fm = NSFileManager.defaultManager;
     NSString *bundleIdentifier = [NSBundle bundleForClass:self.class].bundleIdentifier;
     self.groupIdentifier = [@"group." stringByAppendingString:bundleIdentifier];
+    self.accountIdentifier = [NSUUID UUID];
+    self.sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
     
-    NSURL *sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
-    self.storeURL = [[sharedContainerURL URLByAppendingPathComponent:bundleIdentifier] URLByAppendingPathComponent:@"store.wiredatabase"];
-    self.keyStoreURL = sharedContainerURL;
-    
-    NSURL *otrFolder = [self.keyStoreURL URLByAppendingPathComponent:@"otr"];
+    NSURL *otrFolder = [NSFileManager keyStoreURLForAccountWith:self.accountIdentifier in:self.sharedContainerURL createParentIfNeeded:NO];
     [fm removeItemAtURL:otrFolder error: nil];
     
     _application = [[ApplicationMock alloc] init];
@@ -153,7 +162,7 @@
     [self.testMOC addGroup:self.dispatchGroup];
     self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
     [self.alternativeTestMOC addGroup:self.dispatchGroup];
-    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreAtURL:self.storeURL];
+    self.searchMOC = [NSManagedObjectContext createSearchContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
     [self.searchMOC addGroup:self.dispatchGroup];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
@@ -171,8 +180,7 @@
     [self removeCachesInSharedContainer];
     _application = nil;
     self.groupIdentifier = nil;
-    self.storeURL = nil;
-    self.keyStoreURL = nil;
+    self.sharedContainerURL = nil;
     [super tearDown];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
@@ -286,7 +294,7 @@
         [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     }
     [self performIgnoringZMLogError:^{
-        self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
+        self.uiMOC = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
     }];
     
     ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100 location:nil];
@@ -295,7 +303,7 @@
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
     
-    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreAtURL:self.storeURL keyStoreURL:self.keyStoreURL];
+    self.syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.name;
         [self.syncMOC addGroup:self.dispatchGroup];
@@ -310,7 +318,7 @@
     WaitForAllGroupsToBeEmpty(2);
     
     [self performPretendingUiMocIsSyncMoc:^{
-        [self.uiMOC setupUserKeyStoreForDirectory:self.keyStoreURL];
+        [self.uiMOC setupUserKeyStoreInSharedContainer:self.sharedContainerURL withAccountIdentifier:self.accountIdentifier];
     }];
     
     [self.uiMOC saveOrRollback];

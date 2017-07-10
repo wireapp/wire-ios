@@ -43,7 +43,7 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     override func setUp() {
         super.setUp()
 
-        self.spyKeyStore = SpyUserClientKeyStore(in: UserClientKeysStore.otrDirectoryURL)
+        self.spyKeyStore = SpyUserClientKeyStore(in: sharedContainerURL, accountIdentifier:accountIdentifier)
         cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer")
         let cookie = ZMCookie(managedObjectContext: self.syncMOC, cookieStorage: cookieStorage)
         loginProvider = FakeCredentialProvider()

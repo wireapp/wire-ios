@@ -22,41 +22,53 @@ import XCTest
 import WireTesting
 
 public class DiskDatabaseTest: ZMTBaseTest {
-    let storeURL = PersistentStoreRelocator.storeURL(in: .cachesDirectory)!
+    var sharedContainerURL : URL!
+    var accountId : UUID!
     var moc: NSManagedObjectContext!
+    
+    var storeURL : URL {
+        return FileManager.currentStoreURLForAccount(with: accountId, in: sharedContainerURL)
+    }
     
     public override func setUp() {
         super.setUp()
         NSManagedObjectContext.setUseInMemoryStore(false)
-        
-        cleanUp()
+        sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        accountId = UUID()
         
         createDatabase()
-        NSManagedObjectContext.prepareLocalStore(at: storeURL, backupCorruptedDatabase: false, synchronous: true) {
-            self.moc = NSManagedObjectContext.createUserInterfaceContextWithStore(at: self.storeURL)
+        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountId, inSharedContainerAt: sharedContainerURL, backupCorruptedDatabase: false, synchronous: true) {
+            self.moc = NSManagedObjectContext.createUserInterfaceContextForAccount(withIdentifier: self.accountId, inSharedContainerAt: self.sharedContainerURL)
         }
         
         assert(self.waitForAllGroupsToBeEmpty(withTimeout: 1))
+        XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
     
     public override func tearDown() {
-        super.tearDown()
+        cleanUp()
         moc = nil
+        sharedContainerURL = nil
+        accountId = nil
+        super.tearDown()
     }
     
     private func createDatabase() {
-        NSManagedObjectContext.prepareLocalStore(at: storeURL, backupCorruptedDatabase: false, synchronous: true, completionHandler:nil)
+        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountId, inSharedContainerAt: sharedContainerURL, backupCorruptedDatabase: false, synchronous: true, completionHandler:nil)
         
         NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
     }
     
     private func cleanUp() {
+        let storeURL = FileManager.currentStoreURLForAccount(with: accountId, in: sharedContainerURL)
         let supportCachesPath = (storeURL as NSURL).deletingLastPathComponent!.path
         
         let fileManager = FileManager.default
         
         if fileManager.fileExists(atPath: supportCachesPath) {
             try? fileManager.removeItem(atPath: supportCachesPath)
+        } else {
+            XCTFail("Store was not created")
         }
         
         NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
