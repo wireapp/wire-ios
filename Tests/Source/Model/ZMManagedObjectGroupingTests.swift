@@ -22,13 +22,16 @@ import XCTest
 
 public final class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
+    let storeURL = FileManager.storeURL(in: .cachesDirectory)!
+    var moc: NSManagedObjectContext!
+    
     public override func setUp() {
         
         super.setUp()
         
-        self.createDatabase(in: .cachesDirectory)
-        NSManagedObjectContext.prepareLocalStore(at: storeURL, backupCorruptedDatabase: false, synchronous: true) {
-            self.moc = NSManagedObjectContext.createUserInterfaceContextWithStore(at: self.storeURL)
+        self.createDatabase(in: .cachesDirectory, accountIdentifier: nil)
+        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountID, inSharedContainerAt: sharedContainerDirectoryURL, backupCorruptedDatabase: false, synchronous: true) {
+            self.moc = NSManagedObjectContext.createUserInterfaceContextForAccount(withIdentifier: self.accountID, inSharedContainerAt: self.sharedContainerDirectoryURL)
         }
         
         assert(self.waitForAllGroupsToBeEmpty(withTimeout: 1))
@@ -40,8 +43,6 @@ public final class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         moc = nil
     }
     
-    let storeURL = PersistentStoreRelocator.storeURL(in: .cachesDirectory)!
-    var moc: NSManagedObjectContext!
     
     public func testThatItFindsNoDuplicates_None() {
         // GIVEN

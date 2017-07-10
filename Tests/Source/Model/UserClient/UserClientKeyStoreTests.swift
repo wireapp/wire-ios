@@ -25,36 +25,35 @@ import WireCryptobox
 class UserClientKeysStoreTests: OtrBaseTest {
     
     var sut: UserClientKeysStore!
-    
-    var sharedOtrFolderURL : URL {
-        let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        return directoryURL.appendingPathComponent("otr")
-    }
-    
-    func cleanOTRFolder() {
-        let fm = FileManager.default
-        for path in [UserClientKeysStore.legacyOtrDirectory.path, UserClientKeysStore.otrDirectory.path, sharedOtrFolderURL.path] {
-            _ = try? fm.removeItem(atPath: path)
-        }
-    }
+    var accountID : UUID!
     
     override func setUp() {
         super.setUp()
         self.cleanOTRFolder()
-        self.sut = UserClientKeysStore(in: sharedOtrFolderURL)
+        accountID = UUID()
+        self.sut = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
     }
     
     override func tearDown() {
         sut = nil
         self.cleanOTRFolder()
+        accountID = nil
         super.tearDown()
     }
     
+    func cleanOTRFolder() {
+        let fm = FileManager.default
+        var paths = UserClientKeysStore.legacyDirectories(sharedContainerURL: OtrBaseTest.sharedContainerURL).map{$0.path}
+        if let accountID = accountID {
+            paths.append(OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).path)
+        }
+        paths.forEach { try? fm.removeItem(atPath: $0) }
+    }
+    
     func testThatTheOTRFolderHasBackupDisabled() {
-        
-        
         // when
-        guard let values = try? sharedOtrFolderURL.resourceValues(forKeys: Set(arrayLiteral: URLResourceKey.isExcludedFromBackupKey)) else {return XCTFail()}
+        guard let values = try? OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID)
+                                           .resourceValues(forKeys: Set(arrayLiteral: URLResourceKey.isExcludedFromBackupKey)) else {return XCTFail()}
 
         // then
         XCTAssertTrue(values.isExcludedFromBackup!)
@@ -70,7 +69,6 @@ class UserClientKeysStoreTests: OtrBaseTest {
             XCTAssertNil(error, "Should not return error while generating key")
             
         }
-        
     }
     
     func testThatItWrapsKeysTo0WhenReachingTheMaximum() {
@@ -124,17 +122,8 @@ class UserClientKeysStoreTests: OtrBaseTest {
         
     }
     
-    func testThatTheOTRFolderHasTheRightPath() {
-        
-        // given
-        let otrURL = try! FileManager.default.url(for: FileManager.SearchPathDirectory.applicationSupportDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false).appendingPathComponent("otr")
-        
-        // then
-        XCTAssertEqual(UserClientKeysStore.otrDirectory, otrURL)
-    }
-    
     fileprivate func createFakeOTRFolder() {
-        try! FileManager.default.createDirectory(atPath: UserClientKeysStore.legacyOtrDirectory.path, withIntermediateDirectories: true, attributes: [:])
+        try! FileManager.default.createDirectory(atPath: OtrBaseTest.legacyOtrDirectory.path, withIntermediateDirectories: true, attributes: [:])
     }
 
     func testThatItMovesTheLegacyCryptoboxToTheGivenURL() {
@@ -144,40 +133,34 @@ class UserClientKeysStoreTests: OtrBaseTest {
         self.cleanOTRFolder()
 
         self.createFakeOTRFolder()
-        try! "foo".data(using: String.Encoding.utf8)!.write(to: UserClientKeysStore.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
-
+        try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
+        
         // when
-        print(sharedOtrFolderURL)
-        let _ = UserClientKeysStore(in: sharedOtrFolderURL)
+        let _ = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
         
         // then
-        let fooData = try! Data(contentsOf: sharedOtrFolderURL.appendingPathComponent("dummy.txt"))
+        let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
         let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
-        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity)
+        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(sharedContainerURL: OtrBaseTest.sharedContainerURL))
     }
     
     func testThatItMovesTheOTRFolderToTheGivenURL() {
         // given
         self.sut = nil
         self.cleanOTRFolder()
-        
-        try! FileManager.default.createDirectory(at: UserClientKeysStore.otrDirectoryURL, withIntermediateDirectories: true, attributes: [:])
-        try! "foo".data(using: String.Encoding.utf8)!.write(to: UserClientKeysStore.otrDirectoryURL.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
+
+        try! FileManager.default.createDirectory(at: OtrBaseTest.otrDirectoryURL(accountIdentifier:accountID), withIntermediateDirectories: true, attributes: [:])
+        try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.otrDirectoryURL(accountIdentifier:accountID).appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
         
         // when
-        print(sharedOtrFolderURL)
-        let _ = UserClientKeysStore(in: sharedOtrFolderURL)
+        let _ = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
         
         // then
-        let fooData = try! Data(contentsOf: sharedOtrFolderURL.appendingPathComponent("dummy.txt"))
+        let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
         let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
-        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity)
+        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(sharedContainerURL: OtrBaseTest.sharedContainerURL))
 
     }
-
-    
-    
-    
 }

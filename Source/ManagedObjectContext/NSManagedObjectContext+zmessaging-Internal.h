@@ -24,6 +24,8 @@
 
 + (BOOL)databaseExistsButIsNotReadableDueToEncryptionAtURL:(NSURL *)storeURL;
 + (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
-+ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorAtURL:(NSURL *)storeURL backupCorrupedDatabase:(BOOL)backupCorruptedDatabase;
++ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                                                                     inSharedContainerAt:(NSURL*)sharedContainerURL
+                                                                  backupCorrupedDatabase:(BOOL)backupCorruptedDatabase;
 
 @end

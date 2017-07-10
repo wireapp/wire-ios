@@ -36,7 +36,7 @@ public struct PersistedDataPatch {
 
     /// Apply all patches to the MOC
     public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
-        moc.performAndWait {
+        moc.performGroupedBlockAndWait {
             let currentVersion = Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String
             let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String) ?? "0.0.0"
             let previousPatchVersion = FrameworkVersion(previousPatchVersionString)!

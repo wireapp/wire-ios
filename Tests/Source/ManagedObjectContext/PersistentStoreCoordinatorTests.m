@@ -18,7 +18,7 @@
 
 
 #import "ZMBaseManagedObjectTest.h"
-
+#import "DatabaseBaseTest.h"
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "ZMManagedObject+Internal.h"
@@ -42,14 +42,14 @@
 - (void)setUp
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL *storeURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
+    NSURL *storeURL = [NSFileManager storeURLInDirectory:NSDocumentDirectory];
     
     if ([fm fileExistsAtPath:storeURL.path]) {
         NSError *error = nil;
         NSURL *parentURL;
         XCTAssert([storeURL getResourceValue:&parentURL forKey:NSURLParentDirectoryURLKey error:&error], @"%@", error);
         XCTAssert([[NSFileManager defaultManager] removeItemAtURL:parentURL error:&error],
-                  @"Failed to remote directory %@", parentURL.path);
+                  @"Failed to remove directory %@", parentURL.path);
     }
     
     [super setUp];
