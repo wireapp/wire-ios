@@ -41,7 +41,8 @@
 {
     [super setUp];
     [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext initPersistentStoreCoordinatorAtURL:self.sharedContainerStoreURL backupCorrupedDatabase:NO];
+        [NSManagedObjectContext initPersistentStoreCoordinatorForAccountWithIdentifier:self.accountID
+                                                                   inSharedContainerAt:self.sharedContainerDirectoryURL                                              backupCorrupedDatabase:NO];
     }];
 }
 
@@ -58,13 +59,13 @@
     // given
     id classMock = [OCMockObject mockForClass:[NSManagedObjectContext class]];
 
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     
     // when
     [[[classMock stub] andReturnValue:@YES] databaseExistsButIsNotReadableDueToEncryptionAtURL:OCMOCK_ANY];
     
     // then
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     [classMock stopMocking];
 }
 
@@ -80,10 +81,14 @@
     // when
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    [NSManagedObjectContext prepareLocalStoreAtURL:self.sharedContainerStoreURL backupCorruptedDatabase:NO synchronous:YES completionHandler:^{
-        completionCalled = YES;
-        dispatch_semaphore_signal(sem);
-    }];
+    [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:self.accountID
+                                                  inSharedContainerAt:self.sharedContainerDirectoryURL
+                                              backupCorruptedDatabase:NO
+                                                          synchronous:YES
+                                                    completionHandler:^{
+                                                        completionCalled = YES;
+                                                        dispatch_semaphore_signal(sem);
+                                                    }];
     XCTAssertFalse(completionCalled);
     
     // then
@@ -110,10 +115,14 @@
     
     // when
     dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    [NSManagedObjectContext prepareLocalStoreAtURL:self.sharedContainerStoreURL backupCorruptedDatabase:NO synchronous:YES completionHandler:^{
-        completionCalledTimes++;
-        dispatch_semaphore_signal(sem);
-    }];
+    [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:self.accountID
+                                                  inSharedContainerAt:self.sharedContainerDirectoryURL
+                                              backupCorruptedDatabase:NO
+                                                          synchronous:YES
+                                                    completionHandler:^{
+                                                        completionCalledTimes++;
+                                                        dispatch_semaphore_signal(sem);
+                                                    }];
     XCTAssertEqual(completionCalledTimes, 0);
     
     // then

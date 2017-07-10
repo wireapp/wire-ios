@@ -30,23 +30,33 @@
 @property (nonatomic) NSURL *applicationSupportDirectoryStoreURL;
 @property (nonatomic) NSURL *sharedContainerDirectoryURL;
 @property (nonatomic) NSURL *sharedContainerStoreURL;
+@property (nonatomic) NSUUID *accountID;
 
 @end
 
+@implementation NSFileManager (StoreLocation)
+
++ (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
+{
+    return [[[[NSFileManager defaultManager] URLsForDirectory:directory inDomains:NSUserDomainMask] firstObject] URLByAppendingStorePath];
+}
+
+@end
 
 @implementation DatabaseBaseTest
 
 - (void)setUp
 {
     [super setUp];
+    self.accountID = [NSUUID createUUID];
     
     [NSManagedObjectContext setUseInMemoryStore:NO];
     self.fm = [NSFileManager defaultManager];
-    self.cachesDirectoryStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSCachesDirectory];
-    self.applicationSupportDirectoryStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSApplicationSupportDirectory];
-    self.sharedContainerStoreURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
+    self.cachesDirectoryStoreURL = [NSFileManager storeURLInDirectory:NSCachesDirectory];
+    self.applicationSupportDirectoryStoreURL = [NSFileManager storeURLInDirectory:NSApplicationSupportDirectory];
     self.sharedContainerDirectoryURL = [self.fm URLForDirectory:NSDocumentDirectory inDomain:NSUserDomainMask appropriateForURL:nil create:YES error:nil];
-    
+    self.sharedContainerStoreURL = [NSFileManager currentStoreURLForAccountWith:self.accountID in:self.sharedContainerDirectoryURL];
+    XCTAssertTrue([self.fm fileExistsAtPath:self.sharedContainerDirectoryURL.path]);
     [self cleanUp];
 }
 
@@ -54,6 +64,7 @@
 {
     [self cleanUp];
     self.fm = nil;
+    self.accountID = nil;
     self.cachesDirectoryStoreURL = nil;
     self.applicationSupportDirectoryStoreURL = nil;
     self.sharedContainerStoreURL = nil;
@@ -99,12 +110,25 @@
 
 #pragma mark - Helper
 
-- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory
+- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory accountIdentifier:(NSUUID *)accountIdentifier
 {
-    NSURL *storeURL = [PersistentStoreRelocator storeURLInDirectory:directory];
+    NSURL *containerURL = [[NSFileManager defaultManager] URLsForDirectory:directory inDomains:NSUserDomainMask].firstObject;
+    return [self createDatabaseAtSharedContainerURL:containerURL accountIdentifier:accountIdentifier];
+}
 
-    [NSManagedObjectContext prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:NO synchronous:YES completionHandler:nil];
-
+- (BOOL)createDatabaseAtSharedContainerURL:(NSURL *)sharedContainerURL accountIdentifier:(NSUUID *)accountIdentifier
+{
+    NSURL *storeURL = sharedContainerURL;
+    if (nil != accountIdentifier) {
+        storeURL = [sharedContainerURL URLByAppendingPathComponent:accountIdentifier.UUIDString isDirectory:YES];
+    }
+    storeURL = [storeURL URLByAppendingStorePath];
+    [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:accountIdentifier
+                                                  inSharedContainerAt:sharedContainerURL
+                                              backupCorruptedDatabase:NO
+                                                          synchronous:YES
+                                                    completionHandler:nil];
+    
     XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:storeURL]);
     [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
     
@@ -155,11 +179,17 @@
 
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase
 {
+    [self prepareLocalStoreAtRootURL:self.sharedContainerDirectoryURL accountIdentifier:self.accountID backingUpDatabase:backupCorruptedDatabase];
+}
+
+- (void)prepareLocalStoreAtRootURL:(NSURL *)containerURL accountIdentifier:(NSUUID *)accountIdentifier backingUpDatabase:(BOOL)backupCorruptedDatabase
+{
     [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreAtURL:self.sharedContainerStoreURL backupCorruptedDatabase:backupCorruptedDatabase synchronous:YES completionHandler:nil];
+        [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:accountIdentifier inSharedContainerAt:containerURL backupCorruptedDatabase:backupCorruptedDatabase synchronous:YES completionHandler:nil];
         WaitForAllGroupsToBeEmpty(0.5);
     }];
 }
+
 
 - (void)createDirectoryForStoreAtURL:(NSURL *)storeURL
 {

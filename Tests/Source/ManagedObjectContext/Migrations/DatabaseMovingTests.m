@@ -36,7 +36,10 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
 - (void)cleanUp
 {
     [super cleanUp];
-    for (NSString *backupFolder in self.currentBackupFoldersInApplicationSupport) {
+    for (NSString *backupFolder in [self currentBackupFoldersInApplicationSupportWithAccountId:self.accountID]) {
+        [self.fm removeItemAtPath:backupFolder error:nil];
+    }
+    for (NSString *backupFolder in [self currentBackupFoldersInApplicationSupportWithAccountId:nil]) {
         [self.fm removeItemAtPath:backupFolder error:nil];
     }
 }
@@ -45,8 +48,8 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createDatabaseInDirectory:NSCachesDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+        XCTAssertTrue([self createDatabaseInDirectory:NSCachesDirectory accountIdentifier:nil]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     }];
     
     for (NSString *extension in self.databaseFileExtensions) {
@@ -57,7 +60,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     }
 
     // when
-    [self prepareLocalStoreInSharedContainerBackingUpDatabase:NO];
+    [self prepareLocalStoreAtRootURL:self.sharedContainerDirectoryURL accountIdentifier:self.accountID backingUpDatabase:NO];
 
     // then
     for (NSString *extension in self.databaseFileExtensions) {
@@ -81,8 +84,8 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
 {
     // given
     [self performIgnoringZMLogError:^{
-        XCTAssertTrue([self createDatabaseInDirectory:NSApplicationSupportDirectory]);
-        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+        XCTAssertTrue([self createDatabaseInDirectory:NSApplicationSupportDirectory accountIdentifier:nil]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     }];
     
     for (NSString *extension in self.databaseFileExtensions) {
@@ -103,7 +106,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
         XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
     }
     
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
 
      NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
      XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
@@ -112,9 +115,9 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
 - (void)testThatItMovesRemainingDatabaseFilesFromTheApplicationSupportDirectoryToTheSharedDirectory
 {
     // given
-    XCTAssertTrue([self createDatabaseInDirectory:NSApplicationSupportDirectory]);
-    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
-
+    XCTAssertTrue([self createDatabaseInDirectory:NSApplicationSupportDirectory accountIdentifier:nil]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
+    
     // We simulate that we already moved the main database file previously
     [self createDirectoryForStoreAtURL:self.sharedContainerStoreURL];
     NSError *error;
@@ -143,7 +146,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
         XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
     }
     
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     
     NSString *supportURL = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
@@ -152,7 +155,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
 - (void)testThatItMovesRemainingExternalDatabaseFilesFromTheApplicationSupportDirectoryToTheSharedDirectory
 {
     // given: we simulate that we already moved all main database files expect the .store_SUPPORT file
-    [self createDatabaseInDirectory:NSDocumentDirectory];
+    XCTAssertTrue([self createDatabaseInDirectory:NSDocumentDirectory accountIdentifier:self.accountID]);
     NSString *supportFileInSharedContainer = [self.sharedContainerStoreURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
     XCTAssertTrue([self.fm removeItemAtPath:supportFileInSharedContainer error:nil]);
     
@@ -179,7 +182,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
         XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
     }
     
-    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     XCTAssertTrue([self.fm fileExistsAtPath:supportFileInSharedContainer]);
 }
 
@@ -188,7 +191,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnreadableLocalStore]);
-        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
@@ -210,7 +213,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     // given
     [self performIgnoringZMLogError:^{
         XCTAssertTrue([self createdUnreadableLocalStore]);
-        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreAtURL:self.sharedContainerStoreURL]);
+        XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:self.sharedContainerDirectoryURL]);
     }];
     
     NSString *storeFile = [self.sharedContainerStoreURL.path stringByAppendingString:@""];
@@ -226,7 +229,7 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     NSURL *parentFolder;
     [storeFolder getResourceValue:&parentFolder forKey:NSURLParentDirectoryURLKey error:NULL];
     
-    NSArray *backupFolders = [self currentBackupFoldersInApplicationSupport];
+    NSArray *backupFolders = [self currentBackupFoldersInApplicationSupportWithAccountId:self.accountID];
     XCTAssertEqual(backupFolders.count, 1u);
     
     NSURL *firstBackupFolder = [NSURL fileURLWithPath:backupFolders.firstObject];
@@ -237,9 +240,12 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     XCTAssertEqualObjects(newData, oldStoreFileData);
 }
 
-- (NSArray<NSString *>*)currentBackupFoldersInApplicationSupport
+- (NSArray<NSString *>*)currentBackupFoldersInApplicationSupportWithAccountId:(NSUUID *)accountId
 {
     NSURL *dbDirectory = self.sharedContainerDirectoryURL;
+    if (nil != accountId) {
+        dbDirectory = [dbDirectory URLByAppendingPathComponent:accountId.UUIDString isDirectory:YES];
+    }
     NSArray *dirContent = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:dbDirectory.path
                                                                               error:NULL];
     NSMutableArray *backupFolders = [NSMutableArray array];
@@ -249,6 +255,96 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
         }
     }
     return backupFolders;
+}
+
+@end
+
+
+@implementation DatabaseMovingTests (AccountBasedSubdirectory)
+
+- (void)testThatItMovesTheDatabaseFromTheSharedContainerToSubDirectoryWithUserId
+{
+    // given
+    NSURL *containerURL = self.sharedContainerDirectoryURL;
+    NSURL *newBaseURL = [[containerURL URLByAppendingPathComponent:self.accountID.UUIDString] URLByAppendingStorePath];
+    NSURL *oldBaseURL = [containerURL URLByAppendingStorePath];
+
+    [self performIgnoringZMLogError:^{
+        XCTAssertTrue([self createDatabaseAtSharedContainerURL:self.sharedContainerDirectoryURL accountIdentifier:nil]);
+        XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:containerURL]);
+    }];
+    
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [oldBaseURL.path stringByAppendingString:extension];
+        NSString *toPath = [newBaseURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+    }
+    
+    // when
+    [self prepareLocalStoreAtRootURL:containerURL accountIdentifier:self.accountID backingUpDatabase:NO];
+    
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [oldBaseURL.path stringByAppendingString:extension];
+        NSString *toPath = [newBaseURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
+    
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:containerURL]);
+    
+    NSString *supportURL = [newBaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+}
+
+
+- (void)testThatItMovesRemainingDatabaseFilesFromTheSharedContainerToSubDirectoryWithUserId
+{
+    // given
+    NSURL *containerURL = self.sharedContainerDirectoryURL;
+    NSURL *newBaseURL = [[containerURL URLByAppendingPathComponent:self.accountID.UUIDString] URLByAppendingStorePath];
+    NSURL *oldBaseURL = [containerURL URLByAppendingStorePath];
+
+    XCTAssertTrue([self createDatabaseAtSharedContainerURL:self.sharedContainerDirectoryURL accountIdentifier:nil]);
+    XCTAssertTrue([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:containerURL]);
+    
+    // We simulate that we already moved the main database file previously
+    [self createDirectoryForStoreAtURL:newBaseURL];
+    NSError *error;
+    XCTAssertTrue([self.fm moveItemAtPath:oldBaseURL.path toPath:newBaseURL.path error:&error]);
+    XCTAssertNil(error);
+    
+    XCTAssertFalse([self.fm fileExistsAtPath:oldBaseURL.path]);
+    
+    NSArray *journalingExtensions = [self.databaseFileExtensions subarrayWithRange:NSMakeRange(1, self.databaseFileExtensions.count - 1)];
+    
+    for (NSString *extension in journalingExtensions) {
+        NSString *fromPath = [oldBaseURL.path stringByAppendingString:extension];
+        NSString *toPath = [newBaseURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:toPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:fromPath]);
+    }
+    
+    // when
+    [self prepareLocalStoreAtRootURL:containerURL accountIdentifier:self.accountID backingUpDatabase:NO];
+    
+    // then
+    for (NSString *extension in self.databaseFileExtensions) {
+        NSString *fromPath = [oldBaseURL.path stringByAppendingString:extension];
+        NSString *toPath = [newBaseURL.path stringByAppendingString:extension];
+        XCTAssertFalse([self.fm fileExistsAtPath:fromPath]);
+        XCTAssertTrue([self.fm fileExistsAtPath:toPath]);
+    }
+    
+    XCTAssertFalse([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:self.accountID inSharedContainerAt:containerURL]);
+    
+    NSString *supportURL = [newBaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertTrue([self.fm fileExistsAtPath:supportURL]);
+
+    NSString *oldSupportURL = [oldBaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:@".store_SUPPORT"].path;
+    XCTAssertFalse([self.fm fileExistsAtPath:oldSupportURL]);
+
 }
 
 @end

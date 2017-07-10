@@ -36,6 +36,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 @property (nonatomic) NSString *testName;
 @property (nonatomic) NSURL *databaseDirectory;
 @property (nonatomic) NSURL *storeURL;
+@property (nonatomic) NSURL *sharedContainerURL;
+@property (nonatomic) NSUUID *accountId;
 
 @property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 
@@ -73,12 +75,15 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (void)prepareForTestNamed:(NSString *)testName
 {
     self.testName = testName;
+    self.accountId = [NSUUID UUID];
     self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
     ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
     
-    self.storeURL = [PersistentStoreRelocator storeURLInDirectory:NSDocumentDirectory];
-    self.databaseDirectory = self.storeURL.URLByDeletingLastPathComponent;
-    
+    self.sharedContainerURL = [[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask].firstObject;
+    self.databaseDirectory = [self.sharedContainerURL URLByAppendingPathComponent:self.accountId.UUIDString
+                                                                      isDirectory:YES];
+    self.storeURL = [self.databaseDirectory URLByAppendingStorePath];
+
     [NSManagedObjectContext setUseInMemoryStore:self.shouldUseInMemoryStore];
     
     [self resetState];
@@ -87,7 +92,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self resetUIandSyncContextsAndResetPersistentStore:YES];
     [ZMPersistentCookieStorage deleteAllKeychainItems];
     
-    self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreAtURL:self.storeURL];
+    self.searchMOC = [NSManagedObjectContext createSearchContextForAccountWithIdentifier:self.accountId inSharedContainerAt:self.sharedContainerURL];
     [self.searchMOC addGroup:self.dispatchGroup];
 }
 
@@ -148,14 +153,14 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     }
     
     // NOTE this produces logs if self.useInMemoryStore = NO
-    self.uiMOC = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
+    self.uiMOC = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:self.accountId inSharedContainerAt:self.sharedContainerURL];
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
     [self performPretendingUiMocIsSyncMoc:^{
-        [self.uiMOC setupUserKeyStoreForDirectory:self.databaseDirectory];
+        [self.uiMOC setupUserKeyStoreInSharedContainer:self.sharedContainerURL withAccountIdentifier:self.accountId];
     }];
     
-    self.syncMOC = [NSManagedObjectContext createSyncContextWithStoreAtURL:self.storeURL keyStoreURL:self.databaseDirectory];
+    self.syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:self.accountId inSharedContainerAt:self.sharedContainerURL];
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.testName;
         [self.syncMOC addGroup:self.dispatchGroup];

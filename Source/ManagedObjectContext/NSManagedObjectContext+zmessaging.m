@@ -76,24 +76,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 static BOOL storeIsReady = NO;
 
-+ (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL
++ (BOOL)needsToPrepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL *)sharedContainerURL
 {
     BOOL needsMigration = NO;
     
+    NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountIdentifier in:sharedContainerURL];
     if ([[NSFileManager defaultManager] fileExistsAtPath:storeURL.path]) {
         NSManagedObjectModel *mom = self.loadManagedObjectModel;
         NSDictionary *sharedContainerMetadata = [self metadataForStoreAtURL:storeURL];
         needsMigration = sharedContainerMetadata != nil && ![mom isConfiguration:nil compatibleWithStoreMetadata:sharedContainerMetadata];
     }
 
-    PersistentStoreRelocator *storeRelocator = [[PersistentStoreRelocator alloc] initWithStoreLocation:storeURL];
-
-    return needsMigration || storeRelocator.storeNeedsToBeRelocated || [self databaseExistsButIsNotReadableDueToEncryptionAtURL:storeURL];
+    NSURL *oldStoreURL = [PersistentStoreRelocator oldLocationForStoreWithSharedContainerURL:sharedContainerURL newLocation:storeURL];
+    return needsMigration || oldStoreURL != nil || [self databaseExistsButIsNotReadableDueToEncryptionAtURL:storeURL];
 }
 
-+ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
-       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-             completionHandler:(void (^)())completionHandler
++ (void)prepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                              inSharedContainerAt:(NSURL *)sharedContainerURL
+                          backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                                completionHandler:(void (^)())completionHandler
 {
     dispatch_block_t finally = ^() {
         storeIsReady = YES;
@@ -118,6 +119,7 @@ static BOOL storeIsReady = NO;
         // (2) User turns the phone on, but do not enter the passcode yet
         // (3) App is awake on the background due to VoIP push notification
         // We should wait then until the database is becoming available
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountIdentifier in:sharedContainerURL];
         if ([self databaseExistsButIsNotReadableDueToEncryptionAtURL:storeURL]) {
             ZM_WEAK(self);
             NSAssert(applicationProtectedDataDidBecomeAvailableObserver == nil, @"prepareLocalStoreInternalBackingUpCorruptedDatabase: called twice");
@@ -127,26 +129,27 @@ static BOOL storeIsReady = NO;
                                                                    queue:nil
                                                               usingBlock:^(NSNotification * _Nonnull __unused note) {
                                                                   ZM_STRONG(self);
-                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorAtURL:storeURL backupCorrupedDatabase:backupCorruptedDatabase];
+                                                                  sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL backupCorrupedDatabase:backupCorruptedDatabase];
                                                                   finally();
                                                                   [[NSNotificationCenter defaultCenter] removeObserver:applicationProtectedDataDidBecomeAvailableObserver];
                                                                   applicationProtectedDataDidBecomeAvailableObserver = nil;
                                                               }];
         }
         else {
-            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorAtURL:storeURL backupCorrupedDatabase:backupCorruptedDatabase];
+            sharedPersistentStoreCoordinator = [self initPersistentStoreCoordinatorForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL backupCorrupedDatabase:backupCorruptedDatabase];
             finally();
         }
     }
 }
 
-+ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
-       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-                   synchronous:(BOOL)synchronous
-             completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                              inSharedContainerAt:(NSURL *)sharedContainerURL
+                          backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                                      synchronous:(BOOL)synchronous
+                                completionHandler:(void(^)())completionHandler;
 {
     (synchronous ? dispatch_sync : dispatch_async)(UIContextCreationQueue(), ^{
-        [self prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:backupCorruptedDatabase completionHandler:completionHandler];
+        [self prepareLocalStoreForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL backupCorruptedDatabase:backupCorruptedDatabase completionHandler:completionHandler];
     });
 }
 
@@ -155,12 +158,13 @@ static BOOL storeIsReady = NO;
     return storeIsReady;
 }
 
-+ (NSPersistentStoreCoordinator *)persistentStoreCoordinatorAtURL:(NSURL *)storeURL
++ (NSPersistentStoreCoordinator *)persistentStoreCoordinatorForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                                                                 inSharedContainerAt:(NSURL *)sharedContainerURL
 {
     NSPersistentStoreCoordinator *psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
     
     if (psc == nil) {
-        [self prepareLocalStoreAtURL:storeURL backupCorruptedDatabase:NO completionHandler:nil];
+        [self prepareLocalStoreForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL backupCorruptedDatabase:NO completionHandler:nil];
         psc = UsesInMemoryStore ? inMemorySharedPersistentStoreCoordinator : sharedPersistentStoreCoordinator;
         Require(psc != nil);
     }
@@ -168,9 +172,10 @@ static BOOL storeIsReady = NO;
     return psc;
 }
 
-+ (instancetype)createUserInterfaceContextWithStoreAtURL:(NSURL *)storeURL
++ (instancetype)createUserInterfaceContextForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                                               inSharedContainerAt:(NSURL *)sharedContainerURL
 {
-    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     SharedUserInterfaceContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
@@ -191,9 +196,9 @@ static BOOL storeIsReady = NO;
     });
 }
 
-+ (instancetype)createSyncContextWithStoreAtURL:(NSURL *)storeURL keyStoreURL:(NSURL *)keyStoreURL
++ (instancetype)createSyncContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL *)sharedContainerURL
 {
-    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
 
     NSManagedObjectContext *moc = [[self alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -201,7 +206,7 @@ static BOOL storeIsReady = NO;
         [moc markAsSyncContext];
         [moc configureWithPersistentStoreCoordinator:psc];
         [moc setupLocalCachedSessionAndSelfUser];
-        [moc setupUserKeyStoreForDirectory:keyStoreURL];
+        [moc setupUserKeyStoreInSharedContainer:sharedContainerURL withAccountIdentifier:accountIdentifier];
         moc.undoManager = nil;
         moc.mergePolicy = [[ZMSyncMergePolicy alloc] initWithMergeType:NSMergeByPropertyObjectTrumpMergePolicyType];
     }];
@@ -214,9 +219,9 @@ static BOOL storeIsReady = NO;
     return moc;
 }
 
-+ (instancetype)createSearchContextWithStoreAtURL:(NSURL *)storeURL
++ (instancetype)createSearchContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL *)sharedContainerURL
 {
-    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorAtURL:storeURL];
+    NSPersistentStoreCoordinator *psc = [self persistentStoreCoordinatorForAccountWithIdentifier:accountIdentifier inSharedContainerAt:sharedContainerURL];
     RequireString(psc != nil, "No persistent store coordinator, call -prepareLocalStore: first.");
     
     NSManagedObjectContext *moc = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
@@ -470,21 +475,20 @@ static dispatch_once_t clearStoreOnceToken;
     return sharedPersistentStoreCoordinator;
 }
 
-+ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorAtURL:(NSURL *)storeURL backupCorrupedDatabase:(BOOL)backupCorruptedDatabase
++ (NSPersistentStoreCoordinator *)initPersistentStoreCoordinatorForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL *)sharedContainerURL backupCorrupedDatabase:(BOOL)backupCorruptedDatabase
 {
+    NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountIdentifier in:sharedContainerURL];
     [self clearPersistentStoreAtURL:storeURL];
     [self createDirectoryForStoreAtURL:storeURL];
     
-    PersistentStoreRelocator *storeRelocator = [[PersistentStoreRelocator alloc] initWithStoreLocation:storeURL];
-    
+    PersistentStoreRelocator *storeRelocator = [[PersistentStoreRelocator alloc] initWithSharedContainerURL:sharedContainerURL newStoreURL:storeURL];
     NSError *error = nil;
     [storeRelocator moveStoreIfNecessaryAndReturnError:&error];
-    
     if (error != nil) {
         ZMLogError(@"Moving store failed: %@", error);
         return nil;
     }
-    
+
     NSManagedObjectModel *mom = [self loadManagedObjectModel];
     NSPersistentStoreCoordinator* psc = [[NSPersistentStoreCoordinator alloc] initWithManagedObjectModel:mom];
 

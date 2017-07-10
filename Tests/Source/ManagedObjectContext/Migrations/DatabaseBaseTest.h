@@ -30,14 +30,24 @@
 @property (nonatomic, readonly) NSURL *sharedContainerDirectoryURL;
 @property (nonatomic, readonly) NSURL *sharedContainerStoreURL;
 @property (nonatomic, readonly) NSArray <NSString *> *databaseFileExtensions;
-
+@property (nonatomic, readonly) NSUUID *accountID;
 
 - (void)cleanUp;
-- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory;
+- (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory accountIdentifier:(NSUUID *)accountIdentifier;
+- (BOOL)createDatabaseAtSharedContainerURL:(NSURL *)sharedContainerURL accountIdentifier:(NSUUID *)accountIdentifier;
+
 - (NSData *)invalidData;
 - (BOOL)createdUnreadableLocalStore;
 - (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase;
+- (void)prepareLocalStoreAtRootURL:(NSURL *)containerURL accountIdentifier:(NSUUID *)accountIdentifier backingUpDatabase:(BOOL)backupCorruptedDatabase;
 - (BOOL)createExternalSupportFileForDatabaseAtURL:(NSURL *)databaseURL;
 - (void)createDirectoryForStoreAtURL:(NSURL *)storeURL;
+
+@end
+
+
+@interface NSFileManager (StoreLocation)
+
++ (NSURL *)storeURLInDirectory:(NSSearchPathDirectory)directory;
 
 @end

@@ -25,6 +25,34 @@ class OtrBaseTest: XCTestCase {
         super.setUp()
         
         //clean stored cryptobox files
-        let _ = try? FileManager.default.removeItem(at: UserClientKeysStore.otrDirectory)
+        if let items =  (try? FileManager.default.contentsOfDirectory(at: OtrBaseTest.sharedContainerURL, includingPropertiesForKeys: nil, options: [])) {
+            items.forEach{ try? FileManager.default.removeItem(at: $0) }
+        }
+    }
+    
+    static var sharedContainerURL : URL {
+        return try! FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+    }
+    
+    static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
+        return FileManager.keyStoreURLForAccount(with: accountIdentifier, in: sharedContainerURL, createParentIfNeeded: true)
+    }
+    
+    static var legacyOtrDirectory : URL {
+        return FileManager.keyStoreURLForAccount(with: nil, in: sharedContainerURL, createParentIfNeeded: true)
+    }
+    
+    static func otrDirectory(accountIdentifier: UUID) -> URL {
+        var url : URL?
+        do {
+            url = self.otrDirectoryURL(accountIdentifier: accountIdentifier)
+            try FileManager.default.createDirectory(at: url!, withIntermediateDirectories: true, attributes: nil)
+        }
+        catch let err as NSError {
+            if (url == nil) {
+                fatal("Unable to initialize otrDirectory = error: \(err)")
+            }
+        }
+        return url!
     }
 }

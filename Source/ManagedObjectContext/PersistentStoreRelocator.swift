@@ -18,28 +18,69 @@
 
 import Foundation
 
+public extension FileManager {
+    
+    fileprivate static func previousStoreURLs(sharedContainerURL: URL) -> [URL]  {
+        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
+            FileManager.default.urls(for: $0, in: .userDomainMask).first!
+        }
+        locations.append(sharedContainerURL)
+        return locations.map{$0.appendingStorePath()}
+    }
+
+    /// Returns the URL for the current persistentStore
+    public static func currentStoreURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
+        var url = sharedContainerURL
+        if let accountIdentifier = accountIdentifier {
+            url.appendPathComponent(accountIdentifier.uuidString, isDirectory:true)
+        }
+        return url.appendingStorePath()
+    }
+}
+
+
+extension NSURL {
+    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/{accountIdentifier}/store.wiredatabase
+    @objc(URLByAppendingStorePath)
+    public func appendingStorePath() -> NSURL {
+        return (self as URL).appendingStorePath() as NSURL
+    }
+}
+
+
+extension URL {
+    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/{accountIdentifier}/store.wiredatabase
+    public func appendingStorePath() -> URL {
+        let bundleId = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier
+        require(nil != bundleId, "Bundle identifier not found")
+        
+        return appendingPathComponent(bundleId!, isDirectory: true).appendingPathComponent("store.wiredatabase", isDirectory: false)
+    }
+    
+    fileprivate func appendingSuffixToLastPathComponent(suffix: String) -> URL {
+        let modifiedComponent = lastPathComponent + suffix
+        return deletingLastPathComponent().appendingPathComponent(modifiedComponent)
+    }
+}
+
+
 @objc public class PersistentStoreRelocator : NSObject {
     
     private let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
     
-    private let storeLocation : URL
-    
-    private let previousStoreLocations : [URL] = {
-        return [.cachesDirectory, .applicationSupportDirectory].flatMap({ PersistentStoreRelocator.storeURL(in: $0) })
-    }()
-    
-    private let storeFileExtensions = ["", "-wal", "-shm"]
-    
-    public init(storeLocation: URL) {
-        self.storeLocation = storeLocation
+    let storeLocation : URL
+    let previousStoreLocation : URL?
+    static private let storeFileExtensions = ["", "-wal", "-shm"]
+
+    public init(sharedContainerURL: URL, newStoreURL: URL) {
+        self.storeLocation = newStoreURL
+        self.previousStoreLocation = type(of:self).oldLocationForStore(sharedContainerURL: sharedContainerURL,
+                                                                       newLocation: newStoreURL)
     }
     
-    var storeNeedsToBeRelocated : Bool {
-        return previousStoreLocation != nil
-    }
-    
-    var previousStoreLocation : URL? {
-        return  previousStoreLocations.filter({ $0 != storeLocation }).first(where: { storeExists(at: $0) })
+    static func oldLocationForStore(sharedContainerURL: URL, newLocation: URL) -> URL? {
+        let previousStoreLocations = FileManager.previousStoreURLs(sharedContainerURL: sharedContainerURL)
+        return previousStoreLocations.first(where: { $0 != newLocation && storeExists(at: $0)})
     }
     
     func moveStoreIfNecessary() throws {
@@ -49,14 +90,14 @@ import Foundation
     }
     
     func moveStore(from: URL, to: URL) throws {
-        guard storeExists(at: from) else {
+        guard type(of:self).storeExists(at: from) else {
             zmLog.debug("Attempt to move store from \(from.path), which doesn't exist")
             return
         }
         
         let fileManager = FileManager.default
         
-        try storeFileExtensions.forEach { storeFileExtension in
+        try type(of:self).storeFileExtensions.forEach { storeFileExtension in
             let destination = to.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             let source = from.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             
@@ -89,7 +130,7 @@ import Foundation
         try FileManager.default.moveItem(at: source, to: destination)
     }
     
-    private func storeExists(at url: URL) -> Bool {
+    static func storeExists(at url: URL) -> Bool {
         let fileManager = FileManager.default
         let storeFiles = storeFileExtensions.map(url.appendingSuffixToLastPathComponent(suffix:))
         let storeFilesExists = storeFiles.reduce(false, { (result, url) in
@@ -99,7 +140,7 @@ import Foundation
         return storeFilesExists || externalBinaryStoreFileExists(at: url)
     }
     
-    private func externalBinaryStoreFileExists(at url: URL) -> Bool {
+    static func externalBinaryStoreFileExists(at url: URL) -> Bool {
         let storeName = url.deletingPathExtension().lastPathComponent
         let storeDirectory = url.deletingLastPathComponent()
         let supportFile = ".\(storeName)_SUPPORT"
@@ -112,25 +153,5 @@ import Foundation
         return FileManager.default.fileExists(atPath: storeDirectory.appendingPathComponent(supportFile).path)
     }
     
-    @objc(storeURLInDirectory:)
-    public static func storeURL(in directory: FileManager.SearchPathDirectory) -> URL? {
-        
-        if let databaseLocation = FileManager.default.urls(for: directory, in: .userDomainMask).first,
-           let databaseDirectory = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier {
-            
-            return databaseLocation.appendingPathComponent(databaseDirectory, isDirectory: true).appendingPathComponent("store.wiredatabase", isDirectory: false)
-        }
-        
-        return nil
-    }
-    
 }
 
-private extension URL {
-    
-    func appendingSuffixToLastPathComponent(suffix: String) -> URL {
-        let modifiedComponent = lastPathComponent + suffix
-        return deletingLastPathComponent().appendingPathComponent(modifiedComponent)
-    }
-    
-}

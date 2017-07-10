@@ -29,7 +29,7 @@
 + (NSManagedObjectModel *)loadManagedObjectModel;
 
 /// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL;
++ (BOOL)needsToPrepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
 
 /// Creates persistent store coordinator and migrates store if needed
 /// @param synchronous defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
@@ -38,17 +38,18 @@
 /// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
 /// @param completionHandler callback to be executed on completion (nullable), will be invoked on an arbitrary queue, it's the
 ///     caller responsibility to ensure this is switched back to the correct queue
-+ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
-       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-                   synchronous:(BOOL)synchronous
-             completionHandler:(void(^)())completionHandler;
++ (void)prepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier
+                              inSharedContainerAt:(NSURL*)sharedContainerURL
+                          backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
+                                      synchronous:(BOOL)synchronous
+                                completionHandler:(void(^)())completionHandler;
 
 /// Returns whether the store is ready to be opened
 + (BOOL)storeIsReady;
 
 /// Create context used by the UI
 /// @param storeURL where database is located
-+ (instancetype)createUserInterfaceContextWithStoreAtURL:(NSURL *)storeURL;
++ (instancetype)createUserInterfaceContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
 
 /// Reset the user interface context. NOTE: only used in testing with a in-memory store.
 + (void)resetUserInterfaceContext;
@@ -57,11 +58,11 @@
 /// C.f. @c zm_isSyncContext
 /// @param storeURL where database is located
 /// @param keyStoreURL where cryptobox sessions are located
-+ (instancetype)createSyncContextWithStoreAtURL:(NSURL *)storeURL keyStoreURL:(NSURL *)keyStoreURL;
++ (instancetype)createSyncContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
 
 /// Create context used for searching
 /// @param storeURL where database is located
-+ (instancetype)createSearchContextWithStoreAtURL:(NSURL *)storeURL;
++ (instancetype)createSearchContextForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL*)sharedContainerURL;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
