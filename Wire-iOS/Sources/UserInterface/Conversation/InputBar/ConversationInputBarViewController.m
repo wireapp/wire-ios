@@ -549,7 +549,12 @@
 
 - (NSArray<UIKeyCommand *> *)keyCommands
 {
-    return @[[UIKeyCommand keyCommandWithInput:@"\r" modifierFlags:UIKeyModifierCommand action:@selector(commandReturnPressed)]];
+    return @[
+             [UIKeyCommand keyCommandWithInput:@"\r"
+                                 modifierFlags:UIKeyModifierCommand
+                                        action:@selector(commandReturnPressed)
+                          discoverabilityTitle:NSLocalizedString(@"conversation.input_bar.shortcut.send", nil)]
+             ];
 }
 
 - (BOOL)canBecomeFirstResponder
