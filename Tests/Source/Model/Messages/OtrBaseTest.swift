@@ -42,17 +42,4 @@ class OtrBaseTest: XCTestCase {
         return FileManager.keyStoreURLForAccount(with: nil, in: sharedContainerURL, createParentIfNeeded: true)
     }
     
-    static func otrDirectory(accountIdentifier: UUID) -> URL {
-        var url : URL?
-        do {
-            url = self.otrDirectoryURL(accountIdentifier: accountIdentifier)
-            try FileManager.default.createDirectory(at: url!, withIntermediateDirectories: true, attributes: nil)
-        }
-        catch let err as NSError {
-            if (url == nil) {
-                fatal("Unable to initialize otrDirectory = error: \(err)")
-            }
-        }
-        return url!
-    }
 }
