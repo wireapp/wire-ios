@@ -106,23 +106,8 @@ extension NSManagedObjectContext {
             }
         }
         
-        var _storeURL = directory.appendingPathComponent(identifier)
-        
-        if !fileManager.fileExists(atPath: _storeURL.path) {
-            do {
-                try fileManager.createDirectory(at: _storeURL, withIntermediateDirectories: true, attributes: nil)
-            } catch {
-                assertionFailure("Failed to get or create directory \(error)")
-            }
-        }
-        
-        do {
-            var values = URLResourceValues()
-            values.isExcludedFromBackup = true
-            try _storeURL.setResourceValues(values)
-        } catch {
-            assertionFailure("Error excluding \(_storeURL.path) from backup: \(error)")
-        }
+        let _storeURL = directory.appendingPathComponent(identifier)
+        FileManager.default.createAndProtectDirectory(at: _storeURL)
         
         let storeFileName = "ZMEventModel.sqlite"
         return _storeURL.appendingPathComponent(storeFileName)
