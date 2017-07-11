@@ -25,7 +25,7 @@ extension NSManagedObjectContext {
     fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
     
     @objc(setupUserKeyStoreInSharedContainer:withAccountIdentifier:)
-    public func setupUserKeyStore(in sharedContainerDirectory: URL, for accountIdentifier: UUID) -> Void
+    public func setupUserKeyStore(in sharedContainerDirectory: URL, for accountIdentifier: UUID?) -> Void
     {
         if !self.zm_isSyncContext {
             fatal("Can't initiliazie crypto box on non-sync context")
@@ -63,8 +63,9 @@ public extension FileManager {
         if let accountIdentifier = accountIdentifier {
             url.appendPathComponent(accountIdentifier.uuidString, isDirectory:true)
         }
-        if createParentIfNeeded && !FileManager.default.fileExists(atPath: url.path) {
-            try! FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        let fm = FileManager.default
+        if createParentIfNeeded {
+            fm.createAndProtectDirectory(at: url)
         }
         return url.appendingPathComponent(FileManager.keyStoreFolderPrefix)
     }
@@ -85,7 +86,7 @@ open class UserClientKeysStore: NSObject {
     public private(set) var cryptoboxDirectoryURL : URL
     public private(set) var sharedContainerURL: URL
     
-    public init(in sharedContainerURL: URL, accountIdentifier: UUID) {
+    public init(in sharedContainerURL: URL, accountIdentifier: UUID?) {
         cryptoboxDirectoryURL = FileManager.keyStoreURLForAccount(with: accountIdentifier, in: sharedContainerURL, createParentIfNeeded: true)
                                                   
         self.sharedContainerURL = sharedContainerURL
@@ -93,51 +94,37 @@ open class UserClientKeysStore: NSObject {
                                                              sharedContainer: sharedContainerURL)!
     }
     
-    static func setupContext(in directory:URL, sharedContainer: URL) -> EncryptionContext? {
+    static func setupContext(in directory: URL, sharedContainer: URL) -> EncryptionContext? {
         let encryptionContext : EncryptionContext
-        do {
-            /// migrate old directories
-            var didMigrate = false
-            if needToMigrateIdentity(sharedContainerURL: sharedContainer) {
-                
-                legacyDirectories(sharedContainerURL: sharedContainer).forEach{
-                    guard FileManager.default.fileExists(atPath: $0.path) else { return }
-                    if !didMigrate {
-                        do {
-                            try FileManager.default.moveItem(at: $0, to: directory)
-                            didMigrate = true
-                        }
-                        catch let err {
-                            fatal("Cannot move legacy directory: \(err)")
-                        }
-                    }
-                    else {
-                        do {
-                            try FileManager.default.removeItem(at: $0)
-                        }
-                        catch let err {
-                            fatal("Cannot removing older legacy directory: \(err)")
-                        }
-                    }
+        let fm = FileManager.default
+        
+        /// migrate old directories if needed
+        var didMigrate = false
+        legacyDirectories(sharedContainerURL: sharedContainer).forEach {
+            guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
+            if !didMigrate {
+                do {
+                    try fm.moveItem(at: $0, to: directory)
+                    didMigrate = true
+                }
+                catch let err {
+                    fatal("Cannot move legacy directory: \(err)")
                 }
             }
-            if !FileManager.default.fileExists(atPath: directory.path) {
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
+            else {
+                // We only migrate the newest directory we can find, older ones should be removed
+                do {
+                    try fm.removeItem(at: $0)
+                }
+                catch let err {
+                    fatal("Cannot removing older legacy directory: \(err)")
+                }
             }
-            
-            encryptionContext = EncryptionContext(path: directory)
-            try (directory as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
-
-            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
-            try FileManager.default.setAttributes(attributes, ofItemAtPath: directory.path)
-
-            return encryptionContext
-        }
-        catch let err {
-            fatal("failed to init cryptobox: \(err)")
         }
         
-        return nil
+        fm.createAndProtectDirectory(at: directory)
+        encryptionContext = EncryptionContext(path: directory)
+        return encryptionContext
     }
     
     open func deleteAndCreateNewBox() {
@@ -163,6 +150,7 @@ open class UserClientKeysStore: NSObject {
             return sharedContainerURL.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         }
         
+        // sorted by most recent first, oldest last
         return [legacyOtrDirectory3, legacyOtrDirectory2, legacyOtrDirectory1]
     }
     

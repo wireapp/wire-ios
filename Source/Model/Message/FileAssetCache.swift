@@ -60,19 +60,7 @@ private struct FileCache : Cache {
         }
         
         // create and set attributes
-        do {
-            try FileManager.default.createDirectory(at: cacheFolderURL, withIntermediateDirectories:true, attributes:[FileAttributeKey.protectionKey.rawValue:FileProtectionType.completeUntilFirstUserAuthentication])
-        }
-        catch {
-            fatal("Can't create cache directory: \(cacheFolderURL)")
-        }
-        
-        do {
-            try (cacheFolderURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
-        }
-        catch {
-            fatal("Can not exclude cache directory from backup: \(cacheFolderURL)")
-        }
+        FileManager.default.createAndProtectDirectory(at: cacheFolderURL)
     }
     
     func assetData(_ key: String) -> Data? {

@@ -132,19 +132,7 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
         self.directory = sharedContainerURL.appendingPathComponent(directoryName)
         self.url = directory.appendingPathComponent(fileName)
         super.init()
-        createDirectoryIfNeeded()
-    }
-
-    private func createDirectoryIfNeeded() {
-        do {
-            guard !fileManager.fileExists(atPath: directory.path) else { return }
-            try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-            try (directory as NSURL).setResourceValue(true, forKey: .isExcludedFromBackupKey)
-            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
-            try fileManager.setAttributes(attributes, ofItemAtPath: directory.path)
-        } catch {
-            zmLog.error("Failed to create shared object store directory at: \(directory), error: \(error)")
-        }
+        FileManager.default.createAndProtectDirectory(at:directory)
     }
 
     @discardableResult public func store(_ object: T) -> Bool {

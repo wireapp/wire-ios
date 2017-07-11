@@ -72,6 +72,47 @@ public extension FileManager {
         return url
     }
     
+    
+    /// Creates a new directory if needed, sets the file protection to `completeUntilFirstUserAuthentication` and excludes the URL from backups
+    public func createAndProtectDirectory(at directoryURL: URL) {
+        if !fileExists(atPath: directoryURL.path) {
+            do {
+                try createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+            }
+            catch let error {
+                fatal("Failed to create directory: \(directoryURL), error: \(error)")
+            }
+        }
+        
+        // Make sure it's not accessible until first unlock
+        do {
+            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
+            try setAttributes(attributes, ofItemAtPath: directoryURL.path)
+        }
+        catch let error {
+            fatal("Failed to set protection until first user authentication: \(directoryURL), error: \(error)")
+        }
+        
+        // Make sure this is not backed up:
+        directoryURL.excludeFromBackup()
+    }
+}
+
+
+
+fileprivate extension URL {
+    
+    func excludeFromBackup() {
+        var mutableCopy = self
+        do {
+            var resourceValues = URLResourceValues()
+            resourceValues.isExcludedFromBackup = true
+            try mutableCopy.setResourceValues(resourceValues)
+        }
+        catch let error {
+            fatal("Error excluding: \(mutableCopy), from backup: \(error)")
+        }
+    }
 }
 
 
