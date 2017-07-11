@@ -510,6 +510,52 @@
     XCTAssertFalse(conversation.allUsersTrusted);
 }
 
+- (void)testThatAConversationIsTrustedIfItHasTeamUsers
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // GIVEN
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        
+        Team *mainTeam = [Team fetchOrCreateTeamWithRemoteIdentifier:[[NSUUID alloc] init]
+                                                      createIfNeeded:YES
+                                                           inContext:self.syncMOC
+                                                             created:NULL];
+        
+        ZM_UNUSED Member *selfMembership = [Member getOrCreateMemberForUser:selfUser inTeam:mainTeam context:self.syncMOC];
+        // WHEN
+        ZMUser *user = [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.syncMOC];
+        ZM_UNUSED Member *userMembership = [Member getOrCreateMemberForUser:user inTeam:mainTeam context:self.syncMOC];
+        // THEN
+        XCTAssertTrue(conversation.allUsersTrusted);
+    }];
+}
+
+- (void)testThatAConversationIsNotTrustedIfItExternalUsers
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // GIVEN
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        conversation.conversationType = ZMConversationTypeGroup;
+        
+        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        
+        Team *mainTeam = [Team fetchOrCreateTeamWithRemoteIdentifier:[[NSUUID alloc] init]
+                                                      createIfNeeded:YES
+                                                           inContext:self.syncMOC
+                                                             created:NULL];
+        
+        ZM_UNUSED Member *selfMembership = [Member getOrCreateMemberForUser:selfUser inTeam:mainTeam context:self.syncMOC];
+        // WHEN
+        ZM_UNUSED ZMUser *user = [self insertUserInConversation:conversation userIsTrusted:YES managedObjectContext:self.syncMOC];
+
+        // THEN
+        XCTAssertFalse(conversation.allUsersTrusted);
+    }];
+}
+
 - (void)testThatAConversationIsNotTrustedIfNotAMemberAnymore
 {
     // GIVEN
