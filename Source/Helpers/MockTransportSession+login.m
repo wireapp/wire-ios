@@ -79,9 +79,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         
         
         self.selfUser = user;
-        // also open push channel
         self.clientCompletedLogin = YES;
-        [self simulatePushChannelOpened];
         
         NSDictionary *responsePayload = @{
                                           @"access_token" : HardcodedAccessToken,
