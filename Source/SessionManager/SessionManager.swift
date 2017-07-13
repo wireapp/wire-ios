@@ -125,7 +125,7 @@ public class SessionManager : NSObject {
             }
         } else {
             do {
-                let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
+                let unauthenticatedSession = try UnauthenticatedSession(backendURL: transportSession.baseURL, delegate: self)
                 self.unauthenticatedSession = unauthenticatedSession
                 delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
             } catch let error {
@@ -159,7 +159,7 @@ public class SessionManager : NSObject {
     @objc public var isUserSessionActive: Bool {
         return userSession != nil
     }
-    
+
     func updateProfileImage(imageData: Data) {
         userSession?.enqueueChanges {
             self.userSession?.profileUpdate.updateImage(imageData: imageData)
@@ -186,7 +186,7 @@ extension SessionManager: ZMAuthenticationObserver {
         guard self.unauthenticatedSession == nil else { return }
         
         do {
-            let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
+            let unauthenticatedSession = try UnauthenticatedSession(backendURL: transportSession.baseURL, delegate: self)
             self.unauthenticatedSession = unauthenticatedSession
             delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
         } catch let error {

@@ -29,9 +29,11 @@ public class UnauthenticatedSession : NSObject {
     let moc: NSManagedObjectContext
     let authenticationStatus: ZMAuthenticationStatus
     let operationLoop: UnauthenticatedOperationLoop
+    let transportSession: UnauthenticatedTransportSession
+
     weak var delegate: UnauthenticatedSessionDelegate?
     
-    convenience init(transportSession: ZMTransportSession, delegate: UnauthenticatedSessionDelegate? = nil) throws {
+    convenience init(backendURL: URL, delegate: UnauthenticatedSessionDelegate? = nil) throws {
         let model = NSManagedObjectModel()
         let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
         try coordinator.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
@@ -39,15 +41,15 @@ public class UnauthenticatedSession : NSObject {
         moc.createDispatchGroups()
         moc.persistentStoreCoordinator = coordinator
         let authenticationStatus = ZMAuthenticationStatus(cookieStorage: transportSession.cookieStorage, managedObjectContext: moc)
-        
         self.init(moc: moc, authenticationStatus: authenticationStatus!, transportSession: transportSession, delegate: delegate)
     }
     
-    init(moc: NSManagedObjectContext, authenticationStatus: ZMAuthenticationStatus, transportSession: ZMTransportSession, delegate: UnauthenticatedSessionDelegate?) {
+    init(moc: NSManagedObjectContext, authenticationStatus: ZMAuthenticationStatus, backendURL: URL, delegate: UnauthenticatedSessionDelegate?) {
         self.delegate = delegate
         self.moc = moc
         self.authenticationStatus = authenticationStatus
-        
+        self.transportSession = UnauthenticatedTransportSession(baseURL: backendURL)
+
         let loginRequestStrategy = ZMLoginTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)
         let loginCodeRequestStrategy = ZMLoginCodeRequestTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)!
         let registrationRequestStrategy = ZMRegistrationTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)!
