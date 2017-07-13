@@ -30,6 +30,8 @@
 @class UnauthenticatedSession;
 @class MockUser;
 @class MockConversation;
+@class MockConnection;
+@class SearchDirectory;
 
 @interface IntegrationTest : ZMTBaseTest
 
@@ -43,8 +45,19 @@
 @property (nonatomic, nullable) UnauthenticatedSession *unauthenticatedSession;
 @property (nonatomic, readonly) BOOL useInMemoryStore;
 @property (nonatomic, readonly) BOOL useRealKeychain;
+@property (nonatomic, nullable) SearchDirectory *sharedSearchDirectory;
 
 @property (nonatomic, nullable) MockUser *selfUser;
 @property (nonatomic, nullable) MockConversation *selfConversation;
+@property (nonatomic, nullable) MockUser *user1; // connected, with profile picture
+@property (nonatomic, nullable) MockUser *user2; // connected
+@property (nonatomic, nullable) MockUser *user3; // not connected, with profile picture, in a common group conversation
+@property (nonatomic, nullable) MockUser *user4; // not connected, with profile picture, no shared conversations
+@property (nonatomic, nullable) MockUser *user5; // not connected, no shared conversation
+@property (nonatomic, nullable) MockConversation *selfToUser1Conversation;
+@property (nonatomic, nullable) MockConversation *selfToUser2Conversation;
+@property (nonatomic, nullable) MockConversation *groupConversation;
+@property (nonatomic, nullable) MockConnection *connectionSelfToUser1;
+@property (nonatomic, nullable) MockConnection *connectionSelfToUser2;
 
 @end

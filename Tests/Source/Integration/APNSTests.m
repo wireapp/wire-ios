@@ -27,11 +27,19 @@
 #import "WireSyncEngine_iOS_Tests-Swift.h"
 
 
-@interface APNSTests : IntegrationTestBase
+@interface APNSTests : IntegrationTest
 
 @end
 
 @implementation APNSTests
+
+- (void)setUp
+{
+    [super setUp];
+    
+    [self createSelfUserAndConversation];
+    [self createExtraUsersAndConversations];
+}
 
 - (NSDictionary *)APNSPayloadForNotificationPayload:(NSDictionary *)notificationPayload identifier:(NSUUID *)identifier {
     
@@ -64,7 +72,7 @@
     // given
     BOOL const useAPNS = YES;
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     NSString *conversationName = @"MYCONVO";
     __block NSString *conversationID;
     WaitForAllGroupsToBeEmpty(0.2);
@@ -99,7 +107,7 @@
     if(useAPNS) {
         [self.userSession receivedPushNotificationWithPayload:[self APNSPayloadForNotificationPayload:payload] completionHandler:nil source:ZMPushNotficationTypeVoIP];
     }
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     ZMConversationList *convs = [ZMConversationList conversationsInUserSession:self.userSession];
@@ -120,7 +128,7 @@
     [self.userSession performChanges:^{
         [self.userSession setPushToken:token];
         [self.userSession setPushKitToken:token];
-        [self.uiMOC forceSaveOrRollback];
+        [self.userSession.managedObjectContext forceSaveOrRollback];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -149,7 +157,7 @@
 
 - (void)testThatItUpdatesNewTokensIfNeeded
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
 
     // given
@@ -158,37 +166,39 @@
     
     XCTAssertTrue([self registerForNotifications:token]);
     [self.mockTransportSession resetReceivedRequests];
-    
-    // when
-    [self recreateUserSessionAndWipeCache:NO];
     WaitForAllGroupsToBeEmpty(0.5);
     
+    
     // expect
-    id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
-    [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:newToken] pushToken];
+    ZM_WEAK(self);
     self.application.registerForRemoteNotificationsCallback = ^{
+        ZM_STRONG(self);
         [self.userSession performChanges:^{
             [self.userSession application:self.application didRegisterForRemoteNotificationsWithDeviceToken:newToken];
         }];
     };
     
     // when
-    [self.userSession start];
+    [self recreateSessionManager];
+    
+    id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
+    [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:newToken] pushToken];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
 
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         [session simulatePushChannelOpened];
     }];
-    WaitForEverythingToBeDone();
-
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     // then
     XCTAssertTrue([self lastRequestsContainedTokenRequests], @"Did receive: %@", self.mockTransportSession.receivedRequests);
-    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 1u);
+    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 2u);
 }
 
 - (void)testThatItReregistersPushTokensOnDemand
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertTrue([self login]);
 
     // given
     NSData *token = [NSData dataWithBytes:@"abc" length:3];
@@ -205,7 +215,9 @@
     // expect
     id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
     [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:newToken] pushToken];
+    ZM_WEAK(self);
     self.application.registerForRemoteNotificationsCallback = ^{
+        ZM_STRONG(self);
         [self.userSession performChanges:^{
             [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:newToken];
         }];
@@ -225,14 +237,13 @@
     }
     XCTAssertTrue(didContainSignalingKeyRequest);
     XCTAssertTrue([self lastRequestsContainedTokenRequests]);
-    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 1u);
+    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 2u);
     [mockPushRegistrant verify];
 }
 
 - (void)testThatItReregistersPushTokensOnDemandEvenIfItDidNotChange
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertTrue([self login]);
 
     // given
     NSData *token = [NSData dataWithBytes:@"abc" length:3];
@@ -244,7 +255,9 @@
     // expect
     id mockPushRegistrant = [OCMockObject partialMockForObject:self.userSession.pushRegistrant];
     [(ZMPushRegistrant *)[[mockPushRegistrant expect] andReturn:token] pushToken];
+    ZM_WEAK(self);
     self.application.registerForRemoteNotificationsCallback = ^{
+        ZM_STRONG(self);
         [self.userSession performChanges:^{
             [self.userSession application:self.userSession.application didRegisterForRemoteNotificationsWithDeviceToken:token];
         }];
@@ -266,14 +279,13 @@
     }
     XCTAssertTrue(didContainSignalingKeyRequest);
     XCTAssertTrue([self lastRequestsContainedTokenRequests]);
-    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 1u);
+    XCTAssertEqual(self.application.registerForRemoteNotificationCount, 2u);
     [mockPushRegistrant verify];
 }
 
 - (void)testThatItPingsBackToTheBackendWhenReceivingAVoIPNotificationToCancelTheAPNSNotification
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.2);
+    XCTAssertTrue([self login]);
     
     self.mockTransportSession.pushChannel.keepOpen = NO;  // do not use websocket
     
@@ -299,7 +311,7 @@
     // when
     [self.mockTransportSession resetReceivedRequests];
     NSDictionary *apnsPayload = [self APNSPayloadForNotificationPayload:payload identifier:identifier];
-    NSUUID *lastNotificationId = self.syncMOC.zm_lastNotificationID;
+    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
     [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
     WaitForAllGroupsToBeEmpty(0.2);
     
@@ -317,8 +329,7 @@
 
 - (void)testThatItPingsBackToTheBackendWhenReceivingAVoIPNotificationToCancelTheAPNSNotificationAndRetiresAfter_401
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.2);
+    XCTAssertTrue([self login]);
     
     self.mockTransportSession.pushChannel.keepOpen = NO; // do not use websocket
     
@@ -349,7 +360,7 @@
     __block NSUInteger callCount = 0;
 
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
-    NSUUID *lastNotificationId = self.syncMOC.zm_lastNotificationID;
+    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
     NSString *expectedPath = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@&cancel_fallback=%@", lastNotificationId.transportString, selfUser.selfClient.remoteIdentifier, identifier.transportString];
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
@@ -369,7 +380,7 @@
     NSDictionary *apnsPayload = [self APNSPayloadForNotificationPayload:payload identifier:identifier];
     [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
 
     // then
     NSArray <ZMTransportRequest *> *requests = self.mockTransportSession.receivedRequests;
@@ -384,8 +395,7 @@
 
 - (void)testThatItFetchesTheNotificationAndPingsBackToTheBackendWhenReceivingAVoIPNotificationOfTypeNotice
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.2);
+    XCTAssertTrue([self login]);
     
     self.mockTransportSession.pushChannel.keepOpen = NO; // do not use websocket
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
@@ -415,7 +425,7 @@
     
     // when
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
-    NSUUID *lastNotificationId = self.syncMOC.zm_lastNotificationID;
+    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
 
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@&cancel_fallback=%@", lastNotificationId.transportString ,selfUser.selfClient.remoteIdentifier, notificationID.transportString];
@@ -430,17 +440,16 @@
     NSDictionary *apnsPayload = noticePayload;
     [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.userSession.managedObjectContext];
     XCTAssertNotNil(conversation);
 }
 
 - (void)testThatItFetchesTheNotificationAndPingsBackToTheBackendWhenReceivingAVoIPNotificationOfTypeNotice_TriesAgainWhenReceiving_401
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.2);
+    XCTAssertTrue([self login]);
     
     self.mockTransportSession.pushChannel.keepOpen = NO;  // do not use websocket
     ZMUser *selfUser = [self userForMockUser:self.selfUser];
@@ -472,7 +481,7 @@
     XCTestExpectation *fetchingExpectation = [self expectationWithDescription:@"fetching notification"];
     
     __block NSUInteger requestCount = 0;
-    NSUUID *lastNotificationId = self.syncMOC.zm_lastNotificationID;
+    NSUUID *lastNotificationId = self.userSession.syncManagedObjectContext.zm_lastNotificationID;
     self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
         NSString *path = [NSString stringWithFormat:@"/notifications?size=500&since=%@&client=%@&cancel_fallback=%@", lastNotificationId.transportString, selfUser.selfClient.remoteIdentifier, notificationID.transportString];
         if ([request.path isEqualToString:path] && request.method == ZMMethodGET) {
@@ -490,11 +499,11 @@
     NSDictionary *apnsPayload = noticePayload;
     [self.userSession receivedPushNotificationWithPayload:apnsPayload completionHandler:nil source:ZMPushNotficationTypeVoIP];
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     XCTAssertEqual(requestCount, 2lu);
-    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:conversationID inManagedObjectContext:self.userSession.managedObjectContext];
     XCTAssertNotNil(conversation);
 }
 
@@ -502,9 +511,7 @@
 {
     if (BackgroundAPNSConfirmationStatus.sendDeliveryReceipts) {
         // given
-        XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-        WaitForAllGroupsToBeEmpty(0.2);
-        
+        XCTAssertTrue([self login]);
 
         ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:@"Hello" nonce:[NSUUID createUUID].transportString expiresAfter:nil];
         
@@ -530,7 +537,9 @@
         XCTestExpectation *confirmationExpectation = [self expectationWithDescription:@"Did send confirmation"];
         XCTestExpectation *missingClientsExpectation = [self expectationWithDescription:@"Did fetch missing client"];
         __block NSUInteger requestCount = 0;
+        ZM_WEAK(self);
         self.mockTransportSession.responseGeneratorBlock = ^ZMTransportResponse *(ZMTransportRequest *request) {
+            ZM_STRONG(self);
             NSString *confirmationPath = [NSString stringWithFormat:@"/conversations/%@/otr/messages?report_missing=", self.selfToUser1Conversation.identifier];
             if ([request.path hasPrefix:confirmationPath] && request.method == ZMMethodPOST) {
                 XCTAssertTrue(request.shouldUseVoipSession);
