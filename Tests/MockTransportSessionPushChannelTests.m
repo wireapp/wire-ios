@@ -45,7 +45,6 @@
 {
     // GIVEN
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
-    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     __block NSDictionary *payload;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         MockUser *selfUser = [session insertSelfUserWithName:@"Me Myself"];
@@ -54,9 +53,11 @@
         
         payload = @{@"email" : selfUser.email, @"password" : selfUser.password};
     }];
+    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
     
     // WHEN
-    [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
+    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // THEN
     XCTAssertEqual(self.pushChannelDidOpenCount, 1u);
@@ -507,7 +508,6 @@
 {
     // GIVEN
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
-    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     
     __block MockUser *selfUser;
     NSString *email = @"doo@example.com";
@@ -527,6 +527,8 @@
                                                                @"email": email,
                                                                @"password": password
                                                                } path:path method:ZMMethodPOST];
+    [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
+    
     WaitForAllGroupsToBeEmpty(0.5);
     
     // THEN

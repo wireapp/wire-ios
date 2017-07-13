@@ -156,6 +156,10 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 - (void)setKeepOpen:(BOOL)keepOpen
 {
     self.shouldKeepPushChannelOpen = keepOpen;
+    
+    if (self.shouldKeepPushChannelOpen && !self.shouldSendPushChannelEvents) {
+        [self simulatePushChannelOpened];
+    }
 }
 
 - (BOOL)keepOpen
