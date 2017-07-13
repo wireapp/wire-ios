@@ -588,6 +588,24 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.emailAddress, originalValue);
 }
 
+- (void)testThatItSetsEmailToNilIfItIsNull
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = uuid;
+    user.emailAddress =  @"gino@pino.it";
+    
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    [payload setObject:[NSNull null] forKey:@"email"];
+    
+    // when
+    [user updateWithTransportData:payload authoritative:NO];
+    
+    // then
+    XCTAssertNil(user.emailAddress);
+}
+
 - (void)testThatItSetsEmailToNilIfItIsMissing
 {
     // given
@@ -604,6 +622,24 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
     // then
     XCTAssertNil(user.emailAddress);
+}
+
+- (void)testThatItSetsPhoneToNilIfItIsNull
+{
+    // given
+    NSUUID *uuid = [NSUUID createUUID];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = uuid;
+    user.phoneNumber =  @"555-fake-number";
+    
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    [payload setObject:[NSNull null] forKey:@"phone"];
+    
+    // when
+    [user updateWithTransportData:payload authoritative:NO];
+    
+    // then
+    XCTAssertNil(user.phoneNumber);
 }
 
 - (void)testThatItSetsPhoneToNilIfItIsMissing
