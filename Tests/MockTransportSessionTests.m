@@ -175,6 +175,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     WaitForAllGroupsToBeEmpty(0.5);
     
     [self responseForPayload:payload path:@"/login" method:ZMMethodPOST]; // this will simulate the user logging in
+    WaitForAllGroupsToBeEmpty(0.5);
+    
     [self.sut.mockedTransportSession configurePushChannelWithConsumer:self groupQueue:self.fakeSyncContext];
     [self.sut.mockedTransportSession.pushChannel setKeepOpen:YES];
     WaitForAllGroupsToBeEmpty(0.5);
