@@ -16,17 +16,27 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 import WireTransport
 import WireMessageStrategy
 
+
 class UnauthenticatedOperationLoop: NSObject {
     
-    let transportSession: ZMTransportSession
+    unowned let transportSession: UnauthenticatedTransportSession
     let requestStrategies: [RequestStrategy]
     let operationQueue : ZMSGroupQueue
+    private var tornDown = false
+    fileprivate var shouldEnqueue = true
+
+    func tearDown() {
+        shouldEnqueue = false
+        requestStrategies.forEach { ($0 as? TearDownCapable)?.tearDown() }
+        tornDown = true
+    }
     
-    init(transportSession: ZMTransportSession, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
+    init(transportSession: UnauthenticatedTransportSession, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue
@@ -35,22 +45,32 @@ class UnauthenticatedOperationLoop: NSObject {
     }
     
     deinit {
-        requestStrategies.forEach({ ($0 as? TearDownCapable)?.tearDown() })
+        precondition(tornDown, "Need to call tearDown before deinit")
     }
 }
 
+
 extension UnauthenticatedOperationLoop: RequestAvailableObserver {
+
     func newRequestsAvailable() {
-        self.transportSession.attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
+        var enqueueMore = true
+        while enqueueMore && shouldEnqueue {
+            let result = transportSession.enqueueRequest(withGenerator: generator)
+            enqueueMore = result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
+        }
+    }
+
+    private var generator: ZMTransportRequestGenerator {
+        return { [weak self] in
+            guard let `self` = self else { return nil }
             let request = (self.requestStrategies as NSArray).nextRequest()
-            
-            request?.add(ZMCompletionHandler(on: self.operationQueue, block: {_ in
+            request?.addCompletionHandler(ZMCompletionHandler(on: self.operationQueue) { _ in
                 self.operationQueue.performGroupedBlock { [weak self] in
                     self?.newRequestsAvailable()
                 }
-            }))
-            
+            })
             return request
         }
     }
+
 }

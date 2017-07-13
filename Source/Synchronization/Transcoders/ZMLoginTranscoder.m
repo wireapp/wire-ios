@@ -115,6 +115,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
     {
         request = [self.timedDownstreamSync nextRequest];
     }
+
     return request;
 }
 
