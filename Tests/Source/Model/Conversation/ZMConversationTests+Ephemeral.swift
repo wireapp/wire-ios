@@ -84,6 +84,33 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         // then
         XCTAssertEqual(conversation.messageDestructionTimeout, 5)
     }
+ 
+    func testThatSendingEphemeralToEmptyConversationIsNotPossible() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+
+        // when
+        conversation.internalAddParticipants(Set(arrayLiteral: selfUser), isAuthoritative: true)
+                
+        // then
+        XCTAssertEqual(conversation.canSendEphemeral, false)
+    }
     
+    func testThatSendingEphemeralToNormalConversationIsPossible() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        
+        // when
+        let user = ZMUser.insert(in: uiMOC, name: "Test")
+        user.remoteIdentifier = UUID()
+        
+        conversation.internalAddParticipants(Set(arrayLiteral: selfUser), isAuthoritative: true)
+        conversation.addParticipant(user)
+        
+        // then
+        XCTAssertEqual(conversation.canSendEphemeral, true)
+    }
 }
 
