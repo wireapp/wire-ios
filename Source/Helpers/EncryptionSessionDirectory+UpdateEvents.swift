@@ -117,7 +117,7 @@ extension EncryptionSessionsDirectory {
     
     /// Decrypted data from event
     private func decryptedData(_ event: ZMUpdateEvent, client: UserClient) throws -> (createdNewSession: Bool, decryptedData: Data)? {
-        guard let encryptedData = event.encryptedMessageData,
+        guard let encryptedData = try event.encryptedMessageData(),
             let sessionIdentifier = client.sessionIdentifier else { return nil }
         
         /// Check if it's the "bomb" message (gave encrypting on the sender)
@@ -125,7 +125,7 @@ extension EncryptionSessionsDirectory {
             zmLog.error("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionIdentifier). Current device might have invalid prekeys on the BE.")
             return nil
         }
-        
+
         /// Decrypt and create session if needed
         if self.hasSession(for: sessionIdentifier) {
             return (createdNewSession: false, decryptedData: try self.decrypt(encryptedData, from: sessionIdentifier))
@@ -167,23 +167,26 @@ extension ZMUpdateEvent {
     }
     
     /// Message data payload
-    fileprivate var encryptedMessageData : Data? {
-        let dictionaryKey : String
-        switch self.type {
-        case .conversationOtrMessageAdd:
-            dictionaryKey = "text"
-        case .conversationOtrAssetAdd:
-            dictionaryKey = "key"
-        default:
-            return nil
-        }
-        guard let eventData = self.eventData,
-            let dataString = eventData[dictionaryKey] as? String,
-            let data = Data(base64Encoded: dataString)
-            else {
-                return nil
-        }
+    fileprivate func encryptedMessageData() throws -> Data? {
+        guard let key = payloadKey else { return nil }
+        guard let string = eventData?[key] as? String, let data = Data(base64Encoded: string) else { return nil }
+
+        // We need to check the size of the encrypted data payload for regular OTR and external messages
+        let maxReceivingSize = Int(12_000 * 1.5)
+        guard string.characters.count <= maxReceivingSize, externalStringCount <= maxReceivingSize else { throw CBOX_DECODE_ERROR }
         return data
+    }
+
+    fileprivate var payloadKey: String? {
+        switch type {
+        case .conversationOtrMessageAdd: return "text"
+        case .conversationOtrAssetAdd: return "key"
+        default: return nil
+        }
+    }
+
+    fileprivate var externalStringCount: Int {
+        return (eventData?["data"] as? String)?.characters.count ?? 0
     }
     
     /// Returns a decrypted version of self, injecting the decrypted data

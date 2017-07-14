@@ -105,5 +105,85 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
         }
     }
+
+    func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
+            let text = "https://wir\("".padding(toLength: crlf.characters.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
+            XCTAssertGreaterThan(text.characters.count, 18_000)
+            let message = ZMGenericMessage.message(text: text, nonce: UUID.create().transportString())
+
+            let wrapper = NSDictionary(dictionary: [
+                "id": UUID.create().transportString(),
+                "payload": [
+                    [
+                    "type": "conversation.otr-message-add",
+                    "from": self.otherUser.remoteIdentifier!.transportString(),
+                    "conversation": self.groupConversation.remoteIdentifier!.transportString(),
+                    "time": Date().transportString(),
+                    "data": [
+                        "recipient": self.selfClient.remoteIdentifier!,
+                        "sender": self.otherClient.remoteIdentifier!,
+                        "text": self.encryptedMessageToSelf(message: message, from: self.otherClient).base64String()
+                        ]
+                    ]
+                ]
+            ])
+
+            let event = ZMUpdateEvent.eventsArray(from: wrapper, source: .download)!.first!
+
+            // When
+            self.performIgnoringZMLogError {
+                self.selfClient.keysStore.encryptionContext.perform { session in
+                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                }
+            }
+
+            // Then
+            guard let lastMessage = self.groupConversation.messages.lastObject as? ZMSystemMessage else { return XCTFail() }
+            XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
+        }
+    }
+
+    func testThatItInsertsAnUnableToDecryptMessageIfTheEncryptedPayloadIsLongerThan_18_000_External_Message() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
+            let text = "https://wir\("".padding(toLength: crlf.characters.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
+            XCTAssertGreaterThan(text.characters.count, 18_000)
+
+            let wrapper = NSDictionary(dictionary: [
+                "id": UUID.create().transportString(),
+                "payload": [
+                    [
+                        "type": "conversation.otr-message-add",
+                        "from": self.otherUser.remoteIdentifier!.transportString(),
+                        "conversation": self.groupConversation.remoteIdentifier!.transportString(),
+                        "time": Date().transportString(),
+                        "data": [
+                            "data": text,
+                            "recipient": self.selfClient.remoteIdentifier!,
+                            "sender": self.otherClient.remoteIdentifier!,
+                            "text": "something with less than 18000 characters count".data(using: .utf8)!.base64String()
+                        ]
+                    ]
+                ]
+            ])
+
+            let event = ZMUpdateEvent.eventsArray(from: wrapper, source: .download)!.first!
+
+            // When
+            self.performIgnoringZMLogError {
+                self.selfClient.keysStore.encryptionContext.perform { session in
+                    _ = session.decryptAndAddClient(event, in: self.syncMOC)
+                }
+            }
+
+            // Then
+            guard let lastMessage = self.groupConversation.messages.lastObject as? ZMSystemMessage else { return XCTFail() }
+            XCTAssertEqual(lastMessage.systemMessageType, .decryptionFailed)
+        }
+    }
 }
 
