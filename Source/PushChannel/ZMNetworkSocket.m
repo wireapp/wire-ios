@@ -231,6 +231,12 @@ NS_ENUM(int, Trace) {
         return;
     }
     
+    // Socket is closed.
+    if (self.dataBufferIsolation == nil) {
+        ZMLogError(@"%@: dataBufferIsolation is nil", self);
+        return;
+    }
+    
     // This must only be called on the streamPairThread,
     // e.g. from within the -stream:handleEvent: callback
     dispatch_sync(self.dataBufferIsolation, ^{
