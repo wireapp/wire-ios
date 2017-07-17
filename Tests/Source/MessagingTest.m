@@ -377,6 +377,8 @@
         id mockUserSession = [OCMockObject niceMockForClass:[ZMUserSession class]];
         [[[mockUserSession stub] andReturn:self.uiMOC] managedObjectContext];
         [[[mockUserSession stub] andReturn:self.syncMOC] syncManagedObjectContext];
+        [[[mockUserSession stub] andReturn:self.accountIdentifier] accountIdentifier];
+        [[[mockUserSession stub] andReturn:self.sharedContainerURL] sharedContainerURL];
         [(ZMUserSession *)[[mockUserSession stub] andReturn:self.mockTransportSession] transportSession];
         _mockUserSession = mockUserSession;
     }

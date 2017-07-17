@@ -165,7 +165,7 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
 
 - (void) createSharedSearchDirectory {
     if (self.sharedSearchDirectory == nil) {
-        self.sharedSearchDirectory = [[SearchDirectory alloc] initWithUserSession:self.userSession sharedContainerURL:self.sharedContainerURL accountIdentifier:self.accountIdentifier];
+        self.sharedSearchDirectory = [[SearchDirectory alloc] initWithUserSession:self.userSession];
     }
 }
 
@@ -346,7 +346,8 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
                         operationLoop:nil
                         application:self.application
                         appVersion:@"00000"
-                        appGroupIdentifier:self.groupIdentifier];
+                        appGroupIdentifier:self.groupIdentifier
+                        accountIdentifier:self.accountIdentifier];
     WaitForEverythingToBeDone();
     
     [self.uiMOC zm_tearDownCallState];

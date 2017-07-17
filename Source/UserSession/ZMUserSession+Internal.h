@@ -92,7 +92,8 @@ extern NSString * const ZMAppendAVSLogNotificationName;
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                      appGroupIdentifier:(NSString *)appGroupIdentifier;
+                      appGroupIdentifier:(NSString *)appGroupIdentifier
+                       accountIdentifier:(NSUUID *)accountIdentifier;
 
 - (void)tearDown;
 

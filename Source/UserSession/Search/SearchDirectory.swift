@@ -31,9 +31,10 @@ public class SearchDirectory : NSObject {
         assert(isTornDown, "`tearDown` must be called before SearchDirectory is deinitialized")
     }
     
-    public init(userSession: ZMUserSession, sharedContainerURL: URL, accountIdentifier: UUID) {
+    public init(userSession: ZMUserSession) {
         self.userSession = userSession
-        self.searchContext =  NSManagedObjectContext.createSearchForAccount(withIdentifier: accountIdentifier, inSharedContainerAt: sharedContainerURL)
+        self.searchContext = NSManagedObjectContext.createSearchForAccount(withIdentifier: userSession.accountIdentifier,
+                                                                           inSharedContainerAt: userSession.sharedContainerURL)
     }
     
     /// Tear down the SearchDirectory. 

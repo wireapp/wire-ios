@@ -80,6 +80,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) LocalNotificationDispatcher *localNotificationDispatcher;
 @property (nonatomic) NSString *applicationGroupIdentifier;
 @property (nonatomic, readwrite) NSURL *sharedContainerURL;
+@property (nonatomic) NSUUID *accountIdentifier;
 @property (nonatomic) TopConversationsDirectory *topConversationsDirectory;
 
 
@@ -154,7 +155,8 @@ ZM_EMPTY_ASSERTING_INIT()
 - (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
                            analytics:(id<AnalyticsType>)analytics
                           appVersion:(NSString *)appVersion
-                  appGroupIdentifier:(NSString *)appGroupIdentifier;
+                  appGroupIdentifier:(NSString *)appGroupIdentifier
+                   accountIdentifier:(NSUUID *)accountIdentifier;
 {
     zmSetupEnvironments();
     ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] initWithUserDefaults:NSUserDefaults.standardUserDefaults];
@@ -164,14 +166,11 @@ ZM_EMPTY_ASSERTING_INIT()
 
     ZMAPNSEnvironment *apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
     
-    // TODO Sabine: use userId from AccountManager
     self.sharedContainerURL = [NSFileManager sharedContainerDirectoryForAppGroupIdentifier:appGroupIdentifier];
-    
     RequireString(nil != self.sharedContainerURL, "Unable to get a shared container URL using group identifier: %s", appGroupIdentifier.UTF8String);
     
-    // TODO add accountID
-    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:nil inSharedContainerAt:self.sharedContainerURL];
-    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:nil inSharedContainerAt:self.sharedContainerURL];
+    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:accountIdentifier inSharedContainerAt:self.sharedContainerURL];
+    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:accountIdentifier inSharedContainerAt:self.sharedContainerURL];
     [syncMOC performBlockAndWait:^{
         syncMOC.analytics = analytics;
     }];
@@ -206,7 +205,8 @@ ZM_EMPTY_ASSERTING_INIT()
                             operationLoop:nil
                               application:application
                                appVersion:appVersion
-                       appGroupIdentifier:appGroupIdentifier];
+                       appGroupIdentifier:appGroupIdentifier
+                        accountIdentifier:accountIdentifier];
     if (self != nil) {
         self.ownsQueue = YES;
     }
@@ -221,7 +221,8 @@ ZM_EMPTY_ASSERTING_INIT()
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                      appGroupIdentifier:(NSString *)appGroupIdentifier;
+                      appGroupIdentifier:(NSString *)appGroupIdentifier
+                       accountIdentifier:(NSUUID *)accountIdentifier;
 
 {
     self = [super init];
@@ -236,6 +237,7 @@ ZM_EMPTY_ASSERTING_INIT()
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
 
         // TODO Sabine: use userId from AccountManager
+        self.accountIdentifier = accountIdentifier;
         self.sharedContainerURL = [NSFileManager sharedContainerDirectoryForAppGroupIdentifier:appGroupIdentifier];
         self.apnsEnvironment = apnsEnvironment;
         self.networkIsOnline = YES;
@@ -248,8 +250,8 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
         
-        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAppGroupIdentifier:appGroupIdentifier accountIdentifier:nil];
-        [self.class moveCachesIfNeededWithAppGroupIdentifier:appGroupIdentifier accountIdentifier:nil];
+        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAccountWith:self.accountIdentifier in:self.sharedContainerURL];
+        [self.class moveCachesIfNeededForAccountWith:self.accountIdentifier in:self.sharedContainerURL];
         
         UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:cacheLocation];
         self.managedObjectContext.zm_userImageCache = userImageCache;

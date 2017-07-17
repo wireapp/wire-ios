@@ -104,7 +104,8 @@
                                                  operationLoop:self.operationLoop
                                                    application:self.application
                                                     appVersion:@"00000"
-                                            appGroupIdentifier:self.groupIdentifier];
+                                            appGroupIdentifier:self.groupIdentifier
+                                             accountIdentifier:self.accountIdentifier];
     self.sut.thirdPartyServicesDelegate = self.thirdPartyServices;
     
     WaitForAllGroupsToBeEmpty(0.5);
@@ -145,6 +146,12 @@
     [self.uiMOC.userInfo removeAllObjects];
     
     [super cleanUpAndVerify];
+    NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.sut.accountIdentifier in:self.sut.sharedContainerURL];
+    NSArray *items = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:cachesURL includingPropertiesForKeys:nil options:0 error:nil];
+    for (NSURL *item in items) {
+        [[NSFileManager defaultManager] removeItemAtURL:item error:nil];
+    }
+    
     self.authFailHandler = nil;
     self.tokenSuccessHandler = nil;
     self.baseURL = nil;

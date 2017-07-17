@@ -91,7 +91,8 @@
     ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:nil
                                                                analytics:nil
                                                               appVersion:version
-                                                      appGroupIdentifier:self.groupIdentifier];
+                                                      appGroupIdentifier:self.groupIdentifier
+                                                       accountIdentifier:self.accountIdentifier];
     XCTAssertNotNil(session);
     
     // then
@@ -237,7 +238,8 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-                                                              appGroupIdentifier:self.groupIdentifier];
+                                                              appGroupIdentifier:self.groupIdentifier
+                                                               accountIdentifier:self.accountIdentifier];
     [userSession didRegisterUserClient:userClient];
     
     // then
@@ -546,7 +548,8 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-                                                              appGroupIdentifier:self.groupIdentifier];
+                                                              appGroupIdentifier:self.groupIdentifier
+                                                               accountIdentifier:self.accountIdentifier];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
