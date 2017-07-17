@@ -22,6 +22,9 @@ import WireTransport
 import WireMessageStrategy
 
 
+private let log = ZMSLog(tag: "UnauthenticatedOperationLoop")
+
+
 class UnauthenticatedOperationLoop: NSObject {
     
     unowned let transportSession: UnauthenticatedTransportSession
@@ -56,7 +59,12 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
         var enqueueMore = true
         while enqueueMore && shouldEnqueue {
             let result = transportSession.enqueueRequest(withGenerator: generator)
-            enqueueMore = result.didGenerateNonNullRequest && result.didHaveLessRequestThanMax
+            enqueueMore = result == .success
+            switch result {
+            case .maximumNumberOfRequests: log.debug("Maximum number of concurrent requests reached")
+            case .nilRequest: log.error("Nil request generated")
+            default: break
+            }
         }
     }
 
@@ -64,7 +72,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
         return { [weak self] in
             guard let `self` = self else { return nil }
             let request = (self.requestStrategies as NSArray).nextRequest()
-            request?.addCompletionHandler(ZMCompletionHandler(on: self.operationQueue) { _ in
+            request?.add(ZMCompletionHandler(on: self.operationQueue) { _ in
                 self.operationQueue.performGroupedBlock { [weak self] in
                     self?.newRequestsAvailable()
                 }
