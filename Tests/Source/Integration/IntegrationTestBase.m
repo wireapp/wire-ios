@@ -570,7 +570,6 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
         MockConversation *mockConversation = [session insertConversationWithSelfUser:self.selfUser creator:mockUser otherUsers:nil type:ZMTConversationTypeInvalid];
         connection1.conversation = mockConversation;
         [self storeRemoteIDForObject:mockConversation];
-
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -632,20 +631,6 @@ NSString * const SelfUserPassword = @"fgf0934';$@#%";
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithLastRead:newClearedTimeStamp
                                                         ofConversationWithID:mockConversation.identifier
                                                                        nonce:[NSUUID createUUID].transportString];
-    
-    // when
-    [self.mockTransportSession performRemoteChanges:^(id session) {
-        NOT_USED(session);
-        [self.selfConversation insertClientMessageFromUser:self.selfUser data:genericMessage.data];
-    }];
-}
-
-- (void)remotelyAppendSelfConversationWithZMMessageHideForMessageID:(NSString *)messageID
-                                                     conversationID:(NSString *)conversationID;
-{
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithHideMessage:messageID
-                                                                 inConversation:conversationID
-                                                                          nonce:[NSUUID createUUID].transportString];
     
     // when
     [self.mockTransportSession performRemoteChanges:^(id session) {
