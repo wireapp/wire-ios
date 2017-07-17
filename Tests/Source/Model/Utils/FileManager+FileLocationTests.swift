@@ -20,7 +20,7 @@
 import Foundation
 
 
-class URL_StoreLocationTests : XCTestCase {
+class FileManager_StoreLocationTests : XCTestCase {
     
     func testThatTheStoreLocationIsTheExpected() {
         // given
@@ -53,19 +53,162 @@ class URL_StoreLocationTests : XCTestCase {
             XCTFail("WARNING!! Changing the method `appendingStorePath` might break migration. See PersistentStoreRelocator")
         }
     }
+    
+    func testThatItAppendsTheAccountIDIfSpecifiedForTheCurrentStoreLocation() {
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let accountId = UUID()
+        
+        // when
+        let storeURL = FileManager.currentStoreURLForAccount(with: accountId, in: url)
+        
+        // then
+        var components = storeURL.pathComponents
+
+        guard !components.isEmpty else { return XCTFail() }
+        let dataBaseComp = components.removeLast()
+        XCTAssertEqual(dataBaseComp, "store.wiredatabase")
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let bundleComp = components.removeLast()
+        XCTAssertEqual(bundleComp, Bundle.main.bundleIdentifier)
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let accountIdComp = components.removeLast()
+        XCTAssertEqual(accountIdComp, accountId.uuidString)
+
+        XCTAssertEqual(components, url.pathComponents)
+    }
+    
+    func testThatItIgnoresIfNotSpecifiedForTheCurrentStoreLocation() {
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        
+        // when
+        let storeURL = FileManager.currentStoreURLForAccount(with: nil, in: url)
+        
+        // then
+        var components = storeURL.pathComponents
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let dataBaseComp = components.removeLast()
+        XCTAssertEqual(dataBaseComp, "store.wiredatabase")
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let bundleComp = components.removeLast()
+        XCTAssertEqual(bundleComp, Bundle.main.bundleIdentifier)
+        
+        XCTAssertEqual(components, url.pathComponents)
+    }
+}
+
+class FileManager_CryptoboxTests : XCTestCase {
+    
+    func testThatItReturnsTheCryptoboxPath_withAccountId(){
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let accountId = UUID()
+        
+        // when
+        let storeURL = FileManager.keyStoreURLForAccount(with: accountId, in: url, createParentIfNeeded: false)
+        
+        // then
+        var components = storeURL.pathComponents
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let otrComp = components.removeLast()
+        XCTAssertEqual(otrComp, FileManager.keyStoreFolderPrefix)
+
+        guard !components.isEmpty else { return XCTFail() }
+        let accountIdComp = components.removeLast()
+        XCTAssertEqual(accountIdComp, accountId.uuidString)
+        
+        XCTAssertEqual(components, url.pathComponents)
+    }
+    
+    func testThatItReturnsTheCryptoboxPath_withoutAccountId(){
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        
+        // when
+        let storeURL = FileManager.keyStoreURLForAccount(with: nil, in: url, createParentIfNeeded: false)
+        
+        // then
+        var components = storeURL.pathComponents
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let otrComp = components.removeLast()
+        XCTAssertEqual(otrComp, FileManager.keyStoreFolderPrefix)
+        
+        XCTAssertEqual(components, url.pathComponents)
+    }
+    
+    func testThatItCreatesTheParentDirectoryIfNeededAndExcludesItFromBackup(){
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        
+        // when
+        let storeURL = FileManager.keyStoreURLForAccount(with: nil, in: url, createParentIfNeeded: true)
+        
+        // then
+        let parentURL = storeURL.deletingLastPathComponent()
+        var isDirectory : ObjCBool = false
+        XCTAssertTrue(FileManager.default.fileExists(atPath: parentURL.path, isDirectory:&isDirectory))
+        XCTAssertTrue(isDirectory.boolValue)
+        XCTAssertTrue(parentURL.isExcludedFromBackup)
+        
+        try! FileManager.default.removeItem(at:parentURL)
+    }
 }
 
 
-class FileManager_FileLocationTests : XCTestCase {
+class FileManager_CacheTests : XCTestCase {
 
-    func testThatItReturnsTheLocationForTheCaches_WithoutAccountIdentifier(){
+    func testThatItReturnsTheCachesDirectory_WithAccountId(){
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        let accountId = UUID()
+        
         // when
-//        let url = FileManager.cachesURL(forAppGroupIdentifier: <#T##String#>, accountIdentifier: <#T##UUID?#>)
+        let cachesURL = FileManager.default.cachesURLForAccount(with: accountId, in: url)
+        
         // then
+        var components = cachesURL.pathComponents
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let accountIdComp = components.removeLast()
+        XCTAssertEqual(accountIdComp, accountId.uuidString)
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let cachesComp = components.removeLast()
+        XCTAssertEqual(cachesComp, "Caches")
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let libraryComp = components.removeLast()
+        XCTAssertEqual(libraryComp, "Library")
+        
+        XCTAssertEqual(components, url.pathComponents)
     }
     
     
-    func testThatItReturnsTheLocationForTheCaches_WithAccountIdentifier(){
+    func testThatItReturnsTheCachesDirectory_WithoutAccountId(){
+        // given
+        let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         
+        // when
+        let cachesURL = FileManager.default.cachesURLForAccount(with: nil, in: url)
+        
+        // then
+        var components = cachesURL.pathComponents
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let cachesComp = components.removeLast()
+        XCTAssertEqual(cachesComp, "Caches")
+        
+        guard !components.isEmpty else { return XCTFail() }
+        let libraryComp = components.removeLast()
+        XCTAssertEqual(libraryComp, "Library")
+        
+        XCTAssertEqual(components, url.pathComponents)
     }
 }
