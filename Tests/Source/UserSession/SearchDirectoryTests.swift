@@ -31,7 +31,7 @@ class SearchDirectoryTests : MessagingTest {
             remoteChanges.insertUser(withName: "User A")
         }
         
-        let sut = SearchDirectory(userSession: mockUserSession, sharedContainerURL: sharedContainerURL, accountIdentifier: accountIdentifier)
+        let sut = SearchDirectory(userSession: mockUserSession)
         
         // when
         let task = sut.perform(request)
@@ -68,7 +68,7 @@ class SearchDirectoryTests : MessagingTest {
         ZMSearchUser.searchUserToMediumImageCache().setObject(Data(count: 1) as NSData, forKey: uuid1 as NSUUID)
         ZMSearchUser.searchUserToSmallProfileImageCache().setObject(Data(count: 1) as NSData, forKey: uuid1 as NSUUID)
         
-        let sut = SearchDirectory(userSession: mockUserSession, sharedContainerURL: sharedContainerURL, accountIdentifier: accountIdentifier)
+        let sut = SearchDirectory(userSession: mockUserSession)
         
         // when
         let task = sut.perform(request)
@@ -106,7 +106,7 @@ class SearchDirectoryTests : MessagingTest {
         user1.remoteIdentifier = uuid1
         uiMOC.saveOrRollback()
         
-        let sut = SearchDirectory(userSession: mockUserSession, sharedContainerURL: sharedContainerURL, accountIdentifier: accountIdentifier)
+        let sut = SearchDirectory(userSession: mockUserSession)
         
         // when
         let task = sut.perform(request)
@@ -129,7 +129,7 @@ class SearchDirectoryTests : MessagingTest {
         // given
         let uuid = UUID.create()
         let imageCache = ZMSearchUser.searchUserToMediumImageCache()!
-        let sut = SearchDirectory(userSession: mockUserSession, sharedContainerURL: sharedContainerURL, accountIdentifier: accountIdentifier)
+        let sut = SearchDirectory(userSession: mockUserSession)
         
         imageCache.setObject(Data(count: 1) as NSData, forKey: uuid as NSUUID)
         
@@ -143,7 +143,7 @@ class SearchDirectoryTests : MessagingTest {
     
     func testThatItRemovesItselfFromTheTableOnTearDown() {
         // given
-        let sut = SearchDirectory(userSession: mockUserSession, sharedContainerURL: sharedContainerURL, accountIdentifier: accountIdentifier)
+        let sut = SearchDirectory(userSession: mockUserSession)
         let request = SearchRequest(query: "User", searchOptions: [.directory])
         
         mockTransportSession.performRemoteChanges { (remoteChanges) in

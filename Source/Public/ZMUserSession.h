@@ -87,7 +87,8 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 - (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
                            analytics:(id<AnalyticsType>)analytics
                           appVersion:(NSString *)appVersion
-                  appGroupIdentifier:(NSString *)appGroupIdentifier;
+                  appGroupIdentifier:(NSString *)appGroupIdentifier
+                   accountIdentifier:(NSUUID *)accountIdentifier;
 
 @property (nonatomic, weak) id<ZMRequestsToOpenViewsDelegate> requestToOpenViewDelegate;
 @property (nonatomic, weak) id<ZMThirdPartyServicesDelegate> thirdPartyServicesDelegate;
@@ -130,7 +131,8 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 /// The URL of the shared container that has been determinned using the passed in application group identifier
 @property (nonatomic, readonly) NSURL *sharedContainerURL;
 
-@property (nonatomic, readonly) NSURL *storeURL;
+/// The identifier of the current account
+@property (nonatomic, readonly) NSUUID *accountIdentifier;
 
 @end
 
