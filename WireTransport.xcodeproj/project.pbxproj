@@ -263,7 +263,6 @@
 		547712101B751F7900223568 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		547712111B751F7900223568 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		547712121B751F7900223568 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		547712131B751F7900223568 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		547712141B751F7900223568 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		547712151B751F7900223568 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		547712161B751F7900223568 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
@@ -642,7 +641,6 @@
 				547712101B751F7900223568 /* project-common.xcconfig */,
 				547712111B751F7900223568 /* project-debug.xcconfig */,
 				547712121B751F7900223568 /* project.xcconfig */,
-				547712131B751F7900223568 /* README.md */,
 				547712141B751F7900223568 /* simulator.xcconfig */,
 				547712151B751F7900223568 /* swift.xcconfig */,
 				547712161B751F7900223568 /* tests.xcconfig */,
