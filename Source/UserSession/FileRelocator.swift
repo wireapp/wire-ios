@@ -30,9 +30,10 @@ extension ZMUserSession {
         guard let accountIdentifier = accountIdentifier else { return }
         
         let fm = FileManager.default
-        guard let newCacheLocation = fm.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-              let oldCacheLocation = fm.cachesURLForAccount(with: nil, in: sharedContainerURL),
-              let files = (try? fm.contentsOfDirectory(atPath: oldCacheLocation.path))
+        let newCacheLocation = fm.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL)
+        let oldCacheLocation = fm.cachesURLForAccount(with: nil, in: sharedContainerURL)
+        
+        guard let files = (try? fm.contentsOfDirectory(atPath: oldCacheLocation.path))
         else { return }
         
         fm.createAndProtectDirectory(at: newCacheLocation)
