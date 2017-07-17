@@ -40,7 +40,7 @@ public extension FileManager {
 
 
 extension NSURL {
-    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/{accountIdentifier}/store.wiredatabase
+    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/store.wiredatabase
     @objc(URLByAppendingStorePath)
     public func appendingStorePath() -> NSURL {
         return (self as URL).appendingStorePath() as NSURL
@@ -49,7 +49,7 @@ extension NSURL {
 
 
 extension URL {
-    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/{accountIdentifier}/store.wiredatabase
+    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/store.wiredatabase
     public func appendingStorePath() -> URL {
         let bundleId = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier
         require(nil != bundleId, "Bundle identifier not found")

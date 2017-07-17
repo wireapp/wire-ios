@@ -63,11 +63,11 @@ public extension FileManager {
     }
     
     /// Returns the URL for caches appending the accountIdentifier if specified
-    public func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL? {
+    public func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
                                     .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier = accountIdentifier {
-            return url.appendingPathComponent("\(type(of:self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
+            return url.appendingPathComponent(accountIdentifier.uuidString, isDirectory: true)
         }
         return url
     }
@@ -100,9 +100,9 @@ public extension FileManager {
 
 
 
-fileprivate extension URL {
+public extension URL {
     
-    func excludeFromBackup() {
+    public func excludeFromBackup() {
         var mutableCopy = self
         do {
             var resourceValues = URLResourceValues()
@@ -112,6 +112,11 @@ fileprivate extension URL {
         catch let error {
             fatal("Error excluding: \(mutableCopy), from backup: \(error)")
         }
+    }
+    
+    public var isExcludedFromBackup : Bool {
+        guard let values = try? resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else { return false }
+        return values.isExcludedFromBackup ?? false
     }
 }
 
