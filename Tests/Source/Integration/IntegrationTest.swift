@@ -51,7 +51,7 @@ extension IntegrationTest {
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self;
         ZMCallFlowRequestStrategyInternalFlowManagerOverride = MockFlowManager()
-        mockTransportSession.cookieStorage.deleteUserKeychainItems()
+        mockTransportSession.cookieStorage.deleteKeychainItems()
                 
         createSessionManager()
     }
@@ -100,7 +100,7 @@ extension IntegrationTest {
     
     @objc
     func deleteAuthenticationCookie() {
-        mockTransportSession.cookieStorage.deleteUserKeychainItems()
+        mockTransportSession.cookieStorage.deleteKeychainItems()
     }
     
     @objc
