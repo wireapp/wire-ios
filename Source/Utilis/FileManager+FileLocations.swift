@@ -67,7 +67,7 @@ public extension FileManager {
         let url = sharedContainerURL.appendingPathComponent("Library", isDirectory: true)
                                     .appendingPathComponent("Caches", isDirectory: true)
         if let accountIdentifier = accountIdentifier {
-            return url.appendingPathComponent(accountIdentifier.uuidString, isDirectory: true)
+            return url.appendingPathComponent("\(type(of:self).cachesFolderPrefix)-\(accountIdentifier.uuidString)", isDirectory: true)
         }
         return url
     }
