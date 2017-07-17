@@ -22,9 +22,11 @@ class ZMUserSessionRelocationTests : ZMUserSessionTestsBase {
 
     func testThatItMovesCaches(){
         // given
-        let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)!
-        let items = try! FileManager.default.contentsOfDirectory(at: oldLocation, includingPropertiesForKeys:nil)
-        items.forEach{ try! FileManager.default.removeItem(at: $0) }
+        let oldLocation = FileManager.default.cachesURLForAccount(with: nil, in: self.sut.sharedContainerURL)
+        if FileManager.default.fileExists(atPath: oldLocation.path) {
+            let items = try! FileManager.default.contentsOfDirectory(at: oldLocation, includingPropertiesForKeys:nil)
+            items.forEach{ try! FileManager.default.removeItem(at: $0) }
+        }
         
         let _ = UserImageLocalCache(location: oldLocation)
         let itemNames = try! FileManager.default.contentsOfDirectory(atPath: oldLocation.path)
@@ -34,7 +36,7 @@ class ZMUserSessionRelocationTests : ZMUserSessionTestsBase {
         ZMUserSession.moveCachesIfNeededForAccount(with: self.sut.accountIdentifier, in: self.sut.sharedContainerURL)
         
         // then
-        let newLocation = FileManager.default.cachesURLForAccount(with: self.accountIdentifier, in: self.sharedContainerURL)!
+        let newLocation = FileManager.default.cachesURLForAccount(with: self.accountIdentifier, in: self.sharedContainerURL)
         let movedItemNames = try! FileManager.default.contentsOfDirectory(atPath: newLocation.path)
         XCTAssertTrue(movedItemNames.count > 0)
         itemNames.forEach{
