@@ -19,25 +19,16 @@
 import UIKit
 import WireUtilities
 
-
-private var _instance : BackgroundActivityFactory? = BackgroundActivityFactory() // swift automatically dispatch_once make this thread safe
-
 @objc open class BackgroundActivityFactory: NSObject {
+    
+    private static let _instance : BackgroundActivityFactory = BackgroundActivityFactory()
     
     open var application : UIApplication? = nil
     open var mainGroupQueue : ZMSGroupQueue? = nil
     
     @objc open class func sharedInstance() -> BackgroundActivityFactory
     {
-        if _instance == nil {
-            _instance = BackgroundActivityFactory()
-        }
-        return _instance!
-    }
-    
-    @objc open class func tearDownInstance()
-    {
-        _instance = nil
+        return _instance
     }
     
     @objc open func backgroundActivity(withName name: String) -> ZMBackgroundActivity?

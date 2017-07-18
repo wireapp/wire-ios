@@ -45,7 +45,8 @@ static SecKeyRef publicKeyFromCertificateData(NSData *certificateData)
     }
     
     SecKeyRef key = SecCertificateCopyPublicKey(certificate);
-    
+    CFRelease(certificate);
+
     if (key == nil) {
         [NSException raise:NSInvalidArgumentException format:@"Error extracing pinned key from certificate"];
     }

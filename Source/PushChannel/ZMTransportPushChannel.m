@@ -96,6 +96,10 @@ ZM_EMPTY_ASSERTING_INIT();
     return self;
 }
 
+- (void)dealloc {
+    [self.scheduler tearDown];
+}
+
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     ZMLogInfo(@"Setting push channel consumer");
