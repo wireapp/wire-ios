@@ -59,6 +59,7 @@ class ZMConversationMessageDestructionTimeoutTests : XCTestCase {
 }
 
 
+
 class ZMConversationTests_Ephemeral : BaseZMMessageTests {
 
     func testThatItAllowsSettingTimeoutsOnGroupConversations(){
