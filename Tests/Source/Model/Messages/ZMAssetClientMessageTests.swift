@@ -2302,3 +2302,27 @@ extension ZMAssetClientMessageTests {
     }
 
 }
+
+// MARK: - isGIF
+extension ZMAssetClientMessageTests {
+    func testThatItDetectsGIF_MIME() {
+        // GIVEN
+        let gifMIME = "image/gif"
+        // WHEN
+        let isGif = gifMIME.isGIF
+        // THEN
+        XCTAssertTrue(isGif)
+    }
+    
+    func testThatItRejectsNonGIF_MIME() {
+        // GIVEN
+        
+        ["text/plain", "application/pdf", "image/jpeg", "video/mp4"].forEach {
+        
+            // WHEN
+            let isGif = $0.isGIF
+            // THEN
+            XCTAssertFalse(isGif)
+        }
+    }
+}
