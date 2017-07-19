@@ -81,6 +81,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     self.pushChannelURL = [NSURL URLWithString:@"http://pushchannel.example.com/foo"];
 
     self.scheduler = [OCMockObject mockForClass:ZMTransportRequestScheduler.class];
+    [[self.scheduler expect] tearDown];
     [[[self.scheduler stub] andCall:@selector(schedulerPerformGroupedBlock:) onObject:self] performGroupedBlock:OCMOCK_ANY];
     [self verifyMockLater:self.scheduler];
     self.sut = (id) [[ZMTransportPushChannel alloc] initWithScheduler:self.scheduler userAgentString:self.userAgentString URL:self.pushChannelURL pushChannelClass:FakePushChannelConnection.class];
@@ -92,6 +93,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     currentFakePushChannelConnection.consumer = nil;
     currentFakePushChannelConnection = nil;
     self.sut = nil;
+    self.scheduler = nil;
     [super tearDown];
 }
 
@@ -424,7 +426,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // when
     [self.sut pushChannelDidOpen:(id)currentFakePushChannelConnection withResponse:response];
-    [self.scheduler verify];
 }
 
 - (void)testItForwardsDidCloseResponseToTheScheduler
@@ -438,7 +439,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // when
     [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
-    [self.scheduler verify];
 }
 
 - (void)testItDoesNotForwardANilDidOpenResponseToTheScheduler
@@ -452,7 +452,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // when
     id response = nil;
     [self.sut pushChannelDidOpen:(id)currentFakePushChannelConnection withResponse:response];
-    [self.scheduler verify];
 }
 
 - (void)testItDoesNotForwardANilDidCloseResponseToTheScheduler
@@ -466,7 +465,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // when
     id response = nil;
     [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
-    [self.scheduler verify];
 }
 
 - (void)testThatItNotifiesTheNotworkStateDelegateWhenItReceivesData;
