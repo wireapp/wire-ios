@@ -112,13 +112,13 @@ BOOL verifyServerTrust(SecTrustRef const serverTrust, NSString *host)
 static SecKeyRef publicKeyAssociatedWithServerTrust(SecTrustRef const serverTrust)
 {
     SecKeyRef key = nil;
-    SecPolicyRef policy = SecPolicyCreateBasicX509();
+    __block SecPolicyRef policy = SecPolicyCreateBasicX509();
     
-    SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0); // leaf certificate
+    __block SecCertificateRef certificate = SecTrustGetCertificateAtIndex(serverTrust, 0); // leaf certificate
     
     SecCertificateRef certificatesCArray[] = { certificate};
     CFArrayRef certificates = CFArrayCreate(NULL, (const void **)certificatesCArray, 1, NULL);
-    SecTrustRef trust = NULL;
+    __block SecTrustRef trust = NULL;
     
     void(^finally)() = ^{
         if (certificates) {
