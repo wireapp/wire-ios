@@ -28,4 +28,11 @@
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithQueue:(dispatch_queue_t)queue NS_DESIGNATED_INITIALIZER;
 
+/// Performs a block and wait for completion.
+/// @note: The block is not retained after its execution. This means that if the queue
+/// is not running (e.g. blocked by a deadlock), the block and all its captured variables
+/// will be retained, otherwise it will eventually be released.
+/// @attention: Be *very careful* not to create deadlocks.
+- (void)performGroupedBlockAndWait:(dispatch_block_t)block;
+
 @end
