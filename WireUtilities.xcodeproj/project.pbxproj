@@ -98,6 +98,8 @@
 		BF98AD681E92852E00026541 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF98AD671E92852E00026541 /* WireTesting.framework */; };
 		BF98AD691E92858100026541 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF98AD671E92852E00026541 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF98AD6A1E92858100026541 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF98AD641E927F4500026541 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BF9D0B061F1CF39A005D4C31 /* Optional+ApplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */; };
+		BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
@@ -280,6 +282,8 @@
 		BF98AD641E927F4500026541 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		BF98AD671E92852E00026541 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		BF98AD6B1E92864E00026541 /* WireUtilities-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "WireUtilities-Info.plist"; path = "Resources/WireUtilities-Info.plist"; sourceTree = SOURCE_ROOT; };
+		BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+ApplyTests.swift"; sourceTree = "<group>"; };
+		BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Apply.swift"; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
@@ -550,6 +554,7 @@
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
+				BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */,
 				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
@@ -609,6 +614,7 @@
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
+				BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
 				16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
@@ -839,6 +845,7 @@
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
+				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
@@ -893,6 +900,7 @@
 				F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */,
 				54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */,
 				54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */,
+				BF9D0B061F1CF39A005D4C31 /* Optional+ApplyTests.swift in Sources */,
 				877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
