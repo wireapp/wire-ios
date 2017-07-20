@@ -85,7 +85,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     
     [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
     [self resetUIandSyncContextsAndResetPersistentStore:YES];
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
     
     self.searchMOC = [NSManagedObjectContext createSearchContextWithStoreAtURL:self.storeURL];
     [self.searchMOC addGroup:self.dispatchGroup];

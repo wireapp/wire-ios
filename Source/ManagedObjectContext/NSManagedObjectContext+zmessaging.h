@@ -28,6 +28,9 @@
 
 + (NSManagedObjectModel *)loadManagedObjectModel;
 
+/// Returns true if a store exists at the given URL
++ (BOOL)storeExistsAtURL:(NSURL *)storeURL;
+
 /// Checks if migration is needed or the database has to be moved
 + (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL;
 
