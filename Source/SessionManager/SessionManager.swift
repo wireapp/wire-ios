@@ -41,7 +41,7 @@ public class SessionManager : NSObject {
     var authenticationToken: ZMAuthenticationObserverToken?
     var userSession: ZMUserSession?
     var unauthenticatedSession: UnauthenticatedSession?
-    let storeProvider: LocalStoreProviderProtocol
+    public let storeProvider: LocalStoreProviderProtocol
     
     public convenience init(appVersion: String,
                 mediaManager: AVSMediaManager,
