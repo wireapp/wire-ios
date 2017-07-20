@@ -26,6 +26,8 @@
     
     if (self != nil) {
         _queue = queue;
+        
+        [self createDispatchGroups];
     }
     
     return self;
