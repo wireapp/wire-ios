@@ -40,6 +40,15 @@
     });
 }
 
+- (void)performGroupedBlockAndWait:(dispatch_block_t)block;
+{
+    NSArray *groups = [self enterAllGroups];
+    dispatch_sync(self.queue, ^{
+        block();
+        [self leaveAllGroups:groups];
+    });
+}
+
 - (ZMSDispatchGroup *)dispatchGroup
 {
     return [self firstGroup];
