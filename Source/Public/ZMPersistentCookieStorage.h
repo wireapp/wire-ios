@@ -28,10 +28,12 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMPersistentCookieStorage : NSObject
 
 + (instancetype)storageForServerName:(NSString *)serverName;
-+ (void)deleteAllKeychainItems;
 + (void)setDoNotPersistToKeychain:(BOOL)disabled;
 
+- (void)deleteUserKeychainItems;
+
 @property (nonatomic, nullable) NSData *authenticationCookieData;
+@property (nonatomic) NSString *cookieLabel;
 
 @end
 

@@ -20,6 +20,7 @@
 @import Security;
 @import WireSystem;
 @import WireUtilities;
+@import UIKit;
 
 #import "ZMTLogging.h"
 #import "ZMPersistentCookieStorage.h"
@@ -88,6 +89,18 @@ static dispatch_queue_t isolationQueue()
 
 #pragma mark - Public API
 
+- (NSString *)cookieLabel
+{
+    if (_cookieLabel == nil) {
+        NSUUID *deviceIdentifier = [[UIDevice currentDevice] identifierForVendor];
+        if (deviceIdentifier == nil) {
+            deviceIdentifier = [NSUUID UUID];
+        }
+        _cookieLabel = deviceIdentifier.UUIDString;
+    }
+    return _cookieLabel;
+}
+
 + (void)setDoNotPersistToKeychain:(BOOL)disabled;
 {
     KeychainDisabled = disabled;
@@ -111,7 +124,7 @@ static dispatch_queue_t isolationQueue()
     }
 }
 
-+ (void)deleteAllKeychainItems
+- (void)deleteUserKeychainItems
 {
     dispatch_sync(isolationQueue(), ^{
         NonPersistedPassword = nil;
