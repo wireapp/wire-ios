@@ -111,7 +111,7 @@
 		54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15441B32F2C1008D3787 /* ZMTransportSession.m */; };
 		54CA15CD1B32F2C1008D3787 /* ZMTransportSessionErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15451B32F2C1008D3787 /* ZMTransportSessionErrorCode.h */; };
 		54CA15CF1B32F2C1008D3787 /* ZMReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15471B32F2C1008D3787 /* ZMReachability.m */; };
-		54CA15D11B32F2C1008D3787 /* ZMServerTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15481B32F2C1008D3787 /* ZMServerTrust.h */; };
+		54CA15D11B32F2C1008D3787 /* ZMServerTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15481B32F2C1008D3787 /* ZMServerTrust.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54CA15D31B32F2C1008D3787 /* ZMServerTrust.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15491B32F2C1008D3787 /* ZMServerTrust.m */; };
 		54CA15D51B32F2C1008D3787 /* ZMURLSession+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA154A1B32F2C1008D3787 /* ZMURLSession+Internal.h */; };
 		54CA15D71B32F2C1008D3787 /* ZMURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA154B1B32F2C1008D3787 /* ZMURLSession.m */; };
@@ -121,6 +121,7 @@
 		54EA3E6D1BEA65B80071592B /* Fakes.m in Sources */ = {isa = PBXBuildFile; fileRef = 54EA3E6C1BEA65B80071592B /* Fakes.m */; };
 		871667FE1BB2CD1E009C6EEA /* ZMKeychain.m in Sources */ = {isa = PBXBuildFile; fileRef = 871667FC1BB2CD1E009C6EEA /* ZMKeychain.m */; };
 		871668001BB2CD2A009C6EEA /* ZMKeychain.h in Headers */ = {isa = PBXBuildFile; fileRef = 871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		AF9D8F9E1F20D9B700ABF225 /* TestTrustVerificator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */; };
 		BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */; };
 		BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */; };
 		BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
@@ -345,6 +346,7 @@
 		54EA3E6C1BEA65B80071592B /* Fakes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Fakes.m; sourceTree = "<group>"; };
 		871667FC1BB2CD1E009C6EEA /* ZMKeychain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMKeychain.m; sourceTree = "<group>"; };
 		871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMKeychain.h; sourceTree = "<group>"; };
+		AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTrustVerificator.swift; sourceTree = "<group>"; };
 		BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftStructs+TransportEncoding.swift"; sourceTree = "<group>"; };
 		BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
 		BF453F191CC6377200403E1C /* ZMRequestCancellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMRequestCancellation.h; sourceTree = "<group>"; };
@@ -624,6 +626,7 @@
 				546E89DC1B33015000DD1042 /* ZMURLSessionTests.m */,
 				BFEC39661CC6423700591F36 /* ZMTaskIdentifierTests.m */,
 				16B6859B1EC1BBF00055BEA3 /* ZMServerTrustTests.m */,
+				AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */,
 				5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */,
 			);
 			path = URLSession;
@@ -1105,6 +1108,7 @@
 				546E89DF1B33015000DD1042 /* ZMAccessTokenTests.m in Sources */,
 				F9C4317E1CD7ADF300A8542F /* ZMKeychainTests.m in Sources */,
 				546E89FF1B33015000DD1042 /* ZMTransportCodecTests.m in Sources */,
+				AF9D8F9E1F20D9B700ABF225 /* TestTrustVerificator.swift in Sources */,
 				BFEC39671CC6423700591F36 /* ZMTaskIdentifierTests.m in Sources */,
 				546E89F11B33015000DD1042 /* ZMWebSocketHandshakeTests.m in Sources */,
 				0928E2051BA023A30057232E /* NSData_MultipartTests.m in Sources */,

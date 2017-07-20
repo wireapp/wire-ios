@@ -18,12 +18,13 @@
 
 #import <XCTest/XCTest.h>
 #import "ZMServerTrust.h"
+#import "WireTransport_ios_tests-Swift.h"
 
 @import WireTesting;
 @import WireUtilities;
 
-@interface ZMServerTrustTests : ZMTBaseTest
 
+@interface ZMServerTrustTests : ZMTBaseTest
 @end
 
 @implementation ZMServerTrustTests
@@ -339,12 +340,19 @@
 - (void)testExternalHostWithValidCertificateIsTrusted
 {
     // given
-    SecTrustRef serverTrust = [self validTrustForExternalHost];
-    
+    XCTestExpectation *trustExpectation = [self expectationWithDescription:@"It should verify the server trust"];
+
+    TestTrustVerificator *trustVerificator = [[TestTrustVerificator alloc] initWithCallback:^(BOOL trusted){
+        if (trusted) {
+            [trustExpectation fulfill];
+        }
+    }]; 
+
+    // when
+    [trustVerificator verifyURL:[NSURL URLWithString:@"https://www.youtube.com"]];
+
     // then
-    XCTAssertTrue(verifyServerTrust(serverTrust, @"https://www.youtube.com"));
-    
-    CFRelease(serverTrust);
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 - (void)testExternalHostWithInvalidCertificateIsNotTrusted

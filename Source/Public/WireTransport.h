@@ -55,3 +55,7 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/ZMTaskIdentifier.h>
 #import <WireTransport/ZMRequestCancellation.h>
 #import <WireTransport/ZMPushChannel.h>
+
+
+// Private
+#import "ZMServerTrust.h"
