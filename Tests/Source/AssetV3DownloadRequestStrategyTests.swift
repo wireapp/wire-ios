@@ -45,6 +45,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     var mockApplicationStatus: MockApplicationStatus!
     var sut: AssetV3DownloadRequestStrategy!
     var conversation: ZMConversation!
+    var user: ZMUser!
 
     override func setUp() {
         super.setUp()
@@ -54,14 +55,9 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sut = AssetV3DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
         
         self.syncMOC.performGroupedBlockAndWait {
-            self.conversation = self.createConversation()
+            self.user = self.createUser(alsoCreateClient: true)
+            self.conversation = self.createGroupConversation(with: self.user)
         }
-    }
-
-    fileprivate func createConversation() -> ZMConversation {
-        let conv = ZMConversation.insertNewObject(in: syncMOC)
-        conv.remoteIdentifier = UUID.create()
-        return conv
     }
     
     fileprivate func createFileMessageWithAssetId(
@@ -106,7 +102,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         // Given
         syncMOC.performGroupedBlockAndWait {
             
-            guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.createConversation()) else { return XCTFail("No message") }
+            guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             
             guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData found") }
             XCTAssert(assetData.hasUploaded())
@@ -148,7 +144,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     func testThatItGeneratesARequestOnlyOnceForAssetMessages_V3() {
         // Given
         syncMOC.performGroupedBlockAndWait {
-            guard let _ = self.createFileMessageWithAssetId(in: self.createConversation()) else { return XCTFail("No message") }
+            guard let _ = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             
             // When
             guard let _ = self.sut.nextRequest() else { return XCTFail("No request generated") }
