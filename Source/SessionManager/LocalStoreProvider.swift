@@ -22,6 +22,7 @@ import UIKit
 private let zmLog = ZMSLog(tag: "LocalStoreProvider")
 
 @objc public protocol LocalStoreProviderProtocol: NSObjectProtocol {
+    var userIdentifier: UUID { get }
     var appGroupIdentifier: String { get }
     var storeExists: Bool { get }
     var storeURL: URL? { get }
@@ -54,20 +55,22 @@ extension FileManager: FileManagerProtocol {}
 @objc public class LocalStoreProvider: NSObject {
     
     public let appGroupIdentifier: String
+    public let userIdentifier: UUID
     let bundleIdentifier: String
 
     let fileManager: FileManagerProtocol
-    init(bundleIdentifier: String, appGroupIdentifier: String, fileManager: FileManagerProtocol) {
+    init(bundleIdentifier: String, appGroupIdentifier: String, userIdentifier: UUID, fileManager: FileManagerProtocol) {
         self.bundleIdentifier = bundleIdentifier
         self.appGroupIdentifier = appGroupIdentifier
+        self.userIdentifier = userIdentifier
         self.fileManager = fileManager
     }
     
-    public override convenience init() {
+    public convenience init(userIdentifier: UUID) {
         let bundle = Bundle.main
         let bundleIdentifier = bundle.bundleIdentifier!
         let groupIdentifier = "group." + bundleIdentifier
-        self.init(bundleIdentifier: bundleIdentifier, appGroupIdentifier: groupIdentifier, fileManager: FileManager.default)
+        self.init(bundleIdentifier: bundleIdentifier, appGroupIdentifier: groupIdentifier, userIdentifier: userIdentifier, fileManager: FileManager.default)
     }
 }
 
@@ -122,14 +125,13 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
     
     public var needsToPrepareLocalStore: Bool {
         guard let storeURL = self.storeURL else { return false }
-        return NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL)
+        return NSManagedObjectContext.needsToPrepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: storeURL)
     }
     
     public func prepareLocalStore(completion completionHandler: @escaping (() -> ())) {
         let environment = ZMDeploymentEnvironment().environmentType()
         let shouldBackupCorruptedDatabase = environment == .internal // TODO: on debug build as well
-        
-        NSManagedObjectContext.prepareLocalStore(at: self.storeURL, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
+        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: self.storeURL, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
     }
     
 }

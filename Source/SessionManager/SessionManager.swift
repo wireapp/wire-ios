@@ -61,7 +61,7 @@ public class SessionManager : NSObject {
                                                   cookieStorage: cookieStorage,
                                                   initialAccessToken: nil,
                                                   sharedContainerIdentifier: nil)
-        let localStoreProvider = LocalStoreProvider()
+        let localStoreProvider = LocalStoreProvider(userIdentifier: UUID()) // TODO: we need to provide real user id
         
         self.init(storeProvider: localStoreProvider,
                   appVersion: appVersion,
@@ -107,7 +107,6 @@ public class SessionManager : NSObject {
                                                 transportSession: self.transportSession,
                                                 apnsEnvironment: self.apnsEnvironment,
                                                 application: self.application,
-                                                userId:nil,
                                                 appVersion: appVersion,
                                                 storeProvider: storeProvider)!
                 
@@ -204,7 +203,6 @@ extension SessionManager: ZMAuthenticationObserver {
                                         transportSession: transportSession,
                                         apnsEnvironment: apnsEnvironment,
                                         application: application,
-                                        userId:nil,
                                         appVersion: appVersion,
                                         storeProvider: storeProvider)!
         self.userSession = userSession

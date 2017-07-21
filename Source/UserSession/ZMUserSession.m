@@ -76,9 +76,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMStoredLocalNotification *pendingLocalNotification;
 @property (nonatomic) LocalNotificationDispatcher *localNotificationDispatcher;
 @property (nonatomic) id<LocalStoreProviderProtocol> storeProvider;
-@property (nonatomic) NSURL *storeURL;
-@property (nonatomic) NSURL *keyStoreURL;
-@property (nonatomic, readwrite) NSURL *sharedContainerURL;
 @property (nonatomic) NSUUID *accountIdentifier;
 @property (nonatomic) TopConversationsDirectory *topConversationsDirectory;
 
@@ -132,7 +129,6 @@ ZM_EMPTY_ASSERTING_INIT()
                     transportSession:(ZMTransportSession *)transportSession
                      apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                          application:(id<ZMApplication>)application
-                              userId:(NSUUID * __unused)uuid
                           appVersion:(NSString *)appVersion
                        storeProvider:(id<LocalStoreProviderProtocol>)storeProvider
 {
@@ -142,10 +138,8 @@ ZM_EMPTY_ASSERTING_INIT()
         apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
     }
     
-    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:accountIdentifier inSharedContainerAt:self.sharedContainerURL];
-    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:accountIdentifier inSharedContainerAt:self.sharedContainerURL];
-    self.storeURL = storeProvider.storeURL;
-    self.keyStoreURL = storeProvider.keyStoreURL;
+    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:self.sharedContainerURL];
+    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:self.sharedContainerURL];
     [syncMOC performBlockAndWait:^{
         syncMOC.analytics = analytics;
     }];
@@ -177,9 +171,6 @@ ZM_EMPTY_ASSERTING_INIT()
                               application:application
                                appVersion:appVersion
                             storeProvider:storeProvider];
-    if (self != nil) {
-        self.ownsQueue = YES;
-    }
     return self;
 }
 
@@ -203,8 +194,6 @@ ZM_EMPTY_ASSERTING_INIT()
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
 
-        self.accountIdentifier = storeProvider.accountIdentifier;
-        self.sharedContainerURL = storeProvider.sharedContainerDirectory;
         self.apnsEnvironment = apnsEnvironment;
         self.networkIsOnline = YES;
         self.managedObjectContext = userInterfaceContext;
@@ -592,6 +581,16 @@ ZM_EMPTY_ASSERTING_INIT()
 - (ZMOperationStatus *)operationStatus
 {
     return self.operationLoop.syncStrategy.applicationStatusDirectory.operationStatus;
+}
+
+- (NSURL *)sharedContainerURL
+{
+    return self.storeProvider.sharedContainerDirectory;
+}
+
+- (NSUUID *)accountIdentifier
+{
+    return self.storeProvider.userIdentifier;
 }
 
 @end

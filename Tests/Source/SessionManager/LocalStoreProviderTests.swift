@@ -51,7 +51,7 @@ class LocalStoreProviderTests: ZMTBaseTest {
         fileManager = MockFileManager()
         bundleIdentifier = "com.some.app"
         appGroupIdentifier = "group." + bundleIdentifier
-        sut = LocalStoreProvider(bundleIdentifier: bundleIdentifier, appGroupIdentifier: appGroupIdentifier, fileManager: fileManager)
+        sut = LocalStoreProvider(bundleIdentifier: bundleIdentifier, appGroupIdentifier: appGroupIdentifier, userIdentifier: UUID(), fileManager: fileManager)
     }
     
     override func tearDown() {
@@ -70,7 +70,7 @@ extension LocalStoreProviderTests {
         let groupIdentifier = "group.\(Bundle.main.bundleIdentifier!)"
         
         // when
-        let sut = LocalStoreProvider()
+        let sut = LocalStoreProvider(userIdentifier: UUID())
         
         // then
         XCTAssertEqual(sut.appGroupIdentifier, groupIdentifier)
@@ -81,7 +81,7 @@ extension LocalStoreProviderTests {
         let defaultFileManager: FileManagerProtocol = FileManager.default
         
         // when
-        let sut = LocalStoreProvider()
+        let sut = LocalStoreProvider(userIdentifier: UUID())
 
         // then
         XCTAssert(sut.fileManager === defaultFileManager)
