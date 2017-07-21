@@ -40,7 +40,7 @@
 #import "StopWatch.h"
 #import "UIViewController+Orientation.h"
 #import "Wire-Swift.h"
-
+@import WireSyncEngine;
 
 @interface RootViewController (Registration) <RegistrationViewControllerDelegate>
 
@@ -48,7 +48,7 @@
 
 
 
-@interface RootViewController ()  <ZMUserObserver>
+@interface RootViewController ()
 
 @property (nonatomic) UIViewController *visibleViewController;
 
@@ -57,7 +57,6 @@
 @property (nonatomic, strong) id convContentChangedObserver;
 
 @property (nonatomic) id<ZMAuthenticationObserverToken> authToken;
-@property (nonatomic) id userObserverToken;
 
 @end
 
@@ -73,7 +72,7 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        self.authToken = [[ZMUserSession sharedSession] addAuthenticationObserver:self];
+        self.authToken = [ZMUserSessionAuthenticationNotification addObserver:self];
     }
     return self;
 }
@@ -83,15 +82,17 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self.convContentChangedObserver];
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    [[ZMUserSession sharedSession] removeAuthenticationObserverForToken:self.authToken];
+    [ZMUserSessionAuthenticationNotification removeObserverForToken:self.authToken];
+}
+
+- (void)setup
+{
+    self.authToken = [ZMUserSessionAuthenticationNotification addObserver:self];
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    // observe future accent color changes
-    self.userObserverToken = [UserChangeInfo addUserObserver:self forUser:[ZMUser selfUser]];
     
     if (self.isLoggedIn) {
         [self presentFrameworkFromRegistration:NO];
@@ -151,6 +152,7 @@
     [UIApplication sharedApplication].keyWindow.tintColor = [UIColor accentColor];
     self.zClientViewController = [[ZClientViewController alloc] init];
     self.zClientViewController.isComingFromRegistration = fromRegistration;
+    [[AppDelegate sharedAppDelegate].notificationWindowController transitionToLoggedInSession];
     [self switchToViewController:self.zClientViewController animated:YES];
 }
 

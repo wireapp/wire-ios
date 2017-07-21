@@ -35,6 +35,7 @@
 #import "AnalyticsTracker+Registration.h"
 
 #import "WireSyncEngine+iOS.h"
+#import "Wire-Swift.h"
 
 @interface RegistrationEmailFlowViewController () <FormStepDelegate, EmailVerificationStepViewControllerDelegate, ZMRegistrationObserver, ZMAuthenticationObserver>
 
@@ -56,8 +57,8 @@
 
 - (void)removeObservers
 {
-    [[ZMUserSession sharedSession] removeAuthenticationObserverForToken:self.authenticationToken];
-    [[ZMUserSession sharedSession] removeRegistrationObserverForToken:self.registrationToken];
+    [ZMUserSessionAuthenticationNotification removeObserverForToken:self.authenticationToken];
+    [[UnauthenticatedSession sharedSession]  removeRegistrationObserver:self.registrationToken];
     
     self.authenticationToken = nil;
     self.registrationToken = nil;
@@ -84,8 +85,8 @@
     [super didMoveToParentViewController:parent];
     
     if (parent && self.authenticationToken == nil && self.registrationToken == nil) {
-        self.authenticationToken = [[ZMUserSession sharedSession] addAuthenticationObserver:self];
-        self.registrationToken = [[ZMUserSession sharedSession] addRegistrationObserver:self];
+        self.authenticationToken = [ZMUserSessionAuthenticationNotification addObserver:self];
+        self.registrationToken = [[UnauthenticatedSession sharedSession] addRegistrationObserver:self];
     } else {
         [self removeObservers];
     }
@@ -121,7 +122,7 @@
 
 - (void)presentProfilePictureStep
 {
-    ProfilePictureStepViewController *pictureStepViewController = [[ProfilePictureStepViewController alloc] initWithEditableUser:[ZMUser editableSelfUser]];
+    ProfilePictureStepViewController *pictureStepViewController = [[ProfilePictureStepViewController alloc] initWithUnregisteredUser:self.unregisteredUser];
     pictureStepViewController.analyticsTracker = self.analyticsTracker;
     pictureStepViewController.formStepDelegate = self;
     
@@ -149,15 +150,13 @@
              ([viewController isKindOfClass:[EmailStepViewController class]] && [self hasUserAcceptedTOS]))
     {
         [self.analyticsTracker tagAcceptedTermsOfUse];
-        [[ZMUserSession sharedSession] setupPushNotificationsForApplication:[UIApplication sharedApplication]];
+        [[UIApplication sharedApplication] registerForRemoteNotifications];
         
         self.hasUserAcceptedTOS = YES;
 
-        [[ZMUserSession sharedSession] checkNetworkAndFlashIndicatorIfNecessary];
-
-        if ([ZMUserSession sharedSession].networkState != ZMNetworkStateOffline) {
+        if (![AppDelegate checkNetworkAndFlashIndicatorIfNecessary]) {
             ZMCompleteRegistrationUser *completeUser = [self.unregisteredUser completeRegistrationUser];
-            [[ZMUserSession sharedSession] registerSelfUser:completeUser];
+            [[UnauthenticatedSession sharedSession] registerUser:completeUser];
 
             EmailVerificationStepViewController *emailVerificationStepViewController = [[EmailVerificationStepViewController alloc] initWithEmailAddress:self.unregisteredUser.emailAddress];
             emailVerificationStepViewController.formStepDelegate = self;
@@ -183,7 +182,7 @@
 
 - (void)emailVerificationStepDidRequestVerificationEmail
 {
-    [[ZMUserSession sharedSession] resendRegistrationVerificationEmail];
+    [[UnauthenticatedSession sharedSession] resendRegistrationVerificationEmail];
     [self.analyticsTracker tagResentEmailVerification];
 }
 
