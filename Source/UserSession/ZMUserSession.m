@@ -132,14 +132,12 @@ ZM_EMPTY_ASSERTING_INIT()
                           appVersion:(NSString *)appVersion
                        storeProvider:(id<LocalStoreProviderProtocol>)storeProvider
 {
-    self.storeProvider = storeProvider;
-
     if (apnsEnvironment == nil) {
         apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
     }
     
-    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:self.sharedContainerURL];
-    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:self.sharedContainerURL];
+    NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:storeProvider.sharedContainerDirectory];
+    NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:storeProvider.userIdentifier inSharedContainerAt:storeProvider.sharedContainerDirectory];
     [syncMOC performBlockAndWait:^{
         syncMOC.analytics = analytics;
     }];
@@ -186,7 +184,7 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     self = [super init];
     if(self) {
-        
+        self.storeProvider = storeProvider;
         self.appVersion = appVersion;
         [ZMUserAgent setWireAppVersion:appVersion];
         self.didStartInitialSync = NO;
