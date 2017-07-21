@@ -59,15 +59,9 @@
     (void) [[[classMock stub] andReturn:self.registrationDownstreamSync] syncWithSingleRequestTranscoder:OCMOCK_ANY managedObjectContext:self.uiMOC];
     
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"com.wearezeta.test-WireSyncEngine"];
-    ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.uiMOC cookieStorage:self.cookieStorage];
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.uiMOC cookie:cookie];
-    
-    id mockApplicationStatusDirectory = [OCMockObject mockForClass:[ZMApplicationStatusDirectory class]];
-    [[[mockApplicationStatusDirectory stub] andReturn:self.authenticationStatus] authenticationStatus];
-    [[[mockApplicationStatusDirectory stub] andReturnValue:@(ZMSynchronizationStateUnauthenticated)] synchronizationState];
-    [(ZMApplicationStatusDirectory *)[[mockApplicationStatusDirectory stub] andReturnValue:@(ZMOperationStateForeground)] operationState];
-    
-    self.sut = (id) [[ZMRegistrationTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatusDirectory:mockApplicationStatusDirectory];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage managedObjectContext:self.uiMOC];
+        
+    self.sut = (id) [[ZMRegistrationTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
     [classMock stopMocking];
 }
 
@@ -332,41 +326,8 @@
     [self performPretendingUiMocIsSyncMoc:^{
         [self.sut didReceiveResponse:response forSingleRequest:self.registrationDownstreamSync];
         // then
-        XCTAssertTrue(self.authenticationStatus.registeredOnThisDevice);
+        XCTAssertTrue(self.authenticationStatus.completedRegistration);
     }];
-}
-
-- (void)testThatItUpdatesTheSelfUserAfterSuccessfullRegistration
-{
-    // given
-    NSString *name = @"Name";
-    NSString *emailAddress = @"user@example.com";
-    NSUUID *remoteID = [NSUUID createUUID];
-    ZMCompleteRegistrationUser *user = [ZMCompleteRegistrationUser registrationUserWithEmail:emailAddress password:@"foobar$$"];
-    user.name = name;
-    [[self.registrationDownstreamSync expect] resetCompletionState];
-    [[self.registrationDownstreamSync expect] readyForNextRequest];
-    [self.authenticationStatus prepareForRegistrationOfUser:user];
-    
-    ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:@{@"name": name,
-                                                                               @"email": emailAddress,
-                                                                               @"id": remoteID.transportString}
-                                                                  HTTPStatus:200
-                                                       transportSessionError:nil];
-    
-    // expect
-    [[self.registrationDownstreamSync expect] resetCompletionState];
-    [[self.registrationDownstreamSync expect] readyForNextRequest];
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self.sut didReceiveResponse:response forSingleRequest:self.registrationDownstreamSync];
-    }];
-
-    // then
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    XCTAssertEqualObjects(selfUser.name, name);
-    XCTAssertEqualObjects(selfUser.emailAddress, emailAddress);
 }
 
 - (void)testThatItDoesNotSetTheSelfUserIDAfterRegistration
@@ -542,7 +503,7 @@
         [self.sut didReceiveResponse:response forSingleRequest:self.registrationDownstreamSync];
     
         // then
-        XCTAssertFalse(self.authenticationStatus.registeredOnThisDevice);
+        XCTAssertFalse(self.authenticationStatus.completedRegistration);
     }];
 }
 

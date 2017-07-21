@@ -19,7 +19,10 @@
 
 @import Foundation;
 
+
 #import <WireDataModel/ZMNotifications.h>
+
+NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMAuthenticationObserverToken;
 
@@ -33,7 +36,7 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionAuthenticationNotificationType) {
 @interface ZMUserSessionAuthenticationNotification : ZMNotification
 
 @property (nonatomic) ZMUserSessionAuthenticationNotificationType type;
-@property (nonatomic) NSError *error;
+@property (nonatomic, nullable) NSError *error;
 
 /// Notifies all @c ZMAuthenticationObserver that the authentication failed
 + (void)notifyAuthenticationDidFail:(NSError *)error;
@@ -48,6 +51,8 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionAuthenticationNotificationType) {
 + (void)notifyLoginCodeRequestDidSucceed;
 
 + (id<ZMAuthenticationObserverToken>)addObserverWithBlock:(void(^)(ZMUserSessionAuthenticationNotification *))block ZM_MUST_USE_RETURN;
-+ (void)removeObserver:(id<ZMAuthenticationObserverToken>)token;
++ (void)removeObserverForToken:(id<ZMAuthenticationObserverToken>)token;
 
 @end
+
+NS_ASSUME_NONNULL_END

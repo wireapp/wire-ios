@@ -28,6 +28,7 @@
 #import "ZMUserSessionRegistrationNotification.h"
 #import "ZMClientRegistrationStatus.h"
 #import "ZMAuthenticationStatus.h"
+#import "ZMAuthenticationStatus_Internal.h"
 
 @import WireUtilities;
 
@@ -80,20 +81,13 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     [super setUp];
     
     self.originalLoginTimerInterval = DefaultPendingValidationLoginAttemptInterval;
-    ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.uiMOC cookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"]];
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.syncMOC cookie:cookie];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"] managedObjectContext:nil];
     self.mockClientRegistrationStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
-    
-    self.mockApplicationStatusDirectory = [OCMockObject niceMockForClass:[ZMApplicationStatusDirectory class]];
-    [[[self.mockApplicationStatusDirectory stub] andReturn:self.authenticationStatus] authenticationStatus];
-    [[[self.mockApplicationStatusDirectory stub] andReturn:self.mockClientRegistrationStatus] clientRegistrationStatus];
-    [[[self.mockApplicationStatusDirectory stub] andReturnValue:@(ZMSynchronizationStateUnauthenticated)] synchronizationState];
-    [(ZMApplicationStatusDirectory *)[[self.mockApplicationStatusDirectory stub] andReturnValue:@(ZMOperationStateForeground)] operationState];
     
     self.mockLocale = [OCMockObject niceMockForClass:[NSLocale class]];
     [[[self.mockLocale stub] andReturn:[NSLocale localeWithLocaleIdentifier:@"fr_FR"]] currentLocale];
     
-    self.sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatusDirectory:self.mockApplicationStatusDirectory];
+    self.sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
     
     self.testEmailCredentials = [ZMEmailCredentials credentialsWithEmail:TestEmail password:TestPassword];
     self.testPhoneNumberCredentials = [ZMPhoneCredentials credentialsWithPhoneNumber:TestPhoneNumber verificationCode:TestPhoneCode];
@@ -112,7 +106,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 - (void)testThatItCreatesTheTimedRequestSyncWithZeroDelayInDefaultConstructor
 {
     // given
-    ZMLoginTranscoder *sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC applicationStatusDirectory:self.mockApplicationStatusDirectory];
+    ZMLoginTranscoder *sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
     
     // then
     XCTAssertNotNil(sut.timedDownstreamSync);
@@ -151,7 +145,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     
     //then
     XCTAssert(notified);
-    [ZMUserSessionAuthenticationNotification removeObserver:token];
+    [ZMUserSessionAuthenticationNotification removeObserverForToken:token];
 }
 
 - (void)expectRegistrationSucceedAfter:(void(^)())block;
@@ -617,9 +611,9 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     NSDictionary *expectedPayload = @{@"email" : self.testEmailCredentials.email,
                                       @"locale" : [NSLocale formattedLocaleIdentifier]};
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:self.testEmailCredentials.email password:@"12345678"];
-
-    [(ZMClientRegistrationStatus *)[[self.mockClientRegistrationStatus expect] andReturnValue:OCMOCK_VALUE(ZMClientRegistrationPhaseWaitingForEmailVerfication)] currentPhase];
-    [[[self.mockClientRegistrationStatus expect] andReturn:credentials] emailCredentials];
+    
+    [self.authenticationStatus didFailLoginWithEmailBecausePendingValidation];
+    [self.authenticationStatus setLoginCredentials:credentials];
     
     [ZMUserSessionRegistrationNotification resendValidationForRegistrationEmail];
     WaitForAllGroupsToBeEmpty(0.5);

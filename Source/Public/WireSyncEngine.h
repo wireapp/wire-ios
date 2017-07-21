@@ -39,14 +39,12 @@
 #import <WireSyncEngine/ZMUserSession+Background.h>
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 #import <WireSyncEngine/ZMClientRegistrationStatus.h>
-#import <WireSyncEngine/ZMAuthenticationStatus+Testing.h>
 #import <WireSyncEngine/ZMUserSessionAuthenticationNotification.h>
 #import <WireSyncEngine/ZMAPSMessageDecoder.h>
 #import <WireSyncEngine/ZMUserTranscoder.h>
 #import <WireSyncEngine/NSError+ZMUserSessionInternal.h>
 #import <WireSyncEngine/ZMOperationLoop.h>
 #import <WireSyncEngine/ZMClientUpdateNotification+Internal.h>
-#import <WireSyncEngine/ZMCookie.h>
 #import <WireSyncEngine/ZMLocalNotification.h>
 #import <WireSyncEngine/ZMLocalNotificationLocalization.h>
 #import <WireSyncEngine/UILocalNotification+StringProcessing.h>
@@ -64,3 +62,8 @@
 #import <WireSyncEngine/ZMUserSession+OperationLoop.h>
 #import <WireSyncEngine/ZMOperationLoop+Background.h>
 #import <WireSyncEngine/ZMSimpleListRequestPaginator.h>
+#import <WireSyncEngine/ZMLoginTranscoder.h>
+#import <WireSyncEngine/ZMLoginCodeRequestTranscoder.h>
+#import <WireSyncEngine/ZMRegistrationTranscoder.h>
+#import <WireSyncEngine/ZMPhoneNumberVerificationTranscoder.h>
+#import <WireSyncEngine/ZMHotFix.h>

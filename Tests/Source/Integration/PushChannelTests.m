@@ -20,15 +20,25 @@
 @import WireMockTransport;
 @import WireDataModel;
 
-#import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMMissingUpdateEventsTranscoder+Internal.h"
+#import "WireSyncEngine_iOS_Tests-Swift.h"
 
-@interface PushChannelTests : IntegrationTestBase
+
+@interface PushChannelTests : IntegrationTest
 
 @end
 
+
 @implementation PushChannelTests
+
+- (void)setUp
+{
+    [super setUp];
+    
+    [self createSelfUserAndConversation];
+    [self createExtraUsersAndConversations];
+}
 
 - (void)testThatWeReceiveRemoteMessagesWhenThePushChannelIsUp
 {
@@ -36,7 +46,7 @@
     NSString *testMessage1 = [NSString stringWithFormat:@"%@ message 1", self.name];
     NSString *testMessage2 = [NSString stringWithFormat:@"%@ message 22", self.name];
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     ZMUser *sender = [self userForMockUser:self.user1];
 
     // when
@@ -68,7 +78,7 @@
 - (void)testThatItFetchesLastNotificationsFromBackendIgnoringTransientNotificationsID
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NOT_USED(session);

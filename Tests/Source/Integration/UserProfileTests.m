@@ -16,10 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-#import "IntegrationTestBase.h"
 #import "NSError+ZMUserSession.h"
 #import "NSError+ZMUserSessionInternal.h"
+#import "WireSyncEngine_iOS_Tests-Swift.h"
 
 #import "ZMUserSession.h"
 #import "ZMUserSession+Authentication.h"
@@ -29,17 +28,20 @@
 #import "ZMClientRegistrationStatus+Internal.h"
 
 #import "ZMCredentials.h"
-  
-@interface UserProfileTests : IntegrationTestBase
-@property (nonatomic) id clientRegStatusMock;
+
+
+@interface UserProfileTests : IntegrationTest
+
 @end
+
 
 @implementation UserProfileTests
 
-- (void)tearDown
+- (void)setUp
 {
-    [super tearDown];
-    [self.clientRegStatusMock stopMocking];
+    [super setUp];
+    
+    [self createSelfUserAndConversation];
 }
 
 - (void)testThatWeCanChangeUsernameAndAccentColorForSelfUser
@@ -49,7 +51,7 @@
     ZMAccentColor accentColor = ZMAccentColorSoftPink;
     {
         // Create a UI context
-        XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+        XCTAssertTrue([self login]);
         // Change the name & save
         ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         
@@ -61,17 +63,21 @@
         
         [self.userSession saveOrRollbackChanges];
         // Wait for merge ui->sync to be done
-        WaitForEverythingToBeDone();
+        WaitForAllGroupsToBeEmpty(0.5);
+        
         
         XCTAssertEqual(selfUser.accentColorValue, accentColor);
     }
     
     // Tears down context(s) &
     // Re-create contexts
-    [self recreateUserSessionAndWipeCache:YES];
+    [self destroySessionManager];
+    [self deleteAuthenticationCookie];
+    [self createSessionManager];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // Wait for sync to be done
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     // Check that user is updated:
     {
@@ -88,7 +94,7 @@
 {
     ZMAccentColor accentColor = ZMAccentColorSoftPink;
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
 
     ZMUser<ZMEditableUser> *selfUser = [ZMUser selfUserInUserSession:self.userSession];
     XCTAssertNotEqual(selfUser.accentColorValue, accentColor);
@@ -98,7 +104,7 @@
     // when
     selfUser.accentColorValue = accentColor;
     [self.userSession saveOrRollbackChanges];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     NSArray *notifications = observer.notifications;
@@ -114,41 +120,6 @@
 @end
 
 
-
-@implementation UserProfileTests (Onboarding)
-
-
-- (void)registerUser
-{
-    NSString *password = @"thePa$$w0rd";
-    ZMCompleteRegistrationUser *user = [ZMCompleteRegistrationUser registrationUserWithEmail:@"thedude@example.com" password:password];
-    user.name = @"Hans Müller";
-    user.accentColorValue = ZMAccentColorStrongBlue;
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        [session whiteListEmail:user.emailAddress];
-    }];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    id authenticationObserver = [OCMockObject mockForProtocol:@protocol(ZMAuthenticationObserver)];
-    id authenticationObserverToken = [self.userSession addAuthenticationObserver:authenticationObserver];
-    
-    // expect
-    [[authenticationObserver expect] authenticationDidSucceed];
-    
-    // when
-    [self.userSession registerSelfUser:user];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    [authenticationObserver verify];
-    [self.userSession removeAuthenticationObserverForToken:authenticationObserverToken];
-}
-
-@end
-
-
-
 @implementation UserProfileTests (ChangeEmailAndPhoneAtSecondLogin)
 
 - (void)testThatItCanSetsThePhoneAtTheSecondLogin
@@ -156,7 +127,7 @@
     // given
     NSString *phone = @"+9912312452";
 
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
 
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -205,7 +176,7 @@
     // given
     NSString *phone = @"+9912312452";
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
     
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -238,7 +209,7 @@
     // given
     NSString *phone = @"+9912312452";
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
     
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -277,7 +248,7 @@
     // given
     NSString *phone = @"+9912312452";
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
     
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -318,7 +289,7 @@
     // given
     NSString *phone = @"+9912312452";
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
     
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -356,7 +327,7 @@
     // given
     NSString *phone = @"+9912312452";
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
     
     XCTAssertFalse(self.userSession.registeredOnThisDevice);
@@ -392,30 +363,31 @@
 - (BOOL)loginWithPhoneAndRemoveEmail
 {
     NSString *phone = @"+99123456789";
+    NSString *code = self.mockTransportSession.phoneVerificationCodeForLogin;
     
-    if (nil == self.clientRegStatusMock) {
-        self.clientRegStatusMock = [OCMockObject partialMockForObject:self.userSession.clientRegistrationStatus];
-        [[[self.clientRegStatusMock stub] andReturnValue:@(NO)] isAddingEmailNecessary];
-    }
-    
-    self.selfUser.email = nil;
-    self.selfUser.phone = phone;
-    self.selfUser.password = nil;
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        self.selfUser.phone = phone;
         [session whiteListPhone:phone];
     }];
     
-    return [self loginAndWaitForSyncToBeCompleteWithPhone:phone];
+    BOOL success = [self loginWithCredentials:[ZMPhoneCredentials credentialsWithPhoneNumber:phone verificationCode:code] ignoreAuthenticationFailures:NO];
+    
+    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        NOT_USED(session);
+        self.selfUser.email = nil;
+        self.selfUser.password = nil;
+    }];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    return success;
 }
 
 - (void)testThatItCanSetEmailAndPassword
 {
     // given
-    self.registeredOnThisDevice = YES;
     NSString *email = @"foobar@geraterwerwer.dsf.example.com";
     XCTAssertTrue([self loginWithPhoneAndRemoveEmail]);
-    self.selfUser.email = nil;
-    self.selfUser.password = nil;
     ZMEmailCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:email password:@"ds4rgsdg"];
     [self.mockTransportSession resetReceivedRequests];
     

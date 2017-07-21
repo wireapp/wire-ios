@@ -21,14 +21,14 @@ import WireTesting
 import WireCryptobox
 import WireDataModel
 
-extension IntegrationTestBase {
+extension IntegrationTest {
     
     /// Encrypts a message from the given client to the self user.
     /// It will create a session between the two if needed
     @objc(encryptedMessageToSelfWithMessage:fromSender:)
     public func encryptedMessageToSelf(message: ZMGenericMessage, from sender: UserClient) -> Data {
         
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
+        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         if selfClient.user!.remoteIdentifier == nil {
             selfClient.user!.remoteIdentifier = UUID()
         }
@@ -67,7 +67,7 @@ extension IntegrationTestBase {
             return
         }
         
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
+        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         var prekey: String?
         self.encryptionContext(for: client).perform { (session) in
             prekey = try! session.generateLastPrekey()
@@ -90,23 +90,23 @@ extension IntegrationTestBase {
         }
         
         // create user
-        let localUser = ZMUser(remoteID: remoteUserIdentifier, createIfNeeded: true, in: self.syncMOC)!
+        let localUser = ZMUser(remoteID: remoteUserIdentifier, createIfNeeded: true, in: self.userSession!.syncManagedObjectContext)!
         
         // create client
         let localClient = localUser.clients.first(where: { $0.remoteIdentifier == remoteClientIdentifier }) ?? { _ -> UserClient in
-            let newClient = UserClient.insertNewObject(in: self.syncMOC)
+            let newClient = UserClient.insertNewObject(in: self.userSession!.syncManagedObjectContext)
             newClient.user = localUser
             newClient.remoteIdentifier = remoteClientIdentifier
             return newClient
-        }()
-        self.syncMOC.saveOrRollback()
+            }()
+        self.userSession!.syncManagedObjectContext.saveOrRollback()
         
         var lastPrekey: String?
         self.mockTransportSession.performRemoteChanges { (session) in
             lastPrekey = remoteClient.lastPrekey.value
         }
         
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
+        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         if !localClient.hasSessionWithSelfClient {
             XCTAssertTrue(selfClient.establishSessionWithClient(localClient, usingPreKey: lastPrekey!))
         }
@@ -115,7 +115,7 @@ extension IntegrationTestBase {
     /// Decrypts a message that was sent from self to a given user
     public func decryptMessageFromSelf(cypherText: Data, to client: UserClient) -> Data? {
         
-        let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()!
+        let selfClient = ZMUser.selfUser(in: self.userSession!.syncManagedObjectContext).selfClient()!
         var plainText: Data?
         self.encryptionContext(for: client).perform { (session) in
             if session.hasSession(for: selfClient.sessionIdentifier!) {
@@ -137,7 +137,7 @@ extension IntegrationTestBase {
 }
 
 
-extension IntegrationTestBase {
+extension IntegrationTest {
     
     /// Delete all other clients encryption contexts
     public func deleteAllOtherEncryptionContexts() {
