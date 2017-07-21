@@ -21,12 +21,18 @@ import Foundation
 import WireSyncEngine
 import WireMockTransport
 
-class OTRTests : IntegrationTestBase {
+class OTRTests : IntegrationTest {
+    
+    override func setUp() {
+        super.setUp()
+        
+        createSelfUserAndConversation()
+        createExtraUsersAndConversations()
+    }
         
     func testThatItSendsEncryptedTextMessage() {
         // given
-        XCTAssert(logInAndWaitForSyncToBeComplete())
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(login())
         
         guard let conversation = self.conversation(for: self.selfToUser1Conversation) else {return XCTFail()}
         
@@ -35,10 +41,10 @@ class OTRTests : IntegrationTestBase {
         
         // when
         var message: ZMConversationMessage?
-        userSession.performChanges {
+        userSession?.performChanges {
             message = conversation.appendMessage(withText: text)
         }
-        XCTAssert(waitForEverythingToBeDone(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertNotNil(message)
@@ -51,8 +57,7 @@ class OTRTests : IntegrationTestBase {
     
     func testThatItSendsEncryptedImageMessage() {
         // given
-        XCTAssert(self.logInAndWaitForSyncToBeComplete())
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(login())
 
         guard let conversation = self.conversation(for: self.selfToUser1Conversation) else { return XCTFail() }
         self.mockTransportSession.resetReceivedRequests()
@@ -60,11 +65,11 @@ class OTRTests : IntegrationTestBase {
         
         // when
         var message: ZMConversationMessage? = nil
-        userSession.performChanges {
+        userSession?.performChanges {
              message = conversation.appendMessage(withImageData: imageData)
         }
         
-        XCTAssert(waitForEverythingToBeDone(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertNotNil(message)
@@ -79,8 +84,7 @@ class OTRTests : IntegrationTestBase {
     func testThatItSendsARequestToUpdateSignalingKeys() {
         
         // given
-        XCTAssert(self.logInAndWaitForSyncToBeComplete())
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(login())
         self.mockTransportSession.resetReceivedRequests()
         
     
@@ -94,10 +98,10 @@ class OTRTests : IntegrationTestBase {
         }
         
         // when
-        self.userSession.performChanges {
-            UserClient.resetSignalingKeysInContext(self.uiMOC)
+        self.userSession?.performChanges {
+            UserClient.resetSignalingKeysInContext(self.userSession!.managedObjectContext)
         }
-        XCTAssert(waitForEverythingToBeDone(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // then
         XCTAssertTrue(didReregister)
@@ -106,8 +110,7 @@ class OTRTests : IntegrationTestBase {
     func testThatItCreatesNewKeysIfReqeustToSyncSignalingKeysFailedWithBadRequest() {
         
         // given
-        XCTAssert(self.logInAndWaitForSyncToBeComplete())
-        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssert(login())
         self.mockTransportSession.resetReceivedRequests()
 
         var tryCount = 0
@@ -135,11 +138,11 @@ class OTRTests : IntegrationTestBase {
         }
         
         // when
-        userSession.performChanges {
-            UserClient.resetSignalingKeysInContext(self.uiMOC)
+        userSession?.performChanges {
+            UserClient.resetSignalingKeysInContext(self.userSession!.managedObjectContext)
         }
         
-        XCTAssert(waitForEverythingToBeDone(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(tryCount, 2)

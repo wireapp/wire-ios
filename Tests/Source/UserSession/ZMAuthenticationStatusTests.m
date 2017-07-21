@@ -24,7 +24,6 @@
 #import "MessagingTest.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMUserSessionRegistrationNotification.h"
-#import "ZMAuthenticationStatus+Testing.h"
 #import "ZMCredentials.h"
 #import "NSError+ZMUserSessionInternal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
@@ -49,9 +48,8 @@
     [super setUp];
     
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"foo.bar"];
-    ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.uiMOC cookieStorage:self.cookieStorage];
-    
-    self.sut = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.uiMOC cookie:cookie];
+    [self.cookieStorage deleteUserKeychainItems];
+    self.sut = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage managedObjectContext:nil];
     ZM_WEAK(self);
     // If a test fires any notification and it's not listening for it, this will fail
     self.authenticationCallback = ^(id note ZM_UNUSED){
@@ -78,7 +76,7 @@
     self.sut = nil;
     self.cookieStorage = nil;
     
-    [ZMUserSessionAuthenticationNotification removeObserver:self.authenticationObserverToken];
+    [ZMUserSessionAuthenticationNotification removeObserverForToken:self.authenticationObserverToken];
     self.authenticationObserverToken = nil;
     
     [ZMUserSessionRegistrationNotification removeObserver:self.registrationObserverToken];

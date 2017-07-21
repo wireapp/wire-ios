@@ -39,16 +39,18 @@
 @class ClientUpdateStatus;
 @class AVSFlowManager;
 @class ZMCallKitDelegate;
+@class AVSMediaManager;
 
 extern NSString * const ZMAppendAVSLogNotificationName;
 
 @interface ZMUserSession (AuthenticationStatus)
-@property (nonatomic, readonly) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, readonly) UserProfileUpdateStatus *userProfileUpdateStatus;
 @property (nonatomic, readonly) ZMClientRegistrationStatus *clientRegistrationStatus;
 @property (nonatomic, readonly) ClientUpdateStatus *clientUpdateStatus;
 @property (nonatomic, readonly) ZMAccountStatus *accountStatus;
 @property (nonatomic, readonly) ProxiedRequestsStatus *proxiedRequestStatus;
+@property (nonatomic, readonly) id<AuthenticationStatusProvider> authenticationStatus;
+
 @end
 
 
@@ -87,13 +89,12 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 - (instancetype)initWithTransportSession:(ZMTransportSession *)session
                     userInterfaceContext:(NSManagedObjectContext *)userInterfaceContext
                 syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
-                            mediaManager:(id<AVSMediaManager>)mediaManager
+                            mediaManager:(AVSMediaManager *)mediaManager
                          apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                      appGroupIdentifier:(NSString *)appGroupIdentifier
-                       accountIdentifier:(NSUUID *)accountIdentifier;
+                           storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 
 - (void)tearDown;
 

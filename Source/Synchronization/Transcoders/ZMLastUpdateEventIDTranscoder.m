@@ -130,15 +130,13 @@
 {
     NOT_USED(sync);
     SyncStatus *status = self.syncStatus;
-    if(response.payload == nil) {
-        if (status.isSyncing) {
-            [status failCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
-        }
-        return;
-    }
     
     NSUUID *lastNotificationID = [[response.payload asDictionary] optionalUuidForKey:@"id"];
-    if(lastNotificationID != nil) {
+    
+    if (response.HTTPStatus == 404 && status.currentSyncPhase == self.expectedSyncPhase) {
+        [status finishCurrentSyncPhaseWithPhase:self.expectedSyncPhase];
+    }
+    else if (lastNotificationID != nil) {
         self.lastUpdateEventID = lastNotificationID;
         if (status.currentSyncPhase == self.expectedSyncPhase) {
             [status updateLastUpdateEventIDWithEventID:lastNotificationID];

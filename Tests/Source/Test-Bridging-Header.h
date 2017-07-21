@@ -20,10 +20,9 @@
 #import <WireSyncEngine/WireSyncEngine.h>
 #import "MessagingTest.h"
 #import "ZMUserSessionTestsBase.h"
-#import "IntegrationTestBase.h"
 #import "MessagingTest+EventFactory.h"
 #import "ConversationTestsBase.h"
 #import "ZMLocalNotificationForEventTest.h"
-@import CallKit;
 #import "ZMCallKitDelegateTests+Mocking.h"
 #import "ZMCallKitDelegate+TypeConformance.h"
+#import "IntegrationTest.h"

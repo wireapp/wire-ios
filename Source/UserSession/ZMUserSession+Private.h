@@ -27,4 +27,6 @@
 
 @property (nonatomic, readonly) ZMTransportSession *transportSession;
 
+- (void)tearDown;
+
 @end

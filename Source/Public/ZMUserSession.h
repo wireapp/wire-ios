@@ -32,14 +32,17 @@
 @class ZMProxyRequest;
 @class ZMCallKitDelegate;
 @class CallingRequestStrategy;
+@class AVSMediaManager;
+@class ZMAPNSEnvironment;
 
 @protocol UserProfile;
 @protocol AnalyticsType;
-@protocol AVSMediaManager;
 @protocol ZMNetworkAvailabilityObserver;
 @protocol ZMRequestsToOpenViewsDelegate;
 @protocol ZMThirdPartyServicesDelegate;
 @protocol UserProfileImageUpdateProtocol;
+@protocol ZMApplication;
+@protocol LocalStoreProviderProtocol;
 @class TopConversationsDirectory;
 
 @protocol ZMAVSLogObserver <NSObject>
@@ -62,6 +65,7 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 @interface ZMUserSession : NSObject <ZMManagedObjectContextProvider>
 
 /**
+<<<<<<< HEAD
  Returns YES if data store needs to be migrated.
  */
 + (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier accountIdentifier:(NSUUID *)accountIdentifier;
@@ -78,17 +82,22 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 + (BOOL)storeIsReady;
 
 /**
+=======
+>>>>>>> develop
  Intended initializer to be used by the UI
  @param mediaManager: The media manager delegate
  @param analytics: An object conforming to the @c AnalyticsType protocol that can be used to track events on the sync engine
  @param appVersion: The application version (build number)
- @param appGroupIdentifier: The identifier of the shared application group container that should be used to store databases etc.
+ @param storeProvider: An object conforming to the @c LocalStoreProviderProtocol that provides information about local store locations etc.
 */
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
+- (instancetype)initWithMediaManager:(AVSMediaManager *)mediaManager
                            analytics:(id<AnalyticsType>)analytics
+                    transportSession:(ZMTransportSession *)transportSession
+                     apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
+                         application:(id<ZMApplication>)application
+                              userId:(NSUUID *)uuid
                           appVersion:(NSString *)appVersion
-                  appGroupIdentifier:(NSString *)appGroupIdentifier
-                   accountIdentifier:(NSUUID *)accountIdentifier;
+                       storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 
 @property (nonatomic, weak) id<ZMRequestsToOpenViewsDelegate> requestToOpenViewDelegate;
 @property (nonatomic, weak) id<ZMThirdPartyServicesDelegate> thirdPartyServicesDelegate;
