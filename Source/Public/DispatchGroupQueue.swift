@@ -32,7 +32,7 @@ public class DispatchGroupQueue : NSObject, ZMSGroupQueue {
         return self.dispatchGroupContext.groups.first
     }
     
-    func add(_ group : ZMSDispatchGroup) {
+    public func add(_ group : ZMSDispatchGroup) {
         self.dispatchGroupContext.add(group)
     }
     
