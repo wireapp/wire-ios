@@ -92,7 +92,7 @@
     [[[self.apnsEnvironment stub] andReturn:@"APNS"] transportTypeForTokenType:ZMAPNSTypeNormal];
     [[[self.apnsEnvironment stub] andReturn:@"APNS_VOIP"] transportTypeForTokenType:ZMAPNSTypeVoIP];
     
-    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:self.accountIdentifier];
     
     self.sut = [[ZMUserSession alloc] initWithTransportSession:self.transportSession
                                           userInterfaceContext:self.uiMOC
