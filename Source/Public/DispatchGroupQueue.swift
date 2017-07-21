@@ -18,21 +18,25 @@
 
 import Foundation
 
-class DispatchGroupQueue : NSObject, ZMSGroupQueue {
+public class DispatchGroupQueue : NSObject, ZMSGroupQueue {
     
     let queue : DispatchQueue
     let dispatchGroupContext : DispatchGroupContext
     
-    init(queue: DispatchQueue) {
+    public init(queue: DispatchQueue) {
         self.queue = queue
         self.dispatchGroupContext = DispatchGroupContext(groups: [])
     }
     
-    var dispatchGroup: ZMSDispatchGroup! {
+    public  var dispatchGroup: ZMSDispatchGroup! {
         return self.dispatchGroupContext.groups.first
     }
     
-    func performGroupedBlock(_ block: @escaping () -> Void) {
+    func add(_ group : ZMSDispatchGroup) {
+        self.dispatchGroupContext.add(group)
+    }
+    
+    public func performGroupedBlock(_ block: @escaping () -> Void) {
         let groups = dispatchGroupContext.enterAll()
         queue.async {
             block()
