@@ -237,13 +237,13 @@ public class SharingSession {
         syncContext.zm_userInterface = userInterfaceContext
         
         let environment = ZMBackendEnvironment(userDefaults: UserDefaults.shared())
-        
+        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!)
+                
         let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
             websocketURL: environment.backendWSURL,
-            mainGroupQueue: userInterfaceContext,
+            cookieStorage: cookieStorage,
             initialAccessToken: ZMAccessToken(),
-            application: nil,
             sharedContainerIdentifier: applicationGroupIdentifier
         )
         
