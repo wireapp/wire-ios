@@ -84,7 +84,7 @@
     id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
     [[[userAgent expect] classMethod] setWireAppVersion:version];
     
-    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
     
     // when
     ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:nil
@@ -92,7 +92,6 @@
                                                         transportSession:transportSession
                                                          apnsEnvironment:nil
                                                              application:[UIApplication sharedApplication]
-                                                                  userId:nil
                                                               appVersion:version
                                                            storeProvider:storeProvider];
     XCTAssertNotNil(session);
@@ -225,7 +224,7 @@
     id pushChannel = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannel)];
     id transportSession = [OCMockObject niceMockForClass:ZMTransportSession.class];
     id cookieStorage = [OCMockObject niceMockForClass:ZMPersistentCookieStorage.class];
-    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
     
     // expect
     [[pushChannel expect] setClientID:userClient.remoteIdentifier];
@@ -241,12 +240,7 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-<<<<<<< HEAD
-                                                              appGroupIdentifier:self.groupIdentifier
-                                                               accountIdentifier:self.accountIdentifier];
-=======
                                                                    storeProvider:storeProvider];
->>>>>>> develop
     [userSession didRegisterUserClient:userClient];
     
     // then
@@ -454,7 +448,7 @@
 - (void)testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID
 {
     // given
-    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
     id transportSession = [OCMockObject mockForClass:ZMTransportSession.class];
     id pushChannel = [OCMockObject mockForProtocol:@protocol(ZMPushChannel)];
     
@@ -489,12 +483,7 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-<<<<<<< HEAD
-                                                              appGroupIdentifier:self.groupIdentifier
-                                                               accountIdentifier:self.accountIdentifier];
-=======
                                                                    storeProvider:storeProvider];
->>>>>>> develop
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

@@ -20,6 +20,7 @@ import XCTest
 import WireTesting
 
 class MockLocalStoreProvider: NSObject, LocalStoreProviderProtocol {
+    var userIdentifier: UUID
     var appGroupIdentifier: String
     var storeURL: URL?
     var keyStoreURL: URL?
@@ -27,6 +28,7 @@ class MockLocalStoreProvider: NSObject, LocalStoreProviderProtocol {
     var sharedContainerDirectory: URL?
 
     override init() {
+        userIdentifier = UUID()
         appGroupIdentifier = "group." + Bundle.main.bundleIdentifier!
         sharedContainerDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
         keyStoreURL = sharedContainerDirectory

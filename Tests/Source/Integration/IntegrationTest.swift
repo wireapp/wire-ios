@@ -127,7 +127,7 @@ extension IntegrationTest {
               let transportSession = transportSession
         else { XCTFail(); return }
         
-        let storeProvider = WireSyncEngine.LocalStoreProvider()
+        let storeProvider = LocalStoreProvider(userIdentifier: UUID())
 
         sessionManager = SessionManager(storeProvider: storeProvider,
                                         appVersion: "0.0.0",

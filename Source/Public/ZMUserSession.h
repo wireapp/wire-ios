@@ -65,25 +65,6 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 @interface ZMUserSession : NSObject <ZMManagedObjectContextProvider>
 
 /**
-<<<<<<< HEAD
- Returns YES if data store needs to be migrated.
- */
-+ (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier accountIdentifier:(NSUUID *)accountIdentifier;
-
-/**
- Should be called <b>before</b> using ZMUserSession when applications is started if +needsToPrepareLocalStore returns YES. 
-    It will intialize persistent store and perform migration (if needed) on background thread.
-    When it's done it will call completionHandler on an arbitrary thread. It is the responsability of the caller to switch to the desired thread.
-    The local store is not ready to be used (and the ZMUserSession is not ready to be initialized) until the completionHandler has been called.
- */
-+ (void)prepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier accountIdentifier:(NSUUID *)accountIdentifier completion:(void (^)())completionHandler;
-
-/// Whether the local store is ready to be opened. If it returns false, the user session can't be started yet
-+ (BOOL)storeIsReady;
-
-/**
-=======
->>>>>>> develop
  Intended initializer to be used by the UI
  @param mediaManager: The media manager delegate
  @param analytics: An object conforming to the @c AnalyticsType protocol that can be used to track events on the sync engine
@@ -95,7 +76,6 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
                     transportSession:(ZMTransportSession *)transportSession
                      apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                          application:(id<ZMApplication>)application
-                              userId:(NSUUID *)uuid
                           appVersion:(NSString *)appVersion
                        storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 
