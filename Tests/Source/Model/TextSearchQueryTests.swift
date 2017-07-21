@@ -428,6 +428,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
+        conversation.conversationType = .group
+        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2])
+        
         let message = conversation.appendMessage(withText: "This is a regular message in the conversation") as! ZMMessage
         let otherMessage = conversation.appendMessage(withText: "This is the another message in the conversation") as! ZMMessage
         conversation.messageDestructionTimeout = 300

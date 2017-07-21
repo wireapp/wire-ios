@@ -25,10 +25,10 @@ import Foundation
 /// team name if there is any, picture and uuid.
 public final class Account: NSObject {
 
-    let userName: String
-    let teamName: String?
-    let userIdentifier: UUID
-    var imageData: Data?
+    public let userName: String
+    public let teamName: String?
+    public let userIdentifier: UUID
+    public var imageData: Data?
 
     public required init(userName: String, userIdentifier: UUID, teamName: String? = nil, imageData: Data? = nil) {
         self.userName = userName

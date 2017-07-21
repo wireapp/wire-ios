@@ -76,6 +76,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 static BOOL storeIsReady = NO;
 
++ (BOOL)storeExistsAtURL:(NSURL *)storeURL
+{
+    if (UsesInMemoryStore) {
+        return inMemorySharedPersistentStoreCoordinator != nil;
+    } else {
+        return [NSFileManager.defaultManager fileExistsAtPath:storeURL.path];
+    }
+}
+
 + (BOOL)needsToPrepareLocalStoreForAccountWithIdentifier:(NSUUID *)accountIdentifier inSharedContainerAt:(NSURL *)sharedContainerURL
 {
     BOOL needsMigration = NO;
