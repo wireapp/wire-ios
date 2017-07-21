@@ -22,17 +22,15 @@
 @import WireMessageStrategy;
 
 @class NSManagedObjectContext;
-@class ZMApplicationStatusDirectory;
+@class ZMAuthenticationStatus;
 
 NS_ASSUME_NONNULL_BEGIN;
 
-@interface ZMLoginTranscoder : ZMAbstractRequestStrategy
+@interface ZMLoginTranscoder : NSObject <RequestStrategy, TearDownCapable>
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext applicationStatus:(id<ZMApplicationStatus>)applicationStatus NS_UNAVAILABLE;
+- (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc applicationStatusDirectory:(ZMApplicationStatusDirectory *)applicationStatusDirectory;
-
-- (void)tearDown;
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
 
 @end
 

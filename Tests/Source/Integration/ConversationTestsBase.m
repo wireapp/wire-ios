@@ -18,6 +18,7 @@
 
 
 #import "ConversationTestsBase.h"
+#import "WireSyncEngine_iOS_Tests-Swift.h"
 
 
 @implementation ConversationTestsBase
@@ -31,12 +32,12 @@
 - (void)tearDown
 {
     self.receivedConversationWindowChangeNotifications = nil;
-    [self.syncMOC performGroupedBlockAndWait:^{
-        [self.syncMOC zm_teardownMessageObfuscationTimer];
+    [self.userSession.syncManagedObjectContext performGroupedBlockAndWait:^{
+        [self.userSession.syncManagedObjectContext zm_teardownMessageObfuscationTimer];
     }];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
     
-    [self.uiMOC zm_teardownMessageDeletionTimer];
+    [self.userSession.managedObjectContext zm_teardownMessageDeletionTimer];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout: 0.5]);
     
     [super tearDown];
@@ -57,15 +58,41 @@
     return fileURL;
 }
 
+- (void)setDate:(NSDate *)date forAllEventsInMockConversation:(MockConversation *)conversation
+{
+    for(MockEvent *event in conversation.events) {
+        event.time = date;
+    }
+    conversation.lastEventTime = date;
+}
+
 - (void)setupGroupConversationWithOnlyConnectedParticipants
 {
+    [self createSelfUserAndConversation];
+    [self createExtraUsersAndConversations];
+
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
+        
+        NSDate *selfConversationDate = [NSDate dateWithTimeIntervalSince1970:1400157817];
+        NSDate *connection1Date = [NSDate dateWithTimeInterval:500 sinceDate:selfConversationDate];
+        NSDate *connection2Date = [NSDate dateWithTimeInterval:1000 sinceDate:connection1Date];
+        NSDate *groupConversationDate = [NSDate dateWithTimeInterval:1000 sinceDate:connection2Date];
+        
+        [self setDate:selfConversationDate forAllEventsInMockConversation:self.selfConversation];
+        [self setDate:connection1Date forAllEventsInMockConversation:self.selfToUser1Conversation];
+        [self setDate:connection2Date forAllEventsInMockConversation:self.selfToUser2Conversation];
+        [self setDate:groupConversationDate forAllEventsInMockConversation:self.groupConversation];
+        
+        self.connectionSelfToUser1.lastUpdate = connection1Date;
+        self.connectionSelfToUser2.lastUpdate = connection2Date;
+
         self.groupConversationWithOnlyConnected = [session insertGroupConversationWithSelfUser:self.selfUser
                                                                                     otherUsers:@[self.user1, self.user2]];
         self.groupConversationWithOnlyConnected.creator = self.selfUser;
-        [self storeRemoteIDForObject:self.groupConversationWithOnlyConnected];
         [self.groupConversationWithOnlyConnected changeNameByUser:self.selfUser name:@"Group conversation with only connected participants"];
         [self setDate:[NSDate dateWithTimeInterval:1000 sinceDate:self.groupConversation.lastEventTime] forAllEventsInMockConversation:self.groupConversationWithOnlyConnected];
+        
+
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 }
@@ -76,7 +103,7 @@
                                             verify:(void(^)(ZMConversation *))verifyConversation
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     ZMConversation *conversation = [self conversationForMockConversation:mockConversation];
     
@@ -128,7 +155,7 @@
                                 verifyWithObserver:(void(^)(ZMConversation *, ConversationChangeObserver *))verifyConversation;
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     afterLoginBlock();
     WaitForAllGroupsToBeEmpty(0.5);
     ZMConversation *conversation = [self conversationForMockConversation:mockConversation];
@@ -169,7 +196,7 @@
                                         verify:(void(^)(ZMConversation *))verifyConversation
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     ZMConversation *conversation = [self conversationForMockConversation:mockConversation];
     
@@ -206,8 +233,7 @@
 
 - (MockConversationWindowObserver *)windowObserverAfterLogginInAndInsertingMessagesInMockConversation:(MockConversation *)mockConversation;
 {
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForEverythingToBeDone();
+    XCTAssertTrue([self login]);
     ZMConversation *conversation = [self conversationForMockConversation:mockConversation];
     
     const int MESSAGES = 10;

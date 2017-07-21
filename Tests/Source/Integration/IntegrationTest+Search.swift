@@ -20,25 +20,25 @@ import WireMockTransport
 import XCTest
 import WireTesting
 
-extension IntegrationTestBase {
-        
+extension IntegrationTest {
+    
     @objc
     public func searchAndConnectToUser(withName name: String, searchQuery: String) {
         createSharedSearchDirectory()
-    
+        
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
-        let task = sharedSearchDirectory.perform(request)
+        let task = sharedSearchDirectory?.perform(request)
         var searchResult : SearchResult? = nil
         
-        task.onResult { (result, completed) in
+        task?.onResult { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
             }
         }
         
-        task.start()
+        task?.start()
         
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
@@ -49,7 +49,7 @@ extension IntegrationTestBase {
         
         let connectionCreated = expectation(description: "Connection created")
         
-        searchUser?.connect(withMessageText: "Hola", completionHandler: { 
+        searchUser?.connect(withMessageText: "Hola", completionHandler: {
             connectionCreated.fulfill()
         })
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
@@ -61,17 +61,17 @@ extension IntegrationTestBase {
         
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.directory])
-        let task = sharedSearchDirectory.perform(request)
+        let task = sharedSearchDirectory?.perform(request)
         var searchResult : SearchResult? = nil
         
-        task.onResult { (result, completed) in
+        task?.onResult { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
             }
         }
         
-        task.start()
+        task?.start()
         
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)
@@ -85,17 +85,17 @@ extension IntegrationTestBase {
         
         let searchCompleted = expectation(description: "Search result arrived")
         let request = SearchRequest(query: searchQuery, searchOptions: [.contacts])
-        let task = sharedSearchDirectory.perform(request)
+        let task = sharedSearchDirectory?.perform(request)
         var searchResult : SearchResult? = nil
         
-        task.onResult { (result, completed) in
+        task?.onResult { (result, completed) in
             if completed {
                 searchResult = result
                 searchCompleted.fulfill()
             }
         }
         
-        task.start()
+        task?.start()
         
         XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
         XCTAssertNotNil(searchResult)

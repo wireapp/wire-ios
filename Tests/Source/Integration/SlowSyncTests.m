@@ -25,7 +25,6 @@
 
 #import "MessagingTest.h"
 #import "ZMUserSession+Internal.h"
-#import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
 #import "ZMLoginTranscoder+Internal.h"
 #import "ZMConversationTranscoder.h"
@@ -33,7 +32,7 @@
 #import "WireSyncEngine_iOS_Tests-Swift.h"
 
 
-@interface SlowSyncTests : IntegrationTestBase
+@interface SlowSyncTests : IntegrationTest
 
 @end
 
@@ -41,10 +40,17 @@
 
 @implementation SlowSyncTests
 
+- (void)setUp
+{
+    [super setUp];
+    [self createSelfUserAndConversation];
+    [self createExtraUsersAndConversations];
+}
+
 - (void)testThatWeCanGetConnections
 {
     // when
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     // then
     NSFetchRequest *fetchRequest = [ZMConnection sortedFetchRequest];
@@ -55,11 +61,11 @@
     XCTAssertEqual(connections.count, 2u);
 
     XCTAssertTrue([connections containsObjectMatchingWithBlock:^BOOL(ZMConnection *obj){
-        return [obj.to.remoteIdentifier isEqual:[self remoteIdentifierForMockObject:self.user1]];
+        return [obj.to.remoteIdentifier.transportString isEqual:self.user1.identifier];
     }]);
     
     XCTAssertTrue([connections containsObjectMatchingWithBlock:^BOOL(ZMConnection *obj){
-        return [obj.to.remoteIdentifier isEqual:[self remoteIdentifierForMockObject:self.user2]];
+        return [obj.to.remoteIdentifier.transportString isEqual:self.user2.identifier];
     }]);
 }
 
@@ -67,14 +73,14 @@
 - (void)testThatWeCanGetUsers
 {
     // when
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     // then
     NSFetchRequest *fetchRequest = [ZMUser sortedFetchRequest];
 
     
-    NSArray *users = [self.uiMOC executeFetchRequestOrAssert:fetchRequest];
-    ZMUser *fetchedSelfUser = [ZMUser selfUserInContext:self.uiMOC];
+    NSArray *users = [self.userSession.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    ZMUser *fetchedSelfUser = [ZMUser selfUserInContext:self.userSession.managedObjectContext];
     
     XCTAssertNotNil(users);
     
@@ -94,37 +100,36 @@
 {
     
     // when
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForEverythingToBeDone();
+    XCTAssertTrue([self login]);
     
     // then
     NSFetchRequest *fetchRequest = [ZMConversation sortedFetchRequest];
-    NSArray *conversations = [self.uiMOC executeFetchRequestOrAssert:fetchRequest];
+    NSArray *conversations = [self.userSession.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
     
     XCTAssertNotNil(conversations);
     XCTAssertEqual(conversations.count, 3u);
     
     
-    ZMConversation *actualSelfConversation = [ZMConversation conversationWithRemoteID:[self remoteIdentifierForMockObject:self.selfConversation] createIfNeeded:NO inContext:self.uiMOC];
+    ZMConversation *actualSelfConversation = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:self.selfConversation.identifier] createIfNeeded:NO inContext:self.userSession.managedObjectContext];
     [actualSelfConversation assertMatchesConversation:self.selfConversation failureRecorder:NewFailureRecorder()];
     
-    ZMConversation *actualSelfToUser1Conversation = [self findConversationWithUUID:[self remoteIdentifierForMockObject:self.selfToUser1Conversation] inMoc:self.uiMOC];
+    ZMConversation *actualSelfToUser1Conversation = [self findConversationWithIdentifier:self.selfToUser1Conversation.identifier inMoc:self.userSession.managedObjectContext];
     [actualSelfToUser1Conversation assertMatchesConversation:self.selfToUser1Conversation failureRecorder:NewFailureRecorder()];
     
-    ZMConversation *actualSelfToUser2Conversation = [self findConversationWithUUID:[self remoteIdentifierForMockObject:self.selfToUser2Conversation] inMoc:self.uiMOC];
+    ZMConversation *actualSelfToUser2Conversation = [self findConversationWithIdentifier:self.selfToUser2Conversation.identifier inMoc:self.userSession.managedObjectContext];
     [actualSelfToUser2Conversation assertMatchesConversation:self.selfToUser2Conversation failureRecorder:NewFailureRecorder()];
     
-    ZMConversation *actualGroupConversation = [self findConversationWithUUID:[self remoteIdentifierForMockObject:self.groupConversation] inMoc:self.uiMOC];
+    ZMConversation *actualGroupConversation = [self findConversationWithIdentifier:self.groupConversation.identifier inMoc:self.userSession.managedObjectContext];
     [actualGroupConversation assertMatchesConversation:self.groupConversation failureRecorder:NewFailureRecorder()];
 }
 
 - (NSArray *)commonRequestsOnLogin {
     return @[
-             [[ZMTransportRequest alloc] initWithPath:ZMLoginURL method:ZMMethodPOST payload:@{@"email":[self.selfUser.email copy], @"password":[self.selfUser.password copy], @"label": self.userSession.authenticationStatus.cookieLabel} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken],
+             [[ZMTransportRequest alloc] initWithPath:ZMLoginURL method:ZMMethodPOST payload:@{@"email":[self.selfUser.email copy], @"password":[self.selfUser.password copy], @"label": self.mockTransportSession.cookieStorage.cookieLabel} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken],
              [ZMTransportRequest requestGetFromPath:@"/self"],
              [ZMTransportRequest requestGetFromPath:@"/self"], // second request during slow sync
              [ZMTransportRequest requestGetFromPath:@"/clients"],
-             [ZMTransportRequest requestGetFromPath:[NSString stringWithFormat:@"/notifications/last?client=%@",  [ZMUser selfUserInContext:self.syncMOC].selfClient.remoteIdentifier]],
+             [ZMTransportRequest requestGetFromPath:[NSString stringWithFormat:@"/notifications/last?client=%@",  [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext].selfClient.remoteIdentifier]],
              [ZMTransportRequest requestGetFromPath:@"/connections?size=90"],
              [ZMTransportRequest requestGetFromPath:@"/conversations/ids?size=100"],
              [ZMTransportRequest requestGetFromPath:[NSString stringWithFormat:@"/conversations?ids=%@,%@,%@,%@", self.selfConversation.identifier,self.selfToUser1Conversation.identifier,self.selfToUser2Conversation.identifier,self.groupConversation.identifier]],
@@ -147,7 +152,7 @@
         self.selfUser.completeProfileAssetIdentifier = nil;
         self.selfUser.previewProfileAssetIdentifier = nil;
     }];
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [NSThread sleepForTimeInterval:0.2]; // sleep to wait for spurious calls
     
     NSDictionary *assetsUpdatePayload = @{
@@ -158,7 +163,7 @@
                                                   ]
                                           };
     
-    ZMUser *localUser = [ZMUser selfUserInContext:self.syncMOC];
+    ZMUser *localUser = [ZMUser selfUserInContext:self.userSession.syncManagedObjectContext];
     AssetRequestFactory *factory = [[AssetRequestFactory alloc] init];
 
     // given
@@ -195,7 +200,7 @@
 - (void)testThatItGeneratesOnlyTheExpectedRequestsForUserWithV3ProfilePicture
 {
     // when
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     [NSThread sleepForTimeInterval:0.2]; // sleep to wait for spurious calls
     
     // given
@@ -231,15 +236,13 @@
 - (void)testThatItDoesAQuickSyncOnStartupIfAfterARestartWithoutAnyPushNotification
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForEverythingToBeDone();
+    XCTAssertTrue([self login]);
     
     [self.mockTransportSession resetReceivedRequests];
     
     // when
-    [self recreateUserSessionAndWipeCache:NO];
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForEverythingToBeDone();
+    [self recreateSessionManager];
+    XCTAssertTrue([self login]);
     
     // then
     BOOL hasNotificationsRequest = NO;
@@ -260,21 +263,20 @@
 - (void)testThatItDoesAQuickSyncOnStartupIfItHasReceivedNotificationsEarlier
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
 
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NOT_USED(session);
         ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Hello, Test!" nonce:NSUUID.createUUID.transportString expiresAfter:nil];
         [self.groupConversation encryptAndInsertDataFromClient:self.user1.clients.anyObject toClient:self.selfUser.clients.anyObject data:message.data];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     [self.mockTransportSession resetReceivedRequests];
     
     // when
-    [self recreateUserSessionAndWipeCache:NO];
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForEverythingToBeDone();
+    [self recreateSessionManager];
+    XCTAssertTrue([self login]);
     
     // then
     BOOL hasNotificationsRequest = NO;
@@ -294,14 +296,14 @@
 - (void)testThatItDoesAQuickSyncAfterTheWebSocketWentDown
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
         NOT_USED(session);
         ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Hello, Test!" nonce:NSUUID.createUUID.transportString expiresAfter:nil];
         [self.groupConversation encryptAndInsertDataFromClient:self.user1.clients.anyObject toClient:self.selfUser.clients.anyObject data:message.data];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     [self.mockTransportSession resetReceivedRequests];
     
@@ -310,7 +312,7 @@
         [session simulatePushChannelClosed];
         [session simulatePushChannelOpened];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     BOOL hasNotificationsRequest = NO;
@@ -331,14 +333,7 @@
 - (void)testThatItDoesASlowSyncAfterTheWebSocketWentDownAndNotificationsReturnsAnError
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    
-    [self.mockTransportSession performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> *session) {
-        NOT_USED(session);
-        ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Hello, Test!" nonce:NSUUID.createUUID.transportString expiresAfter:nil];
-        [self.groupConversation encryptAndInsertDataFromClient:self.user1.clients.anyObject toClient:self.selfUser.clients.anyObject data:message.data];
-    }];
-    WaitForEverythingToBeDone();
+    XCTAssertTrue([self login]);
     
     [self.mockTransportSession resetReceivedRequests];
 
@@ -372,7 +367,7 @@
         [session simulatePushChannelClosed];
         [session simulatePushChannelOpened];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
 
@@ -396,19 +391,22 @@
     }]];
     
     // when
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     // then
     [observer verify];
     [ZMNetworkAvailabilityChangeNotification removeNetworkAvailabilityObserver:observer];
     
-    XCTAssertEqual(receivedNotes.count, 1u);
-    ZMNetworkAvailabilityChangeNotification *note1 = receivedNotes[0];
+    XCTAssertEqual(receivedNotes.count, 2u);
+    ZMNetworkAvailabilityChangeNotification *note1 = receivedNotes.firstObject;
+    ZMNetworkAvailabilityChangeNotification *note2 = receivedNotes.lastObject;
 
     XCTAssertNotNil(note1);
-
-    XCTAssertEqual(note1.networkState, ZMNetworkStateOnline);
+    XCTAssertEqual(note1.networkState, ZMNetworkStateOnlineSynchronizing);
     
+    XCTAssertNotNil(note2);
+    XCTAssertEqual(note2.networkState, ZMNetworkStateOnline);
+
     XCTAssertEqual(self.userSession.networkState, ZMNetworkStateOnline);
 }
 
@@ -416,7 +414,7 @@
 - (void)testThatItHasTheSelfUserEmailAfterTheSlowSync
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     
     // then
     XCTAssertNotNil([[ZMUser selfUserInUserSession:self.userSession] emailAddress]);
@@ -429,9 +427,9 @@
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> _Nonnull session) {
         mockTeam = [session insertTeamWithName:@"Foo" isBound:YES users:[NSSet setWithArray:@[self.selfUser, self.user1]]];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     ZMUser *localUser1 = [self userForMockUser:self.user1];
     ZMUser *localUser2 = [self userForMockUser:self.user2];
     ZMUser *localSelfUser = [self userForMockUser:self.selfUser];
@@ -470,7 +468,7 @@
         [session saveAndCreatePushChannelEvents]; // clears the team.member-leave event from the push channel events
         [session simulatePushChannelOpened];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     XCTAssertNil(localUser1.team);
@@ -489,9 +487,9 @@
     [self.mockTransportSession performRemoteChanges:^(id<MockTransportSessionObjectCreation> _Nonnull session) {
         mockTeam = [session insertTeamWithName:@"Foo" isBound: YES users:[NSSet setWithObject:self.selfUser]];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
+    XCTAssertTrue([self login]);
     XCTAssertNotNil([ZMUser selfUserInUserSession:self.userSession].team);
     
     // when
@@ -518,7 +516,7 @@
         [session saveAndCreatePushChannelEvents]; // clears the team.member-leave event from the push channel events
         [session simulatePushChannelOpened];
     }];
-    WaitForEverythingToBeDone();
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
     XCTAssertNil([ZMUser selfUserInUserSession:self.userSession].team);
@@ -556,9 +554,9 @@
             && (user.accentColorValue == (ZMAccentColor) [values[@"accentID"] intValue]));
 }
 
-- (ZMConversation *)findConversationWithUUID:(NSUUID *)UUID inMoc:(NSManagedObjectContext *)moc
+- (ZMConversation *)findConversationWithIdentifier:(NSString *)identifier inMoc:(NSManagedObjectContext *)moc
 {
-    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:UUID createIfNeeded:NO inContext:moc];
+    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:[NSUUID uuidWithTransportString:identifier] createIfNeeded:NO inContext:moc];
     XCTAssertNotNil(conversation);
     return conversation;
 }
@@ -571,8 +569,7 @@
 - (void)testThatItFetchesTheNotificationStreamDuringBackgroundFetch
 {
     // given
-    XCTAssertTrue([self logInAndWaitForSyncToBeComplete]);
-    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssertTrue([self login]);
     
     [self.application setBackground];
     [self.application simulateApplicationDidEnterBackground];

@@ -28,9 +28,16 @@ extension SearchTests : ZMUserObserver {
     
 }
 
-class SearchTests : IntegrationTestBase {
+class SearchTests : IntegrationTest {
 
     var userNotifications : [UserChangeInfo] = []
+    
+    override func setUp() {
+        super.setUp()
+        
+        createSelfUserAndConversation()
+        createExtraUsersAndConversations()
+    }
     
     override func tearDown() {
         userNotifications.removeAll()
@@ -49,17 +56,15 @@ class SearchTests : IntegrationTestBase {
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
-            
-            self.storeRemoteID(for: user)
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // when
         searchAndConnectToUser(withName: userName, searchQuery: "Johnny")
         
         // then
-        guard let newUser = self.user(for: user) else { XCTFail(); return }
+        guard let newUser = self.user(for: user!) else { XCTFail(); return }
         guard let oneToOneConversation = newUser.oneToOneConversation else { XCTFail(); return }
         XCTAssertEqual(newUser.name, userName)
         XCTAssertNotNil(newUser.oneToOneConversation);
@@ -94,9 +99,9 @@ class SearchTests : IntegrationTestBase {
             
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
-        let pendingConnections = ZMConversationList.pendingConnectionConversations(inUserSession: userSession)
+        let pendingConnections = ZMConversationList.pendingConnectionConversations(inUserSession: userSession!)
         XCTAssertEqual(pendingConnections.count, 1)
     }
     
@@ -109,11 +114,9 @@ class SearchTests : IntegrationTestBase {
             user = changes.insertUser(withName: userName)
             user?.email = "johnny@example.com"
             user?.phone = ""
-            
-            self.storeRemoteID(for: user)
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // find user
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny") else { XCTFail(); return }
@@ -146,11 +149,10 @@ class SearchTests : IntegrationTestBase {
             user?.email = "johnny@example.com"
             user?.phone = ""
             
-            self.storeRemoteID(for: user)
             self.groupConversation.addUsers(by: self.selfUser, addedUsers: [user!])
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // find user
         guard let searchUser = searchForDirectoryUser(withName: userName, searchQuery: "Johnny") else { XCTFail(); return }
@@ -186,7 +188,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user1.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
         guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
         
@@ -208,7 +210,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // when
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
@@ -227,7 +229,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user5.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         
         // when
@@ -247,7 +249,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // delay mock transport session response
         let semaphore = DispatchSemaphore(value: 0)
@@ -290,7 +292,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
@@ -308,7 +310,7 @@ class SearchTests : IntegrationTestBase {
         XCTAssertNil(mediumImageCache?.object(forKey: remoteIdentifer as AnyObject))
         
         // when requesting medium image
-        userSession.performChanges {
+        userSession?.performChanges {
             searchUser.requestMediumProfileImage(in: self.userSession)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -331,7 +333,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         let mediumAssetIDCache = ZMSearchUser.searchUserToMediumAssetIDCache()
         let mediumImageCache = ZMSearchUser.searchUserToMediumImageCache()
@@ -350,7 +352,7 @@ class SearchTests : IntegrationTestBase {
             XCTAssertNil(mediumImageCache?.object(forKey: remoteIdentifer as AnyObject))
             
             // when requesting medium image
-            userSession.performChanges {
+            userSession?.performChanges {
                 searchUser.requestMediumProfileImage(in: self.userSession)
             }
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -374,7 +376,7 @@ class SearchTests : IntegrationTestBase {
             XCTAssertNil(mediumImageCache?.object(forKey: remoteIdentifer as AnyObject))
             
             // when requesting medium image
-            userSession.performChanges {
+            userSession?.performChanges {
                 searchUser.requestMediumProfileImage(in: self.userSession)
             }
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -398,7 +400,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         let mediumAssetIDCache = ZMSearchUser.searchUserToMediumAssetIDCache()
         let mediumImageCache = ZMSearchUser.searchUserToMediumImageCache()
@@ -419,7 +421,7 @@ class SearchTests : IntegrationTestBase {
         mediumAssetIDCache?.removeObject(forKey: remoteIdentifer as AnyObject)
         
         // (3) when requesting medium image
-        userSession.performChanges {
+        userSession?.performChanges {
             searchUser.requestMediumProfileImage(in: self.userSession)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -436,7 +438,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         // delay mock transport session response
         let semaphore = DispatchSemaphore(value: 0)
@@ -463,7 +465,7 @@ class SearchTests : IntegrationTestBase {
         XCTAssertEqual(userNotifications.count, 1)
 
         // when requesting medium
-        userSession.performChanges {
+        userSession?.performChanges {
             searchUser.requestMediumProfileImage(in: self.userSession)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -489,7 +491,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user1.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
         guard let user = searchForConnectedUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
         
@@ -513,25 +515,26 @@ class SearchTests : IntegrationTestBase {
         var userName : String? = nil
         
         mockTransportSession.performRemoteChanges { (changes) in
-            profileImageData = MockAsset(in: self.mockTransportSession.managedObjectContext, forID: self.user4.smallProfileImageIdentifier!)?.data
+            profileImageData = MockAsset.init(in: self.mockTransportSession.managedObjectContext, forID: self.user4.smallProfileImageIdentifier!)?.data
             userName = self.user4.name
         }
         
-        XCTAssert(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         mockTransportSession.resetReceivedRequests()
         
         // when
-        guard let searchQuery = userName?.components(separatedBy: " ").last else { return XCTFail() }
-        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { return XCTFail() }
-        XCTAssert(waitForEverythingToBeDone())
+        guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
+        guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        searchUser.requestSmallProfileImage(in: userSession)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(searchUser.imageSmallProfileData, profileImageData)
         
         let requests = mockTransportSession.receivedRequests()
-        guard requests.count == 3 else { return XCTFail("Wrong number of requests") }
-        XCTAssertEqual(requests[1].path, "/users?ids=\(user4.identifier)")
-        XCTAssertEqual(requests[1].method, .methodGET)
+        XCTAssertEqual(requests.count, 3)
         XCTAssertEqual(requests[2].path, "/assets/v3/\(user4.previewProfileAssetIdentifier!)")
         XCTAssertEqual(requests[2].method, .methodGET)
     }
@@ -560,7 +563,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
@@ -577,7 +580,7 @@ class SearchTests : IntegrationTestBase {
         mockTransportSession.resetReceivedRequests()
         
         // when requesting medium image
-        userSession.performChanges {
+        userSession?.performChanges {
             searchUser.requestMediumProfileImage(in: self.userSession)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -604,7 +607,7 @@ class SearchTests : IntegrationTestBase {
             userName = self.user4.name
         }
         
-        XCTAssertTrue(logInAndWaitForSyncToBeComplete())
+        XCTAssertTrue(login())
         
         guard let searchQuery = userName?.components(separatedBy: " ").last else { XCTFail(); return }
         guard let searchUser = searchForDirectoryUser(withName: userName!, searchQuery: searchQuery) else { XCTFail(); return }
@@ -625,7 +628,7 @@ class SearchTests : IntegrationTestBase {
         mockTransportSession.resetReceivedRequests()
         
         // when requesting medium image
-        userSession.performChanges {
+        userSession?.performChanges {
             searchUser.requestMediumProfileImage(in: self.userSession)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
