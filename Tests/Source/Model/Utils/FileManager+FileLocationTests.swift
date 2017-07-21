@@ -177,7 +177,7 @@ class FileManager_CacheTests : XCTestCase {
         
         guard !components.isEmpty else { return XCTFail() }
         let accountIdComp = components.removeLast()
-        XCTAssertEqual(accountIdComp, accountId.uuidString)
+        XCTAssertEqual(accountIdComp, FileManager.cachesFolderPrefix + "-" + accountId.uuidString)
         
         guard !components.isEmpty else { return XCTFail() }
         let cachesComp = components.removeLast()
