@@ -26,11 +26,17 @@
 #import "ZMCredentials.h"
 #import "ZMUserSessionAuthenticationNotification.h"
 #import "ZMPushToken.h"
+#import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 static NSString *ZMLogTag ZM_UNUSED = @"Authentication";
 static NSString *const HasHistoryKey = @"hasHistory";
 
 @implementation ZMUserSession (Authentication)
+
+- (void)setEmailCredentials:(ZMEmailCredentials *)emailCredentials
+{
+    self.clientRegistrationStatus.emailCredentials = emailCredentials;
+}
 
 - (void)checkIfLoggedInWithCallback:(void (^)(BOOL))callback
 {
@@ -46,38 +52,7 @@ static NSString *const HasHistoryKey = @"hasHistory";
 
 - (BOOL)needsToRegisterClient
 {
-    return self.clientRegistrationStatus.currentPhase != ZMClientRegistrationPhaseRegistered;
-}
-
-- (void)loginWithCredentials:(ZMCredentials *)loginCredentials
-{    
-    [self.syncManagedObjectContext performGroupedBlock:^{
-        if (self.isLoggedIn) {
-            ZMLogDebug(@"User session has a cookie in loginWithEmail, no need to log in");
-            [ZMUserSessionAuthenticationNotification notifyAuthenticationDidSucceed];
-            [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
-            return;
-        }
-        else if (   (loginCredentials.email.length == 0 || loginCredentials.password.length == 0)
-                 && (loginCredentials.phoneNumber.length == 0 || loginCredentials.phoneNumberVerificationCode.length == 0))
-        {
-            ZMLogDebug(@"Email or password is empty.");
-            [ZMUserSessionAuthenticationNotification notifyAuthenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionNeedsCredentials userInfo:nil]];
-            return;
-        }
-        else {
-            ZMLogDebug(@"Setting credentials for %@", loginCredentials.email);
-            [self.authenticationStatus prepareForLoginWithCredentials:loginCredentials]; 
-            if (self.needsToRegisterClient) {
-                [self.clientRegistrationStatus prepareForClientRegistration];
-            }
-            else {
-                [self start];
-            }
-        }
-    }];
-    
-    [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
+    return true;
 }
 
 - (BOOL)hadHistoryAtLastLogin
@@ -85,24 +60,12 @@ static NSString *const HasHistoryKey = @"hasHistory";
     return self.accountStatus.hadHistoryBeforeLogin;
 }
 
-- (BOOL)requestPhoneVerificationCodeForLogin:(NSString *)phoneNumber
+- (void)deleteUserKeychainItems;
 {
-    if(![ZMPhoneNumberValidator validateValue:&phoneNumber error:nil]) {
-        return NO;
-    }
-    [self.syncManagedObjectContext performGroupedBlock:^{
-        [self.authenticationStatus prepareForRequestingPhoneVerificationCodeForLogin:phoneNumber];
-        [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
-    }];
-    return YES;
+    [self.transportSession.cookieStorage deleteUserKeychainItems];
 }
 
-+ (void)deleteAllKeychainItems;
-{
-    [ZMPersistentCookieStorage deleteAllKeychainItems];
-}
-
-+ (void)resetStateAndExit;
+- (void)resetStateAndExit;
 {
     dispatch_async(dispatch_get_global_queue(0, 0), ^{
         dispatch_semaphore_t sem = dispatch_semaphore_create(0);
@@ -119,7 +82,6 @@ static NSString *const HasHistoryKey = @"hasHistory";
             ;
         }
         
-        [self deleteAllKeychainItems];
         [NSManagedObjectContext setClearPersistentStoreOnStart:YES];
         
         [[NSUserDefaults standardUserDefaults] synchronize];
@@ -133,59 +95,6 @@ static NSString *const HasHistoryKey = @"hasHistory";
 + (void)deleteCacheOnRelaunch;
 {
     [NSManagedObjectContext setClearPersistentStoreOnStart:YES];
-}
-
-- (id<ZMAuthenticationObserverToken>)addAuthenticationObserver:(id<ZMAuthenticationObserver>)observer
-{
-    ZM_WEAK(observer);
-    return (id<ZMAuthenticationObserverToken>)[ZMUserSessionAuthenticationNotification addObserverWithBlock:^(ZMUserSessionAuthenticationNotification *note) {
-        ZM_STRONG(observer);
-        switch(note.type) {
-            case ZMAuthenticationNotificationLoginCodeRequestDidFail:
-                if ([observer respondsToSelector:@selector(loginCodeRequestDidFail:)]) {
-                    [observer loginCodeRequestDidFail:note.error];
-                }
-                break;
-            case ZMAuthenticationNotificationAuthenticationDidSuceeded:
-                if ([observer respondsToSelector:@selector(authenticationDidSucceed)]) {
-                    [observer authenticationDidSucceed];
-                }
-                break;
-            case ZMAuthenticationNotificationAuthenticationDidFail:
-            {
-                NSError *forwardedError = nil;
-                if (note.error.code == ZMUserSessionCanNotRegisterMoreClients) {
-                    NSMutableDictionary *errorUserInfo = [NSMutableDictionary dictionary];
-                    
-                    NSArray *clientIds = note.error.userInfo[ZMClientsKey];
-                    NSArray *clientsObjects = [clientIds mapWithBlock:^id(NSManagedObjectID *objId) {
-                        return [self.managedObjectContext existingObjectWithID:objId error:NULL];
-                    }];
-                    
-                    errorUserInfo[ZMClientsKey] = clientsObjects;
-                    
-                    forwardedError = [NSError errorWithDomain:note.error.domain code:note.error.code userInfo:errorUserInfo];
-                }
-                else {
-                    forwardedError = note.error;
-                }
-                if ([observer respondsToSelector:@selector(authenticationDidFail:)]) {
-                    [observer authenticationDidFail:forwardedError];
-                }
-            }
-                break;
-            case ZMAuthenticationNotificationLoginCodeRequestDidSucceed:
-                if([observer respondsToSelector:@selector(loginCodeRequestDidSucceed)]) {
-                    [observer loginCodeRequestDidSucceed];
-                }
-                break;
-        }
-    }];
-}
-
-- (void)removeAuthenticationObserverForToken:(id<ZMAuthenticationObserverToken>)observerToken
-{
-    [ZMUserSessionAuthenticationNotification removeObserver:observerToken];
 }
 
 @end

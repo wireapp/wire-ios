@@ -32,7 +32,8 @@
 @interface  ZMRegistrationTranscoder ()
 
 @property (nonatomic, readonly) ZMSingleRequestSync *registrationSync;
-@property (nonatomic, weak) ZMAuthenticationStatus * authenticationStatus;
+@property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
+@property (nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -44,24 +45,20 @@
 
 @implementation ZMRegistrationTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc applicationStatusDirectory:(ZMApplicationStatusDirectory *)applicationStatusDirectory
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
 {
-    self = [super initWithManagedObjectContext:moc applicationStatus:applicationStatusDirectory];
+    self = [super init];
     
     if (self != nil) {
+        self.managedObjectContext = moc;
         _registrationSync = [ZMSingleRequestSync syncWithSingleRequestTranscoder:self managedObjectContext:self.managedObjectContext];
-        self.authenticationStatus = applicationStatusDirectory.authenticationStatus;
-        [applicationStatusDirectory.authenticationStatus addAuthenticationCenterObserver:self];
+        self.authenticationStatus = authenticationStatus;
+        [authenticationStatus addAuthenticationCenterObserver:self];
     }
     return self;
 }
 
-- (ZMStrategyConfigurationOption)configuration
-{
-    return ZMStrategyConfigurationOptionAllowsRequestsWhileUnauthenticated;
-}
-
- - (ZMTransportRequest *)nextRequestIfAllowed
+ - (ZMTransportRequest *)nextRequest
 {
     if (self.isInRegistrationPhase) {
         return self.registrationSync.nextRequest;
@@ -145,10 +142,6 @@
 {
     NOT_USED(sync);
     if (response.result == ZMTransportResponseStatusSuccess) {
-        ZMUser *user = [ZMUser selfUserInContext:self.managedObjectContext];
-        [user updateWithTransportData:[response.payload asDictionary] authoritative:YES];
-        // I want to unset the user ID until we log in
-        user.remoteIdentifier = nil;
         [self.authenticationStatus didCompleteRegistrationSuccessfully];
     }
     else if (response.result == ZMTransportResponseStatusPermanentError) {

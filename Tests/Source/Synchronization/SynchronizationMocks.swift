@@ -20,6 +20,7 @@ import Foundation
 import AddressBook
 import WireDataModel
 import WireCryptobox
+import avs
 @testable import WireSyncEngine
 
 
@@ -101,10 +102,10 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
     
     var mockPhase: ZMAuthenticationPhase
     
-    init(phase: ZMAuthenticationPhase = .authenticated, cookieString: String = "label", cookie: ZMCookie? = nil) {
+    init(phase: ZMAuthenticationPhase = .authenticated, cookieString: String = "label", cookieStorage: ZMPersistentCookieStorage? = nil) {
         self.mockPhase = phase
         self.cookieString = cookieString
-        super.init(managedObjectContext: nil, cookie: cookie)
+        super.init(cookieStorage: cookieStorage, managedObjectContext: nil)
     }
     
     override var currentPhase: ZMAuthenticationPhase {
@@ -120,18 +121,22 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
 
 class ZMMockClientRegistrationStatus: ZMClientRegistrationStatus {
     var mockPhase : ZMClientRegistrationPhase?
-    var mockCredentials : ZMEmailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
     var mockReadiness :Bool = true
+    
+    convenience override init() {
+        self.init(managedObjectContext: nil, cookieStorage: nil, registrationStatusDelegate: nil)
+    }
+    
+    override init!(managedObjectContext moc: NSManagedObjectContext!, cookieStorage: ZMPersistentCookieStorage!, registrationStatusDelegate: ZMClientRegistrationStatusDelegate!) {
+        super.init(managedObjectContext: moc, cookieStorage: cookieStorage, registrationStatusDelegate: registrationStatusDelegate)
+        self.emailCredentials = ZMEmailCredentials(email: "bla@example.com", password: "secret")
+    }
     
     override var currentPhase: ZMClientRegistrationPhase {
         if let phase = mockPhase {
             return phase
         }
         return super.currentPhase
-    }
-    
-    override var emailCredentials : ZMEmailCredentials {
-        return mockCredentials
     }
     
     var isLoggedIn: Bool {
@@ -261,5 +266,24 @@ public class MockSyncStateDelegate : NSObject, ZMSyncStateDelegate {
     public func didRegister(_ userClient: UserClient!) {
         registeredUserClient = userClient
     }
+}
+
+@objc
+public class MockFlowManager : NSObject {
+
+    public weak var delegate : AVSFlowManagerDelegate? = nil
+    
+    public func networkChanged() {
+        // nop
+    }
+    
+    public func isReady() -> Bool {
+        return true
+    }
+    
+    public static func getInstance() -> AnyObject? {
+        return ZMCallFlowRequestStrategyInternalFlowManagerOverride
+    }
+    
 }
 

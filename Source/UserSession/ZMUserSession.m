@@ -40,13 +40,11 @@
 #import "WireSyncEngineLogs.h"
 #import "ZMAVSBridge.h"
 #import "ZMOnDemandFlowManager.h"
-#import "ZMCookie.h"
 #import "ZMCallFlowRequestStrategy.h"
 #import "ZMCallKitDelegate.h"
 #import "ZMOperationLoop+Private.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
-#import "ZMEnvironmentsSetup.h"
 #import "ZMClientRegistrationStatus.h"
 #import "ZMCallKitDelegate+TypeConformance.h"
 
@@ -63,7 +61,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @interface ZMUserSession ()
 @property (nonatomic) ZMOperationLoop *operationLoop;
 @property (nonatomic) ZMTransportRequest *runningLoginRequest;
-@property (nonatomic) BOOL ownsQueue;
 @property (nonatomic) ZMTransportSession *transportSession;
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) NSManagedObjectContext *syncManagedObjectContext;
@@ -78,7 +75,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMApplicationRemoteNotification *applicationRemoteNotification;
 @property (nonatomic) ZMStoredLocalNotification *pendingLocalNotification;
 @property (nonatomic) LocalNotificationDispatcher *localNotificationDispatcher;
-@property (nonatomic) NSString *applicationGroupIdentifier;
+@property (nonatomic) id<LocalStoreProviderProtocol> storeProvider;
 @property (nonatomic) NSURL *storeURL;
 @property (nonatomic) NSURL *keyStoreURL;
 @property (nonatomic, readwrite) NSURL *sharedContainerURL;
@@ -124,130 +121,53 @@ ZM_EMPTY_ASSERTING_INIT()
     return [[NSProcessInfo processInfo] environment][@"ZMEncryptionOnly"] != nil;
 }
 
-+ (NSURL *)sharedContainerDirectoryForApplicationGroup:(NSString *)appGroupIdentifier
-{
-    NSFileManager *fm = NSFileManager.defaultManager;
-    NSURL *sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:appGroupIdentifier];
-    
-    if (nil == sharedContainerURL) {
-        // Seems like the shared container is not available. This could happen for series of reasons:
-        // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
-        // 2. App is running on simulator and there is no correct provisioning profile on the system
-        // 3. Bug with signing
-        //
-        // The app should allow not having a shared container in cases 1 and 2; in case 3 the app should crash
-        
-        ZMDeploymentEnvironmentType deploymentEnvironment = [[ZMDeploymentEnvironment alloc] init].environmentType;
-        if (!TARGET_IPHONE_SIMULATOR && (deploymentEnvironment == ZMDeploymentEnvironmentTypeAppStore || deploymentEnvironment == ZMDeploymentEnvironmentTypeInternal)) {
-            RequireString(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: %s", appGroupIdentifier.UTF8String);
-        }
-        else {
-            sharedContainerURL = [[fm URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask] firstObject];
-            ZMLogError(@"ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = %d", deploymentEnvironment);
-            ZMLogError(@"================================WARNING================================");
-            ZMLogError(@"Wire is going to use APPLICATION SUPPORT directory to host the database");
-            ZMLogError(@"================================WARNING================================");
-        }
-    }
-    
-    return sharedContainerURL;
-}
-
-+ (NSURL *)cachesURLForAppGroupIdentifier:(NSString *)appGroupIdentifier
-{
-    NSFileManager *fm = NSFileManager.defaultManager;
-    NSURL *sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:appGroupIdentifier];
-    
-    if (sharedContainerURL != nil) {
-        return [[sharedContainerURL URLByAppendingPathComponent:@"Library" isDirectory:YES] URLByAppendingPathComponent:@"Caches" isDirectory:YES];
-    }
-    
-    return nil;
-}
-
-+ (NSURL *)keyStoreURLForAppGroupIdentifier:(NSString *)appGroupIdentifier
-{
-    return [self sharedContainerDirectoryForApplicationGroup:appGroupIdentifier];
-}
-
-+ (NSURL *)storeURLForAppGroupIdentifier:(NSString *)appGroupIdentifier
-{
-    return [[[self sharedContainerDirectoryForApplicationGroup:appGroupIdentifier]
-             URLByAppendingPathComponent:[NSBundle mainBundle].bundleIdentifier isDirectory:YES]
-             URLByAppendingPathComponent:@"store.wiredatabase"];
-}
-
-+ (BOOL)needsToPrepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier
-{
-    return [NSManagedObjectContext needsToPrepareLocalStoreAtURL:[self storeURLForAppGroupIdentifier:appGroupIdentifier]];
-}
-
-+ (void)prepareLocalStoreUsingAppGroupIdentifier:(NSString *)appGroupIdentifier completion:(void (^)())completionHandler
-{
-    ZMDeploymentEnvironmentType environment = [[ZMDeploymentEnvironment alloc] init].environmentType;
-    BOOL shouldBackupCorruptedDatabase = environment == ZMDeploymentEnvironmentTypeInternal || DEBUG;
-    
-    [NSManagedObjectContext prepareLocalStoreAtURL:[self storeURLForAppGroupIdentifier:appGroupIdentifier]
-                           backupCorruptedDatabase:shouldBackupCorruptedDatabase
-                                       synchronous:NO
-                                 completionHandler:completionHandler];
-}
-
-+ (BOOL)storeIsReady
-{
-    return [NSManagedObjectContext storeIsReady];
-}
-
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
-- (instancetype)initWithMediaManager:(id<AVSMediaManager>)mediaManager
+- (instancetype)initWithMediaManager:(AVSMediaManager *)mediaManager
                            analytics:(id<AnalyticsType>)analytics
+                    transportSession:(ZMTransportSession *)transportSession
+                     apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
+                         application:(id<ZMApplication>)application
+                              userId:(NSUUID * __unused)uuid
                           appVersion:(NSString *)appVersion
-                  appGroupIdentifier:(NSString *)appGroupIdentifier;
+                  storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 {
-    zmSetupEnvironments();
-    ZMBackendEnvironment *environment = [[ZMBackendEnvironment alloc] initWithUserDefaults:NSUserDefaults.standardUserDefaults];
-    NSURL *backendURL = environment.backendURL;
-    NSURL *websocketURL = environment.backendWSURL;
-    self.applicationGroupIdentifier = appGroupIdentifier;
+    self.storeProvider = storeProvider;
 
-    ZMAPNSEnvironment *apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
+    if (apnsEnvironment == nil) {
+        apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
+    }
     
-    self.storeURL = [self.class storeURLForAppGroupIdentifier:appGroupIdentifier];
-    self.keyStoreURL = [self.class keyStoreURLForAppGroupIdentifier:appGroupIdentifier];
-    RequireString(nil != self.storeURL, "Unable to get a store URL using group identifier: %s", appGroupIdentifier.UTF8String);
+    self.storeURL = storeProvider.storeURL;
+    self.keyStoreURL = storeProvider.keyStoreURL;
     NSManagedObjectContext *userInterfaceContext = [NSManagedObjectContext createUserInterfaceContextWithStoreAtURL:self.storeURL];
     NSManagedObjectContext *syncMOC = [NSManagedObjectContext createSyncContextWithStoreAtURL:self.storeURL keyStoreURL:self.keyStoreURL];
     [syncMOC performBlockAndWait:^{
         syncMOC.analytics = analytics;
     }];
-
-    UIApplication *application = [UIApplication sharedApplication];
     
-    ZMTransportSession *session = [[ZMTransportSession alloc] initWithBaseURL:backendURL
-                                                                 websocketURL:websocketURL
-                                                               mainGroupQueue:userInterfaceContext
-                                                           initialAccessToken:[userInterfaceContext accessToken]
-                                                                  application:application
-                                                    sharedContainerIdentifier:nil];
+    [[BackgroundActivityFactory sharedInstance] setApplication:[UIApplication sharedApplication]]; // TODO make BackgroundActivityFactory work with ZMApplication
+    [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:userInterfaceContext];
     
     RequestLoopAnalyticsTracker *tracker = [[RequestLoopAnalyticsTracker alloc] initWithAnalytics:analytics];
-    session.requestLoopDetectionCallback = ^(NSString *path) {
-        // The tracker will return NO in case the path should be ignored.
-        if (! [tracker tagWithPath:path]) {
-            return;
-        }
-        ZMLogWarn(@"Request loop happening at path: %@", path);
-        dispatch_async(dispatch_get_main_queue(), ^{
-            [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportRequestLoopNotificationName object:nil userInfo:@{@"path" : path}];
-        });
-    };
     
+    if ([transportSession respondsToSelector:@selector(setRequestLoopDetectionCallback:)]) {
+        transportSession.requestLoopDetectionCallback = ^(NSString *path) {
+            // The tracker will return NO in case the path should be ignored.
+            if (! [tracker tagWithPath:path]) {
+                return;
+            }
+            ZMLogWarn(@"Request loop happening at path: %@", path);
+            dispatch_async(dispatch_get_main_queue(), ^{
+                [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportRequestLoopNotificationName object:nil userInfo:@{@"path" : path}];
+            });
+        };
+    }
     
-    self = [self initWithTransportSession:session
+    self = [self initWithTransportSession:transportSession
                      userInterfaceContext:userInterfaceContext
                  syncManagedObjectContext:syncMOC
                              mediaManager:mediaManager
@@ -255,28 +175,24 @@ ZM_EMPTY_ASSERTING_INIT()
                             operationLoop:nil
                               application:application
                                appVersion:appVersion
-                       appGroupIdentifier:appGroupIdentifier];
-    if (self != nil) {
-        self.ownsQueue = YES;
-    }
+                            storeProvider:storeProvider];
     return self;
 }
 
 - (instancetype)initWithTransportSession:(ZMTransportSession *)session
                     userInterfaceContext:(NSManagedObjectContext *)userInterfaceContext
                 syncManagedObjectContext:(NSManagedObjectContext *)syncManagedObjectContext
-                            mediaManager:(id<AVSMediaManager>)mediaManager
+                            mediaManager:(AVSMediaManager *)mediaManager
                          apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                      appGroupIdentifier:(NSString *)appGroupIdentifier;
+                           storeProvider:(id<LocalStoreProviderProtocol>)storeProvider
 
 {
     self = [super init];
     if(self) {
-        zmSetupEnvironments();
-        [ZMUserSession enableLogsByEnvironmentVariable];
+        
         self.appVersion = appVersion;
         [ZMUserAgent setWireAppVersion:appVersion];
         self.didStartInitialSync = NO;
@@ -284,7 +200,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
         [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pushChannelDidChange:) name:ZMPushChannelStateChangeNotificationName object:nil];
 
-        self.sharedContainerURL = [self.class sharedContainerDirectoryForApplicationGroup:appGroupIdentifier];
+        self.sharedContainerURL = storeProvider.sharedContainerDirectory;
         self.apnsEnvironment = apnsEnvironment;
         self.networkIsOnline = YES;
         self.managedObjectContext = userInterfaceContext;
@@ -296,7 +212,7 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
         
-        NSURL *cacheLocation = [self.class cachesURLForAppGroupIdentifier:appGroupIdentifier];
+        NSURL *cacheLocation = storeProvider.cachesURL;
         
         UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:cacheLocation];
         self.managedObjectContext.zm_userImageCache = userImageCache;
@@ -335,16 +251,15 @@ ZM_EMPTY_ASSERTING_INIT()
         
         [self.syncManagedObjectContext performBlockAndWait:^{
     
-            ZMCookie *cookie = [[ZMCookie alloc] initWithManagedObjectContext:self.syncManagedObjectContext cookieStorage:session.cookieStorage];
             self.operationLoop = operationLoop ?: [[ZMOperationLoop alloc] initWithTransportSession:session
-                                                                                             cookie:cookie
+                                                                                             cookieStorage:session.cookieStorage
                                                                         localNotificationdispatcher:self.localNotificationDispatcher
                                                                                        mediaManager:mediaManager
                                                                                 onDemandFlowManager:self.onDemandFlowManager
                                                                                               uiMOC:self.managedObjectContext
                                                                                             syncMOC:self.syncManagedObjectContext
                                                                                   syncStateDelegate:self
-                                                                                 appGroupIdentifier:appGroupIdentifier
+                                                                                 appGroupIdentifier:storeProvider.appGroupIdentifier // TODO: pass storeProvider instead
                                                                                         application:application];
             
             __weak id weakSelf = self;
@@ -382,6 +297,12 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                           userSession:self
                                                                          mediaManager:(AVSMediaManager *)mediaManager];
         }
+        
+        [self.syncManagedObjectContext performBlockAndWait:^{
+            if (self.clientRegistrationStatus.currentPhase != ZMClientRegistrationPhaseRegistered) {
+                [self.clientRegistrationStatus prepareForClientRegistration];
+            }
+        }];
     }
     return self;
 }
@@ -397,11 +318,6 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.localNotificationDispatcher tearDown];
     self.localNotificationDispatcher = nil;
     [self.blackList teardown];
-    
-    if(self.ownsQueue) {
-        [self.transportSession tearDown];
-        self.transportSession = nil;
-    }
     
     __block NSMutableArray *keysToRemove = [NSMutableArray array];
     [self.managedObjectContext.userInfo enumerateKeysAndObjectsUsingBlock:^(id key, id obj, BOOL * ZM_UNUSED stop) {
@@ -450,7 +366,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (BOOL)isLoggedIn
 {
-    return self.authenticationStatus.currentPhase == ZMAuthenticationPhaseAuthenticated &&
+    return self.authenticationStatus.isAuthenticated &&
     self.clientRegistrationStatus.currentPhase == ZMClientRegistrationPhaseRegistered;
 }
 
@@ -518,7 +434,7 @@ ZM_EMPTY_ASSERTING_INIT()
     }];
 }
 
-- (void)setMediaManager:(id <AVSMediaManager>)delegate;
+- (void)setMediaManager:(AVSMediaManager *)delegate;
 {
     NOT_USED(delegate);
 }
@@ -552,14 +468,11 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.syncManagedObjectContext performGroupedBlock:^{
         if (self.isLoggedIn) {
             [ZMUserSessionAuthenticationNotification notifyAuthenticationDidSucceed];
-            return;
-        }
-
-        if (self.authenticationStatus.needsCredentialsToLogin) {
+        } else if (self.authenticationStatus.isAuthenticated) {
+            [self.clientRegistrationStatus prepareForClientRegistration];
+        } else {
             [ZMUserSessionAuthenticationNotification notifyAuthenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionNeedsCredentials
                                                                                                                userInfo:nil]];
-        } else {
-            [self.clientRegistrationStatus prepareForClientRegistration];
         }
     }];
 }
@@ -976,9 +889,9 @@ static BOOL ZMUserSessionUseCallKit = NO;
 
 @implementation ZMUserSession (AuthenticationStatus)
 
-- (ZMAuthenticationStatus *)authenticationStatus;
+- (id<AuthenticationStatusProvider>)authenticationStatus
 {
-    return self.operationLoop.syncStrategy.applicationStatusDirectory.authenticationStatus;
+    return self.transportSession.cookieStorage;
 }
 
 - (UserProfileUpdateStatus *)userProfileUpdateStatus;

@@ -22,13 +22,14 @@
 @import WireDataModel;
 
 #import "ZMUserSession.h"
-#import "IntegrationTestBase.h"
 #import "ZMUserSession+Internal.h"
+#import "NotificationObservers.h"
 #import "ZMConversationTranscoder+Internal.h"
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
+#import "IntegrationTest.h"
 
 
-@interface ConversationTestsBase : IntegrationTestBase
+@interface ConversationTestsBase : IntegrationTest
 
 - (void)testThatItAppendsMessageToConversation:(MockConversation *)mockConversation
                                      withBlock:(NSArray *(^)(MockTransportSession<MockTransportSessionObjectCreation> *session))appendMessages

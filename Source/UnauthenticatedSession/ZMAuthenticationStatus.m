@@ -41,12 +41,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 @implementation ZMAuthenticationStatus
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc cookie:(ZMCookie *)cookie;
+- (instancetype)initWithCookieStorage:(ZMPersistentCookieStorage *)cookieStorage managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 {
     self = [super init];
     if(self) {
-        self.moc = moc;
-        self.cookie = cookie;
+        self.moc = managedObjectContext;
+        self.cookieStorage = cookieStorage;
         self.isWaitingForLogin = !self.isLoggedIn;
     }
     return self;
@@ -64,12 +64,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (NSString *)cookieLabel
 {
-    return self.cookie.label;
+    return self.cookieStorage.cookieLabel;
 }
 
 - (void)setCookieLabel:(NSString *)label
 {
-    self.cookie.label = label;
+    self.cookieStorage.cookieLabel = label;
 }
 
 - (void)resetLoginAndRegistrationStatus
@@ -101,16 +101,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
         }
         [[NSNotificationCenter defaultCenter] postNotificationName:AuthenticationCenterDataChangeNotificationName object:self];
     }
-}
-
-- (void)setRegisteredOnThisDevice:(BOOL)registeredOnThisDevice
-{
-    [self.moc setRegisteredOnThisDevice:registeredOnThisDevice];
-}
-
-- (BOOL)registeredOnThisDevice
-{
-    return [self.moc isRegisteredOnThisDevice];
 }
 
 - (ZMCompleteRegistrationUser *)registrationUser
@@ -182,7 +172,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (BOOL)hasCookie;
 {
-    NSData *cookie = [self.cookie data];
+    NSData *cookie = [self.cookieStorage authenticationCookieData];
     return cookie != nil;
 }
 
@@ -211,7 +201,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self setRegisteredOnThisDevice:NO];
+    self.cookieStorage.authenticationCookieData = nil;
     BOOL wasDuplicated = self.duplicateRegistrationPhoneNumber;
     [self resetLoginAndRegistrationStatus];
     if(wasDuplicated && credentials.credentialWithPhone) {
@@ -226,7 +216,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForRegistrationOfUser:(ZMCompleteRegistrationUser *)user
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    self.cookie.data = nil;
+    self.cookieStorage.authenticationCookieData = nil;
     self.isWaitingForLogin = YES;
     [self resetLoginAndRegistrationStatus];
     self.registrationUser = user;
@@ -286,14 +276,16 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)didCompleteRegistrationSuccessfully
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    [self setRegisteredOnThisDevice:YES];
+    self.completedRegistration = YES;
     
-    if(self.currentPhase == ZMAuthenticationPhaseRegisterWithEmail) {
+    if (self.currentPhase == ZMAuthenticationPhaseRegisterWithEmail) {
         ZMCredentials *credentials = [ZMEmailCredentials credentialsWithEmail:self.registrationUser.emailAddress password:self.registrationUser.password];
         //we need to set credentials first cause that will trigger notification and check for current state but we need to know that we are going from email registration to login attempts
         self.loginCredentials = credentials;
         self.registrationUser = nil;
         [ZMUserSessionRegistrationNotification notifyEmailVerificationDidSucceed];
+    } else if (self.currentPhase == ZMAuthenticationPhaseAuthenticated) {
+        [self loginSucceed];
     }
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
@@ -348,6 +340,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     if (self.isWaitingForLogin) {
         self.isWaitingForLogin = NO;
     }
+    [ZMUserSessionAuthenticationNotification notifyAuthenticationDidSucceed];
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
@@ -411,7 +404,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)setAuthenticationCookieData:(NSData *)data;
 {
     ZMLogDebug(@"Setting cookie data: %@", data != nil ? @"Nil" : @"Not nil");
-    self.cookie.data = data;
+    self.cookieStorage.authenticationCookieData = data;
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
@@ -454,7 +447,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 @end
 
-
+static NSString * const CookieLabelKey = @"ZMCookieLabel";
 
 @implementation NSManagedObjectContext (Registration)
 
@@ -468,9 +461,15 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
     }];
 }
 
-- (BOOL)isRegisteredOnThisDevice
+- (BOOL)registeredOnThisDevice
 {
     return ((NSNumber *)[self persistentStoreMetadataForKey:RegisteredOnThisDeviceKey]).boolValue;
+}
+
+- (NSString *)legacyCookieLabel
+{
+    NSString *label = [self persistentStoreMetadataForKey:CookieLabelKey];
+    return label;
 }
 
 @end

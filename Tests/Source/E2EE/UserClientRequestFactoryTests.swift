@@ -33,11 +33,13 @@ class UserClientRequestFactoryTests: MessagingTest {
     override func setUp() {
         super.setUp()
         self.spyKeyStore = SpyUserClientKeyStore(in: UserClientKeysStore.otrDirectoryURL)
-        self.authenticationStatus = MockAuthenticationStatus(cookie: nil);
+        self.authenticationStatus = MockAuthenticationStatus();
         self.sut = UserClientRequestFactory(keysStore: self.spyKeyStore)
     }
     
     override func tearDown() {
+        try? FileManager.default.removeItem(at: spyKeyStore.cryptoboxDirectoryURL)  
+        
         self.authenticationStatus = nil
         self.sut = nil
         self.spyKeyStore = nil
@@ -58,7 +60,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
         
         //when
-        guard let request = try? sut.registerClientRequest(client, credentials: credentials, authenticationStatus:authenticationStatus) else {
+        guard let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie") else {
             XCTFail()
             return
         }
@@ -97,7 +99,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         //when
         let upstreamRequest : ZMUpstreamRequest
         do {
-            upstreamRequest = try sut.registerClientRequest(client, credentials: nil, authenticationStatus:authenticationStatus)
+            upstreamRequest = try sut.registerClientRequest(client, credentials: nil, cookieLabel: "mycookie")
         } catch {
             return XCTFail("error should be nil \(error)")
             
@@ -137,7 +139,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
         
         //when
-        let request = try? sut.registerClientRequest(client, credentials: credentials, authenticationStatus:authenticationStatus)
+        let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie")
         
         XCTAssertNil(request, "Should not return request if client fails to generate prekeys")
     }
@@ -150,7 +152,7 @@ class UserClientRequestFactoryTests: MessagingTest {
         let credentials = ZMEmailCredentials(email: "some@example.com", password: "123")
         
         //when
-        let request = try? sut.registerClientRequest(client, credentials: credentials, authenticationStatus:authenticationStatus)
+        let request = try? sut.registerClientRequest(client, credentials: credentials, cookieLabel: "mycookie")
         
         XCTAssertNil(request, "Should not return request if client fails to generate last prekey")
     }

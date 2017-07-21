@@ -47,10 +47,10 @@ class OperationLoopNewRequestObserver {
 
 
 @objc class MockAuthenticationProvider: NSObject, AuthenticationStatusProvider {
-    var mockAuthenticationPhase: ZMAuthenticationPhase = .authenticated
+    var mockIsAuthenticated: Bool = true
     
-    var currentPhase: ZMAuthenticationPhase {
-        return mockAuthenticationPhase
+    var isAuthenticated: Bool {
+        return mockIsAuthenticated
     }
 }
 
@@ -184,8 +184,9 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
     
     override func tearDown() {
         observer = nil
-        BackgroundActivityFactory.tearDownInstance()
         sut = nil
+        BackgroundActivityFactory.sharedInstance().mainGroupQueue = nil
+        BackgroundActivityFactory.sharedInstance().application = nil
         authenticationProvider = nil
         super.tearDown()
     }
@@ -475,7 +476,7 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
     
     func testThatItDoesNotStartABackgroundActivityWhenTheStatusIsNotAuthenticated() {
         // given
-        authenticationProvider.mockAuthenticationPhase = .unauthenticated
+        authenticationProvider.mockIsAuthenticated = false
         
         // when
         sut.didReceiveVoIPNotification(createEventsWithID())

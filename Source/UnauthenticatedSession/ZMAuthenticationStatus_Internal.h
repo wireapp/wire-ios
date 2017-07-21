@@ -21,7 +21,7 @@
 
 @interface ZMAuthenticationStatus () <ZMTimerClient>
 
-@property (nonatomic) ZMCookie *cookie;
+@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 
@@ -30,7 +30,7 @@
 @property (nonatomic) ZMCompleteRegistrationUser *internalRegistrationUser;
 
 @property (nonatomic) BOOL isWaitingForEmailVerification;
-@property (nonatomic) BOOL registeredOnThisDevice;
+@property (nonatomic) BOOL completedRegistration;
 
 @property (nonatomic) BOOL duplicateRegistrationEmail;
 @property (nonatomic) BOOL duplicateRegistrationPhoneNumber;
@@ -46,11 +46,5 @@
 - (void)resetLoginAndRegistrationStatus;
 - (void)setLoginCredentials:(ZMCredentials *)credentials;
 
-@end
-
-
-@interface NSManagedObjectContext (Registration)
-- (void)setRegisteredOnThisDevice:(BOOL)registeredOnThisDevice;
-- (BOOL)isRegisteredOnThisDevice;
 @end
 
