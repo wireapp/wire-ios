@@ -74,14 +74,12 @@ static UIColor *fontColor, *warningBackgroundColor;
 @property (nonatomic, strong) UITapGestureRecognizer *tapGestureRecognizer;
 
 @property (nonatomic, strong) NSTimer *collapseTimer;
+@property (nonatomic, strong) id serverConnectionObserverToken;
 
 @end
 
 
-
-@interface NetworkStatusViewController (NetworkAvailability) <ZMNetworkAvailabilityObserver>
-
-+ (StatusBarState)statusBarStateForZMNetworkState:(ZMNetworkState)networkState;
+@interface NetworkStatusViewController (ServerConnection) <ServerConnectionObserver>
 
 @end
 
@@ -137,7 +135,8 @@ static UIColor *fontColor, *warningBackgroundColor;
     self.statusLabel.backgroundColor = [UIColor clearColor];
 
     [self addTapGestureRecognizer];
-    [ZMNetworkAvailabilityChangeNotification addNetworkAvailabilityObserver:self userSession:[ZMUserSession sharedSession]];
+    
+    self.serverConnectionObserverToken = [SessionManager.shared.serverConnection addObserver:self];
     
     // Set the view hidden to disable receiving touches. It will be eventually set to NO by a reachability change.
     self.view.hidden = YES;
@@ -159,7 +158,7 @@ static UIColor *fontColor, *warningBackgroundColor;
 
 - (void)dealloc
 {
-    [ZMNetworkAvailabilityChangeNotification removeNetworkAvailabilityObserver:self];
+    [SessionManager.shared.serverConnection removeObserver:self.serverConnectionObserverToken];
 }
 
 - (void)tappedOnBackground:(UIGestureRecognizer *)sender
@@ -175,7 +174,8 @@ static UIColor *fontColor, *warningBackgroundColor;
 
 - (void)updateState
 {
-    [self enqueueStatusBarStateChange:[NetworkStatusViewController statusBarStateForZMNetworkState:[ZMUserSession sharedSession].networkState]];
+    BOOL isOffline = SessionManager.shared.serverConnection.isOffline;
+    [self enqueueStatusBarStateChange:isOffline ? StatusBarStateServerUnreachable : StatusBarStateOk];
 }
 
 - (void)flashNetworkStatusIfNecessaryAndShowAlert:(BOOL)showAlert
@@ -266,20 +266,11 @@ static UIColor *fontColor, *warningBackgroundColor;
 
 
 
-@implementation NetworkStatusViewController (NetworkAvailability)
+@implementation NetworkStatusViewController (ServerConnection)
 
-- (void)didChangeAvailability:(ZMNetworkAvailabilityChangeNotification *)note
+- (void)serverConnectionDidChange:(id<ServerConnection>)serverConnection
 {
     [self updateState];
-}
-
-+ (StatusBarState)statusBarStateForZMNetworkState:(ZMNetworkState)networkState
-{
-    StatusBarState state = StatusBarStateOk;
-    if ([ZMUserSession sharedSession].networkState == ZMNetworkStateOffline) {
-        state = StatusBarStateServerUnreachable;
-    }
-    return state;
 }
 
 @end

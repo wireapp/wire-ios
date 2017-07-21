@@ -837,7 +837,7 @@
 {
     [self updateAccessoryViews];
     [self updateNewButtonTitleLabel];
-    [[ZMUserSession sharedSession] checkNetworkAndFlashIndicatorIfNecessary];
+    [AppDelegate checkNetworkAndFlashIndicatorIfNecessary];
 }
 
 - (BOOL)textViewShouldEndEditing:(UITextView *)textView
@@ -1002,10 +1002,7 @@
 
 - (void)giphyButtonPressed:(id)sender
 {
-    
-    [[ZMUserSession sharedSession] checkNetworkAndFlashIndicatorIfNecessary];
-    
-    if ([ZMUserSession sharedSession].networkState != ZMNetworkStateOffline) {
+    if (![AppDelegate checkNetworkAndFlashIndicatorIfNecessary]) {
         
         [Analytics.shared tagMediaAction:ConversationMediaActionGif inConversation:self.conversation];
     

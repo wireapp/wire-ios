@@ -291,9 +291,19 @@ static AppDelegate *sharedAppDelegate = nil;
     return self.appController.zetaUserSession;
 }
 
+- (UnauthenticatedSession *)unauthenticatedSession
+{
+    return self.appController.unautenticatedUserSession;
+}
+
 - (NotificationWindowRootViewController *)notificationWindowController
 {
     return self.appController.notificationWindowController;
+}
+
+- (SessionManager *)sessionManager
+{
+    return self.appController.sessionManager;
 }
 
 - (UIWindow *)window
