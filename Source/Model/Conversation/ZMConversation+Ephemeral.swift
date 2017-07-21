@@ -74,6 +74,9 @@ public extension ZMConversation {
         return ZMConversationMessageDestructionTimeout(rawValue: messageDestructionTimeout) ?? .none
     }
 
+    public var canSendEphemeral: Bool {
+        return self.activeParticipants.count > 1
+    }
 }
 
 

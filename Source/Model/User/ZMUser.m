@@ -550,12 +550,12 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     }
     
     NSString *email = [transportData optionalStringForKey:@"email"];
-    if (email != nil || authoritative) {
+    if ([transportData objectForKey:@"email"] || authoritative) {
         self.emailAddress = email.stringByRemovingExtremeCombiningCharacters;
     }
     
     NSString *phone = [transportData optionalStringForKey:@"phone"];
-    if (phone != nil || authoritative) {
+    if ([transportData objectForKey:@"phone"] || authoritative) {
         self.phoneNumber = phone.stringByRemovingExtremeCombiningCharacters;
     }
     

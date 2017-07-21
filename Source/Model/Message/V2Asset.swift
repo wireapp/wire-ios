@@ -22,12 +22,10 @@ import MobileCoreServices
 
 
 extension String {
-
     var isGIF: Bool {
-        guard let UTIString = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, self as CFString, nil)?.takeUnretainedValue() else { return false }
+        guard let UTIString = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, self as CFString, nil)?.takeRetainedValue() else { return false }
         return UTIString == kUTTypeGIF
     }
-
 }
 
 
