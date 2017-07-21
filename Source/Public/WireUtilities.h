@@ -26,7 +26,6 @@ FOUNDATION_EXPORT double WireUtilitiesVersionNumber;
 FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 
 
-#import <WireUtilities/ZMDispatchGroupQueue.h>
 #import <WireUtilities/NSData+ZMAdditions.h>
 #import <WireUtilities/NSData+ZMSCrypto.h>
 #import <WireUtilities/NSDate+Utility.h>

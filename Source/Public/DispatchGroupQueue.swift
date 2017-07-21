@@ -16,23 +16,28 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import <Foundation/Foundation.h>
+import Foundation
 
-@import WireSystem;
-
-@interface NSObject (DispatchGroups)
-
-- (void)createDispatchGroups;
-
-/// List of all groups associated with this context
-- (NSArray<ZMSDispatchGroup *> *_Nonnull)allGroups;
-- (ZMSDispatchGroup * _Nullable)firstGroup;
-
-/// This is used for testing. It is not thread safe.
-- (void)addGroup:(ZMSDispatchGroup * _Nonnull)dispatchGroup;
-
-- (NSArray<ZMSDispatchGroup *> * _Nonnull)enterAllGroups;
-- (void)leaveAllGroups:(NSArray<ZMSDispatchGroup *> * _Nonnull)groups;
-- (NSArray<ZMSDispatchGroup *> * _Nonnull)enterAllButFirstGroup;
-
-@end
+class DispatchGroupQueue : NSObject, ZMSGroupQueue {
+    
+    let queue : DispatchQueue
+    let dispatchGroupContext : DispatchGroupContext
+    
+    init(queue: DispatchQueue) {
+        self.queue = queue
+        self.dispatchGroupContext = DispatchGroupContext(groups: [])
+    }
+    
+    var dispatchGroup: ZMSDispatchGroup! {
+        return self.dispatchGroupContext.groups.first
+    }
+    
+    func performGroupedBlock(_ block: @escaping () -> Void) {
+        let groups = dispatchGroupContext.enterAll()
+        queue.async {
+            block()
+            self.dispatchGroupContext.leave(groups)
+        }
+    }
+    
+}
