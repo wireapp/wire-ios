@@ -64,7 +64,7 @@ ZM_EMPTY_ASSERTING_INIT()
         self.moc = moc;
         self.includeClientID = includeClientID;
         self.transcoder = transcoder;
-        self.singleRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:self.moc];
+        self.singleRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:self.moc];
     }
     return self;
 }

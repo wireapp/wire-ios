@@ -41,11 +41,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 @implementation ZMAuthenticationStatus
 
-- (instancetype)initWithCookieStorage:(ZMPersistentCookieStorage *)cookieStorage managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+- (instancetype)initWithCookieStorage:(ZMPersistentCookieStorage *)cookieStorage groupQueue:(id<ZMSGroupQueue>)groupQueue
 {
     self = [super init];
     if(self) {
-        self.moc = managedObjectContext;
+        self.groupQueue = groupQueue;
         self.cookieStorage = cookieStorage;
         self.isWaitingForLogin = !self.isLoggedIn;
     }
@@ -193,7 +193,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (void)timerDidFire:(ZMTimer *)timer
 {
-    [self.moc performGroupedBlock:^{
+    [self.groupQueue performGroupedBlock:^{
         [self didTimeoutLoginForCredentials:timer.userInfo[TimerInfoOriginalCredentialsKey]];
     }];
 }

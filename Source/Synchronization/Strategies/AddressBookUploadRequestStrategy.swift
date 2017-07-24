@@ -62,7 +62,7 @@ private let addressBookLastUploadedIndex = "ZMAddressBookTranscoderLastIndexUplo
         self.addressBookGenerator = addressBookGenerator
         self.tracker = tracker ?? AddressBookAnalytics(analytics: moc.analytics, managedObjectContext: moc)
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
-        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {

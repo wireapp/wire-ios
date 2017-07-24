@@ -29,10 +29,10 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 
 @interface ZMLoginTranscoder () <ZMSingleRequestTranscoder, ZMAuthenticationStatusObserver>
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                         timedDownstreamSync:(ZMTimedSingleRequestSync *)timedDownstreamSync
-                   verificationResendRequest:(ZMSingleRequestSync *)verificationResendRequest NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue
+              authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+               timedDownstreamSync:(ZMTimedSingleRequestSync *)timedDownstreamSync
+         verificationResendRequest:(ZMSingleRequestSync *)verificationResendRequest NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic) ZMTimedSingleRequestSync *timedDownstreamSync;
 @property (nonatomic) ZMSingleRequestSync *loginWithPhoneNumberSync;
