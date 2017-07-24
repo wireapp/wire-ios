@@ -37,7 +37,6 @@
 @property (nonatomic) BOOL isWaitingForLogin;
 @property (nonatomic) BOOL canClearCredentials;
 
-@property (nonatomic) NSData *cookieData;
 @property (nonatomic) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMTimer *loginTimer;
 

@@ -156,7 +156,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (BOOL)isLoggedIn
 {
-    return nil != self.cookieData;
+    return nil != self.authenticationCookieData;
 }
 
 - (void)startLoginTimer
@@ -184,7 +184,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForLoginWithCredentials:(ZMCredentials *)credentials
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    self.cookieData = nil;
+    self.authenticationCookieData = nil;
     BOOL wasDuplicated = self.duplicateRegistrationPhoneNumber;
     [self resetLoginAndRegistrationStatus];
     if(wasDuplicated && credentials.credentialWithPhone) {
@@ -199,7 +199,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)prepareForRegistrationOfUser:(ZMCompleteRegistrationUser *)user
 {
     ZMLogDebug(@"%@", NSStringFromSelector(_cmd));
-    self.cookieData = nil;
+    self.authenticationCookieData = nil;
     self.isWaitingForLogin = YES;
     [self resetLoginAndRegistrationStatus];
     self.registrationUser = user;
@@ -387,7 +387,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 - (void)setAuthenticationCookieData:(NSData *)data;
 {
     ZMLogDebug(@"Setting cookie data: %@", data != nil ? @"Nil" : @"Not nil");
-    self.cookieData = data;
+    _authenticationCookieData = data;
     ZMLogDebug(@"current phase: %lu", (unsigned long)self.currentPhase);
 }
 
