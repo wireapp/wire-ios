@@ -241,7 +241,6 @@ extension UserProfileUpdateStatusTests {
     func testThatItNotifiesAfterSuccessfullySettingEmail() {
         
         // GIVEN
-        XCTAssertFalse(self.sut.managedObjectContext.selfContactCardNeedsToBeUploaded)
         let credentials = ZMEmailCredentials(email: "foo@example.com", password: "%$#@11111")
         try? self.sut.requestSettingEmailAndPassword(credentials: credentials)
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -259,7 +258,6 @@ extension UserProfileUpdateStatusTests {
         default:
             XCTFail()
         }
-        XCTAssertTrue(self.sut.managedObjectContext.selfContactCardNeedsToBeUploaded)
     }
     
     func testThatItIsNotSettingEmailAnymoreAsSoonAsTheSelfUserHasEmail() {
@@ -563,7 +561,6 @@ extension UserProfileUpdateStatusTests {
     func testThatItCompletesUpdatingPhoneNumber() {
         
         // GIVEN
-        XCTAssertFalse(self.sut.managedObjectContext.selfContactCardNeedsToBeUploaded)
         let credentials = ZMPhoneCredentials(phoneNumber: "+1555234342", verificationCode: "234555")
         
         // WHEN
@@ -574,7 +571,6 @@ extension UserProfileUpdateStatusTests {
         // THEN
         XCTAssertFalse(self.sut.currentlySettingPhone)
         XCTAssertNil(self.sut.phoneNumberToSet)
-        XCTAssertTrue(self.sut.managedObjectContext.selfContactCardNeedsToBeUploaded)
     }
     
     func testThatItFailsUpdatingPhoneNumber() {
