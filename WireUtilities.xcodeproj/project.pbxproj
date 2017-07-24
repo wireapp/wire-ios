@@ -29,6 +29,8 @@
 		09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */; };
 		163FB9061F2229DF00802AF4 /* DispatchGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */; };
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
+		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
+		168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */; };
 		16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */; };
 		16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */; };
 		3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
@@ -200,6 +202,8 @@
 		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
 		163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContext.swift; sourceTree = "<group>"; };
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
+		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
+		168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueueTests.swift; sourceTree = "<group>"; };
 		16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMEType.swift"; sourceTree = "<group>"; };
 		16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMETypeTests.swift"; sourceTree = "<group>"; };
 		3E88BD381B1F3EA300232589 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -610,6 +614,8 @@
 				0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */,
 				091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */,
 				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
+				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
+				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
 				F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */,
 				871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */,
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
@@ -884,6 +890,7 @@
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				F9C9A7C71CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
+				168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */,
 				F9D381B21B70B94B00E6E4EB /* NSSet+ZMUTests.m in Sources */,
 				F9C9A7C61CAEAFE10039E10C /* ZMEmailAddressValidatorTests.m in Sources */,
 				091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */,
@@ -907,6 +914,7 @@
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
 				546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */,
+				163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */,
 				546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */,
 				09F027D01B721DA300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m in Sources */,
 			);
