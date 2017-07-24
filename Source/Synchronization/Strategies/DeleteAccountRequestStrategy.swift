@@ -37,7 +37,7 @@ import WireTransport
             .allowsRequestsDuringEventProcessing,
             .allowsRequestsDuringNotificationStreamFetch
         ]
-        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: self.managedObjectContext)
+        self.deleteSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: self.managedObjectContext)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {

@@ -37,7 +37,7 @@
 
 @property (nonatomic) BOOL isWaitingForLogin;
 
-@property (nonatomic) NSManagedObjectContext *moc;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) BOOL canClearCredentials;
 
 @property (nonatomic) ZMTimer *loginTimer;

@@ -62,6 +62,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 
 @interface ZMLoginTranscoderTests : MessagingTest
 
+@property (nonatomic) DispatchGroupQueue *groupQueue;
 @property (nonatomic) ZMLoginTranscoder *sut;
 @property (nonatomic) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic) id mockClientRegistrationStatus;
@@ -80,14 +81,15 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 - (void)setUp {
     [super setUp];
     
+    self.groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
     self.originalLoginTimerInterval = DefaultPendingValidationLoginAttemptInterval;
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"] managedObjectContext:nil];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"] groupQueue:self.groupQueue];
     self.mockClientRegistrationStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
     
     self.mockLocale = [OCMockObject niceMockForClass:[NSLocale class]];
     [[[self.mockLocale stub] andReturn:[NSLocale localeWithLocaleIdentifier:@"fr_FR"]] currentLocale];
     
-    self.sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
+    self.sut = [[ZMLoginTranscoder alloc] initWithGroupQueue:self.groupQueue authenticationStatus:self.authenticationStatus];
     
     self.testEmailCredentials = [ZMEmailCredentials credentialsWithEmail:TestEmail password:TestPassword];
     self.testPhoneNumberCredentials = [ZMPhoneCredentials credentialsWithPhoneNumber:TestPhoneNumber verificationCode:TestPhoneCode];
@@ -95,6 +97,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 
 - (void)tearDown {
     [self.sut tearDown];
+    self.groupQueue = nil;
     self.sut = nil;
     self.authenticationStatus = nil;
     self.mockClientRegistrationStatus = nil;
@@ -106,11 +109,11 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
 - (void)testThatItCreatesTheTimedRequestSyncWithZeroDelayInDefaultConstructor
 {
     // given
-    ZMLoginTranscoder *sut = [[ZMLoginTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
+    ZMLoginTranscoder *sut = [[ZMLoginTranscoder alloc] initWithGroupQueue:self.groupQueue authenticationStatus:self.authenticationStatus];
     
     // then
     XCTAssertNotNil(sut.timedDownstreamSync);
-    XCTAssertEqualObjects(sut.timedDownstreamSync.moc, self.uiMOC);
+    XCTAssertEqualObjects(sut.timedDownstreamSync.groupQueue, self.groupQueue);
     XCTAssertEqualObjects(sut.timedDownstreamSync.transcoder, sut);
     XCTAssertEqual(sut.timedDownstreamSync.timeInterval, 0);
     
