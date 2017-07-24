@@ -127,7 +127,7 @@ extension IntegrationTest {
               let transportSession = transportSession
         else { XCTFail(); return }
         
-        let storeProvider = LocalStoreProvider(userIdentifier: UUID())
+        let storeProvider = LocalStoreProvider(userIdentifier: self.currentUserIdentifier)
 
         sessionManager = SessionManager(storeProvider: storeProvider,
                                         appVersion: "0.0.0",

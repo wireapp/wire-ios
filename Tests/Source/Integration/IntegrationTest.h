@@ -35,6 +35,7 @@
 
 @interface IntegrationTest : ZMTBaseTest
 
+@property (nonatomic, null_unspecified) NSUUID *currentUserIdentifier;
 @property (nonatomic, nullable) SessionManager *sessionManager;
 @property (nonatomic, null_unspecified) MockTransportSession *mockTransportSession;
 @property (nonatomic, readonly, nullable) ZMTransportSession *transportSession;
