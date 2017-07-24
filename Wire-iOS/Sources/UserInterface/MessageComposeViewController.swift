@@ -19,6 +19,7 @@
 
 import Foundation
 import Cartography
+import Marklight
 
 
 protocol MessageComposeViewControllerDelegate: class {
@@ -32,9 +33,10 @@ final class MessageComposeViewController: UIViewController {
     weak var delegate: MessageComposeViewControllerDelegate?
 
     private let subjectTextField = UITextField()
-    fileprivate let messageTextView = UITextView()
+    fileprivate let messageTextView = MarklightTextView()
     private let color = ColorScheme.default().color(withName:)
     private let sendButtonView = DraftSendInputAccessoryView()
+    fileprivate let markdownBarView = MarkdownBarView()
 
     private var draft: MessageDraft?
     private let persistence: MessageDraftStorage
@@ -67,7 +69,7 @@ final class MessageComposeViewController: UIViewController {
 
     private func setupViews() {
         view.backgroundColor = color(ColorSchemeColorBackground)
-        [messageTextView, sendButtonView].forEach(view.addSubview)
+        [messageTextView, sendButtonView, markdownBarView].forEach(view.addSubview)
         setupInputAccessoryView()
         setupNavigationItem()
         setupTextView()
@@ -85,6 +87,7 @@ final class MessageComposeViewController: UIViewController {
         messageTextView.delegate = self
         messageTextView.indicatorStyle = ColorScheme.default().indicatorStyle
         messageTextView.accessibilityLabel = "messageTextField"
+        markdownBarView.delegate = messageTextView
     }
 
     private dynamic func backButtonPressed() {
@@ -168,7 +171,7 @@ final class MessageComposeViewController: UIViewController {
             self.present(controller, animated: true, completion: nil)
         }
     }
-
+    
     private func popToListIfNeeded() {
         if splitViewController?.isCollapsed == true {
            navigationController?.navigationController?.popToRootViewController(animated: true)
@@ -217,7 +220,7 @@ final class MessageComposeViewController: UIViewController {
     }
 
     private func createConstraints() {
-        constrain(view, messageTextView, sendButtonView) { view, messageTextView, sendButtonView in
+        constrain(view, messageTextView, sendButtonView, markdownBarView) { view, messageTextView, sendButtonView, markdownBarView in
             messageTextView.top == view.top
             messageTextView.leading == view.leading
             messageTextView.trailing == view.trailing
@@ -225,7 +228,13 @@ final class MessageComposeViewController: UIViewController {
 
             sendButtonView.leading == view.leading
             sendButtonView.trailing == view.trailing
-            sendButtonView.bottom == view.bottom
+            sendButtonView.bottom == markdownBarView.top
+            sendButtonView.height == 56
+
+            markdownBarView.leading == view.leading
+            markdownBarView.trailing == view.trailing
+            markdownBarView.bottom == view.bottom
+            markdownBarView.height == 56
         }
     }
 
@@ -242,16 +251,25 @@ extension MessageComposeViewController: UITextViewDelegate {
 
     func textViewDidChange(_ textView: UITextView) {
         updateDraftThrottled()
+        markdownBarView.updateIconsForModes(messageTextView.markdownElementsForRange(nil))
     }
 
     func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        
+        if text == "\n" {
+            (textView as! MarklightTextView).handleNewLine()
+        }
+        
         if range.location == 0 && text == " " && textView.text?.isEmpty ?? true {
             return false
         }
 
         return true
     }
-
+    
+    func textViewDidChangeSelection(_ textView: UITextView) {
+        markdownBarView.updateIconsForModes(messageTextView.markdownElementsForRange(nil))
+    }
 }
 
 
