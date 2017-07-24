@@ -84,7 +84,7 @@
     
     // then
     XCTAssertNotNil(sut.singleRequestSync);
-    XCTAssertEqual(sut.singleRequestSync.moc, self.syncMOC);
+    XCTAssertEqual(sut.singleRequestSync.groupQueue, self.syncMOC);
     id transcoder = sut.singleRequestSync.transcoder;
     XCTAssertEqual(transcoder, sut);
 }

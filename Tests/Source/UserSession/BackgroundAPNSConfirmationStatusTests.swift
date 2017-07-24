@@ -58,6 +58,8 @@ class BackgroundAPNSConfirmationStatusTests : MessagingTest {
         fakeBGActivityFactory?.tearDown()
         sut.tearDown()
         sut = nil
+        fakeBGActivityFactory.mainGroupQueue = nil
+        fakeBGActivityFactory.tearDown()
         fakeBGActivityFactory = nil
         super.tearDown()
     }

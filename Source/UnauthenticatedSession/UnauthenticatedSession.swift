@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 protocol UnauthenticatedSessionDelegate: class {
     func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials)
@@ -29,24 +30,32 @@ protocol UnauthenticatedSessionDelegate: class {
 @objc
 public class UnauthenticatedSession : NSObject {
     
-    let moc: NSManagedObjectContext
+    public let groupQueue: DispatchGroupQueue
     let authenticationStatus: ZMAuthenticationStatus
     private let operationLoop: UnauthenticatedOperationLoop
     private let transportSession: UnauthenticatedTransportSessionProtocol
     private var tornDown = false
 
     weak var delegate: UnauthenticatedSessionDelegate?
-    
-    convenience init(backendURL: URL, delegate: UnauthenticatedSessionDelegate? = nil) throws {
-        let model = NSManagedObjectModel()
-        let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-        try coordinator.addPersistentStore(ofType: NSInMemoryStoreType, configurationName: nil, at: nil, options: nil)
-        let moc = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        moc.createDispatchGroups()
-        moc.persistentStoreCoordinator = coordinator
-        let authenticationStatus = ZMAuthenticationStatus(managedObjectContext: moc)
-        let transportSession = UnauthenticatedTransportSession(baseURL: backendURL)
-        self.init(moc: moc, authenticationStatus: authenticationStatus!, transportSession: transportSession, delegate: delegate)
+
+    init(transportSession: UnauthenticatedTransportSessionProtocol, delegate: UnauthenticatedSessionDelegate?) {
+        self.delegate = delegate
+        self.groupQueue = DispatchGroupQueue(queue: .main)
+        self.authenticationStatus = ZMAuthenticationStatus(groupQueue: groupQueue)
+        self.transportSession = transportSession
+        self.operationLoop = UnauthenticatedOperationLoop(transportSession: transportSession, operationQueue: groupQueue, requestStrategies: [
+            ZMLoginTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus),
+            ZMLoginCodeRequestTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
+            ZMRegistrationTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
+            ZMPhoneNumberVerificationTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!
+        ])
+
+        super.init()
+        transportSession.didReceiveUserInfo =  UserInfoAvailableClosure(queue: .main) { [weak self] info in
+            guard let `self` = self else { return }
+            let account = Account(userName: "", userIdentifier: info.identifier)
+            self.delegate?.session(session: self, createdAccount: account)
+        }
     }
 
     deinit {
@@ -57,31 +66,4 @@ public class UnauthenticatedSession : NSObject {
         operationLoop.tearDown()
         tornDown = true
     }
-    
-    init(moc: NSManagedObjectContext, authenticationStatus: ZMAuthenticationStatus, transportSession: UnauthenticatedTransportSessionProtocol, delegate: UnauthenticatedSessionDelegate?) {
-        self.delegate = delegate
-        self.moc = moc
-        self.authenticationStatus = authenticationStatus
-        self.transportSession = transportSession
-        self.operationLoop = UnauthenticatedOperationLoop(transportSession: transportSession, operationQueue: moc, requestStrategies: [
-                ZMLoginTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus),
-                ZMLoginCodeRequestTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)!,
-                ZMRegistrationTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)!,
-                ZMPhoneNumberVerificationTranscoder(managedObjectContext: moc, authenticationStatus: authenticationStatus)!
-        ])
-
-        super.init()
-        transportSession.delegate = self
-    }
-}
-
-// MARK: - UnauthenticatedTransportSessionDelegate
-
-extension UnauthenticatedSession: UnauthenticatedTransportSessionDelegate {
-    
-    public func session(_ session: UnauthenticatedTransportSessionProtocol, didReceiveUserInfo userInfo: UserInfo) {
-        let account = Account(userName: "", userIdentifier: userInfo.identifier)
-        delegate?.session(session: self, createdAccount: account)
-    }
-    
 }

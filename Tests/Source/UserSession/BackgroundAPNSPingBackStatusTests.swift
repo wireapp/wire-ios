@@ -185,6 +185,8 @@ class BackgroundAPNSPingBackStatusTests: MessagingTest {
     override func tearDown() {
         observer = nil
         sut = nil
+        BackgroundActivityFactory.sharedInstance().mainGroupQueue = nil
+        BackgroundActivityFactory.sharedInstance().application = nil
         authenticationProvider = nil
         super.tearDown()
     }

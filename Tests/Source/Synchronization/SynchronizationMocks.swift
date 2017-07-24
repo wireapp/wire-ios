@@ -104,7 +104,7 @@ class MockAuthenticationStatus: ZMAuthenticationStatus {
     
     init(phase: ZMAuthenticationPhase = .authenticated) {
         self.mockPhase = phase
-        super.init(managedObjectContext: nil)
+        super.init(groupQueue: DispatchGroupQueue(queue: .main))
     }
     
     override var currentPhase: ZMAuthenticationPhase {

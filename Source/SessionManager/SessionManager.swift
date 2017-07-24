@@ -31,15 +31,16 @@ open class UnauthenticatedSessionFactory {
         self.environment = ZMBackendEnvironment(userDefaults: .standard)
     }
     
-    func session(withDelegate delegate: UnauthenticatedSessionDelegate) throws -> UnauthenticatedSession {
-        return try UnauthenticatedSession(backendURL: environment.backendURL, delegate: delegate)
+    func session(withDelegate delegate: UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
+        let transportSession = UnauthenticatedTransportSession(baseURL: environment.backendURL)
+        return UnauthenticatedSession(transportSession: transportSession, delegate: delegate)
     }
 
 }
 
 open class AuthenticatedSessionFactory {
     
-    let appGroupIdentifier: String
+    let storeProvider: LocalStoreProvider
     let appVersion: String
     let mediaManager: AVSMediaManager
     var analytics: AnalyticsType?
@@ -47,13 +48,13 @@ open class AuthenticatedSessionFactory {
     let application : ZMApplication
     let environment: ZMBackendEnvironment
     
-    public init(appGroupIdentifier: String,
+    public init(storeProvider: LocalStoreProvider,
                 appVersion: String,
                 apnsEnvironment: ZMAPNSEnvironment? = nil,
                 application: ZMApplication,
                 mediaManager: AVSMediaManager,
                 analytics: AnalyticsType? = nil) {
-        self.appGroupIdentifier = appGroupIdentifier
+        self.storeProvider = storeProvider
         self.appVersion = appVersion
         self.mediaManager = mediaManager
         self.analytics = analytics
@@ -79,7 +80,7 @@ open class AuthenticatedSessionFactory {
             application: application,
             userId: nil,
             appVersion: appVersion,
-            appGroupIdentifier: appGroupIdentifier
+            storeProvider: storeProvider
         )
     }
     
@@ -97,9 +98,10 @@ public protocol SessionManagerDelegate : class {
 public class SessionManager : NSObject {
 
     public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
-    
-    public let appGroupIdentifier: String
+
     public let appVersion: String
+    public let storeProvider: LocalStoreProviderProtocol
+    
     fileprivate let authenticatedSessionFactory : AuthenticatedSessionFactory
     fileprivate let unauthenticatedSessionFactory : UnauthenticatedSessionFactory
     
@@ -107,53 +109,56 @@ public class SessionManager : NSObject {
     public weak var delegate : SessionManagerDelegate? = nil
     var userSession: ZMUserSession?
     var unauthenticatedSession: UnauthenticatedSession?
+    
     fileprivate let accountManager: AccountManager
     
-    public convenience init(appGroupIdentifier: String,
-                appVersion: String,
-                apnsEnvironment: ZMAPNSEnvironment? = nil,
-                mediaManager: AVSMediaManager,
-                analytics: AnalyticsType?,
-                delegate: SessionManagerDelegate?,
-                application: ZMApplication,
-                launchOptions: LaunchOptions) {
-        
+    public convenience init(
+        appVersion: String,
+        mediaManager: AVSMediaManager,
+        analytics: AnalyticsType?,
+        delegate: SessionManagerDelegate?,
+        application: ZMApplication,
+        launchOptions: LaunchOptions
+        ) {
+
+        let localStoreProvider = LocalStoreProvider()
+        let unauthenticatedSessionFactory = UnauthenticatedSessionFactory()
         let authenticatedSessionFactory = AuthenticatedSessionFactory(
-            appGroupIdentifier: appGroupIdentifier,
+            storeProvider: localStoreProvider,
             appVersion: appVersion,
-            apnsEnvironment: apnsEnvironment,
+            apnsEnvironment: nil, // TODO
             application: application,
             mediaManager: mediaManager,
-            analytics: analytics)
-        
-        let unauthenticatedSessionFactory = UnauthenticatedSessionFactory()
-        
-        self.init(appGroupIdentifier: appGroupIdentifier,
+            analytics: analytics
+          )
+
+        self.init(storeProvider: localStoreProvider,
                   appVersion: appVersion,
-                  application: application,
                   authenticatedSessionFactory: authenticatedSessionFactory,
                   unauthenticatedSessionFactory: unauthenticatedSessionFactory,
                   delegate: delegate,
+                  application: application,
                   launchOptions: launchOptions)
     }
     
-    init(appGroupIdentifier: String,
-         appVersion: String,
-         application: ZMApplication,
-         authenticatedSessionFactory : AuthenticatedSessionFactory,
-         unauthenticatedSessionFactory : UnauthenticatedSessionFactory,
-         delegate: SessionManagerDelegate?,
-         launchOptions: LaunchOptions) {
-        
+    public init(
+        storeProvider: LocalStoreProviderProtocol,
+        appVersion: String,
+        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
+        delegate: SessionManagerDelegate?,
+        application: ZMApplication,
+        launchOptions: LaunchOptions
+        ) {
+
         SessionManager.enableLogsByEnvironmentVariable()
-        ZMBackendEnvironment.setupEnvironments()
-        
-        self.appGroupIdentifier = appGroupIdentifier
+
+        self.storeProvider = storeProvider
         self.appVersion = appVersion
         self.application = application
         self.delegate = delegate
 
-        let sharedContainerURL = SessionManager.sharedContainerURL(with: appGroupIdentifier)!
+        guard let sharedContainerURL = storeProvider.sharedContainerDirectory else { preconditionFailure("Unable to get shared container URL") }
         accountManager = AccountManager(sharedDirectory: sharedContainerURL)
 
         self.authenticatedSessionFactory = authenticatedSessionFactory
@@ -161,52 +166,50 @@ public class SessionManager : NSObject {
         
         super.init()
         
-        select(account: accountManager.selectedAccount) { session in
+        select(account: accountManager.selectedAccount) { [weak self] session in
+            guard let `self` = self else { return }
+            delegate?.sessionManagerCreated(userSession: session)
             session.application(self.application, didFinishLaunchingWithOptions: launchOptions)
-            if let url = launchOptions[.url] as? URL {
-                session.didLaunch(with: url)
-            }
+            (launchOptions[.url] as? URL).apply(session.didLaunch)
         }
     }
 
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
         if let account = account { // TODO: Add check if store exists?
-            let createSession = { [weak self] in
-                guard let `self` = self else { return }
-                guard let session = self.authenticatedSessionFactory.session(for: account) else { preconditionFailure("Unable to create session for \(account)") }
-                self.userSession = session
-                completion(session)
-                self.delegate?.sessionManagerCreated(userSession: session)
-            }
+            createSession(for: account, completion: completion)
 
-            if ZMUserSession.needsToPrepareLocalStore(usingAppGroupIdentifier: appGroupIdentifier) {
+            if storeProvider.needsToPrepareLocalStore {
                 delegate?.sessionManagerWillStartMigratingLocalStore()
-                ZMUserSession.prepareLocalStore(usingAppGroupIdentifier: appGroupIdentifier) {
-                    DispatchQueue.main.async(execute: createSession)
+                storeProvider.prepareLocalStore() {
+                    DispatchQueue.main.async { [weak self] in
+                        self?.createSession(for: account, completion: completion)
+                    }
                 }
             } else {
-                createSession()
+                createSession(for: account, completion: completion)
             }
         } else {
             createUnauthenticatedSession()
         }
     }
 
-    fileprivate func createUnauthenticatedSession() {
-        do {
-            let unauthenticatedSession = try unauthenticatedSessionFactory.session(withDelegate: self)
-            self.unauthenticatedSession = unauthenticatedSession
-            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
-        } catch {
-            fatal("Can't create unauthenticated session: \(error)")
-        }
+    private func createSession(for account: Account, completion: (ZMUserSession) -> Void) {
+        guard let session = authenticatedSessionFactory.session(for: account) else { preconditionFailure("Unable to create session for \(account)") }
+        self.userSession = session
+        completion(session)
+    }
+
+    private func createUnauthenticatedSession() {
+        let unauthenticatedSession = unauthenticatedSessionFactory.session(withDelegate: self)
+        self.unauthenticatedSession = unauthenticatedSession
+        delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
     }
 
     deinit {
         userSession?.tearDown()
         unauthenticatedSession?.tearDown()
     }
-    
+
     @objc public var currentUser: ZMUser? {
         guard let userSession = userSession else { return nil }
         return ZMUser.selfUser(in: userSession.managedObjectContext)
@@ -261,7 +264,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     func session(session: UnauthenticatedSession, createdAccount account: Account) {
         accountManager.add(account)
         accountManager.select(account)
-        select(account: accountManager.selectedAccount) { userSession in
+        select(account: accountManager.selectedAccount) { [weak self] userSession in
             userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
             
             userSession.syncManagedObjectContext.performGroupedBlock {
@@ -269,7 +272,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             }
             
             if let profileImageData = session.authenticationStatus.profileImageData {
-                self.updateProfileImage(imageData: profileImageData)
+                self?.updateProfileImage(imageData: profileImageData)
             }
         }
     }

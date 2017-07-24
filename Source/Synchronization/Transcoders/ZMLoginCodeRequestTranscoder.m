@@ -33,19 +33,19 @@
 
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic) ZMSingleRequestSync *codeRequestSync;
-@property (nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 
 @end
 
 @implementation ZMLoginCodeRequestTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
 {
     self = [super init];
     if (self != nil) {
-        self.managedObjectContext = moc;
+        self.groupQueue = groupQueue;
         self.authenticationStatus = authenticationStatus;
-        self.codeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:moc];
+        self.codeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
         [self.codeRequestSync readyForNextRequest];
     }
     return self;

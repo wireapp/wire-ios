@@ -41,11 +41,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 @implementation ZMAuthenticationStatus
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue
 {
     self = [super init];
     if(self) {
-        self.moc = managedObjectContext;
+        self.groupQueue = groupQueue;
         self.isWaitingForLogin = !self.isLoggedIn;
     }
     return self;
@@ -176,7 +176,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Authentication";
 
 - (void)timerDidFire:(ZMTimer *)timer
 {
-    [self.moc performGroupedBlock:^{
+    [self.groupQueue performGroupedBlock:^{
         [self didTimeoutLoginForCredentials:timer.userInfo[TimerInfoOriginalCredentialsKey]];
     }];
 }
