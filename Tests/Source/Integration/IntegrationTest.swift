@@ -434,9 +434,7 @@ extension IntegrationTest : SessionManagerDelegate {
     public func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
         self.unauthenticatedSession = unauthenticatedSession
         
-        unauthenticatedSession.moc.performGroupedBlockAndWait {
-            unauthenticatedSession.moc.add(self.dispatchGroup)
-        }
+        unauthenticatedSession.groupQueue.add(self.dispatchGroup)
     }
     
     public func sessionManagerWillStartMigratingLocalStore() {

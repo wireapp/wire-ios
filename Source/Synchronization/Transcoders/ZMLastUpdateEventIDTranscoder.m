@@ -45,7 +45,7 @@
     if(self) {
         self.syncStatus = syncStatus;
         self.directory = directory;
-        self.lastUpdateEventIDSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:moc];
+        self.lastUpdateEventIDSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:moc];
     }
     return self;
 }
