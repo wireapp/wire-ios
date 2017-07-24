@@ -81,7 +81,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     [super setUp];
     
     self.originalLoginTimerInterval = DefaultPendingValidationLoginAttemptInterval;
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"] managedObjectContext:nil];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:nil];
     self.mockClientRegistrationStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
     
     self.mockLocale = [OCMockObject niceMockForClass:[NSLocale class]];
@@ -202,7 +202,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     // given
     NSDictionary *payload = @{@"email": self.testEmailCredentials.email,
                               @"password": self.testEmailCredentials.password,
-                              @"label": self.authenticationStatus.cookieLabel};
+                              @"label": CookieLabel.current.value};
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL method:ZMMethodPOST payload:payload authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken];
     
     [self.authenticationStatus prepareForLoginWithCredentials:self.testEmailCredentials];
@@ -219,7 +219,7 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     // given
     NSDictionary *payload = @{@"phone": self.testPhoneNumberCredentials.phoneNumber,
                               @"code": self.testPhoneNumberCredentials.phoneNumberVerificationCode,
-                              @"label": self.authenticationStatus.cookieLabel};
+                              @"label": CookieLabel.current.value};
     ZMTransportRequest *expectedRequest = [[ZMTransportRequest alloc] initWithPath:ZMLoginURL method:ZMMethodPOST payload:payload authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken];
     [self.authenticationStatus prepareForLoginWithCredentials:self.testPhoneNumberCredentials];
     

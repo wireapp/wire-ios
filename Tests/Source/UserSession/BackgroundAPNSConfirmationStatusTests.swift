@@ -55,11 +55,10 @@ class BackgroundAPNSConfirmationStatusTests : MessagingTest {
     }
     
     override func tearDown() {
-        fakeBGActivityFactory.tearDown()
+        fakeBGActivityFactory?.tearDown()
         sut.tearDown()
         sut = nil
         fakeBGActivityFactory = nil
-        FakeBackgroundActivityFactory.tearDownInstance()
         super.tearDown()
     }
     

@@ -204,6 +204,7 @@ public class SessionManager : NSObject {
 
     deinit {
         userSession?.tearDown()
+        unauthenticatedSession?.tearDown()
     }
     
     @objc public var currentUser: ZMUser? {

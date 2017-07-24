@@ -27,7 +27,7 @@ private let log = ZMSLog(tag: "UnauthenticatedOperationLoop")
 
 class UnauthenticatedOperationLoop: NSObject {
     
-    unowned let transportSession: UnauthenticatedTransportSession
+    let transportSession: UnauthenticatedTransportSessionProtocol
     let requestStrategies: [RequestStrategy]
     let operationQueue : ZMSGroupQueue
     private var tornDown = false
@@ -39,7 +39,7 @@ class UnauthenticatedOperationLoop: NSObject {
         tornDown = true
     }
     
-    init(transportSession: UnauthenticatedTransportSession, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
+    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue

@@ -33,6 +33,7 @@ public class UnauthenticatedSession : NSObject {
     let authenticationStatus: ZMAuthenticationStatus
     private let operationLoop: UnauthenticatedOperationLoop
     private let transportSession: UnauthenticatedTransportSessionProtocol
+    private var tornDown = false
 
     weak var delegate: UnauthenticatedSessionDelegate?
     
@@ -43,9 +44,18 @@ public class UnauthenticatedSession : NSObject {
         let moc = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
         moc.createDispatchGroups()
         moc.persistentStoreCoordinator = coordinator
-        let authenticationStatus = ZMAuthenticationStatus(cookieStorage: nil, managedObjectContext: moc)
+        let authenticationStatus = ZMAuthenticationStatus(managedObjectContext: moc)
         let transportSession = UnauthenticatedTransportSession(baseURL: backendURL)
         self.init(moc: moc, authenticationStatus: authenticationStatus!, transportSession: transportSession, delegate: delegate)
+    }
+
+    deinit {
+        precondition(tornDown, "Need to call tearDown before deinit")
+    }
+
+    func tearDown() {
+        operationLoop.tearDown()
+        tornDown = true
     }
     
     init(moc: NSManagedObjectContext, authenticationStatus: ZMAuthenticationStatus, transportSession: UnauthenticatedTransportSessionProtocol, delegate: UnauthenticatedSessionDelegate?) {
@@ -69,7 +79,7 @@ public class UnauthenticatedSession : NSObject {
 
 extension UnauthenticatedSession: UnauthenticatedTransportSessionDelegate {
     
-    public func session(_ session: UnauthenticatedTransportSession, didReceiveUserInfo userInfo: UserInfo) {
+    public func session(_ session: UnauthenticatedTransportSessionProtocol, didReceiveUserInfo userInfo: UserInfo) {
         let account = Account(userName: "", userIdentifier: userInfo.identifier)
         delegate?.session(session: self, createdAccount: account)
     }
