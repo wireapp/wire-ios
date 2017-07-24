@@ -18,79 +18,15 @@
 
 
 @import WireSystem;
+#import <WireUtilities/WireUtilities-Swift.h>
 #import "NSManagedObjectContext+WireUtilities.h"
 #import <objc/runtime.h>
 
-static char const AssociatedGroupsKey;
-static char const AssociatedIsolationKey;
 static char const AssociatedPendingSaveCountKey;
+static char const AssociatedDispatchGroupContextKey;
 static NSTimeInterval const PerformWarningTimeout = 10;
 
 @implementation NSManagedObjectContext (ZMSGroupQueue)
-
-
-- (void)createDispatchGroups;
-{
-    dispatch_queue_t isolation = dispatch_queue_create("context.isolation", DISPATCH_QUEUE_CONCURRENT);
-    objc_setAssociatedObject(self, &AssociatedIsolationKey, isolation, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    dispatch_barrier_async(isolation, ^{
-        NSMutableArray *groups = [NSMutableArray arrayWithObjects:
-                                  [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue first"],
-                                    // The secondary group gets -performGroupedBlock: added to it, but is not affected by
-                                    // -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
-                                  [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue second"],
-                                  nil];
-        objc_setAssociatedObject(self, &AssociatedGroupsKey, groups, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
-    });
-}
-
-- (NSArray *)allGroups;
-{
-    __block NSArray *result;
-    dispatch_queue_t isolation = objc_getAssociatedObject(self, &AssociatedIsolationKey);
-    RequireString(isolation != nil, "No isolation queue? Make sure to call -createDispatchGroups.");
-    dispatch_sync(isolation, ^{
-        result = [objc_getAssociatedObject(self,  &AssociatedGroupsKey) copy];
-    });
-    return result;
-}
-
-- (ZMSDispatchGroup *)firstGroup;
-{
-    __block ZMSDispatchGroup *result;
-    dispatch_queue_t isolation = objc_getAssociatedObject(self, &AssociatedIsolationKey);
-    RequireString(isolation != nil, "No isolation queue? Make sure to call -createDispatchGroups.");
-    dispatch_sync(isolation, ^{
-        result = [objc_getAssociatedObject(self,  &AssociatedGroupsKey) firstObject];
-    });
-    return result;
-}
-
-- (NSArray *)enterAllGroups;
-{
-    NSArray *groups = self.allGroups;
-    for (ZMSDispatchGroup *g in groups) {
-        [g enter];
-    }
-    return groups;
-}
-
-- (void)leaveAllGroups:(NSArray *)groups;
-{
-    for (ZMSDispatchGroup *g in groups) {
-        [g leave];
-    }
-}
-
-- (NSArray *)enterAllButFirstGroup;
-{
-    NSArray *groups = self.allGroups;
-    groups = [groups subarrayWithRange:NSMakeRange(1, groups.count - 1)];
-    for (ZMSDispatchGroup *g in groups) {
-        [g enter];
-    }
-    return groups;
-}
 
 - (int)pendingSaveCounter;
 {
@@ -102,26 +38,45 @@ static NSTimeInterval const PerformWarningTimeout = 10;
     objc_setAssociatedObject(self, &AssociatedPendingSaveCountKey, @(newCounter), OBJC_ASSOCIATION_RETAIN_NONATOMIC);
 }
 
+
+- (DispatchGroupContext *)dispatchGroupContext
+{
+    return objc_getAssociatedObject(self, &AssociatedDispatchGroupContextKey);
+}
+
+- (void)createDispatchGroups
+{
+    NSArray<ZMSDispatchGroup *> *groups = [NSMutableArray arrayWithObjects:
+                                           [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue first"],
+                                           // The secondary group gets -performGroupedBlock: added to it, but is not affected by
+                                           // -notifyWhenGroupIsEmpty: -- that method needs to add extra blocks to the firstGroup, though.
+                                           [ZMSDispatchGroup groupWithLabel:@"ZMSGroupQueue second"],
+                                           nil];
+    
+    DispatchGroupContext *dispatchGroupContext = [[DispatchGroupContext alloc] initWithGroups:groups];
+    objc_setAssociatedObject(self, &AssociatedDispatchGroupContextKey, dispatchGroupContext, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+}
+
 - (void)performGroupedBlock:(dispatch_block_t)block;
 {
-    NSArray *groups = [self enterAllGroups];
+    NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
     ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:PerformWarningTimeout];
     [self performBlock:^{
         [tp resetTime];
         block();
-        [self leaveAllGroups:groups];
+        [self.dispatchGroupContext leaveGroups:groups];
         [tp warnIfLongerThanInterval];
     }];
 }
 
 - (void)performGroupedBlockAndWait:(dispatch_block_t)block;
 {
-    NSArray *groups = [self enterAllGroups];
+    NSArray *groups = [self.dispatchGroupContext enterAllExcept:nil];
     ZMSTimePoint *tp = [ZMSTimePoint timePointWithInterval:PerformWarningTimeout];
     [self performBlockAndWait:^{
         [tp resetTime];
         block();
-        [self leaveAllGroups:groups];
+        [self.dispatchGroupContext leaveGroups:groups];
         [tp warnIfLongerThanInterval];
     }];
 }
@@ -130,28 +85,18 @@ static NSTimeInterval const PerformWarningTimeout = 10;
 {
     // We need to enter & leave all but the first group to make sure that any work added by
     // this method is stil being tracked by the other groups.
-    NSArray *groups = [self enterAllButFirstGroup];
-    ZMSDispatchGroup *g = self.dispatchGroup;
-    VerifyReturn(g != nil);
-    [g notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
+    ZMSDispatchGroup *firstGroup = self.dispatchGroup;
+    NSArray *groups = [self.dispatchGroupContext enterAllExcept:firstGroup];
+    VerifyReturn(firstGroup != nil);
+    [firstGroup notifyOnQueue:dispatch_get_global_queue(0, 0) block:^{
         [self performGroupedBlock:block];
-        [self leaveAllGroups:groups];
+        [self.dispatchGroupContext leaveGroups:groups];
     }];
 }
 
 - (ZMSDispatchGroup *)dispatchGroup;
 {
-    return [self firstGroup];
-}
-
-- (void)addGroup:(ZMSDispatchGroup *)dispatchGroup;
-{
-    dispatch_queue_t isolation = objc_getAssociatedObject(self, &AssociatedIsolationKey);
-    RequireString(isolation != nil, "No isolation queue? Make sure to call -createDispatchGroups.");
-    dispatch_barrier_async(isolation, ^{
-        NSMutableArray *groups = objc_getAssociatedObject(self,  &AssociatedGroupsKey);
-        [groups addObject:dispatchGroup];
-    });
+    return self.dispatchGroupContext.groups.firstObject;
 }
 
 - (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
@@ -160,6 +105,26 @@ static NSTimeInterval const PerformWarningTimeout = 10;
     NSArray *result = [self executeFetchRequest:request error:&error];
     RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
     return result;
+}
+
+- (void)addGroup:(ZMSDispatchGroup *)dispatchGroup
+{
+    [self.dispatchGroupContext addGroup:dispatchGroup];
+}
+
+- (NSArray *)allGroups
+{
+    return self.dispatchGroupContext.groups;
+}
+
+- (NSArray *)enterAllGroups
+{
+    return [self.dispatchGroupContext enterAllExcept:nil];
+}
+
+- (void)leaveAllGroups:(NSArray *)groups
+{
+    [self.dispatchGroupContext leaveGroups:groups];
 }
 
 @end
