@@ -91,55 +91,6 @@ extension AddressBookUploadRequestStrategyTest {
                 XCTFail("No parsed cards")
             }
             XCTAssertTrue(request.shouldCompress)
-            let selfArray = (request.payload as? [String : AnyObject])?["self"] as? [String]
-            XCTAssertNotNil(selfArray)
-            XCTAssertEqual(selfArray?.count, 0)
-        }
-    }
-    
-    func testThatItIncludesSelfCardWithPhoneNumber() {
-        
-        // given
-        WireSyncEngine.AddressBook.markAddressBookAsNeedingToBeUploaded(self.syncMOC)
-        let selfUser = ZMUser.selfUser(in: self.syncMOC)
-        selfUser.setValue("+155534534566", forKey: #keyPath(ZMUser.phoneNumber))
-        
-        // when
-        let nilRequest = sut.nextRequest() // this will return nil and start async processing
-        
-        // then
-        XCTAssertNil(nilRequest)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let request = sut.nextRequest()
-        XCTAssertNotNil(request)
-        if let request = request {
-            let selfArray = (request.payload as? [String : AnyObject])?["self"] as? [String] ?? []
-            XCTAssertEqual(selfArray, [selfUser.phoneNumber.base64EncodedSHADigest])
-        } else {
-            XCTFail()
-        }
-    }
-    
-    func testThatItIncludesSelfCardWithEmail() {
-        
-        // given
-        WireSyncEngine.AddressBook.markAddressBookAsNeedingToBeUploaded(self.syncMOC)
-        let selfUser = ZMUser.selfUser(in: self.syncMOC)
-        selfUser.setValue("my@fo.example.com", forKey: #keyPath(ZMUser.emailAddress))
-        
-        // when
-        let nilRequest = sut.nextRequest() // this will return nil and start async processing
-        
-        // then
-        XCTAssertNil(nilRequest)
-        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        let request = sut.nextRequest()
-        XCTAssertNotNil(request)
-        if let request = request {
-            let selfArray = (request.payload as? [String : AnyObject])?["self"] as? [String] ?? []
-            XCTAssertEqual(selfArray, [selfUser.emailAddress.base64EncodedSHADigest])
-        } else {
-            XCTFail()
         }
     }
     
