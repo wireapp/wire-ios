@@ -163,7 +163,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
     XCTAssertEqualObjects(selfUser.phoneNumber, phone);
     
     // after
@@ -415,7 +415,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
     XCTAssertEqualObjects(selfUser.emailAddress, email);
     
     // after
@@ -496,7 +496,7 @@
     WaitForAllGroupsToBeEmpty(5);
     
     // then
-    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 3u);
+    XCTAssertEqual(self.mockTransportSession.receivedRequests.count, 2u);
     XCTAssertEqualObjects(selfUser.emailAddress, email);
     
     // after
