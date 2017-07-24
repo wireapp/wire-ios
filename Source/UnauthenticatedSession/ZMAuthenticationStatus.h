@@ -66,11 +66,10 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly) BOOL needsCredentialsToLogin;
 
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
-@property (nonatomic, readonly) NSString *cookieLabel;
 @property (nonatomic) NSData *profileImageData;
 
 
-- (instancetype)initWithCookieStorage:(ZMPersistentCookieStorage *)cookieStorage managedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
 
 - (void)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 - (void)removeAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;

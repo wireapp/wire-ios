@@ -36,6 +36,54 @@ class AuthenticationObserver : NSObject, ZMAuthenticationObserver {
     
 }
 
+final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
+
+    let transportSession: ZMTransportSession
+
+    init(appGroupIdentifier: String, apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
+        self.transportSession = transportSession
+        super.init(appGroupIdentifier: appGroupIdentifier, appVersion: "0.0.0", apnsEnvironment: apnsEnvironment, application: application, mediaManager: mediaManager, analytics: nil)
+    }
+
+    override func session(for account: Account) -> ZMUserSession? {
+        return ZMUserSession(
+            mediaManager: mediaManager,
+            analytics: analytics,
+            transportSession: transportSession,
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            userId: account.userIdentifier,
+            appVersion: appVersion,
+            appGroupIdentifier: appGroupIdentifier
+        )
+    }
+
+}
+
+
+final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
+
+    let transportSession: UnauthenticatedTransportSessionProtocol
+    let moc: NSManagedObjectContext
+
+    init(transportSession: UnauthenticatedTransportSessionProtocol, moc: NSManagedObjectContext) {
+        self.moc = moc
+        self.transportSession = transportSession
+        super.init()
+    }
+
+    override func session(withDelegate delegate: UnauthenticatedSessionDelegate) throws -> UnauthenticatedSession {
+        return try UnauthenticatedSession(
+            moc: moc,
+            authenticationStatus: .init(managedObjectContext: moc),
+            transportSession: transportSession,
+            delegate: delegate
+        )
+    }
+
+}
+
+
 extension IntegrationTest {
     
     static let SelfUserEmail = "myself@user.example.com"
@@ -63,7 +111,7 @@ extension IntegrationTest {
         sharedSearchDirectory = nil
         userSession = nil
         unauthenticatedSession = nil
-        mockTransportSession.tearDown()
+        mockTransportSession?.tearDown()
         mockTransportSession = nil
         sessionManager = nil
         selfUser = nil
@@ -126,19 +174,28 @@ extension IntegrationTest {
               let mediaManager = mediaManager,
               let application = application,
               let transportSession = transportSession
-        else { XCTFail(); return }
+        else { return XCTFail() }
         
         let groupIdentifier = "group.\(bundleIdentifier)"
-        
-        sessionManager = SessionManager(appGroupIdentifier: groupIdentifier,
-                                        appVersion: "0.0.0",
-                                        transportSession: transportSession,
-                                        apnsEnvironment: apnsEnvironment,
-                                        mediaManager: mediaManager,
-                                        analytics: nil,
-                                        delegate: self,
-                                        application: application,
-                                        launchOptions: [:])
+
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, moc: <#T##NSManagedObjectContext#>)
+        let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
+            appGroupIdentifier: groupIdentifier,
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            transportSession: transportSession
+        )
+
+        sessionManager = SessionManager(
+            appGroupIdentifier: groupIdentifier,
+            appVersion: "0.0.0",
+            application: application,
+            authenticatedSessionFactory: authenticatedSessionFactory,
+            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
+            delegate: self,
+            launchOptions: [:]
+        )
     }
     
     @objc

@@ -21,7 +21,6 @@
 
 @interface ZMAuthenticationStatus () <ZMTimerClient>
 
-@property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic, copy) NSString *registrationPhoneNumberThatNeedsAValidationCode;
 @property (nonatomic, copy) NSString *loginPhoneNumberThatNeedsAValidationCode;
 
@@ -36,6 +35,8 @@
 @property (nonatomic) BOOL duplicateRegistrationPhoneNumber;
 
 @property (nonatomic) BOOL isWaitingForLogin;
+
+@property (nonatomic) NSData *cookieData;
 
 @property (nonatomic) NSManagedObjectContext *moc;
 @property (nonatomic) BOOL canClearCredentials;
