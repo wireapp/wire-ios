@@ -27,7 +27,7 @@
 - (void)resetVerificationState;
 - (void)verifyPhoneNumber;
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
 
 
 @end

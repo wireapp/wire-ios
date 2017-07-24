@@ -47,7 +47,7 @@ private let onboardingEndpoint = "/onboarding/v3"
         self.clientRegistrationStatus = clientRegistrationStatus
         self.managedObjectContext = managedObjectContext
         super.init()
-        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: managedObjectContext)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
     }
 }
 

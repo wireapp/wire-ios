@@ -19,6 +19,7 @@
 
 @import PushKit;
 @import WireMockTransport;
+@import WireSyncEngine;
 
 #include "ZMUserSessionTestsBase.h"
 #import "ZMPushToken.h"
@@ -34,8 +35,6 @@
 - (void)simulateLoggedInUser;
 
 @end
-
-
 
 @implementation ZMUserSessionTests
 
@@ -85,6 +84,8 @@
     id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
     [[[userAgent expect] classMethod] setWireAppVersion:version];
     
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
+    
     // when
     ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:nil
                                                                analytics:nil
@@ -93,7 +94,7 @@
                                                              application:[UIApplication sharedApplication]
                                                                   userId:nil
                                                               appVersion:version
-                                                      appGroupIdentifier:self.groupIdentifier];
+                                                           storeProvider:storeProvider];
     XCTAssertNotNil(session);
     
     // then
@@ -224,6 +225,7 @@
     id pushChannel = [OCMockObject niceMockForProtocol:@protocol(ZMPushChannel)];
     id transportSession = [OCMockObject niceMockForClass:ZMTransportSession.class];
     id cookieStorage = [OCMockObject niceMockForClass:ZMPersistentCookieStorage.class];
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
     
     // expect
     [[pushChannel expect] setClientID:userClient.remoteIdentifier];
@@ -239,7 +241,7 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-                                                              appGroupIdentifier:self.groupIdentifier];
+                                                                   storeProvider:storeProvider];
     [userSession didRegisterUserClient:userClient];
     
     // then
@@ -399,75 +401,6 @@
 @end
 
 
-
-@implementation ZMUserSessionTests (AuthenticationCenter)
-
-// TODO jacob move to another test
-//- (void)testThatRegistrationDidFailNotifiesTheAuthenticationObserver
-//{
-//    // given
-//    NSError *error = [NSError errorWithDomain:@"foo" code:201 userInfo:@{}];
-//    
-//    // expect
-//    [[(id) self.registrationObserver expect] registrationDidFail:[OCMArg checkWithBlock:^BOOL(NSError *receivedError) {
-//        XCTAssertEqual([NSOperationQueue currentQueue], [NSOperationQueue mainQueue]);
-//        XCTAssertEqualObjects(error, receivedError);
-//        return YES;
-//    }]];
-//    
-//    // when
-//    [ZMUserSessionRegistrationNotification notifyRegistrationDidFail:error];
-//    WaitForAllGroupsToBeEmpty(0.5);
-//}
-
-// TODO jacob move to another test
-//- (void)testThatAuthenticationDidSucceedNotifiesTheAuthenticationObserver
-//{
-//    // expect
-//    [[[(id) self.authenticationObserver expect] andDo:^(NSInvocation *i ZM_UNUSED){
-//        XCTAssertEqual([NSOperationQueue currentQueue], [NSOperationQueue mainQueue]);
-//    }] authenticationDidSucceed];
-//    
-//    // when
-//    [ZMUserSessionAuthenticationNotification notifyAuthenticationDidSucceed];
-//    WaitForAllGroupsToBeEmpty(0.5);
-//}
-
-// TODO jacob move to another test
-//- (void)testThatAuthenticationDidFailNotifiesTheAuthenticationObserver
-//{
-//    // given
-//    NSError *error = [NSError errorWithDomain:@"foo" code:201 userInfo:@{}];
-//    
-//    // expect
-//    [[(id) self.authenticationObserver expect] authenticationDidFail:[OCMArg checkWithBlock:^BOOL(NSError *receivedError) {
-//        XCTAssertEqual([NSOperationQueue currentQueue], [NSOperationQueue mainQueue]);
-//        XCTAssertEqualObjects(error, receivedError);
-//        return YES;
-//    }]];
-//    
-//    // when
-//    [ZMUserSessionAuthenticationNotification notifyAuthenticationDidFail:error];
-//    WaitForAllGroupsToBeEmpty(0.5);
-//}
-
-// TODO jacob move to another test
-//- (void)testThatItNotifiesAuthenticationCenterObserversWhenTheCredentialsChange
-//{
-//    // given
-//    self.dataChangeNotificationsCount = 0;
-//    
-//    // when
-//    [self.sut.authenticationStatus prepareForLoginWithCredentials:[ZMEmailCredentials credentialsWithEmail:@"bar@bar.bar" password:@"boo"]];
-//    
-//    // then
-//    XCTAssertEqual(self.dataChangeNotificationsCount, 1u);
-//}
-
-@end
-
-
-
 @implementation ZMUserSessionTests (PushToken)
 
 - (void)testThatItSetsThePushToken;
@@ -516,6 +449,7 @@
 - (void)testThatItSetsItselfAsADelegateOfTheTransportSessionAndForwardsUserClientID
 {
     // given
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] init];
     id transportSession = [OCMockObject mockForClass:ZMTransportSession.class];
     id pushChannel = [OCMockObject mockForProtocol:@protocol(ZMPushChannel)];
     
@@ -551,7 +485,7 @@
                                                                    operationLoop:nil
                                                                      application:self.application
                                                                       appVersion:@"00000"
-                                                              appGroupIdentifier:self.groupIdentifier];
+                                                                   storeProvider:storeProvider];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then

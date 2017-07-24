@@ -33,7 +33,7 @@
 
 @property (nonatomic, readonly) ZMSingleRequestSync *registrationSync;
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
-@property (nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 
 @end
 
@@ -45,13 +45,13 @@
 
 @implementation ZMRegistrationTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
 {
     self = [super init];
     
     if (self != nil) {
-        self.managedObjectContext = moc;
-        _registrationSync = [ZMSingleRequestSync syncWithSingleRequestTranscoder:self managedObjectContext:self.managedObjectContext];
+        self.groupQueue = groupQueue;
+        _registrationSync = [ZMSingleRequestSync syncWithSingleRequestTranscoder:self groupQueue:groupQueue];
         self.authenticationStatus = authenticationStatus;
         [authenticationStatus addAuthenticationCenterObserver:self];
     }

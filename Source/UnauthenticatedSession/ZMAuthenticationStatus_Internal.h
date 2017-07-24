@@ -35,14 +35,11 @@
 @property (nonatomic) BOOL duplicateRegistrationPhoneNumber;
 
 @property (nonatomic) BOOL isWaitingForLogin;
-
-@property (nonatomic) NSData *cookieData;
-
-@property (nonatomic) NSManagedObjectContext *moc;
 @property (nonatomic) BOOL canClearCredentials;
 
+@property (nonatomic) NSData *cookieData;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMTimer *loginTimer;
-
 
 - (void)resetLoginAndRegistrationStatus;
 - (void)setLoginCredentials:(ZMCredentials *)credentials;

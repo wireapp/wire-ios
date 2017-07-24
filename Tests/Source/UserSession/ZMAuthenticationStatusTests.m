@@ -45,7 +45,15 @@
 
 - (void)setUp {
     [super setUp];
+<<<<<<< HEAD
     self.sut = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:nil];
+=======
+    
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"foo.bar"];
+    [self.cookieStorage deleteUserKeychainItems];
+    DispatchGroupQueue *groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
+    self.sut = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage groupQueue:groupQueue];
+>>>>>>> develop
     ZM_WEAK(self);
     // If a test fires any notification and it's not listening for it, this will fail
     self.authenticationCallback = ^(id note ZM_UNUSED){

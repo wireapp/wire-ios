@@ -68,8 +68,7 @@ typedef NS_ENUM(NSUInteger, ZMAuthenticationPhase) {
 @property (nonatomic, readonly) ZMAuthenticationPhase currentPhase;
 @property (nonatomic) NSData *profileImageData;
 
-
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)managedObjectContext;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 - (void)addAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;
 - (void)removeAuthenticationCenterObserver:(id<ZMAuthenticationStatusObserver>)observer;

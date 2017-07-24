@@ -69,7 +69,7 @@ public final class UserClientRequestStrategy: ZMObjectSyncStrategy, ZMObjectStra
         self.deleteSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), update: deletePredicate, filter: nil, keysToSync: [ZMUserClientMarkedToDeleteKey], managedObjectContext: context)
         self.insertSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: UserClient.entityName(), filter: insertSyncFilter, managedObjectContext: context)
         
-        self.fetchAllClientsSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: context)
+        self.fetchAllClientsSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: context)
     }
     
     func modifiedPredicate() -> NSPredicate {

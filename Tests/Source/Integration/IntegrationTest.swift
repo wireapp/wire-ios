@@ -40,9 +40,16 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
     let transportSession: ZMTransportSession
 
-    init(appGroupIdentifier: String, apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
+    init(storeProvider: LocalStoreProvider, apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
         self.transportSession = transportSession
-        super.init(appGroupIdentifier: appGroupIdentifier, appVersion: "0.0.0", apnsEnvironment: apnsEnvironment, application: application, mediaManager: mediaManager, analytics: nil)
+        super.init(
+            storeProvider: storeProvider,
+            appVersion: "0.0.0",
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            analytics: nil
+        )
     }
 
     override func session(for account: Account) -> ZMUserSession? {
@@ -54,7 +61,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
             application: application,
             userId: account.userIdentifier,
             appVersion: appVersion,
-            appGroupIdentifier: appGroupIdentifier
+            storeProvider: storeProvider
         )
     }
 
@@ -64,21 +71,14 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
     let transportSession: UnauthenticatedTransportSessionProtocol
-    let moc: NSManagedObjectContext
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol, moc: NSManagedObjectContext) {
-        self.moc = moc
+    init(transportSession: UnauthenticatedTransportSessionProtocol) {
         self.transportSession = transportSession
         super.init()
     }
 
-    override func session(withDelegate delegate: UnauthenticatedSessionDelegate) throws -> UnauthenticatedSession {
-        return try UnauthenticatedSession(
-            moc: moc,
-            authenticationStatus: .init(managedObjectContext: moc),
-            transportSession: transportSession,
-            delegate: delegate
-        )
+    override func session(withDelegate delegate: UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
+        return .init(transportSession: transportSession,delegate: delegate)
     }
 
 }
@@ -169,18 +169,12 @@ extension IntegrationTest {
     
     @objc
     func createSessionManager() {
-        
-        guard let bundleIdentifier = Bundle.init(for: type(of: self)).bundleIdentifier,
-              let mediaManager = mediaManager,
-              let application = application,
-              let transportSession = transportSession
-        else { return XCTFail() }
-        
-        let groupIdentifier = "group.\(bundleIdentifier)"
+        guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return XCTFail() }
 
-        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession, moc: <#T##NSManagedObjectContext#>)
+        let storeProvider = WireSyncEngine.LocalStoreProvider()
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
         let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
-            appGroupIdentifier: groupIdentifier,
+            storeProvider: storeProvider,
             apnsEnvironment: apnsEnvironment,
             application: application,
             mediaManager: mediaManager,
@@ -188,12 +182,12 @@ extension IntegrationTest {
         )
 
         sessionManager = SessionManager(
-            appGroupIdentifier: groupIdentifier,
+            storeProvider: storeProvider,
             appVersion: "0.0.0",
-            application: application,
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
             delegate: self,
+            application: application,
             launchOptions: [:]
         )
     }
@@ -492,9 +486,7 @@ extension IntegrationTest : SessionManagerDelegate {
     public func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
         self.unauthenticatedSession = unauthenticatedSession
         
-        unauthenticatedSession.moc.performGroupedBlockAndWait {
-            unauthenticatedSession.moc.add(self.dispatchGroup)
-        }
+        unauthenticatedSession.groupQueue.add(self.dispatchGroup)
     }
     
     public func sessionManagerWillStartMigratingLocalStore() {
