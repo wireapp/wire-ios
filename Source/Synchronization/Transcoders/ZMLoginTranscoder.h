@@ -30,7 +30,7 @@ NS_ASSUME_NONNULL_BEGIN;
 
 - (instancetype)init NS_UNAVAILABLE;
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
 
 @end
 

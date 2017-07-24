@@ -124,7 +124,7 @@
     
     // then
     XCTAssertNotNil(sut.lastUpdateEventIDSync);
-    XCTAssertEqual(sut.lastUpdateEventIDSync.moc, self.uiMOC);
+    XCTAssertEqual(sut.lastUpdateEventIDSync.groupQueue, self.uiMOC);
     XCTAssertEqual(transcoder, sut);
 }
 

@@ -55,13 +55,15 @@
     self.registrationDownstreamSync = [OCMockObject mockForClass:ZMSingleRequestSync.class];
     [self verifyMockLater:self.registrationDownstreamSync];
     
+    DispatchGroupQueue *groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
+    
     id classMock = [OCMockObject mockForClass:ZMSingleRequestSync.class];
-    (void) [[[classMock stub] andReturn:self.registrationDownstreamSync] syncWithSingleRequestTranscoder:OCMOCK_ANY managedObjectContext:self.uiMOC];
+    (void) [[[classMock stub] andReturn:self.registrationDownstreamSync] syncWithSingleRequestTranscoder:OCMOCK_ANY groupQueue:groupQueue];
     
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"com.wearezeta.test-WireSyncEngine"];
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage managedObjectContext:self.uiMOC];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage groupQueue:groupQueue];
         
-    self.sut = (id) [[ZMRegistrationTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
+    self.sut = (id) [[ZMRegistrationTranscoder alloc] initWithGroupQueue:groupQueue authenticationStatus:self.authenticationStatus];
     [classMock stopMocking];
 }
 

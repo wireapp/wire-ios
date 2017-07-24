@@ -128,13 +128,9 @@ public class SessionManager : NSObject {
                 createSession()
             }
         } else {
-            do {
-                let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
-                self.unauthenticatedSession = unauthenticatedSession
-                delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
-            } catch let error {
-                fatal("Can't create unauthenticated session: \(error)")
-            }
+            let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
+            self.unauthenticatedSession = unauthenticatedSession
+            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
         }
     }
     
@@ -184,13 +180,9 @@ extension SessionManager: ZMAuthenticationObserver {
     @objc public func authenticationDidFail(_ error: Error) {
         guard self.unauthenticatedSession == nil else { return }
         
-        do {
-            let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
-            self.unauthenticatedSession = unauthenticatedSession
-            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
-        } catch let error {
-            fatal("Can't create unauthenticated session: \(error)")
-        }
+        let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
+        self.unauthenticatedSession = unauthenticatedSession
+        delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
     }
     
     @objc public func authenticationDidSucceed() {
