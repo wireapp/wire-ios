@@ -58,17 +58,9 @@
     DispatchGroupQueue *groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
     
     id classMock = [OCMockObject mockForClass:ZMSingleRequestSync.class];
-<<<<<<< HEAD
-    (void) [[[classMock stub] andReturn:self.registrationDownstreamSync] syncWithSingleRequestTranscoder:OCMOCK_ANY managedObjectContext:self.uiMOC];
-
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:self.uiMOC];
-=======
     (void) [[[classMock stub] andReturn:self.registrationDownstreamSync] syncWithSingleRequestTranscoder:OCMOCK_ANY groupQueue:groupQueue];
-    
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"com.wearezeta.test-WireSyncEngine"];
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:self.cookieStorage groupQueue:groupQueue];
->>>>>>> develop
-        
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithGroupQueue:groupQueue];
+
     self.sut = (id) [[ZMRegistrationTranscoder alloc] initWithGroupQueue:groupQueue authenticationStatus:self.authenticationStatus];
     [classMock stopMocking];
 }

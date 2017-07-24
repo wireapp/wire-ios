@@ -40,7 +40,7 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
     let transportSession: ZMTransportSession
 
-    init(storeProvider: LocalStoreProvider, apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
+    init(storeProvider: LocalStoreProviderProtocol, apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
         self.transportSession = transportSession
         super.init(
             storeProvider: storeProvider,
@@ -77,8 +77,8 @@ final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
         super.init()
     }
 
-    override func session(withDelegate delegate: UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
-        return .init(transportSession: transportSession,delegate: delegate)
+    override func session(withDelegate delegate: WireSyncEngine.UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
+        return UnauthenticatedSession(transportSession: transportSession, delegate: delegate)
     }
 
 }

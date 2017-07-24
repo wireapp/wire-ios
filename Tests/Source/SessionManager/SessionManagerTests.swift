@@ -73,15 +73,27 @@ class SessionManagerTests: IntegrationTest {
         delegate = SessionManagerTestDelegate()
     }
     
-    func createManager() -> SessionManager {
-        return SessionManager(storeProvider: storeProvider,
-                              appVersion: "0.0.0",
-                              transportSession: transportSession!,
-                              mediaManager: mediaManager!,
-                              analytics: nil,
-                              delegate: delegate,
-                              application: application!,
-                              launchOptions: [:])
+    func createManager() -> SessionManager? {
+        guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return nil }
+
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
+        let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
+            storeProvider: storeProvider as LocalStoreProviderProtocol,
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            transportSession: transportSession
+        )
+
+        return SessionManager(
+            storeProvider: storeProvider,
+            appVersion: "0.0.0",
+            authenticatedSessionFactory: authenticatedSessionFactory,
+            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
+            delegate: self,
+            application: application,
+            launchOptions: [:]
+        )
     }
     
     override func tearDown() {

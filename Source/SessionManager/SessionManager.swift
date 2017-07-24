@@ -40,7 +40,7 @@ open class UnauthenticatedSessionFactory {
 
 open class AuthenticatedSessionFactory {
     
-    let storeProvider: LocalStoreProvider
+    let storeProvider: LocalStoreProviderProtocol
     let appVersion: String
     let mediaManager: AVSMediaManager
     var analytics: AnalyticsType?
@@ -48,7 +48,7 @@ open class AuthenticatedSessionFactory {
     let application : ZMApplication
     let environment: ZMBackendEnvironment
     
-    public init(storeProvider: LocalStoreProvider,
+    public init(storeProvider: LocalStoreProviderProtocol,
                 appVersion: String,
                 apnsEnvironment: ZMAPNSEnvironment? = nil,
                 application: ZMApplication,
