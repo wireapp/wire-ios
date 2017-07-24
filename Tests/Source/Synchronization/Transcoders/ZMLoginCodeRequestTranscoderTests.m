@@ -39,15 +39,10 @@
 
 - (void)setUp {
     [super setUp];
-    
-<<<<<<< HEAD
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext: self.uiMOC];
-    self.sut = [[ZMLoginCodeRequestTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
-=======
+
     DispatchGroupQueue *groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:nil groupQueue:groupQueue];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithGroupQueue:groupQueue];
     self.sut = [[ZMLoginCodeRequestTranscoder alloc] initWithGroupQueue:groupQueue authenticationStatus:self.authenticationStatus];
->>>>>>> develop
 }
 
 - (void)tearDown {

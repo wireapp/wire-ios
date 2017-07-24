@@ -83,11 +83,8 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     
     self.groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
     self.originalLoginTimerInterval = DefaultPendingValidationLoginAttemptInterval;
-<<<<<<< HEAD
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithManagedObjectContext:nil];
-=======
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:[ZMPersistentCookieStorage storageForServerName:@"test"] groupQueue:self.groupQueue];
->>>>>>> develop
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithGroupQueue:self.groupQueue];
+
     self.mockClientRegistrationStatus = [OCMockObject niceMockForClass:[ZMClientRegistrationStatus class]];
     
     self.mockLocale = [OCMockObject niceMockForClass:[NSLocale class]];
