@@ -44,7 +44,7 @@
     _transcoder = [OCMockObject mockForProtocol:@protocol(ZMSingleRequestTranscoder)];
     [self verifyMockLater:self.transcoder];
     
-    _sut = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self.transcoder managedObjectContext:self.moc];
+    _sut = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self.transcoder groupQueue:self.moc];
 }
 
 - (void)tearDown {
@@ -77,11 +77,10 @@
     XCTAssertEqual(self.sut.status, ZMSingleRequestIdle);
 }
 
-- (void)testThatItExposesTheRightTranscoderAndMoc
+- (void)testThatItExposesTheRightTranscoder
 {
     id transcoder = self.sut.transcoder;
     XCTAssertEqual(transcoder, self.transcoder);
-    XCTAssertEqual(self.sut.moc, self.moc);
 }
 
 - (void)testThatItReturnsReadyWhenAskedToRequest

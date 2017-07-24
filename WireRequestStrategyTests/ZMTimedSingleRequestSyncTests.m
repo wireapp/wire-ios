@@ -76,7 +76,7 @@
     NSTimeInterval interval = 0.13;
     
     // when
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.testSession.uiMOC];
     
     // then
     XCTAssertEqual([sut nextRequest], self.dummyRequest);
@@ -91,7 +91,7 @@
     // given
     const int ATTEMPTS = 3;
     NSTimeInterval interval = 1;
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.testSession.uiMOC];
 
     // when
     ZMTransportRequest *request1 = [sut nextRequest];
@@ -116,7 +116,7 @@
     // given
     const int ATTEMPTS = 3;
     NSTimeInterval interval = 0.01;
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.testSession.uiMOC];
     ZMTransportRequest *request1 = [sut nextRequest];
     XCTAssertEqual(request1, self.dummyRequest);
     
@@ -140,7 +140,7 @@
 {
     // given
     id mockOperationLoop = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0.01 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0.01 groupQueue:self.testSession.uiMOC];
     
     // expect
     [[mockOperationLoop expect] notifyNewRequestsAvailable:OCMOCK_ANY];
@@ -165,7 +165,7 @@
     [[mockOperationLoop reject] notifyNewRequestsAvailable:OCMOCK_ANY];
     
     // when
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0.05 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0.05 groupQueue:self.testSession.uiMOC];
     [sut nextRequest];
     [sut invalidate];
 
@@ -182,7 +182,7 @@
 {
     // given
     NSTimeInterval interval = 0.1;
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:interval groupQueue:self.testSession.uiMOC];
     ZMTransportRequest *request1 = [sut nextRequest];
     XCTAssertEqual(request1, self.dummyRequest);
     id mockOperationLoop = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
@@ -202,7 +202,7 @@
 - (void)testThatHavingAZeroTimeIntervalCausesNoTimerToBeStarted
 {
     // given
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.testSession.uiMOC];
     ZMTransportRequest *request1 = [sut nextRequest];
     XCTAssertEqual(request1, self.dummyRequest);
     id mockOperationLoop = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
@@ -223,7 +223,7 @@
 - (void)testSettingANonZeroTimeIntervalCausesTheTimerToBeStartedAfterNextRequest
 {
     // given
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.testSession.uiMOC];
     ZMTransportRequest *request1 = [sut nextRequest];
     XCTAssertEqual(request1, self.dummyRequest);
     
@@ -244,7 +244,7 @@
 - (void)testThatItDoesNotReturnARequestWhileAPreviousRequestIsRunning
 {
     // given
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.testSession.uiMOC];
     
     // when
     ZMTransportRequest *request1 = [sut nextRequest];
@@ -259,7 +259,7 @@
 - (void)testThatItReturnsARequestWhenAPreviousRequestWasCompleted
 {
     // given
-    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 managedObjectContext:self.testSession.uiMOC];
+    ZMTimedSingleRequestSync *sut = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:self.testSession.uiMOC];
     
     ZMTransportRequest *request1 = [sut nextRequest];
     

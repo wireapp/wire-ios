@@ -78,17 +78,11 @@
 
 @implementation ZMTimedSingleRequestSync
 
-- (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder> __unused)transcoder managedObjectContext:(NSManagedObjectContext * __unused)moc;
-{
-    RequireString(NO, "Use the other init.");
-    return nil;
-}
-
 - (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder
               everyTimeInterval:(NSTimeInterval) timeInterval
-                     managedObjectContext:(NSManagedObjectContext *)moc;
+                     groupQueue:(id<ZMSGroupQueue>)groupQueue
 {
-    self = [super initWithSingleRequestTranscoder:transcoder managedObjectContext:moc];
+    self = [super initWithSingleRequestTranscoder:transcoder groupQueue:(id<ZMSGroupQueue>)groupQueue];
     if(self) {
         self.timeInterval = timeInterval;
         self.shouldReturnRequest = YES;
@@ -115,7 +109,7 @@
             ZMTimedRequestTriggerHolder *holder = [[ZMTimedRequestTriggerHolder alloc] initWithTimedSingleRequest:self];
             self.currentHolder = holder;
             
-            ZMSDispatchGroup * group = self.moc.dispatchGroup;
+            ZMSDispatchGroup * group = self.groupQueue.dispatchGroup;
             [group enter];
             dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(self.timeInterval * NSEC_PER_SEC)), self.queue, ^{
                 [holder fireTrigger];
@@ -130,7 +124,7 @@
 
 - (void)timerDidExpire
 {
-    [self.moc performGroupedBlock:^{
+    [self.groupQueue performGroupedBlock:^{
         self.currentHolder = nil;
         self.shouldReturnRequest = YES;
         [self readyForNextRequest];
@@ -140,7 +134,7 @@
 
 - (void)invalidate
 {
-    ZMSDispatchGroup * group = self.moc.dispatchGroup;
+    ZMSDispatchGroup * group = self.groupQueue.dispatchGroup;
     [group enter];
     dispatch_sync(self.queue, ^{
         [self.currentHolder invalidate];

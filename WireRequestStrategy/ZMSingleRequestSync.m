@@ -33,20 +33,19 @@
 
 @implementation ZMSingleRequestSync
 
-- (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder managedObjectContext:(NSManagedObjectContext *)moc;
-
+- (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder groupQueue:(id<ZMSGroupQueue>)groupQueue
 {
     self = [super init];
     if(self) {
         self.transcoder = transcoder;
-        _moc = moc;
+        _groupQueue = groupQueue;
     }
     return self;
 }
 
-+ (instancetype)syncWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder managedObjectContext:(NSManagedObjectContext *)moc
++ (instancetype)syncWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder groupQueue:(id<ZMSGroupQueue>)groupQueue
 {
-    return [[self alloc] initWithSingleRequestTranscoder:transcoder managedObjectContext:moc];
+    return [[self alloc] initWithSingleRequestTranscoder:transcoder groupQueue:groupQueue];
 }
 
 - (NSString *)description
@@ -86,7 +85,7 @@
         }
         const int currentCounter = self.requestUniqueCounter;
         ZM_WEAK(self);
-        [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.moc block:^(ZMTransportResponse * response) {
+        [request addCompletionHandler:[ZMCompletionHandler handlerOnGroupQueue:self.groupQueue block:^(ZMTransportResponse * response) {
             ZM_STRONG(self);
             [self processResponse:response forRequest:self.currentRequest counterValueAtStart:currentCounter];
         }]];

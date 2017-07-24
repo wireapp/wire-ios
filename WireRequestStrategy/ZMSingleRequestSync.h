@@ -45,11 +45,11 @@ typedef NS_ENUM(int, ZMSingleRequestProgress) {
 
 @property (nonatomic, readonly, weak) id<ZMSingleRequestTranscoder> __nullable transcoder;
 @property (nonatomic, readonly) ZMSingleRequestProgress status;
-@property (nonatomic, readonly) NSManagedObjectContext *moc;
+@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
 
-- (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder managedObjectContext:(NSManagedObjectContext *)moc;
+- (instancetype)initWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
-+ (instancetype)syncWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder managedObjectContext:(NSManagedObjectContext *)moc;
++ (instancetype)syncWithSingleRequestTranscoder:(id<ZMSingleRequestTranscoder>)transcoder groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 /// Marks as need to request, even if it's already performing a request (will abort that request)
 - (void)readyForNextRequest;
