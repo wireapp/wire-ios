@@ -264,6 +264,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     func session(session: UnauthenticatedSession, createdAccount account: Account) {
         accountManager.add(account)
         accountManager.select(account)
+
         select(account: accountManager.selectedAccount) { [weak self] userSession in
             userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
             

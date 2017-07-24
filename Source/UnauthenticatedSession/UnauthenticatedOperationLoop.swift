@@ -22,7 +22,7 @@ import WireTransport
 import WireMessageStrategy
 
 
-private let log = ZMSLog(tag: "UnauthenticatedOperationLoop")
+private let log = ZMSLog(tag: "Network")
 
 
 class UnauthenticatedOperationLoop: NSObject {
@@ -62,7 +62,7 @@ extension UnauthenticatedOperationLoop: RequestAvailableObserver {
             enqueueMore = result == .success
             switch result {
             case .maximumNumberOfRequests: log.debug("Maximum number of concurrent requests reached")
-            case .nilRequest: log.error("Nil request generated")
+            case .nilRequest: log.debug("Nil request generated")
             default: break
             }
         }
