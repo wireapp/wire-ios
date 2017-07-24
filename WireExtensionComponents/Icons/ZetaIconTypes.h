@@ -180,6 +180,17 @@ typedef NS_ENUM(NSInteger, ZetaIconType)
     ZetaIconTypeAsterisk                        = 0x255,
     ZetaIconTypeFlag                            = 0x256,
     
+    // Markdown
+    ZetaIconTypeMarkdownToggle                  = 0x738,
+    ZetaIconTypeMarkdownH1                      = 0x739,
+    ZetaIconTypeMarkdownH2                      = 0x740,
+    ZetaIconTypeMarkdownH3                      = 0x741,
+    ZetaIconTypeMarkdownBold                    = 0x742,
+    ZetaIconTypeMarkdownItalic                  = 0x743,
+    ZetaIconTypeMarkdownUnderline               = 0x744,
+    ZetaIconTypeMarkdownBulletList              = 0x745,
+    ZetaIconTypeMarkdownNumberList              = 0x746,
+    ZetaIconTypeMarkdownCode                    = 0x747,
 };
 
 typedef NS_ENUM(NSInteger, ZetaIconSize) {

@@ -125,6 +125,7 @@
 @property (nonatomic) IconButton *sendButton;
 @property (nonatomic) IconButton *ephemeralIndicatorButton;
 @property (nonatomic) IconButton *emojiButton;
+@property (nonatomic) IconButton *markdownButton;
 @property (nonatomic) IconButton *gifButton;
 @property (nonatomic) IconButton *hourglassButton;
 
@@ -188,7 +189,8 @@
     [self createInputBar]; // Creates all input bar buttons
     [self createSendButton];
     [self createEphemeralIndicatorButton];
-    [self createEmojiButton];
+//    [self createEmojiButton];
+    [self createMarkdownButton];
 
     [self createHourglassButton];
     [self createTypingIndicatorView];
@@ -199,6 +201,7 @@
     
     [self configureAudioButton:self.audioButton];
     [self configureEmojiButton:self.emojiButton];
+    [self configureMarkdownButton];
     [self configureEphemeralKeyboardButton:self.hourglassButton];
     [self configureEphemeralKeyboardButton:self.ephemeralIndicatorButton];
     
@@ -395,6 +398,19 @@
     [self.emojiButton autoSetDimensionsToSize:CGSizeMake(senderDiameter, senderDiameter)];
 }
 
+- (void)createMarkdownButton
+{
+    const CGFloat senderDiameter = 28;
+    
+    self.markdownButton = IconButton.iconButtonCircular;
+    self.markdownButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.markdownButton.accessibilityIdentifier = @"markdownButton";
+    [self.inputBar.leftAccessoryView addSubview:self.markdownButton];
+    [self.markdownButton autoAlignAxisToSuperviewAxis:ALAxisVertical];
+    [self.markdownButton autoPinEdgeToSuperviewEdge:ALEdgeBottom withInset:14];
+    [self.markdownButton autoSetDimensionsToSize:CGSizeMake(senderDiameter, senderDiameter)];
+}
+
 - (void)createHourglassButton
 {
     self.hourglassButton = IconButton.iconButtonDefault;
@@ -563,6 +579,7 @@
 
 - (void)commandReturnPressed
 {
+    [self.inputBar.textView stripEmptyListItems];
     if (nil != self.inputBar.textView.text) {
         [self sendOrEditText:self.inputBar.textView.text];
     }
@@ -638,7 +655,7 @@
             [self selectInputControllerButton:self.emojiButton];
             [Analytics.shared tagEmojiKeyboardOpenend:self.conversation];
             break;
-
+            
         case ConversationInputBarViewControllerModeTimeoutConfguration:
             [self clearTextInputAssistentItemIfNeeded];
 
@@ -806,6 +823,12 @@
 
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
+    // markdown text view needs to detect newlines
+    // in order to automatically insert new list items
+    if ([text isEqualToString:@"\n"]) {
+        [self.inputBar.textView handleNewLine];
+    }
+    
     if (!Settings.sharedSettings.disableSendButton) {
         // The send button is not disabled, we allow newlines and don't send.
         return YES;
@@ -1026,7 +1049,10 @@
 - (void)sendButtonPressed:(id)sender
 {
     [self.inputBar.textView autocorrectLastWord];
+    [self.inputBar.textView stripEmptyListItems];
     [self sendOrEditText:self.inputBar.textView.text];
+    [self.inputBar.textView resetTypingAttributes];
+    [self.inputBar.markdownView resetIcons];
 }
 
 @end
