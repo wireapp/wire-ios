@@ -175,7 +175,6 @@ public class SessionManager : NSObject {
     }
 
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
-        print(account, storeProvider.storeExists)
         if let account = account, storeProvider.storeExists { // TODO: Add check if store exists for passed account
             if storeProvider.needsToPrepareLocalStore {
                 delegate?.sessionManagerWillStartMigratingLocalStore()
