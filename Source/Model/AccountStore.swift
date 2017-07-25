@@ -89,6 +89,19 @@ public final class AccountStore: NSObject {
         }
     }
 
+    /// Deletes the persistence layer of an `AccountStore` from the file system.
+    /// Mostly useful for cleaning up after tests or for complete account resets.
+    /// - parameter root: The root url of the store that should be deleted.
+    @discardableResult static func delete(at root: URL) -> Bool {
+        do {
+            try FileManager.default.removeItem(at: root.appendingPathComponent(directoryName))
+            return true
+        } catch {
+            log.error("Unable to remove all accounts at \(root): \(error)")
+            return false
+        }
+    }
+
     /// Check if an `Account` is already stored in this `AccountStore`.
     /// - parameter account: The account which should be deleted.
     /// - returns: Whether or not the account is stored in this `AccountStore`.
@@ -112,7 +125,7 @@ public final class AccountStore: NSObject {
     }
 
     /// Create a local url for an `Account` inside this `AccountStore`.
-    /// - parameter account: The account for which th eurl should be generated.
+    /// - parameter account: The account for which the url should be generated.
     /// - returns: The `URL` for the given account.
     private func url(for account: Account) -> URL {
         return url(for: account.userIdentifier)
