@@ -104,27 +104,3 @@ struct ConversationDisplayNameMap {
     let conversationObjectID : NSManagedObjectID
     let map : [NSManagedObjectID : String]
 }
-
-let DisplayNameGeneratorKey = "DisplayNameGenerator"
-
-extension NSManagedObjectContext {
-    
-    var nameGenerator : DisplayNameGenerator? {
-        get {
-            return userInfo.object(forKey: DisplayNameGeneratorKey) as? DisplayNameGenerator
-        }
-        set {
-            if newValue == nil {
-                userInfo.removeObject(forKey:DisplayNameGeneratorKey)
-            } else {
-                userInfo[DisplayNameGeneratorKey] = newValue
-            }
-        }
-    }
-}
-
-
-
-
-
-
