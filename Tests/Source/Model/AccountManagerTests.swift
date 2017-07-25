@@ -94,6 +94,27 @@ final class AccountManagerTests: ZMConversationTestsBase {
         XCTAssertEqual(manager.accounts, [account])
     }
 
+    func testThatItCanAddAndSelectAnAccount() {
+        // given
+        let manager = AccountManager(sharedDirectory: url)
+        let account1 = Account(userName: "Silvan", userIdentifier: .create())
+        let account2 = Account(userName: "Jacob", userIdentifier: .create())
+
+        // when
+        manager.addAndSelect(account1)
+
+        // then
+        XCTAssertEqual(manager.selectedAccount, account1)
+        XCTAssertEqual(manager.accounts, [account1])
+
+        // when
+        manager.addAndSelect(account2)
+
+        // then
+        XCTAssertEqual(manager.selectedAccount, account2)
+        XCTAssertEqual(manager.accounts, [account2, account1])
+    }
+
     func testThatItCanDeleteAnAccountManager() {
         // given
         do {
