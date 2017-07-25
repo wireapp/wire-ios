@@ -101,16 +101,16 @@ public class SessionManager : NSObject {
 
     public let appVersion: String
     public let storeProvider: LocalStoreProviderProtocol
+    public weak var delegate: SessionManagerDelegate? = nil
     
-    fileprivate let authenticatedSessionFactory : AuthenticatedSessionFactory
-    fileprivate let unauthenticatedSessionFactory : UnauthenticatedSessionFactory
+    fileprivate let authenticatedSessionFactory: AuthenticatedSessionFactory
+    fileprivate let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    fileprivate let accountManager: AccountManager
     
-    let application : ZMApplication
-    public weak var delegate : SessionManagerDelegate? = nil
+    let application: ZMApplication
     var userSession: ZMUserSession?
     var unauthenticatedSession: UnauthenticatedSession?
-    
-    fileprivate let accountManager: AccountManager
+    var authenticationToken: ZMAuthenticationObserverToken?
     
     public convenience init(
         appVersion: String,
@@ -165,22 +165,21 @@ public class SessionManager : NSObject {
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         
         super.init()
+        authenticationToken = ZMUserSessionAuthenticationNotification.addObserver(self)
         
         select(account: accountManager.selectedAccount) { [weak self] session in
             guard let `self` = self else { return }
-            delegate?.sessionManagerCreated(userSession: session)
             session.application(self.application, didFinishLaunchingWithOptions: launchOptions)
             (launchOptions[.url] as? URL).apply(session.didLaunch)
         }
     }
 
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
-        if let account = account { // TODO: Add check if store exists?
-            createSession(for: account, completion: completion)
-
+        print(account, storeProvider.storeExists)
+        if let account = account, storeProvider.storeExists { // TODO: Add check if store exists for passed account
             if storeProvider.needsToPrepareLocalStore {
                 delegate?.sessionManagerWillStartMigratingLocalStore()
-                storeProvider.prepareLocalStore() {
+                storeProvider.prepareLocalStore {
                     DispatchQueue.main.async { [weak self] in
                         self?.createSession(for: account, completion: completion)
                     }
@@ -196,10 +195,11 @@ public class SessionManager : NSObject {
     private func createSession(for account: Account, completion: (ZMUserSession) -> Void) {
         guard let session = authenticatedSessionFactory.session(for: account) else { preconditionFailure("Unable to create session for \(account)") }
         self.userSession = session
+        delegate?.sessionManagerCreated(userSession: session)
         completion(session)
     }
 
-    private func createUnauthenticatedSession() {
+    fileprivate func createUnauthenticatedSession() {
         let unauthenticatedSession = unauthenticatedSessionFactory.session(withDelegate: self)
         self.unauthenticatedSession = unauthenticatedSession
         delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
@@ -251,6 +251,7 @@ public class SessionManager : NSObject {
 // MARK: - UnauthenticatedSessionDelegate
 
 extension SessionManager: UnauthenticatedSessionDelegate {
+
     func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) {
         if let userSession = userSession, let emailCredentials = credentials as? ZMEmailCredentials {
             userSession.setEmailCredentials(emailCredentials)
@@ -267,7 +268,6 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
         select(account: accountManager.selectedAccount) { [weak self] userSession in
             userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
-            
             userSession.syncManagedObjectContext.performGroupedBlock {
                 userSession.syncManagedObjectContext.registeredOnThisDevice = session.authenticationStatus.completedRegistration
             }
@@ -277,4 +277,25 @@ extension SessionManager: UnauthenticatedSessionDelegate {
             }
         }
     }
+
+}
+
+// MARK: - ZMAuthenticationObserver
+
+extension SessionManager: ZMAuthenticationObserver {
+
+    @objc public func authenticationDidFail(_ error: Error) {
+        guard self.unauthenticatedSession == nil else { return }
+
+        // Dispose the user session if it is there
+        userSession?.tearDown()
+        userSession = nil
+
+        createUnauthenticatedSession()
+    }
+
+    @objc public func authenticationDidSucceed() {
+        // no-op for now
+    }
+
 }
