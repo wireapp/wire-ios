@@ -55,6 +55,7 @@ static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSe
 static dispatch_queue_t UIContextCreationQueue(void);
 static NSManagedObjectContext *SharedUserInterfaceContext = nil;
 static id applicationProtectedDataDidBecomeAvailableObserver = nil;
+static NSString * const DisplayNameGeneratorKey = @"DisplayNameGeneratorKey";
 
 static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
@@ -195,7 +196,6 @@ static BOOL storeIsReady = NO;
 + (void)resetUserInterfaceContext
 {
     dispatch_sync(UIContextCreationQueue(), ^{
-        SharedUserInterfaceContext.nameGenerator = nil;
         SharedUserInterfaceContext = nil;
     });
 }
@@ -341,6 +341,10 @@ static BOOL storeIsReady = NO;
 - (BOOL)zm_shouldRefreshObjectsWithUIContextPolicy
 {
     return self.zm_isUserInterfaceContext && !self.zm_isRefreshOfObjectsDisabled;
+}
+
+- (DisplayNameGenerator *)zm_displayNameGenerator {
+    return self.userInfo[DisplayNameGeneratorKey];
 }
 
 - (NSURL *)zm_storeURL {
@@ -992,7 +996,7 @@ static dispatch_queue_t UIContextCreationQueue(void)
 {
     [self performBlockAndWait:^{
         self.userInfo[IsUserInterfaceContextKey] = @YES;
-        self.nameGenerator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
+        self.userInfo[DisplayNameGeneratorKey] = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
     }];
 }
 

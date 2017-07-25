@@ -237,7 +237,7 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 - (NSString *)displayName;
 {
-    PersonName *personName = [self.managedObjectContext.nameGenerator personNameFor:self];
+    PersonName *personName = [self.managedObjectContext.zm_displayNameGenerator personNameFor:self];
     return personName.givenName ?: @"";
 }
 
@@ -246,12 +246,12 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
     if (conversation == nil) {
         return self.displayName;
     }
-    return [self.managedObjectContext.nameGenerator displayNameFor:self in:conversation];
+    return [self.managedObjectContext.zm_displayNameGenerator displayNameFor:self in:conversation];
 }
 
 - (NSString *)initials
 {
-    PersonName *personName = [self.managedObjectContext.nameGenerator personNameFor:self];
+    PersonName *personName = [self.managedObjectContext.zm_displayNameGenerator personNameFor:self];
     return personName.initials ?: @"";
 }
 
