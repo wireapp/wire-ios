@@ -126,6 +126,7 @@ extension IntegrationTest {
         connectionSelfToUser2 = nil
         selfConversation = nil
         groupConversation = nil
+        WireSyncEngine.LocalStoreProvider().sharedContainerDirectory.apply(AccountManager.delete)
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         

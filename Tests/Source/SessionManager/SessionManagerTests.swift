@@ -90,7 +90,7 @@ class SessionManagerTests: IntegrationTest {
             appVersion: "0.0.0",
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            delegate: self,
+            delegate: delegate,
             application: application,
             launchOptions: [:]
         )
@@ -116,8 +116,11 @@ class SessionManagerTests: IntegrationTest {
     
     func testThatItCreatesUserSessionAndNotifiesDelegateIfStoreIsAvailable() {
         // given
+        guard let manager = storeProvider.sharedContainerDirectory.map(AccountManager.init) else { return XCTFail() }
+        let account = Account(userName: "", userIdentifier: .create())
+        manager.addAndSelect(account)
         storeProvider.storeExists = true
-        
+
         // when
         _ = createManager()
         
