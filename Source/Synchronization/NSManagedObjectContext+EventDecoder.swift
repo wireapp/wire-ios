@@ -34,12 +34,19 @@ extension NSManagedObjectContext {
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = eventPersistentStoreCoordinator
         managedObjectContext.createDispatchGroups()
+        managedObjectContext.isEventMOC = true
         
         addPersistentStore(eventPersistentStoreCoordinator!, appGroupIdentifier: appGroupIdentifier)
         return managedObjectContext
     }
-    
-    public func tearDown() {
+
+    var isEventMOC: Bool {
+        set { userInfo["isEventMOC"] = newValue }
+        get { return (userInfo.object(forKey: "isEventMOC") as? Bool) ?? false }
+    }
+
+    public func tearDownEventMOC() {
+        precondition(isEventMOC, "Invalid operation: tearDownEventMOC called on context not marked as event MOC")
         if let store = persistentStoreCoordinator?.persistentStores.first {
             try! persistentStoreCoordinator?.remove(store)
         }
@@ -60,7 +67,7 @@ extension NSManagedObjectContext {
     fileprivate static func addPersistentStore(_ psc: NSPersistentStoreCoordinator, appGroupIdentifier: String?, isSecondTry: Bool = false) {
         guard let storeURL = storeURL(forAppGroupIdentifier: appGroupIdentifier) else { return }
         do {
-            let storeType = useInMemoryStore() ? NSInMemoryStoreType : NSSQLiteStoreType
+            let storeType = StorageStack.shared.createStorageAsInMemory ? NSInMemoryStoreType : NSSQLiteStoreType
             try psc.addPersistentStore(ofType: storeType, configurationName: nil, at: storeURL, options: nil)
         } catch {
             if isSecondTry {
