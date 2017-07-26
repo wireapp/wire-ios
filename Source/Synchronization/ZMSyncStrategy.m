@@ -44,6 +44,9 @@
 #import <WireSyncEngine/WireSyncEngine-Swift.h>
 
 @interface ZMSyncStrategy ()
+{
+    dispatch_once_t _didFetchObjects;
+}
 
 @property (nonatomic) NSManagedObjectContext *syncMOC;
 @property (nonatomic, weak) NSManagedObjectContext *uiMOC;
@@ -347,9 +350,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (ZMTransportRequest *)nextRequest
 {
-
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
+    dispatch_once(&_didFetchObjects, ^{
         [self.changeTrackerBootStrap fetchObjectsForChangeTrackers];
     });
     
