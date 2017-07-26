@@ -371,7 +371,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             otherMember.team = team
             otherMember.user = otherUser
 
-            expectedConversation = otherUser.oneToOneConversation(in: team)
+            expectedConversation = otherUser.oneToOneConversation
             selfClient.trustClient(otherClient)
 
             // when

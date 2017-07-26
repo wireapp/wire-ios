@@ -257,25 +257,12 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 - (ZMConversation *)oneToOneConversation
 {
-    // !!!: This is a placeholder as removing this still breaks a lot at the moment.
-
-    // TODO:
-    // There will be users which we are not connected to but which are in a team,
-    // in that case we can create or return the existing conversation.
-    // There can also be users which are in multiple teams with us,
-    // which is why we need to specify in which team the 1:1 (but internally group) conversation should be.
-
-    return [self oneToOneConversationInTeam:nil];
-}
-
-- (ZMConversation *)oneToOneConversationInTeam:(Team *)team
-{
-    if (nil == team) {
-        return self.connection.conversation;
-    } else {
+    if (self.isTeamMember) {
         return [ZMConversation fetchOrCreateTeamConversationInManagedObjectContext:self.managedObjectContext
                                                                    withParticipant:self
-                                                                              team:team];
+                                                                              team:self.team];
+    } else {
+        return self.connection.conversation;
     }
 }
 
