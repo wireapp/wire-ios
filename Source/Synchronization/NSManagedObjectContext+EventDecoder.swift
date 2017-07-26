@@ -40,11 +40,6 @@ extension NSManagedObjectContext {
         return managedObjectContext
     }
 
-    var isEventMOC: Bool {
-        set { userInfo["isEventMOC"] = newValue }
-        get { return (userInfo.object(forKey: "isEventMOC") as? Bool) ?? false }
-    }
-
     public func tearDownEventMOC() {
         precondition(isEventMOC, "Invalid operation: tearDownEventMOC called on context not marked as event MOC")
         if let store = persistentStoreCoordinator?.persistentStores.first {
@@ -53,7 +48,12 @@ extension NSManagedObjectContext {
         
         type(of: self).eventPersistentStoreCoordinator = nil
     }
-    
+
+    var isEventMOC: Bool {
+        set { userInfo[IsEventContextKey] = newValue }
+        get { return (userInfo.object(forKey: IsEventContextKey) as? Bool) ?? false }
+    }
+
     fileprivate static func createPersistentStoreCoordinator() -> NSPersistentStoreCoordinator {
         guard let modelURL = Bundle(for: StoredUpdateEvent.self).url(forResource: "ZMEventModel", withExtension:"momd") else {
             fatalError("Error loading model from bundle")

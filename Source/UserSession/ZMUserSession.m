@@ -76,6 +76,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ManagedObjectContextDirectory *contextDirectory;
 @property (nonatomic, readwrite) NSURL *sharedContainerURL;
 @property (nonatomic) TopConversationsDirectory *topConversationsDirectory;
+@property (nonatomic) BOOL hasCompletedInitialSync;
 
 
 /// Build number of the Wire app
@@ -745,6 +746,7 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.managedObjectContext performGroupedBlock:^{
         ZM_STRONG(self);
         self.isPerformingSync = NO;
+        self.hasCompletedInitialSync = YES;
         [self changeNetworkStateAndNotify];
         [self notifyThirdPartyServices];
         [self processPendingNotificationActions];
