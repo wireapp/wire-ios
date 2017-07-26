@@ -34,12 +34,14 @@
 #import <WireUtilities/WireUtilities-Swift.h>
 #import <WireDataModel/WireDataModel-Swift.h>
 
-static NSString * const IsSyncContextKey = @"ZMIsSyncContext";
-static NSString * const IsSearchContextKey = @"ZMIsSearchContext";
+NSString * const IsSyncContextKey = @"ZMIsSyncContext";
+NSString * const IsSearchContextKey = @"ZMIsSearchContext";
+NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
+NSString * const IsEventContextKey = @"ZMIsEventDecoderContext";
+
 static NSString * const SyncContextKey = @"ZMSyncContext";
 static NSString * const UserInterfaceContextKey = @"ZMUserInterfaceContext";
 static NSString * const IsRefreshOfObjectsDisabled = @"ZMIsRefreshOfObjectsDisabled";
-static NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
 static NSString * const IsSaveDisabled = @"ZMIsSaveDisabled";
 static NSString * const IsFailingToSave = @"ZMIsFailingToSave";
 
