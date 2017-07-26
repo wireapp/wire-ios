@@ -19,6 +19,25 @@
 import Foundation
 import WireUtilities
 
+public struct AssetKey {
+    
+    static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
+    
+    public init?(_ string: String) {
+        if AssetKey.validate(string: string) {
+            stringValue = string
+        } else {
+            return nil
+        }
+    }
+    
+    let stringValue : String
+    
+    fileprivate static func validate(string : String) -> Bool {
+        return CharacterSet(charactersIn: string).isSubset(of: legalCharacterSet)
+    }
+}
+
 @objc public enum ProfileImageSize: Int {
     case preview
     case complete
@@ -244,16 +263,16 @@ extension ZMUser {
             return
         }
         for data in assets {
-            if let size = data["size"].flatMap(ProfileImageSize.init), let key = data["key"] {
+            if let size = data["size"].flatMap(ProfileImageSize.init), let key = data["key"].flatMap(AssetKey.init) {
                 switch size {
                 case .preview:
-                    if key != previewProfileAssetIdentifier {
-                        previewProfileAssetIdentifier = key
+                    if key.stringValue != previewProfileAssetIdentifier {
+                        previewProfileAssetIdentifier = key.stringValue
                         imageSmallProfileData = nil
                     }
                 case .complete:
-                    if key != completeProfileAssetIdentifier {
-                        completeProfileAssetIdentifier = key
+                    if key.stringValue != completeProfileAssetIdentifier {
+                        completeProfileAssetIdentifier = key.stringValue
                         imageMediumData = nil
                     }
                 }
