@@ -25,6 +25,11 @@
 @class NSOperationQueue;
 @class DisplayNameGenerator;
 
+extern NSString * const IsUserInterfaceContextKey;
+extern NSString * const IsSyncContextKey;
+extern NSString * const IsSearchContextKey;
+extern NSString * const IsEventContextKey;
+
 @interface NSManagedObjectContext (zmessaging)
 
 + (NSManagedObjectModel *)loadManagedObjectModel;

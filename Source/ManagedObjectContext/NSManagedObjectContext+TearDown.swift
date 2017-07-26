@@ -24,11 +24,22 @@ extension NSManagedObjectContext {
     /// undefined behavior.
     public func tearDown() {
         self.performGroupedBlockAndWait {
-            self.userInfo.removeAllObjects()
+            self.tearDownUserInfo()
             let objects = self.registeredObjects
             objects.forEach {
                 self.refresh($0, mergeChanges: false)
             }
         }
+    }
+
+    private func tearDownUserInfo() {
+        // We need to keep the context type information until all other values have been removed,
+        // otherwise we risk running into assertions based on the context type.
+        if let allKeys = userInfo.allKeys as? [String] {
+            var keys = Set(allKeys)
+            keys.subtract([IsEventContextKey, IsSyncContextKey, IsUserInterfaceContextKey, IsSearchContextKey])
+            userInfo.removeObjects(forKeys: Array(keys))
+        }
+        userInfo.removeAllObjects()
     }
 }
