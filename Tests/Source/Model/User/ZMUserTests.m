@@ -1206,8 +1206,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     connection.to = connectedUser;
     
     // then
-    XCTAssertNil([unconnectedUser oneToOneConversationInTeam:nil]);
-    XCTAssertEqual(oneToOne, [connectedUser oneToOneConversationInTeam:nil]);
+    XCTAssertNil(unconnectedUser.oneToOneConversation);
+    XCTAssertEqual(oneToOne, connectedUser.oneToOneConversation);
 }
 
 

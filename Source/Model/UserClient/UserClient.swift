@@ -241,10 +241,8 @@ public class UserClient: ZMManagedObject, UserClientType {
     private func conversation(for user: ZMUser, in context: NSManagedObjectContext) -> ZMConversation? {
         if user.isSelfUser {
             return ZMConversation.selfConversation(in: context)
-        } else if let team = user.team {
-            return user.oneToOneConversation(in: team)
         } else {
-            return user.oneToOneConversation(in: nil)
+            return user.oneToOneConversation
         }
     }
 
