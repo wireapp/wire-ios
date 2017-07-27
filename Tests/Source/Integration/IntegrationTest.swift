@@ -119,11 +119,7 @@ extension IntegrationTest {
     
     @objc
     func createSessionManager() {
-        
-        guard let mediaManager = mediaManager,
-              let application = application,
-              let transportSession = transportSession
-        else { XCTFail(); return }
+        guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return XCTFail() }
 
         StorageStack.shared.createStorageAsInMemory = useInMemoryStore
         let storeProvider = WireSyncEngine.LocalStoreProvider()
