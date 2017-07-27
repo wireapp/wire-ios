@@ -78,7 +78,7 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
     public func downloadLinkPreviews(inText text: String, completion : @escaping DetectCompletion) {
-        guard let (url, range) = containedLinks(inText: text).first , !blacklist.isBlacklisted(url) else { return callCompletion(completion, result: []) }
+        guard let (url, range) = containedLinks(inText: text).first, !blacklist.isBlacklisted(url) else { return callCompletion(completion, result: []) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
             guard let `self` = self else { return }
             let originalURLString = (text as NSString).substring(with: range)

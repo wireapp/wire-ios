@@ -37,7 +37,7 @@ final class OpenGraphScanner: NSObject {
     }
     
     func parse() {
-        guard let document = try? ONOXMLDocument(string: xmlString, encoding: String.Encoding.utf8.rawValue) else { return }
+        guard let document = try? ONOXMLDocument.htmlDocument(with: xmlString, encoding: String.Encoding.utf8.rawValue) else { return }
         parseXML(document)
         createObjectAndComplete(document)
     }
@@ -76,10 +76,10 @@ final class OpenGraphScanner: NSObject {
 
     private func insertMissingTitleIfNeeded(_ xmlDocument: ONOXMLDocument) {
         guard !contentsByProperty.keys.contains(.title) else { return }
-
-        xmlDocument.enumerateElements(withXPath: "//title", using: { [weak self] (element, _, _) in
+        xmlDocument.enumerateElements(withXPath: "//title", using: { [weak self] (element, _, stop) in
             guard let `self` = self, let value = element?.stringValue() else { return }
             self.addProperty(.title, value: value)
+            stop?.pointee = ObjCBool(true)
         })
     }
 }
