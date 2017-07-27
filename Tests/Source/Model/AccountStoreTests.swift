@@ -74,6 +74,33 @@ final class AccountStoreTests: ZMConversationTestsBase {
         XCTAssertEqual(store.load(), [])
     }
 
+    func testThatItCanDeleteAnAccountStore() {
+        // given
+        do {
+            let store = AccountStore(root: url)
+            let account = Account(userName: "John", userIdentifier: .create())
+
+            XCTAssert(store.add(account))
+            XCTAssertEqual(store.load(), [account])
+        }
+
+        // when
+        XCTAssert(AccountStore.delete(at: url))
+
+        // then
+        do {
+            let store = AccountStore(root: url)
+            XCTAssertEqual(store.load(), [])
+        }
+    }
+
+    func testThatItReturnsFalseWhenTryingToDeleteANonExistentAccountStore() {
+        // then
+        performIgnoringZMLogError {
+            XCTAssertFalse(AccountStore.delete(at: self.url))
+        }
+    }
+
     func testThatItCanStoreMultipleAccounts() {
         // given
         let store = AccountStore(root: url)

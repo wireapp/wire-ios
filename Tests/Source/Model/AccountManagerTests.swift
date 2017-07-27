@@ -94,6 +94,55 @@ final class AccountManagerTests: ZMConversationTestsBase {
         XCTAssertEqual(manager.accounts, [account])
     }
 
+    func testThatItCanAddAndSelectAnAccount() {
+        // given
+        let manager = AccountManager(sharedDirectory: url)
+        let account1 = Account(userName: "Silvan", userIdentifier: .create())
+        let account2 = Account(userName: "Jacob", userIdentifier: .create())
+
+        // when
+        manager.addAndSelect(account1)
+
+        // then
+        XCTAssertEqual(manager.selectedAccount, account1)
+        XCTAssertEqual(manager.accounts, [account1])
+
+        // when
+        manager.addAndSelect(account2)
+
+        // then
+        XCTAssertEqual(manager.selectedAccount, account2)
+        XCTAssertEqual(manager.accounts, [account2, account1])
+    }
+
+    func testThatItCanDeleteAnAccountManager() {
+        // given
+        do {
+            let manager = AccountManager(sharedDirectory: url)
+            let account1 = Account(userName: "Silvan", userIdentifier: .create())
+            let account2 = Account(userName: "Vytis", userIdentifier: .create(), teamName: "Wire")
+
+            // when
+            manager.add(account1)
+            manager.add(account2)
+            manager.select(account2)
+
+            // then
+            XCTAssertEqual(manager.selectedAccount, account2)
+            XCTAssertEqual(manager.accounts, [account1, account2])
+        }
+
+        // when
+        AccountManager.delete(at: url)
+
+        // then
+        do {
+            let manager = AccountManager(sharedDirectory: url)
+            XCTAssertNil(manager.selectedAccount)
+            XCTAssertEqual(manager.accounts, [])
+        }
+    }
+    
     func testThatItRemovesTheSelectedAccountWhenItIsRemoved() {
         // given
         let manager = AccountManager(sharedDirectory: url)
