@@ -106,8 +106,7 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
     }
     
     public var storeExists: Bool {
-        guard let storeURL = storeURL else { return false }
-        return FileManager.default.fileExists(atPath: storeURL.path)
+        return StorageStack.shared.storeExists
     }
 
     public func createStorageStack(migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void) {
