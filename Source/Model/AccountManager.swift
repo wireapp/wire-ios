@@ -53,6 +53,12 @@ public final class AccountManager: NSObject {
         updateAccounts()
     }
 
+    /// Deletes all content stored by an `AccountManager` on disk at the given URL, including the selected account.
+    static public func delete(at root: URL) {
+        AccountStore.delete(at: root)
+        UserDefaults.shared().selectedAccountIdentifier = nil
+    }
+
     /// Adds an account to the manager and persists it.
     /// - parameter account: The account to add.
     public func add(_ account: Account) {
@@ -60,7 +66,14 @@ public final class AccountManager: NSObject {
         updateAccounts()
     }
 
-    /// Removes an account from the manager and the persistsence layer.
+    /// Adds an account to the mananger and immediately and selects it.
+    /// - parameter account: The account to add and select.
+    public func addAndSelect(_ account: Account) {
+        add(account)
+        select(account)
+    }
+
+    /// Removes an account from the manager and the persistence layer.
     /// - parameter account: The account to remove.
     public func remove(_ account: Account) {
         store.remove(account)

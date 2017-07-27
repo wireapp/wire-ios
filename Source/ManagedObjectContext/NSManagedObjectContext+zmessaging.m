@@ -34,12 +34,14 @@
 #import <WireUtilities/WireUtilities-Swift.h>
 #import <WireDataModel/WireDataModel-Swift.h>
 
-static NSString * const IsSyncContextKey = @"ZMIsSyncContext";
-static NSString * const IsSearchContextKey = @"ZMIsSearchContext";
+NSString * const IsSyncContextKey = @"ZMIsSyncContext";
+NSString * const IsSearchContextKey = @"ZMIsSearchContext";
+NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
+NSString * const IsEventContextKey = @"ZMIsEventDecoderContext";
+
 static NSString * const SyncContextKey = @"ZMSyncContext";
 static NSString * const UserInterfaceContextKey = @"ZMUserInterfaceContext";
 static NSString * const IsRefreshOfObjectsDisabled = @"ZMIsRefreshOfObjectsDisabled";
-static NSString * const IsUserInterfaceContextKey = @"ZMIsUserInterfaceContext";
 static NSString * const IsSaveDisabled = @"ZMIsSaveDisabled";
 static NSString * const IsFailingToSave = @"ZMIsFailingToSave";
 
@@ -55,6 +57,7 @@ static NSString * const FailedToEstablishSessionStoreKey = @"FailedToEstablishSe
 static dispatch_queue_t UIContextCreationQueue(void);
 static NSManagedObjectContext *SharedUserInterfaceContext = nil;
 static id applicationProtectedDataDidBecomeAvailableObserver = nil;
+static NSString * const DisplayNameGeneratorKey = @"DisplayNameGeneratorKey";
 
 static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 //
@@ -200,7 +203,6 @@ static BOOL storeIsReady = NO;
 + (void)resetUserInterfaceContext
 {
     dispatch_sync(UIContextCreationQueue(), ^{
-        SharedUserInterfaceContext.nameGenerator = nil;
         SharedUserInterfaceContext = nil;
     });
 }
@@ -346,6 +348,10 @@ static BOOL storeIsReady = NO;
 - (BOOL)zm_shouldRefreshObjectsWithUIContextPolicy
 {
     return self.zm_isUserInterfaceContext && !self.zm_isRefreshOfObjectsDisabled;
+}
+
+- (DisplayNameGenerator *)zm_displayNameGenerator {
+    return self.userInfo[DisplayNameGeneratorKey];
 }
 
 - (NSURL *)zm_storeURL {
@@ -996,7 +1002,7 @@ static dispatch_queue_t UIContextCreationQueue(void)
 {
     [self performBlockAndWait:^{
         self.userInfo[IsUserInterfaceContextKey] = @YES;
-        self.nameGenerator = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
+        self.userInfo[DisplayNameGeneratorKey] = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
     }];
 }
 

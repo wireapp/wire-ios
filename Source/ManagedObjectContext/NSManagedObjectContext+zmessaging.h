@@ -23,6 +23,12 @@
 @import PINCache;
 
 @class NSOperationQueue;
+@class DisplayNameGenerator;
+
+extern NSString * const IsUserInterfaceContextKey;
+extern NSString * const IsSyncContextKey;
+extern NSString * const IsSearchContextKey;
+extern NSString * const IsEventContextKey;
 
 @interface NSManagedObjectContext (zmessaging)
 
@@ -103,6 +109,9 @@
 + (void)resetSharedPersistentStoreCoordinator;
 /// Sets a flag (in NSUserDefaults) that will cause the store to get deleted next time to app launches.
 + (void)setClearPersistentStoreOnStart:(BOOL)flag;
+
+/// Returns the Display Name Generator
+@property (nonatomic, readonly) DisplayNameGenerator* zm_displayNameGenerator;
 
 /// Calls @c -save: only if the receiver returns @c YES for @c -hasChanges
 /// If the save fails, calls @c -rollback on the receiver.

@@ -95,6 +95,25 @@ extension ZMUserTests {
         }
     }
     
+    func testThatItIgnoreAssetsWithIllegalCharacters() {
+        syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let user = ZMUser.selfUser(in: self.syncMOC)
+            let previewId = "some"
+            let completeId = "other"
+            let payload = self.assetPayload(previewId: "Aa\\u0000\r\n", completeId: "Aa\\u0000\r\n")
+            
+            // WHEN
+            user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewId, completeIdentifier: completeId)
+            user.updateAssetData(with: payload, hasLegacyImages:false, authoritative: true)
+            
+            // THEN
+            XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
+            XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
+        }
+    }
+    
     func testThatItRemovesRemoteIdentifiersWhenWeGetEmptyAssets() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
