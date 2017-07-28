@@ -22,14 +22,20 @@ public enum PopUpIconButtonExpandDirection {
     case left, right
 }
 
+protocol PopUpIconButtonDelegate: class {
+    func popUpIconButton(_ button: PopUpIconButton, didSelectIcon icon: ZetaIconType)
+}
+
 public class PopUpIconButton: IconButton {
 
+    weak var delegate: PopUpIconButtonDelegate?
     public var itemIcons: [ZetaIconType] = []
     
     private var buttonView: PopUpIconButtonView?
     fileprivate let longPressGR = UILongPressGestureRecognizer()
     
     public func setupView() {
+        longPressGR.minimumPressDuration = 0.15
         longPressGR.addTarget(self, action: #selector(longPressHandler(gestureRecognizer:)))
         addGestureRecognizer(longPressGR)
     }
@@ -54,6 +60,8 @@ public class PopUpIconButton: IconButton {
             
             buttonView!.removeFromSuperview()
             buttonView = nil
+            
+            delegate?.popUpIconButton(self, didSelectIcon: icon)
         }
     }
 
