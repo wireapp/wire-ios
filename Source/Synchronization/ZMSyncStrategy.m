@@ -173,9 +173,6 @@ ZM_EMPTY_ASSERTING_INIT()
                                    [[UserProfileRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC
                                                                                   applicationStatus:self.applicationStatusDirectory
                                                                             userProfileUpdateStatus:self.applicationStatusDirectory.userProfileUpdateStatus],
-                                   [[SelfContactCardUploadStrategy alloc] initWithAuthenticationStatus:cookieStorage
-                                                                              clientRegistrationStatus:self.applicationStatusDirectory.clientRegistrationStatus
-                                                                                  managedObjectContext:self.syncMOC],
                                    self.linkPreviewAssetDownloadRequestStrategy,
                                    self.linkPreviewAssetUploadRequestStrategy,
                                    self.imageDownloadRequestStrategy,

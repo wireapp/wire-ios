@@ -43,6 +43,8 @@
 @protocol UserProfileImageUpdateProtocol;
 @protocol ZMApplication;
 @protocol LocalStoreProviderProtocol;
+
+@class ManagedObjectContextDirectory;
 @class TopConversationsDirectory;
 
 @protocol ZMAVSLogObserver <NSObject>
@@ -77,7 +79,8 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
                      apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                          application:(id<ZMApplication>)application
                           appVersion:(NSString *)appVersion
-                       storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
+                       storeProvider:(id<LocalStoreProviderProtocol>)storeProvider
+                    contextDirectory:(ManagedObjectContextDirectory *)contextDirectory;
 
 @property (nonatomic, weak) id<ZMRequestsToOpenViewsDelegate> requestToOpenViewDelegate;
 @property (nonatomic, weak) id<ZMThirdPartyServicesDelegate> thirdPartyServicesDelegate;
@@ -123,6 +126,9 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 /// The identifier of the current account
 @property (nonatomic, readonly) NSUUID *accountIdentifier;
 
+/// The sync has been completed as least once
+@property (nonatomic, readonly) BOOL hasCompletedInitialSync;
+           
 @end
 
 

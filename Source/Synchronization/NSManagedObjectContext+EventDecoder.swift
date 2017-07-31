@@ -34,19 +34,26 @@ extension NSManagedObjectContext {
         let managedObjectContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         managedObjectContext.persistentStoreCoordinator = eventPersistentStoreCoordinator
         managedObjectContext.createDispatchGroups()
+        managedObjectContext.isEventMOC = true
         
         addPersistentStore(eventPersistentStoreCoordinator!, appGroupIdentifier: appGroupIdentifier)
         return managedObjectContext
     }
-    
-    public func tearDown() {
+
+    public func tearDownEventMOC() {
+        precondition(isEventMOC, "Invalid operation: tearDownEventMOC called on context not marked as event MOC")
         if let store = persistentStoreCoordinator?.persistentStores.first {
             try! persistentStoreCoordinator?.remove(store)
         }
         
         type(of: self).eventPersistentStoreCoordinator = nil
     }
-    
+
+    var isEventMOC: Bool {
+        set { userInfo[IsEventContextKey] = newValue }
+        get { return (userInfo.object(forKey: IsEventContextKey) as? Bool) ?? false }
+    }
+
     fileprivate static func createPersistentStoreCoordinator() -> NSPersistentStoreCoordinator {
         guard let modelURL = Bundle(for: StoredUpdateEvent.self).url(forResource: "ZMEventModel", withExtension:"momd") else {
             fatalError("Error loading model from bundle")
@@ -60,7 +67,7 @@ extension NSManagedObjectContext {
     fileprivate static func addPersistentStore(_ psc: NSPersistentStoreCoordinator, appGroupIdentifier: String?, isSecondTry: Bool = false) {
         guard let storeURL = storeURL(forAppGroupIdentifier: appGroupIdentifier) else { return }
         do {
-            let storeType = useInMemoryStore() ? NSInMemoryStoreType : NSSQLiteStoreType
+            let storeType = StorageStack.shared.createStorageAsInMemory ? NSInMemoryStoreType : NSSQLiteStoreType
             try psc.addPersistentStore(ofType: storeType, configurationName: nil, at: storeURL, options: nil)
         } catch {
             if isSecondTry {

@@ -33,8 +33,7 @@ public class SearchDirectory : NSObject {
     
     public init(userSession: ZMUserSession) {
         self.userSession = userSession
-        self.searchContext = NSManagedObjectContext.createSearchForAccount(withIdentifier: userSession.accountIdentifier,
-                                                                           inSharedContainerAt: userSession.sharedContainerURL)
+        self.searchContext = userSession.searchManagedObjectContext
     }
     
     /// Tear down the SearchDirectory. 

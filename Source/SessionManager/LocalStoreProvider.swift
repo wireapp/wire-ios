@@ -24,22 +24,16 @@ private let zmLog = ZMSLog(tag: "LocalStoreProvider")
 @objc public protocol LocalStoreProviderProtocol: NSObjectProtocol {
     var userIdentifier: UUID { get }
     var appGroupIdentifier: String { get }
-    var storeExists: Bool { get }
     var storeURL: URL? { get }
     var keyStoreURL: URL? { get }
     var cachesURL: URL? { get }
     var sharedContainerDirectory: URL? { get }
-    
-    /// Whether the local store is ready to be opened. If it returns false, the user session can't be started yet
-    var isStoreReady: Bool { get }
-
-    /// Returns true if data store needs to be migrated.
-    var needsToPrepareLocalStore: Bool { get }
+    var storeExists: Bool { get }
     
     /// Should be called <b>before</b> using ZMUserSession when applications is started if needsToPrepareLocalStore returns true
     /// It will intialize persistent store and perform migration (if needed) on background thread.
-    /// - Parameter completionHandler: called when local store is ready to be used (and the ZMUserSession is ready to be initialized). Called on an arbitrary thread, it is the responsability of the caller to switch to the desired thread.
-    func prepareLocalStore(completion completionHandler: @escaping (() -> ()))
+    /// - Parameter completionHandler: called when local store is ready to be used (and the ZMUserSession is ready to be initialized). Called on the main thread, it is the responsability of the caller to switch to the desired thread.
+    func createStorageStack(for account: Account?, migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void)
 }
 
 protocol FileManagerProtocol: class {
@@ -106,10 +100,6 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
         return fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)?.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
     }
     
-    public var isStoreReady: Bool {
-        return NSManagedObjectContext.storeIsReady()
-    }
-    
     public var storeURL: URL? {
         return sharedContainerDirectory?.appendingPathComponent(bundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
     }
@@ -119,19 +109,18 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
     }
     
     public var storeExists: Bool {
-        guard let storeURL = self.storeURL else { return false }
-        return NSManagedObjectContext.storeExists(at: storeURL)
+        return StorageStack.shared.storeExists
     }
-    
-    public var needsToPrepareLocalStore: Bool {
-        guard let storeURL = self.storeURL else { return false }
-        return NSManagedObjectContext.needsToPrepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: storeURL)
+
+    public func createStorageStack(for account: Account?, migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void) {
+        precondition(nil != sharedContainerDirectory)
+
+        StorageStack.shared.createManagedObjectContextDirectory(
+            forAccountWith: account?.userIdentifier,
+            inContainerAt: sharedContainerDirectory!,
+            startedMigrationCallback: { migration?() },
+            completionHandler: completion
+        )
     }
-    
-    public func prepareLocalStore(completion completionHandler: @escaping (() -> ())) {
-        let environment = ZMDeploymentEnvironment().environmentType()
-        let shouldBackupCorruptedDatabase = environment == .internal // TODO: on debug build as well
-        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: userIdentifier, inSharedContainerAt: self.storeURL, backupCorruptedDatabase: shouldBackupCorruptedDatabase, synchronous: false, completionHandler: completionHandler)
-    }
-    
+
 }

@@ -34,22 +34,21 @@
 
 @property (nonatomic) ZMSingleRequestSync *codeRequestSync;
 @property (nonatomic) ZMSingleRequestSync *codeVerificationSync;
-@property (nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
 
 @end
 
 @implementation ZMPhoneNumberVerificationTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus;
 {
     self = [super init];
     if (self) {
-        self.managedObjectContext = moc;
-        self.codeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:moc];
+        self.groupQueue = groupQueue;
+        self.codeRequestSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
         [self.codeRequestSync readyForNextRequest];
-        
-        self.codeVerificationSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:moc];
+        self.codeVerificationSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
         self.authenticationStatus = authenticationStatus;
     }
     return self;

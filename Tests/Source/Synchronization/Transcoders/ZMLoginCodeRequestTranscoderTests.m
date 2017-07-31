@@ -19,6 +19,7 @@
 
 @import WireTransport;
 @import WireSyncEngine;
+@import WireUtilities;
 
 #import "MessagingTest.h"
 #import "ZMLoginCodeRequestTranscoder.h"
@@ -39,8 +40,9 @@
 - (void)setUp {
     [super setUp];
     
-    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:nil managedObjectContext: self.uiMOC];
-    self.sut = [[ZMLoginCodeRequestTranscoder alloc] initWithManagedObjectContext:self.uiMOC authenticationStatus:self.authenticationStatus];
+    DispatchGroupQueue *groupQueue = [[DispatchGroupQueue alloc] initWithQueue:dispatch_get_main_queue()];
+    self.authenticationStatus = [[ZMAuthenticationStatus alloc] initWithCookieStorage:nil groupQueue:groupQueue];
+    self.sut = [[ZMLoginCodeRequestTranscoder alloc] initWithGroupQueue:groupQueue authenticationStatus:self.authenticationStatus];
 }
 
 - (void)tearDown {

@@ -59,9 +59,9 @@ internal enum AssetTransportError: Error {
             sync.whiteListObject(ZMUser.selfUser(in: managedObjectContext))
         }
         
-        upstreamRequestSyncs[.preview] = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
-        upstreamRequestSyncs[.complete] = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
-        deleteRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
+        upstreamRequestSyncs[.preview] = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
+        upstreamRequestSyncs[.complete] = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
+        deleteRequestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
         
         NotificationCenter.default.addObserver(self, selector: #selector(requestAssetForNotification(note:)), name: ZMUser.previewAssetFetchNotification, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(requestAssetForNotification(note:)), name: ZMUser.completeAssetFetchNotification, object: nil)

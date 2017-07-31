@@ -40,38 +40,38 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 @property (nonatomic, weak) ZMAuthenticationStatus *authenticationStatus;
 @property (nonatomic, readonly) ZMSingleRequestSync *verificationResendRequest;
 @property (nonatomic) id<ZMRequestVerificationEmailObserverToken> emailResendObserverToken;
-@property (nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic) id<ZMSGroupQueue> groupQueue;
 
 @end
 
 
 @implementation ZMLoginTranscoder
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue
+              authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
 {
-    return [self initWithManagedObjectContext:moc
-                   authenticationStatus:authenticationStatus
-                          timedDownstreamSync:nil
-                    verificationResendRequest:nil];
+    return [self initWithGroupQueue:groupQueue
+               authenticationStatus:authenticationStatus
+                timedDownstreamSync:nil
+          verificationResendRequest:nil];
 }
 
-- (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
-                  authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
-                         timedDownstreamSync:(ZMTimedSingleRequestSync *)timedDownstreamSync
-                   verificationResendRequest:(ZMSingleRequestSync *)verificationResendRequest
+- (instancetype)initWithGroupQueue:(id<ZMSGroupQueue>)groupQueue
+              authenticationStatus:(ZMAuthenticationStatus *)authenticationStatus
+               timedDownstreamSync:(ZMTimedSingleRequestSync *)timedDownstreamSync
+         verificationResendRequest:(ZMSingleRequestSync *)verificationResendRequest
 {
     self = [super init];
     
     if (self != nil) {
-        self.managedObjectContext = moc;
+        self.groupQueue = groupQueue;
         self.authenticationStatus = authenticationStatus;
-        _timedDownstreamSync = timedDownstreamSync ?: [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 managedObjectContext:moc];
-        _verificationResendRequest = verificationResendRequest ?: [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:self.managedObjectContext];
+        _timedDownstreamSync = timedDownstreamSync ?: [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:0 groupQueue:groupQueue];
+        _verificationResendRequest = verificationResendRequest ?: [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
         
         self.emailResendObserverToken = [ZMUserSessionRegistrationNotification addObserverForRequestForVerificationEmail:self];
         
-        _loginWithPhoneNumberSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:moc];
+        _loginWithPhoneNumberSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:groupQueue];
     }
     return self;
 }
@@ -132,7 +132,7 @@ NSTimeInterval DefaultPendingValidationLoginAttemptInterval = 5;
 
 - (void)didReceiveRequestToResendValidationEmail
 {
-    [self.managedObjectContext performGroupedBlock:^{
+    [self.groupQueue performGroupedBlock:^{
         [self.verificationResendRequest readyForNextRequest];
         [ZMRequestAvailableNotification notifyNewRequestsAvailable:self];
     }];
