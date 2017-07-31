@@ -92,7 +92,24 @@
 // Profile Header View
 "conversation.connection_view.in_address_book" = "in Contacts";
 
-
+// Conversation list voiceover accessibility
+"conversation_list.voiceover.open_conversation.hint" = "Open conversation";
+"conversation_list.voiceover.status.pending_connection" = "pending";
+"conversation_list.voiceover.status.active_call" = "active call";
+"conversation_list.voiceover.status.missed_call" = "missed call";
+"conversation_list.voiceover.status.pause_media" = "pause media";
+"conversation_list.voiceover.status.play_media" = "play media";
+"conversation_list.voiceover.status.silenced" = "silenced";
+"conversation_list.voiceover.status.typing" = "typing";
+"conversation_list.voiceover.status.ping" = "ping";
+"conversation_list.voiceover.bottom_bar.archived_button.label" = "archived";
+"conversation_list.voiceover.bottom_bar.archived_button.hint" = "list of archived conversations";
+"conversation_list.voiceover.bottom_bar.contacts_button.label" = "contacts";
+"conversation_list.voiceover.bottom_bar.contacts_button.hint" = "search for people on Wire";
+"conversation_list.voiceover.bottom_bar.compose_button.label" = "compose";
+"conversation_list.voiceover.bottom_bar.compose_button.hint" = "compose messages and save for later";
+"conversation_list.voiceover.bottom_bar.camera_button.label" = "camera";
+"conversation_list.voiceover.bottom_bar.camera_button.hint" = "take picture and send quickly";
 
 // Archived List
 "archived_list.title" = "archive";
@@ -128,6 +145,8 @@
 "list.title" = "Conversations";
 "list.archived_conversations" = "ARCHIVE";
 "list.archived_conversations_close" = "Close archive";
+
+"conversation.voiceover.verified" = "verified";
 
 "conversation.status.call" = "Ongoing call";
 "conversation.status.typing" = "Typing a message…";
@@ -515,6 +534,9 @@
 "self.about" = "About";
 "self.sign_out" = "Log Out";
 "self.report_abuse" = "Report Misuse";
+"self.voiceover.label" = "Profile";
+"self.voiceover.hint" = "Open profile and settings";
+"self.new-device.voiceover.label" = "Profile, new devices added";
 
 "self.add_phone_number" = "Add phone number";
 "self.add_email_password" = "Add email address and password";
