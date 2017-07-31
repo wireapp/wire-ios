@@ -21,6 +21,7 @@ import avs
 import WireTransport
 import WireUtilities
 
+
 @objc
 public protocol SessionManagerDelegate : class {
     
@@ -101,42 +102,36 @@ public class SessionManager : NSObject {
         authenticationToken = ZMUserSessionAuthenticationNotification.addObserver(self)
 
         if storeProvider.storeExists {
-            let createSession = {
-                let userSession = ZMUserSession(mediaManager: mediaManager,
-                                                analytics: analytics,
-                                                transportSession: self.transportSession,
-                                                apnsEnvironment: self.apnsEnvironment,
-                                                application: self.application,
-                                                appVersion: appVersion,
-                                                storeProvider: storeProvider)!
-                
-                self.userSession = userSession
-                delegate?.sessionManagerCreated(userSession: userSession)
-                userSession.application(application, didFinishLaunchingWithOptions: launchOptions)
-                if let url = launchOptions[.url] as? URL {
-                    userSession.didLaunch(with: url)
-                }
-            }
-        
-            if storeProvider.needsToPrepareLocalStore {
-                delegate?.sessionManagerWillStartMigratingLocalStore()
-                storeProvider.prepareLocalStore() {
-                    DispatchQueue.main.async(execute: createSession)
-                }
-            } else {
-                createSession()
-            }
+            storeProvider.createStorageStack(
+                for: nil,
+                migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
+                completion: { [weak self] dir in self?.createUserSession(with: dir, launchOptions: launchOptions) }
+            )
         } else {
-            do {
-                let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
-                self.unauthenticatedSession = unauthenticatedSession
-                delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
-            } catch let error {
-                fatal("Can't create unauthenticated session: \(error)")
-            }
+            let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
+            self.unauthenticatedSession = unauthenticatedSession
+            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
         }
     }
-    
+
+    private func createUserSession(with contextDirectory: ManagedObjectContextDirectory, launchOptions: [UIApplicationLaunchOptionsKey : Any]) {
+        let userSession = ZMUserSession(mediaManager: mediaManager,
+                                        analytics: analytics,
+                                        transportSession: transportSession,
+                                        apnsEnvironment: apnsEnvironment,
+                                        application: application,
+                                        appVersion: appVersion,
+                                        storeProvider: storeProvider,
+                                        contextDirectory: contextDirectory)!
+
+        self.userSession = userSession
+        delegate?.sessionManagerCreated(userSession: userSession)
+        userSession.application(application, didFinishLaunchingWithOptions: launchOptions)
+        if let url = launchOptions[.url] as? URL {
+            userSession.didLaunch(with: url)
+        }
+    }
+
     deinit {
         if let authenticationToken = authenticationToken {
             ZMUserSessionAuthenticationNotification.removeObserver(for: authenticationToken)
@@ -183,39 +178,43 @@ extension SessionManager: ZMAuthenticationObserver {
     @objc public func authenticationDidFail(_ error: Error) {
         guard self.unauthenticatedSession == nil else { return }
         
-        do {
-            let unauthenticatedSession = try UnauthenticatedSession(transportSession: transportSession, delegate: self)
-            self.unauthenticatedSession = unauthenticatedSession
-            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
-        } catch let error {
-            fatal("Can't create unauthenticated session: \(error)")
-        }
+        let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
+        self.unauthenticatedSession = unauthenticatedSession
+        delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
     }
     
     @objc public func authenticationDidSucceed() {
         guard self.userSession == nil, let authenticationStatus = self.unauthenticatedSession?.authenticationStatus else {
-            RequestAvailableNotification.notifyNewRequestsAvailable(self)
-            return
+            return RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
-        
-        let userSession = ZMUserSession(mediaManager: mediaManager,
-                                        analytics: analytics,
-                                        transportSession: transportSession,
-                                        apnsEnvironment: apnsEnvironment,
-                                        application: application,
-                                        appVersion: appVersion,
-                                        storeProvider: storeProvider)!
-        self.userSession = userSession
-        userSession.setEmailCredentials(authenticationStatus.emailCredentials())
-        
-        userSession.syncManagedObjectContext.performGroupedBlock {
-            userSession.syncManagedObjectContext.registeredOnThisDevice = authenticationStatus.completedRegistration
+
+        func createUserSessionAfterSuccesfullAuthentication(with contextDirectory: ManagedObjectContextDirectory) {
+            let userSession = ZMUserSession(
+                mediaManager: mediaManager,
+                analytics: analytics,
+                transportSession: transportSession,
+                apnsEnvironment: apnsEnvironment,
+                application: application,
+                appVersion: appVersion,
+                storeProvider: storeProvider,
+                contextDirectory: contextDirectory
+                )!
+
+            self.userSession = userSession
+            userSession.setEmailCredentials(authenticationStatus.emailCredentials())
+            userSession.syncManagedObjectContext.performGroupedBlock {
+                userSession.syncManagedObjectContext.registeredOnThisDevice = authenticationStatus.completedRegistration
+            }
+
+            if let profileImageData = authenticationStatus.profileImageData {
+                updateProfileImage(imageData: profileImageData)
+            }
+            
+            delegate?.sessionManagerCreated(userSession: userSession)
         }
-        
-        if let profileImageData =  authenticationStatus.profileImageData {
-            updateProfileImage(imageData: profileImageData)
-        }
-        
-        self.delegate?.sessionManagerCreated(userSession: userSession)
+
+        // TODO
+        storeProvider.createStorageStack(for: nil, migration: nil, completion: createUserSessionAfterSuccesfullAuthentication)
     }
+
 }

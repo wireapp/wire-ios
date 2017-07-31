@@ -53,11 +53,9 @@
 
 @interface MessagingTest () 
 
-@property (nonatomic) NSManagedObjectContext *uiMOC;
-@property (nonatomic) NSManagedObjectContext *syncMOC;
 @property (nonatomic) NSManagedObjectContext *testMOC;
 @property (nonatomic) NSManagedObjectContext *alternativeTestMOC;
-@property (nonatomic) NSManagedObjectContext *searchMOC;
+@property (nonatomic) ManagedObjectContextDirectory *contextDirectory;
 
 @property (nonatomic) NSString *groupIdentifier;
 @property (nonatomic) NSUUID *accountIdentifier;
@@ -136,7 +134,7 @@
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
 
-    [NSManagedObjectContext setUseInMemoryStore:self.shouldUseInMemoryStore];
+    StorageStack.shared.createStorageAsInMemory = self.shouldUseInMemoryStore;
 
     [self resetState];
     
@@ -163,10 +161,29 @@
     [self.testMOC addGroup:self.dispatchGroup];
     self.alternativeTestMOC = [MockModelObjectContextFactory alternativeMocForPSC:self.testMOC.persistentStoreCoordinator];
     [self.alternativeTestMOC addGroup:self.dispatchGroup];
+<<<<<<< HEAD
     self.searchMOC = [NSManagedObjectContext createSearchContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
+=======
+
+>>>>>>> feature/adopt-storage-stack
     [self.searchMOC addGroup:self.dispatchGroup];
     self.mockTransportSession = [[MockTransportSession alloc] initWithDispatchGroup:self.dispatchGroup];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
+}
+
+- (NSManagedObjectContext *)uiMOC
+{
+    return self.contextDirectory.uiContext;
+}
+
+- (NSManagedObjectContext *)syncMOC
+{
+    return self.contextDirectory.syncContext;
+}
+
+- (NSManagedObjectContext *)searchMOC
+{
+    return self.contextDirectory.searchContext;
 }
 
 - (void)tearDown;
@@ -181,7 +198,13 @@
     [self removeCachesInSharedContainer];
     _application = nil;
     self.groupIdentifier = nil;
+<<<<<<< HEAD
     self.sharedContainerURL = nil;
+=======
+    self.storeURL = nil;
+    self.keyStoreURL = nil;
+
+>>>>>>> feature/adopt-storage-stack
     [super tearDown];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
 }
@@ -226,8 +249,8 @@
     self.mockTransportSession = nil;
     
     self.ignoreTestDebugFlagForTestTimers = NO;
-    [NSManagedObjectContext resetUserInterfaceContext];
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+
+    [StorageStack reset];
 }
 
 - (void)waitAndDeleteAllManagedObjectContexts;
@@ -238,12 +261,10 @@
     NSManagedObjectContext *refSearchMoc = self.searchMOC;
     NSManagedObjectContext *refSyncMoc = self.syncMOC;
     WaitForAllGroupsToBeEmpty(2);
-    
-    self.uiMOC = nil;
-    self.syncMOC = nil;
+
+    self.contextDirectory = nil;
     self.testMOC = nil;
     self.alternativeTestMOC = nil;
-    self.searchMOC = nil;
     
     [refUiMOC performBlockAndWait:^{
         // Do nothing.
@@ -284,11 +305,11 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    self.uiMOC = nil;
-    self.syncMOC = nil;
+    self.contextDirectory = nil;
     
     WaitForAllGroupsToBeEmpty(2);
     
+<<<<<<< HEAD
     [NSManagedObjectContext resetUserInterfaceContext];
     
     if (resetPersistentStore) {
@@ -296,15 +317,38 @@
     }
     [self performIgnoringZMLogError:^{
         self.uiMOC = [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
+=======
+    [StorageStack reset];
+    StorageStack.shared.createStorageAsInMemory = self.shouldUseInMemoryStore;
+
+    // TODO:
+    // if (resetPersistentStore) {
+    //    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
+    // }
+
+    NOT_USED(resetPersistentStore);
+
+    dispatch_semaphore_t semaphore = dispatch_semaphore_create(0);
+
+    [StorageStack.shared createManagedObjectContextDirectoryAt:self.storeURL keyStore:self.keyStoreURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * _Nonnull contextDirectory) {
+        self.contextDirectory = contextDirectory;
+        dispatch_semaphore_signal(semaphore);
+>>>>>>> feature/adopt-storage-stack
     }];
+
+    dispatch_semaphore_wait(semaphore, DISPATCH_TIME_FOREVER);
     
     ImageAssetCache *imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:100 location:nil];
     FileAssetCache *fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
     
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.name;
+<<<<<<< HEAD
     
     self.syncMOC = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:self.accountIdentifier inSharedContainerAt:self.sharedContainerURL];
+=======
+
+>>>>>>> feature/adopt-storage-stack
     [self.syncMOC performGroupedBlockAndWait:^{
         self.syncMOC.userInfo[@"TestName"] = self.name;
         [self.syncMOC addGroup:self.dispatchGroup];

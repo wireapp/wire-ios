@@ -93,9 +93,9 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
                                        keysToSync:keysToSync
                                        managedObjectContext:moc];
         }
-        self.downstreamSelfUserSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self managedObjectContext:self.managedObjectContext];
+        self.downstreamSelfUserSync = [[ZMSingleRequestSync alloc] initWithSingleRequestTranscoder:self groupQueue:self.managedObjectContext];
         self.needsToBeUdpatedFromBackend = [ZMUser predicateForNeedingToBeUpdatedFromBackend];
-        _timedDownstreamSync = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:ZMSelfStrategyPendingValidationRequestInterval managedObjectContext:self.managedObjectContext];
+        _timedDownstreamSync = [[ZMTimedSingleRequestSync alloc] initWithSingleRequestTranscoder:self everyTimeInterval:ZMSelfStrategyPendingValidationRequestInterval groupQueue:self.managedObjectContext];
     }
     return self;
 }
@@ -298,6 +298,9 @@ NSTimeInterval ZMSelfStrategyPendingValidationRequestInterval = 5;
                 self.timedDownstreamSync.timeInterval = 0;
             }
         }
+        
+        // Save to ensure self user is update to date when sync finishes
+        [self.managedObjectContext saveOrRollback];
         
         if (self.isSyncing) {
             [syncStatus finishCurrentSyncPhaseWithPhase:self.expectedSyncPhase];

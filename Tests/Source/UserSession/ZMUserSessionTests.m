@@ -84,8 +84,11 @@
     id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
     [[[userAgent expect] classMethod] setWireAppVersion:version];
     
+<<<<<<< HEAD
     id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
     
+=======
+>>>>>>> feature/adopt-storage-stack
     // when
     ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:nil
                                                                analytics:nil
@@ -93,7 +96,7 @@
                                                          apnsEnvironment:nil
                                                              application:[UIApplication sharedApplication]
                                                               appVersion:version
-                                                           storeProvider:storeProvider];
+                                                        contextDirectory:nil];
     XCTAssertNotNil(session);
     
     // then

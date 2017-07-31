@@ -44,8 +44,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
         ZMPersistentCookieStorage.setDoNotPersistToKeychain(!useRealKeychain)
-        
-        NSManagedObjectContext.setUseInMemoryStore(useInMemoryStore)
+        StorageStack.shared.createStorageAsInMemory = useInMemoryStore
         
         application = ApplicationMock()
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
@@ -85,8 +84,7 @@ extension IntegrationTest {
     }
     
     func resetInMemoryDatabases() {
-        NSManagedObjectContext.resetUserInterfaceContext()
-        NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
+        StorageStack.reset()
     }
     
     @objc
@@ -121,6 +119,7 @@ extension IntegrationTest {
     
     @objc
     func createSessionManager() {
+<<<<<<< HEAD
         
         guard let mediaManager = mediaManager,
               let application = application,
@@ -128,6 +127,12 @@ extension IntegrationTest {
         else { XCTFail(); return }
         
         let storeProvider = LocalStoreProvider(userIdentifier: self.currentUserIdentifier)
+=======
+        guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return XCTFail() }
+
+        StorageStack.shared.createStorageAsInMemory = useInMemoryStore
+        let storeProvider = WireSyncEngine.LocalStoreProvider()
+>>>>>>> feature/adopt-storage-stack
 
         sessionManager = SessionManager(storeProvider: storeProvider,
                                         appVersion: "0.0.0",
@@ -155,7 +160,7 @@ extension IntegrationTest {
     
     @objc
     func destroyPersistentStore() {
-        NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
+        StorageStack.reset()
     }
     
     @objc
@@ -434,9 +439,7 @@ extension IntegrationTest : SessionManagerDelegate {
     public func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
         self.unauthenticatedSession = unauthenticatedSession
         
-        unauthenticatedSession.moc.performGroupedBlockAndWait {
-            unauthenticatedSession.moc.add(self.dispatchGroup)
-        }
+        unauthenticatedSession.groupQueue.add(self.dispatchGroup)
     }
     
     public func sessionManagerWillStartMigratingLocalStore() {

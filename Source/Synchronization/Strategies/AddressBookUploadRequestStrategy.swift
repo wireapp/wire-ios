@@ -62,7 +62,7 @@ private let addressBookLastUploadedIndex = "ZMAddressBookTranscoderLastIndexUplo
         self.addressBookGenerator = addressBookGenerator
         self.tracker = tracker ?? AddressBookAnalytics(analytics: moc.analytics, managedObjectContext: moc)
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
-        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, managedObjectContext: moc)
+        self.requestSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: moc)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
@@ -96,7 +96,7 @@ extension AddressBookUploadRequestStrategy : ZMSingleRequestTranscoder {
         }
         
         let allLocalContactIDs = Set(encodedChunk.otherContactsHashes.keys)
-        let payload : [String: Any] = ["cards" : contactCards, "self" : self.selfHashes()]
+        let payload : [String: Any] = ["cards" : contactCards]
         self.tracker.tagAddressBookUploadStarted(encodedChunk.numberOfTotalContacts)
         let request = ZMTransportRequest(path: onboardingEndpoint, method: .methodPOST, payload: payload as ZMTransportData?, shouldCompress: true)
         request.add(ZMCompletionHandler(on: self.managedObjectContext, block: {
@@ -105,11 +105,6 @@ extension AddressBookUploadRequestStrategy : ZMSingleRequestTranscoder {
             })
         )
         return request
-    }
-    
-    /// Returns a list of the hashes for the current user
-    private func selfHashes() -> [String] {
-        return ZMUser.selfUser(in: self.managedObjectContext).contactHashes
     }
     
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
@@ -311,17 +306,4 @@ extension AddressBookUploadRequestStrategy {
                 .setPersistentStoreMetadata(NSNumber(value: Int(newValue)), key: addressBookLastUploadedIndex)
         }
     }
-}
-
-
-extension ZMUser {
-    
-    /// Returns a list of the hashes for the current user
-    var contactHashes : [String] {
-        return [self.normalizedEmailAddress, self.phoneNumber]
-            .flatMap { $0 }
-            .filter { !$0.isEmpty }
-            .map { $0.base64EncodedSHADigest }
-    }
-    
 }
