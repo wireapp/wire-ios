@@ -19,7 +19,7 @@
 #import <XCTest/XCTest.h>
 
 @import WireTesting;
-
+@class ManagedObjectContextDirectory;
 
 @interface DatabaseBaseTest : ZMTBaseTest
 
@@ -31,6 +31,7 @@
 @property (nonatomic, readonly) NSURL *sharedContainerStoreURL;
 @property (nonatomic, readonly) NSArray <NSString *> *databaseFileExtensions;
 @property (nonatomic, readonly) NSUUID *accountID;
+@property (nonatomic) ManagedObjectContextDirectory *contextDirectory;
 
 - (void)cleanUp;
 - (BOOL)createDatabaseInDirectory:(NSSearchPathDirectory)directory accountIdentifier:(NSUUID *)accountIdentifier;
@@ -38,8 +39,6 @@
 
 - (NSData *)invalidData;
 - (BOOL)createdUnreadableLocalStore;
-- (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase;
-- (void)prepareLocalStoreAtRootURL:(NSURL *)containerURL accountIdentifier:(NSUUID *)accountIdentifier backingUpDatabase:(BOOL)backupCorruptedDatabase;
 - (BOOL)createExternalSupportFileForDatabaseAtURL:(NSURL *)databaseURL;
 - (void)createDirectoryForStoreAtURL:(NSURL *)storeURL;
 

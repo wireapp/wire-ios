@@ -40,7 +40,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 - (void)testThatItDoesNotMigrateFromANonE2EEVersionAndWipesTheDB {
     
     // given
-    NSManagedObjectModel *currentMom = [NSManagedObjectContext loadManagedObjectModel];
+    NSManagedObjectModel *currentMom = NSManagedObjectModel.loadModel;
     
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -737,10 +737,10 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     __block NSArray<ZMMessage *> *messages;
 
     // when
-    [self performMockingStoreURLWithVersion:@"2.25.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
+    [self performMockingStoreURLWithVersion:@"2.25.0" block:^(NSURL *sharedContainer, NSUUID *accountId) {
 
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
-
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
 
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.25.0 to the current mom"];
@@ -807,7 +807,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
         // We additionally check that Core Data will will perform a migration as we only added an index.
         // Without setting a version hash modifier Core Data will not trigger a migration for this change.
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.26.0 to the current mom"];
 
@@ -870,7 +871,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
     // when
     [self performMockingStoreURLWithVersion:@"2.27.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.27.0 to the current mom"];
 
@@ -933,7 +935,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     
     // when
     [self performMockingStoreURLWithVersion:@"2.28.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.28.0 to the current mom"];
         
@@ -996,7 +999,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
     // when
     [self performMockingStoreURLWithVersion:@"2.29.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.29.0 to the current mom"];
 
@@ -1053,7 +1057,8 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
     // when
     [self performMockingStoreURLWithVersion:@"2.30.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.30.0 to the current mom"];
 
@@ -1109,8 +1114,10 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
     __block NSArray<ZMMessage *> *messages;
 
     // when
-    [self performMockingStoreURLWithVersion:@"2.31.0" block:^(NSURL *sharedContainer, NSUUID* accountId) {
-        XCTAssert([NSManagedObjectContext needsToPrepareLocalStoreForAccountWithIdentifier:accountId inSharedContainerAt:sharedContainer]);
+    [self performMockingStoreURLWithVersion:@"2.31.0" block:^(NSURL *sharedContainer, NSUUID *accountId) {
+
+        NSURL *storeURL = [NSFileManager currentStoreURLForAccountWith:accountId in:sharedContainer];
+        XCTAssert([NSPersistentStoreCoordinator shouldMigrateStoreToNewModelVersionAtURL:storeURL withModel:NSManagedObjectModel.loadModel]);
         syncContext = [self checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:accountId inSharedContainer:sharedContainer];
         XCTestExpectation *expectation = [self expectationWithDescription:@"It should migrate from 2.31.0 to the current mom"];
 
@@ -1155,21 +1162,22 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
 #pragma mark - Helper
 
-- (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:(NSUUID*)accountID inSharedContainer:(NSURL *)containerURL
+- (NSManagedObjectContext *)checkThatItCreatesSyncContextAndPreparesLocalStoreWithAccountIdentifier:(NSUUID *)accountID inSharedContainer:(NSURL *)containerURL
 {
     __block NSManagedObjectContext *syncContext;
-    
-    dispatch_semaphore_t sem = dispatch_semaphore_create(0);
-    [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:accountID inSharedContainerAt:containerURL backupCorruptedDatabase:NO synchronous:YES completionHandler:^{
-        [NSManagedObjectContext createUserInterfaceContextForAccountWithIdentifier:accountID inSharedContainerAt:containerURL];
-        syncContext = [NSManagedObjectContext createSyncContextForAccountWithIdentifier:accountID inSharedContainerAt:containerURL];
-        dispatch_semaphore_signal(sem);
-    }];
 
-    dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER);
-    WaitForAllGroupsToBeEmpty(0.5);
+    [StorageStack.shared createManagedObjectContextDirectoryForAccountWith:accountID
+                                                             inContainerAt:containerURL
+                                                  startedMigrationCallback:nil
+                                                         completionHandler:^(ManagedObjectContextDirectory * _Nonnull directory) {
+                                                             syncContext = directory.syncContext;
+                                                         }];
+
+    XCTAssert([self waitWithTimeout:0.5 verificationBlock:^BOOL{
+        return nil != syncContext;
+    }]);
+
     XCTAssertNotNil(syncContext);
-    
     return syncContext;
 }
 

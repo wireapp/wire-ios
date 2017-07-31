@@ -22,6 +22,7 @@
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "ZMManagedObject+Internal.h"
+#import "ZMTestSession.h"
 
 
 
@@ -42,7 +43,7 @@
 - (void)setUp
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSURL *storeURL = [NSFileManager storeURLInDirectory:NSDocumentDirectory];
+    NSURL *storeURL = [[[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject] URLByAppendingStorePath];
     
     if ([fm fileExistsAtPath:storeURL.path]) {
         NSError *error = nil;

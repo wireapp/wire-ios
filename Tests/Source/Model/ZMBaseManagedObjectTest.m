@@ -35,7 +35,7 @@
 
 #import "NSString+RandomString.h"
 
-NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
+//NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 
 @interface ZMBaseManagedObjectTest ()
@@ -106,11 +106,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (NSManagedObjectContext *)searchMOC
 {
     return self.testSession.searchMOC;
-}
-
-- (void)cleanUpAndVerify {
-    [self.testSession waitAndDeleteAllManagedObjectContexts];
-    [self verifyMocksNow];
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore

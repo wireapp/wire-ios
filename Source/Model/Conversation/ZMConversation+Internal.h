@@ -157,19 +157,19 @@ NS_ASSUME_NONNULL_END
 
 - (void)updateWithMessage:(nonnull ZMMessage *)message timeStamp:(nullable NSDate *)timeStamp;
 
-- (nonnull ZMClientMessage *)appendClientMessageWithData:(nonnull NSData *)data;
-- (nonnull ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
-- (nonnull ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview;
-- (nonnull ZMClientMessage *)appendOTRMessageWithLocationData:(nonnull ZMLocationData *)locationData nonce:(nonnull NSUUID *)nonce;
-- (nonnull ZMAssetClientMessage *)appendOTRMessageWithImageData:(nonnull NSData *)imageData nonce:(nonnull NSUUID *)nonce;
-- (nonnull ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce;
+- (nullable ZMClientMessage *)appendClientMessageWithData:(nonnull NSData *)data;
+- (nullable ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
+- (nullable ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview;
+- (nullable ZMClientMessage *)appendOTRMessageWithLocationData:(nonnull ZMLocationData *)locationData nonce:(nonnull NSUUID *)nonce;
+- (nullable ZMAssetClientMessage *)appendOTRMessageWithImageData:(nonnull NSData *)imageData nonce:(nonnull NSUUID *)nonce;
+- (nullable ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce;
 
 
 /// Appends a new message to the conversation.
 /// @param genericMessage the generic message that should be appended
 /// @param expires wether the message should expire or tried to be send infinitively
 /// @param hidden wether the message should be hidden in the conversation or not
-- (nonnull ZMClientMessage *)appendGenericMessage:(nonnull ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
+- (nullable ZMClientMessage *)appendGenericMessage:(nonnull ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (void)appendNewConversationSystemMessageIfNeeded;
 

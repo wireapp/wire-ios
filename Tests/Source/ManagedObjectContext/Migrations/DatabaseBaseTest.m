@@ -50,7 +50,9 @@
     [super setUp];
     self.accountID = [NSUUID createUUID];
     
-    [NSManagedObjectContext setUseInMemoryStore:NO];
+    [StorageStack reset];
+    [[StorageStack shared] setCreateStorageAsInMemory:NO];
+    
     self.fm = [NSFileManager defaultManager];
     self.cachesDirectoryStoreURL = [NSFileManager storeURLInDirectory:NSCachesDirectory];
     self.applicationSupportDirectoryStoreURL = [NSFileManager storeURLInDirectory:NSApplicationSupportDirectory];
@@ -69,43 +71,41 @@
     self.applicationSupportDirectoryStoreURL = nil;
     self.sharedContainerStoreURL = nil;
     self.sharedContainerDirectoryURL = nil;
+    self.contextDirectory = nil;
+    
     [super tearDown];
 }
 
 - (void)cleanUp
 {
-    NSString *supportCachesPath = self.cachesDirectoryStoreURL.URLByDeletingLastPathComponent.path;
-    if([self.fm fileExistsAtPath:supportCachesPath]) {
-        [self.fm removeItemAtPath:supportCachesPath error:nil];
-    }
-    
-    NSString *supportApplicationSupportPath = self.applicationSupportDirectoryStoreURL.URLByDeletingLastPathComponent.path;
-    if([self.fm fileExistsAtPath:supportApplicationSupportPath]) {
-        [self.fm removeItemAtPath:supportApplicationSupportPath error:nil];
-    }
-    
-    NSString *testSharedContainerPath = self.sharedContainerStoreURL.URLByDeletingLastPathComponent.path;
-    if([self.fm fileExistsAtPath:testSharedContainerPath]) {
-        [self.fm removeItemAtPath:testSharedContainerPath error:nil];
-    }
- 
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
-    [NSManagedObjectContext resetUserInterfaceContext];
-    
-    [self performIgnoringZMLogError:^{
-        NSError *error = nil;
-        for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:&error]) {
-            [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
+    WaitForAllGroupsToBeEmpty(2.0);
+    [StorageStack reset];
+    [[StorageStack shared] setCreateStorageAsInMemory:NO];
+
+    NSURL *supportCachesDir = [[NSFileManager defaultManager] URLsForDirectory:NSCachesDirectory inDomains:NSUserDomainMask].firstObject;
+    if([self.fm fileExistsAtPath:supportCachesDir.path]) {
+        NSArray *contents = [self.fm contentsOfDirectoryAtURL:supportCachesDir includingPropertiesForKeys:nil options:0 error:nil];
+        for (NSURL *url in contents) {
+            NSError *error = nil;
+            [self.fm removeItemAtURL:url error:&error];
             if (error) {
-                ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
-                error = nil;
+                ZMLogError(@"Error cleaning up %@: %@", url, error);
             }
         }
-        
+    }
+
+    NSURL *supportApplicationSupportDir = [[NSFileManager defaultManager] URLsForDirectory:NSApplicationSupportDirectory inDomains:NSUserDomainMask].firstObject;
+    if([self.fm fileExistsAtPath:supportApplicationSupportDir.path]) {
+        [self.fm removeItemAtPath:supportApplicationSupportDir.path error:nil];
+    }
+
+    for (NSString *path in [self.fm contentsOfDirectoryAtPath:self.sharedContainerDirectoryURL.path error:nil]) {
+        NSError *error = nil;
+        [self.fm removeItemAtPath:[self.sharedContainerDirectoryURL.path stringByAppendingPathComponent:path] error:&error];
         if (error) {
-            ZMLogError(@"Error reading %@: %@", self.sharedContainerDirectoryURL, error);
+            ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.sharedContainerDirectoryURL, error);
         }
-    }];
+    }
 }
 
 #pragma mark - Helper
@@ -123,15 +123,19 @@
         storeURL = [sharedContainerURL URLByAppendingPathComponent:accountIdentifier.UUIDString isDirectory:YES];
     }
     storeURL = [storeURL URLByAppendingStorePath];
-    [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:accountIdentifier
-                                                  inSharedContainerAt:sharedContainerURL
-                                              backupCorruptedDatabase:NO
-                                                          synchronous:YES
-                                                    completionHandler:nil];
+    
+    [StorageStack reset];
+    [[StorageStack shared] setCreateStorageAsInMemory:NO];
+
+    [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:accountIdentifier inContainerAt:sharedContainerURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
+        self.contextDirectory = directory;
+    }];
+
+    XCTAssert([self waitWithTimeout:5 verificationBlock:^BOOL{
+        return nil != self.contextDirectory;
+    }], @"Did not create context directory. Something might be blocking the main thread?");
     
     XCTAssertTrue([self createExternalSupportFileForDatabaseAtURL:storeURL]);
-    [NSManagedObjectContext resetSharedPersistentStoreCoordinator];
-    
     return YES;
 }
 
@@ -142,6 +146,9 @@
     NSString *storeName = [[databaseURL URLByDeletingPathExtension] lastPathComponent];
     NSString *supportFile  = [NSString stringWithFormat:@".%@_SUPPORT", storeName];
     NSString *supportPath = [databaseURL.URLByDeletingLastPathComponent URLByAppendingPathComponent:supportFile].path;
+    if ([self.fm fileExistsAtPath:supportPath]) {
+        [self.fm removeItemAtPath:supportPath error:nil];
+    }
     success &= [self.fm createDirectoryAtPath:supportPath withIntermediateDirectories:NO attributes:nil error:&error];
     XCTAssertNil(error);
     
@@ -177,18 +184,7 @@
     return @[@"", @"-wal", @"-shm"];
 }
 
-- (void)prepareLocalStoreInSharedContainerBackingUpDatabase:(BOOL)backupCorruptedDatabase
-{
-    [self prepareLocalStoreAtRootURL:self.sharedContainerDirectoryURL accountIdentifier:self.accountID backingUpDatabase:backupCorruptedDatabase];
-}
 
-- (void)prepareLocalStoreAtRootURL:(NSURL *)containerURL accountIdentifier:(NSUUID *)accountIdentifier backingUpDatabase:(BOOL)backupCorruptedDatabase
-{
-    [self performIgnoringZMLogError:^{
-        [NSManagedObjectContext prepareLocalStoreForAccountWithIdentifier:accountIdentifier inSharedContainerAt:containerURL backupCorruptedDatabase:backupCorruptedDatabase synchronous:YES completionHandler:nil];
-        WaitForAllGroupsToBeEmpty(0.5);
-    }];
-}
 
 
 - (void)createDirectoryForStoreAtURL:(NSURL *)storeURL
