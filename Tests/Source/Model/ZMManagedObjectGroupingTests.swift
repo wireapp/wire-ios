@@ -22,30 +22,21 @@ import XCTest
 
 public final class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
-    let storeURL = FileManager.storeURL(in: .cachesDirectory)!
     var moc: NSManagedObjectContext!
     
     public override func setUp() {
-        
         super.setUp()
-        
-        self.createDatabase(in: .cachesDirectory, accountIdentifier: nil)
-        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountID, inSharedContainerAt: sharedContainerDirectoryURL, backupCorruptedDatabase: false, synchronous: true) {
-            self.moc = NSManagedObjectContext.createUserInterfaceContextForAccount(withIdentifier: self.accountID, inSharedContainerAt: self.sharedContainerDirectoryURL)
-        }
-        
-        assert(self.waitForAllGroupsToBeEmpty(withTimeout: 1))
+        createDatabase(in: .documentDirectory, accountIdentifier: accountID)
+        moc = contextDirectory.uiContext
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
     }
     
     public override func tearDown() {
         super.tearDown()
-        try? FileManager.default.removeItem(at: storeURL)
         moc = nil
     }
     
-    
     public func testThatItFindsNoDuplicates_None() {
-        // GIVEN
         // WHEN
         let duplicates: [String: [UserClient]] = self.moc.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
         

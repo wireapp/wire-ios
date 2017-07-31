@@ -183,11 +183,12 @@ private let debugTrackingOverride = false
     }
 
     private func databaseSize() -> UInt? {
+        guard let storeURL = managedObjectContext.zm_storeURL?.path else { return 0 }
         do {
-            let attributes = try FileManager.default.attributesOfItem(atPath: managedObjectContext.zm_storeURL.path)
+            let attributes = try FileManager.default.attributesOfItem(atPath: storeURL)
             return attributes[FileAttributeKey.size] as? UInt
         } catch {
-            log.error("Unable to retrieve database attributes: \(error), path: \(managedObjectContext.zm_storeURL.path)")
+            log.error("Unable to retrieve database attributes: \(error), path: \(storeURL)")
             return nil
         }
     }

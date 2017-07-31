@@ -53,6 +53,7 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         
         // then
         XCTAssertEqual(sut.previousStoreLocation, FileManager.storeURL(in: .applicationSupportDirectory)!)
+        
     }
     
     func testThatIsNecessaryToRelocateStoreIfItsLocatedInAPreviousLocation_and_newStoreAlreadyExists() {
@@ -90,7 +91,8 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
         // new store is also located in caches directory
         let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
                                            newStoreURL: FileManager.currentStoreURLForAccount(
-                                            with: accountId, in: self.sharedContainerDirectoryURL))
+                                            with: accountId,
+                                            in: self.sharedContainerDirectoryURL))
         
         // then
         XCTAssertNil(sut.previousStoreLocation)

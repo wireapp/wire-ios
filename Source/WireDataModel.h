@@ -73,7 +73,6 @@
 #import <WireDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>
 
 #import <WireDataModel/ZMAddressBookContact.h>
-#import <WireDataModel/ZMTestSession.h>
 
 #import <WireDataModel/NSString+ZMPersonName.h>
 
@@ -81,4 +80,5 @@
 #import <WireDataModel/ZMGenericMessage+PropertyUtils.h>
 #import <WireDataModel/ZMMessageTimer.h>
 #import <WireDataModel/NSPredicate+ZMSearch.h>
+#import <WireDataModel/ZMSyncMergePolicy.h>
 
