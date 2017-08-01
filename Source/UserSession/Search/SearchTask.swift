@@ -29,7 +29,20 @@ public class SearchTask {
     fileprivate var taskIdentifier : ZMTaskIdentifier?
     fileprivate var resultHandlers : [ResultHandler] = []
     fileprivate var result : SearchResult = SearchResult(contacts: [], teamMembers: [], addressBook: [],  directory: [], conversations: [])
-    fileprivate var tasksRemaining = 0
+    
+    fileprivate var tasksRemaining = 0 {
+        didSet {
+            // only trigger handles if decrement to 0
+            if oldValue > tasksRemaining {
+                let isCompleted = tasksRemaining == 0
+                resultHandlers.forEach { $0(result, isCompleted) }
+                
+                if isCompleted {
+                    resultHandlers.removeAll()
+                }
+            }
+        }
+    }
     
     public init(request: SearchRequest, context: NSManagedObjectContext, session: ZMUserSession) {
         self.request = request
@@ -58,18 +71,8 @@ public class SearchTask {
     public func start() {
         performLocalSearch()
         performRemoteSearch()
+        performRemoteSearchForTeamUser()
     }
-    
-    func resportResult() {
-        let isCompleted = tasksRemaining == 0
-        
-        resultHandlers.forEach { $0(result, isCompleted) }
-        
-        if isCompleted {
-            resultHandlers.removeAll()
-        }
-    }
-    
 }
 
 extension SearchTask {
@@ -97,7 +100,6 @@ extension SearchTask {
                 }
                 
                 self.tasksRemaining -= 1
-                self.resportResult()
             }
         }
     }
@@ -150,6 +152,11 @@ extension SearchTask {
             let request = self.searchRequestInDirectory(withQuery: self.request.query)
             
             request.add(ZMCompletionHandler(on: self.session.managedObjectContext, block: { [weak self] (response) in
+                
+                defer {
+                    self?.tasksRemaining -= 1
+                }
+                
                 guard
                     let session = self?.session,
                     let query = self?.request.query,
@@ -162,9 +169,6 @@ extension SearchTask {
                 if let updatedResult = self?.result.union(withRemoteResult: result) {
                     self?.result = updatedResult
                 }
-                
-                self?.tasksRemaining -= 1
-                self?.resportResult()
             }))
             
             request.add(ZMTaskCreatedHandler(on: self.context, block: { [weak self] (taskIdentifier) in
@@ -182,11 +186,88 @@ extension SearchTask {
             query = query.substring(from: query.index(after: query.startIndex))
         }
         
-        var queryCharacterSet = CharacterSet.urlQueryAllowed
-        queryCharacterSet.remove(charactersIn: "=&+")
-        let encodedQuery = query.addingPercentEncoding(withAllowedCharacters: queryCharacterSet) ?? ""
-        
-        return ZMTransportRequest(getFromPath: "/search/contacts?q=\(encodedQuery)&size=\(fetchLimit)")
+        let url = NSURLComponents()
+        url.path = "/search/contacts"
+        url.queryItems = [URLQueryItem(name: "q", value: query), URLQueryItem(name: "size", value: String(fetchLimit))]
+        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        return ZMTransportRequest(getFromPath: urlStr)
     }
     
+}
+
+extension SearchTask {
+    
+    func performRemoteSearchForTeamUser() {
+        guard request.searchOptions.contains(.directory) else { return }
+        
+        tasksRemaining += 1
+        
+        context.performGroupedBlock {
+            let request = self.searchRequestInDirectory(withHandle: self.request.query)
+            
+            request.add(ZMCompletionHandler(on: self.session.managedObjectContext, block: { [weak self] (response) in
+                
+                defer {
+                    self?.tasksRemaining -= 1
+                }
+                
+                guard
+                    let session = self?.session,
+                    let query = self?.request.query,
+                    let payload = response.payload?.asArray(),
+                    let userPayload = (payload.first as? ZMTransportData)?.asDictionary()
+                    else {
+                        return
+                }
+                
+                guard
+                    let handle = userPayload["handle"] as? String,
+                    let name = userPayload["name"] as? String,
+                    let id = userPayload["id"] as? String
+                    else {
+                        return
+                }
+                
+                let document = ["handle": handle, "name": name, "id": id]
+                let documentPayload = ["documents": [document]]
+                guard let result = SearchResult(payload: documentPayload, query: query, userSession: session) else {
+                    return
+                }
+                
+                if let prevResult = self?.result, let firstResult = self?.result.directory.first {
+                    if !prevResult.directory.contains(firstResult) {
+                        self?.result = SearchResult(
+                            contacts: prevResult.contacts,
+                            teamMembers: prevResult.teamMembers,
+                            addressBook: prevResult.addressBook,
+                            directory: result.directory + prevResult.directory,
+                            conversations: prevResult.conversations
+                        )
+                    }
+                } else {
+                    self?.result = result
+                }
+            }))
+            
+            request.add(ZMTaskCreatedHandler(on: self.context, block: { [weak self] (taskIdentifier) in
+                self?.taskIdentifier = taskIdentifier
+            }))
+            
+            self.session.transportSession.enqueueSearch(request)
+        }
+    }
+    
+    func searchRequestInDirectory(withHandle handle : String) -> ZMTransportRequest {
+        var handle = handle.lowercased()
+        
+        if handle.hasPrefix("@") {
+            handle = handle.substring(from: handle.index(after: handle.startIndex))
+        }
+        
+        let url = NSURLComponents()
+        url.path = "/users"
+        url.queryItems = [URLQueryItem(name: "handles", value: handle)]
+        let urlStr = url.string?.replacingOccurrences(of: "+", with: "%2B") ?? ""
+        return ZMTransportRequest(getFromPath: urlStr)
+    }
 }
