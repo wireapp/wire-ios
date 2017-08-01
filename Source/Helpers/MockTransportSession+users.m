@@ -53,7 +53,7 @@
         return [self processUserIDRequest:[request RESTComponentAtIndex:1]];
     }
     else if ([request matchesWithPath:@"/users" method:ZMMethodGET]) {
-        return [self processUsersIDsRequest:request.queryParameters[@"ids"]];
+        return [self processUsersRequestWithHandles:request.queryParameters[@"handles"] orIDs:request.queryParameters[@"ids"]];
     }
     else if ([request matchesWithPath:@"/users/prekeys" method:ZMMethodPOST]) {
         return [self processUsersPreKeysRequestWithPayload:[request.payload asDictionary]];
@@ -112,6 +112,44 @@
         id<ZMTransportData> payload = [user transportData];
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil];
     }
+}
+
+- (ZMTransportResponse *)processUsersRequestWithHandles:(NSString *)handles orIDs:(NSString *)IDs {
+    
+    // The 'ids' and 'handles' parameters are mutually exclusive, so we want to ensure at least
+    // one of these parameters exist
+    if (IDs.length > 0) {
+        return [self processUsersIDsRequest:IDs];
+    } else {
+        return [self processUsersHandlesRequest:handles];
+    }
+}
+
+- (ZMTransportResponse *)processUsersHandlesRequest:(NSString *)handles {
+
+    RequireString(handles.length > 0, "Malformed query");
+    
+    NSArray *userHandles = [handles componentsSeparatedByString:@","];
+    userHandles = [self convertToLowercase:userHandles];
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat:@"handle IN %@", userHandles];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count != userHandles.count) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    }
+    
+    // output
+    NSMutableArray *resultArray = [NSMutableArray array];
+    for (MockUser *user in users) {
+        
+        id<ZMTransportData> payload = [user transportData];
+        [resultArray addObject:payload];
+    }
+    return [ZMTransportResponse responseWithPayload:resultArray HTTPStatus:200 transportSessionError:nil];
 }
 
 - (ZMTransportResponse *)processUsersIDsRequest:(NSString *)IDs {

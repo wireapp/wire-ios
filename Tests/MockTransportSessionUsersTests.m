@@ -115,6 +115,83 @@
     }
 }
 
+- (void)testCreatingAndRequestingSeveralUsersByHandle;
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    __block MockUser *user2;
+    __block MockUser *user3;
+    
+    __block MockConnection *connection1;
+    __block MockConnection *connection2;
+    __block MockConnection *connection3;
+    
+    NSString *user1Handle = @"bar";
+    NSString *user2Handle = @"baz";
+    NSString *user3Handle = @"quux";
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Foo"];
+        user1 = [session insertUserWithName:@"Bar"];
+        user1.email = @"";
+        user1.accentID = 2;
+        user1.handle = user1Handle;
+        user1.phone = @"";
+        user1.previewProfileAssetIdentifier = @"123";
+        user1.completeProfileAssetIdentifier = @"4556";
+        
+        connection1 = [session insertConnectionWithSelfUser:selfUser toUser:user1];
+        connection1.status = @"accepted";
+        connection1.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920861.091];
+        
+        user2 = [session insertUserWithName:@"Baz"];
+        user2.email = @"";
+        user2.accentID = 3;
+        user2.handle = user2Handle;
+        user2.phone = @"";
+        
+        connection2 = [session insertConnectionWithSelfUser:selfUser toUser:user2];
+        connection2.status = @"accepted";
+        connection2.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920870.091];
+        
+        user3 = [session insertUserWithName:@"Quux"];
+        user3.email = @"";
+        user3.accentID = 1;
+        user3.handle = user3Handle;
+        user3.phone = @"";
+        user3.previewProfileAssetIdentifier = @"0099";
+        user3.completeProfileAssetIdentifier = @"29993";
+        
+        connection3 = [session insertConnectionWithSelfUser:selfUser toUser:user3];
+        connection3.status = @"accepted";
+        connection3.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920880.091];
+        
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [NSString stringWithFormat:@"/users/?handles=%@,%@,%@", [user1Handle lowercaseString], [user2Handle uppercaseString], user3Handle];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSArray class]]);
+    
+    NSArray *data = (id) response.payload;
+    XCTAssertEqual(data.count, 3u);
+    
+    if (3 <= data.count) {
+        [self checkThatTransportData:data[0] matchesUser:user1 isSelfUser:NO failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[1] matchesUser:user2 isSelfUser:NO failureRecorder:NewFailureRecorder()];
+        [self checkThatTransportData:data[2] matchesUser:user3 isSelfUser:NO failureRecorder:NewFailureRecorder()];
+    }
+}
+
 - (void)testCreatingAndRequestingSelfUser;
 {
     // GIVEN
