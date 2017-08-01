@@ -53,7 +53,8 @@
     self.dataChangeNotificationsCount = 0;
     self.baseURL = [NSURL URLWithString:@"http://bar.example.com"];
     self.transportSession = [OCMockObject niceMockForClass:[ZMTransportSession class]];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"usersessiontest.example.com"];
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"usersessiontest.example.com" userIdentifier:NSUUID.createUUID];
+
     [[[self.transportSession stub] andReturn:self.cookieStorage] cookieStorage];
     ZM_WEAK(self);
     [[self.transportSession stub] setAccessTokenRenewalFailureHandler:[OCMArg checkWithBlock:^BOOL(ZMCompletionHandlerBlock obj) {
@@ -128,7 +129,7 @@
     [self.uiMOC.userInfo removeAllObjects];
     
     [super cleanUpAndVerify];
-    NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.sut.accountIdentifier in:self.sut.sharedContainerURL];
+    NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.accountIdentifier in:self.sut.sharedContainerURL];
     NSArray *items = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:cachesURL includingPropertiesForKeys:nil options:0 error:nil];
     for (NSURL *item in items) {
         [[NSFileManager defaultManager] removeItemAtURL:item error:nil];

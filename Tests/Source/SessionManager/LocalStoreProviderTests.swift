@@ -22,16 +22,29 @@ import XCTest
 typealias FileManagerProtocol = WireSyncEngine.FileManagerProtocol
 
 class MockFileManager: FileManagerProtocol {
+    
     var containerURL: URL?
     var calledGroupIdentifier: String?
+
     func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL? {
         calledGroupIdentifier = groupIdentifier
         return containerURL
     }
 
+    var cachesURL: URL?
+    var calledCachesIdentifier: UUID?
+    var calledSharedContainerURL: URL?
+
+    func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
+        calledCachesIdentifier = accountIdentifier
+        calledSharedContainerURL = sharedContainerURL
+        return cachesURL!
+    }
+
     var urlsForDirectory = [URL]()
     var calledDomainMask: FileManager.SearchPathDomainMask?
     var calledDirectory: FileManager.SearchPathDirectory?
+
     func urls(for directory: FileManager.SearchPathDirectory, in domainMask: FileManager.SearchPathDomainMask) -> [URL] {
         calledDirectory = directory
         calledDomainMask = domainMask
@@ -144,34 +157,4 @@ extension LocalStoreProviderTests {
         XCTAssertEqual(fileManager.calledGroupIdentifier, appGroupIdentifier)
     }
 
-    func testThatKeyStoreIsInSharedContainer() {
-        // given
-        let containerURL = URL(fileURLWithPath: "some/file/path")
-        fileManager.containerURL = containerURL
-        XCTAssertNotNil(fileManager.containerURL)
-
-        // then
-        XCTAssertEqual(sut.keyStoreURL, containerURL)
-    }
-    
-    func testThatKeyStoreIsNilWhenContainerIsNil() {
-        // given
-        fileManager.containerURL = nil
-        
-        // then
-        performIgnoringZMLogError {
-            XCTAssertNil(self.sut.keyStoreURL)
-        }
-    }
-    
-    func testThatStoreURLIsInSharedContainer_bundleId() {
-        // given
-        let containerURL = URL(fileURLWithPath: "some/file/path")
-        let storeURL = containerURL.appendingPathComponent("\(bundleIdentifier!)/store.wiredatabase")
-        fileManager.containerURL = containerURL
-        XCTAssertNotNil(fileManager.containerURL)
-        
-        // then
-        XCTAssertEqual(sut.storeURL, storeURL)
-    }
 }

@@ -32,31 +32,13 @@ public class DiskDatabaseTest: ZMTBaseTest {
     
     public override func setUp() {
         super.setUp()
-<<<<<<< HEAD
-        NSManagedObjectContext.setUseInMemoryStore(false)
-        sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        accountId = UUID()
-        
-        createDatabase()
-        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountId, inSharedContainerAt: sharedContainerURL, backupCorruptedDatabase: false, synchronous: true) {
-            self.moc = NSManagedObjectContext.createUserInterfaceContextForAccount(withIdentifier: self.accountId, inSharedContainerAt: self.sharedContainerURL)
-=======
-        StorageStack.shared.createStorageAsInMemory = false
-        
+
+        accountId = .create()
+
         cleanUp()
         createDatabase()
 
-        let keyStoreURL = storeURL.deletingLastPathComponent()
-        let semaphore = DispatchSemaphore(value: 0)
-
-        StorageStack.shared.createManagedObjectContextDirectory(at: storeURL, keyStore: keyStoreURL) {
-            self.moc = $0.uiContext
-            semaphore.signal()
->>>>>>> feature/adopt-storage-stack
-        }
-
-        semaphore.wait()
-        assert(self.waitForAllGroupsToBeEmpty(withTimeout: 1))
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
     
@@ -69,21 +51,14 @@ public class DiskDatabaseTest: ZMTBaseTest {
     }
     
     private func createDatabase() {
-<<<<<<< HEAD
-        NSManagedObjectContext.prepareLocalStoreForAccount(withIdentifier: accountId, inSharedContainerAt: sharedContainerURL, backupCorruptedDatabase: false, synchronous: true, completionHandler:nil)
-        
-        NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
-=======
-        let keyStoreURL = storeURL.deletingLastPathComponent()
-        let semaphore = DispatchSemaphore(value: 0)
+        StorageStack.reset()
+        StorageStack.shared.createStorageAsInMemory = false
 
-        StorageStack.shared.createManagedObjectContextDirectory(at: storeURL, keyStore: keyStoreURL) { _ in
-            semaphore.signal()
+        StorageStack.shared.createManagedObjectContextDirectory(forAccountWith: accountId, inContainerAt: storeURL) {
+            self.moc = $0.uiContext
         }
 
-        semaphore.wait()
-        StorageStack.reset()
->>>>>>> feature/adopt-storage-stack
+        XCTAssert(wait(withTimeout: 0.5) { self.moc != nil })
     }
     
     private func cleanUp() {

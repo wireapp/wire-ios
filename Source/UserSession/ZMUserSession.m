@@ -74,11 +74,7 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMStoredLocalNotification *pendingLocalNotification;
 @property (nonatomic) LocalNotificationDispatcher *localNotificationDispatcher;
 
-@property (nonatomic) id<LocalStoreProviderProtocol> storeProvider;
-@property (nonatomic) NSUUID *accountIdentifier;
-
-@property (nonatomic) ManagedObjectContextDirectory *contextDirectory;
-@property (nonatomic, readwrite) NSURL *sharedContainerURL;
+@property (nonatomic) id <LocalStoreProviderProtocol> storeProvider;
 
 @property (nonatomic) TopConversationsDirectory *topConversationsDirectory;
 @property (nonatomic) BOOL hasCompletedInitialSync;
@@ -134,20 +130,19 @@ ZM_EMPTY_ASSERTING_INIT()
                      apnsEnvironment:(ZMAPNSEnvironment *)apnsEnvironment
                          application:(id<ZMApplication>)application
                           appVersion:(NSString *)appVersion
-                       storeProvider:(id<LocalStoreProviderProtocol>)storeProvider
-                    contextDirectory:(ManagedObjectContextDirectory *)contextDirectory;
+                       storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 {
     if (apnsEnvironment == nil) {
         apnsEnvironment = [[ZMAPNSEnvironment alloc] init];
     }
 
 
-    [contextDirectory.syncContext performBlockAndWait:^{
-        contextDirectory.syncContext.analytics = analytics;
+    [storeProvider.contextDirectory.syncContext performBlockAndWait:^{
+        storeProvider.contextDirectory.syncContext.analytics = analytics;
     }];
 
     [[BackgroundActivityFactory sharedInstance] setApplication:[UIApplication sharedApplication]]; // TODO make BackgroundActivityFactory work with ZMApplication
-    [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:contextDirectory.uiContext];
+    [[BackgroundActivityFactory sharedInstance] setMainGroupQueue:storeProvider.contextDirectory.uiContext];
     
     RequestLoopAnalyticsTracker *tracker = [[RequestLoopAnalyticsTracker alloc] initWithAnalytics:analytics];
     
@@ -170,7 +165,6 @@ ZM_EMPTY_ASSERTING_INIT()
                             operationLoop:nil
                               application:application
                                appVersion:appVersion
-                         contextDirectory:contextDirectory
                             storeProvider:storeProvider]; // TODO: Inject or combine with injection of context directory (localstore provider could hold on to the directory and be injected);
     return self;
 }
@@ -181,13 +175,11 @@ ZM_EMPTY_ASSERTING_INIT()
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                         contextDirectory:(ManagedObjectContextDirectory *)contextDirectory
                             storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
 {
     self = [super init];
     if(self) {
         self.storeProvider = storeProvider;
-        self.contextDirectory = contextDirectory;
 
         self.appVersion = appVersion;
         [ZMUserAgent setWireAppVersion:appVersion];
@@ -205,8 +197,8 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
         
-        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAccountWith:self.accountIdentifier in:self.sharedContainerURL];
-        [self.class moveCachesIfNeededForAccountWith:self.accountIdentifier in:self.sharedContainerURL];
+        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAccountWith:storeProvider.userIdentifier in:storeProvider.sharedContainerDirectory];
+        [self.class moveCachesIfNeededForAccountWith:storeProvider.userIdentifier in:storeProvider.sharedContainerDirectory];
         
         UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:cacheLocation];
         self.managedObjectContext.zm_userImageCache = userImageCache;
@@ -251,7 +243,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                                                               uiMOC:self.managedObjectContext
                                                                                             syncMOC:self.syncManagedObjectContext
                                                                                   syncStateDelegate:self
-                                                                                 appGroupIdentifier:storeProvider.appGroupIdentifier // TODO: pass storeProvider instead
+                                                                                 appGroupIdentifier:NSBundle.mainBundle.appGroupIdentifier
                                                                                         application:application];
             
             __weak id weakSelf = self;
@@ -277,7 +269,7 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         [self enableBackgroundFetch];
 
-        self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.sharedContainerURL];
+        self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.storeProvider.sharedContainerDirectory];
         
         if ([self.class useCallKit]) {
             CXProvider *provider = [[CXProvider alloc] initWithConfiguration:[ZMCallKitDelegate providerConfiguration]];
@@ -331,7 +323,7 @@ ZM_EMPTY_ASSERTING_INIT()
     }];
     
     NSManagedObjectContext *uiMoc = self.managedObjectContext;
-    self.contextDirectory = nil;
+    self.storeProvider = nil;
     
     BOOL shouldWaitOnUiMoc = !([NSOperationQueue currentQueue] == [NSOperationQueue mainQueue] && uiMoc.concurrencyType == NSMainQueueConcurrencyType);
     
@@ -379,23 +371,22 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (NSManagedObjectContext *)managedObjectContext
 {
-    return self.contextDirectory.uiContext;
+    return self.storeProvider.contextDirectory.uiContext;
 }
 
 - (NSManagedObjectContext *)syncManagedObjectContext
 {
-    return self.contextDirectory.syncContext;
+    return self.storeProvider.contextDirectory.syncContext;
 }
 
 - (NSManagedObjectContext *)searchManagedObjectContext
 {
-    return self.contextDirectory.searchContext;
+    return self.storeProvider.contextDirectory.searchContext;
 }
 
-- (NSURL *)storeURL
+- (NSURL *)sharedContainerURL
 {
-    // TODO
-    return nil; //return self.contextDirectory.storeURL;
+    return self.storeProvider.sharedContainerDirectory;
 }
 
 - (void)didRequestToOpenSyncConversation:(NSNotification *)note
@@ -599,16 +590,6 @@ ZM_EMPTY_ASSERTING_INIT()
 - (ZMOperationStatus *)operationStatus
 {
     return self.operationLoop.syncStrategy.applicationStatusDirectory.operationStatus;
-}
-
-- (NSURL *)sharedContainerURL
-{
-    return self.storeProvider.sharedContainerDirectory;
-}
-
-- (NSUUID *)accountIdentifier
-{
-    return self.storeProvider.userIdentifier;
 }
 
 @end

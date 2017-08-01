@@ -124,7 +124,7 @@
     return (didContainRemoteRequest && didContainVOIPRequest);
 }
 
-- (void)testThatItUpdatesNewTokensIfNeeded
+- (void)DISABLED_testThatItUpdatesNewTokensIfNeeded
 {
     XCTAssertTrue([self login]);
     [self.mockTransportSession resetReceivedRequests];
