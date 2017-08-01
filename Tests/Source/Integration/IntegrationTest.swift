@@ -36,6 +36,12 @@ class AuthenticationObserver : NSObject, ZMAuthenticationObserver {
     
 }
 
+extension MockTransportSession: ReachabilityProvider {
+    public var mayBeReachable: Bool {
+        return true
+    }
+}
+
 final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
     let transportSession: ZMTransportSession
@@ -68,9 +74,9 @@ final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
 
 final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
 
-    let transportSession: UnauthenticatedTransportSessionProtocol
+    let transportSession: UnauthenticatedTransportSessionProtocol & ReachabilityProvider
 
-    init(transportSession: UnauthenticatedTransportSessionProtocol) {
+    init(transportSession: UnauthenticatedTransportSessionProtocol & ReachabilityProvider) {
         self.transportSession = transportSession
         super.init()
     }
@@ -169,7 +175,7 @@ extension IntegrationTest {
         guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return XCTFail() }
         StorageStack.shared.createStorageAsInMemory = useInMemoryStore
 
-        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! (UnauthenticatedTransportSessionProtocol & ReachabilityProvider))
         let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
             apnsEnvironment: apnsEnvironment,
             application: application,
