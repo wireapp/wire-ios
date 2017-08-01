@@ -480,7 +480,9 @@ extension IntegrationTest : SessionManagerDelegate {
             userSession.managedObjectContext.add(self.dispatchGroup)
         }
         
-        userSession.managedObjectContext.performGroupedBlock(userSession.start)
+        userSession.managedObjectContext.performGroupedBlock {
+            userSession.start()
+        }
     }
     
     public func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
