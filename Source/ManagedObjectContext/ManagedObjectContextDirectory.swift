@@ -23,9 +23,6 @@ import Foundation
     
     init(persistentStoreCoordinator: NSPersistentStoreCoordinator, forAccountWith accountIdentifier: UUID?,
          inContainerAt containerUrl: URL) {
-        // TODO Sabine
-        //self.storeURL = store
-        //self.keyStoreURL = keyStore
         self.uiContext = ManagedObjectContextDirectory.createUIManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator)
         self.syncContext = ManagedObjectContextDirectory.createSyncManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator,
                                                                                         forAccountWith: accountIdentifier,
@@ -33,10 +30,6 @@ import Foundation
         self.searchContext = ManagedObjectContextDirectory.createSearchManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator)
         super.init()
     }
-
-    // TODO Sabine
-    //public let storeURL: URL
-    //public let keyStoreURL: URL
     
     /// User interface context. It can be used only from the main queue
     public let uiContext: NSManagedObjectContext
@@ -51,7 +44,6 @@ import Foundation
     public let searchContext: NSManagedObjectContext
     
     deinit {
-        // TODO Silvan: Test that it tears down
         self.uiContext.tearDown()
         self.syncContext.tearDown()
         self.searchContext.tearDown()

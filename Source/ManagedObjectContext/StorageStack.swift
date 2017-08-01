@@ -64,9 +64,15 @@ import UIKit
 
         // destroy previous stack if any
         if self.createStorageAsInMemory {
-            let directory = InMemoryStoreInitialization.createManagedObjectContextDirectory(forAccountWith: accountIdentifier, inContainerAt: containerUrl)
-            self.managedObjectContextDirectory = directory
-            completionHandler(directory)
+            // we need to reuse the exitisting contexts if we already have them,
+            // otherwise when testing logout / login we loose all data.
+            if let directory = managedObjectContextDirectory {
+                completionHandler(directory)
+            } else {
+                let directory = InMemoryStoreInitialization.createManagedObjectContextDirectory(forAccountWith: accountIdentifier, inContainerAt: containerUrl)
+                self.managedObjectContextDirectory = directory
+                completionHandler(directory)
+            }
         } else {
             self.currentPersistentStoreInitialization = PersistentStorageInitialization.createManagedObjectContextDirectory(
                 forAccountWith: accountIdentifier,
