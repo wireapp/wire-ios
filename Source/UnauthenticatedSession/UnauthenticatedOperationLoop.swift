@@ -26,8 +26,8 @@ private let log = ZMSLog(tag: "Network")
 
 
 class UnauthenticatedOperationLoop: NSObject {
-    
-    let transportSession: UnauthenticatedTransportSessionProtocol
+
+    let transportSession: UnauthenticatedTransportSessionProtocol & ReachabilityProvider
     let requestStrategies: [RequestStrategy]
     let operationQueue : ZMSGroupQueue
     private var tornDown = false
@@ -38,8 +38,8 @@ class UnauthenticatedOperationLoop: NSObject {
         requestStrategies.forEach { ($0 as? TearDownCapable)?.tearDown() }
         tornDown = true
     }
-    
-    init(transportSession: UnauthenticatedTransportSessionProtocol, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
+
+    init(transportSession: UnauthenticatedTransportSessionProtocol & ReachabilityProvider, operationQueue: ZMSGroupQueue, requestStrategies: [RequestStrategy]) {
         self.transportSession = transportSession
         self.requestStrategies = requestStrategies
         self.operationQueue = operationQueue

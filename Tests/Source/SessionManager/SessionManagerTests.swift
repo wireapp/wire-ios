@@ -93,7 +93,7 @@ class SessionManagerTests: IntegrationTest {
     func createManager() -> SessionManager? {
         guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return nil }
 
-        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol & ReachabilityProvider)
         let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
             apnsEnvironment: apnsEnvironment,
             application: application,
