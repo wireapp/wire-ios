@@ -183,7 +183,7 @@ public class SessionManager : NSObject {
         
         super.init()
         authenticationToken = ZMUserSessionAuthenticationNotification.addObserver(self)
-        
+
         select(account: accountManager.selectedAccount) { [weak self] session in
             guard let `self` = self else { return }
             session.application(self.application, didFinishLaunchingWithOptions: launchOptions)
@@ -241,27 +241,6 @@ public class SessionManager : NSObject {
         }
     }
 
-    static private func sharedContainerURL(with appGroupIdentifier: String) -> URL? {
-        if let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
-            return sharedContainerURL
-        } else {
-            // Seems like the shared container is not available. This can happen for multiple reasons:
-            // 1. The app is compiled with an incorrect provisioning profile (for example by a 3rd party)
-            // 2. The app is running on simulator and there is no correct provisioning profile on the system
-            // 3. There is another issue with code signing
-            //
-            // The app should allow not having a shared container in the first 2 cases, in the 3rd case the app should crash
-            let environment = ZMDeploymentEnvironment().environmentType()
-            if TARGET_IPHONE_SIMULATOR == 0 && (environment == .appStore || environment == .internal) {
-                fatal("Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
-            } else {
-                log.error("Unable to create shared containerwith deployment environment: \(environment.rawValue)")
-                log.error("Wire is going to use the APPLICATION SUPPORT directory to store user data")
-                return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-            }
-        }
-    }
-
 }
 
 // MARK: - UnauthenticatedSessionDelegate
@@ -307,7 +286,6 @@ extension SessionManager: ZMAuthenticationObserver {
         // Dispose the user session if it is there
         userSession?.tearDown()
         userSession = nil
-
         createUnauthenticatedSession()
     }
 
