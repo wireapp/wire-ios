@@ -145,7 +145,7 @@ NSString * const UserDefaultDisableLinkPreviews = @"DisableLinkPreviews";
         [self migrateHockeyAndOptOutSettingsToSharedDefaults];
         [self restoreLastUsedAVSSettings];
         
-#if TARGET_IPHONE_OS_IPHONE
+#if !(TARGET_OS_SIMULATOR)
         [self loadEnabledLogs];
 #endif
         
