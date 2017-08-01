@@ -36,6 +36,52 @@ class AuthenticationObserver : NSObject, ZMAuthenticationObserver {
     
 }
 
+final class MockAuthenticatedSessionFactory: AuthenticatedSessionFactory {
+
+    let transportSession: ZMTransportSession
+
+    init(apnsEnvironment: ZMAPNSEnvironment?, application: ZMApplication, mediaManager: AVSMediaManager, transportSession: ZMTransportSession) {
+        self.transportSession = transportSession
+        super.init(
+            appVersion: "0.0.0",
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            analytics: nil
+        )
+    }
+
+    override func session(for account: Account, storeProvider: LocalStoreProviderProtocol) -> ZMUserSession? {
+        return ZMUserSession(
+            mediaManager: mediaManager,
+            analytics: analytics,
+            transportSession: transportSession,
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            appVersion: appVersion,
+            storeProvider: storeProvider
+        )
+    }
+
+}
+
+
+final class MockUnauthenticatedSessionFactory: UnauthenticatedSessionFactory {
+
+    let transportSession: UnauthenticatedTransportSessionProtocol
+
+    init(transportSession: UnauthenticatedTransportSessionProtocol) {
+        self.transportSession = transportSession
+        super.init()
+    }
+
+    override func session(withDelegate delegate: WireSyncEngine.UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
+        return UnauthenticatedSession(transportSession: transportSession, delegate: delegate)
+    }
+
+}
+
+
 extension IntegrationTest {
     
     static let SelfUserEmail = "myself@user.example.com"
@@ -50,7 +96,7 @@ extension IntegrationTest {
         mockTransportSession = MockTransportSession(dispatchGroup: self.dispatchGroup)
         WireCallCenterV3Factory.wireCallCenterClass = WireCallCenterV3IntegrationMock.self;
         ZMCallFlowRequestStrategyInternalFlowManagerOverride = MockFlowManager()
-        mockTransportSession.cookieStorage.deleteUserKeychainItems()
+        mockTransportSession.cookieStorage.deleteKeychainItems()
                 
         createSessionManager()
     }
@@ -62,7 +108,7 @@ extension IntegrationTest {
         sharedSearchDirectory = nil
         userSession = nil
         unauthenticatedSession = nil
-        mockTransportSession.tearDown()
+        mockTransportSession?.tearDown()
         mockTransportSession = nil
         sessionManager = nil
         selfUser = nil
@@ -77,7 +123,8 @@ extension IntegrationTest {
         connectionSelfToUser2 = nil
         selfConversation = nil
         groupConversation = nil
-        
+
+        Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory).apply(AccountManager.delete)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         resetInMemoryDatabases()
@@ -98,7 +145,7 @@ extension IntegrationTest {
     
     @objc
     func deleteAuthenticationCookie() {
-        mockTransportSession.cookieStorage.deleteUserKeychainItems()
+        mockTransportSession.cookieStorage.deleteKeychainItems()
     }
     
     @objc
@@ -119,30 +166,26 @@ extension IntegrationTest {
     
     @objc
     func createSessionManager() {
-<<<<<<< HEAD
-        
-        guard let mediaManager = mediaManager,
-              let application = application,
-              let transportSession = transportSession
-        else { XCTFail(); return }
-        
-        let storeProvider = LocalStoreProvider(userIdentifier: self.currentUserIdentifier)
-=======
         guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return XCTFail() }
-
         StorageStack.shared.createStorageAsInMemory = useInMemoryStore
-        let storeProvider = WireSyncEngine.LocalStoreProvider()
->>>>>>> feature/adopt-storage-stack
 
-        sessionManager = SessionManager(storeProvider: storeProvider,
-                                        appVersion: "0.0.0",
-                                        transportSession: transportSession,
-                                        apnsEnvironment: apnsEnvironment,
-                                        mediaManager: mediaManager,
-                                        analytics: nil,
-                                        delegate: self,
-                                        application: application,
-                                        launchOptions: [:])
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
+        let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            transportSession: transportSession
+        )
+
+        sessionManager = SessionManager(
+            appVersion: "0.0.0",
+            authenticatedSessionFactory: authenticatedSessionFactory,
+            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
+            storeProviderFactory: StoreProviderFactory(),
+            delegate: self,
+            application: application,
+            launchOptions: [:]
+        )
     }
     
     @objc
@@ -431,19 +474,16 @@ extension IntegrationTest : SessionManagerDelegate {
             userSession.managedObjectContext.add(self.dispatchGroup)
         }
         
-        userSession.managedObjectContext.performGroupedBlock {
-            userSession.start()
-        }
+        userSession.managedObjectContext.performGroupedBlock(userSession.start)
     }
     
     public func sessionManagerCreated(unauthenticatedSession: UnauthenticatedSession) {
         self.unauthenticatedSession = unauthenticatedSession
-        
         unauthenticatedSession.groupQueue.add(self.dispatchGroup)
     }
     
     public func sessionManagerWillStartMigratingLocalStore() {
-        
+        // no-op
     }
     
 }

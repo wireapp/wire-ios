@@ -22,9 +22,89 @@ import WireTransport
 import WireUtilities
 
 
+private let log = ZMSLog(tag: "SessionManager")
+
+open class UnauthenticatedSessionFactory {
+    
+    let environment: ZMBackendEnvironment
+    
+    init() {
+        self.environment = ZMBackendEnvironment(userDefaults: .standard)
+    }
+    
+    func session(withDelegate delegate: UnauthenticatedSessionDelegate) -> UnauthenticatedSession {
+        let transportSession = UnauthenticatedTransportSession(baseURL: environment.backendURL)
+        return UnauthenticatedSession(transportSession: transportSession, delegate: delegate)
+    }
+
+}
+
+extension Account {
+    func cookieStorage() -> ZMPersistentCookieStorage {
+        let backendURL = ZMBackendEnvironment(userDefaults: .standard).backendURL.host!
+        return ZMPersistentCookieStorage(forServerName: backendURL, userIdentifier: userIdentifier)
+    }
+}
+
+open class AuthenticatedSessionFactory {
+
+    let appVersion: String
+    let mediaManager: AVSMediaManager
+    var analytics: AnalyticsType?
+    var apnsEnvironment : ZMAPNSEnvironment?
+    let application : ZMApplication
+    let environment: ZMBackendEnvironment
+
+    public init(
+        appVersion: String,
+        apnsEnvironment: ZMAPNSEnvironment? = nil,
+        application: ZMApplication,
+        mediaManager: AVSMediaManager,
+        analytics: AnalyticsType? = nil
+        ) {
+        self.appVersion = appVersion
+        self.mediaManager = mediaManager
+        self.analytics = analytics
+        self.apnsEnvironment = apnsEnvironment
+        self.application = application
+        ZMBackendEnvironment.setupEnvironments()
+        self.environment = ZMBackendEnvironment(userDefaults: .standard)
+    }
+    
+    func session(for account: Account, storeProvider: LocalStoreProviderProtocol) -> ZMUserSession? {
+        let transportSession = ZMTransportSession(
+            baseURL: environment.backendURL,
+            websocketURL: environment.backendWSURL,
+            cookieStorage: account.cookieStorage(),
+            initialAccessToken: nil,
+            sharedContainerIdentifier: nil
+        )
+        
+        return ZMUserSession(
+            mediaManager: mediaManager,
+            analytics: analytics,
+            transportSession: transportSession,
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            appVersion: appVersion,
+            storeProvider: storeProvider
+        )
+    }
+
+}
+
+open class StoreProviderFactory: NSObject {
+
+    open func provider(for account: Account?) -> LocalStoreProviderProtocol {
+        return LocalStoreProvider(userIdentifier: account?.userIdentifier)
+    }
+
+}
+
+
 @objc
 public protocol SessionManagerDelegate : class {
-    
+
     func sessionManagerCreated(unauthenticatedSession : UnauthenticatedSession)
     func sessionManagerCreated(userSession : ZMUserSession)
     func sessionManagerWillStartMigratingLocalStore()
@@ -32,118 +112,120 @@ public protocol SessionManagerDelegate : class {
 
 @objc
 public class SessionManager : NSObject {
+
+    public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
+
     public let appVersion: String
-    public let mediaManager: AVSMediaManager
-    public var analytics: AnalyticsType?
-    var apnsEnvironment : ZMAPNSEnvironment?
-    let application : ZMApplication
-    let transportSession: ZMTransportSession
-    public weak var delegate : SessionManagerDelegate? = nil
-    var authenticationToken: ZMAuthenticationObserverToken?
+    public weak var delegate: SessionManagerDelegate? = nil
+    
+    fileprivate let authenticatedSessionFactory: AuthenticatedSessionFactory
+    fileprivate let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
+    fileprivate let storeProviderFactory: StoreProviderFactory
+    fileprivate let accountManager: AccountManager
+    
+    let application: ZMApplication
     var userSession: ZMUserSession?
     var unauthenticatedSession: UnauthenticatedSession?
-    public let storeProvider: LocalStoreProviderProtocol
-    
-    public convenience init(appVersion: String,
-                mediaManager: AVSMediaManager,
-                analytics: AnalyticsType?,
-                delegate: SessionManagerDelegate?,
-                application: ZMApplication,
-                launchOptions: [UIApplicationLaunchOptionsKey : Any]) {
-        
-        ZMBackendEnvironment.setupEnvironments()
-        
-        let environment = ZMBackendEnvironment(userDefaults: .standard)
-        let backendURL = environment.backendURL
-        let websocketURL = environment.backendWSURL
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: backendURL.host!)
-        let transportSession = ZMTransportSession(baseURL: backendURL,
-                                                  websocketURL: websocketURL,
-                                                  cookieStorage: cookieStorage,
-                                                  initialAccessToken: nil,
-                                                  sharedContainerIdentifier: nil)
-        let localStoreProvider = LocalStoreProvider(userIdentifier: UUID()) // TODO: we need to provide real user id
-        
-        self.init(storeProvider: localStoreProvider,
-                  appVersion: appVersion,
-                  transportSession: transportSession,
-                  mediaManager: mediaManager,
-                  analytics: analytics,
-                  delegate: delegate,
-                  application: application,
-                  launchOptions: launchOptions)
-        
+    var authenticationToken: ZMAuthenticationObserverToken?
+
+    public convenience init(
+        appVersion: String,
+        mediaManager: AVSMediaManager,
+        analytics: AnalyticsType?,
+        delegate: SessionManagerDelegate?,
+        application: ZMApplication,
+        launchOptions: LaunchOptions
+        ) {
+
+        let unauthenticatedSessionFactory = UnauthenticatedSessionFactory()
+        let authenticatedSessionFactory = AuthenticatedSessionFactory(
+            appVersion: appVersion,
+            apnsEnvironment: nil, // TODO
+            application: application,
+            mediaManager: mediaManager,
+            analytics: analytics
+          )
+
+        self.init(
+            appVersion: appVersion,
+            authenticatedSessionFactory: authenticatedSessionFactory,
+            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
+            storeProviderFactory: StoreProviderFactory(),
+            delegate: delegate,
+            application: application,
+            launchOptions: launchOptions
+        )
     }
-    
-    public init(storeProvider: LocalStoreProviderProtocol,
-                appVersion: String,
-                transportSession: ZMTransportSession,
-                apnsEnvironment: ZMAPNSEnvironment? = nil,
-                mediaManager: AVSMediaManager,
-                analytics: AnalyticsType?,
-                delegate: SessionManagerDelegate?,
-                application: ZMApplication,
-                launchOptions: [UIApplicationLaunchOptionsKey : Any]
-                ) {
-        
+
+    public init(
+        appVersion: String,
+        authenticatedSessionFactory: AuthenticatedSessionFactory,
+        unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
+        storeProviderFactory: StoreProviderFactory,
+        delegate: SessionManagerDelegate?,
+        application: ZMApplication,
+        launchOptions: LaunchOptions
+        ) {
+
         SessionManager.enableLogsByEnvironmentVariable()
-        self.storeProvider = storeProvider
-        
+        self.storeProviderFactory = storeProviderFactory
         self.appVersion = appVersion
-        self.apnsEnvironment = apnsEnvironment
         self.application = application
-        self.mediaManager = mediaManager
-        self.analytics = analytics
         self.delegate = delegate
-        self.transportSession = transportSession
+
+        guard let sharedContainerURL = storeProviderFactory.provider(for: nil).sharedContainerDirectory else {
+            preconditionFailure("Unable to get shared container URL")
+        }
+
+        accountManager = AccountManager(sharedDirectory: sharedContainerURL)
+        self.authenticatedSessionFactory = authenticatedSessionFactory
+        self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         
         super.init()
-        
         authenticationToken = ZMUserSessionAuthenticationNotification.addObserver(self)
-
-        if storeProvider.storeExists {
-            storeProvider.createStorageStack(
-                for: nil,
-                migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
-                completion: { [weak self] dir in self?.createUserSession(with: dir, launchOptions: launchOptions) }
-            )
-        } else {
-            let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
-            self.unauthenticatedSession = unauthenticatedSession
-            delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
+        
+        select(account: accountManager.selectedAccount) { [weak self] session in
+            guard let `self` = self else { return }
+            session.application(self.application, didFinishLaunchingWithOptions: launchOptions)
+            (launchOptions[.url] as? URL).apply(session.didLaunch)
         }
     }
 
-    private func createUserSession(with contextDirectory: ManagedObjectContextDirectory, launchOptions: [UIApplicationLaunchOptionsKey : Any]) {
-        let userSession = ZMUserSession(mediaManager: mediaManager,
-                                        analytics: analytics,
-                                        transportSession: transportSession,
-                                        apnsEnvironment: apnsEnvironment,
-                                        application: application,
-                                        appVersion: appVersion,
-                                        storeProvider: storeProvider,
-                                        contextDirectory: contextDirectory)!
+    fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
+        let storeProvider = storeProviderFactory.provider(for: account)
 
-        self.userSession = userSession
-        delegate?.sessionManagerCreated(userSession: userSession)
-        userSession.application(application, didFinishLaunchingWithOptions: launchOptions)
-        if let url = launchOptions[.url] as? URL {
-            userSession.didLaunch(with: url)
+        if let account = account, nil != account.cookieStorage().authenticationCookieData, storeProvider.storeExists {
+            storeProvider.createStorageStack(
+                migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
+                completion: { [weak self] provider in self?.createSession(for: account, with: provider, completion: completion) }
+            )
+        } else {
+            createUnauthenticatedSession()
         }
+    }
+
+    fileprivate func createSession(for account: Account, with provider: LocalStoreProviderProtocol, completion: (ZMUserSession) -> Void) {
+        guard let session = authenticatedSessionFactory.session(for: account, storeProvider: provider) else {
+            preconditionFailure("Unable to create session for \(account)")
+        }
+
+        self.userSession = session
+        delegate?.sessionManagerCreated(userSession: session)
+        completion(session)
+    }
+
+    fileprivate func createUnauthenticatedSession() {
+        self.unauthenticatedSession?.tearDown()
+        let unauthenticatedSession = unauthenticatedSessionFactory.session(withDelegate: self)
+        self.unauthenticatedSession = unauthenticatedSession
+        delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
     }
 
     deinit {
-        if let authenticationToken = authenticationToken {
-            ZMUserSessionAuthenticationNotification.removeObserver(for: authenticationToken)
-        }
-        
         userSession?.tearDown()
+        unauthenticatedSession?.tearDown()
     }
-    
-    public var isLoggedIn: Bool {
-        return transportSession.cookieStorage.authenticationCookieData != nil
-    }
-    
+
     @objc public var currentUser: ZMUser? {
         guard let userSession = userSession else { return nil }
         return ZMUser.selfUser(in: userSession.managedObjectContext)
@@ -152,16 +234,40 @@ public class SessionManager : NSObject {
     @objc public var isUserSessionActive: Bool {
         return userSession != nil
     }
-    
+
     func updateProfileImage(imageData: Data) {
         userSession?.enqueueChanges {
             self.userSession?.profileUpdate.updateImage(imageData: imageData)
         }
     }
-    
+
+    static private func sharedContainerURL(with appGroupIdentifier: String) -> URL? {
+        if let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier) {
+            return sharedContainerURL
+        } else {
+            // Seems like the shared container is not available. This can happen for multiple reasons:
+            // 1. The app is compiled with an incorrect provisioning profile (for example by a 3rd party)
+            // 2. The app is running on simulator and there is no correct provisioning profile on the system
+            // 3. There is another issue with code signing
+            //
+            // The app should allow not having a shared container in the first 2 cases, in the 3rd case the app should crash
+            let environment = ZMDeploymentEnvironment().environmentType()
+            if TARGET_IPHONE_SIMULATOR == 0 && (environment == .appStore || environment == .internal) {
+                fatal("Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
+            } else {
+                log.error("Unable to create shared containerwith deployment environment: \(environment.rawValue)")
+                log.error("Wire is going to use the APPLICATION SUPPORT directory to store user data")
+                return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
+            }
+        }
+    }
+
 }
 
+// MARK: - UnauthenticatedSessionDelegate
+
 extension SessionManager: UnauthenticatedSessionDelegate {
+
     func session(session: UnauthenticatedSession, updatedCredentials credentials: ZMCredentials) {
         if let userSession = userSession, let emailCredentials = credentials as? ZMEmailCredentials {
             userSession.setEmailCredentials(emailCredentials)
@@ -171,50 +277,44 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     func session(session: UnauthenticatedSession, updatedProfileImage imageData: Data) {
         updateProfileImage(imageData: imageData)
     }
+    
+    func session(session: UnauthenticatedSession, createdAccount account: Account) {
+        accountManager.addAndSelect(account)
+
+        storeProviderFactory.provider(for: account).createStorageStack(migration: nil) { [weak self] provider in
+            self?.createSession(for: account, with: provider) { userSession in
+                userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
+                userSession.syncManagedObjectContext.performGroupedBlock {
+                    userSession.syncManagedObjectContext.registeredOnThisDevice = session.authenticationStatus.completedRegistration
+                }
+
+                if let profileImageData = session.authenticationStatus.profileImageData {
+                    self?.updateProfileImage(imageData: profileImageData)
+                }
+            }
+        }
+    }
+
 }
 
+// MARK: - ZMAuthenticationObserver
+
 extension SessionManager: ZMAuthenticationObserver {
-    
+
     @objc public func authenticationDidFail(_ error: Error) {
         guard self.unauthenticatedSession == nil else { return }
-        
-        let unauthenticatedSession = UnauthenticatedSession(transportSession: transportSession, delegate: self)
-        self.unauthenticatedSession = unauthenticatedSession
-        delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
+
+        // Dispose the user session if it is there
+        userSession?.tearDown()
+        userSession = nil
+
+        createUnauthenticatedSession()
     }
-    
+
     @objc public func authenticationDidSucceed() {
-        guard self.userSession == nil, let authenticationStatus = self.unauthenticatedSession?.authenticationStatus else {
+        if nil != userSession {
             return RequestAvailableNotification.notifyNewRequestsAvailable(self)
         }
-
-        func createUserSessionAfterSuccesfullAuthentication(with contextDirectory: ManagedObjectContextDirectory) {
-            let userSession = ZMUserSession(
-                mediaManager: mediaManager,
-                analytics: analytics,
-                transportSession: transportSession,
-                apnsEnvironment: apnsEnvironment,
-                application: application,
-                appVersion: appVersion,
-                storeProvider: storeProvider,
-                contextDirectory: contextDirectory
-                )!
-
-            self.userSession = userSession
-            userSession.setEmailCredentials(authenticationStatus.emailCredentials())
-            userSession.syncManagedObjectContext.performGroupedBlock {
-                userSession.syncManagedObjectContext.registeredOnThisDevice = authenticationStatus.completedRegistration
-            }
-
-            if let profileImageData = authenticationStatus.profileImageData {
-                updateProfileImage(imageData: profileImageData)
-            }
-            
-            delegate?.sessionManagerCreated(userSession: userSession)
-        }
-
-        // TODO
-        storeProvider.createStorageStack(for: nil, migration: nil, completion: createUserSessionAfterSuccesfullAuthentication)
     }
 
 }

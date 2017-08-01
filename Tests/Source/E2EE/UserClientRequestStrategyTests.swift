@@ -42,8 +42,9 @@ class UserClientRequestStrategyTests: RequestStrategyTestBase {
     override func setUp() {
         super.setUp()
 
-        self.spyKeyStore = SpyUserClientKeyStore(in: sharedContainerURL, accountIdentifier:accountIdentifier)
-        cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer")
+        self.spyKeyStore = SpyUserClientKeyStore(in: sharedContainerURL, accountIdentifier: accountIdentifier)
+        cookieStorage = ZMPersistentCookieStorage(forServerName: "myServer", userIdentifier: accountIdentifier)
+
         clientRegistrationStatus = ZMMockClientRegistrationStatus(managedObjectContext: self.syncMOC, cookieStorage: cookieStorage, registrationStatusDelegate: nil)
         clientUpdateStatus = ZMMockClientUpdateStatus(syncManagedObjectContext: self.syncMOC)
         sut = UserClientRequestStrategy(clientRegistrationStatus: clientRegistrationStatus, clientUpdateStatus:clientUpdateStatus, context: self.syncMOC, userKeysStore: self.spyKeyStore)

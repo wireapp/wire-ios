@@ -67,6 +67,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
 @property (nonatomic) ContextDidSaveNotificationPersistence *storedDidSaveNotifications;
 @property (nonatomic) ManagedObjectContextChangeObserver *messageReplyObserver;
 @property (nonatomic) ManagedObjectContextChangeObserver *likeMesssageObserver;
+@property (nonatomic, readonly) NSURL *sharedContainerURL;
 
 - (void)notifyThirdPartyServices;
 - (void)start;
@@ -94,8 +95,7 @@ extern NSString * const ZMAppendAVSLogNotificationName;
                            operationLoop:(ZMOperationLoop *)operationLoop
                              application:(id<ZMApplication>)application
                               appVersion:(NSString *)appVersion
-                        contextDirectory:(ManagedObjectContextDirectory *)contextDirectory
-                           storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;
+                           storeProvider:(id<LocalStoreProviderProtocol>)storeProvider;;
 
 - (void)tearDown;
 

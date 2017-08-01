@@ -83,20 +83,16 @@
     // expect
     id userAgent = [OCMockObject mockForClass:ZMUserAgent.class];
     [[[userAgent expect] classMethod] setWireAppVersion:version];
-    
-<<<<<<< HEAD
-    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:[NSUUID createUUID]];
-    
-=======
->>>>>>> feature/adopt-storage-stack
+    id<LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithUserIdentifier:NSUUID.createUUID];
+
     // when
     ZMUserSession *session = [[ZMUserSession alloc] initWithMediaManager:nil
                                                                analytics:nil
                                                         transportSession:transportSession
                                                          apnsEnvironment:nil
-                                                             application:[UIApplication sharedApplication]
+                                                             application:UIApplication.sharedApplication
                                                               appVersion:version
-                                                        contextDirectory:nil];
+                                                           storeProvider:storeProvider];
     XCTAssertNotNil(session);
     
     // then
@@ -458,7 +454,8 @@
     [[[transportSession stub] andReturn:pushChannel] pushChannel];
 
     [[transportSession stub] configurePushChannelWithConsumer:OCMOCK_ANY groupQueue:OCMOCK_ANY];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"usersessiontest.example.com"];
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"usersessiontest.example.com" userIdentifier:NSUUID.createUUID];
+
     [[[transportSession stub] andReturn:self.cookieStorage] cookieStorage];
     [[transportSession stub] setAccessTokenRenewalFailureHandler:[OCMArg checkWithBlock:^BOOL(ZMCompletionHandlerBlock obj) {
         self.authFailHandler = obj;

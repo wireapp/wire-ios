@@ -29,27 +29,14 @@ class AnalyticsTests: ZMTBaseTest {
     var analytics: MockAnalytics!
     var sharedContainerURL : URL!
     var accountID : UUID!
-    
-<<<<<<< HEAD
+
     func createSyncContext() -> NSManagedObjectContext {
-        let syncContext = NSManagedObjectContext.createSyncContextForAccount(withIdentifier: accountID, inSharedContainerAt: sharedContainerURL)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        return syncContext!
-=======
-    func createSyncMOC() -> NSManagedObjectContext {
-        let storeURL = PersistentStoreRelocator.storeURL(in: .documentDirectory)!
-        let keyStoreURL = storeURL.deletingLastPathComponent()
-
-        let semaphore = DispatchSemaphore(value: 0)
-        var context: NSManagedObjectContext!
-        StorageStack.shared.createManagedObjectContextDirectory(at: storeURL, keyStore: keyStoreURL, startedMigrationCallback: nil) {
+        var context: NSManagedObjectContext?
+        StorageStack.shared.createManagedObjectContextDirectory(forAccountWith: accountID, inContainerAt: sharedContainerURL) {
             context = $0.syncContext
-            semaphore.signal()
         }
-
-        semaphore.wait()
-        return context
->>>>>>> feature/adopt-storage-stack
+        XCTAssert(wait(withTimeout: 0.5) { context != nil })
+        return context!
     }
 
     override func setUp() {

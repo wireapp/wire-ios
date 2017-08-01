@@ -22,26 +22,32 @@ import UIKit
 private let zmLog = ZMSLog(tag: "LocalStoreProvider")
 
 @objc public protocol LocalStoreProviderProtocol: NSObjectProtocol {
-    var userIdentifier: UUID { get }
+    var userIdentifier: UUID? { get }
     var appGroupIdentifier: String { get }
-    var storeURL: URL? { get }
-    var keyStoreURL: URL? { get }
     var cachesURL: URL? { get }
     var sharedContainerDirectory: URL? { get }
     var storeExists: Bool { get }
+    var contextDirectory: ManagedObjectContextDirectory? { get }
     
     /// Should be called <b>before</b> using ZMUserSession when applications is started if needsToPrepareLocalStore returns true
     /// It will intialize persistent store and perform migration (if needed) on background thread.
     /// - Parameter completionHandler: called when local store is ready to be used (and the ZMUserSession is ready to be initialized). Called on the main thread, it is the responsability of the caller to switch to the desired thread.
-    func createStorageStack(for account: Account?, migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void)
+    func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void)
 }
 
 protocol FileManagerProtocol: class {
     func containerURL(forSecurityApplicationGroupIdentifier groupIdentifier: String) -> URL?
+    func cachesURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL
     func urls(for directory: FileManager.SearchPathDirectory, in domainMask: FileManager.SearchPathDomainMask) -> [URL]
 }
 
 extension FileManager: FileManagerProtocol {}
+
+public extension Bundle {
+    var appGroupIdentifier: String? {
+        return bundleIdentifier.map { "group." + $0 }
+    }
+}
 
 
 /// Encapsulates all storage related data and methods. LocalStoreProviderProtocol protocol
@@ -49,77 +55,56 @@ extension FileManager: FileManagerProtocol {}
 @objc public class LocalStoreProvider: NSObject {
     
     public let appGroupIdentifier: String
-    public let userIdentifier: UUID
+    public let userIdentifier: UUID?
     let bundleIdentifier: String
+    public var contextDirectory: ManagedObjectContextDirectory?
 
     let fileManager: FileManagerProtocol
-    init(bundleIdentifier: String, appGroupIdentifier: String, userIdentifier: UUID, fileManager: FileManagerProtocol) {
+    init(bundleIdentifier: String, appGroupIdentifier: String, userIdentifier: UUID?, fileManager: FileManagerProtocol) {
         self.bundleIdentifier = bundleIdentifier
         self.appGroupIdentifier = appGroupIdentifier
         self.userIdentifier = userIdentifier
         self.fileManager = fileManager
     }
     
-    public convenience init(userIdentifier: UUID) {
-        let bundle = Bundle.main
-        let bundleIdentifier = bundle.bundleIdentifier!
-        let groupIdentifier = "group." + bundleIdentifier
-        self.init(bundleIdentifier: bundleIdentifier, appGroupIdentifier: groupIdentifier, userIdentifier: userIdentifier, fileManager: FileManager.default)
+    public convenience init(userIdentifier: UUID?) {
+        self.init(
+            bundleIdentifier: Bundle.main.bundleIdentifier!,
+            appGroupIdentifier: Bundle.main.appGroupIdentifier!,
+            userIdentifier: userIdentifier,
+            fileManager: FileManager.default
+        )
     }
 }
 
 extension LocalStoreProvider: LocalStoreProviderProtocol {
     
     public var sharedContainerDirectory: URL? {
-        let directoryInContainer = fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
-        
-        guard let directory = directoryInContainer else {
-            // Seems like the shared container is not available. This could happen for series of reasons:
-            // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
-            // 2. App is running on simulator and there is no correct provisioning profile on the system
-            // 3. Bug with signing
-            //
-            // The app should allow not having a shared container in cases 1 and 2; in case 3 the app should crash
-            
-            let deploymentEnvironment = ZMDeploymentEnvironment().environmentType()
-            if TARGET_IPHONE_SIMULATOR == 0 && (deploymentEnvironment == ZMDeploymentEnvironmentType.appStore || deploymentEnvironment == ZMDeploymentEnvironmentType.internal) {
-                return nil
-            }
-            else {
-                zmLog.error(String(format: "ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = %d", deploymentEnvironment.rawValue))
-                zmLog.error("================================WARNING================================")
-                zmLog.error("Wire is going to use APPLICATION SUPPORT directory to host the database")
-                zmLog.error("================================WARNING================================")
-            }
-            return fileManager.urls(for: .documentDirectory, in: .userDomainMask).first
-        }
-        return directory
+        return FileManager.sharedContainerDirectory(for: appGroupIdentifier)
     }
     
     public var cachesURL: URL? {
-        return fileManager.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)?.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
-    }
-    
-    public var storeURL: URL? {
-        return sharedContainerDirectory?.appendingPathComponent(bundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
-    }
-    
-    public var keyStoreURL: URL? {
-        return sharedContainerDirectory
+        return sharedContainerDirectory.map {
+            fileManager.cachesURLForAccount(with: userIdentifier, in: $0)
+        }
     }
     
     public var storeExists: Bool {
         return StorageStack.shared.storeExists
     }
 
-    public func createStorageStack(for account: Account?, migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void) {
+    public func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void) {
         precondition(nil != sharedContainerDirectory)
 
         StorageStack.shared.createManagedObjectContextDirectory(
-            forAccountWith: account?.userIdentifier,
+            forAccountWith: userIdentifier,
             inContainerAt: sharedContainerDirectory!,
             startedMigrationCallback: { migration?() },
-            completionHandler: completion
+            completionHandler: { [weak self] contextDirectory in
+                guard let `self` = self else { return }
+                self.contextDirectory = contextDirectory
+                completion(self)
+            }
         )
     }
 

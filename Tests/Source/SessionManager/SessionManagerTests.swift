@@ -16,38 +16,48 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import XCTest
 import WireTesting
+@testable import WireSyncEngine
 
-class MockLocalStoreProvider: NSObject, LocalStoreProviderProtocol {
-<<<<<<< HEAD
-    var userIdentifier: UUID
-=======
 
-    var storeExists = true
-    var createStackCalled = false
+class MockStoreProviderFactory: StoreProviderFactory {
 
-    var contextDirectory: ManagedObjectContextDirectory!
+    let mockProvider: LocalStoreProviderProtocol
 
-    func createStorageStack(migration: (() -> Void)?, completion: @escaping (ManagedObjectContextDirectory) -> Void) {
-        createStackCalled = true
-        completion(contextDirectory)
+    init(provider: LocalStoreProviderProtocol) {
+        self.mockProvider = provider
+        super.init()
     }
 
->>>>>>> feature/adopt-storage-stack
+    override func provider(for account: Account?) -> LocalStoreProviderProtocol {
+        return mockProvider
+    }
+
+}
+
+class MockLocalStoreProvider: NSObject, LocalStoreProviderProtocol {
+
+    var userIdentifier: UUID?
+    var storeExists = true
+    var createStackCalled = false
+    var contextDirectory: ManagedObjectContextDirectory?
+
+    func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void) {
+        createStackCalled = true
+        completion(self)
+    }
+
     var appGroupIdentifier: String
-    var storeURL: URL?
-    var keyStoreURL: URL?
     var cachesURL: URL?
     var sharedContainerDirectory: URL?
 
     override init() {
-        userIdentifier = UUID()
+        userIdentifier = .create()
         appGroupIdentifier = "group." + Bundle.main.bundleIdentifier!
         sharedContainerDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first
-        keyStoreURL = sharedContainerDirectory
         cachesURL = sharedContainerDirectory
-        storeURL = sharedContainerDirectory?.appendingPathComponent("wire.db")
     }
 
 }
@@ -80,15 +90,26 @@ class SessionManagerTests: IntegrationTest {
         delegate = SessionManagerTestDelegate()
     }
     
-    func createManager() -> SessionManager {
-        return SessionManager(storeProvider: storeProvider,
-                              appVersion: "0.0.0",
-                              transportSession: transportSession!,
-                              mediaManager: mediaManager!,
-                              analytics: nil,
-                              delegate: delegate,
-                              application: application!,
-                              launchOptions: [:])
+    func createManager() -> SessionManager? {
+        guard let mediaManager = mediaManager, let application = application, let transportSession = transportSession else { return nil }
+
+        let unauthenticatedSessionFactory = MockUnauthenticatedSessionFactory(transportSession: transportSession as! UnauthenticatedTransportSessionProtocol)
+        let authenticatedSessionFactory = MockAuthenticatedSessionFactory(
+            apnsEnvironment: apnsEnvironment,
+            application: application,
+            mediaManager: mediaManager,
+            transportSession: transportSession
+        )
+
+        return SessionManager(
+            appVersion: "0.0.0",
+            authenticatedSessionFactory: authenticatedSessionFactory,
+            unauthenticatedSessionFactory: unauthenticatedSessionFactory,
+            storeProviderFactory: MockStoreProviderFactory(provider: storeProvider),
+            delegate: delegate,
+            application: application,
+            launchOptions: [:]
+        )
     }
     
     override func tearDown() {
@@ -111,8 +132,12 @@ class SessionManagerTests: IntegrationTest {
     
     func testThatItCreatesUserSessionAndNotifiesDelegateIfStoreIsAvailable() {
         // given
+        guard let manager = storeProvider.sharedContainerDirectory.map(AccountManager.init) else { return XCTFail() }
+        let account = Account(userName: "", userIdentifier: .create())
+        account.cookieStorage().authenticationCookieData = NSData.secureRandomData(ofLength: 16)
+        manager.addAndSelect(account)
         storeProvider.storeExists = true
-        
+
         // when
         _ = createManager()
         
