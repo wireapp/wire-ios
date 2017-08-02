@@ -154,9 +154,8 @@ extension IntegrationTest {
     private func deleteSharedContainerContent() {
         AccountManager.delete(at: sharedContainerDirectory)
 
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerDirectory, includingPropertiesForKeys: nil, options: []).forEach {
-            try? FileManager.default.removeItem(at: $0)
-        }
+        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("Library"))
+        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("otr"))
     }
     
     @objc
