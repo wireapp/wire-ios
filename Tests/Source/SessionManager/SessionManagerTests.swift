@@ -98,7 +98,6 @@ class SessionManagerTests: IntegrationTest {
         }
 
         XCTAssert(wait(withTimeout: 0.5) { completed })
-        XCTAssert(provider.storeExists)
 
         // when
         createManager()
