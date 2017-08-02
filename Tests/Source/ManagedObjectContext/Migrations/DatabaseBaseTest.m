@@ -118,18 +118,21 @@
 
 - (BOOL)createDatabaseAtSharedContainerURL:(NSURL *)sharedContainerURL accountIdentifier:(NSUUID *)accountIdentifier
 {
-    NSURL *storeURL = sharedContainerURL;
-    if (nil != accountIdentifier) {
-        storeURL = [sharedContainerURL URLByAppendingPathComponent:accountIdentifier.UUIDString isDirectory:YES];
-    }
-    storeURL = [storeURL URLByAppendingStorePath];
-    
     [StorageStack reset];
     [[StorageStack shared] setCreateStorageAsInMemory:NO];
-
-    [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:accountIdentifier inContainerAt:sharedContainerURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
-        self.contextDirectory = directory;
-    }];
+    
+    NSURL *storeURL;
+    if(accountIdentifier == nil) {
+        storeURL = [sharedContainerURL URLByAppendingStorePath];
+        [[StorageStack shared] createManagedObjectContextFromLegacyStoreInContainerAt:sharedContainerURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
+            self.contextDirectory = directory;
+        }];
+    } else {
+        storeURL = [[sharedContainerURL URLByAppendingPathComponent:accountIdentifier.UUIDString isDirectory:YES] URLByAppendingStorePath];
+        [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:accountIdentifier inContainerAt:sharedContainerURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
+            self.contextDirectory = directory;
+        }];
+    }
 
     XCTAssert([self waitWithTimeout:5 verificationBlock:^BOOL{
         return nil != self.contextDirectory;
