@@ -209,7 +209,7 @@ public class SessionManager : NSObject {
         guard let account = account else { return createUnauthenticatedSession() }
         let storeProvider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier)
 
-        if nil != account.cookieStorage().authenticationCookieData, storeProvider.storeExists {
+        if nil != account.cookieStorage().authenticationCookieData {
             storeProvider.createStorageStack(
                 migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
                 completion: { [weak self] provider in self?.createSession(for: account, with: provider, completion: completion) }
@@ -225,6 +225,8 @@ public class SessionManager : NSObject {
         }
 
         self.userSession = session
+        unauthenticatedSession?.tearDown()
+        unauthenticatedSession = nil
         delegate?.sessionManagerCreated(userSession: session)
         completion(session)
     }
@@ -279,6 +281,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
         provider.createStorageStack(migration: nil) { [weak self] provider in
             self?.createSession(for: account, with: provider) { userSession in
+
                 userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
                 userSession.syncManagedObjectContext.performGroupedBlock {
                     userSession.syncManagedObjectContext.registeredOnThisDevice = session.authenticationStatus.completedRegistration

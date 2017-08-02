@@ -42,15 +42,6 @@ public extension Bundle {
         self.sharedContainerDirectory = sharedContainerDirectory
     }
 
-    public var storeExists: Bool {
-        if StorageStack.shared.createStorageAsInMemory {
-            return StorageStack.shared.managedObjectContextDirectory != nil
-        } else {
-            let storeURL = FileManager.currentStoreURLForAccount(with: userIdentifier, in: sharedContainerDirectory)
-            return FileManager.default.fileExists(atPath: storeURL.path)
-        }
-    }
-
     public func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void) {
         StorageStack.shared.createManagedObjectContextDirectory(
             forAccountWith: userIdentifier,
