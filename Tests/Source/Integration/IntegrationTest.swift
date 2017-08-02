@@ -160,6 +160,7 @@ extension IntegrationTest {
     
     @objc
     func deleteAuthenticationCookie() {
+        ZMPersistentCookieStorage.deleteAllKeychainItems()
         mockTransportSession.cookieStorage.deleteKeychainItems()
     }
     
