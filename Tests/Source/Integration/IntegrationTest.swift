@@ -95,6 +95,7 @@ extension IntegrationTest {
     
     @objc
     func _setUp() {
+        sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         ZMPersistentCookieStorage.setDoNotPersistToKeychain(!useRealKeychain)
         StorageStack.shared.createStorageAsInMemory = useInMemoryStore
         
@@ -130,17 +131,11 @@ extension IntegrationTest {
         selfConversation = nil
         groupConversation = nil
 
-        Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory).apply(AccountManager.delete)
-        
-        let storeProvider = StoreProviderFactory().provider(for: Account(userName: "some", userIdentifier: self.currentUserIdentifier))
-        if let sharedContainerURL = storeProvider.sharedContainerDirectory, let contents = try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: []) {
-            for file in contents {
-                try? FileManager.default.removeItem(at: file)
-            }
-        }
+        deleteSharedContainerContent()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         resetInMemoryDatabases()
+        sharedContainerDirectory = nil
     }
     
     func resetInMemoryDatabases() {
@@ -154,6 +149,14 @@ extension IntegrationTest {
         sessionManager = nil
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+
+    private func deleteSharedContainerContent() {
+        AccountManager.delete(at: sharedContainerDirectory)
+
+        try? FileManager.default.contentsOfDirectory(at: sharedContainerDirectory, includingPropertiesForKeys: nil, options: []).forEach {
+            try? FileManager.default.removeItem(at: $0)
+        }
     }
     
     @objc
@@ -194,7 +197,6 @@ extension IntegrationTest {
             appVersion: "0.0.0",
             authenticatedSessionFactory: authenticatedSessionFactory,
             unauthenticatedSessionFactory: unauthenticatedSessionFactory,
-            storeProviderFactory: StoreProviderFactory(),
             delegate: self,
             application: application,
             launchOptions: [:]
