@@ -96,6 +96,7 @@ extension IntegrationTest {
     @objc
     func _setUp() {
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
+        deleteSharedContainerContent()
         ZMPersistentCookieStorage.setDoNotPersistToKeychain(!useRealKeychain)
         StorageStack.shared.createStorageAsInMemory = useInMemoryStore
         
@@ -152,11 +153,9 @@ extension IntegrationTest {
     }
 
     private func deleteSharedContainerContent() {
-        AccountManager.delete(at: sharedContainerDirectory)
-
-        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("Library"))
-        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("otr"))
-        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent(currentUserIdentifier.transportString()))
+        try? FileManager.default.contentsOfDirectory(at: sharedContainerDirectory, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+            try? FileManager.default.removeItem(at: $0)
+        }
     }
     
     @objc
