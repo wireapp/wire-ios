@@ -35,12 +35,6 @@ import UIKit
 
     private var url: URL?
 
-    public var storeExists: Bool {
-        guard let storeURL = url else { return false }
-        return FileManager.default.fileExists(atPath: storeURL.path)
-            || (managedObjectContextDirectory != nil && createStorageAsInMemory)
-    }
-
     /// Persistent store currently being initialized
     private var currentPersistentStoreInitialization: PersistentStorageInitialization? = nil
     

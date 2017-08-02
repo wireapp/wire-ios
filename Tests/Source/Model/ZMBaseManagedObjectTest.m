@@ -35,8 +35,6 @@
 
 #import "NSString+RandomString.h"
 
-//NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
-
 
 @interface ZMBaseManagedObjectTest ()
 
