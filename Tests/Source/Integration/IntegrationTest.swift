@@ -131,6 +131,13 @@ extension IntegrationTest {
         groupConversation = nil
 
         Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory).apply(AccountManager.delete)
+        
+        let storeProvider = StoreProviderFactory().provider(for: Account(userName: "some", userIdentifier: self.currentUserIdentifier))
+        if let sharedContainerURL = storeProvider.sharedContainerDirectory, let contents = try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: []) {
+            for file in contents {
+                try? FileManager.default.removeItem(at: file)
+            }
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         resetInMemoryDatabases()
