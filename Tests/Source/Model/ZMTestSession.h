@@ -62,9 +62,6 @@ extern NSString *const ZMPersistedClientIdKey;
 /// Perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
 
-/// Wait until all contexts have completed their task and tear them down
-//- (void)waitAndDeleteAllManagedObjectContexts;
-
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;
 
