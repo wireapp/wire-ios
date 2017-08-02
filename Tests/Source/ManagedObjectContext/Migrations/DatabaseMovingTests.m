@@ -310,7 +310,9 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     NSURL *oldBaseURL = [containerURL URLByAppendingStorePath];
 
     XCTAssertTrue([self createDatabaseAtSharedContainerURL:self.sharedContainerDirectoryURL accountIdentifier:nil]);
-    
+    [StorageStack reset];
+    [[StorageStack shared] setCreateStorageAsInMemory:NO];
+
     // We simulate that we already moved the main database file previously
     [self createDirectoryForStoreAtURL:newBaseURL];
     NSError *error;
@@ -330,8 +332,6 @@ static NSString * const DatabaseIdentifier = @"TestDatabase";
     
     // when
     WaitForAllGroupsToBeEmpty(0.5);
-    [StorageStack reset];
-    [[StorageStack shared] setCreateStorageAsInMemory:NO];
     
     XCTestExpectation *expection = [self expectationWithDescription:@"didCreateDirectory"];
     [StorageStack.shared createManagedObjectContextDirectoryForAccountWith:self.accountID

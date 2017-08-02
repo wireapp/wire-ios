@@ -49,7 +49,32 @@ import UIKit
     /// This method should not be called again before any previous invocation completion handler has been called.
     /// - parameter completionHandler: this callback is invoked on the main queue. It is responsibility
     ///     of the caller to switch back to the same queue that this method was invoked on.
+    @objc public func createManagedObjectContextFromLegacyStore(
+        inContainerAt containerUrl: URL,
+        startedMigrationCallback: (() -> Void)? = nil,
+        completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
+        )
+    {
+        directory(forAccountWith: nil, inContainerAt: containerUrl, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
+    }
+    
+    /// Creates a managed object context directory in an asynchronous fashion.
+    /// This method should be invoked from the main queue, and the callback will be dispatched on the main queue.
+    /// This method should not be called again before any previous invocation completion handler has been called.
+    /// - parameter completionHandler: this callback is invoked on the main queue. It is responsibility
+    ///     of the caller to switch back to the same queue that this method was invoked on.
+    /// - parameter accountIdentifier: user identifier that the store should be created for
     @objc public func createManagedObjectContextDirectory(
+        forAccountWith accountIdentifier: UUID,
+        inContainerAt containerUrl: URL,
+        startedMigrationCallback: (() -> Void)? = nil,
+        completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
+        )
+    {
+        directory(forAccountWith: accountIdentifier, inContainerAt: containerUrl, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
+    }
+    
+    internal func directory(
         forAccountWith accountIdentifier: UUID?,
         inContainerAt containerUrl: URL,
         startedMigrationCallback: (() -> Void)? = nil,
