@@ -156,6 +156,7 @@ extension IntegrationTest {
 
         try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("Library"))
         try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent("otr"))
+        try? FileManager.default.removeItem(at: sharedContainerDirectory.appendingPathComponent(currentUserIdentifier.transportString()))
     }
     
     @objc
@@ -227,6 +228,7 @@ extension IntegrationTest {
             let selfUser = session.insertSelfUser(withName: "The Self User")
             selfUser.email = IntegrationTest.SelfUserEmail
             selfUser.password = IntegrationTest.SelfUserPassword
+            selfUser.identifier = self.currentUserIdentifier.transportString()
             selfUser.phone = ""
             selfUser.accentID = 2
             session.addProfilePicture(to: selfUser)
