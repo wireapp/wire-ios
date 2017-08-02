@@ -79,26 +79,30 @@ import UIKit
             fatal("Trying to create a new store before a previous one is done creating")
         }
 
-        self.url = FileManager.currentStoreURLForAccount(with: accountIdentifier, in: containerUrl)
+        let storeURL = FileManager.currentStoreURLForAccount(with: accountIdentifier, in: containerUrl)
+
 
         // destroy previous stack if any
         if self.createStorageAsInMemory {
             // we need to reuse the exitisting contexts if we already have them,
             // otherwise when testing logout / login we loose all data.
-            if let directory = managedObjectContextDirectory {
+            if let directory = managedObjectContextDirectory, storeURL == url {
                 completionHandler(directory)
             } else {
+                url = storeURL
                 let directory = InMemoryStoreInitialization.createManagedObjectContextDirectory(forAccountWith: accountIdentifier, inContainerAt: containerUrl)
                 self.managedObjectContextDirectory = directory
                 completionHandler(directory)
             }
         } else {
+            url = storeURL
+
             self.currentPersistentStoreInitialization = PersistentStorageInitialization.createManagedObjectContextDirectory(
                 forAccountWith: accountIdentifier,
                 inContainerAt: containerUrl,
-                startedMigrationCallback: startedMigrationCallback)
-            { [weak self] directory in
+                startedMigrationCallback: startedMigrationCallback) { [weak self] directory in
                 DispatchQueue.main.async {
+
                     self?.currentPersistentStoreInitialization = nil
                     self?.managedObjectContextDirectory = directory
                     completionHandler(directory)
