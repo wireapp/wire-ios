@@ -95,17 +95,28 @@ extension LocalStoreProvider: LocalStoreProviderProtocol {
 
     public func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void) {
         precondition(nil != sharedContainerDirectory)
-
-        StorageStack.shared.createManagedObjectContextDirectory(
-            forAccountWith: userIdentifier,
-            inContainerAt: sharedContainerDirectory!,
-            startedMigrationCallback: { migration?() },
-            completionHandler: { [weak self] contextDirectory in
-                guard let `self` = self else { return }
-                self.contextDirectory = contextDirectory
-                completion(self)
-            }
-        )
+        
+        if let userIdentifier = self.userIdentifier {
+            StorageStack.shared.createManagedObjectContextDirectory(
+                forAccountWith: userIdentifier,
+                inContainerAt: sharedContainerDirectory!,
+                startedMigrationCallback: { migration?() },
+                completionHandler: { [weak self] contextDirectory in
+                    guard let `self` = self else { return }
+                    self.contextDirectory = contextDirectory
+                    completion(self)
+                }
+            )
+        } else {
+            StorageStack.shared.createManagedObjectContextFromLegacyStore(
+                inContainerAt: sharedContainerDirectory!,
+                startedMigrationCallback: { migration?() },
+                completionHandler: { [weak self] contextDirectory in
+                    guard let `self` = self else { return }
+                    self.contextDirectory = contextDirectory
+                    completion(self)
+                }
+            )
+        }
     }
-
 }
