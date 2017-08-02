@@ -59,7 +59,6 @@ extern NSTimeInterval DefaultPendingValidationLoginAttemptInterval;
     id authenticationObserverToken = [ZMUserSessionAuthenticationNotification addObserver:authenticationObserver];
     
     // expect
-    [[authenticationObserver expect] authenticationDidSucceed];
     [[authenticationObserver expect] authenticationDidSucceed]; // client registration
     
     // when

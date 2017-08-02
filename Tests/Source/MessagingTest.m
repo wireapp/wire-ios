@@ -210,9 +210,20 @@ static ZMReachability *sharedReachabilityMock = nil;
 
     [self resetState];
     [MessagingTest deleteAllFilesInCache];
+    [AccountManager deleteAtRoot:self.sharedContainerURL];
     [self removeCachesInSharedContainer];
+
+    for (NSString *path in [NSFileManager.defaultManager contentsOfDirectoryAtPath:self.sharedContainerURL.path error:nil]) {
+        NSError *error = nil;
+        [NSFileManager.defaultManager removeItemAtPath:[self.sharedContainerURL.path stringByAppendingPathComponent:path] error:&error];
+        if (error) {
+            ZMLogError(@"Error cleaning up %@ in %@: %@", path, self.self.sharedContainerURL, error);
+        }
+    }
+
     _application = nil;
     self.groupIdentifier = nil;
+    self.sharedContainerURL = nil;
 
     [super tearDown];
     Require([self waitForAllGroupsToBeEmptyWithTimeout:5]);
@@ -233,8 +244,7 @@ static ZMReachability *sharedReachabilityMock = nil;
 - (void)removeCachesInSharedContainer
 {
     NSFileManager *fm = NSFileManager.defaultManager;
-    NSURL *sharedContainerURL = [fm containerURLForSecurityApplicationGroupIdentifier:self.groupIdentifier];
-    NSURL *cachesURL = [sharedContainerURL URLByAppendingPathComponent:@"Library/Caches"];
+    NSURL *cachesURL = [self.sharedContainerURL URLByAppendingPathComponent:@"Library/Caches"];
     [fm removeItemAtURL:cachesURL error:nil];
 }
 
