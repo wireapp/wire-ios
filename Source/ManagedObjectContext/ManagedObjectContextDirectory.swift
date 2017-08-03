@@ -32,21 +32,30 @@ import Foundation
     }
     
     /// User interface context. It can be used only from the main queue
-    public let uiContext: NSManagedObjectContext
+    private(set) public var uiContext: NSManagedObjectContext!
     
     /// Local storage and network synchronization context. It can be used only from its private queue.
     /// This context track changes to its objects and synchronizes them from/to the backend.
-    public let syncContext: NSManagedObjectContext
+    private(set) public var syncContext: NSManagedObjectContext!
     
     /// Search context. It can be used only from its private queue.
     /// This context is used to perform searches, not to slow down or insert temporary results in the
     /// sync context.
-    public let searchContext: NSManagedObjectContext
+    private(set) public var searchContext: NSManagedObjectContext!
+    
+    func tearDown() {
+        // this will set all contextes to nil
+        // making it crash if used after tearDown
+        self.uiContext?.tearDown()
+        self.syncContext?.tearDown()
+        self.searchContext?.tearDown()
+        self.uiContext = nil
+        self.syncContext = nil
+        self.searchContext = nil
+    }
     
     deinit {
-        self.uiContext.tearDown()
-        self.syncContext.tearDown()
-        self.searchContext.tearDown()
+        self.tearDown()
     }
 }
 

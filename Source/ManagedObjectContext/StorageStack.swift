@@ -112,8 +112,14 @@ import UIKit
     }
     
     /// Resets the stack. After calling this, the stack is ready to be reinitialized.
+    /// Using a ManagedObjectContextDirectory created by a stack after the stack has been
+    /// reset will cause a crash
     public static func reset() {
         StorageStack.shared = StorageStack()
+    }
+    
+    deinit {
+        self.managedObjectContextDirectory?.tearDown()
     }
     
 }
