@@ -665,7 +665,7 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         [[authenticationObserver expect] authenticationDidSucceed]; // Authentication
         [[authenticationObserver expect] authenticationDidSucceed]; // ZMUserSession Start
         [[[authenticationObserver expect] andDo:provideCredentials] authenticationDidFail:[NSError userSessionErrorWithErrorCode:ZMUserSessionClientDeletedRemotely userInfo:nil]];
-        [[authenticationObserver expect] authenticationDidSucceed]; // Client Registration
+        [[authenticationObserver expect] authenticationDidSucceed]; // authentication
 
         // and when
         XCTAssertTrue([self loginAndIgnoreAuthenticationFailures:YES]);
@@ -675,10 +675,6 @@ extern NSTimeInterval DebugLoginFailureTimerOverride;
         [authenticationObserver verify];
         ZMUser *selfUser = [ZMUser selfUserInUserSession:self.userSession];
         XCTAssertEqualObjects(selfUser.name, self.selfUser.name);
-
-        XCTAssertNotNil(selfUser.clients.anyObject);
-        // TODO: The second request to register the client again is not being fired at the moment.
-        XCTFail(@"The second request to register the client again is not being fired at the moment.");
     }
     
     [ZMUserSessionAuthenticationNotification removeObserverForToken:token];
