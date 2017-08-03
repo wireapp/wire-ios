@@ -225,8 +225,18 @@ public class SessionManager : NSObject {
         }
 
         self.userSession = session
+        let authenticationStatus = unauthenticatedSession?.authenticationStatus
+
         unauthenticatedSession?.tearDown()
         unauthenticatedSession = nil
+
+        session.syncManagedObjectContext.performGroupedBlock {
+            session.setEmailCredentials(authenticationStatus?.emailCredentials())
+            if let registered = authenticationStatus?.completedRegistration {
+                session.syncManagedObjectContext.registeredOnThisDevice = registered
+            }
+        }
+
         delegate?.sessionManagerCreated(userSession: session)
         completion(session)
     }
@@ -282,10 +292,6 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         provider.createStorageStack(migration: nil) { [weak self] provider in
             self?.createSession(for: account, with: provider) { userSession in
 
-                userSession.setEmailCredentials(session.authenticationStatus.emailCredentials())
-                userSession.syncManagedObjectContext.performGroupedBlock {
-                    userSession.syncManagedObjectContext.registeredOnThisDevice = session.authenticationStatus.completedRegistration
-                }
 
                 if let profileImageData = session.authenticationStatus.profileImageData {
                     self?.updateProfileImage(imageData: profileImageData)
