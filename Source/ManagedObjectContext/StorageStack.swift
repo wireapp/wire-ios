@@ -45,11 +45,12 @@ import UIKit
     ///     of the caller to switch back to the same queue that this method was invoked on.
     @objc public func createManagedObjectContextFromLegacyStore(
         inContainerAt containerUrl: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         startedMigrationCallback: (() -> Void)? = nil,
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
     {
-        directory(forAccountWith: nil, inContainerAt: containerUrl, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
+        directory(forAccountWith: nil, inContainerAt: containerUrl, dispatchGroup: dispatchGroup, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
     }
     
     /// Creates a managed object context directory in an asynchronous fashion.
@@ -61,16 +62,18 @@ import UIKit
     @objc public func createManagedObjectContextDirectory(
         forAccountWith accountIdentifier: UUID,
         inContainerAt containerUrl: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         startedMigrationCallback: (() -> Void)? = nil,
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
     {
-        directory(forAccountWith: accountIdentifier, inContainerAt: containerUrl, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
+        directory(forAccountWith: accountIdentifier, inContainerAt: containerUrl, dispatchGroup: dispatchGroup, startedMigrationCallback: startedMigrationCallback, completionHandler: completionHandler)
     }
     
     internal func directory(
         forAccountWith accountIdentifier: UUID?,
         inContainerAt containerUrl: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         startedMigrationCallback: (() -> Void)? = nil,
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
@@ -81,7 +84,6 @@ import UIKit
 
         let storeURL = FileManager.currentStoreURLForAccount(with: accountIdentifier, in: containerUrl)
 
-
         // destroy previous stack if any
         if self.createStorageAsInMemory {
             // we need to reuse the exitisting contexts if we already have them,
@@ -90,7 +92,7 @@ import UIKit
                 completionHandler(directory)
             } else {
                 url = storeURL
-                let directory = InMemoryStoreInitialization.createManagedObjectContextDirectory(forAccountWith: accountIdentifier, inContainerAt: containerUrl)
+                let directory = InMemoryStoreInitialization.createManagedObjectContextDirectory(forAccountWith: accountIdentifier, inContainerAt: containerUrl, dispatchGroup: dispatchGroup)
                 self.managedObjectContextDirectory = directory
                 completionHandler(directory)
             }
@@ -121,15 +123,19 @@ import UIKit
 /// Creates an in memory stack CoreData stack
 class InMemoryStoreInitialization {
 
-    @objc public static func createManagedObjectContextDirectory(forAccountWith accountIdentifier: UUID?,
-                                                           inContainerAt containerUrl: URL) -> ManagedObjectContextDirectory
+    @objc public static func createManagedObjectContextDirectory(
+        forAccountWith accountIdentifier: UUID?,
+        inContainerAt containerUrl: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil
+        ) -> ManagedObjectContextDirectory
     {
         let model = NSManagedObjectModel.loadModel()
         let psc = NSPersistentStoreCoordinator(inMemoryWithModel: model)
         let managedObjectContextDirectory = ManagedObjectContextDirectory(
             persistentStoreCoordinator: psc,
             forAccountWith: accountIdentifier,
-            inContainerAt: containerUrl
+            inContainerAt: containerUrl,
+            dispatchGroup: dispatchGroup
         )
         return managedObjectContextDirectory
     }
