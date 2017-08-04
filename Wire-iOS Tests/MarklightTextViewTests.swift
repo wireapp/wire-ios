@@ -1,9 +1,19 @@
 //
-//  MarklightTextView.swift
-//  Wire-iOS
+// Wire
+// Copyright (C) 2017 Wire Swiss GmbH
 //
-//  Created by John Nguyen on 22.07.17.
-//  Copyright © 2017 Zeta Project Germany GmbH. All rights reserved.
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
 import XCTest
@@ -226,11 +236,66 @@ class MarklightTextViewTests: XCTestCase {
         sut.text = text
         
         // when
-        sut.stripEmptyListItems()
+        let result = sut.stripEmptyMarkdown()
         
         // then
         let expectation = ["1. example", "2. example", "", "- example", ""].joined(separator: "\n")
-        XCTAssertEqual(sut.text, expectation)
+        XCTAssertEqual(result, expectation)
         
+    }
+    
+    func testThatItStripsEmptyMarkdownInMessageContainingOnlyEmptyMarkdown() {
+        // given
+        let text = [
+            "#    ", "##   ", "### ",                   // empty headers
+            "****", "**   **", "____", "__      __",    // empty bold
+            " **", " *    *", " __ ", " _   _",         // empty italics
+            "``", "`    `",                             // empty code
+            ].joined(separator: "\n")
+        
+        // insert so markdown is applied
+        sut.text = ""
+        sut.insertText(text)
+        
+        // when
+        let result = sut.stripEmptyMarkdown().trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        
+        // then
+        XCTAssertEqual(result, "")
+    }
+    
+    func testThatItStripsEmptyMarkdownInMessageContainingNonEmptyMarkdown() {
+        // given
+        let text = [
+            "#    ",
+            "# header",
+            "**bold** _  _ `code`"
+            ].joined(separator: "\n")
+        
+        // insert so markdown is applied
+        sut.text = ""
+        sut.insertText(text)
+        
+        // when
+        let result = sut.stripEmptyMarkdown().trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+        let expectation = ["# header", "**bold**  `code`"].joined(separator: "\n")
+        
+        // then
+        XCTAssertEqual(result, expectation)
+    }
+    
+    func testThatItStripsNestedEmptyMarkdown() {
+        // given
+        let text = "#  **  _    _ **"
+        
+        // insert so markdown is applied
+        sut.text = ""
+        sut.insertText(text)
+        
+        // when
+        let result = sut.stripEmptyMarkdown()
+        
+        // then
+        XCTAssertEqual(result, "")
     }
 }
