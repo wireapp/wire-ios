@@ -120,6 +120,8 @@ public class SessionManager : NSObject {
 
     fileprivate let sharedContainerURL: URL
 
+    private let dispatchGroup: ZMSDispatchGroup?
+
     public convenience init(
         appVersion: String,
         mediaManager: AVSMediaManager,
@@ -154,13 +156,15 @@ public class SessionManager : NSObject {
         unauthenticatedSessionFactory: UnauthenticatedSessionFactory,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        launchOptions: LaunchOptions
+        launchOptions: LaunchOptions,
+        dispatchGroup: ZMSDispatchGroup? = nil
         ) {
 
         SessionManager.enableLogsByEnvironmentVariable()
         self.appVersion = appVersion
         self.application = application
         self.delegate = delegate
+        self.dispatchGroup = dispatchGroup
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -182,6 +186,7 @@ public class SessionManager : NSObject {
             // In order to do so we open the old database and get the userId.
             LocalStoreProvider.openOldDatabaseRetrievingSelfUser(
                 in: sharedContainerURL,
+                dispatchGroup: dispatchGroup,
                 migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
                 completion: { [weak self] user in
                     guard let `self` = self else { return }
@@ -207,7 +212,7 @@ public class SessionManager : NSObject {
 
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
         guard let account = account else { return createUnauthenticatedSession() }
-        let storeProvider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier)
+        let storeProvider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier, dispatchGroup: dispatchGroup)
 
         if nil != account.cookieStorage().authenticationCookieData {
             storeProvider.createStorageStack(
