@@ -117,10 +117,8 @@ public class SessionManager : NSObject {
     fileprivate let authenticatedSessionFactory: AuthenticatedSessionFactory
     fileprivate let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
     fileprivate let accountManager: AccountManager
-
     fileprivate let sharedContainerURL: URL
-
-    private let dispatchGroup: ZMSDispatchGroup?
+    fileprivate let dispatchGroup: ZMSDispatchGroup?
 
     public convenience init(
         appVersion: String,
@@ -289,7 +287,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     func session(session: UnauthenticatedSession, createdAccount account: Account) {
         accountManager.addAndSelect(account)
 
-        let provider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier)
+        let provider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier, dispatchGroup: dispatchGroup)
 
         provider.createStorageStack(migration: nil) { [weak self] provider in
             self?.createSession(for: account, with: provider) { userSession in
