@@ -56,6 +56,11 @@ public class UnauthenticatedSession : NSObject {
         super.init()
         transportSession.didReceiveUserInfo =  UserInfoAvailableClosure(queue: .main) { [weak self] info in
             guard let `self` = self else { return }
+            // Check if we should create the UserInfo and forward it.
+            // This closure will get called when receiving a cookie and userIdentifier as response to /register and /login.
+            //  We only want to forward it as response to hitting /register when we are registering by phone.
+            guard self.authenticationStatus.currentPhase != .registerWithEmail else { return }
+
             let account = Account(userName: "", userIdentifier: info.identifier)
             let cookieStorage = account.cookieStorage()
             cookieStorage.authenticationCookieData = info.cookieData
