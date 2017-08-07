@@ -33,13 +33,24 @@ extension NSPersistentStoreCoordinator {
         let storeURL = FileManager.currentStoreURLForAccount(with: accountIdentifier, in: containerUrl)
         NSPersistentStoreCoordinator.createDirectoryForStore(at: storeURL)
         
-        let storeRelocator = PersistentStoreRelocator(sharedContainerURL: containerUrl, newStoreURL: storeURL)
-        try! storeRelocator.moveStoreIfNecessary()
-
-        if NSPersistentStoreCoordinator.shouldMigrateStoreToNewModelVersion(at: storeURL, model: model) {
+        var migrationStarted = false
+        func notifyMigrationStarted() -> () {
             DispatchQueue.main.async {
-                startedMigrationCallback?()
+                if !migrationStarted {
+                    migrationStarted = true
+                    startedMigrationCallback?()
+                }
             }
+        }
+        
+        let storeRelocator = PersistentStoreRelocator(sharedContainerURL: containerUrl, newStoreURL: storeURL)
+        try! storeRelocator.moveStoreIfNecessary(startedMigrationCallback: notifyMigrationStarted)
+        self.addPersistentStore(at: storeURL, model: model, startedMigrationCallback: notifyMigrationStarted)
+    }
+    
+    private func addPersistentStore(at storeURL: URL, model: NSManagedObjectModel, startedMigrationCallback: ()->()) {
+        if NSPersistentStoreCoordinator.shouldMigrateStoreToNewModelVersion(at: storeURL, model: model) {
+            startedMigrationCallback()
             self.migrateAndAddPersistentStore(url: storeURL)
         } else {
             self.addPersistentStoreWithNoMigration(at: storeURL)
@@ -131,7 +142,7 @@ extension NSPersistentStoreCoordinator {
     static func shouldMigrateStoreToNewModelVersion(at url: URL, model: NSManagedObjectModel) -> Bool {
         
         guard FileManager.default.fileExists(atPath: url.path) else {
-            // Store doesn't exist yet so need to migrate it.
+            // Store doesn't exist yet so no need to migrate it.
             return false
         }
         
@@ -180,8 +191,8 @@ extension NSPersistentStoreCoordinator {
         } catch let error {
             let oldModelVersion = metadata.managedObjectModelVersionIdentifier ?? "n/a"
             let currentModelVersion = self.managedObjectModel.firstVersionIdentifier
-            fatal("Unable to perform migration and create SQLite Core Data store." +
-                "Old model version: \(oldModelVersion), current version \(currentModelVersion)" +
+            fatal("Unable to perform migration and create SQLite Core Data store. " +
+                "Old model version: \(oldModelVersion), current version \(currentModelVersion) " +
                 "with error: \(error.localizedDescription)"
             )
         }

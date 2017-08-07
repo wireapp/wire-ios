@@ -19,14 +19,6 @@
 import Foundation
 
 public extension FileManager {
-    
-    fileprivate static func previousStoreURLs(sharedContainerURL: URL) -> [URL]  {
-        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
-            FileManager.default.urls(for: $0, in: .userDomainMask).first!
-        }
-        locations.append(sharedContainerURL)
-        return locations.map{$0.appendingStorePath()}
-    }
 
     /// Returns the URL for the current persistentStore
     public static func currentStoreURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
@@ -70,7 +62,9 @@ extension URL {
     
     let storeLocation : URL
     let previousStoreLocation : URL?
-    static private let storeFileExtensions = ["", "-wal", "-shm"]
+    
+    /// Extension of store files
+    static let storeFileExtensions = ["", "-wal", "-shm"]
 
     public init(sharedContainerURL: URL, newStoreURL: URL) {
         self.storeLocation = newStoreURL
@@ -78,13 +72,22 @@ extension URL {
                                                                        newLocation: newStoreURL)
     }
     
+    static func possiblePreviousStoreLocations(sharedContainerURL: URL) -> [URL] {
+        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
+            FileManager.default.urls(for: $0, in: .userDomainMask).first!
+        }
+        locations.append(sharedContainerURL)
+        return locations.map{$0.appendingStorePath()}
+    }
+    
     static func oldLocationForStore(sharedContainerURL: URL, newLocation: URL) -> URL? {
-        let previousStoreLocations = FileManager.previousStoreURLs(sharedContainerURL: sharedContainerURL)
+        let previousStoreLocations = self.possiblePreviousStoreLocations(sharedContainerURL: sharedContainerURL)
         return previousStoreLocations.first(where: { $0 != newLocation && storeExists(at: $0)})
     }
     
-    func moveStoreIfNecessary() throws {
+    func moveStoreIfNecessary(startedMigrationCallback: @escaping ()->()) throws {
         if let previousStoreLocation = previousStoreLocation {
+            startedMigrationCallback()
             try moveStore(from: previousStoreLocation, to: storeLocation)
         }
     }
