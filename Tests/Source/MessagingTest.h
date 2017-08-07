@@ -40,6 +40,7 @@
 
 @class MockUser;
 @class ZMClientMessage;
+@class ManagedObjectContextDirectory;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -58,6 +59,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) NSManagedObjectContext *testMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *alternativeTestMOC;
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
+@property (nonatomic, readonly) ManagedObjectContextDirectory *contextDirectory;
 @property (nonatomic, readonly) ApplicationMock *application;
 
 @property (nonatomic, readonly) MockTransportSession *mockTransportSession;
