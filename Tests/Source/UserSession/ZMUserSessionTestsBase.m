@@ -22,6 +22,31 @@
 #import "WireSyncEngine_iOS_Tests-Swift.h"
 @import WireSyncEngine;
 
+@interface MockLocalStoreProvider : NSObject <LocalStoreProviderProtocol>
+
+@property (nonatomic, copy) NSUUID * _Nonnull userIdentifier;
+@property (nonatomic, copy) NSURL * _Nonnull sharedContainerDirectory;
+@property (nonatomic, strong) ManagedObjectContextDirectory * _Nullable contextDirectory;
+
+- (nonnull instancetype)initWithSharedContainerDirectory:(NSURL * _Nonnull)sharedContainerDirectory userIdentifier:(NSUUID * _Nonnull)userIdentifier contextDirectory:(ManagedObjectContextDirectory * _Nonnull)contextDirectory;
+
+@end
+
+@implementation MockLocalStoreProvider
+
+- (instancetype)initWithSharedContainerDirectory:(NSURL *)sharedContainerDirectory userIdentifier:(NSUUID *)userIdentifier contextDirectory:(ManagedObjectContextDirectory *)contextDirectory
+{
+    self = [super init];
+    if (self) {
+        self.userIdentifier = userIdentifier;
+        self.sharedContainerDirectory = sharedContainerDirectory;
+        self.contextDirectory = contextDirectory;
+    }
+    return self;
+}
+
+@end
+
 @implementation ThirdPartyServices
 
 - (void)userSessionIsReadyToUploadServicesData:(ZMUserSession *)userSession;
@@ -93,19 +118,16 @@
     [[[self.apnsEnvironment stub] andReturn:@"APNS"] transportTypeForTokenType:ZMAPNSTypeNormal];
     [[[self.apnsEnvironment stub] andReturn:@"APNS_VOIP"] transportTypeForTokenType:ZMAPNSTypeVoIP];
     
-    id <LocalStoreProviderProtocol> storeProvider = [[LocalStoreProvider alloc] initWithSharedContainerDirectory:self.sharedContainerURL
-                                                                                                  userIdentifier: NSUUID.createUUID dispatchGroup: self.dispatchGroup];
+    self.storeProvider = [[MockLocalStoreProvider alloc] initWithSharedContainerDirectory:self.sharedContainerURL userIdentifier:self.userIdentifier contextDirectory:self.contextDirectory];
     
     self.sut = [[ZMUserSession alloc] initWithTransportSession:self.transportSession
-                                          userInterfaceContext:self.uiMOC
-                                      syncManagedObjectContext:self.syncMOC
                                                   mediaManager:self.mediaManager
                                                apnsEnvironment:self.apnsEnvironment
                                                  operationLoop:self.operationLoop
                                                    application:self.application
                                                     appVersion:@"00000"
-                                                 storeProvider:storeProvider];
-    
+                                                 storeProvider:self.storeProvider];
+        
     self.sut.thirdPartyServicesDelegate = self.thirdPartyServices;
     
     WaitForAllGroupsToBeEmpty(0.5);
