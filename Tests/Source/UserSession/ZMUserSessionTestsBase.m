@@ -130,7 +130,7 @@
     [self.uiMOC.userInfo removeAllObjects];
     
     [super cleanUpAndVerify];
-    NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.accountIdentifier in:self.sut.sharedContainerURL];
+    NSURL *cachesURL = [[NSFileManager defaultManager] cachesURLForAccountWith:self.userIdentifier in:self.sut.sharedContainerURL];
     NSArray *items = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:cachesURL includingPropertiesForKeys:nil options:0 error:nil];
     for (NSURL *item in items) {
         [[NSFileManager defaultManager] removeItemAtURL:item error:nil];

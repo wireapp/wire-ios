@@ -64,7 +64,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, readonly) ZMUserSession *mockUserSession;
 
 @property (nonatomic, readonly) NSString *groupIdentifier;
-@property (nonatomic, readonly) NSUUID *accountIdentifier;
+@property (nonatomic, readonly) NSUUID *userIdentifier;
 @property (nonatomic, readonly) NSURL *sharedContainerURL;
 
 /// reset ui and sync contexts
