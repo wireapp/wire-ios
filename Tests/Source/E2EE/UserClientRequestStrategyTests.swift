@@ -211,7 +211,7 @@ extension UserClientRequestStrategyTests {
         let note = receivedAuthenticationNotifications.first
         AssertOptionalNotNil(note, "Authentication should succeed. Observers should be notified") { note in
             XCTAssertNil(note.error)
-            XCTAssertEqual(note.type, ZMUserSessionAuthenticationNotificationType.authenticationNotificationAuthenticationDidSuceeded)
+            XCTAssertEqual(note.type, ZMUserSessionAuthenticationNotificationType.authenticationNotificationDidRegisterClient)
         }
     }
     
