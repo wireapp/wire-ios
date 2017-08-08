@@ -237,9 +237,9 @@ public class SessionManager : NSObject {
                 session.syncManagedObjectContext.registeredOnThisDevice = registered
             }
 
-            session.managedObjectContext.performGroupedBlock {
+            session.managedObjectContext.performGroupedBlock { [weak self] in
                 completion(session)
-                self.delegate?.sessionManagerCreated(userSession: session)
+                self?.delegate?.sessionManagerCreated(userSession: session)
             }
         }
     }
