@@ -161,7 +161,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [[StorageStack shared] setCreateStorageAsInMemory:self.shouldUseInMemoryStore];
     }
     self.contextDirectory = nil;
-    [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:self.accountIdentifier inContainerAt:self.containerURL startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
+    [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:self.accountIdentifier inContainerAt:self.containerURL dispatchGroup:self.dispatchGroup startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
         self.contextDirectory = directory;
     }];
     

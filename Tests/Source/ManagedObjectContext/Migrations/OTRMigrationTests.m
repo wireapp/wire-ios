@@ -1168,6 +1168,7 @@ static NSString * const DataBaseIdentifier = @"TestDatabase";
 
     [StorageStack.shared createManagedObjectContextDirectoryForAccountWith:accountID
                                                              inContainerAt:containerURL
+                                                             dispatchGroup:self.dispatchGroup
                                                   startedMigrationCallback:nil
                                                          completionHandler:^(ManagedObjectContextDirectory * _Nonnull directory) {
                                                              syncContext = directory.syncContext;
