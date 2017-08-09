@@ -46,6 +46,11 @@ class MockLocalStoreProvider: NSObject, LocalStoreProviderProtocol {
 }
 
 class SessionManagerTestDelegate: SessionManagerDelegate {
+    
+    func sessionManagerDidBlacklistCurrentVersion() {
+        
+    }
+
     var unauthenticatedSession : UnauthenticatedSession?
     func sessionManagerCreated(unauthenticatedSession : UnauthenticatedSession) {
         self.unauthenticatedSession = unauthenticatedSession

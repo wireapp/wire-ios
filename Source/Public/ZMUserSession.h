@@ -85,13 +85,6 @@ extern NSString * const ZMTransportRequestLoopNotificationName;
 @property (atomic, readonly) ZMNetworkState networkState;
 @property (atomic) BOOL isNotificationContentHidden;
 
-/**
- Starts session and checks if client version is not in black list.
- Version should be a build number. blackListedBlock is retained and called only if passed version is black listed. The block is 
- called only once, even if the file is downloaded multiple times.
- */
-- (void)startAndCheckClientVersionWithCheckInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
-
 - (void)start;
 
 /// Performs a save in the context
