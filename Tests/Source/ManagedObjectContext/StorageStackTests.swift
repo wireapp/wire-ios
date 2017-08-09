@@ -34,7 +34,7 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItCreatesSubfolderForStorageWithUUID() {
         
         // GIVEN
-        let userID = UUID()
+        let userID = UUID.create()
         let accountFolder = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
         
         // WHEN
@@ -60,7 +60,7 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItCanReopenAPreviouslyExistingDatabase() {
     
         // GIVEN
-        let uuid = UUID()
+        let uuid = UUID.create()
         let firstStackExpectation = self.expectation(description: "Callback invoked")
         let testValue = "12345678"
         let testKey = "aassddffgg"
@@ -109,11 +109,59 @@ class StorageStackTests: DatabaseBaseTest {
         }
         XCTAssertEqual(readValue, testValue)
     }
+
+    func testThatItCanReopenAPreviouslyExistingDatabase_InMemory() {
+
+        // GIVEN
+        StorageStack.shared.createStorageAsInMemory = true
+        let uuid = UUID.create()
+        let testValue = "12345678"
+        let testKey = "aassddffgg"
+        var contextDirectory: ManagedObjectContextDirectory! = nil
+        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: uuid,
+            applicationContainer: applicationContainer,
+            dispatchGroup: dispatchGroup,
+            completionHandler: { contextDirectory = $0 }
+        )
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // create an entry to check that it is reopening the same DB
+        contextDirectory.uiContext.setPersistentStoreMetadata(testValue, key: testKey)
+        let conversationTemp = ZMConversation.insertNewObject(in: contextDirectory.uiContext)
+        contextDirectory.uiContext.forceSaveOrRollback()
+        let objectID = conversationTemp.objectID
+        contextDirectory = nil
+
+        // WHEN
+        StorageStack.shared.createManagedObjectContextDirectory(
+            accountIdentifier: uuid,
+            applicationContainer: applicationContainer,
+            dispatchGroup: dispatchGroup,
+            completionHandler: { contextDirectory = $0 }
+        )
+
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // THEN
+        contextDirectory.uiContext.setPersistentStoreMetadata(testValue, key: testKey)
+        XCTAssertEqual(contextDirectory.uiContext.persistentStoreCoordinator!.persistentStores.count, 1)
+
+        guard let readValue = contextDirectory.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
+            return XCTFail("Can't read previous value from the context")
+
+        }
+        guard let _ = try? contextDirectory.uiContext.existingObject(with: objectID) as? ZMConversation else {
+            return XCTFail("Can't find previous conversation in the context")
+        }
+        XCTAssertEqual(readValue, testValue)
+        StorageStack.shared.createStorageAsInMemory = false
+    }
     
     func testThatItPerformsMigrationCallbackWhenDifferentVersion() {
         
         // GIVEN
-        let uuid = UUID()
+        let uuid = UUID.create()
         let completionExpectation = self.expectation(description: "Callback invoked")
         let migrationExpectation = self.expectation(description: "Migration started")
         let storeFile = StorageStack.accountFolder(accountIdentifier: uuid, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
@@ -151,7 +199,7 @@ class StorageStackTests: DatabaseBaseTest {
     
     func testThatItPerformsMigrationWhenStoreIsInOldLocation() {
             
-        let userID = UUID()
+        let userID = UUID.create()
         let testValue = "12345678"
         let testKey = "aassddffgg"
         
@@ -206,7 +254,7 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItDoesNotInvokeTheMigrationCallbackWhenThereIsNoMigration() {
         
         // GIVEN
-        let uuid = UUID()
+        let uuid = UUID.create()
         let completionExpectation = self.expectation(description: "Callback invoked")
         
         // WHEN
@@ -275,7 +323,7 @@ extension StorageStackTests {
         // GIVEN
         self.previousDatabaseLocations.forEach { oldPath in
             
-            let userID = UUID()
+            let userID = UUID.create()
             let completionExpectation = self.expectation(description: "Callback invoked")
             
             self.createLegacyStore(filePath: oldPath.appendingStoreFile()) { contextDirectory in

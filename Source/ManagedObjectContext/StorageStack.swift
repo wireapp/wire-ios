@@ -24,7 +24,7 @@ import UIKit
 @objc public class StorageStack: NSObject {
     
     /// In-memory stores. These are mainly used for testing
-    private var inMemoryStores: [URL: ManagedObjectContextDirectory] = [:]
+    private var inMemoryStores: [String: ManagedObjectContextDirectory] = [:]
     
     /// Singleton instance
     public private(set) static var shared = StorageStack()
@@ -93,7 +93,7 @@ import UIKit
         if self.createStorageAsInMemory {
             // we need to reuse the exitisting contexts if we already have them,
             // otherwise when testing logout / login we loose all data.
-            if let managedObjectContextDirectory = self.inMemoryStores[accountDirectory] {
+            if let managedObjectContextDirectory = self.inMemoryStores[accountDirectory.path] {
                 completionHandler(managedObjectContextDirectory)
             } else {
                 let managedObjectContextDirectory = InMemoryStoreInitialization.createManagedObjectContextDirectory(
@@ -101,7 +101,7 @@ import UIKit
                     dispatchGroup: dispatchGroup,
                     applicationContainer: applicationContainer
                 )
-                self.inMemoryStores[accountDirectory] = managedObjectContextDirectory
+                self.inMemoryStores[accountDirectory.path] = managedObjectContextDirectory
                 completionHandler(managedObjectContextDirectory)
             }
         } else {
