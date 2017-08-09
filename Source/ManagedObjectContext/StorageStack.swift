@@ -49,7 +49,7 @@ import UIKit
         completionHandler: @escaping (UUID?) -> Void
         )
     {
-        guard let oldLocation = PersistentStoreRelocator.exisingLegacyStore(applicationContainer: applicationContainer) else {
+        guard let oldLocation = MainPersistentStoreRelocator.exisingLegacyStore(applicationContainer: applicationContainer) else {
             completionHandler(nil)
             return
         }
