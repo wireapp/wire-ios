@@ -29,7 +29,6 @@ FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
 
 #import <WireSystem/ZMSAppleSystemLoggerWrapper.h>
 #import <WireSystem/ZMSAsserts.h>
-#import <WireSystem/ZMSActivity.h>
 #import <WireSystem/ZMSDefines.h>
 #import <WireSystem/ZMSLogging.h>
 #import <WireSystem/ZMSGroupQueue.h>

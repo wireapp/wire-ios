@@ -21,9 +21,6 @@
 
 #import <AssertMacros.h>
 #import "ZMSDefines.h"
-#import "ZMSActivity.h"
-
-
 
 /**
  
@@ -112,7 +109,6 @@
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
 			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, nil); \
-			ZMTraceErrorMessage(#assertion); \
 			action; \
 		} \
 	} while (0)
@@ -130,8 +126,6 @@
 	do { \
 		if ( __builtin_expect(!(assertion), 0) ) { \
 			ZMDebugAssertMessage(@"Verify", #assertion, __FILE__, __LINE__, frmt, ##__VA_ARGS__); \
-			ZMTraceErrorMessage(#assertion); \
-			ZMTraceErrorMessage(frmt, ##__VA_ARGS__); \
 		} \
 	} while (0)
 
@@ -186,15 +180,12 @@
 
 # define ZMCrash(reason, file, line) \
 do { \
-	ZMTraceFaultMessage(reason); \
     ZMAssertionDump(reason, file, line, nil); \
 	__builtin_trap(); \
 } while(0)
 
 # define ZMCrashFormat(reason, file, line, format, ...) \
 do { \
-	ZMTraceFaultMessage(reason); \
-	ZMTraceFaultMessage(format, ##__VA_ARGS__); \
     ZMAssertionDump(reason, file, line, format, ##__VA_ARGS__); \
 	__builtin_trap(); \
 } while(0)
