@@ -19,6 +19,7 @@
 
 @import WireDataModel;
 @import WireTesting;
+@import WireDataModel;
 
 #import "ZMTestSession.h"
 
@@ -54,7 +55,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         _dispatchGroup = dispatchGroup;
         self.accountIdentifier = [NSUUID createUUID];
         self.containerURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
-        self.storeURL = [NSFileManager currentStoreURLForAccountWith:self.accountIdentifier in:self.containerURL];
+        self.storeURL = [[StorageStack accountFolderWithAccountIdentifier:self.accountIdentifier applicationContainer:self.containerURL] URLAppendingPersistentStoreLocation];
     }
     
     return self;
@@ -107,6 +108,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self wipeCaches];
     ZMConversationDefaultLastReadTimestampSaveDelay = self.originalConversationLastReadTimestampTimerValue;
     [self waitAndDeleteAllManagedObjectContexts];
+    self.contextDirectory = nil;
+    [StorageStack reset];
     NSArray *files = [[NSFileManager defaultManager] contentsOfDirectoryAtURL:self.containerURL includingPropertiesForKeys:nil options:0 error:nil];
     for (NSURL *file in files){
         [[NSFileManager defaultManager] removeItemAtURL:file error:nil];
@@ -161,7 +164,10 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
         [[StorageStack shared] setCreateStorageAsInMemory:self.shouldUseInMemoryStore];
     }
     self.contextDirectory = nil;
-    [[StorageStack shared] createManagedObjectContextDirectoryForAccountWith:self.accountIdentifier inContainerAt:self.containerURL dispatchGroup:self.dispatchGroup startedMigrationCallback:nil completionHandler:^(ManagedObjectContextDirectory * directory) {
+    [[StorageStack shared] createManagedObjectContextDirectoryForAccountIdentifier:self.accountIdentifier
+                                                              applicationContainer:self.containerURL
+                                                          startedMigrationCallback:nil
+                                                                 completionHandler:^(ManagedObjectContextDirectory * directory) {
         self.contextDirectory = directory;
     }];
     
@@ -175,7 +181,8 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     [self.uiMOC addGroup:self.dispatchGroup];
     self.uiMOC.userInfo[@"TestName"] = self.testName;
     [self performPretendingUiMocIsSyncMoc:^{
-        [self.uiMOC setupUserKeyStoreInSharedContainer:self.containerURL withAccountIdentifier:self.accountIdentifier];
+        NSURL *url = [StorageStack accountFolderWithAccountIdentifier:self.accountIdentifier applicationContainer:self.containerURL];
+        [self.uiMOC setupUserKeyStoreInAccountDirectory:url applicationContainer:self.containerURL];
     }];
     
     [self.syncMOC performGroupedBlockAndWait:^{

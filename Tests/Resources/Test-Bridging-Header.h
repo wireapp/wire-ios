@@ -30,6 +30,5 @@
 #import "ZMBaseManagedObjectTest.h"
 #import "MessagingTest+EventFactory.h"
 #import "NSString+RandomString.h"
-#import "DatabaseBaseTest.h"
 #import "ZMConversationTests.h"
 #import "ZMUserTests.h"

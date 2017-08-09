@@ -35,11 +35,12 @@ class OtrBaseTest: XCTestCase {
     }
     
     static func otrDirectoryURL(accountIdentifier: UUID) -> URL {
-        return FileManager.keyStoreURLForAccount(with: accountIdentifier, in: sharedContainerURL, createParentIfNeeded: true)
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: self.sharedContainerURL)
+        return FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
     }
     
     static var legacyOtrDirectory : URL {
-        return FileManager.keyStoreURLForAccount(with: nil, in: sharedContainerURL, createParentIfNeeded: true)
+        return FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL, createParentIfNeeded: true)
     }
     
 }

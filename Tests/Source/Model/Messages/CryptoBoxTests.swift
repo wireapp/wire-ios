@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -26,11 +26,11 @@ class CryptoBoxTest: OtrBaseTest {
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
         let accountId = UUID()
-        _ = UserClientKeysStore.setupContext(in: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountId),
-                                             sharedContainer: OtrBaseTest.sharedContainerURL)
+        let accountFolder = StorageStack.accountFolder(accountIdentifier: accountId, applicationContainer: OtrBaseTest.sharedContainerURL)
+        let keyStore = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
         
         // then
-        guard let values = try? OtrBaseTest.otrDirectoryURL(accountIdentifier: accountId).resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else {return XCTFail()}
+        guard let values = try? keyStore.cryptoboxDirectory.resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else {return XCTFail()}
         
         XCTAssertTrue(values.isExcludedFromBackup!)
     }

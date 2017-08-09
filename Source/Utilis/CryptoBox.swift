@@ -24,14 +24,14 @@ extension NSManagedObjectContext {
     
     fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
     
-    @objc(setupUserKeyStoreInSharedContainer:withAccountIdentifier:)
-    public func setupUserKeyStore(in sharedContainerDirectory: URL, for accountIdentifier: UUID?) -> Void
+    @objc(setupUserKeyStoreInAccountDirectory:applicationContainer:)
+    public func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) -> Void
     {
         if !self.zm_isSyncContext {
             fatal("Can't initiliazie crypto box on non-sync context")
         }
 
-        let newKeyStore = UserClientKeysStore(in: sharedContainerDirectory, accountIdentifier: accountIdentifier)
+        let newKeyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
         self.userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
     }
     
@@ -58,16 +58,12 @@ public extension FileManager {
     public static let keyStoreFolderPrefix = "otr"
     
     /// Returns the URL for the keyStore
-    public static func keyStoreURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL, createParentIfNeeded: Bool) -> URL {
-        var url = sharedContainerURL
-        if let accountIdentifier = accountIdentifier {
-            url.appendPathComponent(accountIdentifier.uuidString, isDirectory:true)
-        }
-        let fm = FileManager.default
+    public static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
         if createParentIfNeeded {
-            fm.createAndProtectDirectory(at: url)
+            FileManager.default.createAndProtectDirectory(at: accountDirectory)
         }
-        return url.appendingPathComponent(FileManager.keyStoreFolderPrefix)
+        let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
+        return keyStoreDirectory
     }
     
 }
@@ -77,30 +73,38 @@ public enum UserClientKeyStoreError: Error {
     case preKeysCountNeedsToBePositive
 }
 
+/// A storage for cryptographic keys material
 @objc(UserClientKeysStore)
 open class UserClientKeysStore: NSObject {
     
-    open static let MaxPreKeyID : UInt16 = UInt16.max-1;
-    open var encryptionContext : EncryptionContext
-    fileprivate var internalLastPreKey: String?
-    public private(set) var cryptoboxDirectoryURL : URL
-    public private(set) var sharedContainerURL: URL
+    /// Maximum possible ID for prekey
+    public static let MaxPreKeyID : UInt16 = UInt16.max-1;
     
-    public init(in sharedContainerURL: URL, accountIdentifier: UUID?) {
-        cryptoboxDirectoryURL = FileManager.keyStoreURLForAccount(with: accountIdentifier, in: sharedContainerURL, createParentIfNeeded: true)
-                                                  
-        self.sharedContainerURL = sharedContainerURL
-        encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectoryURL,
-                                                             sharedContainer: sharedContainerURL)!
+    public var encryptionContext : EncryptionContext
+    
+    /// Fallback prekeys (when no other prekey is available, this will always work)
+    fileprivate var internalLastPreKey: String?
+    
+    /// Folder where the material is stored (managed by Cryptobox)
+    public private(set) var cryptoboxDirectory: URL
+    
+    public private(set) var applicationContainer: URL
+    
+    /// Loads new key store (if not present) or load an existing one
+    public init(accountDirectory: URL, applicationContainer: URL) {
+        self.cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+        self.applicationContainer = applicationContainer
+        self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory,
+                                                             applicationContainer: self.applicationContainer)!
     }
     
-    static func setupContext(in directory: URL, sharedContainer: URL) -> EncryptionContext? {
+    private static func setupContext(in directory: URL, applicationContainer: URL) -> EncryptionContext? {
         let encryptionContext : EncryptionContext
         let fm = FileManager.default
         
         /// migrate old directories if needed
         var didMigrate = false
-        legacyDirectories(sharedContainerURL: sharedContainer).forEach {
+        self.legacyDirectories(applicationContainer: applicationContainer).forEach {
             guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
             if !didMigrate {
                 do {
@@ -128,14 +132,13 @@ open class UserClientKeysStore: NSObject {
     }
     
     open func deleteAndCreateNewBox() {
-        let fm = FileManager.default
-        _ = try? fm.removeItem(at: cryptoboxDirectoryURL)
-        encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectoryURL, sharedContainer: sharedContainerURL)!
-        internalLastPreKey = nil
+        _ = try? FileManager.default.removeItem(at: cryptoboxDirectory)
+        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory, applicationContainer: applicationContainer)!
+        self.internalLastPreKey = nil
     }
     
     /// legacy directories returned with the most currently used first and the oldest last
-    static open func legacyDirectories(sharedContainerURL: URL) -> [URL] {
+    static open func legacyDirectories(applicationContainer: URL) -> [URL] {
         var legacyOtrDirectory1 : URL {
             let url = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
             return url.appendingPathComponent(FileManager.keyStoreFolderPrefix)
@@ -147,7 +150,7 @@ open class UserClientKeysStore: NSObject {
         }
         
         var legacyOtrDirectory3 : URL {
-            return sharedContainerURL.appendingPathComponent(FileManager.keyStoreFolderPrefix)
+            return applicationContainer.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         }
         
         // sorted by most recent first, oldest last
@@ -155,8 +158,8 @@ open class UserClientKeysStore: NSObject {
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    open static func needToMigrateIdentity(sharedContainerURL: URL) -> Bool {
-        let oldKeyStore = self.legacyDirectories(sharedContainerURL: sharedContainerURL).first{
+    open static func needToMigrateIdentity(applicationContainer: URL) -> Bool {
+        let oldKeyStore = self.legacyDirectories(applicationContainer: applicationContainer).first{
             FileManager.default.fileExists(atPath: $0.path)
         }
         return oldKeyStore != nil
