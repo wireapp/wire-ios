@@ -21,13 +21,15 @@ import Foundation
 /// List of context
 @objc public class ManagedObjectContextDirectory: NSObject {
     
-    init(persistentStoreCoordinator: NSPersistentStoreCoordinator, forAccountWith accountIdentifier: UUID?,
-         inContainerAt containerUrl: URL, dispatchGroup: ZMSDispatchGroup? = nil) {
+    init(persistentStoreCoordinator: NSPersistentStoreCoordinator,
+         accountDirectory: URL,
+         applicationContainer: URL,
+         dispatchGroup: ZMSDispatchGroup? = nil) {
         self.uiContext = ManagedObjectContextDirectory.createUIManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator, dispatchGroup: dispatchGroup)
         self.syncContext = ManagedObjectContextDirectory.createSyncManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator,
-                                                                                        forAccountWith: accountIdentifier,
-                                                                                        inContainerAt: containerUrl,
-        dispatchGroup: dispatchGroup)
+                                                                                        accountDirectory: accountDirectory,
+                                                                                        dispatchGroup: dispatchGroup,
+                                                                                        applicationContainer: applicationContainer)
         self.searchContext = ManagedObjectContextDirectory.createSearchManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator, dispatchGroup: dispatchGroup)
         super.init()
     }
@@ -78,17 +80,16 @@ extension ManagedObjectContextDirectory {
     
     fileprivate static func createSyncManagedObjectContext(
         persistentStoreCoordinator: NSPersistentStoreCoordinator,
-        forAccountWith accountIdentifier: UUID?,
-        inContainerAt containerUrl: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil
-        ) -> NSManagedObjectContext {
+        accountDirectory: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        applicationContainer: URL) -> NSManagedObjectContext {
         
         let moc = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         moc.markAsSyncContext()
         moc.performAndWait {
             moc.configure(with: persistentStoreCoordinator)
             moc.setupLocalCachedSessionAndSelfUser()
-            moc.setupUserKeyStore(in: containerUrl, for: accountIdentifier)
+            moc.setupUserKeyStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
             moc.undoManager = nil
             moc.mergePolicy = ZMSyncMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
             dispatchGroup.apply(moc.add)

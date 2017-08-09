@@ -75,9 +75,12 @@ public extension FileManager {
     
     /// Creates a new directory if needed, sets the file protection to `completeUntilFirstUserAuthentication` and excludes the URL from backups
     public func createAndProtectDirectory(at directoryURL: URL) {
+        
         if !fileExists(atPath: directoryURL.path) {
             do {
-                try createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: nil)
+                let permission = 0o700
+                let attributes = [FileAttributeKey.posixPermissions.rawValue: permission] as [String: Any]
+                try createDirectory(at: directoryURL, withIntermediateDirectories: true, attributes: attributes)
             }
             catch let error {
                 fatal("Failed to create directory: \(directoryURL), error: \(error)")

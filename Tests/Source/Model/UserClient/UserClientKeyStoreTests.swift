@@ -26,24 +26,27 @@ class UserClientKeysStoreTests: OtrBaseTest {
     
     var sut: UserClientKeysStore!
     var accountID : UUID!
+    var accountFolder: URL!
     
     override func setUp() {
         super.setUp()
         self.cleanOTRFolder()
-        accountID = UUID()
-        self.sut = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
+        self.accountID = UUID()
+        self.accountFolder = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
+        self.sut = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
     }
     
     override func tearDown() {
-        sut = nil
+        self.sut = nil
         self.cleanOTRFolder()
-        accountID = nil
+        self.accountID = nil
+        self.accountFolder = nil
         super.tearDown()
     }
     
     func cleanOTRFolder() {
         let fm = FileManager.default
-        var paths = UserClientKeysStore.legacyDirectories(sharedContainerURL: OtrBaseTest.sharedContainerURL).map{$0.path}
+        var paths = UserClientKeysStore.legacyDirectories(applicationContainer: OtrBaseTest.sharedContainerURL).map{$0.path}
         if let accountID = accountID {
             paths.append(OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).path)
         }
@@ -52,7 +55,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     
     func testThatTheOTRFolderHasBackupDisabled() {
         // when
-        guard let values = try? self.sut.cryptoboxDirectoryURL.resourceValues(forKeys: Set(arrayLiteral: URLResourceKey.isExcludedFromBackupKey)) else {return XCTFail()}
+        guard let values = try? self.sut.cryptoboxDirectory.resourceValues(forKeys: Set(arrayLiteral: URLResourceKey.isExcludedFromBackupKey)) else {return XCTFail()}
 
         // then
         XCTAssertTrue(values.isExcludedFromBackup!)
@@ -135,13 +138,13 @@ class UserClientKeysStoreTests: OtrBaseTest {
         try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
         
         // when
-        let _ = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
+        let _ = UserClientKeysStore(accountDirectory: self.accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
         
         // then
         let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
         let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
-        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(sharedContainerURL: OtrBaseTest.sharedContainerURL))
+        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(applicationContainer: OtrBaseTest.sharedContainerURL))
     }
     
     func testThatItMovesTheOTRFolderToTheGivenURL() {
@@ -153,13 +156,14 @@ class UserClientKeysStoreTests: OtrBaseTest {
         try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.otrDirectoryURL(accountIdentifier:accountID).appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
         
         // when
-        let _ = UserClientKeysStore(in: OtrBaseTest.sharedContainerURL, accountIdentifier: accountID)
+        let accountFolder = StorageStack.accountFolder(accountIdentifier: self.accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
+        let _ = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
         
         // then
         let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
         let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
-        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(sharedContainerURL: OtrBaseTest.sharedContainerURL))
+        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(applicationContainer: OtrBaseTest.sharedContainerURL))
 
     }
 }

@@ -22,30 +22,31 @@ extension NSPersistentStoreCoordinator {
     
     /// Creates a filesystem-based persistent store at the given url with the given model
     convenience init(
-        forAccountWith accountIdentifier: UUID?,
-        inContainerAt containerUrl: URL,
+        storeFile: URL,
+        applicationContainer: URL,
+        migrateIfNeeded: Bool,
         model: NSManagedObjectModel,
-        startedMigrationCallback: (() -> Void)?
-        )
+        startedMigrationCallback: (() -> Void)?)
     {
         self.init(managedObjectModel: model)
         
-        let storeURL = FileManager.currentStoreURLForAccount(with: accountIdentifier, in: containerUrl)
-        NSPersistentStoreCoordinator.createDirectoryForStore(at: storeURL)
-        
         var migrationStarted = false
         func notifyMigrationStarted() -> () {
-            DispatchQueue.main.async {
-                if !migrationStarted {
-                    migrationStarted = true
-                    startedMigrationCallback?()
-                }
+            if !migrationStarted {
+                migrationStarted = true
+                startedMigrationCallback?()
             }
         }
         
-        let storeRelocator = PersistentStoreRelocator(sharedContainerURL: containerUrl, newStoreURL: storeURL)
-        try! storeRelocator.moveStoreIfNecessary(startedMigrationCallback: notifyMigrationStarted)
-        self.addPersistentStore(at: storeURL, model: model, startedMigrationCallback: notifyMigrationStarted)
+        if migrateIfNeeded {
+            PersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
+                                                                applicationContainer: applicationContainer,
+                                                                startedMigrationCallback: startedMigrationCallback)
+        }
+        
+        let containingFolder = storeFile.deletingLastPathComponent()
+        FileManager.default.createAndProtectDirectory(at: containingFolder)
+        self.addPersistentStore(at: storeFile, model: model, startedMigrationCallback: notifyMigrationStarted)
     }
     
     private func addPersistentStore(at storeURL: URL, model: NSManagedObjectModel, startedMigrationCallback: ()->()) {
@@ -113,30 +114,6 @@ extension NSPersistentStoreCoordinator {
 
 extension NSPersistentStoreCoordinator {
     
-    static func createDirectoryForStore(at url: URL) {
-        
-        var directory = url.deletingLastPathComponent()
-        if !FileManager.default.fileExists(atPath: directory.path) {
-            let permission = 0o700
-            let attributes = [FileAttributeKey.posixPermissions.rawValue: permission] as [String: Any]
-            do {
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: attributes)
-            } catch {
-                fatal("Failed to create directory: \(error)")
-            }
-        }
-        
-        // Make sure this is not backed up and not accessible until first authentication
-        do {
-            var values = URLResourceValues()
-            values.isExcludedFromBackup = true
-            try directory.setResourceValues(values)
-            try FileManager.default.setAttributes([FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication], ofItemAtPath: directory.path)
-        } catch {
-            fatal("Can not exclude resource \(url) from backup: \(error)")
-        }
-    }
-    
     /// Check if the store should be migrated (as opposed to discarded) based on model versions
     @objc(shouldMigrateStoreToNewModelVersionAtURL:withModel:)
     static func shouldMigrateStoreToNewModelVersion(at url: URL, model: NSManagedObjectModel) -> Bool {
@@ -171,7 +148,9 @@ extension NSPersistentStoreCoordinator {
     
     /// Retrieves the metadata for the store
     fileprivate static func metadataForStore(at url: URL) -> [String: Any] {
-        guard let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url) else {
+        guard
+            FileManager.default.fileExists(atPath: url.path),
+            let metadata = try? NSPersistentStoreCoordinator.metadataForPersistentStore(ofType: NSSQLiteStoreType, at: url) else {
             return [:]
         }
         return metadata

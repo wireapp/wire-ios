@@ -18,89 +18,67 @@
 
 import Foundation
 
-public extension FileManager {
-
-    /// Returns the URL for the current persistentStore
-    public static func currentStoreURLForAccount(with accountIdentifier: UUID?, in sharedContainerURL: URL) -> URL {
-        var url = sharedContainerURL
-        if let accountIdentifier = accountIdentifier {
-            url.appendPathComponent(accountIdentifier.uuidString, isDirectory:true)
-        }
-        return url.appendingStorePath()
-    }
-}
-
-
-extension NSURL {
-    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/store.wiredatabase
-    @objc(URLByAppendingStorePath)
-    public func appendingStorePath() -> NSURL {
-        return (self as URL).appendingStorePath() as NSURL
-    }
-}
-
-
 extension URL {
-    /// Appends the path to the persistentStore in the form baseURL/{bundleId}/store.wiredatabase
-    public func appendingStorePath() -> URL {
-        let bundleId = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier
-        require(nil != bundleId, "Bundle identifier not found")
-        
-        return appendingPathComponent(bundleId!, isDirectory: true).appendingPathComponent("store.wiredatabase", isDirectory: false)
-    }
-    
-    fileprivate func appendingSuffixToLastPathComponent(suffix: String) -> URL {
+
+    /// Appends a suffix to the last path (e.g. from `/foo/bar` to `/foo/bar_1`)
+    func appendingSuffixToLastPathComponent(suffix: String) -> URL {
         let modifiedComponent = lastPathComponent + suffix
         return deletingLastPathComponent().appendingPathComponent(modifiedComponent)
     }
+    
+    /// Appends the name of the store to the path
+    func appendingStoreFile() -> URL {
+        return self.appendingPathComponent("store.wiredatabase")
+    }
 }
 
-
-@objc public class PersistentStoreRelocator : NSObject {
+/// Relocates a store from a folder to another
+public struct PersistentStoreRelocator {
     
-    private let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
+    private init() {}
     
-    let storeLocation : URL
-    let previousStoreLocation : URL?
+    private static let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
     
     /// Extension of store files
-    static let storeFileExtensions = ["", "-wal", "-shm"]
-
-    public init(sharedContainerURL: URL, newStoreURL: URL) {
-        self.storeLocation = newStoreURL
-        self.previousStoreLocation = type(of:self).oldLocationForStore(sharedContainerURL: sharedContainerURL,
-                                                                       newLocation: newStoreURL)
-    }
+    public static let storeFileExtensions = ["", "-wal", "-shm"]
     
-    static func possiblePreviousStoreLocations(sharedContainerURL: URL) -> [URL] {
-        var locations = [.cachesDirectory, .applicationSupportDirectory].flatMap{
+    /// Returns the list of possible locations for legacy stores
+    static func possiblePreviousStoreFiles(applicationContainer: URL) -> [URL] {
+        var locations = [.cachesDirectory, .applicationSupportDirectory].map{
             FileManager.default.urls(for: $0, in: .userDomainMask).first!
         }
-        locations.append(sharedContainerURL)
-        return locations.map{$0.appendingStorePath()}
+        locations.append(applicationContainer)
+        return locations.map{ $0.appendingStoreFile() }
     }
     
-    static func oldLocationForStore(sharedContainerURL: URL, newLocation: URL) -> URL? {
-        let previousStoreLocations = self.possiblePreviousStoreLocations(sharedContainerURL: sharedContainerURL)
-        return previousStoreLocations.first(where: { $0 != newLocation && storeExists(at: $0)})
+    /// Return the first existing legacy store, if any
+    static func exisingLegacyStore(applicationContainer: URL) -> URL? {
+        let previousStoreLocations = self.possiblePreviousStoreFiles(applicationContainer: applicationContainer)
+        return previousStoreLocations.first(where: { storeExists(at: $0)})
     }
     
-    func moveStoreIfNecessary(startedMigrationCallback: @escaping ()->()) throws {
-        if let previousStoreLocation = previousStoreLocation {
-            startedMigrationCallback()
-            try moveStore(from: previousStoreLocation, to: storeLocation)
+    /// Relocates a legacy store to the new location, if necessary
+    public static func moveLegacyStoreIfNecessary(
+        storeFile: URL,
+        applicationContainer: URL,
+        startedMigrationCallback: (()->())?)
+    {
+        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
+            startedMigrationCallback?()
+            self.moveStore(from: previousStoreLocation, to: storeFile)
         }
     }
     
-    func moveStore(from: URL, to: URL) throws {
-        guard type(of:self).storeExists(at: from) else {
+    private static func moveStore(from: URL, to: URL) {
+        guard self.storeExists(at: from) else {
             zmLog.debug("Attempt to move store from \(from.path), which doesn't exist")
             return
         }
         
         let fileManager = FileManager.default
+        fileManager.createAndProtectDirectory(at: to.deletingLastPathComponent())
         
-        try type(of:self).storeFileExtensions.forEach { storeFileExtension in
+        self.storeFileExtensions.forEach { storeFileExtension in
             let destination = to.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             let source = from.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             
@@ -108,29 +86,32 @@ extension URL {
                 return
             }
             
-            try fileManager.moveItem(at: source, to: destination)
+            try! fileManager.moveItem(at: source, to: destination)
         }
         
-        try moveExternalBinaryStoreFiles(from: from, to: to)
+        moveExternalBinaryStoreFiles(from: from, to: to)
     }
     
-    private func moveExternalBinaryStoreFiles(from: URL, to: URL) throws {
+    private static func moveExternalBinaryStoreFiles(from: URL, to: URL) {
         let fromStoreDirectory = from.deletingLastPathComponent()
-        
-        var isDirectory : ObjCBool = false
-        if !FileManager.default.fileExists(atPath: fromStoreDirectory.path, isDirectory: &isDirectory) && !isDirectory.boolValue {
-            return
-        }
         
         let fromStoreName = from.deletingPathExtension().lastPathComponent
         let fromSupportFile = ".\(fromStoreName)_SUPPORT"
         let source = fromStoreDirectory.appendingPathComponent(fromSupportFile)
+
+        var isDirectory : ObjCBool = false
+        if !FileManager.default.fileExists(atPath: source.path, isDirectory: &isDirectory) || !isDirectory.boolValue {
+            return
+        }
+
+        let toDirectory = to.deletingLastPathComponent()
+        FileManager.default.createAndProtectDirectory(at: toDirectory)
         
         let destinationStoreName = from.deletingPathExtension().lastPathComponent
         let destinationSupportFile = ".\(destinationStoreName)_SUPPORT"
         let destination = to.deletingLastPathComponent().appendingPathComponent(destinationSupportFile)
         
-        try FileManager.default.moveItem(at: source, to: destination)
+        try! FileManager.default.moveItem(at: source, to: destination)
     }
     
     static func storeExists(at url: URL) -> Bool {
