@@ -23,7 +23,7 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
 
 open class AbstractRequestStrategy : NSObject, RequestStrategy {
     
-    weak var applicationStatus : ApplicationStatus?
+    weak public var applicationStatus : ApplicationStatus?
     
     public let managedObjectContext : NSManagedObjectContext
     public var configuration : ZMStrategyConfigurationOption = [.allowsRequestsDuringEventProcessing, .allowsRequestsDuringNotificationStreamFetch]
