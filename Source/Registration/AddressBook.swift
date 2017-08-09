@@ -19,7 +19,6 @@
 import Foundation
 import Contacts
 import libPhoneNumberiOS
-import AddressBook
 
 
 /// Wraps the system address book to return `ZMAddressBookContact` when iterating, filtering out those
@@ -167,11 +166,7 @@ class AddressBook {
             return nil
         }
         
-        if #available(iOS 9.0, *) {
-            return AddressBookIOS9()
-        } else {
-            return AddressBookIOS8()
-        }
+        return ContactAddressBook()
     }
     
     /// Uses the passed in closure, or the standard method if the closure is nil, to
@@ -180,11 +175,7 @@ class AddressBook {
         if let closure = checkClosure {
             return closure()
         }
-        if #available(iOS 9.0, *) {
-            return CNContactStore.authorizationStatus(for: .contacts) == .authorized
-        } else {
-            return ABAddressBookGetAuthorizationStatus() == .authorized
-        }
+        return CNContactStore.authorizationStatus(for: .contacts) == .authorized
     }
 }
 
