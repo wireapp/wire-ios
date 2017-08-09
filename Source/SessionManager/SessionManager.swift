@@ -99,6 +99,7 @@ public protocol SessionManagerDelegate : class {
     func sessionManagerCreated(unauthenticatedSession : UnauthenticatedSession)
     func sessionManagerCreated(userSession : ZMUserSession)
     func sessionManagerWillStartMigratingLocalStore()
+    func sessionManagerDidBlacklistCurrentVersion()
 }
 
 @objc
@@ -107,12 +108,14 @@ public class SessionManager : NSObject {
     public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
 
     public let appVersion: String
+    var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate? = nil
 
     let application: ZMApplication
     var userSession: ZMUserSession?
     var unauthenticatedSession: UnauthenticatedSession?
     var authenticationToken: ZMAuthenticationObserverToken?
+    var blacklistVerificator : ZMBlacklistVerificator?
     
     fileprivate let authenticatedSessionFactory: AuthenticatedSessionFactory
     fileprivate let unauthenticatedSessionFactory: UnauthenticatedSessionFactory
@@ -126,7 +129,8 @@ public class SessionManager : NSObject {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        launchOptions: LaunchOptions
+        launchOptions: LaunchOptions,
+        blacklistDownloadInterval : TimeInterval
         ) {
 
         let unauthenticatedSessionFactory = UnauthenticatedSessionFactory()
@@ -146,6 +150,20 @@ public class SessionManager : NSObject {
             application: application,
             launchOptions: launchOptions
         )
+        self.blacklistVerificator = ZMBlacklistVerificator(checkInterval: blacklistDownloadInterval,
+                                                           version: appVersion,
+                                                           working: nil,
+                                                           application: application,
+                                                           blacklistCallback:
+            { [weak self] (blacklisted) in
+                guard let `self` = self, !self.isAppVersionBlacklisted else { return }
+                
+                if blacklisted {
+                    self.isAppVersionBlacklisted = true
+                    self.delegate?.sessionManagerDidBlacklistCurrentVersion()
+                }
+        })
+        
     }
 
     public init(
@@ -253,6 +271,11 @@ public class SessionManager : NSObject {
     }
 
     deinit {
+        if let authenticationToken = authenticationToken {
+            ZMUserSessionAuthenticationNotification.removeObserver(for: authenticationToken)
+        }
+        
+        blacklistVerificator?.teardown()
         userSession?.tearDown()
         unauthenticatedSession?.tearDown()
     }

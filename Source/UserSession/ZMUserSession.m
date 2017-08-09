@@ -66,7 +66,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMBlacklistVerificator *blackList;
 @property (nonatomic) ZMAPNSEnvironment *apnsEnvironment;
 
-@property (nonatomic) BOOL isVersionBlacklisted;
 @property (nonatomic) ZMOnDemandFlowManager *onDemandFlowManager;
 
 @property (nonatomic) ZMPushRegistrant *pushRegistrant;
@@ -89,9 +88,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 
 @interface ZMUserSession(PushChannel)
 - (void)pushChannelDidChange:(NSNotification *)note;
-@end
-
-@interface ZMUserSession (AlertView) <UIAlertViewDelegate>
 @end
 
 
@@ -440,23 +436,6 @@ ZM_EMPTY_ASSERTING_INIT()
     NOT_USED(delegate);
 }
 
-- (void)startAndCheckClientVersionWithCheckInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
-{
-    [self start];
-    ZM_WEAK(self);
-    self.blackList = [[ZMBlacklistVerificator alloc] initWithCheckInterval:interval
-                                                                   version:self.appVersion
-                                                              workingGroup:self.syncManagedObjectContext.dispatchGroup
-                                                               application:self.application
-                                                         blacklistCallback:^(BOOL isBlackListed) {
-        ZM_STRONG(self);
-        if (!self.isVersionBlacklisted && isBlackListed && blackListed) {
-            blackListed();
-            self.isVersionBlacklisted = YES;
-        }
-    }];
-}
-
 - (void)start;
 {
     [self refreshTokensIfNeeded];
@@ -764,17 +743,6 @@ static NSString * const IsOfflineKey = @"IsOfflineKey";
 - (BOOL)isOffline;
 {
     return [self.userInfo[IsOfflineKey] boolValue];
-}
-
-@end
-
-
-
-@implementation ZMUserSession (AlertView)
-
-- (void)alertView:(UIAlertView * __unused)alertView clickedButtonAtIndex:(NSInteger __unused)buttonIndex
-{
-    [self openAppstore];
 }
 
 @end
