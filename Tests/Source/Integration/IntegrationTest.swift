@@ -414,6 +414,10 @@ extension IntegrationTest {
 
 extension IntegrationTest : SessionManagerDelegate {
     
+    public func sessionManagerDidBlacklistCurrentVersion() {
+        
+    }
+    
     public func sessionManagerCreated(userSession: ZMUserSession) {
         self.userSession = userSession
         
