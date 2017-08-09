@@ -32,16 +32,7 @@ extension URL {
     }
 }
 
-/// Relocates a store from a folder to another
-public struct PersistentStoreRelocator {
-    
-    private init() {}
-    
-    private static let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
-    
-    /// Extension of store files
-    public static let storeFileExtensions = ["", "-wal", "-shm"]
-    
+public struct MainPersistentStoreRelocator {
     /// Returns the list of possible locations for legacy stores
     static func possiblePreviousStoreFiles(applicationContainer: URL) -> [URL] {
         var locations = [.cachesDirectory, .applicationSupportDirectory].map{
@@ -54,7 +45,7 @@ public struct PersistentStoreRelocator {
     /// Return the first existing legacy store, if any
     static func exisingLegacyStore(applicationContainer: URL) -> URL? {
         let previousStoreLocations = self.possiblePreviousStoreFiles(applicationContainer: applicationContainer)
-        return previousStoreLocations.first(where: { storeExists(at: $0)})
+        return previousStoreLocations.first(where: { PersistentStoreRelocator.storeExists(at: $0)})
     }
     
     /// Relocates a legacy store to the new location, if necessary
@@ -65,11 +56,22 @@ public struct PersistentStoreRelocator {
     {
         if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
             startedMigrationCallback?()
-            self.moveStore(from: previousStoreLocation, to: storeFile)
+            PersistentStoreRelocator.moveStore(from: previousStoreLocation, to: storeFile)
         }
     }
+}
+
+/// Relocates a store and related files from one location to another
+public struct PersistentStoreRelocator {
     
-    private static func moveStore(from: URL, to: URL) {
+    private init() {}
+    
+    private static let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
+    
+    /// Extension of store files
+    public static let storeFileExtensions = ["", "-wal", "-shm"]
+    
+    public static func moveStore(from: URL, to: URL) {
         guard self.storeExists(at: from) else {
             zmLog.debug("Attempt to move store from \(from.path), which doesn't exist")
             return
@@ -114,7 +116,7 @@ public struct PersistentStoreRelocator {
         try! FileManager.default.moveItem(at: source, to: destination)
     }
     
-    static func storeExists(at url: URL) -> Bool {
+    public static func storeExists(at url: URL) -> Bool {
         let fileManager = FileManager.default
         let storeFiles = storeFileExtensions.map(url.appendingSuffixToLastPathComponent(suffix:))
         let storeFilesExists = storeFiles.reduce(false, { (result, url) in

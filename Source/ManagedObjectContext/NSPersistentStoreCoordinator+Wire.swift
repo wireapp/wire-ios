@@ -39,7 +39,7 @@ extension NSPersistentStoreCoordinator {
         }
         
         if migrateIfNeeded {
-            PersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
+            MainPersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
                                                                 applicationContainer: applicationContainer,
                                                                 startedMigrationCallback: startedMigrationCallback)
         }
