@@ -78,10 +78,11 @@ import UIKit
     /// - parameter completionHandler: this callback is invoked on the main queue.
     /// - parameter accountIdentifier: user identifier that the store should be created for
     /// - parameter container: the shared container for the app
-    @objc(createManagedObjectContextDirectoryForAccountIdentifier:applicationContainer:startedMigrationCallback:completionHandler:)
+    @objc(createManagedObjectContextDirectoryForAccountIdentifier:applicationContainer:dispatchGroup:startedMigrationCallback:completionHandler:)
     public func createManagedObjectContextDirectory(
         accountIdentifier: UUID,
         applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         startedMigrationCallback: (() -> Void)? = nil,
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
@@ -95,7 +96,11 @@ import UIKit
             if let managedObjectContextDirectory = self.inMemoryStores[accountDirectory] {
                 completionHandler(managedObjectContextDirectory)
             } else {
-                let managedObjectContextDirectory = InMemoryStoreInitialization.createManagedObjectContextDirectory(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
+                let managedObjectContextDirectory = InMemoryStoreInitialization.createManagedObjectContextDirectory(
+                    accountDirectory: accountDirectory,
+                    dispatchGroup: dispatchGroup,
+                    applicationContainer: applicationContainer
+                )
                 self.inMemoryStores[accountDirectory] = managedObjectContextDirectory
                 completionHandler(managedObjectContextDirectory)
             }
