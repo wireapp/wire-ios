@@ -68,7 +68,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (nonatomic) ZMBlacklistVerificator *blackList;
 @property (nonatomic) ZMAPNSEnvironment *apnsEnvironment;
 
-@property (nonatomic) BOOL isVersionBlacklisted;
 @property (nonatomic) ZMOnDemandFlowManager *onDemandFlowManager;
 
 @property (nonatomic) ZMPushRegistrant *pushRegistrant;
@@ -435,23 +434,6 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)setMediaManager:(AVSMediaManager *)delegate;
 {
     NOT_USED(delegate);
-}
-
-- (void)startAndCheckClientVersionWithCheckInterval:(NSTimeInterval)interval blackListedBlock:(void (^)())blackListed;
-{
-    [self start];
-    ZM_WEAK(self);
-    self.blackList = [[ZMBlacklistVerificator alloc] initWithCheckInterval:interval
-                                                                   version:self.appVersion
-                                                              workingGroup:self.syncManagedObjectContext.dispatchGroup
-                                                               application:self.application
-                                                         blacklistCallback:^(BOOL isBlackListed) {
-        ZM_STRONG(self);
-        if (!self.isVersionBlacklisted && isBlackListed && blackListed) {
-            blackListed();
-            self.isVersionBlacklisted = YES;
-        }
-    }];
 }
 
 - (void)start;

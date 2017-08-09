@@ -32,6 +32,7 @@
 #import <WireSyncEngine/ZMOnDemandFlowManager.h>
 
 // PRIVATE
+#import <WireSyncEngine/ZMBlacklistVerificator.h>
 #import <WireSyncEngine/ZMUserSession+Private.h>
 #import <WireSyncEngine/ZMPushRegistrant.h>
 #import <WireSyncEngine/ZMNotifications+UserSession.h>

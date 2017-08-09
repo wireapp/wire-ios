@@ -34,6 +34,7 @@
 		09E393BB1BAB0BB500F3EA1B /* ZMUserSession+OTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393B91BAB0BB500F3EA1B /* ZMUserSession+OTR.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393BE1BAB0C2A00F3EA1B /* ZMUserSession+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393BD1BAB0C2A00F3EA1B /* ZMUserSession+OTR.m */; };
 		160195611E30C9CF00ACBFAC /* LocalNotificationDispatcherCallingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160195601E30C9CF00ACBFAC /* LocalNotificationDispatcherCallingTests.swift */; };
+		1602B4611F3B04150061C135 /* ZMBlacklistVerificator.h in Headers */ = {isa = PBXBuildFile; fileRef = F9FD798B19EE9B9A00D70FCD /* ZMBlacklistVerificator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		160C31271E6434500012E4BC /* OperationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31261E6434500012E4BC /* OperationStatus.swift */; };
 		160C31411E6DDFC30012E4BC /* VoiceChannelV3Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31401E6DDFC30012E4BC /* VoiceChannelV3Tests.swift */; };
 		160C31441E8049320012E4BC /* ApplicationStatusDirectory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 160C31431E8049320012E4BC /* ApplicationStatusDirectory.swift */; };
@@ -2086,6 +2087,7 @@
 				F9B71F471CB29600001DB03F /* ZMBareUser+UserSession.h in Headers */,
 				3E17FA671A6690AA00DFA12F /* ZMPushRegistrant.h in Headers */,
 				54DE26B31BC56E62002B5FBC /* ZMHotFixDirectory.h in Headers */,
+				1602B4611F3B04150061C135 /* ZMBlacklistVerificator.h in Headers */,
 				5430E9251BAA0D9F00395E05 /* WireSyncEngineLogs.h in Headers */,
 				1618B4101DE5FAD4003F015C /* ZMUserSession+Internal.h in Headers */,
 				1EB871501BF502A000AF5CE1 /* ZMUserTranscoder.h in Headers */,
