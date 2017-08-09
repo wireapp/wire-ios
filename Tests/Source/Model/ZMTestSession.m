@@ -166,6 +166,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     self.contextDirectory = nil;
     [[StorageStack shared] createManagedObjectContextDirectoryForAccountIdentifier:self.accountIdentifier
                                                               applicationContainer:self.containerURL
+                                                                     dispatchGroup:self.dispatchGroup
                                                           startedMigrationCallback:nil
                                                                  completionHandler:^(ManagedObjectContextDirectory * directory) {
         self.contextDirectory = directory;
