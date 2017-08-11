@@ -30,8 +30,8 @@ class PreviewBlackListTests: XCTestCase {
     }
     
     func testThatCorrectHostsAreAllBlacklisted() {
-        let hosts = ["soundcloud", "vimeo", "spotify", "youtube", "giphy", "youtu.be", "y2u.be"]
-        
+        let hosts = ["soundcloud", "spotify", "youtube", "giphy", "youtu.be", "y2u.be"]
+
         for host in hosts {
             assertThatHostIsBlacklisted(host)
         }
