@@ -26,7 +26,6 @@ final class PreviewBlacklist {
         "youtube",
         "youtu.be",
         "y2u.be",
-        "vimeo",
         "spotify",
         "giphy"
     ]
