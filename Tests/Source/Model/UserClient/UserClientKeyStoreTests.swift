@@ -46,7 +46,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
     
     func cleanOTRFolder() {
         let fm = FileManager.default
-        var paths = UserClientKeysStore.legacyDirectories(applicationContainer: OtrBaseTest.sharedContainerURL).map{$0.path}
+        var paths = UserClientKeysStore.possibleLegacyKeyStores(applicationContainer: OtrBaseTest.sharedContainerURL).map{$0.path}
         if let accountID = accountID {
             paths.append(OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).path)
         }
@@ -128,25 +128,6 @@ class UserClientKeysStoreTests: OtrBaseTest {
         try! FileManager.default.createDirectory(atPath: OtrBaseTest.legacyOtrDirectory.path, withIntermediateDirectories: true, attributes: [:])
     }
 
-    func testThatItMovesTheLegacyCryptoboxToTheGivenURL() {
-        
-        // given
-        self.sut = nil
-        self.cleanOTRFolder()
-
-        self.createFakeOTRFolder()
-        try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.legacyOtrDirectory.appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
-        
-        // when
-        let _ = UserClientKeysStore(accountDirectory: self.accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
-        
-        // then
-        let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
-        let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
-        XCTAssertEqual(fooString, "foo")
-        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(applicationContainer: OtrBaseTest.sharedContainerURL))
-    }
-    
     func testThatItMovesTheOTRFolderToTheGivenURL() {
         // given
         self.sut = nil

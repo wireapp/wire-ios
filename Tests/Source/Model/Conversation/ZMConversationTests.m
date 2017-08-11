@@ -879,6 +879,20 @@
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
 }
 
+- (void)testThatGroupConversationWithNameInTeamWithOnlyTwoParticipantsIsNotConsideredOneToOne
+{
+    // given
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.userDefinedName = @"Some conversation";
+    conversation.teamRemoteIdentifier = [NSUUID createUUID];
+    [conversation addParticipant:user1];
+    
+    // then
+    XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
+}
+
 - (void)testThatGroupConversationInTeamWithMoreThanTwoParticipantsIsNotConsideredOneToOne
 {
     // given

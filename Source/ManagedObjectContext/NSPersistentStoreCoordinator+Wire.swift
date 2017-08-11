@@ -24,7 +24,6 @@ extension NSPersistentStoreCoordinator {
     convenience init(
         storeFile: URL,
         applicationContainer: URL,
-        migrateIfNeeded: Bool,
         model: NSManagedObjectModel,
         startedMigrationCallback: (() -> Void)?)
     {
@@ -38,11 +37,9 @@ extension NSPersistentStoreCoordinator {
             }
         }
         
-        if migrateIfNeeded {
-            MainPersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
+        MainPersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
                                                                 applicationContainer: applicationContainer,
                                                                 startedMigrationCallback: startedMigrationCallback)
-        }
         
         let containingFolder = storeFile.deletingLastPathComponent()
         FileManager.default.createAndProtectDirectory(at: containingFolder)

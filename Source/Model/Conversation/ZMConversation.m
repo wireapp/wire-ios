@@ -473,7 +473,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     ZMConversationType conversationType = [self internalConversationType];
     
-    if (conversationType == ZMConversationTypeGroup && self.teamRemoteIdentifier != nil && self.otherActiveParticipants.count == 1) {
+    if (conversationType == ZMConversationTypeGroup && self.teamRemoteIdentifier != nil && self.otherActiveParticipants.count == 1 && self.userDefinedName.length == 0) {
         conversationType = ZMConversationTypeOneOnOne;
     }
     
