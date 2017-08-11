@@ -95,17 +95,25 @@ open class UserClientKeysStore: NSObject {
     public init(accountDirectory: URL, applicationContainer: URL) {
         self.cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
         self.applicationContainer = applicationContainer
-        self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory,
-                                                             applicationContainer: self.applicationContainer)!
+        self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory)!
     }
     
-    private static func setupContext(in directory: URL, applicationContainer: URL) -> EncryptionContext? {
-        let encryptionContext : EncryptionContext
+    private static func setupContext(in directory: URL) -> EncryptionContext? {
+        FileManager.default.createAndProtectDirectory(at: directory)
+        return EncryptionContext(path: directory)
+    }
+    
+    /// Moves the key store if needed from all possible legacy locations to the keystore
+    /// directory within the given account directory.
+    public static func migrateIfNeeded(accountDirectory: URL, applicationContainer: URL) {
+        let directory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
         let fm = FileManager.default
+        fm.createAndProtectDirectory(at: directory.deletingLastPathComponent())
         
         /// migrate old directories if needed
         var didMigrate = false
-        self.legacyDirectories(applicationContainer: applicationContainer).forEach {
+        
+        possibleLegacyKeyStores(applicationContainer: applicationContainer).forEach {
             guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
             if !didMigrate {
                 do {
@@ -126,44 +134,29 @@ open class UserClientKeysStore: NSObject {
                 }
             }
         }
-        
-        fm.createAndProtectDirectory(at: directory)
-        encryptionContext = EncryptionContext(path: directory)
-        return encryptionContext
     }
     
     open func deleteAndCreateNewBox() {
         _ = try? FileManager.default.removeItem(at: cryptoboxDirectory)
-        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory, applicationContainer: applicationContainer)!
+        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
         self.internalLastPreKey = nil
-    }
-    
-    /// legacy directories returned with the most currently used first and the oldest last
-    static open func legacyDirectories(applicationContainer: URL) -> [URL] {
-        var legacyOtrDirectory1 : URL {
-            let url = FileManager.default.urls(for: .libraryDirectory, in: .userDomainMask).first!
-            return url.appendingPathComponent(FileManager.keyStoreFolderPrefix)
-        }
-
-        var legacyOtrDirectory2 : URL {
-            let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-            return url.appendingPathComponent(FileManager.keyStoreFolderPrefix)
-        }
-        
-        var legacyOtrDirectory3 : URL {
-            return applicationContainer.appendingPathComponent(FileManager.keyStoreFolderPrefix)
-        }
-        
-        // sorted by most recent first, oldest last
-        return [legacyOtrDirectory3, legacyOtrDirectory2, legacyOtrDirectory1]
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
     open static func needToMigrateIdentity(applicationContainer: URL) -> Bool {
-        let oldKeyStore = self.legacyDirectories(applicationContainer: applicationContainer).first{
+        return getFirstExistingLegacyKeyStore(applicationContainer: applicationContainer) != nil
+    }
+    
+    static func possibleLegacyKeyStores(applicationContainer: URL) -> [URL] {
+        return MainPersistentStoreRelocator.possibleLegacyAccountFolders(applicationContainer: applicationContainer).map{
+            $0.appendingPathComponent(FileManager.keyStoreFolderPrefix)
+        }
+    }
+    
+    private static func getFirstExistingLegacyKeyStore(applicationContainer: URL) -> URL? {
+        return possibleLegacyKeyStores(applicationContainer: applicationContainer).first{
             FileManager.default.fileExists(atPath: $0.path)
         }
-        return oldKeyStore != nil
     }
 
     open func lastPreKey() throws -> String {

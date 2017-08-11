@@ -84,6 +84,20 @@ import WireTesting
         self.createDummyExternalSupportFileForDatabase(storeFile: filePath)
     }
     
+    /// Create a dummy file in the keystore directory for the given account
+    @objc public func createKeyStore(accountDirectory: URL, filename: String) {
+        let path = accountDirectory.appendingPathComponent("otr")
+        let fm = FileManager.default
+        try! fm.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
+        try! Data().write(to: path.appendingPathComponent(filename))
+    }
+    
+    /// Returns true if the given filename exists in the keystore for the given account
+    @objc public func doesFileExistInKeyStore(accountDirectory: URL, filename: String) -> Bool {
+        let path = accountDirectory.appendingPathComponent("otr/\(filename)")
+        return FileManager.default.fileExists(atPath: path.path)
+    }
+    
     /// Clears the current storage folder and the legacy locations
     public func clearStorageFolder() {
         let url = self.applicationContainer

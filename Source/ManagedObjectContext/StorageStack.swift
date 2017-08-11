@@ -29,17 +29,11 @@ import UIKit
     /// Singleton instance
     public private(set) static var shared = StorageStack()
     
-    /// Directory of managed object contexes
-    public var managedObjectContextDirectory: ManagedObjectContextDirectory? = nil
-    
     /// Whether the next storage should be create as in memory instead of on disk.
     /// This is mostly useful for testing.
     public var createStorageAsInMemory: Bool = false
 
     private let isolationQueue = DispatchQueue(label: "StorageStack")
-
-    /// Persistent store currently being initialized
-    private var currentPersistentStoreInitialization: PersistentStorageInitialization? = nil
     
     /// Attempts to access the legacy store and fetch the user ID of the self user.
     /// - parameter completionHandler: this callback is invoked with the user ID, if it exists, else nil.
@@ -54,15 +48,11 @@ import UIKit
             return
         }
         
-        self.currentPersistentStoreInitialization = PersistentStorageInitialization()
         isolationQueue.async {
-            self.currentPersistentStoreInitialization?.createPersistentStoreCoordinator(storeFile: oldLocation,
-                                                                                        applicationContainer: applicationContainer,
-                                                                                        migrateIfNeeded: false,
-                                                                                        startedMigrationCallback: nil)
-            { [weak self] psc in
+            
+            NSPersistentStoreCoordinator.create(storeFile: oldLocation, applicationContainer: applicationContainer)
+            { psc in
                 DispatchQueue.main.async {
-                    self?.currentPersistentStoreInitialization = nil
                     let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
                     context.persistentStoreCoordinator = psc
                     completionHandler(ZMUser.selfUser(in: context).remoteIdentifier)
@@ -137,23 +127,16 @@ import UIKit
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
     {
-        guard self.currentPersistentStoreInitialization == nil else {
-            fatal("Trying to create a new store before a previous one is done creating")
-        }
-        
-        self.currentPersistentStoreInitialization = PersistentStorageInitialization()
-        self.currentPersistentStoreInitialization?.createPersistentStoreCoordinator(
+        NSPersistentStoreCoordinator.createAndMigrate(
             storeFile: storeFile,
+            accountDirectory: accountDirectory,
             applicationContainer: applicationContainer,
-            migrateIfNeeded: migrateIfNeeded,
             startedMigrationCallback: startedMigrationCallback)
-        { [weak self] psc in
-            self?.currentPersistentStoreInitialization = nil // need to hold a reference, see `PersistentStorageInitialization.createPersistentStoreCoordinator`
+        { psc in
             let directory = ManagedObjectContextDirectory(
                 persistentStoreCoordinator: psc,
                 accountDirectory: accountDirectory,
                 applicationContainer: applicationContainer)
-            self?.managedObjectContextDirectory = directory
             completionHandler(directory)
         }
     }
@@ -163,116 +146,6 @@ import UIKit
     /// reset will cause a crash
     public static func reset() {
         StorageStack.shared = StorageStack()
-    }
-}
-
-/// Creates an in memory stack CoreData stack
-class InMemoryStoreInitialization {
-
-    static func createManagedObjectContextDirectory(
-        accountDirectory: URL,
-        dispatchGroup: ZMSDispatchGroup? = nil,
-        applicationContainer: URL) -> ManagedObjectContextDirectory
-
-    {
-        let model = NSManagedObjectModel.loadModel()
-        let psc = NSPersistentStoreCoordinator(inMemoryWithModel: model)
-        let managedObjectContextDirectory = ManagedObjectContextDirectory(
-            persistentStoreCoordinator: psc,
-            accountDirectory: accountDirectory,
-            applicationContainer: applicationContainer,
-            dispatchGroup: dispatchGroup
-        )
-        return managedObjectContextDirectory
-    }
-}
-
-
-/// Creates a persistent store CoreData stack
-class PersistentStorageInitialization {
-    
-    fileprivate init() {}
-    
-    /// Observer token for application becoming available
-    fileprivate var applicationProtectedDataDidBecomeAvailableObserver: Any? = nil
-    
-    /// Creates a filesystem-backed persistent store coordinator with the model contained in this bundle
-    /// The caller should hold on to the returned instance until the `completionHandler` is invoked.
-    /// If not, the callback might end up not being invoked.
-    /// The callback will be invoked on an arbitrary queue.
-    fileprivate func createPersistentStoreCoordinator(
-        storeFile: URL,
-        applicationContainer: URL,
-        migrateIfNeeded: Bool,
-        startedMigrationCallback: (() -> Void)?,
-        completionHandler: @escaping (NSPersistentStoreCoordinator) -> Void
-        ) {
-        
-        let model = NSManagedObjectModel.loadModel()
-        let creation: (Void) -> NSPersistentStoreCoordinator = {
-            NSPersistentStoreCoordinator(
-                storeFile: storeFile,
-                applicationContainer: applicationContainer,
-                migrateIfNeeded: migrateIfNeeded,
-                model: model,
-                startedMigrationCallback: startedMigrationCallback
-             )
-        }
-        
-        // We need to handle the case when the database file is encrypted by iOS and user never entered the passcode
-        // We use default core data protection mode NSFileProtectionCompleteUntilFirstUserAuthentication
-        if PersistentStorageInitialization.databaseExistsButIsNotReadableDueToEncryption(at: storeFile) {
-            self.executeOnceFileSystemIsUnlocked {
-                completionHandler(creation())
-            }
-        } else {
-            let psc = creation()
-            completionHandler(psc)
-        }
-    }
-    
-    /// Listen for the notification for when first authentication has been completed
-    /// (c.f. `NSFileProtectionCompleteUntilFirstUserAuthentication`). Once it's available, it will
-    /// execute the closure
-    private func executeOnceFileSystemIsUnlocked(execute block: @escaping ()->()) {
-        
-        // This happens when
-        // (1) User has passcode enabled
-        // (2) User turns the phone on, but do not enter the passcode yet
-        // (3) App is awake on the background due to VoIP push notification
-        
-        guard self.applicationProtectedDataDidBecomeAvailableObserver == nil else {
-            fatal("Was already waiting on file system unlock?")
-        }
-        
-        NotificationCenter.default.addObserver(
-            forName: .UIApplicationProtectedDataDidBecomeAvailable,
-            object: nil,
-            queue: nil) { [weak self] _ in
-                guard let `self` = self else { return }
-                if let token = self.applicationProtectedDataDidBecomeAvailableObserver {
-                    NotificationCenter.default.removeObserver(token)
-                }
-                self.applicationProtectedDataDidBecomeAvailableObserver = nil
-                block()
-        }
-    }
-    
-    /// Check if the database is created, but still locked (potentially due to file system protection)
-    private static func databaseExistsButIsNotReadableDueToEncryption(at url: URL) -> Bool {
-        guard FileManager.default.fileExists(atPath: url.path) else { return false }
-        return (try? FileHandle(forReadingFrom: url)) == nil
-    }
-}
-
-extension NSManagedObjectModel {
-    /// Loads the CoreData model from the current bundle
-    @objc public static func loadModel() -> NSManagedObjectModel {
-        let modelBundle = Bundle(for: ZMManagedObject.self)
-        guard let result = NSManagedObjectModel.mergedModel(from: [modelBundle]) else {
-            fatal("Can't load data model bundle")
-        }
-        return result
     }
 }
 
