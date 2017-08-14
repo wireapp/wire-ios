@@ -29,7 +29,7 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMReachability : NSObject
 
 /// Calls to the observer will always happen on the specified @c observerQueue . All work will be added to the @c group
-- (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
+- (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver> _Nullable)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
 
 - (void)tearDown;
 

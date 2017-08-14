@@ -417,8 +417,8 @@ static __weak FakeReachability *currentReachability;
 @property (nonatomic) NSUInteger nextTaskIdentifier;
 @property (nonatomic) FakeTransportRequestScheduler *scheduler;
 @property (nonatomic) ZMURLSessionSwitch *URLSessionSwitch;
+@property (nonatomic) NSUUID *userIdentifier;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
-
 
 @end
 
@@ -442,7 +442,7 @@ static __weak FakeReachability *currentReachability;
     [super setUp];
 
     self.scheduler = [[FakeTransportRequestScheduler alloc] init];
-    
+    self.userIdentifier = NSUUID.createUUID;
     self.dataTask = [OCMockObject mockForClass:FakeDataTask.class];
     [[[self.dataTask stub] andReturnValue:OCMOCK_VALUE((NSUInteger) 0)] taskIdentifier];
 
@@ -461,7 +461,7 @@ static __weak FakeReachability *currentReachability;
     
     self.baseURL = [NSURL URLWithString:@"http://base.example.com"];
     self.webSocketURL = [NSURL URLWithString:@"http://websocket.example.com"];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host];
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host userIdentifier:self.userIdentifier];
     
     self.sut = [[ZMTransportSession alloc]
                 initWithURLSessionSwitch:self.URLSessionSwitch
@@ -474,6 +474,7 @@ static __weak FakeReachability *currentReachability;
                 pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil];
+
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
         id strongSelf = weakSelf;
@@ -498,19 +499,22 @@ static __weak FakeReachability *currentReachability;
     self.URLSession = nil;
     self.dataTask = nil;
     [self.sut tearDown];
+
     self.sut = nil;
     self.baseURL = nil;
     self.webSocketURL = nil;
     self.dummyPath = nil;
     self.dummyTokenPayload = nil;
     self.queue = nil;
+    self.failedAuthHandler = nil;
+    self.userIdentifier = nil;
     self.validAccessToken = nil;
     self.expiredAccessToken = nil;
     self.clientID = nil;
     self.scheduler = nil;
     self.URLSessionSwitch = nil;
 
-    [self.cookieStorage deleteUserKeychainItems];
+    [ZMPersistentCookieStorage deleteAllKeychainItems];
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;
@@ -883,7 +887,6 @@ static __weak FakeReachability *currentReachability;
     [(id)backgroundSession verify];
 }
 
-
 - (void)testThatItCallsTheCompletionHandler
 {
     // given
@@ -904,7 +907,6 @@ static __weak FakeReachability *currentReachability;
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
-
 
 - (void)testThatItCallsTheCompletionHandlerWithResponseData
 {

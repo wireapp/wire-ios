@@ -290,6 +290,7 @@ ZM_EMPTY_ASSERTING_INIT();
         if (! didTrust) {
             ZMLogDebug(@"Not trusting the server.");
             completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
+            return;
         }
     }
     completionHandler(NSURLSessionAuthChallengePerformDefaultHandling, challenge.proposedCredential);

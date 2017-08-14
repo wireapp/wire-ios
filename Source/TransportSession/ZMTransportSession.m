@@ -439,12 +439,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSAssert(url != nil, @"Nil URL in request");
     
     NSMutableURLRequest *URLRequest = [[NSMutableURLRequest alloc] initWithURL:url];
-    [ZMUserAgent setUserAgentOnRequest:URLRequest];
-    [URLRequest setHTTPMethod:request.methodAsString];
-    [request setAcceptedResponseMediaTypeOnHTTPRequest:URLRequest];
-    [request setBodyDataAndMediaTypeOnHTTPRequest:URLRequest];
-    [request setAdditionalHeaderFieldsOnHTTPRequest:URLRequest];
-    [request setContentDispositionOnHTTPRequest:URLRequest];
+    [URLRequest configureWithRequest:request];
     [request setTimeoutIntervalOnRequestIfNeeded:URLRequest
                        applicationIsBackgrounded:self.applicationIsBackgrounded
                           usingBackgroundSession:session.isBackgroundSession];
