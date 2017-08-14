@@ -73,9 +73,7 @@ extension ManagedObjectContextDirectory {
             moc.markAsUIContext()
             moc.configure(with: persistentStoreCoordinator)
             ZMUser.selfUser(in: moc)
-            if let dispatchGroup = dispatchGroup {
-                moc.add(dispatchGroup)
-            }
+            dispatchGroup.apply(moc.add)
         }
         moc.mergePolicy = ZMSyncMergePolicy(merge: .rollbackMergePolicyType)
         return moc
@@ -95,9 +93,7 @@ extension ManagedObjectContextDirectory {
             moc.setupUserKeyStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
             moc.undoManager = nil
             moc.mergePolicy = ZMSyncMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
-            if let dispatchGroup = dispatchGroup {
-                moc.add(dispatchGroup)
-            }
+            dispatchGroup.apply(moc.add)
         }
         
         // this will be done async, not to block the UI thread, but
@@ -121,9 +117,7 @@ extension ManagedObjectContextDirectory {
             moc.setupLocalCachedSessionAndSelfUser()
             moc.undoManager = nil
             moc.mergePolicy = ZMSyncMergePolicy(merge: .rollbackMergePolicyType)
-            if let dispatchGroup = dispatchGroup {
-                moc.add(dispatchGroup)
-            }
+            dispatchGroup.apply(moc.add)
         }
         return moc
     }
