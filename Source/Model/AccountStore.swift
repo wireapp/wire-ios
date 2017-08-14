@@ -44,7 +44,7 @@ public final class AccountStore: NSObject {
     public required init(root: URL) {
         directory = root.appendingPathComponent(AccountStore.directoryName)
         super.init()
-        createDirectoryIfNeeded()
+        FileManager.default.createAndProtectDirectory(at: directory)
     }
 
     // MARK: - Storing and Retrieving
@@ -137,17 +137,4 @@ public final class AccountStore: NSObject {
     private func url(for uuid: UUID) -> URL {
         return directory.appendingPathComponent(uuid.uuidString)
     }
-
-    /// Creates the `Accounts` subdirectory to store accounts data in.
-    /// Excludes the directory from backend as well as set the correct `FileProtectionType`.
-    private func createDirectoryIfNeeded() {
-        do {
-            guard !fileManager.fileExists(atPath: directory.path) else { return }
-            try fileManager.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-            try (directory as NSURL).setResourceValue(true, forKey: .isExcludedFromBackupKey)
-        } catch {
-            log.error("Failed to create AccountStore store directory at: \(directory), error: \(error)")
-        }
-    }
-    
 }

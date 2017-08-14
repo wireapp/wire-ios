@@ -91,10 +91,10 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
         let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create().transportString())
         let message = self.conversation.appendClientMessage(with: genericMessage.data())
-        message.linkPreviewState = .processed
+        message?.linkPreviewState = .processed
         
         // THEN
-        XCTAssertEqual(message.categorization, [MessageCategory.text, MessageCategory.link, MessageCategory.linkPreview])
+        XCTAssertEqual(message?.categorization, [MessageCategory.text, MessageCategory.link, MessageCategory.linkPreview])
     }
     
     func testThatItCategorizesAnImageMessage() {

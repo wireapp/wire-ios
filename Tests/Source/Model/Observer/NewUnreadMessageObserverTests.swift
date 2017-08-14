@@ -162,7 +162,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         
         // when
         let genMsg = ZMGenericMessage.knock(nonce: "nonce")
-        let msg1 = conversation.appendClientMessage(with: genMsg.data())
+        let msg1 = conversation.appendClientMessage(with: genMsg.data())!
         msg1.serverTimestamp = Date()
         conversation.resortMessages(withUpdatedMessage: msg1)
         

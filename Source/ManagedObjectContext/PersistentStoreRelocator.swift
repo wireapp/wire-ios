@@ -18,45 +18,95 @@
 
 import Foundation
 
-@objc public class PersistentStoreRelocator : NSObject {
-    
-    private let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
-    
-    private let storeLocation : URL
-    
-    private let previousStoreLocations : [URL] = {
-        return [.cachesDirectory, .applicationSupportDirectory].flatMap({ PersistentStoreRelocator.storeURL(in: $0) })
-    }()
-    
-    private let storeFileExtensions = ["", "-wal", "-shm"]
-    
-    public init(storeLocation: URL) {
-        self.storeLocation = storeLocation
+extension URL {
+
+    /// Appends a suffix to the last path (e.g. from `/foo/bar` to `/foo/bar_1`)
+    func appendingSuffixToLastPathComponent(suffix: String) -> URL {
+        let modifiedComponent = lastPathComponent + suffix
+        return deletingLastPathComponent().appendingPathComponent(modifiedComponent)
     }
     
-    var storeNeedsToBeRelocated : Bool {
-        return previousStoreLocation != nil
+    /// Appends the name of the store to the path
+    func appendingStoreFile() -> URL {
+        return self.appendingPathComponent("store.wiredatabase")
+    }
+}
+
+public struct MainPersistentStoreRelocator {
+    /// Returns the list of possible locations for legacy stores
+    static func possiblePreviousStoreFiles(applicationContainer: URL) -> [URL] {
+        let locations = possibleLegacyAccountFolders(applicationContainer: applicationContainer)
+        return locations.map{ $0.appendingStoreFile() }
     }
     
-    var previousStoreLocation : URL? {
-        return  previousStoreLocations.filter({ $0 != storeLocation }).first(where: { storeExists(at: $0) })
+    static func possibleLegacyAccountFolders(applicationContainer: URL) -> [URL] {
+        var locations = [.cachesDirectory, .applicationSupportDirectory, .libraryDirectory].map{
+            FileManager.default.urls(for: $0, in: .userDomainMask).first!
+        }
+        locations.append(applicationContainer)
+        return locations
     }
     
-    func moveStoreIfNecessary() throws {
-        if let previousStoreLocation = previousStoreLocation {
-            try moveStore(from: previousStoreLocation, to: storeLocation)
+    /// Return the first existing legacy store, if any
+    static func exisingLegacyStore(applicationContainer: URL) -> URL? {
+        let previousStoreLocations = self.possiblePreviousStoreFiles(applicationContainer: applicationContainer)
+        return previousStoreLocations.first(where: { PersistentStoreRelocator.storeExists(at: $0)})
+    }
+    
+    /// Relocates a legacy store to the new location, if necessary
+    public static func moveLegacyStoreIfNecessary(
+        storeFile: URL,
+        applicationContainer: URL,
+        startedMigrationCallback: (()->())?)
+    {
+        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
+            startedMigrationCallback?()
+            PersistentStoreRelocator.moveStore(from: previousStoreLocation, to: storeFile)
+            deleteAllLegacyStoresExcept(storeFile: storeFile, applicationContainer: applicationContainer)
         }
     }
     
-    func moveStore(from: URL, to: URL) throws {
-        guard storeExists(at: from) else {
+    /// Delete all other legacy stores except for the given legacy store.
+    private static func deleteAllLegacyStoresExcept(storeFile: URL, applicationContainer: URL) {
+        
+        for oldStore in possiblePreviousStoreFiles(applicationContainer: applicationContainer) {
+            if PersistentStoreRelocator.storeExists(at: oldStore) && oldStore != storeFile {
+                PersistentStoreRelocator.delete(storeFile: oldStore)
+            }
+        }
+    }
+    
+    public static func needsToMoveLegacyStore(storeFile: URL, applicationContainer: URL) -> Bool {
+        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+/// Relocates a store and related files from one location to another
+public struct PersistentStoreRelocator {
+    
+    private init() {}
+    
+    private static let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
+    
+    /// Extension of store files
+    public static let storeFileExtensions = ["", "-wal", "-shm"]
+    
+    public static func moveStore(from: URL, to: URL) {
+        guard self.storeExists(at: from) else {
             zmLog.debug("Attempt to move store from \(from.path), which doesn't exist")
             return
         }
         
         let fileManager = FileManager.default
+        fileManager.createAndProtectDirectory(at: to.deletingLastPathComponent())
         
-        try storeFileExtensions.forEach { storeFileExtension in
+        moveExternalBinaryStoreFiles(from: from, to: to)
+        
+        self.storeFileExtensions.reversed().forEach { storeFileExtension in
             let destination = to.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             let source = from.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
             
@@ -64,32 +114,17 @@ import Foundation
                 return
             }
             
-            try fileManager.moveItem(at: source, to: destination)
+            try! fileManager.moveItem(at: source, to: destination)
         }
-        
-        try moveExternalBinaryStoreFiles(from: from, to: to)
     }
     
-    private func moveExternalBinaryStoreFiles(from: URL, to: URL) throws {
-        let fromStoreDirectory = from.deletingLastPathComponent()
-        
-        var isDirectory : ObjCBool = false
-        if !FileManager.default.fileExists(atPath: fromStoreDirectory.path, isDirectory: &isDirectory) && !isDirectory.boolValue {
-            return
-        }
-        
-        let fromStoreName = from.deletingPathExtension().lastPathComponent
-        let fromSupportFile = ".\(fromStoreName)_SUPPORT"
-        let source = fromStoreDirectory.appendingPathComponent(fromSupportFile)
-        
-        let destinationStoreName = from.deletingPathExtension().lastPathComponent
-        let destinationSupportFile = ".\(destinationStoreName)_SUPPORT"
-        let destination = to.deletingLastPathComponent().appendingPathComponent(destinationSupportFile)
-        
-        try FileManager.default.moveItem(at: source, to: destination)
+    private static func moveExternalBinaryStoreFiles(from: URL, to: URL) {
+        let toDirectory = to.deletingLastPathComponent()
+        FileManager.default.createAndProtectDirectory(at: toDirectory)
+        try! FileManager.default.moveItem(at: from.supportFolderForStoreFile, to: to.supportFolderForStoreFile)
     }
     
-    private func storeExists(at url: URL) -> Bool {
+    public static func storeExists(at url: URL) -> Bool {
         let fileManager = FileManager.default
         let storeFiles = storeFileExtensions.map(url.appendingSuffixToLastPathComponent(suffix:))
         let storeFilesExists = storeFiles.reduce(false, { (result, url) in
@@ -99,38 +134,41 @@ import Foundation
         return storeFilesExists || externalBinaryStoreFileExists(at: url)
     }
     
-    private func externalBinaryStoreFileExists(at url: URL) -> Bool {
-        let storeName = url.deletingPathExtension().lastPathComponent
-        let storeDirectory = url.deletingLastPathComponent()
-        let supportFile = ".\(storeName)_SUPPORT"
-        
-        var isDirectory : ObjCBool = false
-        if !FileManager.default.fileExists(atPath: storeDirectory.path, isDirectory: &isDirectory) && !isDirectory.boolValue {
-            return false
-        }
-        
-        return FileManager.default.fileExists(atPath: storeDirectory.appendingPathComponent(supportFile).path)
+    static func externalBinaryStoreFileExists(at url: URL) -> Bool {
+        return FileManager.default.fileExists(atPath: url.supportFolderForStoreFile.path)
     }
     
-    @objc(storeURLInDirectory:)
-    public static func storeURL(in directory: FileManager.SearchPathDirectory) -> URL? {
+    /// Deletes the store files and the associated support folder.
+    fileprivate static func delete(storeFile: URL) {
         
-        if let databaseLocation = FileManager.default.urls(for: directory, in: .userDomainMask).first,
-           let databaseDirectory = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier {
-            
-            return databaseLocation.appendingPathComponent(databaseDirectory, isDirectory: true).appendingPathComponent("store.wiredatabase", isDirectory: false)
+        let fileManager = FileManager.default
+        
+        self.storeFileExtensions.forEach {
+            do {
+                try fileManager.removeItem(at: storeFile.appendingSuffixToLastPathComponent(suffix: $0))
+            } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+                // nop
+            } catch {
+                fatalError()
+            }
         }
         
-        return nil
+        do {
+            try fileManager.removeItem(at: storeFile.supportFolderForStoreFile)
+        } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
+            // nop
+        } catch {
+            fatalError()
+        }
     }
-    
 }
 
-private extension URL {
+extension URL {
     
-    func appendingSuffixToLastPathComponent(suffix: String) -> URL {
-        let modifiedComponent = lastPathComponent + suffix
-        return deletingLastPathComponent().appendingPathComponent(modifiedComponent)
+    var supportFolderForStoreFile: URL {
+        let storeName = self.deletingPathExtension().lastPathComponent
+        let storeDirectory = self.deletingLastPathComponent()
+        let supportFile = ".\(storeName)_SUPPORT"
+        return storeDirectory.appendingPathComponent(supportFile)
     }
-    
 }
