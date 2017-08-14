@@ -23,8 +23,6 @@
 @class ZMUser;
 @class ZMSDispatchGroup;
 
-extern NSString *const ZMPersistedClientIdKey;
-
 /// This class provides contexts & caches for running tests against our data model.
 @interface ZMTestSession : NSObject
 

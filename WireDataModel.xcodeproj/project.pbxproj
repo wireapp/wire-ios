@@ -143,6 +143,8 @@
 		CEB15E531D7EE5AB0048A011 /* ZMClientMessagesTests+Reaction.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB15E501D7EE53A0048A011 /* ZMClientMessagesTests+Reaction.swift */; };
 		CEE525AA1CCA4C97001D06F9 /* NSString+RandomString.m in Sources */ = {isa = PBXBuildFile; fileRef = CEE525A91CCA4C97001D06F9 /* NSString+RandomString.m */; };
 		EEA9C5071F3C9F3500DC39EC /* PersistentStorageInitialization.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA9C5061F3C9F3500DC39EC /* PersistentStorageInitialization.swift */; };
+		F118CB921F41D520004DCF96 /* ZMTestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A2C511F2B20480011ED42 /* ZMTestSession.m */; };
+		F118CB931F41D528004DCF96 /* ZMTestSession.h in Headers */ = {isa = PBXBuildFile; fileRef = F94A2C501F2B20480011ED42 /* ZMTestSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F125BAD71EE9849B0018C2F8 /* ZMConversation+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = F125BAD61EE9849B0018C2F8 /* ZMConversation+Teams.swift */; };
 		F12BD0B01E4DCEC40012ADBA /* ZMMessage+Insert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12BD0AF1E4DCEC40012ADBA /* ZMMessage+Insert.swift */; };
 		F163784F1E5C454C00898F84 /* ZMConversation+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = F163784E1E5C454C00898F84 /* ZMConversation+Patches.swift */; };
@@ -191,7 +193,6 @@
 		F943BC2D1E88FEC80048A768 /* ChangedIndexes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F943BC2C1E88FEC80048A768 /* ChangedIndexes.swift */; };
 		F94A208D1CB51AC90059632A /* ZMSyncMergePolicyTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A208C1CB51AC90059632A /* ZMSyncMergePolicyTests.m */; };
 		F94A208F1CB51AF50059632A /* ManagedObjectValidationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A208E1CB51AF50059632A /* ManagedObjectValidationTests.m */; };
-		F94A2C521F2B20480011ED42 /* ZMTestSession.m in Sources */ = {isa = PBXBuildFile; fileRef = F94A2C511F2B20480011ED42 /* ZMTestSession.m */; };
 		F94BD2671DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = F94BD2661DB4EFF200DA0A0E /* ZMAssetClientMessageTest+Encryption.swift */; };
 		F963E96D1D9ADD5A00098AD3 /* ZMGenericMessage+Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E9681D9ADD5A00098AD3 /* ZMGenericMessage+Helper.swift */; };
 		F963E96E1D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.h in Headers */ = {isa = PBXBuildFile; fileRef = F963E9691D9ADD5A00098AD3 /* ZMGenericMessage+PropertyUtils.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -1874,6 +1875,7 @@
 				F9C9A7661CAE8DFC0039E10C /* ZMAddressBookContact.h in Headers */,
 				F9C9A65F1CAD76A50039E10C /* WireDataModel.h in Headers */,
 				F9A7068B1CAEE01D00C2F5FE /* ZMSearchUser+Internal.h in Headers */,
+				F118CB931F41D528004DCF96 /* ZMTestSession.h in Headers */,
 				F9C9A6AC1CAD7C7F0039E10C /* ZMEditableUser.h in Headers */,
 				F9A706581CAEE01D00C2F5FE /* ZMSyncMergePolicy.h in Headers */,
 				F9B71F2F1CB264EF001DB03F /* ZMConversationMessageWindow+Internal.h in Headers */,
@@ -2148,6 +2150,7 @@
 				F125BAD71EE9849B0018C2F8 /* ZMConversation+Teams.swift in Sources */,
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
 				BF1B98071EC31A3C00DE033B /* Member.swift in Sources */,
+				F118CB921F41D520004DCF96 /* ZMTestSession.m in Sources */,
 				54CD460A1DEDA55C00BA3429 /* AddressBookEntry.swift in Sources */,
 				BFFBFD931D59E3F00079773E /* ConversationMessage+Deletion.swift in Sources */,
 				F12BD0B01E4DCEC40012ADBA /* ZMMessage+Insert.swift in Sources */,
@@ -2346,7 +2349,6 @@
 				54F581FF1F2F716B0051ACE8 /* StorageStackTests.swift in Sources */,
 				BFCF31DB1DA50C650039B3DC /* ZMGenericMessageTests+NativePush.swift in Sources */,
 				F9B71FA41CB2BF37001DB03F /* ZMConversationTests+messages.m in Sources */,
-				F94A2C521F2B20480011ED42 /* ZMTestSession.m in Sources */,
 				F9B71FF21CB2C4C6001DB03F /* AnyClassTupleTests.swift in Sources */,
 				F9A7083A1CAEEB7500C2F5FE /* MockEntity.m in Sources */,
 				F963E9741D9BF9ED00098AD3 /* ProtosTests.swift in Sources */,
