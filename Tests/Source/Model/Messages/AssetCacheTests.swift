@@ -24,14 +24,21 @@ private func testData() -> Data {
     return Data.secureRandomData(ofLength: 2000);
 }
 
-class ImageAssetCacheTests: XCTestCase {
-}
-
-class FileAssetCacheTests: XCTestCase {
+class CacheTests: XCTestCase {
     override func setUp() {
+        super.setUp()
         FileAssetCache().wipeCaches()
     }
+
+    override func tearDown() {
+        FileAssetCache().wipeCaches()
+        super.tearDown()
+    }
 }
+
+class ImageAssetCacheTests: CacheTests {}
+class FileAssetCacheTests: CacheTests {}
+
 
 // MARK: - Storing and retrieving image assets
 extension ImageAssetCacheTests {

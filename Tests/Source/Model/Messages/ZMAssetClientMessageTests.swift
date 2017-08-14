@@ -59,7 +59,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
     func appendImageMessage(to conversation: ZMConversation) -> ZMAssetClientMessage {
         let imageData = verySmallJPEGData()
         let nonce = UUID.create()
-        let message = conversation.appendOTRMessage(withImageData: imageData, nonce: nonce)
+        let message = conversation.appendOTRMessage(withImageData: imageData, nonce: nonce)!
 
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: .randomEncryptionKey(),

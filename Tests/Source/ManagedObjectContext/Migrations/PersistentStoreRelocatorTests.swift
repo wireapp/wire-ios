@@ -30,70 +30,72 @@ class PersistentStoreRelocatorTests: DatabaseBaseTest {
     }
     
     func testThatItFindsPreviousStoreInCachesDirectory() {
+        
         // given
-        createDatabase(in: .cachesDirectory)
+        self.createLegacyStore(path: .cachesDirectory)
         
         // new store is located in documents directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .documentDirectory)!)
+        let sut = PersistentStoreRelocator (sharedContainerURL: self.sharedContainerDirectoryURL,
+                                           newStoreURL: StorageStack.accountFolder(accountIdentifier: UUID(), applicationContainer: self.sharedContainerDirectoryURL))
         
         // then
-        XCTAssertEqual(sut.previousStoreLocation, PersistentStoreRelocator.storeURL(in: .cachesDirectory)!)
+        XCTAssertEqual(sut.previousStoreLocation, FileManager.storeURL(in: .cachesDirectory))
     }
     
     func testThatItFindsPreviousStoreInApplicationSupportDirectory() {
+        
         // given
-        createDatabase(in: .applicationSupportDirectory)
+        self.createLegacyStore(path: .applicationSupportDirectory)
         
         // new store is located in documents directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .documentDirectory)!)
+        let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
+                                           newStoreURL: FileManager.currentStoreURLForAccount(
+                                            with: UUID(), in: self.sharedContainerDirectoryURL))
         
         // then
-        XCTAssertEqual(sut.previousStoreLocation, PersistentStoreRelocator.storeURL(in: .applicationSupportDirectory)!)
-    }
-    
-    func testThatIsNecessaryToRelocateStoreIfItsLocatedInAPreviousLocation() {
-        // given
-        createDatabase(in: .cachesDirectory)
+        XCTAssertEqual(sut.previousStoreLocation, FileManager.storeURL(in: .applicationSupportDirectory))
         
-        // new store is located in documents directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .documentDirectory)!)
-        
-        // then
-        XCTAssertTrue(sut.storeNeedsToBeRelocated)
     }
     
     func testThatIsNecessaryToRelocateStoreIfItsLocatedInAPreviousLocation_and_newStoreAlreadyExists() {
         // given
-        let cachesStoreURL = PersistentStoreRelocator.storeURL(in: .cachesDirectory)!
-        
-        createDatabase(in: .documentDirectory)
-        createDirectoryForStore(at: cachesStoreURL)
-        createExternalSupportFileForDatabase(at: cachesStoreURL)
+        let cachesStoreURL = FileManager.storeURL(in: .cachesDirectory)
+        self.createLegacyStore(path: .documentDirectory)
+        self.createDirectoryForStore(at: cachesStoreURL)
+        self.createExternalSupportFileForDatabase(at: cachesStoreURL)
         
         // new store is located in documents directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .documentDirectory)!)
+        let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
+                                           newStoreURL: FileManager.currentStoreURLForAccount(
+                                            with: UUID(), in: self.sharedContainerDirectoryURL))
         
         // then
-        XCTAssertTrue(sut.storeNeedsToBeRelocated)
+        XCTAssertNotNil(sut.previousStoreLocation)
     }
     
     func testThatIsNotNecessaryToRelocateStoreIfNotPreviousStoreExists() {
         // given new store is located in documents directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .documentDirectory)!)
+        let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
+                                           newStoreURL: FileManager.currentStoreURLForAccount(
+                                            with: UUID(), in: self.sharedContainerDirectoryURL))
         
         // then
-        XCTAssertFalse(sut.storeNeedsToBeRelocated)
+        XCTAssertNil(sut.previousStoreLocation)
     }
     
     func testThatIsNotNecessaryToRelocateStoreIfItsLocatedInAPreviousLocation_and_newStoreIsTheSame() {
         // given
-        createDatabase(in: .cachesDirectory)
+        let accountId = UUID()
+        createDatabase(in: .documentDirectory, accountIdentifier: accountId)
         
         // new store is also located in caches directory
-        let sut = PersistentStoreRelocator(storeLocation: PersistentStoreRelocator.storeURL(in: .cachesDirectory)!)
+        let sut = PersistentStoreRelocator(sharedContainerURL: self.sharedContainerDirectoryURL,
+                                           newStoreURL: FileManager.currentStoreURLForAccount(
+                                            with: accountId,
+                                            in: self.sharedContainerDirectoryURL))
         
         // then
-        XCTAssertFalse(sut.storeNeedsToBeRelocated)
+        XCTAssertNil(sut.previousStoreLocation)
     }
     
 }

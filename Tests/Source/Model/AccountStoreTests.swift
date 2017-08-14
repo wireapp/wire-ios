@@ -125,9 +125,6 @@ final class AccountStoreTests: ZMConversationTestsBase {
         XCTAssert(store.add(account2))
 
         let stored = store.load()
-        print(stored)
-        print(account1)
-        print(account2)
         XCTAssertEqual(stored, [account1, account2])
 
         // when

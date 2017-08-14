@@ -35,8 +35,6 @@
 
 #import "NSString+RandomString.h"
 
-NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
-
 
 @interface ZMBaseManagedObjectTest ()
 
@@ -90,6 +88,7 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
     [self.testSession tearDown];
     self.testSession = nil;
+    [StorageStack reset];
     [super tearDown];
 }
 
@@ -106,11 +105,6 @@ NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 - (NSManagedObjectContext *)searchMOC
 {
     return self.testSession.searchMOC;
-}
-
-- (void)cleanUpAndVerify {
-    [self.testSession waitAndDeleteAllManagedObjectContexts];
-    [self verifyMocksNow];
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore

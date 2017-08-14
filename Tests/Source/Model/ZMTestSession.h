@@ -1,17 +1,17 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
-// 
+//
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
 // the Free Software Foundation, either version 3 of the License, or
 // (at your option) any later version.
-// 
+//
 // This program is distributed in the hope that it will be useful,
 // but WITHOUT ANY WARRANTY; without even the implied warranty of
 // MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 // GNU General Public License for more details.
-// 
+//
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
@@ -23,6 +23,7 @@
 @class ZMUser;
 @class ZMSDispatchGroup;
 
+extern NSString *const ZMPersistedClientIdKey;
 
 /// This class provides contexts & caches for running tests against our data model.
 @interface ZMTestSession : NSObject
@@ -45,7 +46,7 @@
 @property (nonatomic, readonly) NSManagedObjectContext *searchMOC;
 
 /// The url in which the database will be stored (in case @c shouldUseInMemoryStore is set to @c NO)
-@property (nonatomic, readonly) NSURL *databaseDirectory;
+//@property (nonatomic, readonly) NSURL *databaseDirectory;
 
 @property (nonatomic, readonly) NSURL *storeURL;
 
@@ -60,9 +61,6 @@
 
 /// Perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
-
-/// Wait until all contexts have completed their task and tear them down
-- (void)waitAndDeleteAllManagedObjectContexts;
 
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;

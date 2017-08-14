@@ -42,9 +42,6 @@
 /// This is a base test class with utility stuff for all tests.
 @interface ZMBaseManagedObjectTest : ZMTBaseTest
 
-/// Waits for queues and managed object contexts to finish work and verifies mocks
-- (void)cleanUpAndVerify;
-
 
 @property (nonatomic, readonly, nonnull) ZMTestSession *testSession;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;

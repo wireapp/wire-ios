@@ -25,52 +25,12 @@
 @class NSOperationQueue;
 @class DisplayNameGenerator;
 
-extern NSString * const IsUserInterfaceContextKey;
-extern NSString * const IsSyncContextKey;
-extern NSString * const IsSearchContextKey;
-extern NSString * const IsEventContextKey;
+extern NSString * _Nonnull const IsUserInterfaceContextKey;
+extern NSString * _Nonnull const IsSyncContextKey;
+extern NSString * _Nonnull const IsSearchContextKey;
+extern NSString * _Nonnull const IsEventContextKey;
 
 @interface NSManagedObjectContext (zmessaging)
-
-+ (NSManagedObjectModel *)loadManagedObjectModel;
-
-/// Returns true if a store exists at the given URL
-+ (BOOL)storeExistsAtURL:(NSURL *)storeURL;
-
-/// Checks if migration is needed or the database has to be moved
-+ (BOOL)needsToPrepareLocalStoreAtURL:(NSURL *)storeURL;
-
-/// Creates persistent store coordinator and migrates store if needed
-/// @param synchronous defines if the method should execute sycnhronously or not (ususally it makes sence to execute it
-///         synchronously when @c +needsToPrepareLocalStore is YES)
-/// @param storeURL where database should be created / moved to
-/// @param backupCorruptedDatabase if true, will copy a corrupted database to another folder for later investigation
-/// @param completionHandler callback to be executed on completion (nullable), will be invoked on an arbitrary queue, it's the
-///     caller responsibility to ensure this is switched back to the correct queue
-+ (void)prepareLocalStoreAtURL:(NSURL *)storeURL
-       backupCorruptedDatabase:(BOOL)backupCorruptedDatabase
-                   synchronous:(BOOL)synchronous
-             completionHandler:(void(^)())completionHandler;
-
-/// Returns whether the store is ready to be opened
-+ (BOOL)storeIsReady;
-
-/// Create context used by the UI
-/// @param storeURL where database is located
-+ (instancetype)createUserInterfaceContextWithStoreAtURL:(NSURL *)storeURL;
-
-/// Reset the user interface context. NOTE: only used in testing with a in-memory store.
-+ (void)resetUserInterfaceContext;
-
-/// This context will mark updates to objects in such a way that these fields are "up to date", ie. that these fields have been fetched.
-/// C.f. @c zm_isSyncContext
-/// @param storeURL where database is located
-/// @param keyStoreURL where cryptobox sessions are located
-+ (instancetype)createSyncContextWithStoreAtURL:(NSURL *)storeURL keyStoreURL:(NSURL *)keyStoreURL;
-
-/// Create context used for searching
-/// @param storeURL where database is located
-+ (instancetype)createSearchContextWithStoreAtURL:(NSURL *)storeURL;
 
 /// Returns @c YES if the receiver is a context that is used for synchronisation with the backend.
 ///
@@ -89,28 +49,19 @@ extern NSString * const IsEventContextKey;
 @property (readonly) BOOL zm_shouldRefreshObjectsWithUIContextPolicy;
 
 /// Returns @c self in case this is a sync context, or attached sync context, if present
-@property (nonatomic) NSManagedObjectContext* zm_syncContext;
+@property (nonatomic, null_unspecified) NSManagedObjectContext* zm_syncContext;
 
 /// Returns @c self in case this is a UI context, or attached UI context, if present
-@property (nonatomic) NSManagedObjectContext* zm_userInterfaceContext;
+@property (nonatomic, null_unspecified) NSManagedObjectContext *zm_userInterfaceContext;
 
 /// Returns the set containing all user clients that failed to establish a session with selfClient
-@property (nonatomic, readonly) NSMutableSet* zm_failedToEstablishSessionStore;
+@property (nonatomic, readonly, nullable) NSMutableSet *zm_failedToEstablishSessionStore;
 
 /// Returns the URL of the store. This is supposed to be used for debugging purposes only
-@property (nonatomic, readonly) NSURL *zm_storeURL;
-
-/// This is used for unit tests.
-+ (void)setUseInMemoryStore:(BOOL)useInMemoryStore;
-+ (BOOL)useInMemoryStore;
-
-/// This is used for unit tests. It only has an effect when @c setUseInMemoryStore: was set to @c YES
-+ (void)resetSharedPersistentStoreCoordinator;
-/// Sets a flag (in NSUserDefaults) that will cause the store to get deleted next time to app launches.
-+ (void)setClearPersistentStoreOnStart:(BOOL)flag;
+@property (nonatomic, readonly, nullable) NSURL *zm_storeURL;
 
 /// Returns the Display Name Generator
-@property (nonatomic, readonly) DisplayNameGenerator* zm_displayNameGenerator;
+@property (nonatomic, readonly, nullable) DisplayNameGenerator*zm_displayNameGenerator;
 
 /// Calls @c -save: only if the receiver returns @c YES for @c -hasChanges
 /// If the save fails, calls @c -rollback on the receiver.
@@ -129,15 +80,15 @@ extern NSString * const IsEventContextKey;
 
 /// This will trigger a call to @c -enqueueDelayedSave once the receiver's group has emptied or
 /// immediately if the receiver has a lot of pending changes.
-- (void)enqueueDelayedSaveWithGroup:(ZMSDispatchGroup *)group;
+- (void)enqueueDelayedSaveWithGroup:(nullable ZMSDispatchGroup *)group;
 
 /// Executes a fetch request and asserts in case of error
 /// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
 
 /// Fetch metadata for key from in-memory non-persisted metadata
 /// or from persistent store metadata, in that order
-- (id)persistentStoreMetadataForKey:(NSString *)key;
+- (nullable id)persistentStoreMetadataForKey:(nonnull NSString *)key;
 
 @end
 

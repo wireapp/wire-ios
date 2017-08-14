@@ -24,16 +24,14 @@ extension NSManagedObjectContext {
     
     fileprivate static let ZMUserClientKeysStoreKey = "ZMUserClientKeysStore"
     
-    @objc(setupUserKeyStoreForDirectory:)
-    public func setupUserKeyStore(for directory: URL) -> Void
+    @objc(setupUserKeyStoreInAccountDirectory:applicationContainer:)
+    public func setupUserKeyStore(accountDirectory: URL, applicationContainer: URL) -> Void
     {
         if !self.zm_isSyncContext {
             fatal("Can't initiliazie crypto box on non-sync context")
         }
-        
-        let sharedDirectory = directory.appendingPathComponent(UserClientKeysStore.otrFolderPrefix)
 
-        let newKeyStore = UserClientKeysStore(in: sharedDirectory)
+        let newKeyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
         self.userInfo[NSManagedObjectContext.ZMUserClientKeysStoreKey] = newKeyStore
     }
     
@@ -55,126 +53,109 @@ extension NSManagedObjectContext {
     }
 }
 
+public extension FileManager {
+
+    public static let keyStoreFolderPrefix = "otr"
+    
+    /// Returns the URL for the keyStore
+    @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
+    public static func keyStoreURL(accountDirectory: URL, createParentIfNeeded: Bool) -> URL {
+        if createParentIfNeeded {
+            FileManager.default.createAndProtectDirectory(at: accountDirectory)
+        }
+        let keyStoreDirectory = accountDirectory.appendingPathComponent(FileManager.keyStoreFolderPrefix)
+        return keyStoreDirectory
+    }
+    
+}
+
 public enum UserClientKeyStoreError: Error {
     case canNotGeneratePreKeys
     case preKeysCountNeedsToBePositive
 }
 
+/// A storage for cryptographic keys material
 @objc(UserClientKeysStore)
 open class UserClientKeysStore: NSObject {
     
-    open static let MaxPreKeyID : UInt16 = UInt16.max-1;
-    static fileprivate let otrFolderPrefix = "otr"
-    open var encryptionContext : EncryptionContext
-    fileprivate var internalLastPreKey: String?
-    public private(set) var cryptoboxDirectoryURL : URL
+    /// Maximum possible ID for prekey
+    public static let MaxPreKeyID : UInt16 = UInt16.max-1;
     
-    public init(in directory: URL) {
-        cryptoboxDirectoryURL = directory
-        encryptionContext = UserClientKeysStore.setupContext(in: directory)!
+    public var encryptionContext : EncryptionContext
+    
+    /// Fallback prekeys (when no other prekey is available, this will always work)
+    fileprivate var internalLastPreKey: String?
+    
+    /// Folder where the material is stored (managed by Cryptobox)
+    public private(set) var cryptoboxDirectory: URL
+    
+    public private(set) var applicationContainer: URL
+    
+    /// Loads new key store (if not present) or load an existing one
+    public init(accountDirectory: URL, applicationContainer: URL) {
+        self.cryptoboxDirectory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+        self.applicationContainer = applicationContainer
+        self.encryptionContext = UserClientKeysStore.setupContext(in: self.cryptoboxDirectory)!
     }
     
-    static func setupContext(in directory: URL) -> EncryptionContext? {
-        let encryptionContext : EncryptionContext
-        do {
-            if UserClientKeysStore.isPreviousOTRDirectoryPresent {
+    private static func setupContext(in directory: URL) -> EncryptionContext? {
+        FileManager.default.createAndProtectDirectory(at: directory)
+        return EncryptionContext(path: directory)
+    }
+    
+    /// Moves the key store if needed from all possible legacy locations to the keystore
+    /// directory within the given account directory.
+    public static func migrateIfNeeded(accountDirectory: URL, applicationContainer: URL) {
+        let directory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
+        let fm = FileManager.default
+        fm.createAndProtectDirectory(at: directory.deletingLastPathComponent())
+        
+        /// migrate old directories if needed
+        var didMigrate = false
+        
+        possibleLegacyKeyStores(applicationContainer: applicationContainer).forEach {
+            guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
+            if !didMigrate {
                 do {
-                    try FileManager.default.moveItem(at: UserClientKeysStore.legacyOtrDirectory, to: directory)
+                    try fm.moveItem(at: $0, to: directory)
+                    didMigrate = true
                 }
                 catch let err {
                     fatal("Cannot move legacy directory: \(err)")
                 }
             }
-            
-            if FileManager.default.fileExists(atPath: UserClientKeysStore.otrDirectoryURL.path) {
+            else {
+                // We only migrate the newest directory we can find, older ones should be removed
                 do {
-                    try FileManager.default.moveItem(at: UserClientKeysStore.otrDirectoryURL, to: directory)
+                    try fm.removeItem(at: $0)
                 }
                 catch let err {
-                    fatal("Cannot move otr to shared container \(err)")
+                    fatal("Cannot removing older legacy directory: \(err)")
                 }
             }
-
-            if !FileManager.default.fileExists(atPath: directory.path) {
-                try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: nil)
-            }
-            encryptionContext = EncryptionContext(path: directory)
-            try (directory as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
-
-            let attributes = [FileAttributeKey.protectionKey: FileProtectionType.completeUntilFirstUserAuthentication]
-            try FileManager.default.setAttributes(attributes, ofItemAtPath: directory.path)
-
-            return encryptionContext
         }
-        catch let err {
-            fatal("failed to init cryptobox: \(err)")
-        }
-        
-        return nil
     }
     
     open func deleteAndCreateNewBox() {
-        let fm = FileManager.default
-        _ = try? fm.removeItem(at: cryptoboxDirectoryURL)
-        encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectoryURL)!
-        internalLastPreKey = nil
-    }
-    
-    /// Legacy URL for cryptobox storage (transition phase)
-    static open var legacyOtrDirectory : URL {
-        let url = try? FileManager.default.url(for: FileManager.SearchPathDirectory.libraryDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
-        return url!.appendingPathComponent(otrFolderPrefix)
-    }
-    
-    /// URL for cryptobox storage (read-only)
-    static open var otrDirectoryURL : URL {
-        var url : URL?
-        url = try! FileManager.default.url(for: FileManager.SearchPathDirectory.applicationSupportDirectory, in: FileManager.SearchPathDomainMask.userDomainMask, appropriateFor: nil, create: false)
-        url = url!.appendingPathComponent(otrFolderPrefix)
-        
-        return url!
-    }
-    
-    /// URL for cryptobox storage
-    static open var otrDirectory : URL {
-        var url : URL?
-        do {
-            url = self.otrDirectoryURL
-            try FileManager.default.createDirectory(at: url!, withIntermediateDirectories: true, attributes: nil)
-        }
-        catch let err as NSError {
-            if (url == nil) {
-                fatal("Unable to initialize otrDirectory = error: \(err)")
-            }
-        }
-        return url!
-    }
-    
-    /// Legacy URL for cryptobox storage (transition phase)
-    fileprivate static var isPreviousOTRDirectoryPresent : Bool {
-        return FileManager.default.fileExists(atPath: self.legacyOtrDirectory.path)
+        _ = try? FileManager.default.removeItem(at: cryptoboxDirectory)
+        self.encryptionContext = UserClientKeysStore.setupContext(in: cryptoboxDirectory)!
+        self.internalLastPreKey = nil
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    open static var needToMigrateIdentity : Bool {
-        return self.isPreviousOTRDirectoryPresent
+    open static func needToMigrateIdentity(applicationContainer: URL) -> Bool {
+        return getFirstExistingLegacyKeyStore(applicationContainer: applicationContainer) != nil
     }
     
-    /// Remove the old legacy identity folder
-    open static func removeOldIdentityFolder() {
-        let oldIdentityPath = self.legacyOtrDirectory.path
-        guard FileManager.default.fileExists(atPath: oldIdentityPath) else {
-            return
+    static func possibleLegacyKeyStores(applicationContainer: URL) -> [URL] {
+        return MainPersistentStoreRelocator.possibleLegacyAccountFolders(applicationContainer: applicationContainer).map{
+            $0.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         }
-        
-        do {
-            try FileManager.default.removeItem(atPath: oldIdentityPath)
-        }
-        catch let err {
-            // if it's still there, we failed to delete. Critical error.
-            if self.isPreviousOTRDirectoryPresent {
-                fatal("Failed to remove identity from previous folder: \(err)")
-            }
+    }
+    
+    private static func getFirstExistingLegacyKeyStore(applicationContainer: URL) -> URL? {
+        return possibleLegacyKeyStores(applicationContainer: applicationContainer).first{
+            FileManager.default.fileExists(atPath: $0.path)
         }
     }
 
