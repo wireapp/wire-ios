@@ -352,9 +352,73 @@ class StorageStackTests: DatabaseBaseTest {
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
     
-    // TODO
+    // To simulate an interrupted migration, we create the legacy store and
+    // migrate the keystore immediately. Then we start the migration from this
+    // inconsistent state.
     func testThatWhenMigrationIsAbortedItCanBeRestarted() {
-        XCTFail()
+        
+        let userID = UUID.create()
+        let testKey = "aassddffgg"
+        let testValue = "eggplant"
+        
+        let oldPath = self.previousDatabaseLocations.first!
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        
+        // GIVEN
+        StorageStack.reset()
+        
+        // create a single legacy store
+        let oldStoreFile = oldPath.appendingStoreFile()
+        self.createLegacyStore(filePath: oldStoreFile) { contextDirectory in
+            contextDirectory.uiContext.setPersistentStoreMetadata(testValue, key: testKey)
+            contextDirectory.uiContext.forceSaveOrRollback()
+        }
+        
+        // migrate the keystore already
+        self.createKeyStore(accountDirectory: oldPath, filename: "foo")
+        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
+        
+        // expectations
+        let migrationExpectation = self.expectation(description: "Migration started")
+        let completionExpectation = self.expectation(description: "Stack initialization completed")
+        
+        // WHEN
+        // create the stack, check that the value is there and that it calls the migration callback
+        var newStoreFile: URL? = nil
+        StorageStack.shared.createManagedObjectContextDirectory(
+            accountIdentifier: userID,
+            applicationContainer: self.applicationContainer,
+            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+        ) { MOCs in
+            defer { completionExpectation.fulfill() }
+            guard let string = MOCs.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
+                XCTFail("Failed to find same value after migrating")
+                return
+            }
+            newStoreFile = MOCs.uiContext.persistentStoreCoordinator!.persistentStores.first!.url
+            XCTAssertEqual(string, testValue)
+        }
+        
+        // THEN
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 1))
+        
+        // check that all files are in the new location
+        if let newStore = newStoreFile {
+            XCTAssertTrue(checkSupportFilesExists(storeFile: newStore))
+        } else {
+            XCTFail()
+        }
+        
+        // check all legacy stores deleted
+        for oldPath in self.previousDatabaseLocations {
+            let oldStoreFile = oldPath.appendingStoreFile()
+            XCTAssertFalse(checkSupportFilesExists(storeFile: oldStoreFile))
+            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldPath, filename: "foo"))
+        }
+        
+        // new keystore exists
+        XCTAssertTrue(self.doesFileExistInKeyStore(accountDirectory: accountDirectory, filename: "foo"))
+        StorageStack.reset()
     }
 }
 
