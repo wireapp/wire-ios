@@ -37,14 +37,17 @@ class BaseSharingSessionTests: ZMTBaseTest {
         super.setUp()
 
         authenticationStatus = FakeAuthenticationStatus()
-        
-        let testSession = ZMTestSession(dispatchGroup: dispatchGroup)
-        testSession?.shouldUseInMemoryStore = true
-        testSession?.prepare(forTestNamed: name)
-        
         let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let userInterfaceContext = testSession?.uiMOC
-        let syncContext = testSession?.syncMOC
+
+        var directory: ManagedObjectContextDirectory!
+        StorageStack.shared.createStorageAsInMemory = true
+        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: UUID.create(), applicationContainer: url) {
+            directory = $0
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let userInterfaceContext = directory.uiContext
+        let syncContext = directory.syncContext
         
         let mockTransport = MockTransportSession(dispatchGroup: ZMSDispatchGroup(label: "ZMSharingSession"))
         let transportSession = mockTransport.mockedTransportSession()

@@ -25,33 +25,21 @@ import WireRequestStrategy
 
 class OperationLoopTests :  ZMTBaseTest {
 
-    var databaseDirectory : URL! = nil
-    var otrDirectory : URL! = nil
     var uiMoc   : NSManagedObjectContext! = nil
     var syncMoc : NSManagedObjectContext! = nil
     var sut : OperationLoop! = nil
     
     override func setUp() {
         super.setUp()
-        
+        let accountId = UUID()
         let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        databaseDirectory = directoryURL.appendingPathComponent("wire.database")
-        otrDirectory = directoryURL.appendingPathComponent("otr")
         
-        NSManagedObjectContext.setUseInMemoryStore(true)
-        resetState()
-        ZMPersistentCookieStorage.setDoNotPersistToKeychain(true)
-        
-        uiMoc = NSManagedObjectContext.createUserInterfaceContextWithStore(at: databaseDirectory)!
-        uiMoc.add(self.dispatchGroup)
-        syncMoc = NSManagedObjectContext.createSyncContextWithStore(at: databaseDirectory, keyStore: otrDirectory)!
-        syncMoc.performGroupedBlockAndWait {
-            self.syncMoc.add(self.dispatchGroup)
-            self.syncMoc.saveOrRollback()
-            
-            self.syncMoc.zm_userInterface = self.uiMoc
+        StorageStack.shared.createStorageAsInMemory = true
+        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountId, applicationContainer: directoryURL, dispatchGroup: self.dispatchGroup) {
+            self.uiMoc = $0.uiContext
+            self.syncMoc = $0.syncContext
         }
-        uiMoc.zm_sync = syncMoc
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         sut = OperationLoop(userContext: uiMoc, syncContext: syncMoc, callBackQueue: OperationQueue())
     }
@@ -69,17 +57,7 @@ class OperationLoopTests :  ZMTBaseTest {
     }
     
     func resetState() {
-        
-        if syncMoc != nil {
-            syncMoc.performGroupedBlock {
-                self.syncMoc.userInfo.removeAllObjects()
-            }
-            if !waitForAllGroupsToBeEmpty(withTimeout: 0.5) {
-                fatalError()
-            }
-        }
-        NSManagedObjectContext.resetUserInterfaceContext()
-        NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
+        StorageStack.reset()
     }
 }
 
