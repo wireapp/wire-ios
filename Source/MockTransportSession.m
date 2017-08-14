@@ -88,12 +88,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 
-@interface MockTransportSession (Mock)
-
-- (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
-
-@end
-
 
 @interface MockTransportSession (PushEvents)
 
@@ -233,11 +227,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
     [self.managedObjectContext createDispatchGroups];
     [self.managedObjectContext addGroup:group];
-    self.managedObjectContext.persistentStoreCoordinator = psc;
-    
-    if(!_cookieStorage) {
-        _cookieStorage = [ZMPersistentCookieStorage storageForServerName:@"ztest.example.com"];
-    }
+    self.managedObjectContext.persistentStoreCoordinator = psc;    
 }
 
 -(void)resetReceivedRequests
