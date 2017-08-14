@@ -66,11 +66,10 @@ extension NSPersistentStoreCoordinator {
 /// Creates a persistent store CoreData stack
 class PersistentStorageInitialization {
     
-    /// when true, createAndMigrate() will return immediately after migrating key store
-    /// and before migrating the legacy store
-    static var debug_returnAfterMigratingClientKeyStore = false
-    
     fileprivate init() {}
+    
+    /// Observer token for application becoming available
+    fileprivate var applicationProtectedDataDidBecomeAvailableObserver: Any! = nil
     
     fileprivate static func executeWhenFileIsAccessible(_ file: URL, usingBlock block: @escaping (Void) -> Void) {
         // We need to handle the case when the database file is encrypted by iOS and user never entered the passcode
