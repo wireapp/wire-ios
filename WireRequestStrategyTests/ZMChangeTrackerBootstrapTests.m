@@ -354,12 +354,13 @@
 {
     // given
     NSString *entityName = ZMConnection.entityName;
+    NSEntityDescription *entityDescription = ZMConnection.entity;
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:entityName];
     request.predicate = [NSPredicate predicateWithFormat:@"status == 0", self.user1];
     
     // when
     NSMapTable *entityToRequestMap = [NSMapTable strongToStrongObjectsMapTable];
-    [entityToRequestMap setObject:[NSSet setWithObject:request.predicate] forKey:entityName];
+    [entityToRequestMap setObject:[NSSet setWithObject:request.predicate] forKey:entityDescription];
     NSMapTable *map = [self.sut executeMappedFetchRequests:entityToRequestMap];
     
     // then
