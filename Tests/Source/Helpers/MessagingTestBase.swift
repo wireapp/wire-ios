@@ -22,21 +22,32 @@ import WireCryptobox
 
 class MessagingTestBase: ZMTBaseTest {
     
-    fileprivate(set) var syncMOC: NSManagedObjectContext!
-    fileprivate(set) var uiMOC: NSManagedObjectContext!
-    
     fileprivate(set) var groupConversation: ZMConversation!
     fileprivate(set) var oneToOneConversation: ZMConversation!
     fileprivate(set) var selfClient: UserClient!
     fileprivate(set) var otherUser: ZMUser!
     fileprivate(set) var otherClient: UserClient!
     fileprivate(set) var otherEncryptionContext: EncryptionContext!
+    fileprivate(set) var contextDirectory: ManagedObjectContextDirectory!
+    fileprivate(set) var accountIdentifier: UUID!
+    fileprivate(set) var sharedContainerURL: URL!
     
+    var syncMOC: NSManagedObjectContext! {
+        return self.contextDirectory.syncContext
+    }
+    
+    var uiMOC: NSManagedObjectContext! {
+        return self.contextDirectory.uiContext
+    }
+
     override func setUp() {
         super.setUp()
         
         self.deleteAllOtherEncryptionContexts()
         self.deleteAllFilesInCache()
+        
+        self.sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+        self.accountIdentifier = UUID()
         self.setupManagedObjectContexes()
         
         self.syncMOC.performGroupedBlockAndWait {
@@ -59,12 +70,22 @@ class MessagingTestBase: ZMTBaseTest {
             self.groupConversation = nil
         }
         self.stopEphemeralMessageTimers()
-        self.tearDownManagedObjectContexes()
         self.deleteAllFilesInCache()
         self.deleteAllOtherEncryptionContexts()
         
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
-        
+
+        StorageStack.reset()
+        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
+
+        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
+            try? FileManager.default.removeItem(at: $0)
+        }
+
+        accountIdentifier = nil
+        sharedContainerURL = nil
+        contextDirectory = nil
+
         super.tearDown()
     }
 }
@@ -287,17 +308,24 @@ extension MessagingTestBase {
 
 // MARK: - Contexts
 extension MessagingTestBase {
-    
+
     fileprivate func setupManagedObjectContexes() {
-        
-        let storeURL = PersistentStoreRelocator.storeURL(in: .cachesDirectory)!
-        NSManagedObjectContext.setUseInMemoryStore(true)
-        self.uiMOC = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)
+        StorageStack.reset()
+        StorageStack.shared.createStorageAsInMemory = true
+
+        StorageStack.shared.createManagedObjectContextDirectory(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: sharedContainerURL,
+            dispatchGroup: dispatchGroup,
+            completionHandler: { self.contextDirectory = $0 }
+        )
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
+
         let imageAssetCache = ImageAssetCache(MBLimit: 100)
         let fileAssetCache = FileAssetCache(location: nil)
         self.uiMOC.userInfo["TestName"] = self.name
         
-        self.syncMOC = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: storeURL.deletingLastPathComponent())
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.userInfo["TestName"] = self.name
             self.syncMOC.saveOrRollback()
@@ -310,32 +338,6 @@ extension MessagingTestBase {
         self.uiMOC.zm_sync = self.syncMOC
         self.uiMOC.zm_imageAssetCache = imageAssetCache
         self.uiMOC.zm_fileAssetCache = fileAssetCache
-    }
-    
-    fileprivate func tearDownManagedObjectContexes() {
-        self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.zm_tearDownCryptKeyStore()
-        }
-        let refUI = self.uiMOC
-        let refSync = self.syncMOC
-        
-        self.uiMOC = nil
-        self.syncMOC = nil
-        
-        refUI?.performAndWait {
-            // wait for any operation to complete
-        }
-        refSync?.performAndWait {
-            // wait for any operation to complete
-            refSync?.userInfo.removeAllObjects()
-        }
-        refUI?.performAndWait {
-            // wait for any operation to complete
-            refUI?.userInfo.removeAllObjects()
-        }
-        
-        NSManagedObjectContext.resetUserInterfaceContext()
-        NSManagedObjectContext.resetSharedPersistentStoreCoordinator()
     }
     
     override var allDispatchGroups: [ZMSDispatchGroup] {
