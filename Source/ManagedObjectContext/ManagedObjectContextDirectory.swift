@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 /// List of context
 @objc public class ManagedObjectContextDirectory: NSObject {

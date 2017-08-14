@@ -116,6 +116,17 @@ import UIKit
             }
         }
     }
+    
+    public func needsToRelocateOrMigrateLocalStack(accountIdentifier: UUID, applicationContainer: URL) -> Bool {
+        guard !self.createStorageAsInMemory else { return false }
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let storeFile = accountDirectory.appendingPersistentStoreLocation()
+        if MainPersistentStoreRelocator.needsToMoveLegacyStore(storeFile: storeFile, applicationContainer: applicationContainer) {
+            return true
+        }
+        let model = NSManagedObjectModel.loadModel()
+        return NSPersistentStoreCoordinator.shouldMigrateStoreToNewModelVersion(at: storeFile, model: model)
+    }
 
     /// Creates a managed object context directory on disk
     func createOnDiskStack(

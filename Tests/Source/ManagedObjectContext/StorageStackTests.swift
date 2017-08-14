@@ -45,7 +45,15 @@ class StorageStackTests: DatabaseBaseTest {
         
         // THEN
         XCTAssertNil(contextDirectory)
+    }
+    
+    func testThatNoMigrationIsNeededForInMemoryDatabase() {
+        // GIVEN
+        StorageStack.shared.createStorageAsInMemory = true
+        let uuid = UUID.create()
         
+        // THEN
+        XCTAssertFalse(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: uuid, applicationContainer: self.applicationContainer))
     }
     
     func testThatItCanReopenAPreviouslyExistingDatabase() {
@@ -168,6 +176,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         // WHEN
         var contextDirectory: ManagedObjectContextDirectory? = nil
+        XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: uuid, applicationContainer: self.applicationContainer))
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: uuid,
             applicationContainer: self.applicationContainer,
@@ -217,6 +226,7 @@ class StorageStackTests: DatabaseBaseTest {
             // WHEN
             // create the stack, check that the value is there and that it calls the migration callback
             var newStoreFile: URL? = nil
+            XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: userID, applicationContainer: self.applicationContainer))
             StorageStack.shared.createManagedObjectContextDirectory(
                 accountIdentifier: userID,
                 applicationContainer: self.applicationContainer,
@@ -330,6 +340,7 @@ class StorageStackTests: DatabaseBaseTest {
         let completionExpectation = self.expectation(description: "Callback invoked")
         
         // WHEN
+        XCTAssertFalse(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: uuid, applicationContainer: self.applicationContainer))
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: uuid,
             applicationContainer: self.applicationContainer,
