@@ -32,6 +32,7 @@
 @class MockMember;
 
 @protocol MockTransportSessionObjectCreation;
+@protocol UnauthenticatedTransportSessionDelegate;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -45,6 +46,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (ZMTransportSession *)mockedTransportSession;
 
 @property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
+@property (nonatomic, nullable) id _userInfoAvailableClosure;
 
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURL *websocketURL;
@@ -81,6 +83,15 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 - (void)registerPushEvent:(MockPushEvent *)mockPushEvent;
 - (void)logoutSelfUser;
+
+@end
+
+
+
+@interface MockTransportSession (Mock)
+
+- (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
+- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(__attribute__((noescape)) ZMTransportRequestGenerator)generator;
 
 @end
 
