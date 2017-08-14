@@ -48,6 +48,7 @@
 @property (nonatomic) ZMTransportResponse *recordedResponse;
 @property (nonatomic) NSString *receivedToken;
 @property (nonatomic) NSString *receivedTokenType;
+@property (nonatomic) NSUUID *userIdentifier;
 
 @end
 
@@ -66,9 +67,10 @@
 
     self.validAccessToken = [[ZMAccessToken alloc] initWithToken:@"valid-token" type:@"valid-type" expiresInSeconds:4321];
     self.expiredAccessToken = [[ZMAccessToken alloc] initWithToken:@"expired-token" type:@"expired-type" expiresInSeconds:0];
-    
+    self.userIdentifier = [NSUUID createUUID];
     self.urlSession = [OCMockObject niceMockForClass:[ZMURLSession class]];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:baseURL.host];
+
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:baseURL.host userIdentifier:self.userIdentifier];
     [self setAuthenticationCookieData];
 
     self.queue = [NSOperationQueue mainQueue];
@@ -101,6 +103,7 @@
     self.taskCount = 0;
     self.failureCount = 0;
     self.recordedResponse = nil;
+    self.userIdentifier = nil;
     [super tearDown];
 }
 
