@@ -16,8 +16,8 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
                BuildableName = "WireShareEngine.framework"
-               BlueprintName = "wire-ios-share-engine"
-               ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
+               BlueprintName = "WireShareEngine"
+               ReferencedContainer = "container:WireShareEngine.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -34,9 +34,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "5470D3F11D76E1B000FDE440"
-               BuildableName = "wire-ios-share-engineTests.xctest"
-               BlueprintName = "wire-ios-share-engineTests"
-               ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
+               BuildableName = "WireShareEngineTests.xctest"
+               BlueprintName = "WireShareEngineTests"
+               ReferencedContainer = "container:WireShareEngine.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -45,8 +45,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
             BuildableName = "WireShareEngine.framework"
-            BlueprintName = "wire-ios-share-engine"
-            ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
+            BlueprintName = "WireShareEngine"
+            ReferencedContainer = "container:WireShareEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -67,8 +67,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
             BuildableName = "WireShareEngine.framework"
-            BlueprintName = "wire-ios-share-engine"
-            ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
+            BlueprintName = "WireShareEngine"
+            ReferencedContainer = "container:WireShareEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
       <AdditionalOptions>
@@ -85,8 +85,8 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "5470D3E71D76E1B000FDE440"
             BuildableName = "WireShareEngine.framework"
-            BlueprintName = "wire-ios-share-engine"
-            ReferencedContainer = "container:wire-ios-share-engine.xcodeproj">
+            BlueprintName = "WireShareEngine"
+            ReferencedContainer = "container:WireShareEngine.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
    </ProfileAction>

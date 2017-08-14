@@ -219,25 +219,27 @@ public class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init(applicationGroupIdentifier: String, hostBundleIdentifier: String) throws {
+    public convenience init(applicationGroupIdentifier: String, accountIdentifier: UUID, hostBundleIdentifier: String) throws {
+        let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        guard !StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL) else { throw InitializationError.needsMigration }
         
-        guard let sharedContainerURL = FileManager.default.containerURL(forSecurityApplicationGroupIdentifier: applicationGroupIdentifier) else {
-            throw InitializationError.missingSharedContainer
-        }
+        let group = DispatchGroup()
         
-        let storeURL = sharedContainerURL.appendingPathComponent(hostBundleIdentifier, isDirectory: true).appendingPathComponent("store.wiredatabase")
-        let keyStoreURL = sharedContainerURL
-        
-        guard !NSManagedObjectContext.needsToPrepareLocalStore(at: storeURL) else { throw InitializationError.needsMigration }
-
-        let userInterfaceContext = NSManagedObjectContext.createUserInterfaceContextWithStore(at: storeURL)!
-        let syncContext = NSManagedObjectContext.createSyncContextWithStore(at: storeURL, keyStore: keyStoreURL)!
-        
-        userInterfaceContext.zm_sync = syncContext
-        syncContext.zm_userInterface = userInterfaceContext
+        var directory: ManagedObjectContextDirectory!
+        group.enter()
+        StorageStack.shared.createManagedObjectContextDirectory(
+            accountIdentifier: accountIdentifier,
+            applicationContainer: sharedContainerURL,
+            startedMigrationCallback: {  },
+            completionHandler: { contextDirectory in
+                directory = contextDirectory
+                group.leave()
+            }
+        )
+        _ = group.wait(timeout: .distantFuture)
         
         let environment = ZMBackendEnvironment(userDefaults: UserDefaults.shared())
-        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!)
+        let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
                 
         let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
@@ -248,8 +250,8 @@ public class SharingSession {
         )
         
         try self.init(
-            userInterfaceContext: userInterfaceContext,
-            syncContext: syncContext,
+            userInterfaceContext: directory.uiContext,
+            syncContext: directory.syncContext,
             transportSession: transportSession,
             sharedContainerURL: sharedContainerURL
         )
