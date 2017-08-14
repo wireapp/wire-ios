@@ -28,6 +28,8 @@
 @class Member;
 @class Team;
 
+extern NSString *const ZMPersistedClientIdKey;
+
 @interface ZMUser : ZMManagedObject <ZMBareUser>
 
 @property (nonatomic, readonly) NSString *emailAddress;

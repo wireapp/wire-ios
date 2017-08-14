@@ -41,7 +41,7 @@
 NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";
 NSString *const ZMUserActiveConversationsKey = @"activeConversations";
 
-static NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
+NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 static NSString *const AccentKey = @"accentColorValue";
 static NSString *const SelfUserObjectIDAsStringKey = @"SelfUserObjectID";

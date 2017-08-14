@@ -17,17 +17,13 @@
 //
 
 
-@import WireDataModel;
 @import WireTesting;
-@import WireDataModel;
+#import <WireDataModel/WireDataModel-Swift.h>
 
 #import "ZMTestSession.h"
 
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+tests.h"
-
-NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
-
 
 @interface ZMTestSession ()
 
