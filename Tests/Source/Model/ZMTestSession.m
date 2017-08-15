@@ -43,18 +43,24 @@
 
 @implementation ZMTestSession
 
-- (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup
+
+- (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup accountIdentifier:(NSUUID *)identifier
 {
     self = [super init];
-    
+
     if (self) {
         _dispatchGroup = dispatchGroup;
-        self.accountIdentifier = [NSUUID createUUID];
+        self.accountIdentifier = identifier;
         self.containerURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
         self.storeURL = [[StorageStack accountFolderWithAccountIdentifier:self.accountIdentifier applicationContainer:self.containerURL] URLAppendingPersistentStoreLocation];
     }
-    
+
     return self;
+}
+
+- (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup
+{
+    return [self initWithDispatchGroup:dispatchGroup accountIdentifier:NSUUID.createUUID];
 }
 
 - (NSManagedObjectContext *)uiMOC
