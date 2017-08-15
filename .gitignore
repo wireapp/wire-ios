@@ -47,3 +47,9 @@ Packages/
 
 Carthage/Checkouts
 Carthage/Build
+
+## Other Logs and Test Coverage
+cobertura.xml
+code-coverage/
+tests.xml
+xcode-summary.log
