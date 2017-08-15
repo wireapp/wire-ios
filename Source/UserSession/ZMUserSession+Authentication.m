@@ -81,8 +81,9 @@ static NSString *const HasHistoryKey = @"hasHistory";
         while (dispatch_semaphore_wait(sem, DISPATCH_TIME_FOREVER) != 0) {
             ;
         }
-        
-        // [NSManagedObjectContext setClearPersistentStoreOnStart:YES]; TODO
+
+        // TODO: This does not delete any local data
+        [StorageStack reset];
         
         [[NSUserDefaults standardUserDefaults] synchronize];
         [[NSUserDefaults sharedUserDefaults] synchronize];
@@ -94,8 +95,8 @@ static NSString *const HasHistoryKey = @"hasHistory";
 
 + (void)deleteCacheOnRelaunch;
 {
-    exit(0); // TODO
-    // [NSManagedObjectContext setClearPersistentStoreOnStart:YES];
+    // TODO: This does not delete any local data
+    exit(0);
 }
 
 @end
