@@ -30,7 +30,7 @@
     self = [super init];
     if (self) {
         self.userIdentifier = userIdentifier;
-        self.sharedContainerDirectory = sharedContainerDirectory;
+        self.applicationContainer = sharedContainerDirectory;
         self.contextDirectory = contextDirectory;
     }
     return self;

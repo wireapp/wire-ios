@@ -55,7 +55,7 @@
 @interface MockLocalStoreProvider : NSObject <LocalStoreProviderProtocol>
 
 @property (nonatomic, copy) NSUUID *userIdentifier;
-@property (nonatomic, copy) NSURL *sharedContainerDirectory;
+@property (nonatomic, copy) NSURL *applicationContainer;
 @property (nonatomic, strong) ManagedObjectContextDirectory *contextDirectory;
 
 - (instancetype)initWithSharedContainerDirectory:(NSURL *)sharedContainerDirectory userIdentifier:(NSUUID *)userIdentifier contextDirectory:(ManagedObjectContextDirectory *)contextDirectory;
