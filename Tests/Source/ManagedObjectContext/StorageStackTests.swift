@@ -157,14 +157,14 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createStorageAsInMemory = false
     }
     
-    func testThatItPerformsMigrationCallbackWhenDifferentVersion() {
+    func testThatItPerformsMigrationCallbackWhenDifferentVersion() throws {
         
         // GIVEN
         let uuid = UUID.create()
         let completionExpectation = self.expectation(description: "Callback invoked")
         let migrationExpectation = self.expectation(description: "Migration started")
         let storeFile = StorageStack.accountFolder(accountIdentifier: uuid, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
-        try! FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
+        try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
         
         // copy old version database into the expected location
         guard let source = Bundle(for: type(of: self)).url(forResource: "store2-3", withExtension: "wiredatabase") else {
@@ -172,7 +172,7 @@ class StorageStackTests: DatabaseBaseTest {
             return
         }
         let destination = URL(string: storeFile.absoluteString)!
-        try! FileManager.default.copyItem(at: source, to: destination)
+        try FileManager.default.copyItem(at: source, to: destination)
         
         // WHEN
         var contextDirectory: ManagedObjectContextDirectory? = nil
@@ -192,7 +192,7 @@ class StorageStackTests: DatabaseBaseTest {
             XCTFail("No context")
             return
         }
-        let messageCount = try! uiContext.count(for: ZMClientMessage.sortedFetchRequest()!)
+        let messageCount = try uiContext.count(for: ZMClientMessage.sortedFetchRequest()!)
         XCTAssertGreaterThan(messageCount, 0)
         
     }
@@ -261,7 +261,7 @@ class StorageStackTests: DatabaseBaseTest {
         }
     }
     
-    func testThatItPerformsMigrationWhenThereExistsMultipleLegacyStores() {
+    func testThatItPerformsMigrationWhenThereExistsMultipleLegacyStores() throws {
         
         let userID = UUID.create()
         let testKey = "aassddffgg"
@@ -282,20 +282,19 @@ class StorageStackTests: DatabaseBaseTest {
         self.createKeyStore(accountDirectory: oldPath, filename: "foo")
         
         // copy the store to all remaining possible legacy locations
-        for oldLocation in self.previousDatabaseLocations {
-            if oldLocation != oldPath {
-                // copy store files
-                ["-shm", "-wal", ""].forEach { storeFileExtension in
-                    let source = oldStoreFile.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
-                    let destination = oldLocation.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: storeFileExtension)
-                    try! FileManager.default.copyItem(at: source, to: destination)
-                }
-                
-                // copy keystore
-                let source = oldPath.appendingPathComponent("otr", isDirectory: true)
-                let destination = oldLocation.appendingPathComponent("otr", isDirectory: true)
-                try! FileManager.default.copyItem(at: source, to: destination)
+        try previousDatabaseLocations.filter { $0 != oldPath }.forEach { oldLocation in
+            // copy store files
+            try ["-shm", "-wal", ""].forEach { storeFileExtension in
+                let source = oldStoreFile.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
+                let destination = oldLocation.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: storeFileExtension)
+                print(source, destination)
+                try FileManager.default.copyItem(at: source, to: destination)
             }
+
+            // copy keystore
+            let source = oldPath.appendingPathComponent("otr", isDirectory: true)
+            let destination = oldLocation.appendingPathComponent("otr", isDirectory: true)
+            try FileManager.default.copyItem(at: source, to: destination)
         }
         
         // expectations
