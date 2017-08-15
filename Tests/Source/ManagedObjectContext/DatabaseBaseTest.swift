@@ -33,6 +33,8 @@ import WireTesting
         super.setUp()
         self.clearStorageFolder()
         try! FileManager.default.createDirectory(at: self.applicationContainer, withIntermediateDirectories: true)
+        let legacyDatabaseDirectory = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        try! FileManager.default.createDirectory(at: legacyDatabaseDirectory, withIntermediateDirectories: true)
     }
     
     override public func tearDown() {
@@ -127,7 +129,7 @@ import WireTesting
         return [
             FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
             FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
-            self.applicationContainer
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
         ]
     }
 }

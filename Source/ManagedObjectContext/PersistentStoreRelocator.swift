@@ -40,10 +40,13 @@ public struct MainPersistentStoreRelocator {
     }
     
     static func possibleLegacyAccountFolders(applicationContainer: URL) -> [URL] {
-        var locations = [.cachesDirectory, .applicationSupportDirectory, .libraryDirectory].map{
+        var locations = [.cachesDirectory, .applicationSupportDirectory, .libraryDirectory].map {
             FileManager.default.urls(for: $0, in: .userDomainMask).first!
         }
-        locations.append(applicationContainer)
+
+        let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        locations.append(sharedContainerAccountFolder)
+
         return locations
     }
     
