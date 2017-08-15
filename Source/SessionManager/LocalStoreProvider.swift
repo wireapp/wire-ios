@@ -25,8 +25,8 @@ public extension Bundle {
 
 @objc public protocol LocalStoreProviderProtocol: class {
     var userIdentifier: UUID { get }
-    var sharedContainerDirectory: URL { get }
-    var contextDirectory: ManagedObjectContextDirectory? { get }
+    var applicationContainer: URL { get }
+    var contextDirectory: ManagedObjectContextDirectory { get }
 }
 
 
@@ -34,28 +34,35 @@ public extension Bundle {
 /// is used instead of concrete class to let us inject a custom implementation in tests
 @objc public class LocalStoreProvider: NSObject, LocalStoreProviderProtocol {
     public let userIdentifier: UUID
-    public let sharedContainerDirectory: URL
-    public var contextDirectory: ManagedObjectContextDirectory?
-    private let dispatchGroup: ZMSDispatchGroup?
+    public let applicationContainer: URL
+    public let contextDirectory: ManagedObjectContextDirectory
 
-    @objc public init(sharedContainerDirectory: URL, userIdentifier: UUID, dispatchGroup: ZMSDispatchGroup? = nil) {
+    private init(applicationContainer: URL, userIdentifier: UUID, contextDirectory: ManagedObjectContextDirectory) {
         self.userIdentifier = userIdentifier
-        self.sharedContainerDirectory = sharedContainerDirectory
-        self.dispatchGroup = dispatchGroup
+        self.applicationContainer = applicationContainer
+        self.contextDirectory = contextDirectory
     }
 
-    public func createStorageStack(migration: (() -> Void)?, completion: @escaping (LocalStoreProviderProtocol) -> Void) {
+    public static func createStack(
+        applicationContainer: URL,
+        userIdentifier: UUID,
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        migration: (() -> Void)? = nil,
+        completion: @escaping (LocalStoreProviderProtocol) -> Void
+        ) {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: userIdentifier,
-            applicationContainer: sharedContainerDirectory,
+            applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
             startedMigrationCallback: { migration?() },
-            completionHandler: { [weak self] contextDirectory in
-                guard let `self` = self else { return }
-                self.contextDirectory = contextDirectory
-                completion(self)
-            }
-        )
+            completionHandler: { contextDirectory in
+                let provider = LocalStoreProvider(
+                    applicationContainer: applicationContainer,
+                    userIdentifier: userIdentifier,
+                    contextDirectory: contextDirectory
+                )
+                completion(provider)
+        })
     }
 
     public static func fetchUserIDFromLegacyStore(

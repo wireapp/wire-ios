@@ -134,7 +134,7 @@ ZM_EMPTY_ASSERTING_INIT()
         self.uiMOC = storeProvider.contextDirectory.uiContext;
         self.hotFix = [[ZMHotFix alloc] initWithSyncMOC:self.syncMOC];
 
-        self.eventMOC = [NSManagedObjectContext createEventContextWithSharedContainerURL:storeProvider.sharedContainerDirectory userIdentifier:storeProvider.userIdentifier];
+        self.eventMOC = [NSManagedObjectContext createEventContextWithSharedContainerURL:storeProvider.applicationContainer userIdentifier:storeProvider.userIdentifier];
         [self.eventMOC addGroup:self.syncMOC.dispatchGroup];
         
         self.applicationStatusDirectory = [[ZMApplicationStatusDirectory alloc] initWithManagedObjectContext:self.syncMOC
