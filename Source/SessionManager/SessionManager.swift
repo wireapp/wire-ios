@@ -311,7 +311,7 @@ extension SessionManager: UnauthenticatedSessionDelegate {
         accountManager.addAndSelect(account)
 
         dispatchGroup?.enter()
-        LocalStoreProvider.createStack(applicationContainer: sharedContainerURL, userIdentifier: account.userIdentifier) { [weak self] provider in
+        LocalStoreProvider.createStack(applicationContainer: sharedContainerURL, userIdentifier: account.userIdentifier, dispatchGroup: dispatchGroup) { [weak self] provider in
             self?.createSession(for: account, with: provider) { userSession in
                 if let profileImageData = session.authenticationStatus.profileImageData {
                     self?.updateProfileImage(imageData: profileImageData)
