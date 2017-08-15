@@ -61,6 +61,10 @@ public class DiskDatabaseTest: ZMTBaseTest {
 
         StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountId, applicationContainer: storeURL) {
             self.moc = $0.uiContext
+            self.moc.performGroupedBlock {
+                let selfUser = ZMUser.selfUser(in: self.moc)
+                selfUser.remoteIdentifier = self.accountId
+            }
         }
 
         XCTAssert(wait(withTimeout: 0.5) { self.moc != nil })
