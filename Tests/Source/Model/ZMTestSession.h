@@ -26,6 +26,7 @@
 /// This class provides contexts & caches for running tests against our data model.
 @interface ZMTestSession : NSObject
 
+- (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup accountIdentifier:(NSUUID *)identifier;
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup;
 
 /// If useInMemoryStore is set to YES an in memory store is used. Defaults to YES.
