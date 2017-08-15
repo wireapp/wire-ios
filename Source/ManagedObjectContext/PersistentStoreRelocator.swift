@@ -91,6 +91,7 @@ public struct PersistentStoreRelocator {
     private init() {}
     
     private static let zmLog = ZMSLog(tag: "PersistentStoreRelocator")
+    private static let fileManager = FileManager.default
     
     /// Extension of store files
     public static let storeFileExtensions = ["", "-wal", "-shm"]
@@ -100,11 +101,9 @@ public struct PersistentStoreRelocator {
             zmLog.debug("Attempt to move store from \(from.path), which doesn't exist")
             return
         }
-        
-        let fileManager = FileManager.default
+
         fileManager.createAndProtectDirectory(at: to.deletingLastPathComponent())
-        
-        moveExternalBinaryStoreFiles(from: from, to: to)
+        moveExternalBinaryStoreFilesIfNeeded(from: from, to: to)
         
         self.storeFileExtensions.reversed().forEach { storeFileExtension in
             let destination = to.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
@@ -118,10 +117,15 @@ public struct PersistentStoreRelocator {
         }
     }
     
-    private static func moveExternalBinaryStoreFiles(from: URL, to: URL) {
-        let toDirectory = to.deletingLastPathComponent()
-        FileManager.default.createAndProtectDirectory(at: toDirectory)
-        try! FileManager.default.moveItem(at: from.supportFolderForStoreFile, to: to.supportFolderForStoreFile)
+    private static func moveExternalBinaryStoreFilesIfNeeded(from: URL, to: URL) {
+        do {
+            guard fileManager.fileExists(atPath: from.supportFolderForStoreFile.path) else { return }
+            let toDirectory = to.deletingLastPathComponent()
+            fileManager.createAndProtectDirectory(at: toDirectory)
+            try FileManager.default.moveItem(at: from.supportFolderForStoreFile, to: to.supportFolderForStoreFile)
+        } catch {
+            fatal("Failed to move existing binary store file from \(from) to \(to): \(error)")
+        }
     }
     
     public static func storeExists(at url: URL) -> Bool {
@@ -149,7 +153,7 @@ public struct PersistentStoreRelocator {
             } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
                 // nop
             } catch {
-                fatalError()
+                fatal("Unexpected error deleting store file \($0): \(error)")
             }
         }
         
@@ -158,7 +162,7 @@ public struct PersistentStoreRelocator {
         } catch let error as NSError where error.domain == NSCocoaErrorDomain && error.code == NSFileNoSuchFileError {
             // nop
         } catch {
-            fatalError()
+            fatal("Unexpected error deleting store file from \(storeFile.supportFolderForStoreFile): \(error)")
         }
     }
 }
