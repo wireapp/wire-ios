@@ -222,10 +222,12 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
 
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
         guard let account = account else { return createUnauthenticatedSession() }
-        let storeProvider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier, dispatchGroup: dispatchGroup)
 
         if nil != account.cookieStorage().authenticationCookieData {
-            storeProvider.createStorageStack(
+            LocalStoreProvider.createStack(
+                applicationContainer: sharedContainerURL,
+                userIdentifier: account.userIdentifier,
+                dispatchGroup: dispatchGroup,
                 migration: { [weak self] in self?.delegate?.sessionManagerWillStartMigratingLocalStore() },
                 completion: { [weak self] provider in self?.createSession(for: account, with: provider, completion: completion) }
             )
@@ -308,10 +310,8 @@ extension SessionManager: UnauthenticatedSessionDelegate {
     public func session(session: UnauthenticatedSession, createdAccount account: Account) {
         accountManager.addAndSelect(account)
 
-        let provider = LocalStoreProvider(sharedContainerDirectory: sharedContainerURL, userIdentifier: account.userIdentifier, dispatchGroup: dispatchGroup)
-
         dispatchGroup?.enter()
-        provider.createStorageStack(migration: nil) { [weak self] provider in
+        LocalStoreProvider.createStack(applicationContainer: sharedContainerURL, userIdentifier: account.userIdentifier) { [weak self] provider in
             self?.createSession(for: account, with: provider) { userSession in
                 if let profileImageData = session.authenticationStatus.profileImageData {
                     self?.updateProfileImage(imageData: profileImageData)

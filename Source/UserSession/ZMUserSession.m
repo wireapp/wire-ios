@@ -193,8 +193,8 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         self.managedObjectContext.zm_syncContext = self.syncManagedObjectContext;
         
-        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAccountWith:storeProvider.userIdentifier in:storeProvider.sharedContainerDirectory];
-        [self.class moveCachesIfNeededForAccountWith:storeProvider.userIdentifier in:storeProvider.sharedContainerDirectory];
+        NSURL *cacheLocation = [NSFileManager.defaultManager cachesURLForAccountWith:storeProvider.userIdentifier in:storeProvider.applicationContainer];
+        [self.class moveCachesIfNeededForAccountWith:storeProvider.userIdentifier in:storeProvider.applicationContainer];
         
         UserImageLocalCache *userImageCache = [[UserImageLocalCache alloc] initWithLocation:cacheLocation];
         self.managedObjectContext.zm_userImageCache = userImageCache;
@@ -263,7 +263,7 @@ ZM_EMPTY_ASSERTING_INIT()
         }];
         [self enableBackgroundFetch];
 
-        self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.storeProvider.sharedContainerDirectory];
+        self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithSharedContainerURL:self.storeProvider.applicationContainer];
         
         if ([self.class useCallKit]) {
             CXProvider *provider = [[CXProvider alloc] initWithConfiguration:[ZMCallKitDelegate providerConfiguration]];
@@ -380,7 +380,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (NSURL *)sharedContainerURL
 {
-    return self.storeProvider.sharedContainerDirectory;
+    return self.storeProvider.applicationContainer;
 }
 
 - (void)didRequestToOpenSyncConversation:(NSNotification *)note
