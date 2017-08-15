@@ -99,12 +99,14 @@ class SessionManagerTests: IntegrationTest {
         account.cookieStorage().authenticationCookieData = NSData.secureRandomData(ofLength: 16)
         manager.addAndSelect(account)
 
-        let provider = LocalStoreProvider(sharedContainerDirectory: sharedContainer, userIdentifier: currentUserIdentifier)
         var completed = false
-        provider.createStorageStack(migration: nil) { configuration in
-            completed = true
-        }
-
+        LocalStoreProvider.createStack(
+            applicationContainer: sharedContainer,
+            userIdentifier: currentUserIdentifier,
+            dispatchGroup: dispatchGroup,
+            completion: { _ in completed = true }
+        )
+        
         XCTAssert(wait(withTimeout: 0.5) { completed })
 
         // when
