@@ -16,16 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
+import WireTransport
 
-public protocol ReachabilityProvider: class {
-    var mayBeReachable: Bool { get }
-}
-
-
-extension ZMTransportSession: ReachabilityProvider {
-
-    public var mayBeReachable: Bool {
-        return reachability.mayBeReachable
-    }
-
+@objc public class FakeReachability: NSObject, ReachabilityProvider {
+    public var mayBeReachable: Bool = true
+    public var isMobileConnection: Bool = true
+    public var oldMayBeReachable: Bool = true
+    public var oldIsMobileConnection: Bool = true
 }

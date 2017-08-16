@@ -23,7 +23,6 @@
 @import WireTesting;
 @import OCMock;
 
-#import "ZMURLSession.h"
 #import "ZMURLSession+Internal.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "Fakes.h"

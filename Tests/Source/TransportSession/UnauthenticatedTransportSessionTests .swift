@@ -50,6 +50,14 @@ private class MockURLSession: SessionProtocol {
 
 }
 
+private class MockReachability: NSObject, ReachabilityProvider {
+    let mayBeReachable = true
+    let isMobileConnection = true
+    let oldMayBeReachable = true
+    let oldIsMobileConnection = true
+    
+    func tearDown() {}
+}
 
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
@@ -60,7 +68,7 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
         sessionMock = MockURLSession()
-        sut = UnauthenticatedTransportSession(baseURL: url, urlSession: sessionMock, reachability: nil)
+        sut = UnauthenticatedTransportSession(baseURL: url, urlSession: sessionMock, reachability: MockReachability())
     }
 
     override func tearDown() {

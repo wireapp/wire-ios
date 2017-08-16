@@ -36,7 +36,7 @@
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                       reachabilityClass:(Class)reachabilityClass
+                            reachability:(id<ReachabilityProvider>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL

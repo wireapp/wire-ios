@@ -24,9 +24,23 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMReachabilityObserver;
 
+@protocol ReachabilityProvider
+
+@property (atomic, readonly) BOOL mayBeReachable;
+@property (atomic, readonly) BOOL isMobileConnection;
+@property (atomic, readonly) BOOL oldMayBeReachable;
+@property (atomic, readonly) BOOL oldIsMobileConnection;
+
+@end
+
+@protocol ReachabilityTearDown
+
+- (void)tearDown;
+
+@end
 
 
-@interface ZMReachability : NSObject
+@interface ZMReachability : NSObject <ReachabilityProvider, ReachabilityTearDown>
 
 /// Calls to the observer will always happen on the specified @c observerQueue . All work will be added to the @c group
 - (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver> _Nullable)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
@@ -46,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMReachabilityObserver <NSObject>
 
-- (void)reachabilityDidChange:(ZMReachability *)reachability;
+- (void)reachabilityDidChange:(id<ReachabilityProvider>)reachability;
 
 @end
 

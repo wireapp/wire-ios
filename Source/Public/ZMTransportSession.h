@@ -36,6 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ZMSGroupQueue;
 @protocol ZMKeyValueStore;
 @protocol ZMPushChannel;
+@protocol ReachabilityProvider;
 @class ZMURLSessionSwitch;
 @class ZMTransportRequest;
 
@@ -73,11 +74,12 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic, copy) void (^requestLoopDetectionCallback)(NSString*);
-@property (nonatomic, readonly) ZMReachability *reachability;
+@property (nonatomic, readonly) id<ReachabilityProvider> reachability;
 
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
                    websocketURL:(NSURL *)websocketURL
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                   reachability:(id<ReachabilityProvider>)reachability
              initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
       sharedContainerIdentifier:(nullable NSString *)sharedContainerIdentifier;
 
