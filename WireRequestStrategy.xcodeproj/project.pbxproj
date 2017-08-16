@@ -104,6 +104,7 @@
 		BF7D9BF31D8C355100949267 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF66512F1D8C2ED50074F367 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BF51D8C355100949267 /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651311D8C2ED50074F367 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BF61D8C355100949267 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
 		F963E8DC1D955D4600098AD3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
 		F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8E01D955D5500098AD3 /* SharedProtocols.swift */; };
 /* End PBXBuildFile section */
@@ -115,6 +116,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 166901691D707509000FE4AF;
 			remoteInfo = WireRequestStrategy;
+		};
+		F154EDD61F447BB600CB8184 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 166901611D707509000FE4AF /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = F154EDC31F447B6C00CB8184;
+			remoteInfo = WireRequestStrategyTestHost;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -253,6 +261,9 @@
 		BF66512F1D8C2ED50074F367 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		BF6651311D8C2ED50074F367 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
 		BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
+		F154EDC41F447B6C00CB8184 /* WireRequestStrategyTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireRequestStrategyTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F154EDC61F447B6C00CB8184 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F154EDD21F447B6C00CB8184 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetRequestFactory.swift; sourceTree = "<group>"; };
 		F963E8E01D955D5500098AD3 /* SharedProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharedProtocols.swift; sourceTree = "<group>"; };
 		F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -286,6 +297,13 @@
 				BF7D9BED1D8C353A00949267 /* PINCache.framework in Frameworks */,
 				BF7D9BEE1D8C353A00949267 /* ProtocolBuffers.framework in Frameworks */,
 				BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F154EDC11F447B6C00CB8184 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -324,6 +342,7 @@
 			children = (
 				1669016A1D707509000FE4AF /* WireRequestStrategy.framework */,
 				166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */,
+				F154EDC41F447B6C00CB8184 /* WireRequestStrategyTestHost.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -386,6 +405,7 @@
 		166901781D707509000FE4AF /* WireRequestStrategyTests */ = {
 			isa = PBXGroup;
 			children = (
+				F154EDC51F447B6C00CB8184 /* WireRequestStrategyTestHost */,
 				1621D2211D75AB2D007108C2 /* MockDataModel */,
 				1669017B1D707509000FE4AF /* Info.plist */,
 				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
@@ -483,6 +503,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		F154EDC51F447B6C00CB8184 /* WireRequestStrategyTestHost */ = {
+			isa = PBXGroup;
+			children = (
+				F154EDC61F447B6C00CB8184 /* AppDelegate.swift */,
+				F154EDD21F447B6C00CB8184 /* Info.plist */,
+			);
+			path = WireRequestStrategyTestHost;
+			sourceTree = "<group>";
+		};
 		F963E8D81D955D4600098AD3 /* Helper */ = {
 			isa = PBXGroup;
 			children = (
@@ -568,11 +597,29 @@
 			);
 			dependencies = (
 				166901771D707509000FE4AF /* PBXTargetDependency */,
+				F154EDD71F447BB600CB8184 /* PBXTargetDependency */,
 			);
 			name = WireRequestStrategyTests;
 			productName = WireRequestStrategyTests;
 			productReference = 166901741D707509000FE4AF /* WireRequestStrategyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		F154EDC31F447B6C00CB8184 /* WireRequestStrategyTestHost */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F154EDD51F447B6C00CB8184 /* Build configuration list for PBXNativeTarget "WireRequestStrategyTestHost" */;
+			buildPhases = (
+				F154EDC01F447B6C00CB8184 /* Sources */,
+				F154EDC11F447B6C00CB8184 /* Frameworks */,
+				F154EDC21F447B6C00CB8184 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WireRequestStrategyTestHost;
+			productName = WireRequestStrategyTestHost;
+			productReference = F154EDC41F447B6C00CB8184 /* WireRequestStrategyTestHost.app */;
+			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
@@ -580,7 +627,7 @@
 		166901611D707509000FE4AF /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 0730;
+				LastSwiftUpdateCheck = 0830;
 				LastUpgradeCheck = 0820;
 				ORGANIZATIONNAME = "Wire GmbH";
 				TargetAttributes = {
@@ -592,6 +639,12 @@
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0800;
+						TestTargetID = F154EDC31F447B6C00CB8184;
+					};
+					F154EDC31F447B6C00CB8184 = {
+						CreatedOnToolsVersion = 8.3.2;
+						DevelopmentTeam = EDF3JCE8BC;
+						ProvisioningStyle = Automatic;
 					};
 				};
 			};
@@ -601,6 +654,7 @@
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 166901601D707509000FE4AF;
 			productRefGroup = 1669016B1D707509000FE4AF /* Products */;
@@ -609,6 +663,7 @@
 			targets = (
 				166901691D707509000FE4AF /* WireRequestStrategy */,
 				166901731D707509000FE4AF /* WireRequestStrategyTests */,
+				F154EDC31F447B6C00CB8184 /* WireRequestStrategyTestHost */,
 			);
 		};
 /* End PBXProject section */
@@ -622,6 +677,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 		166901721D707509000FE4AF /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		F154EDC21F447B6C00CB8184 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -691,6 +753,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		F154EDC01F447B6C00CB8184 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -698,6 +768,11 @@
 			isa = PBXTargetDependency;
 			target = 166901691D707509000FE4AF /* WireRequestStrategy */;
 			targetProxy = 166901761D707509000FE4AF /* PBXContainerItemProxy */;
+		};
+		F154EDD71F447BB600CB8184 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = F154EDC31F447B6C00CB8184 /* WireRequestStrategyTestHost */;
+			targetProxy = F154EDD61F447BB600CB8184 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
@@ -872,6 +947,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
 			};
 			name = Debug;
 		};
@@ -894,6 +970,38 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
+				SWIFT_VERSION = 3.0;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
+			};
+			name = Release;
+		};
+		F154EDD31F447B6C00CB8184 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				INFOPLIST_FILE = "$(SRCROOT)/WireRequestStrategyTests/WireRequestStrategyTestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_VERSION = 3.0;
+			};
+			name = Debug;
+		};
+		F154EDD41F447B6C00CB8184 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				DEVELOPMENT_TEAM = EDF3JCE8BC;
+				INFOPLIST_FILE = "$(SRCROOT)/WireRequestStrategyTests/WireRequestStrategyTestHost/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
+				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -927,6 +1035,14 @@
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
+		};
+		F154EDD51F447B6C00CB8184 /* Build configuration list for PBXNativeTarget "WireRequestStrategyTestHost" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F154EDD31F447B6C00CB8184 /* Debug */,
+				F154EDD41F447B6C00CB8184 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
 		};
 /* End XCConfigurationList section */
 	};
