@@ -29,6 +29,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
 @objc public protocol SessionManagerDelegate : class {
     func sessionManagerCreated(unauthenticatedSession : UnauthenticatedSession)
     func sessionManagerCreated(userSession : ZMUserSession)
+    func sessionManagerDidLogout()
     func sessionManagerWillStartMigratingLocalStore()
     func sessionManagerDidBlacklistCurrentVersion()
 }
@@ -220,6 +221,14 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
         }
     }
 
+    public func logoutCurrentSession() {
+        userSession?.resetStateAndExit()
+        userSession = nil
+        delegate?.sessionManagerDidLogout()
+
+        createUnauthenticatedSession()
+    }
+
     fileprivate func select(account: Account?, completion: @escaping (ZMUserSession) -> Void) {
         guard let account = account else { return createUnauthenticatedSession() }
 
@@ -277,8 +286,8 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     }
 
     @objc public var currentUser: ZMUser? {
-        guard let userSession = userSession else { return nil }
-        return ZMUser.selfUser(in: userSession.managedObjectContext)
+        guard let moc = userSession?.managedObjectContext  else { return nil }
+        return ZMUser.selfUser(in: moc)
     }
     
     @objc public var isUserSessionActive: Bool {
