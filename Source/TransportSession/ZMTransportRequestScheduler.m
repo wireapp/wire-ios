@@ -22,8 +22,7 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
-
-
+#import <WireTransport/WireTransport-Swift.h>
 
 NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited = NSIntegerMax;
 /// C.f. <https://en.wikipedia.org/wiki/List_of_HTTP_status_codes>
@@ -42,6 +41,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 @property (nonatomic, readonly) ZMSDispatchGroup *group;
 @property (nonatomic, readonly) dispatch_queue_t countIsolation;
 @property (nonatomic, readonly) NSMutableArray *backoffItemQueue;
+@property (nonatomic, readwrite) id<ReachabilityProvider> reachability;
 @property (nonatomic) BOOL needsTearDown;
 @property (atomic) NSInteger concurrentRequestCountLimit;
 @property (nonatomic, readonly) NSMutableArray *pendingRequestsRequiringAuthentication;
@@ -59,12 +59,12 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 ZM_EMPTY_ASSERTING_INIT();
 
-- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group;
+- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability;
 {
-    return [self initWithSession:session operationQueue:queue group:group backoff:nil];
+    return [self initWithSession:session operationQueue:queue group:group reachability:reachability backoff:nil];
 }
 
-- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group backoff:(ZMExponentialBackoff *)backoff;
+- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability backoff:(ZMExponentialBackoff *)backoff;
 {
     Require(session != nil);
     Require(queue != nil);
@@ -74,6 +74,10 @@ ZM_EMPTY_ASSERTING_INIT();
         self.needsTearDown = YES;
         self.timeUntilNormalModeWhenNetworkMayBeReachable = 35 + arc4random_uniform(10);
         self.timeUntilRetryModeWhenRateLimited = 7.5;
+        self.reachability = reachability;
+        if(!reachability.mayBeReachable) {
+            _schedulerState = ZMTransportRequestSchedulerStateOffline;
+        }
         
         _backoff = backoff ?: [[ZMExponentialBackoff alloc] initWithGroup:group workQueue:queue];
         _backoffItemQueue = [NSMutableArray array];
@@ -104,15 +108,6 @@ ZM_EMPTY_ASSERTING_INIT();
     Require(! self.needsTearDown);
 }
 
-@synthesize reachability = _reachability;
-- (void)setReachability:(ZMReachability *)reachability;
-{
-    if( !reachability.mayBeReachable) {
-        [self setSchedulerState:ZMTransportRequestSchedulerStateOffline];
-    }
-    _reachability = reachability;
-}
-
 @synthesize schedulerState = _schedulerState;
 - (void)setSchedulerState:(ZMTransportRequestSchedulerState)schedulerState;
 {
@@ -136,8 +131,6 @@ ZM_EMPTY_ASSERTING_INIT();
             }
             self.concurrentRequestCountLimit = 0;
             [self rejectAllBackoffItems];
-            //we want notify delegate only when reachability changes
-            //[self.session schedulerWentOffline:self];
             break;
         }
         case ZMTransportRequestSchedulerStateRateLimitedHoldingOff: {

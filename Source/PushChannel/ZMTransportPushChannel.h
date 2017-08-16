@@ -25,7 +25,7 @@
 @class ZMAccessToken;
 @protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
-
+@protocol ZMReachabilityObserver;
 
 /// This class is responsible for opening and closing the push channel connection to the backend.
 @interface ZMTransportPushChannel : NSObject <ZMReachabilityObserver, ZMPushChannel>

@@ -27,7 +27,8 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZMExponentialBackoff;
 @protocol ZMTransportRequestSchedulerItem;
 @protocol ZMTransportRequestSchedulerSession;
-
+@protocol ReachabilityProvider;
+@protocol ZMReachabilityObserver;
 
 enum {
     TooManyRequestsStatusCode = 429,
@@ -52,8 +53,8 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 
 @interface ZMTransportRequestScheduler : NSObject <ZMReachabilityObserver, ZMSGroupQueue>
 
-- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group;
-- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group backoff:(nullable ZMExponentialBackoff *)backoff NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability;
+- (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability backoff:(nullable ZMExponentialBackoff *)backoff NS_DESIGNATED_INITIALIZER;
 
 - (void)tearDown;
 
@@ -71,7 +72,7 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 
 @property (atomic, readonly) NSInteger concurrentRequestCountLimit;
 @property (nonatomic) ZMTransportRequestSchedulerState schedulerState;
-@property (nonatomic) ZMReachability *reachability; ///< May only be set during setup, not after the first call to any other method.
+@property (nonatomic, readonly) id<ReachabilityProvider> reachability;
 
 @end
 

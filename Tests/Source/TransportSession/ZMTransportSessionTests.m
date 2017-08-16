@@ -44,6 +44,7 @@
 #import "ZMURLSessionSwitch.h"
 #import "Fakes.h"
 #import "ZMPersistentCookieStorage.h"
+#import "WireTransport_ios_tests-Swift.h"
 
 /// the JSON Content-Type header
 static NSString *JSONContentType = @"application/json";
@@ -327,77 +328,12 @@ static FakePushChannel *currentFakePushChannel;
 
 static XCTestCase *currentTestCase;
 
-#define ReachabilityAssert(a) \
-	do { \
-		BOOL _a = a; \
-		if (! _a) { \
-			NSString *d = [NSString stringWithFormat: @"Assertion failed: %s", #a ]; \
-			_XCTRegisterFailure(currentTestCase, d); \
-		} \
-	} while (0)
-
-
-/// C.f. ZMReachability
-@interface FakeReachability : NSObject
-
-- (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
-
-- (void)tearDown;
-
-@property (atomic) BOOL mayBeReachable;
-@property (atomic) BOOL oldMayBeReachable;
-
-@property (nonatomic) BOOL wasTornDown;
-@property (nonatomic, copy) NSArray *names;
-@property (nonatomic, weak) id<ZMReachabilityObserver> observer;
-@property (nonatomic) NSOperationQueue * observerQueue;
-@property (nonatomic) ZMSDispatchGroup *group;
-
-@end
-
-
-static __weak FakeReachability *currentReachability;
-
-
-
-@implementation FakeReachability
-
-
-- (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
-{
-    self = [super init];
-    if (self) {
-        self.names = names;
-        self.observer = observer;
-        self.observerQueue = observerQueue;
-        self.group = group;
-        self.mayBeReachable = YES;
-        self.oldMayBeReachable = YES;
-    }
-    currentReachability = self;
-    return self;
-}
-
-- (void)tearDown;
-{
-    self.wasTornDown = YES;
-}
-
-- (void)dealloc
-{
-    ReachabilityAssert(self.wasTornDown);
-}
-
-@end
-
-
 
 //////////////////////////////////////////////////
 //
 #pragma mark - Tests
 //
 //////////////////////////////////////////////////
-
 
 
 @interface ZMTransportSessionTests : ZMTBaseTest
@@ -419,6 +355,7 @@ static __weak FakeReachability *currentReachability;
 @property (nonatomic) ZMURLSessionSwitch *URLSessionSwitch;
 @property (nonatomic) NSUUID *userIdentifier;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic) FakeReachability *reachability;
 
 @end
 
@@ -462,11 +399,12 @@ static __weak FakeReachability *currentReachability;
     self.baseURL = [NSURL URLWithString:@"http://base.example.com"];
     self.webSocketURL = [NSURL URLWithString:@"http://websocket.example.com"];
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host userIdentifier:self.userIdentifier];
+    self.reachability = [[FakeReachability alloc] init];
     
     self.sut = [[ZMTransportSession alloc]
                 initWithURLSessionSwitch:self.URLSessionSwitch
                 requestScheduler:(id) self.scheduler
-                reachabilityClass:[FakeReachability class]
+                reachability:self.reachability
                 queue:self.queue
                 group:self.dispatchGroup
                 baseURL:self.baseURL
@@ -603,7 +541,7 @@ static __weak FakeReachability *currentReachability;
     self.sut = [[ZMTransportSession alloc]
                 initWithURLSessionSwitch:self.URLSessionSwitch
                 requestScheduler:(id) self.scheduler
-                reachabilityClass:[FakeReachability class]
+                reachability:self.reachability
                 queue:self.queue
                 group:self.dispatchGroup
                 baseURL:url
@@ -820,7 +758,7 @@ static __weak FakeReachability *currentReachability;
     ZMTransportSession *sut = [[ZMTransportSession alloc]
                                initWithURLSessionSwitch:urlSwitch
                                requestScheduler:(id) self.scheduler
-                               reachabilityClass:[FakeReachability class]
+                               reachability:self.reachability
                                queue:self.queue
                                group:self.dispatchGroup
                                baseURL:url
@@ -859,7 +797,7 @@ static __weak FakeReachability *currentReachability;
     ZMTransportSession *sut = [[ZMTransportSession alloc]
                                initWithURLSessionSwitch:urlSwitch
                                requestScheduler:(id) self.scheduler
-                               reachabilityClass:[FakeReachability class]
+                               reachability:self.reachability
                                queue:self.queue
                                group:self.dispatchGroup
                                baseURL:url
@@ -2112,7 +2050,7 @@ static __weak FakeReachability *currentReachability;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    currentReachability.mayBeReachable = YES;
+    self.reachability.mayBeReachable = YES;
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodGET payload:nil];
     
     // expect
@@ -2152,7 +2090,7 @@ static __weak FakeReachability *currentReachability;
 {
     // given
     self.sut.accessToken = self.validAccessToken;
-    currentReachability.mayBeReachable = YES;
+    self.reachability.mayBeReachable = YES;
     ZMTransportRequest *request = [ZMTransportRequest requestWithPath:self.dummyPath method:ZMMethodGET payload:nil];
     
     // expect
@@ -2179,7 +2117,7 @@ static __weak FakeReachability *currentReachability;
 - (void)testThatItForwardsReachabilityChangesToTheScheduler;
 {
     // given
-    ZMReachability *reachability = (id) currentReachability;
+    FakeReachability *reachability = self.reachability;
     
     // when
     [self.sut reachabilityDidChange:reachability];
@@ -2222,10 +2160,10 @@ static __weak FakeReachability *currentReachability;
     }];
 
     // when
-    FakeReachability *reachability = currentReachability;
+    FakeReachability *reachability = self.reachability;
     reachability.mayBeReachable = YES;
     reachability.oldMayBeReachable = NO;
-    [self.sut reachabilityDidChange:(id)reachability];
+    [self.sut reachabilityDidChange:reachability];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -2292,7 +2230,7 @@ static __weak FakeReachability *currentReachability;
 - (void)testThatWhenSettingTheNetworkStateDelegateItIsCalledWithTheCurrentStatus
 {
     // given
-    FakeReachability *reachability = currentReachability;
+    FakeReachability *reachability = self.reachability;
     id mockDelegate = [OCMockObject mockForProtocol:@protocol(ZMNetworkStateDelegate)];
     
     {

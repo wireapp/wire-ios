@@ -24,8 +24,7 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMExponentialBackoff.h"
 #import "Fakes.h"
-
-
+#import "WireTransport_ios_tests-Swift.h"
 
 @interface FakeSchedulerSession : NSObject <ZMTransportRequestSchedulerSession>
 
@@ -173,27 +172,6 @@
 @implementation FakeSchedulerItem
 @end
 
-
-//
-//
-#pragma mark -
-//
-//
-
-
-@interface FakeReachability_2 : NSObject
-
-@property (atomic) BOOL mayBeReachable;
-
-@end
-
-
-
-@implementation FakeReachability_2
-@end
-
-
-
 //
 //
 #pragma mark - Tests
@@ -206,7 +184,7 @@
 @property (nonatomic) ZMTransportRequestScheduler *sut;
 @property (nonatomic) NSOperationQueue *operationQueue;
 @property (nonatomic) FakeSchedulerSession *session;
-@property (nonatomic) FakeReachability_2 *reachability;
+@property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) FakeBackoff *backoff;
 
 @end
@@ -219,14 +197,13 @@
 {
     [super setUp];
     
-    self.reachability = [[FakeReachability_2 alloc] init];
+    self.reachability = [[FakeReachability alloc] init];
     self.reachability.mayBeReachable = YES;
     self.session = [[FakeSchedulerSession alloc] init];
     self.session.reachability = (id) self.reachability;
     self.backoff = [[FakeBackoff alloc] init];
     self.operationQueue = [NSOperationQueue mainQueue];
-    self.sut = [[ZMTransportRequestScheduler alloc] initWithSession:self.session operationQueue:self.operationQueue group:self.dispatchGroup backoff:(id) self.backoff];
-    self.sut.reachability = (id) self.reachability;
+    self.sut = [[ZMTransportRequestScheduler alloc] initWithSession:self.session operationQueue:self.operationQueue group:self.dispatchGroup reachability:self.reachability backoff:(id) self.backoff];
     self.sut.schedulerState = ZMTransportRequestSchedulerStateNormal;
 }
 
@@ -1072,12 +1049,11 @@
 - (void)testThatItStartsInOfflineModeIfReachabilityIsNotReachable
 {
     // given
-    id mockReachability = [OCMockObject mockForClass:ZMReachability.class];
-    [[[mockReachability stub] andReturnValue:@NO] mayBeReachable];
+    FakeReachability *reachability = [[FakeReachability alloc] init];
+    reachability.mayBeReachable = NO;
     
     // when
-    ZMTransportRequestScheduler *sut = [[ZMTransportRequestScheduler alloc] initWithSession:self.session operationQueue:self.operationQueue group:self.dispatchGroup];
-    sut.reachability = (id) mockReachability;
+    ZMTransportRequestScheduler *sut = [[ZMTransportRequestScheduler alloc] initWithSession:self.session operationQueue:self.operationQueue group:self.dispatchGroup reachability:reachability];
     
     // then
     XCTAssertEqual(sut.schedulerState, ZMTransportRequestSchedulerStateOffline);

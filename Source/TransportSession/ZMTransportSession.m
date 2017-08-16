@@ -93,6 +93,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
 @property (nonatomic) id<RequestRecorder> requestLoopDetection;
+@property (nonatomic, readwrite) id<ReachabilityProvider> reachability;
 
 @end
 
@@ -106,6 +107,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     return [self initWithBaseURL:nil
                     websocketURL:nil
                    cookieStorage:nil
+                    reachability:nil
               initialAccessToken:nil
        sharedContainerIdentifier:nil];
 }
@@ -168,6 +170,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
                    websocketURL:(NSURL *)websocketURL
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                   reachability:(id<ReachabilityProvider>)reachability
              initialAccessToken:(ZMAccessToken *)initialAccessToken
       sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
 {
@@ -178,7 +181,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:sharedContainerIdentifier] delegate:self delegateQueue:queue identifier:@"background-session"];
     ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:@"voip-session"];
 
-    ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group];
+    ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     
     ZMURLSessionSwitch *sessionSwitch = [[ZMURLSessionSwitch alloc]
                                          initWithForegroundSession:foregroundSession
@@ -188,7 +191,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     return [self initWithURLSessionSwitch:sessionSwitch
                          requestScheduler:scheduler
-                        reachabilityClass:[ZMReachability class]
+                             reachability:reachability
                                     queue:queue
                                     group:group
                                   baseURL:baseURL
@@ -199,7 +202,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                       reachabilityClass:(Class)reachabilityClass
+                            reachability:(id<ReachabilityProvider>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL
@@ -209,7 +212,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     return [self initWithURLSessionSwitch:URLSessionSwitch
                          requestScheduler:requestScheduler
-                        reachabilityClass:reachabilityClass
+                             reachability:reachability
                                     queue:queue
                                     group:group
                                   baseURL:baseURL
@@ -222,7 +225,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                       reachabilityClass:(Class)reachabilityClass
+                            reachability:(id<ReachabilityProvider>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL
@@ -244,9 +247,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         self.urlSessionSwitch = URLSessionSwitch;
         
         _requestScheduler = requestScheduler;
-        [self setupReachabilityWithClass:reachabilityClass];
-        self.requestScheduler.reachability = self.reachability;
-        
+        self.reachability = reachability;
         self.requestScheduler.schedulerState = ZMTransportRequestSchedulerStateNormal;
         
         if( ! self.reachability.mayBeReachable) {
@@ -284,7 +285,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [self.reachability tearDown];
     self.tornDown = YES;
     
     [self.transportPushChannel closeAndRemoveConsumer];
@@ -749,7 +749,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @implementation ZMTransportSession (ReachabilityObserver)
 
-- (void)reachabilityDidChange:(ZMReachability *)reachability;
+- (void)reachabilityDidChange:(id<ReachabilityProvider>)reachability;
 {
     ZMLogInfo(@"reachabilityDidChange -> mayBeReachable = %@", reachability.mayBeReachable ? @"YES" : @"NO");
     [self.requestScheduler reachabilityDidChange:reachability];
