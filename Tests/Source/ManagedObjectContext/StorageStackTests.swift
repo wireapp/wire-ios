@@ -202,7 +202,8 @@ class StorageStackTests: DatabaseBaseTest {
         let userID = UUID.create()
         let testValue = "12345678"
         let testKey = "aassddffgg"
-
+        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        
         zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { oldDatabasePath, oldKeystorePath in
 
             // GIVEN
@@ -214,9 +215,7 @@ class StorageStackTests: DatabaseBaseTest {
                 contextDirectory.uiContext.setPersistentStoreMetadata(testValue, key: testKey)
                 contextDirectory.uiContext.forceSaveOrRollback()
             }
-
-            self.createKeyStore(accountDirectory: oldKeystorePath, filename: "foo")
-            
+            self.createSessionInKeyStore(accountDirectory: oldKeystorePath, applicationContainer: self.applicationContainer, sessionId: sessionID)
             let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
             
             // expectations
@@ -251,10 +250,9 @@ class StorageStackTests: DatabaseBaseTest {
             }
             XCTAssertFalse(checkSupportFilesExists(storeFile: oldStoreFile))
             
-            
-            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldKeystorePath, filename: "foo"))
-            XCTAssertTrue(self.doesFileExistInKeyStore(accountDirectory: accountDirectory, filename: "foo"))
-            
+            let keyStoreFolder = FileManager.keyStoreURL(accountDirectory: oldKeystorePath, createParentIfNeeded: false)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: keyStoreFolder.path))
+            XCTAssertTrue(self.doesSessionExistInKeyStore(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer, sessionId: sessionID))
             
             StorageStack.reset()
         }
@@ -265,6 +263,7 @@ class StorageStackTests: DatabaseBaseTest {
         let userID = UUID.create()
         let testKey = "aassddffgg"
         let testValue = "eggplant"
+        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
         
         let oldPath = self.previousDatabaseLocations.first!
         
@@ -278,7 +277,7 @@ class StorageStackTests: DatabaseBaseTest {
             contextDirectory.uiContext.forceSaveOrRollback()
         }
         
-        self.createKeyStore(accountDirectory: oldPath, filename: "foo")
+        self.createSessionInKeyStore(accountDirectory: oldPath, applicationContainer: self.applicationContainer, sessionId: sessionID)
         
         // copy the store to all remaining possible legacy locations
         try previousDatabaseLocations.filter { $0 != oldPath }.forEach { oldLocation in
@@ -286,7 +285,6 @@ class StorageStackTests: DatabaseBaseTest {
             try ["-shm", "-wal", ""].forEach { storeFileExtension in
                 let source = oldStoreFile.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
                 let destination = oldLocation.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: storeFileExtension)
-                print(source, destination)
                 try FileManager.default.copyItem(at: source, to: destination)
             }
 
@@ -327,17 +325,17 @@ class StorageStackTests: DatabaseBaseTest {
             XCTFail()
         }
         
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        
         // check all legacy databses and keystores deleted
         zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { databaseFolder, keyStorePath in
             XCTAssertFalse(checkSupportFilesExists(storeFile: databaseFolder.appendingStoreFile()))
-            XCTAssertFalse(doesFileExistInKeyStore(accountDirectory: keyStorePath, filename: "foo"))
-
+            let keyStoreFolder = FileManager.keyStoreURL(accountDirectory: keyStorePath, createParentIfNeeded: false)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: keyStoreFolder.path), "File still exists at \(keyStorePath.path)")
         }
         
-        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
-        
         // new keystore exists
-        XCTAssertTrue(self.doesFileExistInKeyStore(accountDirectory: accountDirectory, filename: "foo"))
+        XCTAssertTrue(self.doesSessionExistInKeyStore(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer, sessionId: sessionID))
         StorageStack.reset()
     }
     
@@ -369,6 +367,7 @@ class StorageStackTests: DatabaseBaseTest {
         let userID = UUID.create()
         let testKey = "aassddffgg"
         let testValue = "eggplant"
+        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
         
         let oldPath = self.previousDatabaseLocations.first!
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
@@ -384,7 +383,7 @@ class StorageStackTests: DatabaseBaseTest {
         }
         
         // migrate the keystore already
-        self.createKeyStore(accountDirectory: oldPath, filename: "foo")
+        self.createSessionInKeyStore(accountDirectory: oldPath, applicationContainer: self.applicationContainer, sessionId: sessionID)
         UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
         
         // expectations
@@ -422,11 +421,12 @@ class StorageStackTests: DatabaseBaseTest {
         for oldPath in self.previousDatabaseLocations {
             let oldStoreFile = oldPath.appendingStoreFile()
             XCTAssertFalse(checkSupportFilesExists(storeFile: oldStoreFile))
-            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldPath, filename: "foo"))
+            let keyStoreFolder = FileManager.keyStoreURL(accountDirectory: oldPath, createParentIfNeeded: false)
+            XCTAssertFalse(FileManager.default.fileExists(atPath: keyStoreFolder.path))
         }
         
         // new keystore exists
-        XCTAssertTrue(self.doesFileExistInKeyStore(accountDirectory: accountDirectory, filename: "foo"))
+        XCTAssertTrue(self.doesSessionExistInKeyStore(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer, sessionId: sessionID))
         StorageStack.reset()
     }
 }

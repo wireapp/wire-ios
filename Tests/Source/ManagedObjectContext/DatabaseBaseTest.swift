@@ -86,18 +86,26 @@ import WireTesting
         self.createDummyExternalSupportFileForDatabase(storeFile: filePath)
     }
     
-    /// Create a dummy file in the keystore directory for the given account
-    @objc public func createKeyStore(accountDirectory: URL, filename: String) {
-        let path = accountDirectory.appendingPathComponent("otr")
-        let fm = FileManager.default
-        try! fm.createDirectory(at: path, withIntermediateDirectories: true, attributes: nil)
-        try! Data().write(to: path.appendingPathComponent(filename))
+    /// Create a session in the keystore directory for the given account
+    public func createSessionInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) {
+        let preKey = "pQABAQICoQBYICHHDV4Zh6yJzJSPhQmtxah8N4kVE+XSCmTVfIsvgm5UA6EAoQBYIJeiWi5TfAWBrYSOtM5nKk5isfRYX5pFqRk13jVenPz6BPY="
+        let keyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
+        keyStore.encryptionContext.perform { sessionsDirectory in
+            try! sessionsDirectory.createClientSession(sessionId, base64PreKeyString: preKey)
+        }
     }
     
-    /// Returns true if the given filename exists in the keystore for the given account
-    @objc public func doesFileExistInKeyStore(accountDirectory: URL, filename: String) -> Bool {
-        let path = accountDirectory.appendingPathComponent("otr/\(filename)")
-        return FileManager.default.fileExists(atPath: path.path)
+    /// Returns true if the given session exists in the keystore for the given account
+    public func doesSessionExistInKeyStore(accountDirectory: URL, applicationContainer: URL, sessionId: EncryptionSessionIdentifier) -> Bool {
+        
+        var hasSession = false
+        
+        let keyStore = UserClientKeysStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
+        keyStore.encryptionContext.perform { sessionsDirectory in
+            hasSession = sessionsDirectory.hasSession(for: sessionId)
+        }
+        
+        return hasSession
     }
     
     /// Clears the current storage folder and the legacy locations
