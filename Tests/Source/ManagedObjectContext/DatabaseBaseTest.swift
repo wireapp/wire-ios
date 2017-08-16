@@ -132,4 +132,13 @@ import WireTesting
             self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
         ]
     }
+
+    /// Previous locations where the keystore was stored
+    var previousKeyStoreLocations: [URL] {
+        return [
+            FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
+            FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
+            self.applicationContainer,
+        ]
+    }
 }
