@@ -76,7 +76,6 @@ class UserClientKeysStoreTests: OtrBaseTest {
     func testThatItWrapsKeysTo0WhenReachingTheMaximum() {
         // given
         let maxPreKey : UInt16 = UserClientKeysStore.MaxPreKeyID
-        print(maxPreKey)
         let prekeyBatchSize : UInt16 = 50
         let startingPrekey = maxPreKey - prekeyBatchSize - 1 // -1 is to generate at least 2 batches
         let maxIterations = 2
