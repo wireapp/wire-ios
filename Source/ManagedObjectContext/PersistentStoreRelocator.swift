@@ -40,14 +40,18 @@ public struct MainPersistentStoreRelocator {
     }
     
     static func possibleLegacyAccountFolders(applicationContainer: URL) -> [URL] {
-        var locations = [.cachesDirectory, .applicationSupportDirectory, .libraryDirectory].map {
+        let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        return possibleCommonLegacyDirectories() + [sharedContainerAccountFolder]
+    }
+
+    static func possibleLegacyKeystoreFolders(applicationContainer: URL) -> [URL] {
+        return possibleCommonLegacyDirectories() + [applicationContainer]
+    }
+
+    private static func possibleCommonLegacyDirectories() -> [URL] {
+        return [.cachesDirectory, .applicationSupportDirectory, .libraryDirectory].map {
             FileManager.default.urls(for: $0, in: .userDomainMask).first!
         }
-
-        let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
-        locations.append(sharedContainerAccountFolder)
-
-        return locations
     }
     
     /// Return the first existing legacy store, if any

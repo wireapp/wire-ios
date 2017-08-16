@@ -202,20 +202,20 @@ class StorageStackTests: DatabaseBaseTest {
         let userID = UUID.create()
         let testValue = "12345678"
         let testKey = "aassddffgg"
-        
-        self.previousDatabaseLocations.forEach { oldPath in
+
+        zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { oldDatabasePath, oldKeystorePath in
 
             // GIVEN
             StorageStack.reset()
             self.clearStorageFolder()
             
-            let oldStoreFile = oldPath.appendingStoreFile()
+            let oldStoreFile = oldDatabasePath.appendingStoreFile()
             self.createLegacyStore(filePath: oldStoreFile) { contextDirectory in
                 contextDirectory.uiContext.setPersistentStoreMetadata(testValue, key: testKey)
                 contextDirectory.uiContext.forceSaveOrRollback()
             }
-            
-            self.createKeyStore(accountDirectory: oldPath, filename: "foo")
+
+            self.createKeyStore(accountDirectory: oldKeystorePath, filename: "foo")
             
             let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
             
@@ -234,8 +234,7 @@ class StorageStackTests: DatabaseBaseTest {
             ) { MOCs in
                 defer { completionExpectation.fulfill() }
                 guard let string = MOCs.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
-                    XCTFail("Failed to find same value after migrating from \(oldPath.path)")
-                    return
+                    return XCTFail("Failed to find same value after migrating from \(oldDatabasePath.path)")
                 }
                 newStoreFile = MOCs.uiContext.persistentStoreCoordinator!.persistentStores.first!.url
                 XCTAssertEqual(string, testValue)
@@ -253,7 +252,7 @@ class StorageStackTests: DatabaseBaseTest {
             XCTAssertFalse(checkSupportFilesExists(storeFile: oldStoreFile))
             
             
-            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldPath, filename: "foo"))
+            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldKeystorePath, filename: "foo"))
             XCTAssertTrue(self.doesFileExistInKeyStore(accountDirectory: accountDirectory, filename: "foo"))
             
             
@@ -328,11 +327,11 @@ class StorageStackTests: DatabaseBaseTest {
             XCTFail()
         }
         
-        // check all legacy stores deleted
-        for oldPath in self.previousDatabaseLocations {
-            let oldStoreFile = oldPath.appendingStoreFile()
-            XCTAssertFalse(checkSupportFilesExists(storeFile: oldStoreFile))
-            XCTAssertFalse(self.doesFileExistInKeyStore(accountDirectory: oldPath, filename: "foo"))
+        // check all legacy databses and keystores deleted
+        zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { databaseFolder, keyStorePath in
+            XCTAssertFalse(checkSupportFilesExists(storeFile: databaseFolder.appendingStoreFile()))
+            XCTAssertFalse(doesFileExistInKeyStore(accountDirectory: keyStorePath, filename: "foo"))
+
         }
         
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)

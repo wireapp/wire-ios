@@ -148,7 +148,7 @@ open class UserClientKeysStore: NSObject {
     }
     
     static func possibleLegacyKeyStores(applicationContainer: URL) -> [URL] {
-        return MainPersistentStoreRelocator.possibleLegacyAccountFolders(applicationContainer: applicationContainer).map{
+        return MainPersistentStoreRelocator.possibleLegacyKeystoreFolders(applicationContainer: applicationContainer).map {
             $0.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         }
     }
