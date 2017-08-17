@@ -36,8 +36,7 @@ extension NSManagedObjectContext {
         // We need to keep the context type information until all other values have been removed,
         // otherwise we risk running into assertions based on the context type.
         guard let allKeys = userInfo.allKeys as? [String] else { return }
-        var keys = Set(allKeys)
-        keys.subtract([IsEventContextKey, IsSyncContextKey, IsUserInterfaceContextKey, IsSearchContextKey])
+        let keys = Set(allKeys)
         userInfo.removeObjects(forKeys: Array(keys))
     }
 }
