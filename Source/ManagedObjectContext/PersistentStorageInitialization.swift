@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 extension NSPersistentStoreCoordinator {
     
@@ -145,6 +146,7 @@ class InMemoryStoreInitialization {
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup
         )
+        MemoryReferenceDebugger.register(managedObjectContextDirectory)
         return managedObjectContextDirectory
     }
 }

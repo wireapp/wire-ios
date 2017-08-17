@@ -26,8 +26,15 @@ import UIKit
     /// In-memory stores. These are mainly used for testing
     private var inMemoryStores: [String: ManagedObjectContextDirectory] = [:]
     
+    fileprivate static var currentStack: StorageStack?
+    private static let singletonQueue = DispatchQueue(label: "SharedStorageStack")
     /// Singleton instance
-    public private(set) static var shared = StorageStack()
+    public static var shared: StorageStack {
+        singletonQueue.sync {
+            currentStack = currentStack ?? StorageStack()
+        }
+        return currentStack!
+    }
     
     /// Whether the next storage should be create as in memory instead of on disk.
     /// This is mostly useful for testing.
@@ -148,6 +155,7 @@ import UIKit
                 persistentStoreCoordinator: psc,
                 accountDirectory: accountDirectory,
                 applicationContainer: applicationContainer)
+            MemoryReferenceDebugger.register(directory)
             completionHandler(directory)
         }
     }
@@ -156,7 +164,7 @@ import UIKit
     /// Using a ManagedObjectContextDirectory created by a stack after the stack has been
     /// reset will cause a crash
     public static func reset() {
-        StorageStack.shared = StorageStack()
+        StorageStack.currentStack = nil
     }
 }
 

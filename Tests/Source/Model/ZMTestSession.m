@@ -16,8 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
-@import WireTesting;
 #import <WireDataModel/WireDataModel-Swift.h>
 
 #import "ZMTestSession.h"
@@ -60,7 +58,7 @@
 
 - (instancetype)initWithDispatchGroup:(ZMSDispatchGroup *)dispatchGroup
 {
-    return [self initWithDispatchGroup:dispatchGroup accountIdentifier:NSUUID.createUUID];
+    return [self initWithDispatchGroup:dispatchGroup accountIdentifier:[[NSUUID alloc] init]];
 }
 
 - (NSManagedObjectContext *)uiMOC
@@ -140,7 +138,7 @@
     }];
 }
 
-- (BOOL)waitUntilDate:(NSDate *)runUntil verificationBlock:(VerificationBlock)block;
+- (BOOL)waitUntilDate:(NSDate *)runUntil verificationBlock:(BOOL(^)(void))block;
 {
     BOOL success = NO;
     while (! success && (0. < [runUntil timeIntervalSinceNow])) {
