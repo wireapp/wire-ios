@@ -29,18 +29,18 @@ import Foundation
     static private var shared = MemoryReferenceDebugger()
     
     public static func register(_ object: AnyObject?, line: UInt = #line, file: StaticString = #file) {
-        guard var object = object else { return }
-        withUnsafePointer(to: &object) {
-            shared.references.append(ReferenceAllocation(object: object, pointerAddress: $0.debugDescription, file: file.description, line: line))
-        }
+        register(object, line: line, file: String(describing: file))
     }
     
     @objc public static func register(_ object: NSObject?, line: UInt, file: UnsafePointer<CChar>) {
-        guard var object = object else { return }
         let fileString = String.init(cString: file)
-        withUnsafePointer(to: &object) {
-            shared.references.append(ReferenceAllocation(object: object, pointerAddress: $0.debugDescription, file: fileString, line: line))
-        }
+        register(object as AnyObject?, line: line, file: fileString)
+    }
+    
+    private static func register(_ object: AnyObject?, line: UInt, file: String) {
+        guard let object = object else { return }
+        let pointer = Unmanaged<AnyObject>.passUnretained(object).toOpaque()
+        shared.references.append(ReferenceAllocation(object: object, pointerAddress: pointer.debugDescription, file: file.description, line: line))
     }
     
     @objc static public func reset() {
