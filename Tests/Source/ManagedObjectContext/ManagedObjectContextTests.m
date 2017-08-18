@@ -162,6 +162,9 @@
     [self performIgnoringZMLogError:^{
         [self.uiMOC saveOrRollback];
     }];
+    
+    // after
+    [contextMock stopMocking];
 }
 
 @end

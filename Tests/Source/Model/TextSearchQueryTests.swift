@@ -190,7 +190,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
 
         let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
+        Thread.sleep(forTimeInterval: 0.05)
         let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        Thread.sleep(forTimeInterval: 0.05)
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: true)
         let lastMessage = conversation.appendMessage(withText: "This is the last message in the conversation") as! ZMMessage
 

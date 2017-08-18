@@ -90,7 +90,7 @@ extension NSManagedObjectContext {
               let attribute = entity.attributesByName[keyPath] else {
                 fatal("Cannot preapare the fetch")
         }
-        
+
         let keyPathExpression = NSExpression(forKeyPath: keyPath)
         let countExpression = NSExpression(forFunction: "count:", arguments: [keyPathExpression])
         

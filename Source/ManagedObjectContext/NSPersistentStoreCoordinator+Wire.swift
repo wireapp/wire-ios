@@ -28,7 +28,6 @@ extension NSPersistentStoreCoordinator {
         startedMigrationCallback: (() -> Void)?)
     {
         self.init(managedObjectModel: model)
-        MemoryReferenceDebugger.register(self)
         var migrationStarted = false
         func notifyMigrationStarted() -> () {
             if !migrationStarted {
@@ -58,7 +57,6 @@ extension NSPersistentStoreCoordinator {
     /// Creates an in memory persistent store coordinator with the given model
     convenience init(inMemoryWithModel model: NSManagedObjectModel) {
         self.init(managedObjectModel: model)
-        MemoryReferenceDebugger.register(self)
         do {
             try self.addPersistentStore(
                 ofType: NSInMemoryStoreType,

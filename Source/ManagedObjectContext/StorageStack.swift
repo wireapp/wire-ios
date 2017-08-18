@@ -36,6 +36,11 @@ import UIKit
         return currentStack!
     }
     
+    /// Created managed object context directory. If I don't retain it here, it will
+    /// eventually de-init and call the tear down of the contexes at the wrong time,
+    /// even if someone is still holding on to it
+    private var managedObjectContextDirectory: ManagedObjectContextDirectory?
+    
     /// Whether the next storage should be create as in memory instead of on disk.
     /// This is mostly useful for testing.
     public var createStorageAsInMemory: Bool = false
@@ -114,7 +119,8 @@ import UIKit
                             startedMigrationCallback?()
                         }
                     },
-                    completionHandler: { mocs in
+                    completionHandler: { [weak self] mocs in
+                        self?.managedObjectContextDirectory = mocs
                         DispatchQueue.main.async {
                             completionHandler(mocs)
                         }

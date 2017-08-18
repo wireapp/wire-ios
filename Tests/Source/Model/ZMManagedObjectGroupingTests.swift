@@ -31,8 +31,6 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
     }
     
     public override func tearDown() {
-        super.tearDown()
-        self.mocs.tearDown()
         self.mocs = nil
         super.tearDown()
     }
