@@ -2,7 +2,7 @@
 
 [![Wire logo](https://github.com/wireapp/wire/blob/master/assets/header-small.png?raw=true)](https://wire.com/jobs/)
 
-[![Build Status](https://travis-ci.org/wireapp/wire-ios-mocktransport.svg?branch=develop)](https://travis-ci.org/wireapp/wire-ios-mocktransport)
+[![CircleCI](https://circleci.com/gh/wireapp/wire-ios-mocktransport.svg?style=shield)](https://circleci.com/gh/wireapp/wire-ios-mocktransport) [![codecov](https://codecov.io/gh/wireapp/wire-ios-mocktransport/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-mocktransport)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
