@@ -35,19 +35,18 @@ public struct PersistedDataPatch {
     }
 
     /// Apply all patches to the MOC
-    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil) {
-        moc.performGroupedBlockAndWait {
-            let currentVersion = Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String
-            let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String) ?? "0.0.0"
-            let previousPatchVersion = FrameworkVersion(previousPatchVersionString)!
-            
-            (patches ?? PersistedDataPatch.allPatchesToApply).filter { $0.version > previousPatchVersion }.forEach {
-                $0.block(moc)
-            }
-            moc.setPersistentStoreMetadata(currentVersion, key: lastDataModelPatchedVersionKey)
-            moc.saveOrRollback()
+    public static func applyAll(in moc: NSManagedObjectContext, fromVersion: String? = nil, patches: [PersistedDataPatch]? = nil)
+    {
+        let currentVersion = Bundle(for: ZMUser.self).infoDictionary!["CFBundleShortVersionString"] as! String
+        let previousPatchVersionString = fromVersion ?? (moc.persistentStoreMetadata(forKey: lastDataModelPatchedVersionKey) as? String) ?? "0.0.0"
+        let previousPatchVersion = FrameworkVersion(previousPatchVersionString)!
+        
+        (patches ?? PersistedDataPatch.allPatchesToApply).filter { $0.version > previousPatchVersion }.forEach {
+            $0.block(moc)
         }
-    }
+        moc.setPersistentStoreMetadata(currentVersion, key: lastDataModelPatchedVersionKey)
+        moc.saveOrRollback()
+}
 }
 
 /// Persistent store key for last data model version

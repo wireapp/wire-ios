@@ -56,6 +56,9 @@ import WireUtilities
         self.uiContext?.tearDown()
         self.syncContext?.tearDown()
         self.searchContext?.tearDown()
+        self.uiContext?.tearDown()
+        self.syncContext?.tearDown()
+        self.searchContext?.tearDown()
         self.uiContext = nil
         self.syncContext = nil
         self.searchContext = nil
