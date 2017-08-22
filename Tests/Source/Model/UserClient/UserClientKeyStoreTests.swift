@@ -123,27 +123,61 @@ class UserClientKeysStoreTests: OtrBaseTest {
         
     }
     
-    fileprivate func createFakeOTRFolder() {
-        try! FileManager.default.createDirectory(atPath: OtrBaseTest.legacyOtrDirectory.path, withIntermediateDirectories: true, attributes: [:])
+    fileprivate func createLegacyOTRFolderWithDummyFile(fileName: String, data: Data) -> URL {
+        let folder = OtrBaseTest.legacyOtrDirectory
+        try! FileManager.default.createDirectory(atPath: folder.path, withIntermediateDirectories: true, attributes: [:])
+        try! data.write(to: folder.appendingPathComponent(fileName))
+        return folder
     }
 
     func testThatItMovesTheOTRFolderToTheGivenURL() {
+        
         // given
         self.sut = nil
         self.cleanOTRFolder()
-
-        try! FileManager.default.createDirectory(at: OtrBaseTest.otrDirectoryURL(accountIdentifier:accountID), withIntermediateDirectories: true, attributes: [:])
-        try! "foo".data(using: String.Encoding.utf8)!.write(to: OtrBaseTest.otrDirectoryURL(accountIdentifier:accountID).appendingPathComponent("dummy.txt"), options: Data.WritingOptions.atomic)
+        let accountFolder = StorageStack.accountFolder(accountIdentifier: self.accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
+        let data = "foo".data(using: String.Encoding.utf8)!
+        _ = self.createLegacyOTRFolderWithDummyFile(fileName: "dummy.txt", data: data)
         
         // when
-        let accountFolder = StorageStack.accountFolder(accountIdentifier: self.accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
-        let _ = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
+        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
         
         // then
-        let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent("dummy.txt"))
+        let expectedFileURL = FileManager.keyStoreURL(accountDirectory: accountFolder, createParentIfNeeded: false).appendingPathComponent("dummy.txt")
+        let fooData = try! Data(contentsOf: expectedFileURL)
         let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
         XCTAssertEqual(fooString, "foo")
         XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(applicationContainer: OtrBaseTest.sharedContainerURL))
 
+    }
+    
+    func testThatItMovesTheOTRFolderAgainIfTheFirstMigrationFailed() {
+        
+        // this is testing migrating half-way (not completely copying the OTR folder)
+        // and then restarting migration after a crash
+        
+        // given
+        self.sut = nil
+        self.cleanOTRFolder()
+        let fileName = "dummy.txt"
+        let data = "foo".data(using: String.Encoding.utf8)!
+        let accountFolder = StorageStack.accountFolder(accountIdentifier: self.accountID, applicationContainer: OtrBaseTest.sharedContainerURL)
+        
+        // first migration
+        _ = self.createLegacyOTRFolderWithDummyFile(fileName: "whatever.dat", data: data)
+        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
+        
+        // to pretend it's not done, re-create the folder
+        _ = self.createLegacyOTRFolderWithDummyFile(fileName: fileName, data: data)
+        
+        // when
+        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
+        
+        // then
+        let fooData = try! Data(contentsOf: OtrBaseTest.otrDirectoryURL(accountIdentifier: accountID).appendingPathComponent(fileName))
+        let fooString = String(data: fooData, encoding: String.Encoding.utf8)!
+        XCTAssertEqual(fooString, "foo")
+        XCTAssertFalse(UserClientKeysStore.needToMigrateIdentity(applicationContainer: OtrBaseTest.sharedContainerURL))
+        
     }
 }

@@ -117,7 +117,7 @@ open class UserClientKeysStore: NSObject {
             guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
             if !didMigrate {
                 do {
-                    try fm.moveItem(at: $0, to: directory)
+                    try fm.moveFolderRecursively(from: $0, to: directory, overwriteExistingFiles: false)
                     didMigrate = true
                 }
                 catch let err {
