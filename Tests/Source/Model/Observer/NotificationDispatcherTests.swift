@@ -194,6 +194,34 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         UserChangeInfo.remove(observer: token, forBareUser: user)
     }
     
+    func testThatItNotifiesAboutChangeWhenObjectIsFaultedAndDisappears(){
+        // given
+        var user: ZMUser? = ZMUser.insertNewObject(in: uiMOC)
+        user?.name = "foo"
+        uiMOC.saveOrRollback()
+        let objectID = user!.objectID
+        uiMOC.refresh(user!, mergeChanges: true)
+        XCTAssertTrue(user!.isFault)
+        let observer = UserObserver()
+        let token = UserChangeInfo.add(observer: observer, for: user)
+        
+        // when
+        user = nil
+        syncMOC.performGroupedBlockAndWait {
+            let syncUser = self.syncMOC.object(with: objectID) as! ZMUser
+            syncUser.name = "bar"
+            self.syncMOC.saveOrRollback()
+        }
+        mergeLastChanges()
+        
+        // then
+        XCTAssertEqual(observer.notifications.count, 1)
+        if let note = observer.notifications.first {
+            XCTAssertTrue(note.nameChanged)
+        }
+        UserChangeInfo.remove(observer: token, forBareUser: user)
+    }
+    
     func testThatItProcessesNonCoreDataChangeNotifications(){
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
