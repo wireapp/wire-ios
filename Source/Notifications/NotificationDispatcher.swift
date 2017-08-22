@@ -48,18 +48,20 @@ extension Notification.Name {
 /// Creates an object that registers an observer in NSNotificationCenter
 /// When this object is deallocated, it automatically unregisters from NSNotificationCenter
 /// To receive notifications, make sure to hold a strong reference to this object
+/// Note: We keep strong reference to the `object` because the notifications would not get delivered
+/// if no one has references to it anymore. This could happen with faulted NSManagedObject.
 public class NotificationCenterObserverToken : NSObject {
     
-    var token : AnyObject?
+    let token : AnyObject
+    let object : AnyObject?
     
     deinit {
-        if let token = token {
-            NotificationCenter.default.removeObserver(token)
-        }
+        NotificationCenter.default.removeObserver(token)
     }
     
     public init(name: NSNotification.Name, object: AnyObject? = nil, queue: OperationQueue? = nil, block: @escaping (_ note: Notification) -> Void) {
         token = NotificationCenter.default.addObserver(forName: name, object: object, queue: queue, using: block)
+        self.object = object
     }
 }
 
