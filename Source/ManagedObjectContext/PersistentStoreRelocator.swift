@@ -120,6 +120,9 @@ public struct PersistentStoreRelocator {
                 return
             }
             
+            if fileManager.fileExists(atPath: destination.path) {
+                try! fileManager.removeItem(at: destination)
+            }
             try! fileManager.moveItem(at: source, to: destination)
         }
     }
@@ -129,7 +132,7 @@ public struct PersistentStoreRelocator {
             guard fileManager.fileExists(atPath: from.supportFolderForStoreFile.path) else { return }
             let toDirectory = to.deletingLastPathComponent()
             fileManager.createAndProtectDirectory(at: toDirectory)
-            try FileManager.default.moveItem(at: from.supportFolderForStoreFile, to: to.supportFolderForStoreFile)
+            try FileManager.default.moveFolderRecursively(from: from.supportFolderForStoreFile, to: to.supportFolderForStoreFile, overwriteExistingFiles: false)
         } catch {
             fatal("Failed to move existing binary store file from \(from) to \(to): \(error)")
         }

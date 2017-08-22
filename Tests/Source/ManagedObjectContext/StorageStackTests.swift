@@ -359,10 +359,11 @@ class StorageStackTests: DatabaseBaseTest {
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
     
-    // To simulate an interrupted migration, we create the legacy store and
-    // migrate the keystore immediately. Then we start the migration from this
-    // inconsistent state.
-    func testThatWhenMigrationIsAbortedItCanBeRestarted() {
+    func testThatWhenMigrationIsInterruptedAfterMigratingKeystoreItCanBeRestarted() {
+    
+        // To simulate an interrupted migration, we create the legacy store and
+        // migrate the keystore immediately. Then we start the migration from this
+        // inconsistent state.
         
         let userID = UUID.create()
         let testKey = "aassddffgg"
@@ -428,6 +429,54 @@ class StorageStackTests: DatabaseBaseTest {
         // new keystore exists
         XCTAssertTrue(self.doesSessionExistInKeyStore(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer, sessionId: sessionID))
         StorageStack.reset()
+    }
+    
+    func testThatWhenMigrationIsInterruptedDuringKeystoreMigrationItCanBeRestarted() {
+        
+        // To simulate an interrupted migration, we create the legacy store and
+        // migrate the keystore immediately, recreate the legacy keystore, then restart 
+        // the migration from this inconsistent state.
+        
+        let userID = UUID.create()
+        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        
+        let oldPath = self.previousDatabaseLocations.first!
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        
+        // GIVEN
+        StorageStack.reset()
+        
+        // create a single legacy store
+        let oldStoreFile = oldPath.appendingStoreFile()
+        self.createLegacyStore(filePath: oldStoreFile) { _ in }
+        
+        
+        // migrate the keystore already
+        self.createSessionInKeyStore(accountDirectory: oldPath, applicationContainer: self.applicationContainer, sessionId: sessionID)
+        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
+        
+        // expectations
+        let migrationExpectation = self.expectation(description: "Migration started")
+        let completionExpectation = self.expectation(description: "Stack initialization completed")
+        
+        // WHEN
+        // create the stack, check that the value is there and that it calls the migration callback
+        StorageStack.shared.createManagedObjectContextDirectory(
+            accountIdentifier: userID,
+            applicationContainer: self.applicationContainer,
+            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+        ) { MOCs in
+            _ = MOCs.uiContext.persistentStoreCoordinator!.persistentStores.first!.url
+            completionExpectation.fulfill()
+        }
+        
+        // THEN
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 1))
+        
+        // new keystore exists
+        XCTAssertTrue(self.doesSessionExistInKeyStore(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer, sessionId: sessionID))
+        StorageStack.reset()
+        
     }
 }
 
