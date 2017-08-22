@@ -27,7 +27,6 @@ import WireUtilities
          applicationContainer: URL,
          dispatchGroup: ZMSDispatchGroup? = nil) {
         self.uiContext = ManagedObjectContextDirectory.createUIManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator, dispatchGroup: dispatchGroup)
-        MemoryReferenceDebugger.register(self.uiContext)
         self.syncContext = ManagedObjectContextDirectory.createSyncManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator,
                                                                                         accountDirectory: accountDirectory,
                                                                                         dispatchGroup: dispatchGroup,
