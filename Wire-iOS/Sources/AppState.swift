@@ -18,23 +18,27 @@
 
 import Foundation
 
+enum AppState : Equatable {
+    
+    case headless
+    case authenticated(completedRegistration: Bool)
+    case unauthenticated(error : Error?)
+    case blacklisted
+    case migrating
+    case suspended
 
-extension AppDelegate {
+    public static func ==(lhs: AppState, rhs: AppState) -> Bool {
         
-    /// @return YES if network is offline
-    @discardableResult
-    @objc
-    static func checkNetworkAndFlashIndicatorIfNecessary() -> Bool {
-        return AppDelegate.checkNetworkAndFlashIndicatorIfNecessary(showAlert: false)
+        switch (lhs, rhs) {
+        case (.headless, .headless),
+             (.authenticated, .authenticated),
+             (.unauthenticated, .unauthenticated),
+             (.blacklisted, .blacklisted),
+             (.migrating, .migrating),
+             (.suspended, .suspended):
+            return true
+        default:
+            return false
+        }   
     }
-    
-    
-    /// @return YES if network is offline
-    @discardableResult
-    @objc(checkNetworkAndFlashIndicatorIfNecessaryAndShowAlert:)
-    static func checkNetworkAndFlashIndicatorIfNecessary(showAlert: Bool)  -> Bool {
-        AppDelegate.shared().notificationWindowController?.networkStatusViewController.flashNetworkStatusIfNecessaryAndShowAlert(showAlert)
-        return AppDelegate.shared().sessionManager.serverConnection?.isOffline ?? true
-    }
-    
 }
