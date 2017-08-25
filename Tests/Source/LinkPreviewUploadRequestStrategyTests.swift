@@ -32,6 +32,12 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
         applicationStatus.mockSynchronizationState = .eventProcessing
         sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
     }
+    
+    override func tearDown() {
+        applicationStatus = nil
+        sut = nil
+        super.tearDown()
+    }
 
     func testThatItDoesNotCreateARequestInState_Done() {
         verifyThatItDoesNotCreateARequest(for: .done)

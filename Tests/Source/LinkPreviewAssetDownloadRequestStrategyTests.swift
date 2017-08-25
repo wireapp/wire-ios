@@ -36,8 +36,14 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         mockApplicationStatus.mockSynchronizationState = .eventProcessing
 
         sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+    }
+    
+    override func tearDown() {
+        sut = nil
+        mockApplicationStatus = nil
         syncMOC.zm_imageAssetCache.wipeCache()
         uiMOC.zm_imageAssetCache.wipeCache()
+        super.tearDown()
     }
     
     // MARK: - Helper

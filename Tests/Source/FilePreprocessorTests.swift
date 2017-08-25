@@ -31,6 +31,11 @@ class FilePreprocessorTests : MessagingTestBase {
         sut = FilePreprocessor(managedObjectContext: self.syncMOC, filter: NSPredicate(value: true))
     }
     
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+    
 }
 
 

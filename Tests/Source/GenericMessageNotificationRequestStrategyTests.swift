@@ -34,6 +34,11 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
         sut = GenericMessageNotificationRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
 
     }
+    
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
 
     func testThatItDoesNotCreateARequestWhenNoNotificationWasFired() {
         // WHEN & then

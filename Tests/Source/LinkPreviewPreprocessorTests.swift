@@ -47,6 +47,12 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
         sut = LinkPreviewPreprocessor(linkPreviewDetector: mockDetector, managedObjectContext: syncMOC)
     }
     
+    override func tearDown() {
+        mockDetector = nil
+        sut = nil
+        super.tearDown()
+    }
+    
     // MARK: - Helper
 
     func createMessage(_ state: ZMLinkPreviewState = .waitingToBeProcessed, isEphemeral : Bool = false) -> ZMClientMessage {

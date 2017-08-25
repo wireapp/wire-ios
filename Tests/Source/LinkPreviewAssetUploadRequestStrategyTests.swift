@@ -38,6 +38,12 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         self.sut = LinkPreviewAssetUploadRequestStrategy(managedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus, linkPreviewPreprocessor: nil, previewImagePreprocessor: nil)
     }
     
+    override func tearDown() {
+        mockApplicationStatus = nil
+        sut = nil
+        super.tearDown()
+    }
+    
     /// Creates a message that should generate request
     func createMessage(_ text: String, linkPreviewState: ZMLinkPreviewState = .waitingToBeProcessed, linkPreview: LinkPreview, isEphemeral: Bool = false) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
