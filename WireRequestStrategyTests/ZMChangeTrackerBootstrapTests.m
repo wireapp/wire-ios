@@ -100,11 +100,15 @@
     self.sut = nil;
     self.user1 = nil;
     self.user2 = nil;
+    self.selfUser = nil;
     self.conversation1 = nil;
     self.conversation2 = nil;
     self.changeTracker1 = nil;
     self.changeTracker2 = nil;
+    self.connection1 = nil;
+    self.conversation2 = nil;
     [self.testSession tearDown];
+    self.testSession = nil;
     [super tearDown];
 }
 

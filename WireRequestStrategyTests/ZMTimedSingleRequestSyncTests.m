@@ -66,7 +66,7 @@
     self.dummyResponse = nil;
     self.trancoderResponses = nil;
     [self.testSession tearDown];
-    
+    self.testSession = nil;
     [super tearDown];
 }
 
