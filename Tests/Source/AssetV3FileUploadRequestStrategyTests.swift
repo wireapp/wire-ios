@@ -43,6 +43,14 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
         }
         self.testFileURL = self.testURLWithFilename("file.dat")
     }
+    
+    override func tearDown() {
+        mockApplicationStatus = nil
+        sut = nil
+        conversation = nil
+        testFileURL = nil
+        super.tearDown()
+    }
 
     // MARK: - Helpers
 

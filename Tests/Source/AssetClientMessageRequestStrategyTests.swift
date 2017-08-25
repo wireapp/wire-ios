@@ -68,6 +68,12 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             self.sut = AssetClientMessageRequestStrategy(withManagedObjectContext: self.syncMOC, applicationStatus: self.mockApplicationStatus)
         }
     }
+    
+    override func tearDown() {
+        mockApplicationStatus = nil
+        self.sut = nil
+        super.tearDown()
+    }
 
     // MARK: Helper
     @discardableResult func createMessage(

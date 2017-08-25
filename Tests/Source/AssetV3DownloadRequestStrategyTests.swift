@@ -60,6 +60,14 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         }
     }
     
+    override func tearDown() {
+        mockApplicationStatus = nil
+        sut = nil
+        user = nil
+        conversation = nil
+        super.tearDown()
+    }
+    
     fileprivate func createFileMessageWithAssetId(
         in aConversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),

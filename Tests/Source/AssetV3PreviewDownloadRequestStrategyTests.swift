@@ -44,6 +44,14 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
     }
     
+    override func tearDown() {
+        mockApplicationStatus = nil
+        sut = nil
+        conversation = nil
+
+        super.tearDown()
+    }
+    
     fileprivate func createConversation() -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()

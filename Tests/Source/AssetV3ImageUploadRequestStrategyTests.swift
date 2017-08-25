@@ -29,17 +29,25 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
     fileprivate var mockApplicationStatus : MockApplicationStatus!
     fileprivate var sut : AssetV3ImageUploadRequestStrategy!
     fileprivate var conversation: ZMConversation!
-    fileprivate var imageData = mediumJPEGData()
-    
+    fileprivate var imageData: Data!
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .eventProcessing
         sut = AssetV3ImageUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
+        imageData = mediumJPEGData()
         self.syncMOC.performGroupedBlockAndWait {
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.remoteIdentifier = UUID.create()
         }
+    }
+    
+    override func tearDown() {
+        mockApplicationStatus = nil
+        sut = nil
+        conversation = nil
+        imageData = nil
+        super.tearDown()
     }
     
     // MARK: - Helpers

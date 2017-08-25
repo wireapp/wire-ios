@@ -23,12 +23,13 @@ import WireDataModel
 
 class GenericMessageRequestStrategyTests : MessagingTestBase {
     
-    let mockClientRegistrationStatus = MockClientRegistrationStatus()
+    var mockClientRegistrationStatus: MockClientRegistrationStatus!
     var conversation: ZMConversation!
     var sut : GenericMessageRequestStrategy!
     
     override func setUp() {
         super.setUp()
+        mockClientRegistrationStatus = MockClientRegistrationStatus()
         
         sut = GenericMessageRequestStrategy(context: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
         
@@ -42,6 +43,14 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             self.conversation.addParticipant(user)
         }
     }
+    
+    override func tearDown() {
+        sut = nil
+        conversation = nil
+        mockClientRegistrationStatus = nil
+        super.tearDown()
+    }
+
     
     func testThatItCallsEntityCompletionHandlerOnRequestCompletion() {
         self.syncMOC.performGroupedBlockAndWait {
