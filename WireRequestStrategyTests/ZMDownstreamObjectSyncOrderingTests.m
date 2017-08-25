@@ -64,6 +64,11 @@
 - (void)tearDown
 {
     [self.testSession tearDown];
+    self.testSession = nil;
+    self.conversation1 = nil;
+    self.conversation2 = nil;
+    self.imageMessage1 = nil;
+    self.imageMessage2 = nil;
 
     [super tearDown];
 }

@@ -85,6 +85,7 @@
     [self.sut tearDown];
     self.sut = nil;
     [self.testSession tearDown];
+    self.testSession = nil;
     [super tearDown];
 }
 
