@@ -26,7 +26,7 @@
 @interface ZMBackgroundActivity ()
 
 @property (nonatomic) UIBackgroundTaskIdentifier identifier;
-@property (nonatomic) id<ZMSGroupQueue> mainGroupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> mainGroupQueue;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, weak) UIApplication *application;
 @property (atomic) BOOL ended;

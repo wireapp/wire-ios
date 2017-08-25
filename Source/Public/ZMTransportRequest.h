@@ -40,7 +40,7 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 @interface ZMCompletionHandler : NSObject
 
 + (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMCompletionHandlerBlock)block;
-@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, readonly, weak) id<ZMSGroupQueue> groupQueue;
 
 @end;
 
@@ -48,7 +48,7 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 @interface ZMTaskCreatedHandler : NSObject
 
 + (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMTaskCreatedBlock)block;
-@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, readonly, weak) id<ZMSGroupQueue> groupQueue;
 
 @end
 
@@ -56,7 +56,7 @@ extern const NSTimeInterval ZMTransportRequestDefaultExpirationInterval;
 @interface ZMTaskProgressHandler : NSObject
 
 + (instancetype)handlerOnGroupQueue:(id<ZMSGroupQueue>)groupQueue block:(ZMProgressHandlerBlock)block;
-@property (nonatomic, readonly) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, readonly, weak) id<ZMSGroupQueue> groupQueue;
 
 @end
 

@@ -37,7 +37,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 }
 
 @property (nonatomic, weak) id<ZMPushChannelConsumer> consumer;
-@property (nonatomic) id<ZMSGroupQueue> consumerQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> consumerQueue;
 @property (nonatomic) ZMWebSocket *webSocket;
 @property (nonatomic) dispatch_queue_t webSocketQueue;
 @property (nonatomic) ZMSDispatchGroup *webSocketGroup;

@@ -23,8 +23,8 @@ import WireUtilities
     
     private static let _instance : BackgroundActivityFactory = BackgroundActivityFactory()
     
-    open var application : UIApplication? = nil
-    open var mainGroupQueue : ZMSGroupQueue? = nil
+    open weak var application : UIApplication? = nil
+    open weak var mainGroupQueue : ZMSGroupQueue? = nil
     
     @objc open class func sharedInstance() -> BackgroundActivityFactory
     {
