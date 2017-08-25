@@ -12,5 +12,4 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-share-engine
 
-This framework is part of Wire iOS. Visit the [Wire iOS repository](http://github.com/wireapp/wire-ios) for an overview of the architecture.
-
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
