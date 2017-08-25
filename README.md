@@ -12,12 +12,11 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-protos
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS SyncEngine. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 The wire-ios-protos framework contains precompiled protocol buffer definitions for objective-c / swift and some convenience methods around them.
 
-
-### How to build
+## How to build
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
 
