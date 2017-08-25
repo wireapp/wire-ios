@@ -28,17 +28,8 @@ The sync engine itself is built on top of a few third-party frameworks, and uses
 
 ![Mobile app architecture](https://github.com/wireapp/wire/blob/master/assets/mobile-architecture.png?raw=true)
 
-
-The iOS application follows closely the overall mobile architecture, adding its layers of iOS and UI helpers.
-
-![iOS app architecture](https://github.com/wireapp/wire/blob/master/assets/ios-architecture.png?raw=true)
-
-*wire-ios-sync-engine* is the top-most layer of the iOS *sync engine*, and it is using a number of other frameworks itself.
-
-### Repositories
-
-- [wire-ios-sync-engine](https://github.com/wireapp/wire-ios-sync-engine): topmost layer that implements client-side business logic, caching, encryption and client-side backend communication protocol
-
+### Documentation
+Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 ## How to build the open source client
 
