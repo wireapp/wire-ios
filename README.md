@@ -12,7 +12,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-mocktransport
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 The wire-ios-mocktransport framework helps us mock the requests to our backend during integration tests.
 
