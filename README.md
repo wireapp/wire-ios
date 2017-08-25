@@ -12,6 +12,6 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-system
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 The wire-ios-system framework covers the interaction with ASL (Apple System Log), profiling and provides wrappers of some Foundation classes.
