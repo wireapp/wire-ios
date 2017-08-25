@@ -12,7 +12,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # WireLinkPreview
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 WireLinkPreview is a Swift framework that can be used to fetch and parse Open Graph data that is present on most webpages (see http://ogp.me/ for more information and https://developers.facebook.com/tools/debug/sharing to debug open graph data).
 
