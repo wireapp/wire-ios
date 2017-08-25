@@ -12,7 +12,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # WireUtilities
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](https://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 WireUtilities implements common data structures, algorithms (such as symmetric encryption) and application environment detection.
 
