@@ -9,9 +9,9 @@ You can find the published source code at [github.com/wireapp/wire](https://gith
 
 For licensing information, see the attached LICENSE file and the list of third-party licenses at [wire.com/legal/licenses/](https://wire.com/legal/licenses/).
 
-# Cryptobox for iOS
+# wire-ios-cryptobox
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 This project provides for cross-compilation of [cryptobox](https://github.com/wireapp/cryptobox) for iOS, currently only in the form of static libraries.
 
