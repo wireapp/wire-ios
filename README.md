@@ -13,7 +13,7 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-transport
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
 The wire-ios-transport framework abstracts the network communication with our backend. It handles authentication of requests, network failures and retries transparently.
 
