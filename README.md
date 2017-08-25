@@ -12,4 +12,4 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-request-strategy
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/wire-ios-sync-engine) for an overview of the architecture.
+This framework is part of Wire iOS SyncEngine. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
