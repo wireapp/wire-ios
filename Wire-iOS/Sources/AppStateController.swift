@@ -77,7 +77,7 @@ class AppStateController : NSObject {
             return .blacklisted
         }
         
-        if (isSuspended) {
+        if isSuspended {
             return .suspended
         }
         
