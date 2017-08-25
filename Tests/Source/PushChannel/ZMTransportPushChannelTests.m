@@ -33,7 +33,7 @@
 - (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 
 @property (nonatomic) NSURL *URL;
-@property (nonatomic) id<ZMSGroupQueue> queue;
+@property (nonatomic, weak) id<ZMSGroupQueue> queue;
 @property (nonatomic) ZMAccessToken *accessToken;
 @property (nonatomic) NSString *clientID;
 @property (nonatomic) NSString *userAgentString;
@@ -172,7 +172,8 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     XCTAssertEqualObjects(currentFakePushChannelConnection.accessToken, self.accessToken);
     XCTAssertEqualObjects(currentFakePushChannelConnection.clientID, self.clientID);
     XCTAssertEqual(currentFakePushChannelConnection.consumer, self.sut);
-    XCTAssertEqual(currentFakePushChannelConnection.queue, self.fakeUIContext);
+    id<ZMSGroupQueue> queue = currentFakePushChannelConnection.queue;
+    XCTAssertEqual(queue, self.fakeUIContext);
 }
 
 - (void)testThatItDoesNotOpenThePushChannelWhenItDoesNotHaveAConsumer;

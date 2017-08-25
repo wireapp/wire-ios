@@ -21,11 +21,10 @@ public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
 }
 
-
 public protocol UnauthenticatedTransportSessionProtocol: class {
 
     func enqueueRequest(withGenerator generator: ZMTransportRequestGenerator) -> EnqueueResult
-    
+    func tearDown()
 }
 
 
@@ -123,6 +122,14 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// - returns: The value after the increment.
     private func increment() -> Int32 {
         return withUnsafeMutablePointer(to: &numberOfRunningRequests, OSAtomicIncrement32)
+    }
+    
+    public func tearDown() {
+        // From NSURLSession documentation at https://developer.apple.com/documentation/foundation/urlsession:
+        // "The session object keeps a strong reference to the delegate until your app 
+        // exits or explicitly invalidates the session. 
+        // If you do not invalidate the session, your app leaks memory until it exits."
+        self.session = nil
     }
 
 }

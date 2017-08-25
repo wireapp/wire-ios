@@ -77,7 +77,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) ZMTransportPushChannel *transportPushChannel;
 
 @property (nonatomic, weak) id<ZMPushChannelConsumer> pushChannelConsumer;
-@property (nonatomic) id<ZMSGroupQueue> pushChannelGroupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> pushChannelGroupQueue;
 
 
 @property (nonatomic, copy, readonly) NSString *userAgentValue;

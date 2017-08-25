@@ -53,7 +53,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 @interface ZMCompletionHandler ()
 
 
-@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic, copy) ZMCompletionHandlerBlock block;
 
 @end
@@ -77,7 +77,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 @interface ZMTaskCreatedHandler ()
 
-@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic, copy) ZMTaskCreatedBlock block;
 
 @end
@@ -103,7 +103,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 
 @interface ZMTaskProgressHandler ()
 
-@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic, copy) ZMProgressHandlerBlock block;
 
 @end

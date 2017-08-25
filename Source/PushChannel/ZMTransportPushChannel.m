@@ -34,7 +34,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic) NSURL *url;
 @property (nonatomic) NSString *userAgentString;
 @property (nonatomic, weak) id<ZMPushChannelConsumer>  consumer;
-@property (nonatomic) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMPushChannelConnection *pushChannel;
 @property (nonatomic, readonly) BOOL shouldBeOpen;
 
