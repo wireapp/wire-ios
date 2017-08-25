@@ -12,11 +12,9 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 # wire-ios-data-model
 
-This framework is part of Wire iOS SyncEngine. Visit [iOS SyncEngine repository](http://github.com/wireapp/zmessaging-cocoa) for an overview of the architecture.
+This framework is part of Wire iOS SyncEngine. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
-The wire-ios-data-model framework contains our Core Data model and entity classes.
-
-### How to build
+## How to build
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
 
