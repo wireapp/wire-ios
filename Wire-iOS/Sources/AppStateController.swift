@@ -38,7 +38,7 @@ class AppStateController : NSObject {
     fileprivate var isLoggedIn = false
     fileprivate var isLoggedOut = false
     fileprivate var isSuspended = false
-    fileprivate var hasEnteredForeground = UIApplication.shared.applicationState == .active
+    fileprivate var hasEnteredForeground = false
     fileprivate var isMigrating = false
     fileprivate var hasCompletedRegistration = false
     fileprivate var authenticationError : Error?
@@ -46,7 +46,8 @@ class AppStateController : NSObject {
     
     override init() {
         super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(applicationWillEnterForeground), name: Notification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive), name: Notification.Name.UIApplicationDidBecomeActive, object: nil)
+        
         authenticationObserverToken = ZMUserSessionAuthenticationNotification.addObserver(self)
         appState = calculateAppState()
     }
@@ -152,7 +153,7 @@ extension AppStateController : SessionManagerDelegate {
 
 extension AppStateController {
     
-    func applicationWillEnterForeground() {
+    func applicationDidBecomeActive() {
         hasEnteredForeground = true
         recalculateAppState()
     }
