@@ -75,46 +75,12 @@ class PersistentStorageInitialization {
     fileprivate static func executeWhenFileIsAccessible(_ file: URL, usingBlock block: @escaping (Void) -> Void) {
         // We need to handle the case when the database file is encrypted by iOS and user never entered the passcode
         // We use default core data protection mode NSFileProtectionCompleteUntilFirstUserAuthentication
-        if PersistentStorageInitialization.databaseExistsButIsNotReadableDueToEncryption(at: file) {
-            PersistentStorageInitialization().executeOnceFileSystemIsUnlocked {
-                block()
-            }
-        } else {
+        let storageInitialization = PersistentStorageInitialization()
+        
+        storageInitialization.applicationProtectedDataDidBecomeAvailableObserver = FileManager.default.executeWhenFileSystemIsAccessible { _ in
+            storageInitialization.applicationProtectedDataDidBecomeAvailableObserver = nil
             block()
-            
         }
-    }
-    
-    /// Listen for the notification for when first authentication has been completed
-    /// (c.f. `NSFileProtectionCompleteUntilFirstUserAuthentication`). Once it's available, it will
-    /// execute the closure
-    fileprivate func executeOnceFileSystemIsUnlocked(execute block: @escaping ()->()) {
-        
-        // This happens when
-        // (1) User has passcode enabled
-        // (2) User turns the phone on, but do not enter the passcode yet
-        // (3) App is awake on the background due to VoIP push notification
-        
-        guard self.applicationProtectedDataDidBecomeAvailableObserver == nil else {
-            fatal("Was already waiting on file system unlock?")
-        }
-        
-        self.applicationProtectedDataDidBecomeAvailableObserver = NotificationCenter.default.addObserver(
-            forName: .UIApplicationProtectedDataDidBecomeAvailable,
-            object: nil,
-            queue: nil) {/* DO NOT MAKE WEAK */ _ in
-                // we intentionally retain a reference to self so can receive the notification. Once this
-                // block finished, it will be released
-                NotificationCenter.default.removeObserver(self.applicationProtectedDataDidBecomeAvailableObserver)
-                self.applicationProtectedDataDidBecomeAvailableObserver = nil
-                block()
-        }
-    }
-    
-    /// Check if the database is created, but still locked (potentially due to file system protection)
-    private static func databaseExistsButIsNotReadableDueToEncryption(at url: URL) -> Bool {
-        guard FileManager.default.fileExists(atPath: url.path) else { return false }
-        return (try? FileHandle(forReadingFrom: url)) == nil
     }
 }
 
