@@ -74,7 +74,7 @@ public class PersonName : NSObject {
         return name
     }()
     
-    lazy var initials : String = {
+    lazy public var initials : String = {
         guard let firstComponent = self.components.first else { return "" }
         
         var _initials = String()
@@ -90,7 +90,7 @@ public class PersonName : NSObject {
         return _initials;
     }()
     
-    static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
+    public static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
         let tagger = schemeTagger ?? NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
 
         if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
@@ -101,7 +101,7 @@ public class PersonName : NSObject {
         return cachedPersonName
     }
     
-    init(name: String, schemeTagger: NSLinguisticTagger){
+    public init(name: String, schemeTagger: NSLinguisticTagger){
         // We're using -precomposedStringWithCanonicalMapping (Unicode Normalization Form C)
         // since this allows us to use faster string comparison later.
         self.rawFullName = name
