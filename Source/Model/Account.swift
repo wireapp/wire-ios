@@ -98,7 +98,7 @@ extension Account {
 
     func write(to url: URL) throws {
         let data = try JSONSerialization.data(withJSONObject: jsonRepresentation())
-        try data.write(to: url)
+        try data.write(to: url, options: [.atomic])
     }
 
     static func load(from url: URL) -> Account? {
