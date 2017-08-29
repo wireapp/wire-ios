@@ -25,8 +25,8 @@ import Foundation
 /// team name if there is any, picture and uuid.
 public final class Account: NSObject {
 
-    public let userName: String
-    public let teamName: String?
+    public var userName: String
+    public var teamName: String?
     public let userIdentifier: UUID
     public var imageData: Data?
 
