@@ -23,7 +23,7 @@
 
 @interface ZMObjectSyncStrategy ()
 
-@property (nonatomic) NSManagedObjectContext *managedObjectContext;
+@property (nonatomic, weak) NSManagedObjectContext *managedObjectContext;
 @property (nonatomic) BOOL tornDown;
 
 @end
