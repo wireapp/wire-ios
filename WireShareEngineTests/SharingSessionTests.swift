@@ -43,6 +43,15 @@ class SharingSessionTests: BaseSharingSessionTests {
         archivedConversation = createConversation(type: .group, archived: true)
         archivedConnection = createConversation(type: .connection, archived: true)
     }
+    
+    override func tearDown() {
+        activeConversation1 = nil
+        activeConversation2 = nil
+        activeConnection = nil
+        archivedConversation = nil
+        archivedConnection = nil
+        super.tearDown()
+    }
 
     func testThatWriteableNonArchivedConversationsAreReturned() {
         let conversations = Set(sharingSession.writeableNonArchivedConversations.map { $0 as! ZMConversation })

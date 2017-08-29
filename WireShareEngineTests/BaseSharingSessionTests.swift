@@ -46,9 +46,6 @@ class BaseSharingSessionTests: ZMTBaseTest {
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        let userInterfaceContext = directory.uiContext
-        let syncContext = directory.syncContext
-        
         let mockTransport = MockTransportSession(dispatchGroup: ZMSDispatchGroup(label: "ZMSharingSession"))
         let transportSession = mockTransport.mockedTransportSession()
 
@@ -56,10 +53,10 @@ class BaseSharingSessionTests: ZMTBaseTest {
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(sharedContainerURL: url)
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [])
-        let registrationStatus = ClientRegistrationStatus(context: syncContext!)
+        let registrationStatus = ClientRegistrationStatus(context: directory.syncContext)
         let operationLoop = RequestGeneratingOperationLoop(
-            userContext: userInterfaceContext!,
-            syncContext: syncContext!,
+            userContext: directory.uiContext,
+            syncContext: directory.syncContext,
             callBackQueue: .main,
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
@@ -71,13 +68,12 @@ class BaseSharingSessionTests: ZMTBaseTest {
         )
 
         let strategyFactory = StrategyFactory(
-            syncContext: syncContext!,
+            syncContext: directory.syncContext,
             applicationStatus: applicationStatusDirectory
         )
 
         sharingSession = try! SharingSession(
-            userInterfaceContext: userInterfaceContext!,
-            syncContext: syncContext!,
+            contextDirectory: directory,
             transportSession: transportSession,
             sharedContainerURL: url,
             saveNotificationPersistence: saveNotificationPersistence,
@@ -94,6 +90,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
         sharingSession = nil
         authenticationStatus = nil
         moc = nil
+        StorageStack.reset()
         super.tearDown()
     }
 

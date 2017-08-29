@@ -25,7 +25,7 @@ import WireTransport.ZMRequestCancellation
 
 class StrategyFactory {
 
-    let syncContext: NSManagedObjectContext
+    unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus
     private(set) var strategies = [AnyObject]()
 

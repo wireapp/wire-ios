@@ -128,8 +128,8 @@ final class OperationLoop : NSObject, RequestAvailableObserver {
     typealias ChangeClosure = (_ changed: Set<NSManagedObject>) -> Void
     typealias SaveClosure = (_ notification: Notification, _ insertedObjects: Set<NSManagedObject>, _ updatedObjects: Set<NSManagedObject>) -> Void
 
-    private let syncContext: NSManagedObjectContext
-    private let userContext: NSManagedObjectContext
+    private unowned let syncContext: NSManagedObjectContext
+    private unowned let userContext: NSManagedObjectContext
     private let callBackQueue: OperationQueue
     private var tokens: [NSObjectProtocol] = []
     
@@ -213,7 +213,7 @@ final class RequestGeneratingOperationLoop {
     
     private let requestGeneratorStore: RequestGeneratorStore
     private let requestGeneratorObserver: RequestGeneratorObserver
-    private let transportSession: ZMTransportSession
+    private unowned let transportSession: ZMTransportSession
     
 
     init(userContext: NSManagedObjectContext, syncContext: NSManagedObjectContext, callBackQueue: OperationQueue = .main, requestGeneratorStore: RequestGeneratorStore, transportSession: ZMTransportSession) {
