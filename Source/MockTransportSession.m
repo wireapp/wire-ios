@@ -198,6 +198,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (void)tearDown
 {
+    // Because we re-use the same MockTransportSession for both authenticated and unauthenticated sessions
+    // we don't want to do any tear down here. We should only tear it down after test is complete
+}
+
+- (void)cleanUp
+{
     self.managedObjectContext = nil;
     [self expireAllBlockedRequests];
     [self.generatedPushEvents removeAllObjects];

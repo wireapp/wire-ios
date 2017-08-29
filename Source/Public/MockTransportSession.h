@@ -84,6 +84,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)registerPushEvent:(MockPushEvent *)mockPushEvent;
 - (void)logoutSelfUser;
 
+/// Called after test case is finished to release all resources
+- (void)cleanUp;
+
 @end
 
 
