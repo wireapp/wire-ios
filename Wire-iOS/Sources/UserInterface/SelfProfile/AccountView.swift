@@ -277,7 +277,8 @@ public final class PersonalAccountView: BaseAccountView {
         self.isAccessibilityElement = true
         self.accessibilityTraits = UIAccessibilityTraitButton
         self.shouldGroupAccessibilityChildren = true
-        
+        self.accessibilityIdentifier = "personal team"
+
         if let imageData = self.account.imageData {
             userImageView.imageView.image = UIImage(data: imageData)
         }
@@ -312,7 +313,6 @@ public final class PersonalAccountView: BaseAccountView {
         super.update()
         self.nameLabel.text = self.account.userName
         self.accessibilityValue = String(format: "conversation_list.header.self_team.accessibility_value".localized, self.nameLabel.text ?? "") + " " + accessibilityState
-        self.accessibilityIdentifier = "personal team"
     }
 }
 
