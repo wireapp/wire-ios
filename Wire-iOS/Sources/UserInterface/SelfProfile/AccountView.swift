@@ -193,7 +193,8 @@ public class BaseAccountView: UIView, AccountViewType {
             imageViewContainer.width == 28
             
             imageViewContainer.bottom == selfView.bottom - 4
-        
+            imageViewContainer.leading == selfView.leading + 9
+            imageViewContainer.trailing == selfView.trailing - 9
             selfView.width <= 128
         }
         
