@@ -94,13 +94,13 @@ class IntegrationTests: XCTestCase {
     }
 
     func testThatItParsesSampleDataiTunes() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataiTunesWithoutTitle() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "website", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: "iTunes", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesDataWithoutTitle()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }

@@ -93,6 +93,17 @@ class OpenGraphScannerTests: XCTestCase {
 
         // then
         XCTAssertNotNil(receivedData, line: line)
+        XCTAssertEqual(mockData.expected?.title, receivedData?.title, line: line)
+        XCTAssertEqual(mockData.expected?.type, receivedData?.type, line: line)
+        XCTAssertEqual(mockData.expected?.url, receivedData?.url, line: line)
+        
+        XCTAssertEqual(mockData.expected?.imageUrls ?? [], receivedData?.imageUrls ?? [], line: line)
+        XCTAssertEqual(mockData.expected?.siteName, receivedData?.siteName, line: line)
+        XCTAssertEqual(mockData.expected?.siteNameString, receivedData?.siteNameString, line: line)
+        XCTAssertEqual(mockData.expected?.content, receivedData?.content, line: line)
+        XCTAssertEqual(mockData.expected?.userGeneratedImage, receivedData?.userGeneratedImage, line: line)
+        XCTAssertEqual(mockData.expected?.foursquareMetaData, receivedData?.foursquareMetaData, line: line)
+
         XCTAssertEqual(mockData.expected, receivedData, line: line)
     }
     
