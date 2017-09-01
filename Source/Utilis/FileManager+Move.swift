@@ -29,8 +29,43 @@ extension FileManager {
         to destination: URL,
         overwriteExistingFiles: Bool) throws
     {
-        self.createAndProtectDirectory(at: destination)
+        try self.moveOrCopyFolderRecursively(
+            operation: .move,
+            from: source,
+            to: destination,
+            overwriteExistingFiles: overwriteExistingFiles)
         
+        // we moved everything, now we can delete
+        try self.removeItem(at: source)
+    }
+    
+    /// Copies the content of the folder recursively to another folder.
+    /// If the destionation folder does not exists, it creates it.
+    @objc public func copyFolderRecursively(
+        from source: URL,
+        to destination: URL,
+        overwriteExistingFiles: Bool) throws
+    {
+        try self.moveOrCopyFolderRecursively(
+            operation: .copy,
+            from: source,
+            to: destination,
+            overwriteExistingFiles: overwriteExistingFiles)
+    }
+    
+    private enum FileOperation {
+        case move
+        case copy
+    }
+    
+    private func moveOrCopyFolderRecursively(
+        operation: FileOperation,
+        from source: URL,
+        to destination: URL,
+        overwriteExistingFiles: Bool) throws
+    {
+        self.createAndProtectDirectory(at: destination)
+
         var isDirectory : ObjCBool = false
         let enumerator = self.enumerator(at: source, includingPropertiesForKeys: [.nameKey, .isDirectoryKey])!
         try enumerator.forEach { item in
@@ -40,7 +75,8 @@ extension FileManager {
             
             if isDirectory.boolValue {
                 enumerator.skipDescendants() // do not descend in this directory with this forEach loop
-                try self.moveFolderRecursively(
+                try self.moveOrCopyFolderRecursively(
+                    operation: operation,
                     from: sourceItem,
                     to: destinationItem,
                     overwriteExistingFiles: overwriteExistingFiles
@@ -53,13 +89,17 @@ extension FileManager {
                         try self.removeItem(at: destinationItem)
                     }
                 }
-                try self.moveItem(at: sourceItem, to: destinationItem)
+                try self.apply(operation, at: sourceItem, to: destinationItem)
             }
         }
-        
-        // we moved everything, now we can delete
-        try self.removeItem(at: source)
     }
     
-    
+    private func apply(_ operation: FileOperation, at source: URL, to destination: URL) throws {
+        switch operation {
+        case .move:
+            try self.moveItem(at: source, to: destination)
+        case .copy:
+            try self.copyItem(at: source, to: destination)
+        }
+    }
 }
