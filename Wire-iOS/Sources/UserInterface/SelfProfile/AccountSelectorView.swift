@@ -75,6 +75,9 @@ final internal class AccountSelectorView: UIView {
 
     fileprivate var accounts: [Account]? = nil {
         didSet {
+            guard let _ = ZMUserSession.shared() else {
+                return
+            }
             
             accountViews = accounts?.map({ AccountViewFactory.viewFor(account: $0) }) ?? []
             

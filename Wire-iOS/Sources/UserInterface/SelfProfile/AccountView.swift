@@ -84,7 +84,9 @@ class DotView: UIView {
             centerView.edges == selfView.edges
         }
         
-        userObserver = UserChangeInfo.add(observer: self, forBareUser: ZMUser.selfUser())
+        if let selfUser = ZMUser.selfUser() {
+            userObserver = UserChangeInfo.add(observer: self, forBareUser: selfUser)
+        }
     }
     
     required init?(coder aDecoder: NSCoder) {
