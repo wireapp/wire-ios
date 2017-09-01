@@ -311,6 +311,18 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
         }
     }
 
+    public func delete(account: Account) {
+        let accountID = account.userIdentifier
+        self.accountManager.remove(account)
+        
+        do {
+            try FileManager.default.removeItem(at: StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: sharedContainerURL))
+        }
+        catch let error {
+            log.error("Impossible to delete the acccount \(account): \(error)")
+        }
+    }
+    
     fileprivate func createSession(for account: Account, with provider: LocalStoreProviderProtocol, completion: @escaping (ZMUserSession) -> Void) {
         guard let session = authenticatedSessionFactory.session(for: account, storeProvider: provider) else {
             preconditionFailure("Unable to create session for \(account)")
