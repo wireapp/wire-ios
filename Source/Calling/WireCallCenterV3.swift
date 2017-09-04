@@ -301,11 +301,33 @@ internal func callMetricsHandler(conversationId: UnsafePointer<Int8>?, metrics: 
     }
 }
 
+/// Handle requests for refreshing the calling configuration
+internal func requestCallConfigHandler(handle : UnsafeMutableRawPointer?, contextRef: UnsafeMutableRawPointer?) -> Int32 {
+    guard let contextRef = contextRef else { return EPROTO }
+    
+    let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
+    
+    callCenter.uiMOC?.performGroupedBlock {
+        callCenter.requestCallConfig()
+    }
+    
+    return 0
+}
+
 /// Handles sending call messages
 /// In order to be passed to C, this function needs to be global
-internal func sendCallMessageHandler(token: UnsafeMutableRawPointer?, conversationId: UnsafePointer<Int8>?, userId: UnsafePointer<Int8>?, clientId: UnsafePointer<Int8>?, data: UnsafePointer<UInt8>?, dataLength: Int, contextRef: UnsafeMutableRawPointer?) -> Int32
+internal func sendCallMessageHandler(token: UnsafeMutableRawPointer?,
+                                     conversationId: UnsafePointer<Int8>?,
+                                     senderUserId: UnsafePointer<Int8>?,
+                                     senderClientId: UnsafePointer<Int8>?,
+                                     destinationUserId: UnsafePointer<Int8>?,
+                                     destinationClientId: UnsafePointer<Int8>?,
+                                     data: UnsafePointer<UInt8>?,
+                                     dataLength: Int,
+                                     transient : Int32,
+                                     contextRef: UnsafeMutableRawPointer?) -> Int32
 {
-    guard let token = token, let contextRef = contextRef, let conversationId = UUID(cString: conversationId), let userId = UUID(cString: userId), let clientId = String(cString: clientId), let data = data else {
+    guard let token = token, let contextRef = contextRef, let conversationId = UUID(cString: conversationId), let userId = UUID(cString: senderUserId), let clientId = String(cString: senderClientId), let data = data else {
         return EINVAL // invalid argument
     }
     
@@ -362,6 +384,7 @@ internal func groupMemberHandler(conversationIdRef: UnsafePointer<Int8>?, contex
 @objc
 public protocol WireCallCenterTransport: class {
     func send(data: Data, conversationId: UUID, userId: UUID, completionHandler: @escaping ((_ status: Int) -> Void))
+    func requestCallConfig(completionHandler: @escaping (_ config: String?, _ status : Int) -> Void)
 }
 
 public typealias WireCallMessageToken = UnsafeMutableRawPointer
@@ -466,6 +489,14 @@ public struct CallEvent {
         })
     }
     
+    fileprivate func requestCallConfig() {
+        transport?.requestCallConfig(completionHandler: { [weak self] (config, httpStatusCode) in
+            guard let `self` = self else { return }
+            
+            self.avsWrapper.update(callConfig: config, httpStatusCode: httpStatusCode)
+        })
+    }
+    
     fileprivate func handleCallState(callState: CallState, conversationId: UUID, userId: UUID?, messageTime: Date? = nil) {
         callState.logState()
         var callState = callState
@@ -535,9 +566,9 @@ public struct CallEvent {
     // MARK - Call state methods
 
 
-    @objc(answerCallForConversationID:isGroup:)
-    public func answerCall(conversationId: UUID, isGroup: Bool) -> Bool {
-        let answered = avsWrapper.answerCall(conversationId: conversationId, isGroup: isGroup)
+    @objc(answerCallForConversationID:)
+    public func answerCall(conversationId: UUID) -> Bool {
+        let answered = avsWrapper.answerCall(conversationId: conversationId)
         if answered {
             if let previousSnapshot = callSnapshots[conversationId] {
                 callSnapshots[conversationId] = CallSnapshot(callState: .answered, isVideo: previousSnapshot.isVideo)
@@ -564,15 +595,15 @@ public struct CallEvent {
 
     @objc(closeCallForConversationID:isGroup:)
     public func closeCall(conversationId: UUID, isGroup: Bool) {
-        avsWrapper.endCall(conversationId: conversationId, isGroup: isGroup)
-        if isGroup, let previousSnapshot = callSnapshots[conversationId] {
+        avsWrapper.endCall(conversationId: conversationId)
+        if isGroup, let previousSnapshot = callSnapshots[conversationId] { // TODO move isGroup into CallSnapshot
             callSnapshots[conversationId] = CallSnapshot(callState: .incoming(video: previousSnapshot.isVideo, shouldRing: false), isVideo: previousSnapshot.isVideo)
         }
     }
     
-    @objc(rejectCallForConversationID:isGroup:)
-    public func rejectCall(conversationId: UUID, isGroup: Bool) {
-        avsWrapper.rejectCall(conversationId: conversationId, isGroup: isGroup)
+    @objc(rejectCallForConversationID:)
+    public func rejectCall(conversationId: UUID) {
+        avsWrapper.rejectCall(conversationId: conversationId)
         
         if let previousSnapshot = callSnapshots[conversationId] {
             callSnapshots[conversationId] = CallSnapshot(callState: .incoming(video: previousSnapshot.isVideo, shouldRing: false), isVideo: previousSnapshot.isVideo)
