@@ -242,7 +242,17 @@ public class SharingSession {
                 group.leave()
             }
         )
-        _ = group.wait(timeout: .distantFuture)
+        
+        var didCreateStorageStack = false
+        group.notify(queue: .global()) { 
+            didCreateStorageStack = true
+        }
+        
+        while !didCreateStorageStack {
+            if !RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow: 0.002)) {
+                Thread.sleep(forTimeInterval: 0.002)
+            }
+        }
         
         let environment = ZMBackendEnvironment(userDefaults: UserDefaults.shared())
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
@@ -262,7 +272,8 @@ public class SharingSession {
         try self.init(
             contextDirectory: directory,
             transportSession: transportSession,
-            sharedContainerURL: sharedContainerURL
+            sharedContainerURL: sharedContainerURL,
+            accountContainerURL: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
         )
 
     }
@@ -291,7 +302,7 @@ public class SharingSession {
         setupObservers()
     }
     
-    public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, sharedContainerURL: URL) throws {
+    public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, sharedContainerURL: URL, accountContainerURL: URL) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         
@@ -309,9 +320,9 @@ public class SharingSession {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(sharedContainerURL: sharedContainerURL)
-        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(sharedContainerURL: sharedContainerURL)
+        
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainerURL)
+        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainerURL)
         
         try self.init(
             contextDirectory: contextDirectory,
