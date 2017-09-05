@@ -41,8 +41,8 @@ fileprivate extension Notification {
 
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
-    public required init(sharedContainerURL url: URL) {
-        objectStore = SharedObjectStore(sharedContainerURL: url, fileName: "ContextDidChangeNotifications")
+    public required init(accountContainer url: URL) {
+        objectStore = SharedObjectStore(accountContainer: url, fileName: "ContextDidChangeNotifications")
     }
 
     @discardableResult public func add(_ note: Notification) -> Bool {
@@ -91,8 +91,8 @@ fileprivate extension Notification {
 @objc public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
 
-    public required init(sharedContainerURL url: URL) {
-        objectStore = SharedObjectStore(sharedContainerURL: url, fileName: "ShareExtensionAnalytics")
+    public required init(accountContainer url: URL) {
+        objectStore = SharedObjectStore(accountContainer: url, fileName: "ShareExtensionAnalytics")
     }
 
     @discardableResult public func add(_ storableEvent: StorableTrackingEvent) -> Bool {
@@ -126,10 +126,10 @@ public class SharedObjectStore<T>: NSObject, NSKeyedUnarchiverDelegate {
     private let directory: URL
     private let url: URL
     private let fileManager = FileManager.default
-    private let directoryName = "SharedObjectStore"
+    private let directoryName = "sharedObjectStore"
 
-    public required init(sharedContainerURL: URL, fileName: String) {
-        self.directory = sharedContainerURL.appendingPathComponent(directoryName)
+    public required init(accountContainer: URL, fileName: String) {
+        self.directory = accountContainer.appendingPathComponent(directoryName)
         self.url = directory.appendingPathComponent(fileName)
         super.init()
         FileManager.default.createAndProtectDirectory(at:directory)

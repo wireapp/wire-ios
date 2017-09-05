@@ -23,6 +23,7 @@ extension NSPersistentStoreCoordinator {
     /// Creates a filesystem-based persistent store at the given url with the given model
     convenience init(
         storeFile: URL,
+        accountIdentifier: UUID?,
         applicationContainer: URL,
         model: NSManagedObjectModel,
         startedMigrationCallback: (() -> Void)?)
@@ -36,9 +37,12 @@ extension NSPersistentStoreCoordinator {
             }
         }
         
-        MainPersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
-                                                                applicationContainer: applicationContainer,
-                                                                startedMigrationCallback: startedMigrationCallback)
+        if let accountIdentifier = accountIdentifier {
+            MainPersistentStoreRelocator.moveLegacyStoreIfNecessary(storeFile: storeFile,
+                                                                    accountIdentifier: accountIdentifier,
+                                                                    applicationContainer: applicationContainer,
+                                                                    startedMigrationCallback: startedMigrationCallback)
+        }
         
         let containingFolder = storeFile.deletingLastPathComponent()
         FileManager.default.createAndProtectDirectory(at: containingFolder)

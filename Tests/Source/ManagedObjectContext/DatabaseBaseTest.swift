@@ -22,6 +22,8 @@ import WireTesting
 
 @objc public class DatabaseBaseTest: ZMTBaseTest {
     
+    var accountID : UUID = UUID.create()
+    
     public var applicationContainer: URL {
         return FileManager.default
             .urls(for: .applicationSupportDirectory, in: .userDomainMask)
@@ -73,14 +75,17 @@ import WireTesting
     /// Create storage stack at a legacy location
     @objc public func createLegacyStore(filePath: URL, customization: ((ManagedObjectContextDirectory)->())? = nil) {
         
-        StorageStack.shared.createOnDiskStack(
-            accountDirectory: filePath.deletingLastPathComponent(),
+        NSPersistentStoreCoordinator.create(
             storeFile: filePath,
-            applicationContainer: self.applicationContainer,
-            migrateIfNeeded: false,
-            completionHandler: { mocs in
-                customization?(mocs)
-        })
+            applicationContainer: applicationContainer)
+        { (psc) in
+            let directory = ManagedObjectContextDirectory(
+                persistentStoreCoordinator: psc,
+                accountDirectory: filePath.deletingLastPathComponent(),
+                applicationContainer: self.applicationContainer)
+            MemoryReferenceDebugger.register(directory)
+            customization?(directory)
+        }
         
         StorageStack.reset()
         self.createDummyExternalSupportFileForDatabase(storeFile: filePath)
@@ -137,8 +142,13 @@ import WireTesting
         return [
             FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
             FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
-            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!),
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.transportString()).appendingPathComponent("store")
         ]
+    }
+    
+    var previousDatabaseLocationsBeforeMultiAccountSupport: ArraySlice<URL> {
+        return previousDatabaseLocations.prefix(3)
     }
 
     /// Previous locations where the keystore was stored
@@ -147,6 +157,7 @@ import WireTesting
             FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
             FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
             self.applicationContainer,
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.transportString())
         ]
     }
 }

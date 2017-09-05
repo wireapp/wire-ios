@@ -59,13 +59,12 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItCanReopenAPreviouslyExistingDatabase() {
     
         // GIVEN
-        let uuid = UUID.create()
         let firstStackExpectation = self.expectation(description: "Callback invoked")
         let testValue = "12345678"
         let testKey = "aassddffgg"
         var contextDirectory: ManagedObjectContextDirectory! = nil
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: uuid,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer
         ) { directory in
             contextDirectory = directory
@@ -87,7 +86,7 @@ class StorageStackTests: DatabaseBaseTest {
         let secondStackExpectation = self.expectation(description: "Callback invoked")
         
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: uuid,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer
         ) { directory in
             contextDirectory = directory
@@ -113,11 +112,10 @@ class StorageStackTests: DatabaseBaseTest {
 
         // GIVEN
         StorageStack.shared.createStorageAsInMemory = true
-        let uuid = UUID.create()
         let testValue = "12345678"
         let testKey = "aassddffgg"
         var contextDirectory: ManagedObjectContextDirectory! = nil
-        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: uuid,
+        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountID,
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
             completionHandler: { contextDirectory = $0 }
@@ -134,7 +132,7 @@ class StorageStackTests: DatabaseBaseTest {
 
         // WHEN
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: uuid,
+            accountIdentifier: accountID,
             applicationContainer: applicationContainer,
             dispatchGroup: dispatchGroup,
             completionHandler: { contextDirectory = $0 }
@@ -160,10 +158,9 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItPerformsMigrationCallbackWhenDifferentVersion() throws {
         
         // GIVEN
-        let uuid = UUID.create()
         let completionExpectation = self.expectation(description: "Callback invoked")
         let migrationExpectation = self.expectation(description: "Migration started")
-        let storeFile = StorageStack.accountFolder(accountIdentifier: uuid, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
+        let storeFile = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
         try FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
         
         // copy old version database into the expected location
@@ -176,9 +173,9 @@ class StorageStackTests: DatabaseBaseTest {
         
         // WHEN
         var contextDirectory: ManagedObjectContextDirectory? = nil
-        XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: uuid, applicationContainer: self.applicationContainer))
+        XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountID, applicationContainer: self.applicationContainer))
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: uuid,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
             startedMigrationCallback: { _ in migrationExpectation.fulfill() }
         ) { directory in
@@ -198,8 +195,7 @@ class StorageStackTests: DatabaseBaseTest {
     }
     
     func testThatItPerformsMigrationWhenStoreIsInOldLocation() {
-            
-        let userID = UUID.create()
+        
         let testValue = "12345678"
         let testKey = "aassddffgg"
         let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
@@ -216,7 +212,7 @@ class StorageStackTests: DatabaseBaseTest {
                 contextDirectory.uiContext.forceSaveOrRollback()
             }
             self.createSessionInKeyStore(accountDirectory: oldKeystorePath, applicationContainer: self.applicationContainer, sessionId: sessionID)
-            let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+            let accountDirectory = StorageStack.accountFolder(accountIdentifier: self.accountID, applicationContainer: self.applicationContainer)
             
             // expectations
             let migrationExpectation = self.expectation(description: "Migration started")
@@ -225,9 +221,9 @@ class StorageStackTests: DatabaseBaseTest {
             // WHEN
             // create the stack, check that the value is there and that it calls the migration callback
             var newStoreFile: URL? = nil
-            XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: userID, applicationContainer: self.applicationContainer))
+            XCTAssertTrue(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: self.accountID, applicationContainer: self.applicationContainer))
             StorageStack.shared.createManagedObjectContextDirectory(
-                accountIdentifier: userID,
+                accountIdentifier: self.accountID,
                 applicationContainer: self.applicationContainer,
                 startedMigrationCallback: { _ in migrationExpectation.fulfill() }
             ) { MOCs in
@@ -260,7 +256,6 @@ class StorageStackTests: DatabaseBaseTest {
     
     func testThatItPerformsMigrationWhenThereExistsMultipleLegacyStores() throws {
         
-        let userID = UUID.create()
         let testKey = "aassddffgg"
         let testValue = "eggplant"
         let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
@@ -285,6 +280,7 @@ class StorageStackTests: DatabaseBaseTest {
             try ["-shm", "-wal", ""].forEach { storeFileExtension in
                 let source = oldStoreFile.appendingSuffixToLastPathComponent(suffix: storeFileExtension)
                 let destination = oldLocation.appendingStoreFile().appendingSuffixToLastPathComponent(suffix: storeFileExtension)
+                try FileManager.default.createDirectory(at: oldLocation, withIntermediateDirectories: true)
                 try FileManager.default.copyItem(at: source, to: destination)
             }
 
@@ -302,7 +298,7 @@ class StorageStackTests: DatabaseBaseTest {
         // create the stack, check that the value is there and that it calls the migration callback
         var newStoreFile: URL? = nil
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: userID,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
             startedMigrationCallback: { _ in migrationExpectation.fulfill() }
         ) { MOCs in
@@ -325,7 +321,7 @@ class StorageStackTests: DatabaseBaseTest {
             XCTFail()
         }
         
-        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer)
         
         // check all legacy databses and keystores deleted
         zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { databaseFolder, keyStorePath in
@@ -342,13 +338,12 @@ class StorageStackTests: DatabaseBaseTest {
     func testThatItDoesNotInvokeTheMigrationCallbackWhenThereIsNoMigration() {
         
         // GIVEN
-        let uuid = UUID.create()
         let completionExpectation = self.expectation(description: "Callback invoked")
         
         // WHEN
-        XCTAssertFalse(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: uuid, applicationContainer: self.applicationContainer))
+        XCTAssertFalse(StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountID, applicationContainer: self.applicationContainer))
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: uuid,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
             startedMigrationCallback: { _ in XCTFail() }
         ) { directory in
@@ -365,13 +360,12 @@ class StorageStackTests: DatabaseBaseTest {
         // migrate the keystore immediately. Then we start the migration from this
         // inconsistent state.
         
-        let userID = UUID.create()
         let testKey = "aassddffgg"
         let testValue = "eggplant"
         let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
         
         let oldPath = self.previousDatabaseLocations.first!
-        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer)
         
         // GIVEN
         StorageStack.reset()
@@ -385,7 +379,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         // migrate the keystore already
         self.createSessionInKeyStore(accountDirectory: oldPath, applicationContainer: self.applicationContainer, sessionId: sessionID)
-        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
+        UserClientKeysStore.migrateIfNeeded(accountIdentifier: accountID, accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
         
         // expectations
         let migrationExpectation = self.expectation(description: "Migration started")
@@ -395,7 +389,7 @@ class StorageStackTests: DatabaseBaseTest {
         // create the stack, check that the value is there and that it calls the migration callback
         var newStoreFile: URL? = nil
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: userID,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
             startedMigrationCallback: { _ in migrationExpectation.fulfill() }
         ) { MOCs in
@@ -437,11 +431,10 @@ class StorageStackTests: DatabaseBaseTest {
         // migrate the keystore immediately, recreate the legacy keystore, then restart 
         // the migration from this inconsistent state.
         
-        let userID = UUID.create()
         let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
         
         let oldPath = self.previousDatabaseLocations.first!
-        let accountDirectory = StorageStack.accountFolder(accountIdentifier: userID, applicationContainer: self.applicationContainer)
+        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer)
         
         // GIVEN
         StorageStack.reset()
@@ -453,7 +446,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         // migrate the keystore already
         self.createSessionInKeyStore(accountDirectory: oldPath, applicationContainer: self.applicationContainer, sessionId: sessionID)
-        UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
+        UserClientKeysStore.migrateIfNeeded(accountIdentifier: accountID, accountDirectory: accountDirectory, applicationContainer: self.applicationContainer)
         
         // expectations
         let migrationExpectation = self.expectation(description: "Migration started")
@@ -462,7 +455,7 @@ class StorageStackTests: DatabaseBaseTest {
         // WHEN
         // create the stack, check that the value is there and that it calls the migration callback
         StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: userID,
+            accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
             startedMigrationCallback: { _ in migrationExpectation.fulfill() }
         ) { MOCs in
@@ -529,13 +522,12 @@ extension StorageStackTests {
     func testThatItReturnsUserIDFromLegacyStoreWhenItExists() {
         
         // GIVEN
-        self.previousDatabaseLocations.forEach { oldPath in
+        self.previousDatabaseLocationsBeforeMultiAccountSupport.forEach { oldPath in
             
-            let userID = UUID.create()
             let completionExpectation = self.expectation(description: "Callback invoked")
             
             self.createLegacyStore(filePath: oldPath.appendingStoreFile()) { contextDirectory in
-                ZMUser.selfUser(in: contextDirectory.uiContext).remoteIdentifier = userID
+                ZMUser.selfUser(in: contextDirectory.uiContext).remoteIdentifier = self.accountID
                 contextDirectory.uiContext.forceSaveOrRollback()
             }
             
@@ -545,7 +537,7 @@ extension StorageStackTests {
                 startedMigrationCallback: { _ in XCTFail() }
             ) { fetchedUserID in
                 completionExpectation.fulfill()
-                XCTAssertEqual(userID, fetchedUserID)
+                XCTAssertEqual(self.accountID, fetchedUserID)
             }
             
             // THEN

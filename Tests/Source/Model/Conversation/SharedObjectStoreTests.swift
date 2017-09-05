@@ -40,7 +40,7 @@ class ContextDidSaveNotificationPersistenceTests: BaseZMMessageTests {
     override func setUp() {
         super.setUp()
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        sut = ContextDidSaveNotificationPersistence(sharedContainerURL: url)
+        sut = ContextDidSaveNotificationPersistence(accountContainer: url)
     }
 
     override func tearDown() {
@@ -133,7 +133,7 @@ class ShareExtensionAnalyticsPersistenceTests: BaseZMMessageTests {
     override func setUp() {
         super.setUp()
         let url = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        sut = ShareExtensionAnalyticsPersistence(sharedContainerURL: url)
+        sut = ShareExtensionAnalyticsPersistence(accountContainer: url)
     }
 
     override func tearDown() {
@@ -190,7 +190,7 @@ class ShareObjectStoreTests: ZMTBaseTest {
     
     func createStore() -> SharedObjectStore<WireDataModel.SharedObjectTestClass> {
         let url = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        return SharedObjectStore(sharedContainerURL: url, fileName: "store")
+        return SharedObjectStore(accountContainer: url, fileName: "store")
     }
     
     func testThatItCanDecodeClassSavedBeforeProjectRename() {
