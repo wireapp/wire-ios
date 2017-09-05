@@ -23,6 +23,9 @@ import UIKit
 /// Singleton to manage the creation of the CoreData stack
 @objc public class StorageStack: NSObject {
     
+    /// Root folder for account specific data
+    fileprivate static let accountDataFolder = "AccountData"
+    
     /// In-memory stores. These are mainly used for testing
     private var inMemoryStores: [String: ManagedObjectContextDirectory] = [:]
     
@@ -55,7 +58,7 @@ import UIKit
         completionHandler: @escaping (UUID?) -> Void
         )
     {
-        guard let oldLocation = MainPersistentStoreRelocator.exisingLegacyStore(applicationContainer: applicationContainer) else {
+        guard let oldLocation = MainPersistentStoreRelocator.exisingLegacyStore(applicationContainer: applicationContainer, accountIdentifier: nil) else {
             completionHandler(nil)
             return
         }
@@ -110,6 +113,7 @@ import UIKit
             let storeFile = accountDirectory.appendingPersistentStoreLocation()
             isolationQueue.async {
                 self.createOnDiskStack(
+                    accountIdentifier: accountIdentifier,
                     accountDirectory: accountDirectory,
                     storeFile: storeFile,
                     applicationContainer: applicationContainer,
@@ -134,7 +138,7 @@ import UIKit
         guard !self.createStorageAsInMemory else { return false }
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
-        if MainPersistentStoreRelocator.needsToMoveLegacyStore(storeFile: storeFile, applicationContainer: applicationContainer) {
+        if MainPersistentStoreRelocator.needsToMoveLegacyStore(storeFile: storeFile, accountIdentifier: accountIdentifier, applicationContainer: applicationContainer) {
             return true
         }
         let model = NSManagedObjectModel.loadModel()
@@ -143,6 +147,7 @@ import UIKit
 
     /// Creates a managed object context directory on disk
     func createOnDiskStack(
+        accountIdentifier: UUID,
         accountDirectory: URL,
         storeFile: URL,
         applicationContainer: URL,
@@ -153,6 +158,7 @@ import UIKit
     {
         NSPersistentStoreCoordinator.createAndMigrate(
             storeFile: storeFile,
+            accountIdentifier: accountIdentifier,
             accountDirectory: accountDirectory,
             applicationContainer: applicationContainer,
             startedMigrationCallback: startedMigrationCallback)
@@ -177,15 +183,10 @@ import UIKit
 public extension StorageStack {
     
     /// Returns the URL that holds the data for the given account
-    /// It will be in the format <application container>/<bundle ID>/<account identifier>
+    /// It will be in the format <application container>/AccountData/<account identifier>
     @objc public static func accountFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
-        
-        guard let bundleId = Bundle.main.bundleIdentifier ?? Bundle(for: ZMUser.self).bundleIdentifier else {
-            fatal("No bundle??")
-        }
-        
         return applicationContainer
-            .appendingPathComponent(bundleId)
+            .appendingPathComponent(StorageStack.accountDataFolder)
             .appendingPathComponent(accountIdentifier.uuidString)
     }
 }

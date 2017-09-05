@@ -33,6 +33,7 @@ extension NSPersistentStoreCoordinator {
             let model = NSManagedObjectModel.loadModel()
             completionHandler(NSPersistentStoreCoordinator(
                 storeFile: storeFile,
+                accountIdentifier: nil,
                 applicationContainer: applicationContainer,
                 model: model,
                 startedMigrationCallback: nil
@@ -44,6 +45,7 @@ extension NSPersistentStoreCoordinator {
     /// the legacy store and keystore if they exist. The callback will be invoked on an arbitrary queue.
     static func createAndMigrate(
         storeFile: URL,
+        accountIdentifier: UUID,
         accountDirectory: URL,
         applicationContainer: URL,
         startedMigrationCallback: (() -> Void)?,
@@ -52,10 +54,11 @@ extension NSPersistentStoreCoordinator {
         
         PersistentStorageInitialization.executeWhenFileIsAccessible(storeFile) {
             let model = NSManagedObjectModel.loadModel()
-            UserClientKeysStore.migrateIfNeeded(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
+            UserClientKeysStore.migrateIfNeeded(accountIdentifier: accountIdentifier, accountDirectory: accountDirectory, applicationContainer: applicationContainer)
             
             completionHandler(NSPersistentStoreCoordinator(
                 storeFile: storeFile,
+                accountIdentifier: accountIdentifier,
                 applicationContainer: applicationContainer,
                 model: model,
                 startedMigrationCallback: startedMigrationCallback

@@ -33,19 +33,30 @@ extension URL {
 }
 
 public struct MainPersistentStoreRelocator {
-    /// Returns the list of possible locations for legacy stores
-    static func possiblePreviousStoreFiles(applicationContainer: URL) -> [URL] {
-        let locations = possibleLegacyAccountFolders(applicationContainer: applicationContainer)
+    /// Returns the list of possible locations for legacy stores. If accountIdentifier is supplied it also 
+    /// includes account directories used after multiple account support was added.
+    static func possiblePreviousStoreFiles(applicationContainer: URL, accountIdentifier: UUID?) -> [URL] {
+        let locations = possibleLegacyAccountFolders(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier)
         return locations.map{ $0.appendingStoreFile() }
     }
     
-    static func possibleLegacyAccountFolders(applicationContainer: URL) -> [URL] {
+    static func possibleLegacyAccountFolders(applicationContainer: URL, accountIdentifier: UUID?) -> [URL] {
+        var accountsFolders = possibleCommonLegacyDirectories()
+        
         let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
-        return possibleCommonLegacyDirectories() + [sharedContainerAccountFolder]
+        accountsFolders.append(sharedContainerAccountFolder)
+        
+        if let accountIdentifier = accountIdentifier {
+            accountsFolders.append(sharedContainerAccountFolder.appendingPathComponent(accountIdentifier.transportString()).appendingPathComponent("store"))
+        }
+        
+        return accountsFolders
     }
 
-    static func possibleLegacyKeystoreFolders(applicationContainer: URL) -> [URL] {
-        return possibleCommonLegacyDirectories() + [applicationContainer]
+    static func possibleLegacyKeystoreFolders(applicationContainer: URL, accountIdentifier: UUID) -> [URL] {
+        let bundleIdFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        let bundleIdAccountFolder = bundleIdFolder.appendingPathComponent(accountIdentifier.transportString())
+        return possibleCommonLegacyDirectories() + [applicationContainer, bundleIdAccountFolder]
     }
 
     private static func possibleCommonLegacyDirectories() -> [URL] {
@@ -55,36 +66,37 @@ public struct MainPersistentStoreRelocator {
     }
     
     /// Return the first existing legacy store, if any
-    static func exisingLegacyStore(applicationContainer: URL) -> URL? {
-        let previousStoreLocations = self.possiblePreviousStoreFiles(applicationContainer: applicationContainer)
+    static func exisingLegacyStore(applicationContainer: URL, accountIdentifier: UUID?) -> URL? {
+        let previousStoreLocations = self.possiblePreviousStoreFiles(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier)
         return previousStoreLocations.first(where: { PersistentStoreRelocator.storeExists(at: $0)})
     }
     
     /// Relocates a legacy store to the new location, if necessary
     public static func moveLegacyStoreIfNecessary(
         storeFile: URL,
+        accountIdentifier: UUID,
         applicationContainer: URL,
         startedMigrationCallback: (()->())?)
     {
-        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
+        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier), previousStoreLocation != storeFile {
             startedMigrationCallback?()
             PersistentStoreRelocator.moveStore(from: previousStoreLocation, to: storeFile)
-            deleteAllLegacyStoresExcept(storeFile: storeFile, applicationContainer: applicationContainer)
+            deleteAllLegacyStoresExcept(storeFile: storeFile, accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         }
     }
     
     /// Delete all other legacy stores except for the given legacy store.
-    private static func deleteAllLegacyStoresExcept(storeFile: URL, applicationContainer: URL) {
+    private static func deleteAllLegacyStoresExcept(storeFile: URL, accountIdentifier: UUID, applicationContainer: URL) {
         
-        for oldStore in possiblePreviousStoreFiles(applicationContainer: applicationContainer) {
+        for oldStore in possiblePreviousStoreFiles(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier) {
             if PersistentStoreRelocator.storeExists(at: oldStore) && oldStore != storeFile {
                 PersistentStoreRelocator.delete(storeFile: oldStore)
             }
         }
     }
     
-    public static func needsToMoveLegacyStore(storeFile: URL, applicationContainer: URL) -> Bool {
-        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer), previousStoreLocation != storeFile {
+    public static func needsToMoveLegacyStore(storeFile: URL, accountIdentifier: UUID, applicationContainer: URL) -> Bool {
+        if let previousStoreLocation = self.exisingLegacyStore(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier), previousStoreLocation != storeFile {
             return true
         } else {
             return false

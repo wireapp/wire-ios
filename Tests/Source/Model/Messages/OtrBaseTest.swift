@@ -43,4 +43,8 @@ class OtrBaseTest: XCTestCase {
         return FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL, createParentIfNeeded: true)
     }
     
+    static func legacyAccountOtrDirectory(accountIdentifier: UUID) -> URL {
+        return FileManager.keyStoreURL(accountDirectory: self.sharedContainerURL.appendingPathComponent(accountIdentifier.transportString()), createParentIfNeeded: true)
+    }
+    
 }

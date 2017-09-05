@@ -105,7 +105,7 @@ open class UserClientKeysStore: NSObject {
     
     /// Moves the key store if needed from all possible legacy locations to the keystore
     /// directory within the given account directory.
-    public static func migrateIfNeeded(accountDirectory: URL, applicationContainer: URL) {
+    public static func migrateIfNeeded(accountIdentifier: UUID, accountDirectory: URL, applicationContainer: URL) {
         let directory = FileManager.keyStoreURL(accountDirectory: accountDirectory, createParentIfNeeded: true)
         let fm = FileManager.default
         fm.createAndProtectDirectory(at: directory.deletingLastPathComponent())
@@ -113,7 +113,7 @@ open class UserClientKeysStore: NSObject {
         /// migrate old directories if needed
         var didMigrate = false
         
-        possibleLegacyKeyStores(applicationContainer: applicationContainer).forEach {
+        possibleLegacyKeyStores(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier).forEach {
             guard directory != $0, fm.fileExists(atPath: $0.path) else { return }
             if !didMigrate {
                 do {
@@ -143,18 +143,18 @@ open class UserClientKeysStore: NSObject {
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    open static func needToMigrateIdentity(applicationContainer: URL) -> Bool {
-        return getFirstExistingLegacyKeyStore(applicationContainer: applicationContainer) != nil
+    open static func needToMigrateIdentity(applicationContainer: URL, accountIdentifier: UUID) -> Bool {
+        return getFirstExistingLegacyKeyStore(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier) != nil
     }
     
-    static func possibleLegacyKeyStores(applicationContainer: URL) -> [URL] {
-        return MainPersistentStoreRelocator.possibleLegacyKeystoreFolders(applicationContainer: applicationContainer).map {
+    static func possibleLegacyKeyStores(applicationContainer: URL, accountIdentifier : UUID) -> [URL] {
+        return MainPersistentStoreRelocator.possibleLegacyKeystoreFolders(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier).map {
             $0.appendingPathComponent(FileManager.keyStoreFolderPrefix)
         }
     }
     
-    private static func getFirstExistingLegacyKeyStore(applicationContainer: URL) -> URL? {
-        return possibleLegacyKeyStores(applicationContainer: applicationContainer).first{
+    private static func getFirstExistingLegacyKeyStore(applicationContainer: URL, accountIdentifier: UUID) -> URL? {
+        return possibleLegacyKeyStores(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier).first{
             FileManager.default.fileExists(atPath: $0.path)
         }
     }
