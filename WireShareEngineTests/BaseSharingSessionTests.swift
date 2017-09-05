@@ -75,7 +75,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
         sharingSession = try! SharingSession(
             contextDirectory: directory,
             transportSession: transportSession,
-            sharedContainerURL: url,
+            cachesDirectory: url,
             saveNotificationPersistence: saveNotificationPersistence,
             analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,

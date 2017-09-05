@@ -272,15 +272,15 @@ public class SharingSession {
         try self.init(
             contextDirectory: directory,
             transportSession: transportSession,
-            sharedContainerURL: sharedContainerURL,
-            accountContainerURL: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
+            cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
+            accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
         )
 
     }
     
     internal init(contextDirectory: ManagedObjectContextDirectory,
                   transportSession: ZMTransportSession,
-                  sharedContainerURL: URL,
+                  cachesDirectory: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
@@ -298,11 +298,11 @@ public class SharingSession {
         
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
-        setupCaches(atContainerURL: sharedContainerURL)
+        setupCaches(at: cachesDirectory)
         setupObservers()
     }
     
-    public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, sharedContainerURL: URL, accountContainerURL: URL) throws {
+    public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, cachesDirectory: URL, accountContainer: URL) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         
@@ -321,13 +321,13 @@ public class SharingSession {
             transportSession: transportSession
         )
         
-        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainerURL)
-        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainerURL)
+        let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
+        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
         
         try self.init(
             contextDirectory: contextDirectory,
             transportSession: transportSession,
-            sharedContainerURL: sharedContainerURL,
+            cachesDirectory: cachesDirectory,
             saveNotificationPersistence: saveNotificationPersistence,
             analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
@@ -346,18 +346,17 @@ public class SharingSession {
         StorageStack.reset()
     }
     
-    private func setupCaches(atContainerURL containerURL: URL) {
-        let cachesURL = containerURL.appendingPathComponent("Library", isDirectory: true).appendingPathComponent("Caches", isDirectory: true)
+    private func setupCaches(at cachesDirectory: URL) {
         
-        let userImageCache = UserImageLocalCache(location: cachesURL)
+        let userImageCache = UserImageLocalCache(location: cachesDirectory)
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
         
-        let imageAssetCache = ImageAssetCache(MBLimit: 50, location: cachesURL)
+        let imageAssetCache = ImageAssetCache(MBLimit: 50, location: cachesDirectory)
         userInterfaceContext.zm_imageAssetCache = imageAssetCache
         syncContext.zm_imageAssetCache = imageAssetCache
         
-        let fileAssetcache = FileAssetCache(location: cachesURL)
+        let fileAssetcache = FileAssetCache(location: cachesDirectory)
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
     }
