@@ -530,7 +530,7 @@
 - (void)uploadAddressBookIfNeeded
 {
     // We should not even try to access address book when in a team
-    if (ZMUser.selfUser.hasTeam) {
+    if (nil == ZMUser.selfUser || ZMUser.selfUser.hasTeam) {
         return;
     }
     
