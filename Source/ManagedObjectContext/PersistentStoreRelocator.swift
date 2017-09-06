@@ -47,7 +47,7 @@ public struct MainPersistentStoreRelocator {
         accountsFolders.append(sharedContainerAccountFolder)
         
         if let accountIdentifier = accountIdentifier {
-            accountsFolders.append(sharedContainerAccountFolder.appendingPathComponent(accountIdentifier.transportString()).appendingPathComponent("store"))
+            accountsFolders.append(sharedContainerAccountFolder.appendingPathComponent(accountIdentifier.uuidString).appendingPathComponent("store"))
         }
         
         return accountsFolders
@@ -55,7 +55,7 @@ public struct MainPersistentStoreRelocator {
 
     static func possibleLegacyKeystoreFolders(applicationContainer: URL, accountIdentifier: UUID) -> [URL] {
         let bundleIdFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
-        let bundleIdAccountFolder = bundleIdFolder.appendingPathComponent(accountIdentifier.transportString())
+        let bundleIdAccountFolder = bundleIdFolder.appendingPathComponent(accountIdentifier.uuidString)
         return possibleCommonLegacyDirectories() + [applicationContainer, bundleIdAccountFolder]
     }
 

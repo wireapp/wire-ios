@@ -143,7 +143,7 @@ import WireTesting
             FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
             FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
             self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!),
-            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.transportString()).appendingPathComponent("store")
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.uuidString).appendingPathComponent("store")
         ]
     }
     
@@ -157,7 +157,7 @@ import WireTesting
             FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!,
             FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!,
             self.applicationContainer,
-            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.transportString())
+            self.applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!).appendingPathComponent(accountID.uuidString)
         ]
     }
 }
