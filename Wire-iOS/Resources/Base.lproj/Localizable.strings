@@ -559,8 +559,8 @@
 "self.new_device_alert.trust_devices" = "OK";
 
 // Settings - top level
-"self.settings.create_team.title" = "Create team";
-"self.settings.add_account.title" = "Add account";
+"self.settings.create_team.title" = "Create Team";
+"self.settings.add_account.title" = "Add Account";
 
 // Settings - Account details
 "self.settings.account_section" = "Account";
