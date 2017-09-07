@@ -67,7 +67,9 @@ typedef NS_ENUM(NSUInteger, ZMUserSessionErrorCode) {
     /// Access token expired and could not be renewed
     ZMUserSessionAccessTokenExpired = 20,
     /// The user requested to add an additional account
-    ZMUserSessionAddAccountRequested = 21
+    ZMUserSessionAddAccountRequested = 21,
+    /// The user account is suspended and may not be logged in
+    ZMUserSessionAccountSuspended = 22
 };
 
 FOUNDATION_EXPORT NSString * const ZMUserSessionErrorDomain;
