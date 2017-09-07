@@ -31,7 +31,16 @@ extension FileManager {
                 let attributes = [FileAttributeKey.posixPermissions.rawValue: permission] as [String: Any]
                 try createDirectory(at: url, withIntermediateDirectories: true, attributes: attributes)
             }
-            catch let error {
+            catch let error as NSError {
+                // Only when building on simulator
+                #if arch(i386) || arch(x86_64)
+                if error.code == CocoaError.fileWriteUnknown.rawValue {
+                    // This error happens when installing app build with iOS10 on iOS11 simulator
+                    // Seems to be working fine on device or older iOS.
+                    return
+                }
+                #endif
+
                 fatal("Failed to create directory: \(url), error: \(error)")
             }
         }
