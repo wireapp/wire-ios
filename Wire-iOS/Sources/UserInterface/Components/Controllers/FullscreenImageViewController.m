@@ -165,7 +165,6 @@
     self.view.userInteractionEnabled = YES;
     [self setupGestureRecognizers];
     [self showChrome:YES];
-
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -220,7 +219,7 @@
 
     [self.scrollView addConstraintsFittingToView:self.view];
 
-    self.automaticallyAdjustsScrollViewInsets = YES;
+    self.automaticallyAdjustsScrollViewInsets = NO;
     self.scrollView.delegate = self;
     self.scrollView.accessibilityIdentifier = @"fullScreenPage";
     
@@ -401,6 +400,11 @@
 
 #pragma mark - UIScrollViewDelegate
 
+- (void)scrollViewWillBeginZooming:(UIScrollView *)scrollView withView:(UIView *)view
+{
+    [self.delegate fadeAndHideMenu:YES];
+}
+
 - (void)scrollViewDidZoom:(UIScrollView *)scrollView
 {
     [self setSelectedByMenu:NO animated:NO];
@@ -438,6 +442,7 @@
     [self showChrome:!self.isShowingChrome];
     [self setSelectedByMenu:NO animated:NO];
     [[UIMenuController sharedMenuController] setMenuVisible:NO];
+    [self.delegate fadeAndHideMenu:!self.delegate.menuVisible];
 }
 
 - (void)handleDoubleTap:(UITapGestureRecognizer *)doubleTapper
