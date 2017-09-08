@@ -229,8 +229,15 @@ class SkeletonViewController: UIViewController {
     let listView : ListSkeletonView
     let customSplitViewController : SplitViewController
     
-    public init(_ account: Account) {
-        self.account = account
+    public init(from: Account?, to: Account) {
+
+        if let fromUnwrapped = from, to.imageData == nil {
+            account = fromUnwrapped
+        }
+        else {
+            account = to
+        }
+
         self.blurEffectView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
         self.backgroundImageView = UIImageView()
         self.customSplitViewController = SplitViewController()

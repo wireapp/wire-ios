@@ -178,8 +178,8 @@ class AppRootViewController : UIViewController {
             viewController = clientViewController
         case .headless:
             viewController = LaunchImageViewController()
-        case .loading(account: let account):
-            viewController = SkeletonViewController(account)
+        case .loading(account: let toAccount, from: let fromAccount):
+            viewController = SkeletonViewController(from: fromAccount, to: toAccount)
         }
         
         if let viewController = viewController {

@@ -74,7 +74,7 @@ class AppStateController : NSObject {
         }
         
         if let account = loadingAccount {
-            return .loading(account: account)
+            return .loading(account: account, from: SessionManager.shared?.accountManager.selectedAccount)
         }
         
         if isLoggedIn {
