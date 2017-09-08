@@ -464,6 +464,11 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 {
     NSURLSessionTask *task;
     
+    if (self.tornDown) {
+        ZMLogError(@"%@: cannot create the task for request (%@), isTornDown = %d", self, request, self.tornDown);
+        return nil;
+    }
+    
     if (nil != transportRequest.fileUploadURL) {
         RequireString(self.isBackgroundSession, "File uploads need to set 'forceToBackgroundSession' on the request");
         task = [self.backingSession uploadTaskWithRequest:request fromFile:transportRequest.fileUploadURL];
