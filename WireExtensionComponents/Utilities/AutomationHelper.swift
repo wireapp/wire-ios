@@ -63,6 +63,9 @@ import WireSyncEngine
         if arguments.hasFlag(AutomationKey.LogNetwork.rawValue) {
             ZMSLog.set(level: .debug, tag: "Network")
         }
+        if arguments.hasFlag(AutomationKey.LogCalling.rawValue) {
+            ZMSLog.set(level: .debug, tag: "calling")
+        }
         AutomationHelper.enableLogTags(arguments)
         self.delayInAddressBookRemoteSearch = AutomationHelper.addressBookSearchDelay(arguments)
         super.init()
@@ -72,6 +75,7 @@ import WireSyncEngine
         case Email = "loginemail"
         case Password = "loginpassword"
         case LogNetwork = "debug-log-network"
+        case LogCalling = "debug-log-calling"
         case LogTags = "debug-log"
         case DisableAutocorrection = "disable-autocorrection"
         case EnableAddressBookOnSimulator = "addressbook-on-simulator"
