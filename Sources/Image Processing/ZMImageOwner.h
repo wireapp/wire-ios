@@ -35,7 +35,7 @@ extern NSString * _Nonnull StringFromImageFormat(ZMImageFormat format);
 
 @protocol ZMImageOwner <NSObject>
 
-- (void)setImageData:(nonnull NSData *)imageData forFormat:(ZMImageFormat)format properties:(nonnull ZMIImageProperties *)properties;
+- (void)setImageData:(nonnull NSData *)imageData forFormat:(ZMImageFormat)format properties:(nullable ZMIImageProperties *)properties;
 - (nullable NSData *)imageDataForFormat:(ZMImageFormat)format;
 
 

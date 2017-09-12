@@ -35,7 +35,7 @@ public class ImageOwner: NSObject, ZMImageOwner {
         self.nonce = nonce
     }
     
-    public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties) {
+    public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         switch format {
         case .preview:
             previewData = imageData
