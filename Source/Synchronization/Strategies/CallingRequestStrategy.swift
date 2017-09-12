@@ -57,7 +57,9 @@ public final class CallingRequestStrategy : NSObject, RequestStrategy {
     }
     
     public func nextRequest() -> ZMTransportRequest? {
+        zmLog.debug("CallingRequestStrategy nextRequest()")
         if let request = self.callConfigRequestSync.nextRequest() {
+            zmLog.debug("callConfigRequestSync nextRequest()")
             return request
         }
         
