@@ -29,20 +29,20 @@ typedef NS_ENUM(NSUInteger, ZMImageFormat) {
     ZMImageFormatProfile
 };
 
-extern ZMImageFormat ImageFormatFromString(NSString *string);
-extern NSString * StringFromImageFormat(ZMImageFormat format);
+extern ZMImageFormat ImageFormatFromString(NSString * _Nonnull string);
+extern NSString * _Nonnull StringFromImageFormat(ZMImageFormat format);
 
 
 @protocol ZMImageOwner <NSObject>
 
-- (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties *)properties;
-- (NSData *)imageDataForFormat:(ZMImageFormat)format;
+- (void)setImageData:(nonnull NSData *)imageData forFormat:(ZMImageFormat)format properties:(nonnull ZMIImageProperties *)properties;
+- (nullable NSData *)imageDataForFormat:(ZMImageFormat)format;
 
 
 /// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
-- (NSOrderedSet *)requiredImageFormats;
+- (nonnull NSOrderedSet *)requiredImageFormats;
 
-- (NSData *)originalImageData;
+- (nullable NSData *)originalImageData;
 - (CGSize)originalImageSize;
 
 - (BOOL)isInlineForFormat:(ZMImageFormat)format;

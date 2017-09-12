@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -35,7 +35,7 @@ public class ImageOwner: NSObject, ZMImageOwner {
         self.nonce = nonce
     }
     
-    public func setImageData(_ imageData: Data!, for format: ZMImageFormat, properties: ZMIImageProperties) {
+    public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties) {
         switch format {
         case .preview:
             previewData = imageData
@@ -45,7 +45,7 @@ public class ImageOwner: NSObject, ZMImageOwner {
         }
     }
     
-    public func imageData(for format: ZMImageFormat) -> Data! {
+    public func imageData(for format: ZMImageFormat) -> Data? {
         switch format {
         case .preview: return previewData
         case .medium: return mediumData
@@ -53,11 +53,11 @@ public class ImageOwner: NSObject, ZMImageOwner {
         }
     }
     
-    public func requiredImageFormats() -> NSOrderedSet! {
+    public func requiredImageFormats() -> NSOrderedSet {
         return NSOrderedSet(objects: ZMImageFormat.preview.rawValue, ZMImageFormat.medium.rawValue)
     }
     
-    public func originalImageData() -> Data! {
+    public func originalImageData() -> Data? {
         return self.imageData
     }
     
