@@ -1,2 +1,1 @@
-github "wireapp/wire-ios-data-model" "fix/observers-nil"
-
+github "wireapp/wire-ios-data-model" ~> 72.0
