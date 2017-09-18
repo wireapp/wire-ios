@@ -68,11 +68,19 @@ extension ZMMessage {
     }
     
     public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {
+        return edit(message, newText: newText, fetchLinkPreview: true)
+    }
+    
+    public static func edit(_ message: ZMConversationMessage, newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
-        return castedMessage.edit(newText)
+        return castedMessage.edit(newText, fetchLinkPreview: fetchLinkPreview)
     }
     
     func edit(_ newText: String) -> ZMMessage? {
+        return edit(newText, fetchLinkPreview: true)
+    }
+    
+    func edit(_ newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
         guard isEditableMessage else { return nil }
         guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
         guard let conversation = conversation else { return nil }
@@ -90,7 +98,7 @@ extension ZMMessage {
         hiddenInConversation = conversation
         visibleInConversation = nil
         normalizedText = nil
-        newMessage.linkPreviewState = .waitingToBeProcessed
+        newMessage.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
         return newMessage
     }
     
