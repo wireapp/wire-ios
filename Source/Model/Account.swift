@@ -19,6 +19,9 @@
 
 import Foundation
 
+extension Notification.Name {
+    public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
+}
 
 /// An `Account` holds information related to a single account,
 /// such as the accounts users name,
@@ -29,6 +32,12 @@ public final class Account: NSObject {
     public var teamName: String?
     public let userIdentifier: UUID
     public var imageData: Data?
+    
+    public var unreadConversationCount: Int = 0 {
+        didSet {
+            NotificationCenter.default.post(name: .AccountUnreadCountDidChangeNotification, object: self)
+        }
+    }
 
     public required init(userName: String, userIdentifier: UUID, teamName: String? = nil, imageData: Data? = nil) {
         self.userName = userName
@@ -36,6 +45,17 @@ public final class Account: NSObject {
         self.teamName = teamName
         self.imageData = imageData
         super.init()
+    }
+    
+    /// Updates the properties of the receiver with the given account. Use this method
+    /// when you wish to update an exisiting account object with newly fetched properties
+    /// from the account store.
+    ///
+    public func updateWith(_ account: Account) {
+        guard self.userIdentifier == account.userIdentifier else { return }
+        self.userName = account.userName
+        self.teamName = account.teamName
+        self.imageData = account.imageData
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
