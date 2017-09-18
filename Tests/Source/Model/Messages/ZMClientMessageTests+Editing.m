@@ -158,6 +158,29 @@
     XCTAssertEqual(newMessage.linkPreviewState, ZMLinkPreviewStateWaitingToBeProcessed);
 }
 
+- (void)testThatItDoesNotFetchLinkPreviewIfExplicitlyToldNotTo
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    
+    BOOL fetchLinkPreview = NO;
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMClientMessage *message = (ZMClientMessage *)[conversation appendMessageWithText:oldText fetchLinkPreview:fetchLinkPreview];
+    message.serverTimestamp = [NSDate dateWithTimeIntervalSinceNow:-20];
+    [message markAsSent];
+    
+    XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
+    
+    // when
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText fetchLinkPreview:fetchLinkPreview];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqual(newMessage.linkPreviewState, ZMLinkPreviewStateDone);
+}
+
 - (void)testThatItDoesNotEditAMessageThatFailedToSend
 {
     // given
