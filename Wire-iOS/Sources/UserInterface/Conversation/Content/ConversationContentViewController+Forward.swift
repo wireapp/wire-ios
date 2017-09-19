@@ -88,10 +88,10 @@ extension ZMMessage: Shareable {
     
     public func previewView() -> UIView? {
         let cell: ConversationCell
-
+        
         if isText {
             let textMessageCell = TextMessageCell(style: .default, reuseIdentifier: "")
-            textMessageCell.smallLinkAttachments = true
+            //textMessageCell.smallLinkAttachments = true // this should be true only if the content has no image
             textMessageCell.contentLayoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
             
             textMessageCell.messageTextView.backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
@@ -105,7 +105,7 @@ extension ZMMessage: Shareable {
         else if isImage {
             let imageMessageCell = ImageMessageCell(style: .default, reuseIdentifier: "")
             imageMessageCell.contentLayoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            imageMessageCell.autoStretchVertically = false
+            imageMessageCell.autoStretchVertically = true
             imageMessageCell.defaultLayoutMargins = .zero
             cell = imageMessageCell
         }
@@ -120,7 +120,7 @@ extension ZMMessage: Shareable {
         else if isLocation {
             let locationCell = LocationMessageCell(style: .default, reuseIdentifier: "")
             locationCell.contentLayoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            locationCell.containerHeightConstraint.constant = 120
+            locationCell.containerHeightConstraint.constant = 160
             cell = locationCell
         }
         else if isFile {
@@ -142,7 +142,7 @@ extension ZMMessage: Shareable {
         
         constrain(cell, cell.contentView) { cell, contentView in
             cell.width >= 320
-            cell.height <= 200
+            cell.height <= 210
             contentView.edges == cell.edges
         }
 

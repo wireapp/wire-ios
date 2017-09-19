@@ -96,14 +96,16 @@ extension ShareViewController {
         }
         
         if self.showPreview {
-            let screenHeightCompact = (UIScreen.main.bounds.height <= 568)
+            //let screenHeightCompact = (UIScreen.main.bounds.height <= 568)
 
             constrain(self.containerView, self.shareablePreviewWrapper!, self.shareablePreviewView!, self.tokenField) { view, shareablePreviewWrapper, shareablePreviewView, tokenField in
                 
-                shareablePreviewWrapper.top == view.top + 28
-                shareablePreviewWrapper.left == view.left + 16
-                shareablePreviewWrapper.right == -16 + view.right
-                shareablePreviewWrapper.height <= (screenHeightCompact ? 150 : 200)
+                shareablePreviewWrapper.top == view.top + 20
+                shareablePreviewWrapper.left == view.left + 8
+                shareablePreviewWrapper.right == -8 + view.right
+                //shareablePreviewWrapper.height == (screenHeightCompact ? 150 : 200)
+                
+                shareablePreviewWrapper.height == shareablePreviewView.height
                 
                 shareablePreviewView.edges == shareablePreviewWrapper.edges
                 
@@ -157,6 +159,13 @@ extension ShareViewController {
             sendButton.width == sendButton.height
             sendButton.trailing == view.trailing - 16
             sendButton.bottom == -12 + view.bottom
+        }
+    }
+    
+    func constrainAfterLoading() {
+        
+        constrain(self.shareablePreviewWrapper!, self.shareablePreviewView!.subviews.first!.subviews.first!) { shareablePreviewWrapper, shareablePreviewView in
+            shareablePreviewWrapper.height == shareablePreviewView.height
         }
     }
 }

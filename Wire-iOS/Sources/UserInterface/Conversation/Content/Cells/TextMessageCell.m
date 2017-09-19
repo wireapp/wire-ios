@@ -144,9 +144,10 @@
     [self.linkAttachmentContainer autoPinEdgeToSuperviewEdge:ALEdgeTrailing withInset:0];
     self.mediaPlayerTopMarginConstraint = [self.linkAttachmentContainer autoPinEdge:ALEdgeTop toEdge:ALEdgeBottom ofView:self.messageTextView];
     
-    [NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh forConstraints:^{
+    //Check here
+    //[NSLayoutConstraint autoSetPriority:UILayoutPriorityDefaultHigh forConstraints:^{
         [self.linkAttachmentContainer autoPinEdgeToSuperviewMargin:ALEdgeBottom];
-    }];
+    //}];
     
     [self.editedImageView autoPinEdge:ALEdgeLeft toEdge:ALEdgeRight ofView:self.authorLabel withOffset:8];
     [self.editedImageView autoAlignAxis:ALAxisHorizontal toSameAxisOfView:self.authorLabel];
