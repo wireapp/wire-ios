@@ -77,6 +77,13 @@ final public class ShareViewController<D: ShareDestination, S: Shareable>: UIVie
         return .lightContent
     }
     
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        self.shareablePreviewView?.layoutSubviews()
+        self.constrainAfterLoading()
+    }
+    
     // MARK: - Search
     
     private var filteredDestinations: [D] = []
