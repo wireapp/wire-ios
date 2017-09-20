@@ -97,19 +97,22 @@ extension ShareViewController {
         
         if self.showPreview {
             //let screenHeightCompact = (UIScreen.main.bounds.height <= 568)
-
+            
+            let computedHeight = self.shareable.viewHeight(previewView: self.shareablePreviewView!)
+            let height : CGFloat = min(230.0,computedHeight)
+            
             constrain(self.containerView, self.shareablePreviewWrapper!, self.shareablePreviewView!, self.tokenField) { view, shareablePreviewWrapper, shareablePreviewView, tokenField in
                 
-                shareablePreviewWrapper.top == view.top + 20
-                shareablePreviewWrapper.left == view.left + 8
-                shareablePreviewWrapper.right == -8 + view.right
+                shareablePreviewWrapper.top == view.top + 28
+                shareablePreviewWrapper.left == view.left + 16
+                shareablePreviewWrapper.right == -16 + view.right
                 //shareablePreviewWrapper.height == (screenHeightCompact ? 150 : 200)
                 
-                shareablePreviewWrapper.height == shareablePreviewView.height
-                
+                shareablePreviewWrapper.height == height
                 shareablePreviewView.edges == shareablePreviewWrapper.edges
                 
                 tokenField.top == shareablePreviewWrapper.bottom + 16
+                
             }
         }
         else {
@@ -159,13 +162,6 @@ extension ShareViewController {
             sendButton.width == sendButton.height
             sendButton.trailing == view.trailing - 16
             sendButton.bottom == -12 + view.bottom
-        }
-    }
-    
-    func constrainAfterLoading() {
-        
-        constrain(self.shareablePreviewWrapper!, self.shareablePreviewView!.subviews.first!.subviews.first!) { shareablePreviewWrapper, shareablePreviewView in
-            shareablePreviewWrapper.height == shareablePreviewView.height
         }
     }
 }
