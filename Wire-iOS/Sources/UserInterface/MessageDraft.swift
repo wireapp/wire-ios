@@ -63,7 +63,7 @@ import CoreData
     var canBeSent: Bool {
         return subject?.isEmpty == false || message?.isEmpty == false
     }
-
+    
 }
 
 
@@ -73,7 +73,7 @@ func ==(lhs: MessageDraft, rhs: MessageDraft) -> Bool {
 
 
 extension MessageDraft: Shareable {
-
+    
     public typealias I = ZMConversation
 
     public func share<ZMConversation>(to: [ZMConversation]) {
@@ -85,7 +85,11 @@ extension MessageDraft: Shareable {
     public func previewView() -> UIView? {
         return nil
     }
-
+    
+    public func viewHeight(previewView: UIView?) -> CGFloat {
+        return 0.0
+    }
+    
 }
 
 

@@ -201,13 +201,13 @@ static const CGFloat ImageToolbarMinimumSize = 192;
     [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeLeft relation:NSLayoutRelationLessThanOrEqual];
     self.imageRightConstraint = [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight];
     self.imageRightConstraint.active = NO;
-    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight relation:NSLayoutRelationGreaterThanOrEqual];
+    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight relation:NSLayoutRelationEqual]; //NSLayoutRelationGreaterThanOrEqual];
     [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeLeft];
     
-    [NSLayoutConstraint autoSetPriority:ALLayoutPriorityDefaultHigh + 1 forConstraints:^{
+    //[NSLayoutConstraint autoSetPriority:ALLayoutPriorityDefaultHigh + 1 forConstraints:^{
         [self.imageViewContainer autoPinEdgeToSuperviewEdge:ALEdgeBottom];
         self.imageWidthConstraint = [self.imageViewContainer autoSetDimension:ALDimensionWidth toSize:0];
-    }];
+    //}];
     
     NSMutableArray<NSLayoutConstraint *> *insideConstraints = [NSMutableArray array];
     [insideConstraints addObject:[self.imageToolbarView autoPinEdge:ALEdgeLeft toEdge:ALEdgeLeft ofView:self.imageViewContainer]];

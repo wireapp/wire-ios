@@ -51,13 +51,10 @@
 @property (nonatomic) BOOL initialTextCellConstraintsCreated;
 
 @property (nonatomic) UIImageView *editedImageView;
-@property (nonatomic) UIView *linkAttachmentContainer;
 @property (nonatomic) LinkAttachment *linkAttachment;
 @property (nonatomic) UIViewController <LinkAttachmentPresenter> *linkAttachmentViewController;
-
 @property (nonatomic) NSLayoutConstraint *mediaPlayerTopMarginConstraint;
 @property (nonatomic) UIView *linkAttachmentView;
-
 @property (nonatomic) NSLayoutConstraint *textViewHeightConstraint;
 @end
 

@@ -28,6 +28,7 @@ public protocol Shareable {
     associatedtype I: ShareDestination
     func share<I>(to: [I])
     func previewView() -> UIView?
+    func viewHeight(previewView: UIView?) -> CGFloat
 }
 
 final public class ShareViewController<D: ShareDestination, S: Shareable>: UIViewController, UITableViewDelegate, UITableViewDataSource, TokenFieldDelegate, UIViewControllerTransitioningDelegate {
@@ -75,13 +76,6 @@ final public class ShareViewController<D: ShareDestination, S: Shareable>: UIVie
     
     override public var preferredStatusBarStyle: UIStatusBarStyle {
         return .lightContent
-    }
-    
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        
-        self.shareablePreviewView?.layoutSubviews()
-        self.constrainAfterLoading()
     }
     
     // MARK: - Search
@@ -157,7 +151,7 @@ final public class ShareViewController<D: ShareDestination, S: Shareable>: UIVie
         
         self.selectedDestinations.remove(destination)
     }
-    
+     
     public func scrollViewDidScroll(_ scrollView: UIScrollView) {
         self.topSeparatorView.scrollViewDidScroll(scrollView: scrollView)
     }

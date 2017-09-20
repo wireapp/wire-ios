@@ -33,6 +33,7 @@ func forward(_ image: UIImage, to conversations: [AnyObject]) {
 }
 
 extension UIImage: Shareable {
+
     public func share<ZMConversation>(to conversations: [ZMConversation]) {
         forward(self, to: conversations as [AnyObject])
     }
@@ -45,6 +46,10 @@ extension UIImage: Shareable {
         imageView.backgroundColor = .white
         imageView.layer.cornerRadius = 4
         return imageView
+    }
+    
+    public func viewHeight(previewView: UIView?) -> CGFloat {
+        return 0.0
     }
 }
 
@@ -61,6 +66,9 @@ func forward(_ videoAtURL: URL, to conversations: [AnyObject]) {
 }
 
 extension URL: Shareable {
+    
+
+
     public func share<ZMConversation>(to conversations: [ZMConversation]) {
         forward(self, to: conversations as [AnyObject])
     }
@@ -77,6 +85,10 @@ extension URL: Shareable {
         playerViewController.view.layer.cornerRadius = 4
 
         return playerViewController.view
+    }
+    
+    public func viewHeight(previewView: UIView?) -> CGFloat {
+        return 0.0
     }
 }
 

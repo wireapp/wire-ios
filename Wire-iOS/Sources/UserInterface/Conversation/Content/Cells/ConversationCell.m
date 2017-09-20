@@ -316,6 +316,8 @@ static const CGFloat BurstContainerExpandedHeight = 40;
     if (!self.countdownContainerViewHidden) {
         self.countdownContainerView.layer.cornerRadius = CGRectGetWidth(self.countdownContainerView.bounds) / 2;
     }
+    
+    [self.contentView layoutIfNeeded];
 }
 
 - (void)updateConstraintConstants

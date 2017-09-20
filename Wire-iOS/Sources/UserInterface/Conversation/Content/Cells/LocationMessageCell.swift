@@ -76,7 +76,7 @@ public final class LocationMessageCell: ConversationCell {
     
     private func createConstraints() {
         constrain(messageContentView, containerView, authorLabel, mapView, obfuscationView) { contentView, container, authorLabel, mapView, obfuscationView in
-            container.left == authorLabel.left
+            container.left == contentView.leftMargin
             container.right == contentView.rightMargin
             container.top == contentView.top
             container.bottom == contentView.bottom

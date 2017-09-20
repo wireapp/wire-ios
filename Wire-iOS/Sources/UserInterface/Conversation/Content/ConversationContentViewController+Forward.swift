@@ -92,8 +92,8 @@ extension ZMMessage: Shareable {
         if isText {
             let textMessageCell = TextMessageCell(style: .default, reuseIdentifier: "")
             //textMessageCell.smallLinkAttachments = true // this should be true only if the content has no image
-            textMessageCell.contentLayoutMargins = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-            
+            textMessageCell.contentLayoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+            textMessageCell.linkAttachmentContainer.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)            
             textMessageCell.messageTextView.backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
             textMessageCell.messageTextView.layer.cornerRadius = 4
             textMessageCell.messageTextView.layer.masksToBounds = true
@@ -105,7 +105,7 @@ extension ZMMessage: Shareable {
         else if isImage {
             let imageMessageCell = ImageMessageCell(style: .default, reuseIdentifier: "")
             imageMessageCell.contentLayoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
-            imageMessageCell.autoStretchVertically = true
+            imageMessageCell.autoStretchVertically = false
             imageMessageCell.defaultLayoutMargins = .zero
             cell = imageMessageCell
         }
@@ -139,10 +139,11 @@ extension ZMMessage: Shareable {
         layoutProperties.alwaysShowDeliveryState = false
         
         cell.configure(for: self, layoutProperties: layoutProperties)
+        //let height : CGFloat = cell.systemLayoutSizeFitting(UILayoutFittingExpandedSize).height
         
         constrain(cell, cell.contentView) { cell, contentView in
             cell.width >= 320
-            cell.height <= 210
+            cell.height <= 230
             contentView.edges == cell.edges
         }
 
@@ -153,6 +154,37 @@ extension ZMMessage: Shareable {
         
         return cell
     }
+    
+    public func viewHeight(previewView: UIView?) -> CGFloat {
+        
+        guard let previewView = previewView as? ConversationCell else { return 0.0 }
+        /*return previewView.messageContentView.constraints.filter(<#T##isIncluded: (NSLayoutConstraint) throws -> Bool##(NSLayoutConstraint) throws -> Bool#>)
+        
+        print("Preview view height: \(previewView.frame.size.height)")
+        print("Preview view messageContentView height: \(previewView.messageContentView.frame.size.height)")
+        print("Preview view subviews: \(previewView.subviews)")
+        return previewView.contentView.subviews.first!.frame.size.height
+         */
+        
+        
+        /*
+        guard let previewView = previewView as? ConversationCell else { return 0.0 }
+        
+        previewView.layoutSubviews()
+        let size = previewView.sizeThatFits(CGSize(width: previewView.frame.size.width, height: 3000))
+        previewView.layoutSubviews()
+            print("Size: \(size.width) \(size.height)")
+        */
+        
+        if previewView is ImageMessageCell {
+            return 200
+        } else {
+            let height : CGFloat = previewView.messageContentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
+            return height
+        }
+        
+    }
+    
 }
 
 extension ZMConversationList {
