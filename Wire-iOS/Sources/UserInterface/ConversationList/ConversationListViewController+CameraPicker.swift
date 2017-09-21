@@ -48,7 +48,7 @@ extension UIImage: Shareable {
         return imageView
     }
     
-    public func viewHeight(previewView: UIView?) -> CGFloat {
+    public func getHeight(for previewView: UIView?) -> CGFloat {
         return 0.0
     }
 }
@@ -87,7 +87,7 @@ extension URL: Shareable {
         return playerViewController.view
     }
     
-    public func viewHeight(previewView: UIView?) -> CGFloat {
+    public func getHeight(for previewView: UIView?) -> CGFloat {
         return 0.0
     }
 }

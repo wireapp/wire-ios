@@ -86,7 +86,7 @@ extension MessageDraft: Shareable {
         return nil
     }
     
-    public func viewHeight(previewView: UIView?) -> CGFloat {
+    public func getHeight(for previewView: UIView?) -> CGFloat {
         return 0.0
     }
     

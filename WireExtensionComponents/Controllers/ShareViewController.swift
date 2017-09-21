@@ -28,7 +28,8 @@ public protocol Shareable {
     associatedtype I: ShareDestination
     func share<I>(to: [I])
     func previewView() -> UIView?
-    func viewHeight(previewView: UIView?) -> CGFloat
+    func getHeight(for previewView: UIView?) -> CGFloat
+    
 }
 
 final public class ShareViewController<D: ShareDestination, S: Shareable>: UIViewController, UITableViewDelegate, UITableViewDataSource, TokenFieldDelegate, UIViewControllerTransitioningDelegate {
