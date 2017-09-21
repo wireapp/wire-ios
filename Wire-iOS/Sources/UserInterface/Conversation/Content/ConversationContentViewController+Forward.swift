@@ -143,7 +143,7 @@ extension ZMMessage: Shareable {
         
         constrain(cell, cell.contentView) { cell, contentView in
             cell.width >= 320
-            cell.height <= 230
+            cell.height <= 200
             contentView.edges == cell.edges
         }
 
@@ -155,34 +155,27 @@ extension ZMMessage: Shareable {
         return cell
     }
     
-    public func viewHeight(previewView: UIView?) -> CGFloat {
+    public func getHeight(for previewView: UIView?) -> CGFloat {
         
         guard let previewView = previewView as? ConversationCell else { return 0.0 }
-        /*return previewView.messageContentView.constraints.filter(<#T##isIncluded: (NSLayoutConstraint) throws -> Bool##(NSLayoutConstraint) throws -> Bool#>)
         
-        print("Preview view height: \(previewView.frame.size.height)")
-        print("Preview view messageContentView height: \(previewView.messageContentView.frame.size.height)")
-        print("Preview view subviews: \(previewView.subviews)")
-        return previewView.contentView.subviews.first!.frame.size.height
-         */
+        let standardHeight : CGFloat = 200.0
+        let screenHeightCompact = (UIScreen.main.bounds.height <= 568)
+        var height : CGFloat = 0.0
         
-        
-        /*
-        guard let previewView = previewView as? ConversationCell else { return 0.0 }
-        
-        previewView.layoutSubviews()
-        let size = previewView.sizeThatFits(CGSize(width: previewView.frame.size.width, height: 3000))
-        previewView.layoutSubviews()
-            print("Size: \(size.width) \(size.height)")
-        */
-        
-        if previewView is ImageMessageCell {
-            return 200
+        if let previewView = previewView as? ImageMessageCell {
+            if let imageHeight = previewView.fullImageView.image?.size.height, imageHeight < standardHeight {
+                height = imageHeight
+            } else {
+                height = standardHeight
+            }
+        } else if let previewView = previewView as? VideoMessageCell {
+            height = previewView.videoViewHeight
         } else {
-            let height : CGFloat = previewView.messageContentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
-            return height
+            height = previewView.messageContentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
         }
         
+        return min((screenHeightCompact ? 160 : standardHeight), height)
     }
     
 }

@@ -251,6 +251,7 @@ static const CGFloat ImageToolbarMinimumSize = 192;
         else {
             self.messageContentView.layoutMargins = UIEdgeInsetsZero;
             self.imageRightConstraint.active = YES;
+            [self.messageContentView autoPinEdgesToSuperviewEdges];
         }
         
         [NSLayoutConstraint deactivateConstraints:self.imageToolbarOutsideConstraints];
