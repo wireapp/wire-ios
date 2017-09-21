@@ -112,7 +112,7 @@ public final class AccountManager: NSObject {
         var updatedAccounts = [Account]()
         
         for account in computeSortedAccounts() {
-            if let existingAccount = existingAccountForIdentifier(account.userIdentifier) {
+            if let existingAccount = self.account(with: account.userIdentifier) {
                 existingAccount.updateWith(account)
                 updatedAccounts.append(existingAccount)
             } else {
@@ -123,7 +123,7 @@ public final class AccountManager: NSObject {
         accounts = updatedAccounts
         
         let computedAccount = computeSelectedAccount()
-        if let account = computedAccount, let exisitingAccount = existingAccountForIdentifier(account.userIdentifier) {
+        if let account = computedAccount, let exisitingAccount = self.account(with: account.userIdentifier) {
             exisitingAccount.updateWith(account)
             selectedAccount = exisitingAccount
         } else {
@@ -131,7 +131,7 @@ public final class AccountManager: NSObject {
         }
     }
     
-    private func existingAccountForIdentifier(_ id: UUID) -> Account? {
+    public func account(with id: UUID) -> Account? {
         return accounts.first(where: { return $0.userIdentifier == id })
     }
 
