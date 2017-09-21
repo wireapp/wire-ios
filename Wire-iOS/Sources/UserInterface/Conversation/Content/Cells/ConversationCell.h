@@ -33,6 +33,7 @@
 
 extern const CGFloat ConversationCellSelectedOpacity;
 extern const NSTimeInterval ConversationCellSelectionAnimationDuration;
+static const CGFloat standardCellHeight = 200.0;
 
 
 typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
@@ -73,6 +74,7 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 - (BOOL)conversationCellShouldStartDestructionTimer:(ConversationCell *)cell;
 @end
 
+@protocol PreviewProvider;
 
 @interface ConversationCell : UITableViewCell <UserImageViewDelegate>
 

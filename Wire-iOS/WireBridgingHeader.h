@@ -156,6 +156,7 @@
 #import "CASStyler+Variables.h"
 #import "AVSLogObserver.h"
 #import "Analytics+Performance.h"
+#import "UIScreen+Compact.h"
 
 // Camera
 #import "CameraController.h"

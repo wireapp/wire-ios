@@ -64,6 +64,10 @@
 
 @end
 
+@interface ImageMessageCell (PreviewProvider) <PreviewProvider>
+
+@end
+
 @implementation ImageMessageCell
 
 static ImageCache *imageCache(void)
@@ -569,6 +573,22 @@ static const CGFloat ImageToolbarMinimumSize = 192;
 - (MessageType)messageType;
 {
     return MessageTypeImage;
+}
+
+@end
+
+@implementation ImageMessageCell (PreviewProvider)
+
+-(CGFloat)getPreviewContentHeight
+{
+    CGFloat height = 0.0;
+    UIImage *image = [self.fullImageView image];
+    if(image != nil && image.size.height < standardCellHeight) {
+        height = image.size.height;
+    } else {
+        height = standardCellHeight;
+    }
+    return MIN(([UIScreen isCompact] ? 160.0 : standardCellHeight), height);
 }
 
 @end

@@ -153,28 +153,10 @@ extension ZMMessage: Shareable {
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        
-        guard let previewView = previewView as? ConversationCell else { return 0.0 }
-        
-        let standardHeight : CGFloat = 200.0
-        let screenHeightCompact = (UIScreen.main.bounds.height <= 568)
-        var height : CGFloat = 0.0
-        
-        if let previewView = previewView as? ImageMessageCell {
-            if let imageHeight = previewView.fullImageView.image?.size.height, imageHeight < standardHeight {
-                height = imageHeight
-            } else {
-                height = standardHeight
-            }
-        } else if let previewView = previewView as? VideoMessageCell {
-            height = previewView.videoViewHeight
-        } else {
-            height = previewView.messageContentView.systemLayoutSizeFitting(UILayoutFittingCompressedSize).height
-        }
-        
-        return min((screenHeightCompact ? 160 : standardHeight), height)
+        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
+        return previewView.getPreviewContentHeight()
     }
-    
+
 }
 
 extension ZMConversationList {
