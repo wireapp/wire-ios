@@ -194,3 +194,9 @@ extension VideoMessageCell: TransferViewDelegate {
         self.delegate.conversationCell?(self, didSelect: action)
     }
 }
+
+extension VideoMessageCell: PreviewProvider {
+    func getPreviewContentHeight() -> CGFloat {
+        return min((UIScreen.isCompact() ? CGFloat(160.0) : standardCellHeight), videoViewHeight)
+    }
+}

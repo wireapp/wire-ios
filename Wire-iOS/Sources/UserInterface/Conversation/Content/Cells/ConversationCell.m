@@ -32,6 +32,7 @@
 #import "Analytics+iOS.h"
 #import "UIResponder+FirstResponder.h"
 #import "UserImageView+Magic.h"
+#import "UIScreen+Compact.h"
 
 const CGFloat ConversationCellSelectedOpacity = 0.4;
 const NSTimeInterval ConversationCellSelectionAnimationDuration = 0.33;
@@ -92,6 +93,10 @@ static const CGFloat BurstContainerExpandedHeight = 40;
 @end
 
 @interface ConversationCell (MessageToolboxViewDelegate) <MessageToolboxViewDelegate>
+
+@end
+
+@interface ConversationCell (PreviewProvider) <PreviewProvider>
 
 @end
 
@@ -734,6 +739,16 @@ static const CGFloat BurstContainerExpandedHeight = 40;
 - (void)messageToolboxViewDidSelectDelete:(MessageToolboxView *)messageToolboxView
 {
     [self.delegate conversationCell:self didSelectAction:MessageActionDelete];
+}
+
+@end
+
+@implementation ConversationCell (PreviewProvider)
+
+-(CGFloat)getPreviewContentHeight
+{
+    CGFloat height = [self.messageContentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;static const CGFloat standardCellHeight = 200.0;
+    return MIN(([UIScreen isCompact] ? 160.0 : standardCellHeight), height);
 }
 
 @end

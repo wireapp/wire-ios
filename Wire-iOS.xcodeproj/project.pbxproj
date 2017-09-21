@@ -207,6 +207,8 @@
 		54F7C2851D746F3F004D8087 /* AddressBookHelper+Automation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54F7C2841D746F3F004D8087 /* AddressBookHelper+Automation.swift */; };
 		54FF9E281E813BA500323D2E /* DebugAlert.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9E271E813BA500323D2E /* DebugAlert.swift */; };
 		6DC7310EF4FE22057C3A6DC8 /* libPods-Wire-iOS-Tests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CC9C38FFEE2CB1B4A68D125E /* libPods-Wire-iOS-Tests.a */; };
+		7CA5407E1F74000F00457F4B /* PreviewProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CA5407D1F74000F00457F4B /* PreviewProvider.swift */; };
+		7CA540831F740B7C00457F4B /* UIScreen+Compact.m in Sources */ = {isa = PBXBuildFile; fileRef = 7CA540821F740B7C00457F4B /* UIScreen+Compact.m */; };
 		848DE12B1A83D20000E154B1 /* emoticons.min.json in Resources */ = {isa = PBXBuildFile; fileRef = 848DE12A1A83D20000E154B1 /* emoticons.min.json */; };
 		87023D7B1D76E4E2007B667E /* AFNetworking.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87023D7A1D76E4E2007B667E /* AFNetworking.framework */; };
 		870533FF1DD6162400A7F822 /* OverflowSeparatorView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870533FE1DD6162400A7F822 /* OverflowSeparatorView.swift */; };
@@ -1298,6 +1300,9 @@
 		597184FEC66FBCEC21973EDC /* Pods-WireExtensionComponents.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.release.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.release.xcconfig"; sourceTree = "<group>"; };
 		64D671EBEE8C57217EB00733 /* Pods-Wire-iOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Wire-iOS.release.xcconfig"; path = "Pods/Target Support Files/Pods-Wire-iOS/Pods-Wire-iOS.release.xcconfig"; sourceTree = "<group>"; };
 		7190BAB91AC2BC0874284A71 /* Pods-WireExtensionComponents.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WireExtensionComponents.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WireExtensionComponents/Pods-WireExtensionComponents.debug.xcconfig"; sourceTree = "<group>"; };
+		7CA5407D1F74000F00457F4B /* PreviewProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PreviewProvider.swift; sourceTree = "<group>"; };
+		7CA540811F740B7C00457F4B /* UIScreen+Compact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIScreen+Compact.h"; sourceTree = "<group>"; };
+		7CA540821F740B7C00457F4B /* UIScreen+Compact.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIScreen+Compact.m"; sourceTree = "<group>"; };
 		848DE12A1A83D20000E154B1 /* emoticons.min.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = emoticons.min.json; path = ../Sources/emoticons.min.json; sourceTree = "<group>"; };
 		8571A3524311D898C8012582 /* libPods-WireExtensionComponents.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-WireExtensionComponents.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		87023D7A1D76E4E2007B667E /* AFNetworking.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AFNetworking.framework; path = Carthage/Build/iOS/AFNetworking.framework; sourceTree = "<group>"; };
@@ -4356,6 +4361,8 @@
 				8711A59F1E0C320100043ACF /* FloatingPoint.swift */,
 				BF8ECC321E5AED6C0015177D /* UIMenuItem+MessageActions.swift */,
 				8742C2E91E5309FC00329FB6 /* NSAttributedString+Highlight.swift */,
+				7CA540811F740B7C00457F4B /* UIScreen+Compact.h */,
+				7CA540821F740B7C00457F4B /* UIScreen+Compact.m */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -4555,6 +4562,7 @@
 				BFC914911D1814AF001F068B /* LocationMessageCell.swift */,
 				87F18BB41E0154C000C69D9B /* FileTransfer */,
 				874448871C22FCE500E7B947 /* Utility */,
+				7CA5407D1F74000F00457F4B /* PreviewProvider.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -5961,6 +5969,7 @@
 				8736F1C21E4DCEB8001CBA62 /* AppLockViewController.swift in Sources */,
 				871BC28A1D34F8F800DF0793 /* UIImagePickerController+GetImage.m in Sources */,
 				8F264BA119E808A8005FF4BE /* ProximityMonitorManager.m in Sources */,
+				7CA540831F740B7C00457F4B /* UIScreen+Compact.m in Sources */,
 				BFCF31D71DA3A9350039B3DC /* SettingsCellDescriptorFactory+Options.swift in Sources */,
 				BF4D99CE1E79AAD400A7B08F /* ParticipantsCollectionViewController.swift in Sources */,
 				871BC2851D34F8F800DF0793 /* UIColor+WAZExtensions.m in Sources */,
@@ -6132,6 +6141,7 @@
 				16258EE81AD7CEBF0076B75F /* PhoneVerificationStepViewController.m in Sources */,
 				871BC2711D34F8F800DF0793 /* SwipeMenuCollectionCell.m in Sources */,
 				BF52C1591CAEBD8D0037331F /* ArchivedNavigationBar.swift in Sources */,
+				7CA5407E1F74000F00457F4B /* PreviewProvider.swift in Sources */,
 				87F18BD51E03FF9700C69D9B /* ConversationDetailsTransitioningDelegate.m in Sources */,
 				F12CDAE71E43880100CEFCEB /* RegistrationTextViewCell.swift in Sources */,
 				87BEB03C1D3E44BA00DE9575 /* CameraKeyboardViewController.swift in Sources */,

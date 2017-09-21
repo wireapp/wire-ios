@@ -33,8 +33,6 @@
 #import "LinkAttachmentViewControllerFactory.h"
 #import "LinkAttachment.h"
 #import "Wire-Swift.h"
-
-
 #import "Analytics+iOS.h"
 
 @import WireLinkPreview;
@@ -226,8 +224,8 @@
             articleView.authorLabel.numberOfLines = 1;
             
             if(showImage) {
-                BOOL isCompact = [UIScreen mainScreen].bounds.size.height <= 568;
-                articleView.imageHeight = isCompact ? 75.0 : 125.0;
+                BOOL isScreenCompact = [UIScreen mainScreen].bounds.size.height <= 568;
+                articleView.imageHeight = isScreenCompact ? 75.0 : 125.0;
             }
         }
         articleView.translatesAutoresizingMaskIntoConstraints = NO;

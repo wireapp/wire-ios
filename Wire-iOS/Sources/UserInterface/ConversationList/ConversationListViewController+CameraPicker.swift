@@ -42,14 +42,16 @@ extension UIImage: Shareable {
     
     public func previewView() -> UIView? {
         let imageView = UIImageView(image: self)
-        imageView.contentMode = .scaleAspectFit
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
         imageView.backgroundColor = .white
         imageView.layer.cornerRadius = 4
         return imageView
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        return 0.0
+        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
+        return previewView.getPreviewContentHeight()
     }
 }
 
@@ -67,8 +69,6 @@ func forward(_ videoAtURL: URL, to conversations: [AnyObject]) {
 
 extension URL: Shareable {
     
-
-
     public func share<ZMConversation>(to conversations: [ZMConversation]) {
         forward(self, to: conversations as [AnyObject])
     }
@@ -88,7 +88,8 @@ extension URL: Shareable {
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        return 0.0
+        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
+        return previewView.getPreviewContentHeight()
     }
 }
 
