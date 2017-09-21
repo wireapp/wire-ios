@@ -91,7 +91,7 @@ extension ZMMessage: Shareable {
         
         if isText {
             let textMessageCell = TextMessageCell(style: .default, reuseIdentifier: "")
-            //textMessageCell.smallLinkAttachments = true // this should be true only if the content has no image
+            textMessageCell.smallLinkAttachments = true
             textMessageCell.contentLayoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
             textMessageCell.linkAttachmentContainer.layoutMargins = UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)            
             textMessageCell.messageTextView.backgroundColor = ColorScheme.default().color(withName: ColorSchemeColorBackground)
