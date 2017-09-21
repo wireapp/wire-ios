@@ -229,7 +229,8 @@
             articleView.authorLabel.numberOfLines = 1;
             
             if(showImage) {
-                articleView.imageHeight = ([UIScreen mainScreen].bounds.size.height <= 568) ? 75.0 : 125.0;
+                BOOL isCompact = [UIScreen mainScreen].bounds.size.height <= 568;
+                articleView.imageHeight = isCompact ? 75.0 : 125.0;
             }
         }
         articleView.translatesAutoresizingMaskIntoConstraints = NO;

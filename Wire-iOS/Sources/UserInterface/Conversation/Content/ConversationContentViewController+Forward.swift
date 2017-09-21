@@ -139,11 +139,8 @@ extension ZMMessage: Shareable {
         layoutProperties.alwaysShowDeliveryState = false
         
         cell.configure(for: self, layoutProperties: layoutProperties)
-        //let height : CGFloat = cell.systemLayoutSizeFitting(UILayoutFittingExpandedSize).height
         
         constrain(cell, cell.contentView) { cell, contentView in
-            cell.width >= 320
-            cell.height <= 200
             contentView.edges == cell.edges
         }
 
