@@ -220,13 +220,17 @@
     }
 
     if (linkPreview != nil && nil == self.linkAttachmentViewController && !isGiphy) {
-        BOOL showImage = !self.smallLinkAttachments && textMesssageData.hasImageData;
+        BOOL showImage = textMesssageData.hasImageData;
+        
         ArticleView *articleView = [[ArticleView alloc] initWithImagePlaceholder:showImage];
 
         if (self.smallLinkAttachments) {
             articleView.messageLabel.numberOfLines = 1;
             articleView.authorLabel.numberOfLines = 1;
-            [articleView autoSetDimension:ALDimensionHeight toSize:70];
+            
+            if(showImage) {
+                articleView.imageHeight = ([UIScreen mainScreen].bounds.size.height <= 568) ? 75.0 : 125.0;
+            }
         }
         articleView.translatesAutoresizingMaskIntoConstraints = NO;
         [articleView configureWithTextMessageData:textMesssageData obfuscated:message.isObfuscated];
