@@ -19,9 +19,11 @@
 import Foundation
 import WireTransport
 
-@objc public class FakeReachability: NSObject, ReachabilityProvider {
+@objc public class FakeReachability: NSObject, ReachabilityProvider, ReachabilityTearDown {
     public var mayBeReachable: Bool = true
     public var isMobileConnection: Bool = true
     public var oldMayBeReachable: Bool = true
     public var oldIsMobileConnection: Bool = true
+    
+    public func tearDown() { }
 }

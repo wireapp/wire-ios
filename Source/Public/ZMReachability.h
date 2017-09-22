@@ -60,7 +60,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMReachabilityObserver <NSObject>
 
-- (void)reachabilityDidChange:(id<ReachabilityProvider>)reachability;
+- (void)reachabilityDidChange:(id<ReachabilityProvider,ReachabilityTearDown>)reachability;
 
 @end
 
