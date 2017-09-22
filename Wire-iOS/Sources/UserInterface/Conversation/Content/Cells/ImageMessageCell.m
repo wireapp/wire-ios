@@ -575,20 +575,18 @@ static const CGFloat ImageToolbarMinimumSize = 192;
     return MessageTypeImage;
 }
 
-@end
+#pragma mark - Preview Provider delegate
 
-@implementation ImageMessageCell (PreviewProvider)
+-(void)preparePreview
+{
+    [super preparePreview];
+    self.autoStretchVertically = FALSE;
+    self.defaultLayoutMargins = UIEdgeInsetsZero;
+}
 
 -(CGFloat)getPreviewContentHeight
 {
-    CGFloat height = 0.0;
-    UIImage *image = [self.fullImageView image];
-    if(image != nil && image.size.height < standardCellHeight) {
-        height = image.size.height;
-    } else {
-        height = standardCellHeight;
-    }
-    return MIN(([UIScreen isCompact] ? 160.0 : standardCellHeight), height);
+    return [HeightsProvider heightForImage: [self.fullImageView image]];
 }
 
 @end

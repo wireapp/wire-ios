@@ -210,5 +210,9 @@ public final class LocationMessageCell: ConversationCell {
             self.containerView.alpha = selected ? ConversationCellSelectedOpacity : 1
         }
     }
+    
+    public override func preparePreview() {
+        super.preparePreview()
+        self.containerHeightConstraint.constant = 160
+    }
 }
-

@@ -21,7 +21,7 @@
 
 #import "UserImageView.h"
 #import "WireSyncEngine+iOS.h"
-
+#import "PreviewProvider.h"
 #import "Analytics+iOS.h"
 #import "MessageAction.h"
 
@@ -33,8 +33,6 @@
 
 extern const CGFloat ConversationCellSelectedOpacity;
 extern const NSTimeInterval ConversationCellSelectionAnimationDuration;
-static const CGFloat standardCellHeight = 200.0;
-
 
 typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 @interface MenuConfigurationProperties : NSObject
@@ -74,9 +72,7 @@ typedef void (^SelectedMenuBlock)(BOOL selected, BOOL animated);
 - (BOOL)conversationCellShouldStartDestructionTimer:(ConversationCell *)cell;
 @end
 
-@protocol PreviewProvider;
-
-@interface ConversationCell : UITableViewCell <UserImageViewDelegate>
+@interface ConversationCell : UITableViewCell <UserImageViewDelegate,PreviewProvider>
 
 @property (nonatomic, readonly) ConversationCellLayoutProperties *layoutProperties;
 
