@@ -144,8 +144,8 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAdded
 {
     // given
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] forFormat:ZMImageFormatOriginal];
-    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] forFormat:ZMImageFormatOriginal];
+    (void)[self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] for:ZMImageFormatOriginal];
+    (void)[self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] for:ZMImageFormatOriginal];
     NSSet *objects = [NSSet setWithArray:@[self.imageMessage1, self.imageMessage2]];
     
     // when
@@ -161,14 +161,14 @@
 - (void)testThatItHasOutstandingItemsWhenItemsAreAddedAndOneIsRemoved
 {
     // given
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] forFormat:ZMImageFormatOriginal];
-    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] forFormat:ZMImageFormatOriginal];
+    (void)[self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] for:ZMImageFormatOriginal];
+    (void)[self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] for:ZMImageFormatOriginal];
     NSSet *objects = [NSSet setWithArray:@[self.imageMessage1, self.imageMessage2]];
     
     // when
     self.imagePreprocessingQueue.suspended = YES;
     [self.sut objectsDidChange:objects];
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
+    (void)[self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data for:ZMImageFormatOriginal];
     [self.sut objectsDidChange:objects];
     
     // then
@@ -180,8 +180,8 @@
 - (void)testThatItHasNoOutstandingItemsWhenItemsAreAddedAndThenRemoved;
 {
     // given
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] forFormat:ZMImageFormatOriginal];
-    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] forFormat:ZMImageFormatOriginal];
+    (void)[self.imageMessage1.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"1" length:1] for:ZMImageFormatOriginal];
+    (void)[self.imageMessage2.imageAssetStorage updateMessageWithImageData:[NSData dataWithBytes:"2" length:1] for:ZMImageFormatOriginal];
     NSSet *objects = [NSSet setWithArray:@[self.imageMessage1, self.imageMessage2]];
     
     // when
@@ -189,8 +189,8 @@
     [self.sut objectsDidChange:objects];
     self.imagePreprocessingQueue.suspended = NO;
     [self.imagePreprocessingQueue waitUntilAllOperationsAreFinished];
-    [self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
-    [self.imageMessage2.imageAssetStorage updateMessageWithImageData:NSData.data forFormat:ZMImageFormatOriginal];
+    (void)[self.imageMessage1.imageAssetStorage updateMessageWithImageData:NSData.data for:ZMImageFormatOriginal];
+    (void)[self.imageMessage2.imageAssetStorage updateMessageWithImageData:NSData.data for:ZMImageFormatOriginal];
     [self.sut objectsDidChange:objects];
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.3]);
     
