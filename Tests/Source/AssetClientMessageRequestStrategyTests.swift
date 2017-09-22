@@ -82,7 +82,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         preview: Bool = false,
         assetId: Bool = false,
         previewAssetId: Bool = false,
-        uploadState: ZMAssetUploadState = .uploadingFullAsset,
+        uploadState: AssetUploadState = .uploadingFullAsset,
         transferState: ZMFileTransferState = .uploading,
         line: UInt = #line
         ) -> ZMAssetClientMessage {
@@ -98,7 +98,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         if isImage {
             let size = CGSize(width: 368, height: 520)
             let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
-            message.imageAssetStorage?.setImageData(imageData, for: .medium, properties: properties)
+            message.imageAssetStorage.setImageData(imageData, for: .medium, properties: properties)
             XCTAssertEqual(message.mimeType, "image/jpg", line: line)
             XCTAssertEqual(message.size, 1024, line: line)
             XCTAssertEqual(message.imageMessageData?.originalSize, size, line: line)
@@ -473,7 +473,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingFullAsset)
+            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
             XCTAssertEqual(message.transferState, .uploading)
             XCTAssertFalse(message.delivered)
 

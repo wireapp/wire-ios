@@ -20,16 +20,15 @@
 import Foundation
 import WireDataModel
 
-@objc public final class FileUploadRequestStrategyNotification: NSObject {
-    public static let uploadFinishedNotificationName = "FileUploadRequestStrategyUploadFinishedNotificationName"
+public struct FileUploadRequestStrategyNotification {
+    public static let uploadFinishedNotificationName = Notification.Name("FileUploadRequestStrategyUploadFinishedNotificationName")
     public static let requestStartTimestampKey = "requestStartTimestamp"
-    public static let uploadFailedNotificationName = "FileUploadRequestStrategyUploadFailedNotificationName"
+    public static let uploadFailedNotificationName = Notification.Name("FileUploadRequestStrategyUploadFailedNotificationName")
 }
 
 final public class AssetAnalytics {
 
     private let moc: NSManagedObjectContext
-    private let notificationCenter = NotificationCenter.default
 
     init(managedObjectContext: NSManagedObjectContext) {
         moc = managedObjectContext
@@ -40,11 +39,11 @@ final public class AssetAnalytics {
         let uiMoc = self.moc.zm_userInterface!
 
         uiMoc.performGroupedBlock {
-            self.notificationCenter.post(
-                name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFinishedNotificationName),
-                object: try? uiMoc.existingObject(with: messageObjectId),
-                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
-            )
+            let userInfo: [String: Any] = [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
+            NotificationInContext(name: FileUploadRequestStrategyNotification.uploadFinishedNotificationName,
+                                  context: self.moc.notificationContext,
+                                  object: try? uiMoc.existingObject(with: messageObjectId),
+                                  userInfo: userInfo).post()
         }
     }
 
@@ -53,11 +52,11 @@ final public class AssetAnalytics {
         let uiMoc = self.moc.zm_userInterface!
 
         uiMoc.performGroupedBlock {
-            self.notificationCenter.post(
-                name: NSNotification.Name(rawValue: FileUploadRequestStrategyNotification.uploadFailedNotificationName),
-                object: try? uiMoc.existingObject(with: messageObjectId),
-                userInfo: [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp ?? Date()]
-            )
+            let userInfo: [String: Any] = [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp ?? Date()]
+            NotificationInContext(name: FileUploadRequestStrategyNotification.uploadFailedNotificationName,
+                                  context: self.moc.notificationContext,
+                                  object: try? uiMoc.existingObject(with: messageObjectId),
+                                  userInfo: userInfo).post()
         }
     }
 

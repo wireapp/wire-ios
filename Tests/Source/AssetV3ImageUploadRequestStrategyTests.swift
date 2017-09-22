@@ -81,7 +81,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
     func simulatePreprocessing(of message: ZMAssetClientMessage, preview: Bool = false) {
         let size = CGSize(width: 368, height: 520)
         let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
-        message.imageAssetStorage?.setImageData(imageData, for: .medium, properties: properties)
+        message.imageAssetStorage.setImageData(imageData, for: .medium, properties: properties)
         if !preview {
             XCTAssertEqual(message.mimeType, "image/jpg")
             XCTAssertEqual(message.size, 1024)

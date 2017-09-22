@@ -25,6 +25,7 @@ import WireRequestStrategy
     
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
     fileprivate let assetRequestFactory = AssetDownloadRequestFactory()
+    private var notificationToken: Any? = nil
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -46,23 +47,19 @@ import WireRequestStrategy
         registerForWhitelistingNotification()
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     func registerForWhitelistingNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didWhitelistAssetDownload),
-            name: NSNotification.Name(rawValue: ZMClientMessageLinkPreviewImageDownloadNotificationName),
-            object: nil
-        )
+        self.notificationToken = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
+                                                                   context: self.managedObjectContext.notificationContext,
+                                                                   object: nil)
+        { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.didWhitelistAssetDownload(objectID)
+        }
     }
     
-    func didWhitelistAssetDownload(_ note: Notification) {
+    func didWhitelistAssetDownload(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
-            guard let objectID = note.object as? NSManagedObjectID else { return }
             guard let message = try? self.managedObjectContext.existingObject(with: objectID) as? ZMClientMessage else { return }
             self.assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
@@ -92,7 +89,7 @@ import WireRequestStrategy
         
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: [ZMClientMessageLinkPreviewKey, ZMAssetClientMessageDownloadedImageKey],
+                                                        changedKeys: [ZMClientMessageLinkPreviewKey, #keyPath(ZMAssetClientMessage.hasDownloadedImage)],
                                                         uiContext: uiMOC)
     }
 

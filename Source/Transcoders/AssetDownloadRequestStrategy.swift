@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -21,15 +21,16 @@ import WireImages
 import WireTransport
 import WireRequestStrategy
 
-@objc public final class AssetDownloadRequestStrategyNotification: NSObject {
-    public static let downloadFinishedNotificationName = "AssetDownloadRequestStrategyDownloadFinishedNotificationName"
-    public static let downloadStartTimestampKey = "requestStartTimestamp"
-    public static let downloadFailedNotificationName = "AssetDownloadRequestStrategyDownloadFailedNotificationName"
+public struct AssetDownloadRequestStrategyNotification {
+    public static let downloadFinishedNotificationName = Notification.Name("AssetDownloadRequestStrategyDownloadFinishedNotificationName")
+    public static let downloadStartTimestampKey = "downloadRequestStartTimestamp"
+    public static let downloadFailedNotificationName = Notification.Name("AssetDownloadRequestStrategyDownloadFailedNotificationName")
 }
 
 @objc public final class AssetDownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
     
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
+    private var token: Any? = nil
     
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -55,19 +56,20 @@ import WireRequestStrategy
         )
     }
     
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-    
     func registerForCancellationNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(AssetDownloadRequestStrategy.cancelOngoingRequestForAssetClientMessage(_:)), name: NSNotification.Name(rawValue: ZMAssetClientMessageDidCancelFileDownloadNotificationName), object: nil)
+        
+        self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+                                          context: self.managedObjectContext.notificationContext,
+                                          object: nil)
+        { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.cancelOngoingRequestForAssetClientMessage(objectID)
+        }
     }
     
-    func cancelOngoingRequestForAssetClientMessage(_ note: Notification) {
-        guard let objectID = note.object as? NSManagedObjectID else { return }
+    func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
-            
             guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
             guard message.version < 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
@@ -82,7 +84,10 @@ import WireRequestStrategy
     
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
         if response.result == .success {
-            guard let fileMessageData = assetClientMessage.fileMessageData, let asset = assetClientMessage.genericAssetMessage?.assetData else { return }
+            guard let fileMessageData = assetClientMessage.fileMessageData,
+                let asset = assetClientMessage.genericAssetMessage?.assetData,
+                let filename = fileMessageData.filename
+            else { return }
             guard assetClientMessage.visibleInConversation != nil else {
                 // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished, 
                 // we don't want to update the message
@@ -91,11 +96,11 @@ import WireRequestStrategy
             
             // TODO: create request that streams directly to the cache file, otherwise the memory would overflow on big files
             let fileCache = self.managedObjectContext.zm_fileAssetCache
-            fileCache.storeAssetData(assetClientMessage.nonce, fileName: fileMessageData.filename, encrypted: true, data: response.rawData!)
+            fileCache.storeAssetData(assetClientMessage.nonce, fileName: filename, encrypted: true, data: response.rawData!)
 
             let decryptionSuccess = fileCache.decryptFileIfItMatchesDigest(
                 assetClientMessage.nonce,
-                fileName: fileMessageData.filename,
+                fileName: filename,
                 encryptionKey: asset.uploaded.otrKey,
                 sha256Digest: asset.uploaded.sha256
             )
@@ -119,12 +124,18 @@ import WireRequestStrategy
         uiManagedObjectContext?.performGroupedBlock({ () -> Void in
             let uiMessage = (try? uiManagedObjectContext!.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
             
-            let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
+            let userInfo: [String: Any] = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
             if uiMessage?.transferState == .downloaded {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: uiMessage, userInfo: userInfo)
+                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName,
+                                      context: self.managedObjectContext.notificationContext,
+                                      object: uiMessage,
+                                      userInfo: userInfo).post()
             }
             else {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName), object: uiMessage, userInfo: userInfo)
+                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName,
+                                      context: self.managedObjectContext.notificationContext,
+                                      object: uiMessage,
+                                      userInfo: userInfo).post()
             }
         })
     }

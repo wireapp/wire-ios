@@ -27,6 +27,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 @objc public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
+    private var notificationToken: Any? = nil
 
     private typealias DecryptionKeys = (otrKey: Data, sha256: Data)
     
@@ -56,19 +57,20 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         )
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     func registerForCancellationNotification() {
-        NotificationCenter.default.addObserver(self, selector: #selector(cancelOngoingRequestForAssetClientMessage), name: NSNotification.Name(rawValue: ZMAssetClientMessageDidCancelFileDownloadNotificationName), object: nil)
+        self.notificationToken = NotificationInContext.addObserver(name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+                                                                   context: self.managedObjectContext.notificationContext,
+                                                                   object: nil)
+        {
+            [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.cancelOngoingRequestForAssetClientMessage(objectID)
+        }
     }
 
-    func cancelOngoingRequestForAssetClientMessage(_ note: Notification) {
-        guard let objectID = note.object as? NSManagedObjectID else { return }
+    func cancelOngoingRequestForAssetClientMessage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self  else { return }
-            
             guard let message = self.managedObjectContext.registeredObject(for: objectID) as? ZMAssetClientMessage else { return }
             guard message.version == 3 else { return }
             guard let identifier = message.associatedTaskIdentifier else { return }
@@ -108,12 +110,18 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         uiMOC.performGroupedBlock({ () -> Void in
             let uiMessage = (try? uiMOC.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
 
-            let userInfo = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
+            let userInfo: [String: Any] = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
             if downloadSuccess {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName), object: uiMessage, userInfo: userInfo)
+                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName,
+                                      context: self.managedObjectContext.notificationContext,
+                                      object: uiMessage,
+                                      userInfo: userInfo).post()
             }
             else {
-                NotificationCenter.default.post(name: NSNotification.Name(rawValue: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName), object: uiMessage, userInfo: userInfo)
+                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName,
+                                      context: self.managedObjectContext.notificationContext,
+                                      object: uiMessage,
+                                      userInfo: userInfo).post()
             }
         })
     }
@@ -121,14 +129,16 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage, fileMessageData: ZMFileMessageData) -> Bool {
         guard let fileMessageData = message.fileMessageData,
             let genericMessage = message.genericAssetMessage,
-            let asset = genericMessage.assetData else { return false }
+            let asset = genericMessage.assetData,
+            let filename = fileMessageData.filename
+        else { return false }
 
         let keys = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
 
         if asset.original.hasImage() {
             return storeAndDecryptImage(asset: asset, nonce: message.nonce, data: data, keys: keys)
         } else {
-            return storeAndDecryptFile(asset: asset, nonce: message.nonce, data: data, keys: keys, name: fileMessageData.filename)
+            return storeAndDecryptFile(asset: asset, nonce: message.nonce, data: data, keys: keys, name: filename)
         }
     }
 

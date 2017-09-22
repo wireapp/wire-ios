@@ -94,7 +94,7 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
         message.uploadState = .uploadingFullAsset
 
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
-        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: message.fileMessageData!.filename, encrypted: true))
+        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
     }
 
 // MARK: Preprocessing
