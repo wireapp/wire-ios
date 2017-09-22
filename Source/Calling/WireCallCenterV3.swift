@@ -355,7 +355,7 @@ internal func readyHandler(version: Int32, contextRef: UnsafeMutableRawPointer?)
     guard let contextRef = contextRef else { return }
     
     if let callingProtocol = CallingProtocol(rawValue: Int(version)) {
-        let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
+       let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
         
         callCenter.uiMOC?.performGroupedBlock {
             callCenter.callingProtocol = callingProtocol
@@ -376,6 +376,40 @@ internal func groupMemberHandler(conversationIdRef: UnsafePointer<Int8>?, contex
     let members = callCenter.avsWrapper.members(in: convID)
     callCenter.uiMOC?.performGroupedBlock {
         callCenter.callParticipantsChanged(conversationId: convID, participants: members)
+    }
+}
+
+/// Handles video state changes
+/// In order to be passed to C, this function needs to be global
+internal func videoStateChangeHandler(state: Int32, contextRef: UnsafeMutableRawPointer?) {
+    guard let contextRef = contextRef else { return }
+    
+    let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
+    
+    if let state = ReceivedVideoState(rawValue: UInt(state)),
+       let context = callCenter.uiMOC {
+        
+        context.performGroupedBlock {
+            WireCallCenterV3VideoNotification(receivedVideoState: state).post(in: context.notificationContext)
+        }
+    } else {
+        zmLog.error("Couldn't send video state change notification")
+    }
+}
+
+/// Handles audio CBR mode enabling
+/// In order to be passed to C, this function needs to be global
+internal func audioCBREnabledHandler(contextRef: UnsafeMutableRawPointer?) {
+    guard let contextRef = contextRef else { return }
+    
+    let callCenter = Unmanaged<WireCallCenterV3>.fromOpaque(contextRef).takeUnretainedValue()
+    
+    if let context = callCenter.uiMOC {
+        context.performGroupedBlock {
+            WireCallCenterCBRCallNotification().post(in: context.notificationContext)
+        }
+    } else {
+        zmLog.error("Couldn't send CBR notification")
     }
 }
 
@@ -517,7 +551,10 @@ public struct CallEvent {
         }
         
         updateSnapshots(forCallSate: callState, conversationId: conversationId, userId: userId)
-        WireCallCenterCallStateNotification(callState: callState, conversationId: conversationId, userId: userId, messageTime: messageTime).post()
+        
+        if let context = uiMOC {
+            WireCallCenterCallStateNotification(callState: callState, conversationId: conversationId, userId: userId, messageTime: messageTime).post(in: context.notificationContext)
+        }
     }
     
     fileprivate func updateSnapshots(forCallSate callState: CallState, conversationId: UUID, userId: UUID?) {
@@ -545,7 +582,9 @@ public struct CallEvent {
     fileprivate func missed(conversationId: UUID, userId: UUID, timestamp: Date, isVideoCall: Bool) {
         zmLog.debug("missed call")
         
-        WireCallCenterMissedCallNotification(conversationId: conversationId, userId:userId, timestamp: timestamp, video: isVideoCall).post()
+        if let context = uiMOC {
+            WireCallCenterMissedCallNotification(conversationId: conversationId, userId:userId, timestamp: timestamp, video: isVideoCall).post(in: context.notificationContext)
+        }
     }
     
     public func received(data: Data, currentTimestamp: Date, serverTimestamp: Date, conversationId: UUID, userId: UUID, clientId: String) {
@@ -569,7 +608,9 @@ public struct CallEvent {
                 callSnapshots[conversationId] = CallSnapshot(callState: .answered, isVideo: previousSnapshot.isVideo)
             }
             
-            WireCallCenterCallStateNotification(callState: .answered, conversationId: conversationId, userId: self.selfUserId, messageTime:nil).post()
+            if let context = uiMOC {
+                WireCallCenterCallStateNotification(callState: .answered, conversationId: conversationId, userId: self.selfUserId, messageTime:nil).post(in: context.notificationContext)
+            }
         }
         return answered
     }
@@ -582,7 +623,10 @@ public struct CallEvent {
         let started = avsWrapper.startCall(conversationId: conversationId, video: video, isGroup: isGroup)
         if started {
             callSnapshots[conversationId] = CallSnapshot(callState: .outgoing, isVideo: video)
-            WireCallCenterCallStateNotification(callState: .outgoing, conversationId: conversationId, userId: selfUserId, messageTime:nil).post()
+            
+            if let context = uiMOC {
+                WireCallCenterCallStateNotification(callState: .outgoing, conversationId: conversationId, userId: selfUserId, messageTime:nil).post(in: context.notificationContext)
+            }
         }
         return started
     }
