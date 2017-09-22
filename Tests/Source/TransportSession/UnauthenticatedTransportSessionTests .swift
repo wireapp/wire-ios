@@ -175,4 +175,29 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     }
 
+    func testWrongURLResponseError() {
+        // given
+        let response = URLResponse(url: url, mimeType: "", expectedContentLength: 1, textEncodingName: nil)
+        sessionMock.nextCompletionParameters = (nil, response, NSError.requestExpiredError())
+        let completionExpectation = expectation(description: "Completion handler should be called with errors")
+        let request = ZMTransportRequest(getFromPath: "/")
+        
+        request.add(ZMCompletionHandler(on: fakeUIContext) { response in
+            // then
+            XCTAssertFalse(response.rawResponse == nil)
+            XCTAssertFalse(response.transportSessionError == nil)
+            completionExpectation.fulfill()
+        })
+        
+        // when
+        let result = sut.enqueueRequest { request }
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.1))
+        
+        // then
+        XCTAssertEqual(result, .success)
+    }
+}
+
+enum TestError: Error {
+    case genericError
 }
