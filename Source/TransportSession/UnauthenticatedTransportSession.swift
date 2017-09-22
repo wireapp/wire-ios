@@ -98,7 +98,20 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         request.log()
 
         let task = session.task(with: urlRequest as URLRequest) { [weak self] data, response, error in
-            let transportResponse = ZMTransportResponse(httpurlResponse: response as! HTTPURLResponse, data: data, error: error)
+            
+            var transportResponse: ZMTransportResponse!
+            
+            if let response = response as? HTTPURLResponse {
+                transportResponse = ZMTransportResponse(httpurlResponse: response, data: data, error: error)
+            }
+            else if let error = error {
+                transportResponse = ZMTransportResponse(transportSessionError: error)
+            }
+            
+            if nil == transportResponse {
+                preconditionFailure()
+            }
+            
             transportResponse.log()
             request.complete(with: transportResponse)
             self?.decrement(notify: true)
