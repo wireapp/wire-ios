@@ -33,18 +33,21 @@
     ZMConversation *sut = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    __block BOOL didSendNote = NO;
-    [self expectationForNotification:ZMConversationLastReadDidChangeNotificationName object:nil handler:^BOOL(NSNotification * _Nonnull notification) {
-        XCTAssertEqual(notification.object, sut);
-        didSendNote = YES;
-        return true;
-    }];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Notified"];
+    id token = [NotificationInContext addObserverWithName:ZMConversation.lastReadDidChangeNotificationName
+                                                  context:self.uiMOC.notificationContext
+                                                   object:nil
+                                                    queue:nil
+                                                    using:^(NotificationInContext * notification) {
+                                                        XCTAssertEqual(notification.object, sut);
+                                                        [expectation fulfill];
+                                                    }];
     
     [sut updateLastReadServerTimeStampIfNeededWithTimeStamp:[NSDate date] andSync:NO];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     
     // then
-    XCTAssertTrue(didSendNote);
+    token = nil;
 }
 
 

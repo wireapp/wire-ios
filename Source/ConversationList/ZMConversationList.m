@@ -20,7 +20,6 @@
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConnection+Internal.h"
-#import "ZMNotifications.h"
 #import "ZMConversationListDirectory.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
@@ -117,7 +116,6 @@
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
     [self.managedObjectContext.conversationListObserverCenter removeConversationList:self];
 }
 

@@ -144,53 +144,6 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
     ZMFileTransferStateFailedDownload,
 };
 
-#pragma mark - ZMFileMessageData
-
-@protocol ZMFileMessageData <NSObject>
-/// MIME type of the file being transfered (implied from file extension)
-@property (nonatomic) NSString *mimeType;
-/// Original file size
-@property (nonatomic) unsigned long long size;
-/// File transfer state
-@property (nonatomic) ZMFileTransferState transferState;
-/// File name as was sent
-@property (nonatomic) NSString *filename;
-/// Currend download / upload progress
-@property (nonatomic) float progress;
-/// The file location on the filesystem
-@property (nonatomic, readonly) NSURL *fileURL;
-/// The asset ID of the thumbnail, if any
-@property (nonatomic) NSString *thumbnailAssetID;
-/// Duration of the media in milliseconds
-@property (nonatomic, readonly) NSUInteger durationMilliseconds;
-/// Dimensions of the video
-@property (nonatomic, readonly) CGSize videoDimensions;
-/// Document preview frame
-@property (nonatomic, readonly) NSData *previewData;
-/// This can be used as a cache key for @c -previewData
-@property (nonatomic, readonly) NSString *imagePreviewDataIdentifier;
-/// Normalized loudness of audio data
-@property (nonatomic, readonly) NSArray<NSNumber *> *normalizedLoudness;
-
-/// Marks file to be downloaded
-- (void)requestFileDownload;
-
-/// Cancels the pending download or upload of the file. Deisgned to be used in case the file transfer on sender side is
-/// in @c ZMFileMessageStateUploading state, or in @c ZMFileMessageStateDownloading state on receiver side.
-- (void)cancelTransfer;
-
-/// Video-message related properties
-/// if MIME type is indicating the video content
-- (BOOL)isVideo;
-
-/// Audio-message related properties
-/// if MIME type is indicating the audio content
-- (BOOL)isAudio;
-
-/// Whether the file message represents a v3 image
-- (BOOL)v3_isImage;
-
-@end
 
 #pragma mark - ZMLocationMessageData
 

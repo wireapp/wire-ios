@@ -278,18 +278,25 @@
 
 - (void)testThatItNotifiesWhenAllClientAreVerified;
 {
-    XCTestExpectation *expectation = [self expectationForNotification:ZMConversationIsVerifiedNotificationName object:nil handler:^BOOL(NSNotification * _Nonnull notification __unused) {
-        [expectation fulfill];
-        return YES;
-    }];
-    
     __block NSManagedObjectID *conversationObjectID = nil;
-    
+    __block id token = nil;
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
         ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
         UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
+        
+        // expect
+        XCTestExpectation *expectation = [self expectationWithDescription:@"Notified"];
+        token = [NotificationInContext addObserverWithName:ZMConversation.isVerifiedNotificationName
+                                                      context:self.uiMOC.notificationContext
+                                                       object:nil
+                                                        queue:nil
+                                                        using:^(NotificationInContext * notification) {
+                                                            XCTAssertEqualObjects(notification.object, conversation);
+                                                            [expectation fulfill];
+                                                        }];
+
         
         // when
         XCTAssertNotEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
@@ -303,6 +310,7 @@
     ZMConversation *uiConversation = [self.uiMOC existingObjectWithID:conversationObjectID error:nil];
     XCTAssertEqual(uiConversation.securityLevel, ZMConversationSecurityLevelSecure);
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+    token = nil;
 }
 
 - (void)testThatIncreasesSecurityLevelOfCreatedGroupConversationWithAllParticipantsAlreadyTrusted

@@ -52,7 +52,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 @objc public class V3Asset: NSObject, ZMImageMessageData {
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
-    private let assetStorage: ZMImageAssetStorage
+    private let assetStorage: ImageAssetStorage
     fileprivate let moc: NSManagedObjectContext
 
     fileprivate var isImage: Bool {
@@ -60,9 +60,9 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public init?(with message: ZMAssetClientMessage) {
-        guard message.version == 3, let storage = message.imageAssetStorage else { return nil }
+        guard message.version == 3 else { return nil }
         assetClientMessage = message
-        assetStorage = storage
+        assetStorage = message.imageAssetStorage
         moc = message.managedObjectContext!
     }
 
@@ -155,10 +155,10 @@ extension V3Asset: AssetProxyType {
             requestFileDownload()
         } else if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
-            NotificationCenter.default.post(
-                name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName),
-                object: assetClientMessage.objectID
-            )
+            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName,
+                                  context: self.moc.notificationContext,
+                                  object: assetClientMessage.objectID
+                                ).post()
         } else {
             return zmLog.info("Called \(#function) on a v3 asset that doesn't represent an image or has a preview")
         }

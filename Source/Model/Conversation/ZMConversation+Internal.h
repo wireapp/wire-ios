@@ -68,10 +68,6 @@ extern NSString *const ZMConversationArchivedChangedTimeStampKey;
 extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
 extern NSString *const ZMNotificationConversationKey;
-
-extern NSString *const ZMConversationClearTypingNotificationName;
-extern NSString *const ZMConversationLastReadDidChangeNotificationName;
-
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
 
 

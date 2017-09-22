@@ -27,7 +27,6 @@
 #import "ZMConnection+Internal.h"
 #import "ZMAddressBookContact.h"
 
-#import "ZMNotifications+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
 static NSCache *searchUserToSmallProfileImageCache;
@@ -55,8 +54,8 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @property (nonatomic, copy) NSString *connectionRequestMessage;
 @property (nonatomic) BOOL isPendingApprovalByOtherUser;
 
-@property (nonatomic, readonly) NSManagedObjectContext *syncMOC;
-@property (nonatomic, readonly) NSManagedObjectContext *uiMOC;
+@property (weak, nonatomic, readonly) NSManagedObjectContext *syncMOC;
+@property (weak, nonatomic, readonly) NSManagedObjectContext *uiMOC;
 
 @property (nonatomic) ZMUser *user;
 @property (nonatomic) ZMAddressBookContact *contact;
@@ -305,19 +304,20 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     if (self.user != nil) {
         [self.user connectWithMessageText:text completionHandler:completionHandler];
     } else {
-        CheckString(self.syncMOC != nil,
+        NSManagedObjectContext *syncMOC = self.syncMOC;
+        CheckString(syncMOC != nil,
                     "No user session / sync context.");
         NSString *name = [self.name copy];
         ZMAccentColor accentColorValue = self.accentColorValue;
-        [self.syncMOC performGroupedBlock:^{
-            ZMUser *user = [ZMUser userWithRemoteID:self.remoteIdentifier createIfNeeded:YES inContext:self.syncMOC];
+        [syncMOC performGroupedBlock:^{
+            ZMUser *user = [ZMUser userWithRemoteID:self.remoteIdentifier createIfNeeded:YES inContext:syncMOC];
             user.name = name;
             user.accentColorValue = accentColorValue;
             user.needsToBeUpdatedFromBackend = YES;
             ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
             connection.message = text;
             
-            [self.syncMOC saveOrRollback];
+            [syncMOC saveOrRollback];
             
             // Do a delayed save and run the handler on the main queue, once it's done:
             ZMSDispatchGroup * g = [ZMSDispatchGroup groupWithLabel:@"ZMSearchUser"];

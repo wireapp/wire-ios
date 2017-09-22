@@ -28,7 +28,7 @@ public extension ZMConversationMessage {
     }
 
     public var isImage: Bool {
-        return imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage())
+        return imageMessageData != nil || (fileMessageData != nil && fileMessageData!.v3_isImage)
     }
 
     public var isKnock: Bool {
@@ -38,15 +38,15 @@ public extension ZMConversationMessage {
     /// Returns YES, if the message is a file transfer message
     /// This also includes audio messages and video messages
     public var isFile: Bool {
-        return fileMessageData != nil && !fileMessageData!.v3_isImage()
+        return fileMessageData != nil && !fileMessageData!.v3_isImage
     }
 
     public var isVideo: Bool {
-        return isFile && fileMessageData!.isVideo()
+        return isFile && fileMessageData!.isVideo
     }
 
     public var isAudio: Bool {
-        return isFile && fileMessageData!.isAudio()
+        return isFile && fileMessageData!.isAudio
     }
 
     public var isLocation: Bool {

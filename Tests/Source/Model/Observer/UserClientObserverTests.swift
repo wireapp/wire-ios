@@ -46,9 +46,6 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let token = UserClientChangeInfo.add(observer: clientObserver, for: userClient)
-        defer {
-            UserClientChangeInfo.remove(observer: token, for: userClient)
-        }
         
         // when
         modifier(userClient)
@@ -62,11 +59,13 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
-        
-        guard let changes = clientObserver.receivedChangeInfo.first else { return }
-        changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
-                                             expectedChangedFields: expectedChangedFields)
+        withExtendedLifetime(token) { () -> () in
+            XCTAssertEqual(clientObserver.receivedChangeInfo.count, changeCount, "Should not have changed further once")
+            
+            guard let changes = clientObserver.receivedChangeInfo.first else { return }
+            changes.checkForExpectedChangeFields(userInfoKeys: userInfoKeys,
+                                                 expectedChangedFields: expectedChangedFields)
+        }
     }
     
     func testThatItNotifiesTheObserverOfTrustedByClientsChange() {
@@ -128,17 +127,11 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let otherObserver = TestUserClientObserver()
-        let token = UserClientChangeInfo.add(observer: otherObserver, for: client)
-        UserClientChangeInfo.remove(observer: token, for: client)
+        _ = UserClientChangeInfo.add(observer: otherObserver, for: client) // not storing the token
         
         // when
-        self.checkThatItNotifiesTheObserverOfAChange(client,
-                                                     modifier: { otherClient.ignoreClient($0) },
-                                                     expectedChangedFields: [
-                                                        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
-                                                        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue
-            ]
-        )
+        otherClient.ignoreClient(client)
+        self.uiMOC.saveOrRollback()
         
         XCTAssertEqual(otherObserver.receivedChangeInfo.count, 0)
     }

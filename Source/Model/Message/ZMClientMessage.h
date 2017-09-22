@@ -28,14 +28,12 @@
 extern NSString * _Nonnull const ZMFailedToCreateEncryptedMessagePayloadString;
 extern NSUInteger const ZMClientMessageByteSizeExternalThreshold;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewStateKey;
-extern NSString * _Nonnull const ZMClientMessageLinkPreviewImageDownloadNotificationName;
 extern NSString * _Nonnull const ZMClientMessageLinkPreviewKey;
 
 
 @interface ZMClientMessage : ZMOTRMessage
 
 /// Link Preview state
-@property (nonatomic) ZMLinkPreviewState linkPreviewState;
 @property (nonatomic) NSDate * _Nullable updatedTimestamp;
 @property (nonatomic, readonly) ZMGenericMessage * _Nullable genericMessage;
 
@@ -45,11 +43,6 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewKey;
 
 @end
 
-
-
-@interface ZMClientMessage (ZMImageOwner) <ZMImageOwner>
-
-@end
 
 
 @interface ZMClientMessage (Testing)

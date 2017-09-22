@@ -39,7 +39,7 @@ extension NSManagedObjectContext {
             return observer
         }
         
-        let newObserver = ConversationListObserverCenter()
+        let newObserver = ConversationListObserverCenter(managedObjectContext: self)
         self.userInfo[NSManagedObjectContext.ConversationListObserverCenterKey] = newObserver
         return newObserver
     }
@@ -53,11 +53,18 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     var insertedConversations = [ZMConversation]()
     var deletedConversations = [ZMConversation]()
     
+    weak var managedObjectContext: NSManagedObjectContext!
+    
+    fileprivate init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
+    }
+    
     /// Adds a conversationList to the objects to observe
-    @objc public func startObservingList(_ conversationList: ZMConversationList) {
+    @objc public func startObservingList(_ conversationList: ZMConversationList)
+    {
         if listSnapshots[conversationList.identifier] == nil {
             zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
-            listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList)
+            listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList, managedObjectContext: self.managedObjectContext)
         }
     }
     
@@ -69,7 +76,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
                 zmLog.debug("Conversation in \(conversationList.identifier) includes: \($0.objectID) with type: \($0.conversationType.rawValue)")
             }
         }
-        listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList)
+        listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList, managedObjectContext: self.managedObjectContext)
     }
     
     /// Removes the conversationList from the objects to observe
@@ -160,9 +167,12 @@ class ConversationListSnapshot: NSObject {
     var conversationChanges = [ConversationChangeInfo]()
     var needsToRecalculate = false
     
-    init(conversationList: ZMConversationList) {
+    private var managedObjectContext: NSManagedObjectContext
+    
+    init(conversationList: ZMConversationList, managedObjectContext: NSManagedObjectContext) {
         self.conversationList = conversationList
         self.state = SetSnapshot(set: conversationList.toOrderedSetState(), moveType: .uiCollectionView)
+        self.managedObjectContext = managedObjectContext
         super.init()
     }
     
@@ -243,7 +253,8 @@ class ConversationListSnapshot: NSObject {
         listChange = ConversationListChangeInfo(setChangeInfo: newStateUpdate.changeInfo)
     }
     
-    private func notifyObservers(conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) {
+    private func notifyObservers(conversationChanges: [ConversationChangeInfo],
+                                 listChanges: ConversationListChangeInfo?) {
         guard listChanges != nil || conversationChanges.count != 0 else { return }
         
         var userInfo = [String : Any]()
@@ -257,8 +268,14 @@ class ConversationListSnapshot: NSObject {
             zmLog.debug("No changes for conversationList \(String(describing: self.conversationList))")
             return
         }
+        
+        let notification = NotificationInContext(name: .ZMConversationListDidChange,
+                                                 context: self.managedObjectContext.notificationContext,
+                                                 object: self.conversationList,
+                                                 userInfo: userInfo)
+            
         zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
-        NotificationCenter.default.post(name: .ZMConversationListDidChange, object: self.conversationList, userInfo: userInfo)
+        notification.post()
     }
     
     func logMessage(for conversationChanges: [ConversationChangeInfo], listChanges: ConversationListChangeInfo?) -> String {

@@ -19,7 +19,6 @@
 
 #import "ZMConversation+Internal.h"
 #import "ZMConversationMessageWindow.h"
-#import "ZMNotifications+Internal.h"
 #import "ZMChangedIndexes.h"
 #import "ZMOrderedSetState.h"
 #import "ZMMessage+Internal.h"

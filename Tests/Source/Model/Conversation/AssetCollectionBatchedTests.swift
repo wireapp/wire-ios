@@ -252,10 +252,13 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     func testThatItExcludesDefinedCategories_PreCategorized(){
         // given
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data,
+                                                              nonce: .create(),
+                                                              managedObjectContext: uiMOC,
+                                                              expiresAfter: 0)
         message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         
@@ -278,10 +281,10 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     func testThatItExcludesDefinedCategories_NotPreCategorized(){
         // given
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
         message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         
@@ -326,10 +329,10 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         // given
         insertAssetMessages(count: 1)
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
         message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         

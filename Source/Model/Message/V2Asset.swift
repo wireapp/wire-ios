@@ -33,10 +33,11 @@ extension String {
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
-    fileprivate let assetStorage: ZMImageAssetStorage
+    fileprivate let assetStorage: ImageAssetStorage
 
     public init?(with message: ZMAssetClientMessage) {
-        guard message.version < 3, let storage = message.imageAssetStorage else { return nil }
+        guard message.version < 3 else { return nil }
+        let storage = message.imageAssetStorage
         assetClientMessage = message
         assetStorage = storage
         moc = message.managedObjectContext!
@@ -51,7 +52,7 @@ extension String {
 
     public var mediumData: Data? {
         if assetStorage.mediumGenericMessage?.imageAssetData?.width > 0 {
-            return assetClientMessage.imageAssetStorage?.imageData(for: .medium, encrypted: false)
+            return assetClientMessage.imageAssetStorage.imageData(for: .medium, encrypted: false)
         }
         return nil
     }
@@ -94,7 +95,7 @@ extension String {
 
     public var originalSize: CGSize {
         let genericMessage = assetStorage.mediumGenericMessage ?? assetStorage.previewGenericMessage
-        guard let asset = genericMessage?.imageAssetData, asset.originalWidth > 0 else { return assetStorage.preprocessedSize() }
+        guard let asset = genericMessage?.imageAssetData, asset.originalWidth > 0 else { return assetStorage.preprocessedSize }
         let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
         if size != .zero {
             return size
@@ -157,11 +158,8 @@ extension V2Asset: AssetProxyType {
     }
 
     public func requestImageDownload() {
-        guard !assetClientMessage.objectID.isTemporaryID else { return }
-        NotificationCenter.default.post(
-            name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName),
-            object: assetClientMessage.objectID
-        )
+        guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
+        NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
     }
 
     public var requiredImageFormats: NSOrderedSet {

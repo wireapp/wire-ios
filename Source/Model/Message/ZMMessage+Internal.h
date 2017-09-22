@@ -106,6 +106,8 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
                                          inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 
+- (void)updateTimestamp:(NSDate * _Nullable)timestamp isUpdatingExistingMessage:(BOOL)isUpdate;
+
 @end
 
 

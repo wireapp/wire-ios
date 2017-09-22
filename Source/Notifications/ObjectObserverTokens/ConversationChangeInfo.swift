@@ -151,23 +151,16 @@ extension ConversationChangeInfo {
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forConversation:)
     public static func add(observer: ZMConversationObserver, for conversation: ZMConversation) -> NSObjectProtocol {
-        return NotificationCenterObserverToken(name: .ConversationChange, object: conversation)
+        return ManagedObjectObserverToken(name: .ConversationChange,
+                                          managedObjectContext: conversation.managedObjectContext!,
+                                          object: conversation)
         { [weak observer] (note) in
             guard let `observer` = observer,
-                let changeInfo = note.userInfo?["changeInfo"] as? ConversationChangeInfo
+                let changeInfo = note.changeInfo as? ConversationChangeInfo
                 else { return }
             
             observer.conversationDidChange(changeInfo)
         } 
-    }
-    
-    @objc(removeObserver:forConversation:)
-    public static func remove(observer: NSObjectProtocol, for conversation: ZMConversation?) {
-        guard let token = (observer as? NotificationCenterObserverToken)?.token else {
-            NotificationCenter.default.removeObserver(observer, name: .ConversationChange, object: conversation)
-            return
-        }
-        NotificationCenter.default.removeObserver(token, name: .ConversationChange, object: conversation)
     }
 }
 

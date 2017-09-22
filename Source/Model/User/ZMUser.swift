@@ -281,10 +281,16 @@ extension ZMUser {
     }
     
     @objc public func requestPreviewAsset() {
-        NotificationCenter.default.post(name: ZMUser.previewAssetFetchNotification, object: objectID)
+        guard let moc = self.managedObjectContext?.zm_userInterface else { return }
+        NotificationInContext(name: ZMUser.previewAssetFetchNotification,
+                              context: moc.notificationContext,
+                              object: self.objectID).post()
     }
     
     @objc public func requestCompleteAsset() {
-        NotificationCenter.default.post(name: ZMUser.completeAssetFetchNotification, object: objectID)
+        guard let moc = self.managedObjectContext?.zm_userInterface else { return }
+        NotificationInContext(name: ZMUser.completeAssetFetchNotification,
+                              context: moc.notificationContext,
+                              object: self.objectID).post()
     }
 }

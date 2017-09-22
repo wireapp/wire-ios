@@ -20,7 +20,6 @@
 #import "ZMAddressBookContact.h"
 #import "ZMManagedObjectContextProvider.h"
 #import "ZMUser.h"
-#import "ZMNotifications+Internal.h"
 
 @implementation ZMAddressBookContact
 

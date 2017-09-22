@@ -18,7 +18,7 @@
 
 import XCTest
 import WireUtilities
-import WireDataModel
+@testable import WireDataModel
 import WireLinkPreview
 
 extension ZMConversationMessage {
@@ -136,7 +136,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
             XCTAssertEqual(message.cachedCategory, [MessageCategory.image])
 
             // WHEN
-            message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+            message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
 
             // THEN
             XCTAssertEqual(message.cachedCategory, [MessageCategory.image, MessageCategory.GIF])
@@ -147,10 +147,10 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         
         // GIVEN
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage(originalImageData: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
         message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-        message.imageAssetStorage!.setImageData(data, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         
         
         // THEN

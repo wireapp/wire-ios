@@ -144,88 +144,53 @@ extension UserChangeInfo {
     // MARK: Registering UserObservers
     /// Adds an observer for the user if one specified or to all ZMUsers is none is specified
     /// You must hold on to the token and use it to unregister
-    @objc(addUserObserver:forUser:)
-    static func add(observer: ZMUserObserver, for user: ZMUser?) -> NSObjectProtocol {
-        return NotificationCenterObserverToken(name: .UserChange, object: user)
+    @objc(addUserObserver:forUser:managedObjectContext:)
+    public static func add(observer: ZMUserObserver, for user: ZMUser?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user)
         { [weak observer] (note) in
             guard let `observer` = observer,
-                let changeInfo = note.userInfo?["changeInfo"] as? UserChangeInfo
+                let changeInfo = note.changeInfo as? UserChangeInfo
                 else { return }
             
             observer.userDidChange(changeInfo)
         }
     }
-    
-    @objc(removeUserObserver:forUser:)
-    static func remove(observer: NSObjectProtocol, for user: ZMUser?) {
-        guard let token = (observer as? NotificationCenterObserverToken)?.token else {
-            NotificationCenter.default.removeObserver(observer, name: .UserChange, object: user)
-            return
-        }
-        NotificationCenter.default.removeObserver(token, name: .UserChange, object: user)
-    }
-    
     
     // MARK: Registering SearchUserObservers
     /// Adds an observer for the searchUser if one specified or to all ZMSearchUser is none is specified
     /// You must hold on to the token and use it to unregister
-    @objc(addSearchUserObserver:forSearchUser:)
+    @objc(addSearchUserObserver:forSearchUser:managedObjectContext:)
     public static func add(searchUserObserver observer: ZMUserObserver,
-                           for user: ZMSearchUser?) -> NSObjectProtocol
+                           for user: ZMSearchUser?,
+                           managedObjectContext: NSManagedObjectContext
+                           ) -> NSObjectProtocol
     {
-        return NotificationCenterObserverToken(name: .SearchUserChange, object: user)
+        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user)
         { [weak observer] (note) in
             guard let `observer` = observer,
-                let changeInfo = note.userInfo?["changeInfo"] as? UserChangeInfo
+                let changeInfo = note.changeInfo as? UserChangeInfo
                 else { return }
             
             observer.userDidChange(changeInfo)
         }
-    }
-    
-    @objc(removeSearchUserObserver:forSearchUser:)
-    static func remove(searchUserObserver observer: NSObjectProtocol,
-                              for user: ZMSearchUser?)
-    {
-        guard let token = (observer as? NotificationCenterObserverToken)?.token else {
-            NotificationCenter.default.removeObserver(observer, name: .SearchUserChange, object: user)
-            return
-        }
-        NotificationCenter.default.removeObserver(token, name: .SearchUserChange, object: user)
     }
     
     // MARK: Registering ZMBareUser
     /// Adds an observer for the ZMUser or ZMSearchUser
     /// You must hold on to the token and use it to unregister
-    @objc(addObserver:forBareUser:)
+    @objc(addObserver:forBareUser:managedObjectContext:)
     public static func add(observer: ZMUserObserver,
-                           forBareUser user: ZMBareUser) -> NSObjectProtocol?
+                           forBareUser user: ZMBareUser,
+                           managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol?
     {
         if let user = user as? ZMSearchUser {
-            return add(searchUserObserver: observer, for: user)
+            return add(searchUserObserver: observer, for: user, managedObjectContext: managedObjectContext)
         }
         else if let user = user as? ZMUser {
-            return add(observer: observer, for:user)
+            return add(observer: observer, for:user, managedObjectContext: managedObjectContext)
         }
         return nil
     }
-    
-    @objc(removeObserver:forBareUser:)
-    public static func remove(observer: NSObjectProtocol,
-                              forBareUser user: ZMBareUser?)
-    {
-        if let user = user as? ZMSearchUser {
-            UserChangeInfo.remove(searchUserObserver: observer, for: user)
-        }
-        else if let user = user as? ZMUser {
-            UserChangeInfo.remove(observer: observer, for: user)
-        }
-        else if user == nil {
-            UserChangeInfo.remove(searchUserObserver: observer, for: nil)
-            UserChangeInfo.remove(observer: observer, for: nil)
-        }
-    }
-
 }
 
 

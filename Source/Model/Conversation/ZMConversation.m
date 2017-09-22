@@ -74,10 +74,6 @@ NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey"
 NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 
-NSString *const ZMConversationClearTypingNotificationName = @"ZMConversationClearTypingNotification";
-NSString *const ZMConversationIsVerifiedNotificationName = @"ZMConversationIsVerifiedNotificationName";
-NSString *const ZMConversationFailedToDecryptMessageNotificationName = @"ZMConversationFailedToDecryptMessageNotificationName";
-NSString *const ZMConversationLastReadDidChangeNotificationName = @"ZMConversationLastReadDidChangeNotification";
 NSString *const SecurityLevelKey = @"securityLevel";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
@@ -693,7 +689,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     NSUUID *nonce = NSUUID.UUID;
     id <ZMConversationMessage> message = [self appendOTRMessageWithText:text nonce:nonce fetchLinkPreview:fetchPreview];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationClearTypingNotificationName object:self];
+    [[[NotificationInContext alloc] initWithName:ZMConversation.clearTypingNotificationName
+                                        context:self.managedObjectContext.notificationContext
+                                         object:self
+                                       userInfo:nil
+     ] post];
     return message;
 }
 
@@ -1233,10 +1233,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
-    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithOriginalImageData:imageData
-                                                                                            nonce:nonce
-                                                                             managedObjectContext:self.managedObjectContext
-                                                                                     expiresAfter:self.messageDestructionTimeout];
+    ZMAssetClientMessage *message =
+    [ZMAssetClientMessage assetClientMessageWithOriginalImage:imageData
+                                                        nonce:nonce
+                                         managedObjectContext:self.managedObjectContext
+                                                 expiresAfter:self.messageDestructionTimeout];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     [message updateCategoryCache];
     if(hidden) {
@@ -1253,10 +1254,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
-    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWithFileMetadata:fileMetadata
-                                                                                       nonce:nonce
-                                                                        managedObjectContext:self.managedObjectContext
-                                                                                expiresAfter:self.messageDestructionTimeout];
+    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWith:fileMetadata
+                                                                           nonce:nonce
+                                                            managedObjectContext:self.managedObjectContext
+                                                                    expiresAfter:self.messageDestructionTimeout];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     message.isEncrypted = YES;
     [message updateCategoryCache];

@@ -242,6 +242,11 @@
     }
 }
 
+- (void)deleteImageDataForFormat:(ZMImageFormat)format;
+{
+    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:format encrypted:NO];
+}
+
 - (NSData *)imageDataForFormat:(ZMImageFormat)format
 {
     switch (format) {
@@ -286,7 +291,7 @@
 
 - (void)processingDidFinish;
 {
-    [self setImageData:nil forFormat:ZMImageFormatOriginal properties:nil];
+    [self deleteImageDataForFormat:ZMImageFormatOriginal];
     
     self.originalDataProcessed = YES;
     [self.managedObjectContext enqueueDelayedSave];
