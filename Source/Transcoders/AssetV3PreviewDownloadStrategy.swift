@@ -28,6 +28,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
 @objc public final class AssetV3PreviewDownloadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate var downstreamSync: ZMDownstreamObjectSyncWithWhitelist!
+    private var token: Any? = nil
     
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
@@ -48,23 +49,20 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         registerForWhitelistingNotification()
     }
 
-    deinit {
-        NotificationCenter.default.removeObserver(self)
-    }
-
     func registerForWhitelistingNotification() {
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(didRequestToDownloadImage),
-            name: NSNotification.Name(rawValue: ZMAssetClientMessage.ImageDownloadNotificationName),
-            object: nil
-        )
+        
+        self.token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
+                                                       context: self.managedObjectContext.notificationContext,
+                                                       object: nil)
+        { [weak self] note in
+            guard let objectID = note.object as? NSManagedObjectID else { return }
+            self?.didRequestToDownloadImage(objectID)
+        }
     }
 
-    func didRequestToDownloadImage(_ note: Notification) {
+    func didRequestToDownloadImage(_ objectID: NSManagedObjectID) {
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
-            guard let objectID = note.object as? NSManagedObjectID else { return }
             guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
             guard let message = object as? ZMAssetClientMessage else { return }
             self.downstreamSync.whiteListObject(message)
@@ -98,7 +96,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         // Notify about the changes
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
-                                                        changedKeys: [ZMAssetClientMessageDownloadedImageKey],
+                                                        changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedImage)],
                                                         uiContext: uiMOC)
     }
 

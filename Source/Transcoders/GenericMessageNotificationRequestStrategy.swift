@@ -22,7 +22,7 @@ import WireDataModel
 @objc
 public final class GenericMessageNotificationRequestStrategy: NSObject, RequestStrategy {
 
-    private var token: NotificationCenterObserverToken?
+    private var token: Any?
     private let managedObjectContext: NSManagedObjectContext
     fileprivate let genericMessageStrategy: GenericMessageRequestStrategy
 
@@ -37,8 +37,8 @@ public final class GenericMessageNotificationRequestStrategy: NSObject, RequestS
     }
 
     private func setupObserver() {
-        token = NotificationCenterObserverToken(name: GenericMessageScheduleNotification.name) { [weak self] note in
-            guard let `self` = self, let (message, conversation) = note.object as? (ZMGenericMessage, ZMConversation) else { return }
+        self.token = GenericMessageScheduleNotification.addObserver(managedObjectContext: self.managedObjectContext) { [weak self] (message, conversation) in
+            guard let `self` = self  else { return }
             let identifier = conversation.objectID
             self.managedObjectContext.performGroupedBlock {
                 guard let syncConversation = (try? self.managedObjectContext.existingObject(with: identifier)) as? ZMConversation else { return }

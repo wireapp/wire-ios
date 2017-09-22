@@ -26,25 +26,26 @@ import WireRequestStrategy
 private let zmLog = ZMSLog(tag: "fetchClientRS")
 
 
-public let ZMNeedsToUpdateUserClientsNotificationName = "ZMNeedsToUpdateUserClientsNotification"
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
 public extension ZMUser {
     
     func fetchUserClients() {
-        NotificationCenter.default.post(
-            name: Notification.Name(rawValue: ZMNeedsToUpdateUserClientsNotificationName),
-            object: nil,
-            userInfo: [ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey: objectID])
+        NotificationInContext(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+                              context: self.managedObjectContext!.notificationContext,
+                              object: self.objectID).post()
     }
 }
 
 @objc
 public final class FetchingClientRequestStrategy : AbstractRequestStrategy, ZMEventConsumer {
 
+    fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
+
+    
     fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
     
-    fileprivate(set) var userClientsObserverToken: NSObjectProtocol!
+    fileprivate(set) var userClientsObserverToken: Any? = nil
     fileprivate(set) var userClientsSync: ZMRemoteIdentifierObjectSync!
     
     fileprivate var insertSyncFilter: NSPredicate {
@@ -61,19 +62,18 @@ public final class FetchingClientRequestStrategy : AbstractRequestStrategy, ZMEv
         
         self.userClientsSync = ZMRemoteIdentifierObjectSync(transcoder: self, managedObjectContext: self.managedObjectContext)
         
-        self.userClientsObserverToken = NotificationCenter.default.addObserver(forName: NSNotification.Name(rawValue: ZMNeedsToUpdateUserClientsNotificationName), object: nil, queue: .main) { [unowned self] note in
-            
-            let objectID = note.userInfo?[ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey] as? NSManagedObjectID
-            self.managedObjectContext.performGroupedBlock {
-                guard let optionalUser = try? objectID.flatMap(self.managedObjectContext.existingObject(with:)), let user = optionalUser as? ZMUser  else { return }
-                self.userClientsSync.setRemoteIdentifiersAsNeedingDownload(Set(arrayLiteral: user.remoteIdentifier!))
-                RequestAvailableNotification.notifyNewRequestsAvailable(self)
-            }
+        self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
+                                                                       context: self.managedObjectContext.notificationContext,
+                                                                       object: nil)
+            {
+                [weak self] note in
+                guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
+                self.managedObjectContext.performGroupedBlock {
+                    guard let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser else { return }
+                    self.userClientsSync.setRemoteIdentifiersAsNeedingDownload(Set(arrayLiteral: user.remoteIdentifier!))
+                    RequestAvailableNotification.notifyNewRequestsAvailable(self)
+                }
         }
-    }
-    
-    deinit {
-        NotificationCenter.default.removeObserver(self.userClientsObserverToken)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {

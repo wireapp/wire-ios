@@ -26,6 +26,7 @@
 		54327FE61E545A8900B08FFC /* ClientMessageTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE51E545A8900B08FFC /* ClientMessageTranscoder.swift */; };
 		54327FE81E54636400B08FFC /* MessageExpirationTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE71E54636400B08FFC /* MessageExpirationTimer.swift */; };
 		54327FEA1E548A6700B08FFC /* SystemMessageEventsConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE91E548A6700B08FFC /* SystemMessageEventsConsumer.swift */; };
+		543BE0591F698BD4007D7409 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3C1E93C5810089AC69 /* WireDataModel.framework */; };
 		5442A7341E4224DB00415104 /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */; };
 		548A553F1E6576D500680179 /* ZMOTRMessageMissingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548A553D1E6576C000680179 /* ZMOTRMessageMissingTests.swift */; };
 		548F88AD1E54ABE700D179C7 /* PushMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548F88AC1E54ABE700D179C7 /* PushMessageHandler.swift */; };
@@ -35,8 +36,8 @@
 		54B2CBA41E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B2CBA31E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift */; };
 		54B2CBA61E5DE79C00BFFEAE /* ClientMessageTranscoderTests+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B2CBA51E5DE79C00BFFEAE /* ClientMessageTranscoderTests+Ephemeral.swift */; };
 		54B2CBA81E5DE7CF00BFFEAE /* ClientMessageTranscoderTests+ResponsePayload.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B2CBA71E5DE7CF00BFFEAE /* ClientMessageTranscoderTests+ResponsePayload.swift */; };
+		54C8A39A1F751738004961DF /* ZMConversation+Notifications.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C8A3991F751738004961DF /* ZMConversation+Notifications.swift */; };
 		54E03A461E93C5810089AC69 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3B1E93C5810089AC69 /* WireCryptobox.framework */; };
-		54E03A471E93C5810089AC69 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3C1E93C5810089AC69 /* WireDataModel.framework */; };
 		54E03A481E93C5810089AC69 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3D1E93C5810089AC69 /* WireImages.framework */; };
 		54E03A491E93C5810089AC69 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3E1E93C5810089AC69 /* WireLinkPreview.framework */; };
 		54E03A4B1E93C5810089AC69 /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A401E93C5810089AC69 /* WireProtos.framework */; };
@@ -186,6 +187,7 @@
 		54B2CBA31E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTrancoderTests+MessageConfirmation.swift"; sourceTree = "<group>"; };
 		54B2CBA51E5DE79C00BFFEAE /* ClientMessageTranscoderTests+Ephemeral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTranscoderTests+Ephemeral.swift"; sourceTree = "<group>"; };
 		54B2CBA71E5DE7CF00BFFEAE /* ClientMessageTranscoderTests+ResponsePayload.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTranscoderTests+ResponsePayload.swift"; sourceTree = "<group>"; };
+		54C8A3991F751738004961DF /* ZMConversation+Notifications.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Notifications.swift"; sourceTree = "<group>"; };
 		54E03A3B1E93C5810089AC69 /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
 		54E03A3C1E93C5810089AC69 /* WireDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireDataModel.framework; path = Carthage/Build/iOS/WireDataModel.framework; sourceTree = "<group>"; };
 		54E03A3D1E93C5810089AC69 /* WireImages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireImages.framework; path = Carthage/Build/iOS/WireImages.framework; sourceTree = "<group>"; };
@@ -271,8 +273,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				543BE0591F698BD4007D7409 /* WireDataModel.framework in Frameworks */,
 				5442A7341E4224DB00415104 /* libPhoneNumberiOS.framework in Frameworks */,
-				54E03A471E93C5810089AC69 /* WireDataModel.framework in Frameworks */,
 				54E03A491E93C5810089AC69 /* WireLinkPreview.framework in Frameworks */,
 				54E03A4D1E93C5810089AC69 /* WireSystem.framework in Frameworks */,
 				54E03A501E93C5810089AC69 /* WireUtilities.framework in Frameworks */,
@@ -474,6 +476,7 @@
 				BFE85DEC1DD9F47C00BCD68B /* AssetAnalytics.swift */,
 				F9F0573C1D93DC8100FA1AAD /* ZMMessage+Dependency.swift */,
 				54979CB61E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift */,
+				54C8A3991F751738004961DF /* ZMConversation+Notifications.swift */,
 				160C312A1E65FB6D0012E4BC /* ApplicationStatus.swift */,
 				1632C4B01F0E66BB007BE89D /* TearDownCapable.swift */,
 			);
@@ -631,7 +634,7 @@
 		F9F056AA1D93D22000FA1AAD /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0830;
 				ORGANIZATIONNAME = "Wire Swiss GmbH";
 				TargetAttributes = {
 					F9F056B21D93D22000FA1AAD = {
@@ -755,6 +758,7 @@
 				F9F0573D1D93DC8100FA1AAD /* ZMMessage+Dependency.swift in Sources */,
 				16D0E0851DF8954F0075DF8F /* OTREntity.swift in Sources */,
 				F9F057411D93DD5300FA1AAD /* ClientMessageRequestFactory.swift in Sources */,
+				54C8A39A1F751738004961DF /* ZMConversation+Notifications.swift in Sources */,
 				BF3A460C1DD46FD500F5B16A /* AssetV3FileUploadRequestStrategy.swift in Sources */,
 				16D0E0791DF822E10075DF8F /* GenericMessageRequestStrategy.swift in Sources */,
 				F963E9291D95890E00098AD3 /* AssetDownloadRequestFactory.swift in Sources */,
@@ -846,6 +850,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 545BB64A1E573AA500A717CE /* project-debug.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -856,8 +861,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 545BB64B1E573AA500A717CE /* project.xcconfig */;
 			buildSettings = {
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				GCC_NO_COMMON_BLOCKS = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
 			};
 			name = Release;
 		};

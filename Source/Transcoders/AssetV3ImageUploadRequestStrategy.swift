@@ -26,8 +26,8 @@ extension ZMAssetClientMessage {
     static var v3_imageUploadPredicate: NSPredicate {
         return NSPredicate(
             format: "version == 3 && %K != %d && %K == %d",
-            ZMAssetClientMessageUploadedStateKey, ZMAssetUploadState.done.rawValue,
-            ZMAssetClientMessageTransferStateKey, ZMFileTransferState.uploading.rawValue
+            #keyPath(ZMAssetClientMessage.uploadState), AssetUploadState.done.rawValue,
+            #keyPath(ZMAssetClientMessage.transferState), ZMFileTransferState.uploading.rawValue
         )
     }
 
@@ -120,7 +120,7 @@ public final class AssetV3ImageUploadRequestStrategy: AbstractRequestStrategy, Z
             entityName: ZMAssetClientMessage.entityName(),
             update: ZMAssetClientMessage.v3_imageUploadPredicate,
             filter: ZMAssetClientMessage.v3_imageUploadFilter,
-            keysToSync: [ZMAssetClientMessageUploadedStateKey],
+            keysToSync: [#keyPath(ZMAssetClientMessage.uploadState)],
             managedObjectContext: managedObjectContext
         )
     }
@@ -227,7 +227,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
                 message.associatedTaskIdentifier = nil
                 if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
-                    self.failUpload(of: message, keys: [ZMAssetClientMessageUploadedStateKey], request: request)
+                    self.failUpload(of: message, keys: [#keyPath(ZMAssetClientMessage.uploadState)], request: request)
                 }
             })
 
@@ -236,13 +236,14 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             })
         }
 
-        return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey), transportRequest: request)
+        return ZMUpstreamRequest(keys: Set(arrayLiteral: #keyPath(ZMAssetClientMessage.uploadState)), transportRequest: request)
     }
 
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
-        guard let message = managedObject as? ZMAssetClientMessage, let imageAssetStorage = message.imageAssetStorage  else { return false }
-
-        if imageAssetStorage.shouldReprocess(for: .medium) && true == message.fileMessageData?.v3_isImage() {
+        guard let message = managedObject as? ZMAssetClientMessage else { return false }
+        
+        let imageAssetStorage = message.imageAssetStorage
+        if imageAssetStorage.shouldReprocess(for: .medium) && true == message.fileMessageData?.v3_isImage {
             // before we create an upstream request we should check if we can (and should) process image data again
             // if we can we reschedule processing, this might cause a loop if the message can not be processed whatsoever
             scheduleImageProcessing(forMessage: message, format: .medium)
@@ -270,7 +271,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             message.expire()
         }
 
-        guard keys.contains(ZMAssetClientMessageUploadedStateKey) else { return }
+        guard keys.contains(#keyPath(ZMAssetClientMessage.uploadState)) else { return }
         message.didFailToUploadFileData()
         managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
         message.uploadState = .uploadingFailed

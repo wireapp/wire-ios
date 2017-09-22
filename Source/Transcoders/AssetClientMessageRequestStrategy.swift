@@ -47,7 +47,7 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
             entityName: ZMAssetClientMessage.entityName(),
             update: ZMAssetClientMessage.v3_messageUpdatePredicate,
             filter: ZMAssetClientMessage.v3_messageInsertionFilter,
-            keysToSync: [ZMAssetClientMessageUploadedStateKey],
+            keysToSync: [#keyPath(ZMAssetClientMessage.uploadState)],
             managedObjectContext: managedObjectContext
         )
     }
@@ -87,7 +87,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
         guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message)") }
-        return ZMUpstreamRequest(keys: [ZMAssetClientMessageUploadedStateKey], transportRequest: request)
+        return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.uploadState)], transportRequest: request)
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable : Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
@@ -98,7 +98,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
         }
 
         if response.result == .success {
-            if message.fileMessageData?.v3_isImage() == true {
+            if message.fileMessageData?.v3_isImage == true {
                 message.delivered = true
                 message.uploadState = .done
                 message.markAsSent()
@@ -112,7 +112,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
 
     func updateNonImageFileMessageStatus(for message: ZMAssetClientMessage, response: ZMTransportResponse) -> Bool {
         guard let filedata = message.fileMessageData else { return false }
-        precondition(!filedata.v3_isImage(), "Should not be called with a v3 image message")
+        precondition(!filedata.v3_isImage, "Should not be called with a v3 image message")
 
         switch message.uploadState {
         case .uploadingPlaceholder: // We uploaded the Asset.original
@@ -155,7 +155,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
             failedBecauseOfMissingClients = message.parseUploadResponse(response, clientRegistrationDelegate: delegate)
         }
         if !failedBecauseOfMissingClients {
-            let shouldUploadFailed = [ZMAssetUploadState.uploadingFullAsset, .uploadingThumbnail].contains(message.uploadState)
+            let shouldUploadFailed = [AssetUploadState.uploadingFullAsset, .uploadingThumbnail].contains(message.uploadState)
             failMessageUpload(message, keys: keys, request: upstreamRequest.transportRequest)
             return shouldUploadFailed
         }
@@ -169,7 +169,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
             message.expire()
         }
 
-        if keys.contains(ZMAssetClientMessageUploadedStateKey) {
+        if keys.contains(#keyPath(ZMAssetClientMessage.uploadState)) {
             switch message.uploadState {
             case .uploadingPlaceholder: // Asset.Original
                 message.resetLocallyModifiedKeys(keys) // We do not want to send a not-uploaded if we failed to upload the Asset.Original

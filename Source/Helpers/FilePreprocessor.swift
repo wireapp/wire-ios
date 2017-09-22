@@ -57,7 +57,7 @@ It creates an encrypted version from the plain text version
     }
     
     public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let predicate = NSPredicate(format: "%K == NO && %K == %d", DeliveredKey, ZMAssetClientMessageTransferStateKey, ZMFileTransferState.uploading.rawValue)
+        let predicate = NSPredicate(format: "%K == NO && %K == %d", DeliveredKey, #keyPath(ZMAssetClientMessage.transferState), ZMFileTransferState.uploading.rawValue)
         return ZMAssetClientMessage.sortedFetchRequest(with: predicate)
     }
     
