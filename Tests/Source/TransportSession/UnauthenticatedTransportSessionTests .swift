@@ -50,7 +50,7 @@ private class MockURLSession: SessionProtocol {
 
 }
 
-private class MockReachability: NSObject, ReachabilityProvider {
+private class MockReachability: NSObject, ReachabilityProvider, ReachabilityTearDown {
     let mayBeReachable = true
     let isMobileConnection = true
     let oldMayBeReachable = true

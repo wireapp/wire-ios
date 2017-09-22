@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -28,7 +28,7 @@
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 
-@interface ZMReachability() <ReachabilityProvider>
+@interface ZMReachability() <ReachabilityProvider,ReachabilityTearDown>
 {
     int32_t _tornDown;
 }
