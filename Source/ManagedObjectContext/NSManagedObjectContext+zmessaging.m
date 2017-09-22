@@ -26,9 +26,7 @@
 #import "ZMUser+Internal.h"
 #import "ZMSyncMergePolicy.h"
 #import "ZMConversation+Internal.h"
-#import "ZMNotifications.h"
 
-#import "ZMConversation+Internal.h"
 #import <objc/runtime.h>
 #import <libkern/OSAtomic.h>
 #import <WireUtilities/WireUtilities-Swift.h>

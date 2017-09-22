@@ -31,11 +31,10 @@ extension ZMAssetClientMessage {
     /// Returns the binary data of the encrypted `Asset.Uploaded` protobuf message or `nil`
     /// in case the receiver does not contain a `Asset.Uploaded` generic message.
     /// Also returns `nil` for messages representing an image
-    public func encryptedMessagePayloadForDataType(_ dataType: ZMAssetClientMessageDataType) -> (data: Data, strategy: MissingClientsStrategy)? {
+    public func encryptedMessagePayloadForDataType(_ dataType: AssetClientMessageDataType) -> (data: Data, strategy: MissingClientsStrategy)? {
         
-        guard imageAssetStorage != nil else { return nil }
         guard let selfClient = validSelfClient() else {return nil}
-        guard let genericMessage = genericMessage(for: dataType) else { return nil }
+        guard let genericMessage = genericMessage(dataType: dataType) else { return nil }
         guard let (recipients, strategy) = userEntriesAndStrategy(for: genericMessage, selfClient: selfClient) else { return nil }
         
         var data : Data?
@@ -54,7 +53,6 @@ extension ZMAssetClientMessage {
     /// Returns the OTR asset meta for the image format
     public func encryptedMessagePayloadForImageFormat(_ imageFormat: ZMImageFormat) -> (otrMessageData: ZMOtrAssetMeta, strategy: MissingClientsStrategy)? {
         
-        guard let imageAssetStorage = imageAssetStorage else { return nil }
         guard let selfClient = validSelfClient() else {return nil}
         guard let genericMessage = imageAssetStorage.genericMessage(for: imageFormat) else { return nil }
         guard let (recipients, strategy) = userEntriesAndStrategy(for: genericMessage, selfClient: selfClient) else { return nil }

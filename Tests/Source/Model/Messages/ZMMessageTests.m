@@ -28,7 +28,6 @@
 #import "ZMMessage+Internal.h"
 #import "ZMUser+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
-#import "ZMAssetClientMessage.h"
 #import "ZMMessageTests.h"
 #import "MessagingTest+EventFactory.h"
 #import <OCMock/OCMock.h>
@@ -670,45 +669,6 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertNil(message.systemMessageData);
     XCTAssertNotNil(message.imageMessageData);
     XCTAssertNil(message.knockMessageData);
-}
-
-- (void)testThatItUpdatesTheServerTimestampAfterPreviewWasUploaded
-{
-    // given
-    NSDate *referenceDate = [NSDate dateWithTimeIntervalSince1970:123456];
-    NSDate *updatedDate = [NSDate dateWithTimeIntervalSince1970:127476];
-    
-    ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    message.serverTimestamp = referenceDate;
-    message.uploadState = ZMAssetUploadStateUploadingPlaceholder;
-    
-    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessageUploadedStateKey];
-
-    
-    // when
-    [message updateWithPostPayload:@{@"time" : updatedDate.transportString } updatedKeys:updatedKeys];
-    
-    // then
-    XCTAssertEqualObjects(message.serverTimestamp, updatedDate);
-}
-
-- (void)testThatItDoesNotUpdateTheServerTimestampAfterMediumWasUploaded
-{
-    // given
-    NSDate *referenceDate = [NSDate dateWithTimeIntervalSince1970:123456];
-    NSDate *updatedDate = [NSDate dateWithTimeIntervalSince1970:127476];
-    
-    ZMAssetClientMessage *message = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    message.serverTimestamp = referenceDate;
-    message.uploadState = ZMAssetUploadStateUploadingFullAsset;
-    
-    NSSet *updatedKeys = [NSSet setWithObject:ZMAssetClientMessageUploadedStateKey];
-    
-    // when
-    [message updateWithPostPayload:@{@"time" : updatedDate.transportString } updatedKeys:updatedKeys];
-    
-    // then
-    XCTAssertEqualObjects(message.serverTimestamp, referenceDate);
 }
 
 @end

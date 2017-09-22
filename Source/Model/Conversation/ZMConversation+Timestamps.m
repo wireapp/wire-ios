@@ -55,7 +55,11 @@
         if (shouldSync && self.lastReadServerTimeStamp != nil && isSyncContext) {
             [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationLastReadServerTimeStampKey]];
         }
-        [[NSNotificationCenter defaultCenter] postNotificationName:ZMConversationLastReadDidChangeNotificationName object: self];
+        [[[NotificationInContext alloc] initWithName:ZMConversation.lastReadDidChangeNotificationName
+                                             context:self.managedObjectContext.notificationContext
+                                              object:self
+                                            userInfo:nil
+          ] post];
     }
     return (newTime != nil);
 }

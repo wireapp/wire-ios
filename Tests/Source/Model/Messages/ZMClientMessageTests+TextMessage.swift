@@ -22,26 +22,6 @@ import WireLinkPreview
 
 @testable import WireDataModel
 
-private class NotificationObserver: NSObject {
-    
-    let closure: (Notification) -> Void
-    var token: NSObjectProtocol?
-    
-    init(name: String, closure: @escaping (Notification) -> Void) {
-        self.closure = closure
-        super.init()
-        NotificationCenter.default.addObserver(self, selector: #selector(notifcationReceived), name: NSNotification.Name(rawValue: name), object: nil)
-    }
-    
-    @objc func notifcationReceived(_ note: Notification) {
-        closure(note)
-    }
-    
-    func tearDown() {
-        NotificationCenter.default.removeObserver(self)
-    }
-}
-
 class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     
     override func tearDown() {
@@ -294,7 +274,6 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
     }
     
     func assertThatItSendsANotificationToDownloadTheImageWhenRequestImageDownloadIsCalled(_ preview: LinkPreview, line: UInt = #line) {
-        let anExpectation = expectation(description: "It should fire a notification")
         
         // given
         let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
@@ -308,17 +287,20 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
 
         
         // when
-        
-        let observer = NotificationObserver(name: ZMClientMessageLinkPreviewImageDownloadNotificationName) { note in
-            guard note.object as? NSManagedObjectID == clientMessage.objectID else { return XCTFail() }
-            anExpectation.fulfill()
+        let expectation = self.expectation(description: "Notified")
+        let token: Any? = NotificationInContext.addObserver(name: ZMClientMessage.linkPreviewImageDownloadNotification,
+                                          context: self.uiMOC.notificationContext,
+                                          object: clientMessage.objectID)
+        { _ in
+            expectation.fulfill()
         }
         
         clientMessage.requestImageDownload()
         
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
-        observer.tearDown()
+        withExtendedLifetime(token) { () -> () in
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.2), line: line)
+        }
     }
     
 

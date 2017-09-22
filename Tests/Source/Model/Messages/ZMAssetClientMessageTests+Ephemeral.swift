@@ -124,10 +124,10 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.uploadState = .uploadingFullAsset
             
             // when
-            message.update(withPostPayload: [:], updatedKeys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
+            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
             
             // then
-            XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingFullAsset)
+            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 1)
             XCTAssertTrue(self.obfuscationTimer.isTimerRunning(for: message))
         }
@@ -147,11 +147,11 @@ extension ZMAssetClientMessageTests_Ephemeral {
 
             message.update(
                 withPostPayload: payload,
-                updatedKeys: [ZMAssetClientMessageUploadedStateKey]
+                updatedKeys: [#keyPath(ZMAssetClientMessage.uploadState)]
             )
             
             // then
-            XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingFullAsset)
+            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 1)
             XCTAssertTrue(self.obfuscationTimer.isTimerRunning(for: message))
         }
@@ -168,7 +168,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.update(withPostPayload: [:], updatedKeys: Set())
             
             // then
-            XCTAssertEqual(message.uploadState, ZMAssetUploadState.uploadingPlaceholder)
+            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingPlaceholder)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
         }
     }
@@ -186,6 +186,30 @@ extension ZMAssetClientMessageTests_Ephemeral {
             XCTAssertEqual(message.uploadState, .uploadingFullAsset)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
         }
+    }
+    
+    func testThatTheEphemeralMessageHasImageProperties() {
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            self.conversation.messageDestructionTimeout = 10
+            let data = self.verySmallJPEGData()
+            let message = self.conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
+            
+            self.syncMOC.saveOrRollback()
+            
+            // WHEN
+            let size = CGSize(width: 368, height: 520)
+            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
+            message.imageAssetStorage.setImageData(data, for: .medium, properties: properties)
+            self.syncMOC.saveOrRollback()
+            
+            // THEN
+            XCTAssertEqual(message.mimeType, "image/jpg")
+            XCTAssertEqual(message.size, 1024)
+            XCTAssertEqual(message.imageMessageData?.originalSize, size)
+        }
+        
     }
     
 }
@@ -266,8 +290,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         let message = appendPreviewImageMessage()
         message.sender = sender
-        XCTAssertNil(message.imageAssetStorage?.mediumGenericMessage)
-        XCTAssertNotNil(message.imageAssetStorage?.previewGenericMessage)
+        XCTAssertNil(message.imageAssetStorage.mediumGenericMessage)
+        XCTAssertNotNil(message.imageAssetStorage.previewGenericMessage)
 
         // when
         XCTAssertFalse(message.startSelfDestructionIfNeeded())

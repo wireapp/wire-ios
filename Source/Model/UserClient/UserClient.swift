@@ -211,7 +211,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     /// Can be called several times without issues
     public func resetSession() {
         guard let sessionIdentifier = self.sessionIdentifier,
-              let uiMOC = self.managedObjectContext,
+              let uiMOC = self.managedObjectContext?.zm_userInterface,
               let syncMOC = uiMOC.zm_sync
         else { return }
 
@@ -228,19 +228,23 @@ public class UserClient: ZMManagedObject, UserClientType {
             // Mark clients as needing to be refetched
             selfClient.missesClient(syncClient)
             syncMOC.saveOrRollback()
-
+            let userID = self.user!.objectID
+            
             uiMOC.performGroupedBlock {
                 // Send session reset message so other user can send us messages immediately
-                guard let user = self.user, let conversation = self.conversation(for: user, in: uiMOC) else { return }
+                guard
+                    let user = (try? uiMOC.existingObject(with: userID)) as? ZMUser,
+                    let conversation = self.conversation(for: user) else { return }
                 let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
-                GenericMessageScheduleNotification(message: message, conversation: conversation).post()
+                GenericMessageScheduleNotification.post(message: message, conversation: conversation)
             }
         }
     }
 
-    private func conversation(for user: ZMUser, in context: NSManagedObjectContext) -> ZMConversation? {
+    private func conversation(for user: ZMUser) -> ZMConversation? {
         if user.isSelfUser {
-            return ZMConversation.selfConversation(in: context)
+            guard let moc = user.managedObjectContext else { return nil }
+            return ZMConversation.selfConversation(in: moc)
         } else {
             return user.oneToOneConversation
         }

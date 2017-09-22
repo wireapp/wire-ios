@@ -118,7 +118,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         message.nonce = UUID.create()
         
         let imageData = self.verySmallJPEGData()
-        XCTAssertNotNil(message.imageAssetStorage!.updateMessage(withImageData: imageData, for: ZMImageFormat.preview))
+        XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: imageData, for: ZMImageFormat.preview))
         
         let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.preview, encrypted: message.isEncrypted)
         AssertOptionalNotNil(storedData) { storedData in
@@ -131,7 +131,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         message.nonce = UUID.create()
         
         let imageData = self.verySmallJPEGData()
-        XCTAssertNotNil(message.imageAssetStorage!.updateMessage(withImageData: imageData, for: ZMImageFormat.medium))
+        XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: imageData, for: ZMImageFormat.medium))
         
         let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.medium, encrypted: message.isEncrypted)
         AssertOptionalNotNil(storedData) { storedData in
@@ -156,7 +156,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce.transportString(), format: ZMImageFormat.medium))
         
         // when
-        XCTAssertNotNil(message.imageAssetStorage!.updateMessage(withImageData: encryptedImageData, for: ZMImageFormat.medium))
+        XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: encryptedImageData, for: ZMImageFormat.medium))
         
         let decryptedImageData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.medium, encrypted: false)
         AssertOptionalNotNil(decryptedImageData) { decryptedImageData in
@@ -185,7 +185,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         
         // when
         //pass in some wrong data (i.e. plain data instead of encrypted)
-        XCTAssertNil(message.imageAssetStorage!.updateMessage(withImageData: imageData, for: ZMImageFormat.medium))
+        XCTAssertNil(message.imageAssetStorage.updateMessage(imageData: imageData, for: ZMImageFormat.medium))
         
         let decryptedImageData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.medium, encrypted: false)
         XCTAssertNil(decryptedImageData)
@@ -210,7 +210,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce.transportString(), format: ZMImageFormat.medium))
         
         // when
-        XCTAssertNotNil(message.imageAssetStorage!.updateMessage(withImageData: encryptedImageData, for: ZMImageFormat.medium))
+        XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: encryptedImageData, for: ZMImageFormat.medium))
         XCTAssertTrue(message.hasDownloadedImage)
         
         // pretend that there are no encrypted no decrypted message data stored
@@ -235,11 +235,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = addFile()
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         // then
         XCTAssertNotNil(sut)
@@ -255,11 +255,11 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = UUID.create()
         let fileMetadata = addFile()
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         // when
         sut.expire()
@@ -268,7 +268,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
-        XCTAssertEqual(sut.uploadState, ZMAssetUploadState.done)
+        XCTAssertEqual(sut.uploadState, AssetUploadState.done)
         XCTAssertTrue(sut.isExpired)
     }
 
@@ -276,11 +276,11 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = UUID.create()
         let fileMetadata = addFile()
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
 
 
         sut.uploadState = .uploadingFullAsset
@@ -292,7 +292,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
-        XCTAssertEqual(sut.uploadState.rawValue, ZMAssetUploadState.uploadingFailed.rawValue)
+        XCTAssertEqual(sut.uploadState.rawValue, AssetUploadState.uploadingFailed.rawValue)
         XCTAssertTrue(sut.isExpired)
     }
 
@@ -300,11 +300,11 @@ extension ZMAssetClientMessageTests {
         // given
         let nonce = UUID.create()
         let fileMetadata = addFile()
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
 
 
         sut.uploadState = .uploadingThumbnail
@@ -316,7 +316,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
-        XCTAssertEqual(sut.uploadState.rawValue, ZMAssetUploadState.uploadingFailed.rawValue)
+        XCTAssertEqual(sut.uploadState.rawValue, AssetUploadState.uploadingFailed.rawValue)
         XCTAssertTrue(sut.isExpired)
     }
     
@@ -345,11 +345,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = addFile()
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         // then
         XCTAssertTrue(sut.hasDownloadedFile)
@@ -363,11 +363,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = addFile()
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         self.uiMOC.zm_fileAssetCache.deleteAssetData(sut.nonce, fileName: sut.filename!, encrypted: false)
         
@@ -385,11 +385,11 @@ extension ZMAssetClientMessageTests {
 
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         self.uiMOC.zm_imageAssetCache.storeAssetData(sut.nonce, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
         defer { self.uiMOC.zm_imageAssetCache.deleteAssetData(sut.nonce, format: .medium, encrypted: false) }
@@ -406,11 +406,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = addFile()
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         self.uiMOC.zm_imageAssetCache.storeAssetData(sut.nonce, format: .original, encrypted: false, data: Data.secureRandomData(ofLength: 100))
         defer { self.uiMOC.zm_imageAssetCache.deleteAssetData(sut.nonce, format: .medium, encrypted: false) }
@@ -432,11 +432,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
         
         XCTAssertNotNil(sut)
         
@@ -465,11 +465,11 @@ extension ZMAssetClientMessageTests {
         let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
-        let sut = ZMAssetClientMessage(
-            fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: fileMetadata,
             nonce: nonce,
             managedObjectContext: uiMOC,
-            expiresAfter: 0)
+            expiresAfter: 0)!
 
         XCTAssertNotNil(sut)
         
@@ -634,12 +634,12 @@ extension ZMAssetClientMessageTests {
             let fileMetadata = self.addFile()
             
             // when
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             // then
             XCTAssertNotNil(sut)
@@ -653,12 +653,12 @@ extension ZMAssetClientMessageTests {
             let nonce = UUID.create()
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             // when
             let otrKey = Data.randomEncryptionKey()
@@ -697,12 +697,12 @@ extension ZMAssetClientMessageTests {
             conversation.conversationType = .group
             conversation.addParticipant(user2)
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             sut.visibleInConversation = conversation
             
             // when
@@ -744,12 +744,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             XCTAssertNotNil(sut.fileMessageData)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
@@ -770,12 +770,12 @@ extension ZMAssetClientMessageTests {
             
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             XCTAssertNotNil(sut.fileMessageData)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
@@ -805,12 +805,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             sut.transferState = .downloading
             sut.delivered = true
@@ -832,12 +832,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
 
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             sut.transferState = .uploading
             sut.delivered = false
@@ -871,12 +871,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             sut.transferState = .uploaded
             sut.delivered = true
@@ -897,12 +897,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             sut.delivered = true
             XCTAssertNotNil(sut.fileMessageData)
@@ -914,7 +914,7 @@ extension ZMAssetClientMessageTests {
             
             // then the generic message data should include the not uploaded
             let assetMessage = sut.genericAssetMessage!
-            let genericMessage = sut.genericMessage(for: .placeholder)!
+            let genericMessage = sut.genericMessage(dataType: .placeholder)!
             
             XCTAssertTrue(assetMessage.asset.hasNotUploaded())
             XCTAssertEqual(assetMessage.asset.notUploaded, ZMAssetNotUploaded.CANCELLED)
@@ -934,7 +934,13 @@ extension ZMAssetClientMessageTests {
             XCTAssertNotNil(sut.fileMessageData)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
-            _ = self.expectation(forNotification: ZMAssetClientMessageDidCancelFileDownloadNotificationName, object:sut.objectID, handler: nil)
+            let expectation = self.expectation(description: "Notification fired")
+            let token = NotificationInContext.addObserver(
+                name: ZMAssetClientMessage.didCancelFileDownloadNotificationName,
+                context: self.uiMOC.notificationContext,
+                object: sut.objectID) { note in
+                    expectation.fulfill()
+            }
             
             sut.requestFileDownload()
             XCTAssertEqual(sut.transferState, ZMFileTransferState.downloading)
@@ -943,7 +949,10 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
             
             // then
-            XCTAssertEqual(sut.transferState, ZMFileTransferState.uploaded)
+            withExtendedLifetime(token) { () -> () in
+                XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+                XCTAssertEqual(sut.transferState, ZMFileTransferState.uploaded)
+            }
         }
     }
     
@@ -953,12 +962,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             self.syncConversation.mutableMessages.add(sut)
             sut.delivered = true
@@ -970,7 +979,7 @@ extension ZMAssetClientMessageTests {
             sut.resend()
             
             // then
-            XCTAssertEqual(sut.uploadState, ZMAssetUploadState.uploadingPlaceholder)
+            XCTAssertEqual(sut.uploadState, AssetUploadState.uploadingPlaceholder)
             XCTAssertFalse(sut.delivered)
             XCTAssertEqual(sut.transferState, ZMFileTransferState.uploading)
             XCTAssertEqual(sut.progress, 0)
@@ -984,7 +993,7 @@ extension ZMAssetClientMessageTests {
             let image = self.verySmallJPEGData()
             let nonce = UUID.create()
 
-            let sut = ZMAssetClientMessage(originalImageData: image, nonce: nonce, managedObjectContext: self.syncMOC, expiresAfter: 1000)
+            let sut = ZMAssetClientMessage.assetClientMessage(originalImage: image, nonce: nonce, managedObjectContext: self.syncMOC, expiresAfter: 1000)
             
             self.syncConversation.mutableMessages.add(sut)
             sut.delivered = true
@@ -996,7 +1005,7 @@ extension ZMAssetClientMessageTests {
             sut.resend()
             
             // then
-            XCTAssertEqual(sut.uploadState, ZMAssetUploadState.uploadingFullAsset)
+            XCTAssertEqual(sut.uploadState, AssetUploadState.uploadingFullAsset)
             XCTAssertFalse(sut.delivered)
             XCTAssertEqual(sut.transferState, ZMFileTransferState.uploading)
             XCTAssertEqual(sut.progress, 0)
@@ -1009,12 +1018,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             // then
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
@@ -1033,12 +1042,12 @@ extension ZMAssetClientMessageTests {
             let uuid = UUID.create().transportString()
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
             sut.add(ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce)"))
@@ -1070,12 +1079,12 @@ extension ZMAssetClientMessageTests {
             let uuid = UUID.create().transportString()
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
             let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce)")
@@ -1111,12 +1120,12 @@ extension ZMAssetClientMessageTests {
             let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             let assetWithUploaded = ZMAsset.asset(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key())
             let assetWithPreview = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
@@ -1159,10 +1168,10 @@ extension ZMAssetClientMessageTests {
         let uuid = UUID.create().transportString()
         let fileMetadata = self.addFile()
         
-        let sut = ZMAssetClientMessage(fileMetadata: fileMetadata,
+        let sut = ZMAssetClientMessage.assetClientMessage(with: fileMetadata,
                                        nonce: UUID.create(),
                                        managedObjectContext: uiMOC,
-                                       expiresAfter: 0)
+                                       expiresAfter: 0)!
         
         XCTAssertFalse(sut.genericAssetMessage!.asset.hasPreview())
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -1212,10 +1221,10 @@ extension ZMAssetClientMessageTests {
             let fileMetadata = ZMFileMetadata(fileURL: self.currentTestURL!, thumbnail: thumbnail)
             
             // when
-            let message = ZMAssetClientMessage(fileMetadata: fileMetadata,
+            let message = ZMAssetClientMessage.assetClientMessage(with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
-                expiresAfter: 0)
+                expiresAfter: 0)!
             
             // then
             let storedThumbail = message.managedObjectContext?.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
@@ -1237,10 +1246,10 @@ extension ZMAssetClientMessageTests {
             let fileMetadata = ZMFileMetadata(fileURL: textFile, thumbnail: thumbnail)
             
             // when
-            let message = ZMAssetClientMessage(fileMetadata: fileMetadata,
+            let message = ZMAssetClientMessage.assetClientMessage(with: fileMetadata,
                                                nonce: nonce,
                                                managedObjectContext: self.syncMOC,
-                                               expiresAfter: 0)
+                                               expiresAfter: 0)!
             
             // then
             let storedThumbail = message.managedObjectContext?.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
@@ -1295,7 +1304,7 @@ extension ZMAssetClientMessageTests {
         let image = self.verySmallJPEGData()
         
         // when
-        _ = ZMAssetClientMessage(originalImageData: image, nonce: nonce, managedObjectContext: self.uiMOC, expiresAfter: 0)
+        _ = ZMAssetClientMessage.assetClientMessage(originalImage: image, nonce: nonce, managedObjectContext: self.uiMOC, expiresAfter: 0)
         
         // then
         let fileData = self.uiMOC.zm_imageAssetCache.assetData(nonce, format: .original, encrypted: false)
@@ -1310,8 +1319,8 @@ extension ZMAssetClientMessageTests {
         let expectedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
         
         // when
-        let sut = ZMAssetClientMessage(originalImageData: image, nonce: nonce, managedObjectContext: self.uiMOC, expiresAfter: 0)
-        let imageMessageStorage = sut.imageAssetStorage!
+        let sut = ZMAssetClientMessage.assetClientMessage(originalImage: image, nonce: nonce, managedObjectContext: self.uiMOC, expiresAfter: 0)
+        let imageMessageStorage = sut.imageAssetStorage
         
         // then
         XCTAssertEqual(expectedSize, imageMessageStorage.originalImageSize())
@@ -1331,7 +1340,7 @@ extension ZMAssetClientMessageTests {
             message.uploadState = .uploadingFullAsset
 
             // when
-            message.update(withPostPayload: payload, updatedKeys: Set(arrayLiteral: ZMAssetClientMessageUploadedStateKey))
+            message.update(withPostPayload: payload, updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
 
             // then
             XCTAssertEqual(message.serverTimestamp, message.conversation?.lastServerTimeStamp)
@@ -1401,7 +1410,7 @@ extension ZMAssetClientMessageTests {
         let sut = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false, imageData: expectedData)
         
         // when
-        let data = sut.imageAssetStorage!.originalImageData()
+        let data = sut.imageAssetStorage.originalImageData()
         
         // then
         XCTAssertNotNil(data)
@@ -1413,7 +1422,7 @@ extension ZMAssetClientMessageTests {
         let sut = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
         
         // then
-        XCTAssertNil(sut.imageAssetStorage!.originalImageData())
+        XCTAssertNil(sut.imageAssetStorage.originalImageData())
     }
 
     func testThatIsPublicForFormatReturnsNoForAllFormats() {
@@ -1425,7 +1434,7 @@ extension ZMAssetClientMessageTests {
 
         // then
         for format in formats {
-            XCTAssertFalse(sut.imageAssetStorage!.isPublic(for: format))
+            XCTAssertFalse(sut.imageAssetStorage.isPublic(for: format))
         }
     }
 
@@ -1435,7 +1444,7 @@ extension ZMAssetClientMessageTests {
         
         for format in [ZMImageFormat.preview, ZMImageFormat.medium] {
             // when
-            let data = message.imageAssetStorage!.imageData(for: format, encrypted: true)
+            let data = message.imageAssetStorage.imageData(for: format, encrypted: true)
             
             // then
             let dataOnFile = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: format, encrypted: true)
@@ -1449,7 +1458,7 @@ extension ZMAssetClientMessageTests {
         
         for format in [ZMImageFormat.preview, ZMImageFormat.medium] {
             // when
-            let data = message.imageAssetStorage!.imageData(for: format, encrypted: false)
+            let data = message.imageAssetStorage.imageData(for: format, encrypted: false)
             
             // then
             let dataOnFile = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format:format, encrypted: false)
@@ -1463,8 +1472,8 @@ extension ZMAssetClientMessageTests {
         for format in [ZMImageFormat.preview, ZMImageFormat.medium] {
             
             // when
-            let plainData = message.imageAssetStorage!.imageData(for: format, encrypted: false)
-            let encryptedData = message.imageAssetStorage!.imageData(for: format, encrypted: true)
+            let plainData = message.imageAssetStorage.imageData(for: format, encrypted: false)
+            let encryptedData = message.imageAssetStorage.imageData(for: format, encrypted: true)
             
             // then
             XCTAssertNil(plainData)
@@ -1481,7 +1490,7 @@ extension ZMAssetClientMessageTests {
         for _ in [ZMImageFormat.preview, ZMImageFormat.medium] {
             
             // when
-            let originalSize = message.imageAssetStorage!.originalImageSize()
+            let originalSize = message.imageAssetStorage.originalImageSize()
             
             // then
             XCTAssertEqual(originalSize, self.sampleImageProperties(.medium).size)
@@ -1497,7 +1506,7 @@ extension ZMAssetClientMessageTests {
         for _ in [ZMImageFormat.preview, ZMImageFormat.medium] {
             
             // when
-            let originalSize = message.imageAssetStorage!.originalImageSize()
+            let originalSize = message.imageAssetStorage.originalImageSize()
             
             // then
             XCTAssertEqual(originalSize, CGSize(width: 0, height: 0))
@@ -1514,7 +1523,7 @@ extension ZMAssetClientMessageTests {
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
         
         // then
-        XCTAssertEqual(message.imageAssetStorage!.requiredImageFormats(), expected);
+        XCTAssertEqual(message.imageAssetStorage.requiredImageFormats(), expected);
 
     }
     
@@ -1524,11 +1533,11 @@ extension ZMAssetClientMessageTests {
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
 
         // then
-        XCTAssertFalse(message.imageAssetStorage!.isInline(for:.medium));
-        XCTAssertTrue(message.imageAssetStorage!.isInline(for: .preview));
-        XCTAssertFalse(message.imageAssetStorage!.isInline(for: .original));
-        XCTAssertFalse(message.imageAssetStorage!.isInline(for: .profile));
-        XCTAssertFalse(message.imageAssetStorage!.isInline(for:.invalid));
+        XCTAssertFalse(message.imageAssetStorage.isInline(for:.medium));
+        XCTAssertTrue(message.imageAssetStorage.isInline(for: .preview));
+        XCTAssertFalse(message.imageAssetStorage.isInline(for: .original));
+        XCTAssertFalse(message.imageAssetStorage.isInline(for: .profile));
+        XCTAssertFalse(message.imageAssetStorage.isInline(for:.invalid));
     }
 
     func testThatItReturnsTheRightValueForUsingNativePushForFormat() {
@@ -1537,11 +1546,11 @@ extension ZMAssetClientMessageTests {
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
         
         // then
-        XCTAssertTrue(message.imageAssetStorage!.isUsingNativePush(for: .medium));
-        XCTAssertFalse(message.imageAssetStorage!.isUsingNativePush(for: .preview));
-        XCTAssertFalse(message.imageAssetStorage!.isUsingNativePush(for: .original));
-        XCTAssertFalse(message.imageAssetStorage!.isUsingNativePush(for: .profile));
-        XCTAssertFalse(message.imageAssetStorage!.isUsingNativePush(for: .invalid));
+        XCTAssertTrue(message.imageAssetStorage.isUsingNativePush(for: .medium));
+        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .preview));
+        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .original));
+        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .profile));
+        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .invalid));
     }
     
     func testThatItClearsOnlyTheOriginalImageFormat() {
@@ -1550,12 +1559,12 @@ extension ZMAssetClientMessageTests {
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: true, storeProcessed: true)
         
         // when
-        message.imageAssetStorage!.processingDidFinish()
+        message.imageAssetStorage.processingDidFinish()
         
         // then
         let directory = self.uiMOC.zm_imageAssetCache!
         XCTAssertNil(directory.assetData(message.nonce, format: .original, encrypted: false))
-        XCTAssertNil(message.imageAssetStorage!.originalImageData())
+        XCTAssertNil(message.imageAssetStorage.originalImageData())
         XCTAssertNotNil(directory.assetData(message.nonce, format: .medium, encrypted: false))
         XCTAssertNotNil(directory.assetData(message.nonce, format: .preview, encrypted: false))
         XCTAssertNotNil(directory.assetData(message.nonce, format: .medium, encrypted: true))
@@ -1568,95 +1577,95 @@ extension ZMAssetClientMessageTests {
             
             // given
             let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
-            let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)
+            let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)!
             let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/tiff")
             
             // when
-            message.imageAssetStorage!.setImageData(testData, for: format, properties: testProperties)
+            message.imageAssetStorage.setImageData(testData, for: format, properties: testProperties)
             
             // then
-            XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: format)!.image.width, 33)
-            XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: format)!.image.height, 55)
-            XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: format)!.image.size, 10)
-            XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: format)!.image.mimeType, "image/tiff")
+            XCTAssertEqual(message.imageAssetStorage.genericMessage(for: format)!.image.width, 33)
+            XCTAssertEqual(message.imageAssetStorage.genericMessage(for: format)!.image.height, 55)
+            XCTAssertEqual(message.imageAssetStorage.genericMessage(for: format)!.image.size, 10)
+            XCTAssertEqual(message.imageAssetStorage.genericMessage(for: format)!.image.mimeType, "image/tiff")
         }
     }
     
     func testThatItStoresTheRightEncryptionKeysNoMatterInWhichOrderTheDataIsSet() {
         
         // given
-        let dataPreview = "FOOOOOO".data(using: String.Encoding.utf8)
-        let dataMedium = "xxxxxxxxx".data(using: String.Encoding.utf8)
+        let dataPreview = "FOOOOOO".data(using: String.Encoding.utf8)!
+        let dataMedium = "xxxxxxxxx".data(using: String.Encoding.utf8)!
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
         message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/tiff")
         
         // when
-        message.imageAssetStorage!.setImageData(dataPreview, for: .preview, properties: testProperties) // simulate various order of setting
-        message.imageAssetStorage!.setImageData(dataMedium, for: .medium, properties: testProperties)
-        message.imageAssetStorage!.setImageData(dataPreview, for: .preview, properties: testProperties)
-        message.imageAssetStorage!.setImageData(dataMedium, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(dataPreview, for: .preview, properties: testProperties) // simulate various order of setting
+        message.imageAssetStorage.setImageData(dataMedium, for: .medium, properties: testProperties)
+        message.imageAssetStorage.setImageData(dataPreview, for: .preview, properties: testProperties)
+        message.imageAssetStorage.setImageData(dataMedium, for: .medium, properties: testProperties)
 
         // then
         let dataOnDiskForPreview = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: .preview, encrypted: true)!
         let dataOnDiskForMedium = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)!
         
-        XCTAssertEqual(dataOnDiskForPreview.zmSHA256Digest(), message.imageAssetStorage!.previewGenericMessage!.image.sha256)
-        XCTAssertEqual(dataOnDiskForMedium.zmSHA256Digest(), message.imageAssetStorage!.mediumGenericMessage!.image.sha256)
+        XCTAssertEqual(dataOnDiskForPreview.zmSHA256Digest(), message.imageAssetStorage.previewGenericMessage!.image.sha256)
+        XCTAssertEqual(dataOnDiskForMedium.zmSHA256Digest(), message.imageAssetStorage.mediumGenericMessage!.image.sha256)
     }
     
     func testThatItSetsTheMediumSizeOnThePreviewOriginalSize_SetPreviewFirst() {
         
         // given
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
-        let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)
+        let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let testMediumProperties = ZMIImageProperties(size: CGSize(width: 111, height: 100), length: UInt(1000), mimeType: "image/tiff")
         let testPreviewProperties = ZMIImageProperties(size: CGSize(width: 80, height: 55), length: UInt(10), mimeType: "image/tiff")
         
         // when
-        message.imageAssetStorage!.setImageData(testData, for:  .preview, properties: testPreviewProperties)
-        message.imageAssetStorage!.setImageData(testData, for:  .medium, properties: testMediumProperties)
+        message.imageAssetStorage.setImageData(testData, for:  .preview, properties: testPreviewProperties)
+        message.imageAssetStorage.setImageData(testData, for:  .medium, properties: testMediumProperties)
         
         // then
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.originalWidth, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.originalHeight, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.width, 80)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.height, 55)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.size, 10)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.mimeType, "image/tiff")
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.originalWidth, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.originalHeight, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.width, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.height, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.size, 1000)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.mimeType, "image/tiff")
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.originalWidth, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.originalHeight, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.width, 80)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.height, 55)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.size, 10)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.mimeType, "image/tiff")
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.originalWidth, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.originalHeight, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.width, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.height, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.size, 1000)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.mimeType, "image/tiff")
     }
     
     func testThatItSetsTheMediumSizeOnThePreviewOriginalSize_SetMediumFirst() {
         
         // given
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
-        let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)
+        let testData = "foobar".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let testMediumProperties = ZMIImageProperties(size: CGSize(width: 111, height: 100), length: UInt(1000), mimeType: "image/tiff")
         let testPreviewProperties = ZMIImageProperties(size: CGSize(width: 80, height: 55), length: UInt(10), mimeType: "image/tiff")
         
         // when
-        message.imageAssetStorage!.setImageData(testData, for:  .medium, properties: testMediumProperties)
-        message.imageAssetStorage!.setImageData(testData, for:  .preview, properties: testPreviewProperties)
+        message.imageAssetStorage.setImageData(testData, for:  .medium, properties: testMediumProperties)
+        message.imageAssetStorage.setImageData(testData, for:  .preview, properties: testPreviewProperties)
         
         // then
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.originalWidth, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.originalHeight, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.width, 80)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.height, 55)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.size, 10)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .preview)!.image.mimeType, "image/tiff")
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.originalWidth, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.originalHeight, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.width, 111)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.height, 100)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.size, 1000)
-        XCTAssertEqual(message.imageAssetStorage!.genericMessage(for: .medium)!.image.mimeType, "image/tiff")
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.originalWidth, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.originalHeight, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.width, 80)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.height, 55)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.size, 10)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .preview)!.image.mimeType, "image/tiff")
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.originalWidth, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.originalHeight, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.width, 111)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.height, 100)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.size, 1000)
+        XCTAssertEqual(message.imageAssetStorage.genericMessage(for: .medium)!.image.mimeType, "image/tiff")
     }
     
     func testThatItSavesTheImageDataToFileInPlainTextAndEncryptedWhenSettingTheDataOnAnEncryptedMessage() {
@@ -1670,16 +1679,16 @@ extension ZMAssetClientMessageTests {
             let data = sampleProcessedImageData(format)
             
             // when
-            message.imageAssetStorage!.setImageData(data, for: format, properties: testProperties)
+            message.imageAssetStorage.setImageData(data, for: format, properties: testProperties)
             
             // then
             XCTAssertEqual(self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: format, encrypted: false), data)
-            XCTAssertEqual(message.imageAssetStorage!.imageData(for: format, encrypted: false), data)
+            XCTAssertEqual(message.imageAssetStorage.imageData(for: format, encrypted: false), data)
             AssertOptionalNotNil(self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: format, encrypted: true)) {
-                let decrypted = $0.zmDecryptPrefixedPlainTextIV(key: message.imageAssetStorage!.genericMessage(for: format)!.image.otrKey)
+                let decrypted = $0.zmDecryptPrefixedPlainTextIV(key: message.imageAssetStorage.genericMessage(for: format)!.image.otrKey)
                 let sha = $0.zmSHA256Digest()
                 XCTAssertEqual(decrypted, data)
-                XCTAssertEqual(sha, message.imageAssetStorage!.genericMessage(for: format)!.image.sha256)
+                XCTAssertEqual(sha, message.imageAssetStorage.genericMessage(for: format)!.image.sha256)
             }
         }
     }
@@ -1692,7 +1701,7 @@ extension ZMAssetClientMessageTests {
             let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
             
             // then
-            XCTAssertNil(message.imageAssetStorage!.imageData(for: format, encrypted: true))
+            XCTAssertNil(message.imageAssetStorage.imageData(for: format, encrypted: true))
         }
     }
     
@@ -1722,7 +1731,7 @@ extension ZMAssetClientMessageTests {
         let properties = ZMIImageProperties(size: CGSize(width: 300, height: 300), length: 234, mimeType: "image/jpg")
         
         // when
-        message.imageAssetStorage!.setImageData(self.verySmallJPEGData(), for: .medium, properties: properties)
+        message.imageAssetStorage.setImageData(self.verySmallJPEGData(), for: .medium, properties: properties)
         
         // then
         let id = message.imageMessageData?.imageDataIdentifier
@@ -1766,13 +1775,22 @@ extension ZMAssetClientMessageTests {
         message.managedObjectContext?.saveOrRollback()
         
         // expect
-        let _ = self.expectation(forNotification: ZMAssetClientMessage.ImageDownloadNotificationName, object: message.objectID, handler: nil)
+        let expectation = self.expectation(description: "Notified")
+        let token = NotificationInContext.addObserver(name: ZMAssetClientMessage.imageDownloadNotificationName,
+                                                      context: self.uiMOC.notificationContext,
+                                                      object: message.objectID,
+                                                      queue: nil)
+        { _ in
+            expectation.fulfill()
+        }
         
         // when
         message.requestImageDownload()
 
         // then
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        withExtendedLifetime(token) { () -> () in
+            XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+        }
     }
 }
 
@@ -1816,7 +1834,7 @@ extension ZMAssetClientMessageTests {
             XCTAssertTrue(sut!.isEncrypted)
             XCTAssertFalse(sut!.isPlainText)
             XCTAssertEqual(sut!.nonce, nonce)
-            XCTAssertEqual(sut!.imageAssetStorage!.genericMessage(for: format)?.data(), genericMessage.data())
+            XCTAssertEqual(sut!.imageAssetStorage.genericMessage(for: format)?.data(), genericMessage.data())
             XCTAssertEqual(sut!.assetId, format == .medium ? mediumAssetId : nil)
         }
     }
@@ -1932,6 +1950,44 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(sut.serverTimestamp, firstDate)
         }
     }
+    
+    
+    func testThatItUpdatesTheServerTimestampAfterPreviewWasUploaded() {
+        
+        // given
+        let referenceDate = Date(timeIntervalSince1970: 123456)
+        let updatedDate = Date(timeIntervalSince1970:127476)
+        
+        let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        message.serverTimestamp = referenceDate
+        message.uploadState = .uploadingPlaceholder
+        
+        let updatedKeys = Set([#keyPath(ZMAssetClientMessage.uploadState)])
+        
+        // when
+        message.update(withPostPayload: ["time": updatedDate.transportString()] , updatedKeys: updatedKeys)
+        
+        // then
+        XCTAssertEqual(message.serverTimestamp, updatedDate)
+    }
+    
+    func testThatItDoesNotUpdateTheServerTimestampAfterMediumWasUploaded() {
+
+        // given
+        let referenceDate = Date(timeIntervalSince1970: 123456)
+        let updatedDate = Date(timeIntervalSince1970:127476)
+        
+        let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        message.serverTimestamp = referenceDate
+        message.uploadState = .uploadingFullAsset
+        
+        let updatedKeys = Set([#keyPath(ZMAssetClientMessage.uploadState)])
+        
+        // when
+        message.update(withPostPayload: ["time": updatedDate.transportString()] , updatedKeys: updatedKeys)
+        // then
+        XCTAssertEqual(message.serverTimestamp, referenceDate)
+    }
 }
 
 // MARK: - Message Deletion
@@ -1979,12 +2035,12 @@ extension ZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             sut.isEncrypted = true
             sut.visibleInConversation = ZMConversation.insertNewObject(in:self.syncMOC)
             sut.conversation?.remoteIdentifier = UUID()

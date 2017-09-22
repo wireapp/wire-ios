@@ -19,8 +19,6 @@
 
 #import "ZMManagedObject.h"
 
-extern NSString * const InvalidateTopConversationCacheNotificationName;
-
 @class ZMUser;
 @class ZMConversation;
 

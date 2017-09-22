@@ -69,25 +69,16 @@ extension MessageWindowChangeInfo {
     /// Adds a ZMConversationMessageWindowObserver to the specified window
     /// You must hold on to the token and use it to unregister
     @objc(addObserver:forWindow:)
-    public static func add(observer: ZMConversationMessageWindowObserver,for window: ZMConversationMessageWindow) -> NSObjectProtocol {
-        return NotificationCenterObserverToken(name: .MessageWindowDidChange, object: window)
+    public static func add(observer: ZMConversationMessageWindowObserver, for window: ZMConversationMessageWindow) -> NSObjectProtocol {
+        return ManagedObjectObserverToken(name: .MessageWindowDidChange, managedObjectContext: window.conversation.managedObjectContext!, object: window)
         { [weak observer] (note) in
             guard let `observer` = observer, let window = note.object as? ZMConversationMessageWindow else { return }
-            if let changeInfo = note.userInfo?[self.MessageWindowChangeUserInfoKey] as? MessageWindowChangeInfo {
+            if let changeInfo = note.userInfo[self.MessageWindowChangeUserInfoKey] as? MessageWindowChangeInfo {
                 observer.conversationWindowDidChange(changeInfo)
             }
-            if let messageChangeInfos = note.userInfo?[self.MessageChangeUserInfoKey] as? [MessageChangeInfo] {
+            if let messageChangeInfos = note.userInfo[self.MessageChangeUserInfoKey] as? [MessageChangeInfo] {
                 observer.messagesInsideWindow?(window, didChange: messageChangeInfos)
             }
         } 
-    }
-    
-    @objc(removeObserver:forWindow:)
-    public static func remove(observer: NSObjectProtocol, for window: ZMConversationMessageWindow?) {
-        guard let token = (observer as? NotificationCenterObserverToken)?.token else {
-            NotificationCenter.default.removeObserver(observer, name: .MessageWindowDidChange, object: window)
-            return
-        }
-        NotificationCenter.default.removeObserver(token, name: .MessageWindowDidChange, object: window)
     }
 }

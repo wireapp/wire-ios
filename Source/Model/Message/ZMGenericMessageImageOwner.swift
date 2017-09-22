@@ -36,7 +36,7 @@ import WireProtos
         self.assetCache = assetCache
     }
     
-    open func setImageData(_ imageData: Data!, for format: ZMImageFormat, properties: ZMIImageProperties!) {
+    open func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         // noop
     }
     
@@ -51,7 +51,7 @@ import WireProtos
         return nil;
     }
     
-    open func originalImageData() -> Data! {
+    open func originalImageData() -> Data? {
         guard let nonce = self.nonce , self.genericMessage.imageAssetData != nil else { return nil }
         return self.assetCache.assetData(nonce, format: .original, encrypted: false)
     }
@@ -60,7 +60,7 @@ import WireProtos
         return false;
     }
     
-    open func imageData(for format: ZMImageFormat) -> Data! {
+    open func imageData(for format: ZMImageFormat) -> Data? {
         guard let nonce = self.nonce ,
               let image = self.genericMessage.imageAssetData, format == image.imageFormat()
         else { return nil }
@@ -74,7 +74,7 @@ import WireProtos
         return CGSize(width: 0,height: 0)
     }
     
-    open func requiredImageFormats() -> NSOrderedSet! {
+    open func requiredImageFormats() -> NSOrderedSet {
         return NSOrderedSet()
     }
     

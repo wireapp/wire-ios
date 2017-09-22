@@ -779,7 +779,13 @@
     
     
     // expect
-    [self expectationForNotification:InvalidateTopConversationCacheNotificationName object:nil handler:nil];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"Notified"];
+    id token = [NotificationInContext addObserverWithName:ZMConnection.invalidateTopConversationCacheNotificationName
+                                       context:self.uiMOC.notificationContext
+                                        object:nil
+                                         queue:nil using:^(NotificationInContext * note __unused) {
+                                             [expectation fulfill];
+                                         }];
     
     // when
     ZMConnection *connection = (id) [self.uiMOC objectWithID:moid];
@@ -787,6 +793,7 @@
 
     // then
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.2]);
+    token = nil;
 }
 
 - (void)testThatItInsertsNewSentConnections;

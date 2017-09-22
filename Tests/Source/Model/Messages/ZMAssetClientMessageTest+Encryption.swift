@@ -54,12 +54,12 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             let fileMetadata = ZMFileMetadata(fileURL: url)
             
             // when
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             self.syncConversation.mutableMessages.add(sut)
             
@@ -92,12 +92,12 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             defer { self.removeTestFile(url) }
             let fileMetadata = ZMFileMetadata(fileURL: url)
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             self.syncConversation.mutableMessages.add(sut)
             
@@ -141,12 +141,12 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             let size = data.count
             defer { self.removeTestFile(url) }
             let videoMetadata = ZMVideoMetadata(fileURL: url, duration: duration, dimensions: dimensions)
-            let sut = ZMAssetClientMessage(
-                fileMetadata: videoMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: videoMetadata,
                 nonce: nonce,
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             self.syncConversation.mutableMessages.add(sut)
             
@@ -185,12 +185,12 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             // given
             let fileMetadata = self.addFile()
             
-            let sut = ZMAssetClientMessage(
-                fileMetadata: fileMetadata,
+            let sut = ZMAssetClientMessage.assetClientMessage(
+                with: fileMetadata,
                 nonce: UUID.create(),
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
-            )
+            )!
             
             self.syncConversation.mutableMessages.add(sut)
             sut.delivered = true
@@ -226,12 +226,12 @@ extension ZMAssetClientMessageTests_Encryption {
     }
     
     func insertFileMessage() -> ZMAssetClientMessage{
-        let sut = ZMAssetClientMessage(
-            fileMetadata: addFile(),
+        let sut = ZMAssetClientMessage.assetClientMessage(
+            with: addFile(),
             nonce: UUID.create(),
             managedObjectContext: self.syncMOC,
             expiresAfter: self.syncConversation.messageDestructionTimeout
-        )
+        )!
         self.syncConversation.mutableMessages.add(sut)
         let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce.transportString(), expiresAfter: NSNumber(value: sut.deletionTimeout)))

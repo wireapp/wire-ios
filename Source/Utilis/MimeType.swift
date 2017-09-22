@@ -20,21 +20,21 @@
 import Foundation
 import MobileCoreServices
 
-extension NSString {
+extension String {
     
     /// Returns whether the string represents a video mime type
     public func isVideoMimeType() -> Bool {
-        return self.zm_conforms(to: kUTTypeMovie)
+        return (self as NSString).zm_conforms(to: kUTTypeMovie)
     }
     
     /// Returns whether the string represents an audio mime type
     public func isAudioMimeType() -> Bool {
-        return self.zm_conforms(to: kUTTypeAudio)
+        return (self as NSString).zm_conforms(to: kUTTypeAudio)
     }
 
     /// Returns whether the string represents an image mime type
     public func isImageMimeType() -> Bool {
-        return self.zm_conforms(to: kUTTypeImage)
+        return (self as NSString).zm_conforms(to: kUTTypeImage)
     }
 
 }

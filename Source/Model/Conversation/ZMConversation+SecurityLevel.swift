@@ -33,7 +33,7 @@ extension ZMConversation {
     public func increaseSecurityLevelIfNeededAfterTrusting(clients: Set<UserClient>) {
         guard self.increaseSecurityLevelIfNeeded() else { return }
         self.appendNewIsSecureSystemMessage(verified: clients)
-        self.notifyOnUI(notification: ZMConversationIsVerifiedNotificationName)
+        self.notifyOnUI(name: ZMConversation.isVerifiedNotificationName)
     }
 
     /// Should be called when client is deleted.
@@ -42,7 +42,7 @@ extension ZMConversation {
     public func increaseSecurityLevelIfNeededAfterRemovingClient(for users: Set<ZMUser>) {
         guard self.increaseSecurityLevelIfNeeded() else { return }
         self.appendNewIsSecureSystemMessage(verified: Set<UserClient>(), for: users)
-        self.notifyOnUI(notification: ZMConversationIsVerifiedNotificationName)
+        self.notifyOnUI(name: ZMConversation.isVerifiedNotificationName)
     }
 
     /// Should be called when a new client is discovered

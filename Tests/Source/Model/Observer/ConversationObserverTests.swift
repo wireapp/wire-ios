@@ -63,10 +63,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // given
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: conversation)
-        defer {
-            ConversationChangeInfo.remove(observer: token, for: conversation)
-        }
+        self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
         
         // when
         modifier(conversation, observer)
@@ -93,6 +90,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         guard let changes = observer.notifications.first else { return }
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys, expectedChangedFields: expectedChangedFields)
         XCTAssertEqual(changes.changedKeys, Set(expectedChangedKeys), file: file, line: line)
+        
+        self.token = nil
     }
     
     func testThatItNotifiesTheObserverOfANameChange()
@@ -173,7 +172,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+        self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
         
         // when
         user.name = "Boo"
@@ -193,7 +192,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // and when
         self.uiMOC.saveOrRollback()
-        ConversationChangeInfo.remove(observer:token, for: conversation)
     }
     
     
@@ -403,7 +401,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         mergeLastChanges()
         
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
+        self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
         
         // when
         self.syncMOC.performGroupedBlockAndWait {
@@ -424,7 +422,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                      expectedChangedFields: ["unreadCountChanged", "conversationListIndicatorChanged"])
         XCTAssertEqual(changes.changedKeys, Set(["estimatedUnreadCount", "conversationListIndicator"]))
         
-        ConversationChangeInfo.remove(observer:token, for: conversation)
     }
     
     func testThatItNotifiesTheObserverOfChangedDisplayName()
@@ -534,7 +531,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         }
 
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
+        self.token = ConversationChangeInfo.add(observer: observer, for: uiConversation)
         
         // when
         self.syncMOC.performGroupedBlockAndWait {
@@ -552,8 +549,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
                                      expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged"])
         XCTAssertEqual(changes.changedKeys, Set(["messages", "conversationListIndicator"]))
-        ConversationChangeInfo.remove(observer:token, for: conversation)
-        
     }
     
     func testThatItNotifiesTheObserverOfAChangedClearedTimeStamp()
@@ -634,7 +629,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+        self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
         
         // when
         conversation.appendMessage(withText: "Foo")
@@ -652,8 +647,6 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         XCTAssertTrue(messagesNotification.messagesChanged)
         XCTAssertTrue(securityNotification.securityLevelChanged)
-
-        ConversationChangeInfo.remove(observer:token, for: conversation)
     }
     
     func testThatItNotifiesWhenConversationIsCreatedRemotely() {
@@ -679,9 +672,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let observer = ConversationObserver()
-        let token = ConversationChangeInfo.add(observer: observer, for: conversation)
-        ConversationChangeInfo.remove(observer:token, for: conversation)
-        
+        _ = ConversationChangeInfo.add(observer: observer, for: conversation)
         
         // when
         conversation.userDefinedName = "Mario!"
@@ -712,7 +703,7 @@ extension ConversationObserverTests {
             self.uiMOC.saveOrRollback()
             
             let observer = ConversationObserver()
-            let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
             
             var lastName = "bar"
             self.startMeasuring()
@@ -724,7 +715,6 @@ extension ConversationObserverTests {
             }
             XCTAssertEqual(observer.notifications.count, count)
             self.stopMeasuring()
-            ConversationChangeInfo.remove(observer:token, for: conversation)
         }
     }
 
@@ -741,7 +731,7 @@ extension ConversationObserverTests {
             self.uiMOC.saveOrRollback()
             
             let observer = ConversationObserver()
-            let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
             
             self.startMeasuring()
             for _ in 1...count {
@@ -750,7 +740,6 @@ extension ConversationObserverTests {
             }
             XCTAssertEqual(observer.notifications.count, count)
             self.stopMeasuring()
-            ConversationChangeInfo.remove(observer:token, for: conversation)
         }
     }
     
@@ -768,7 +757,7 @@ extension ConversationObserverTests {
             self.uiMOC.saveOrRollback()
             
             let observer = ConversationObserver()
-            let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+            self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
             
             self.startMeasuring()
             for _ in 1...count {
@@ -777,7 +766,6 @@ extension ConversationObserverTests {
             self.uiMOC.saveOrRollback()
             XCTAssertEqual(observer.notifications.count, 1)
             self.stopMeasuring()
-            ConversationChangeInfo.remove(observer:token, for: conversation)
         }
     }
     
@@ -799,11 +787,9 @@ extension ConversationObserverTests {
             for _ in 1...count {
                 let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
                 self.uiMOC.saveOrRollback()
-                let token = ConversationChangeInfo.add(observer: observer, for: conversation)
+                _ = ConversationChangeInfo.add(observer: observer, for: conversation)
                 conversation.appendMessage(withText: "hello")
                 self.uiMOC.saveOrRollback()
-                ConversationChangeInfo.remove(observer:token, for: conversation)
-
             }
             self.stopMeasuring()
         }

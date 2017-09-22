@@ -24,7 +24,6 @@
 #import "ZMConnection+Internal.h"
 #import "ZMOrderedSetState.h"
 #import "ZMChangedIndexes.h"
-#import "ZMNotifications+Internal.h"
 #import "ZMEditableUser.h"
 #import "ZMMessageTests.h"
 #import "ZMBaseManagedObjectTest.h"

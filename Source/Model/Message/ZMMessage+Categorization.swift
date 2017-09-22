@@ -146,8 +146,8 @@ extension ZMMessage {
         }
         var category = MessageCategory.image
         if let asset = self as? ZMAssetClientMessage,
-            (asset.imageAssetStorage?.originalImageData() == nil
-                && asset.imageAssetStorage?.mediumGenericMessage == nil
+            (asset.imageAssetStorage.originalImageData() == nil
+                && asset.imageAssetStorage.mediumGenericMessage == nil
                 && imageData.mediumData == nil)
         {
             category.update(with: .excludedFromCollection)
@@ -187,10 +187,10 @@ extension ZMMessage {
         if let asset = self as? ZMAssetClientMessage, asset.transferState == .cancelledUpload || asset.transferState == .failedUpload {
             category.update(with: .excludedFromCollection)
         }
-        if fileData.isAudio() {
+        if fileData.isAudio {
             category.update(with: .audio)
         }
-        else if fileData.isVideo() {
+        else if fileData.isVideo {
             category.update(with: .video)
         }
         return category

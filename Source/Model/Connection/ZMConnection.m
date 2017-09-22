@@ -24,9 +24,10 @@
 #import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
+#import <WireDataModel/WireDataModel-Swift.h>
+
 
 NSString * const ZMConnectionStatusKey = @"status";
-NSString * const InvalidateTopConversationCacheNotificationName = @"ZMInvalidateTopConversationCacheNotification";
 
 static NSString * const ToUserKey = @"to";
 static NSString * const RemoteIdentifierDataKey = @"remoteIdentifier_data";
@@ -171,7 +172,7 @@ struct stringAndStatus {
     }
     
     if (![oldStatus isEqual:newStatus]) {
-        [[NSNotificationCenter defaultCenter] postNotificationName:InvalidateTopConversationCacheNotificationName object:nil];
+        [self invalidateTopConversationCache];
     }
 }
 

@@ -93,8 +93,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 
 - (void)updateWithTimestamp:(NSDate *)serverTimestamp senderUUID:(NSUUID *)senderUUID forConversation:(ZMConversation *)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
 
-- (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate;
-
 @property (nonatomic) NSSet *missingRecipients;
 
 @end;

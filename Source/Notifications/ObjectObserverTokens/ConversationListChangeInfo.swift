@@ -65,33 +65,26 @@ extension ConversationListChangeInfo {
     
     /// Adds a ZMConversationListObserver to the specified list
     /// You must hold on to the token and use it to unregister
-    @objc(addObserver:forList:)
-    public static func add(observer: ZMConversationListObserver,for list: ZMConversationList) -> NSObjectProtocol {
+    @objc(addObserver:forList:managedObjectContext:)
+    public static func add(observer: ZMConversationListObserver,
+                           for list: ZMConversationList,
+                           managedObjectContext: NSManagedObjectContext
+                           ) -> NSObjectProtocol {
         zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
-        return NotificationCenterObserverToken(name: .ZMConversationListDidChange, object: list)
+        return ManagedObjectObserverToken(name: .ZMConversationListDidChange, managedObjectContext: managedObjectContext, object: list)
         { [weak observer] (note) in
             guard let `observer` = observer, let aList = note.object as? ZMConversationList
                 else { return }
             zmLog.debug("Notifying registered observer \(observer) about changes in list: \(aList.identifier)")
             
-            if let changeInfo = note.userInfo?["conversationListChangeInfo"] as? ConversationListChangeInfo{
+            if let changeInfo = note.userInfo["conversationListChangeInfo"] as? ConversationListChangeInfo{
                 observer.conversationListDidChange(changeInfo)
             }
-            if let changeInfos = note.userInfo?["conversationChangeInfos"] as? [ConversationChangeInfo] {
+            if let changeInfos = note.userInfo["conversationChangeInfos"] as? [ConversationChangeInfo] {
                 changeInfos.forEach{
                     observer.conversationInsideList?(aList, didChange: $0)
                 }
             }
         }
-    }
-    
-    @objc(removeObserver:forList:)
-    public static func remove(observer: NSObjectProtocol, for list: ZMConversationList?) {
-        zmLog.debug("Removing observer \(observer) for list \(String(describing: list?.identifier))")
-        guard let token = (observer as? NotificationCenterObserverToken)?.token else {
-            NotificationCenter.default.removeObserver(observer, name: .ZMConversationListDidChange, object: list)
-            return
-        }
-        NotificationCenter.default.removeObserver(token, name: .ZMConversationListDidChange, object: list)
     }
 }

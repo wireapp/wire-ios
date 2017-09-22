@@ -19,6 +19,8 @@
 
 import Foundation
 
+extension Account : NotificationContext { }
+
 extension Notification.Name {
     public static let AccountUnreadCountDidChangeNotification = Notification.Name("AccountUnreadCountDidChangeNotification")
 }
@@ -35,7 +37,7 @@ public final class Account: NSObject {
     
     public var unreadConversationCount: Int = 0 {
         didSet {
-            NotificationCenter.default.post(name: .AccountUnreadCountDidChangeNotification, object: self)
+            NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
         }
     }
 

@@ -22,33 +22,33 @@ import XCTest
 class MimeTypeTests: XCTestCase {
 
     func testThatItParsesVideoMimeTypeCorrectly_Positive() {
-        XCTAssertTrue(("video/mp4" as NSString).isVideoMimeType())
-        XCTAssertTrue(("video/mpeg" as NSString).isVideoMimeType())
+        XCTAssertTrue("video/mp4".isVideoMimeType())
+        XCTAssertTrue("video/mpeg".isVideoMimeType())
     }
 
     func testThatItParsesVideoMimeTypeCorrectly_Negative() {
-        XCTAssertFalse(("foo" as NSString).isVideoMimeType())
-        XCTAssertFalse(("" as NSString).isVideoMimeType())
-        XCTAssertFalse(("text/plain" as NSString).isVideoMimeType())
-        XCTAssertFalse(("application/octet-stream" as NSString).isVideoMimeType())
-        XCTAssertFalse(("audio/mpeg" as NSString).isVideoMimeType())
-        XCTAssertFalse((".mp4" as NSString).isVideoMimeType())
+        XCTAssertFalse("foo".isVideoMimeType())
+        XCTAssertFalse("".isVideoMimeType())
+        XCTAssertFalse("text/plain".isVideoMimeType())
+        XCTAssertFalse("application/octet-stream".isVideoMimeType())
+        XCTAssertFalse("audio/mpeg".isVideoMimeType())
+        XCTAssertFalse(".mp4".isVideoMimeType())
     }
     
     func testThatItParsesAudioMimeTypeCorrectly_Positive() {
-        XCTAssertTrue(("audio/mp4" as NSString).isAudioMimeType())
-        XCTAssertTrue(("audio/mpeg" as NSString).isAudioMimeType())
-        XCTAssertTrue(("audio/x-m4a" as NSString).isAudioMimeType())
+        XCTAssertTrue("audio/mp4".isAudioMimeType())
+        XCTAssertTrue("audio/mpeg".isAudioMimeType())
+        XCTAssertTrue("audio/x-m4a".isAudioMimeType())
     }
     
     func testThatItParsesAudioMimeTypeCorrectly_Negative() {
-        XCTAssertFalse(("foo" as NSString).isAudioMimeType())
-        XCTAssertFalse(("" as NSString).isAudioMimeType())
-        XCTAssertFalse(("text/plain" as NSString).isAudioMimeType())
-        XCTAssertFalse(("application/octet-stream" as NSString).isAudioMimeType())
-        XCTAssertFalse((".mp4" as NSString).isAudioMimeType())
-        XCTAssertFalse(("video/mp4" as NSString).isAudioMimeType())
-        XCTAssertFalse(("video/mpeg" as NSString).isAudioMimeType())
+        XCTAssertFalse("foo".isAudioMimeType())
+        XCTAssertFalse("".isAudioMimeType())
+        XCTAssertFalse("text/plain".isAudioMimeType())
+        XCTAssertFalse("application/octet-stream".isAudioMimeType())
+        XCTAssertFalse(".mp4".isAudioMimeType())
+        XCTAssertFalse("video/mp4".isAudioMimeType())
+        XCTAssertFalse("video/mpeg".isAudioMimeType())
     }
 
 }

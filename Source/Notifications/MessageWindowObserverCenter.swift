@@ -268,7 +268,11 @@ class MessageWindowSnapshot : NSObject, ZMConversationObserver, ZMMessageObserve
             return
         }
         
-        NotificationCenter.default.post(name: .MessageWindowDidChange, object: window, userInfo: userInfo)
+        NotificationInContext(name: .MessageWindowDidChange,
+                              context: window.conversation.managedObjectContext!.notificationContext,
+                              object: window,
+                              userInfo: userInfo)
+            .post()        
         zmLog.debug(logMessage(for: messageChangeInfos, windowChangeInfo: windowChangeInfo))
     }
     
