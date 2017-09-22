@@ -50,8 +50,8 @@ extension UIImage: Shareable {
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
-        return previewView.getPreviewContentHeight()
+        guard let previewView = previewView as? UIImageView else { return 0.0 }
+        return HeightsProvider.heightForImage(previewView.image)
     }
 }
 
@@ -80,7 +80,7 @@ extension URL: Shareable {
         let playerViewController = AVPlayerViewController()
         
         playerViewController.player = AVPlayer(url: self)
-        playerViewController.showsPlaybackControls = true
+        playerViewController.showsPlaybackControls = false
         playerViewController.view.backgroundColor = .white
         playerViewController.view.layer.cornerRadius = 4
 
@@ -88,8 +88,7 @@ extension URL: Shareable {
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
-        return previewView.getPreviewContentHeight()
+        return HeightsProvider.heightForVideo()
     }
 }
 

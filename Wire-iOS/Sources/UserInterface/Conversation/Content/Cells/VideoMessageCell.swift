@@ -28,7 +28,7 @@ public final class VideoMessageCell: ConversationCell {
     private let videoMessageView = VideoMessageView()
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
 
-    public var videoViewHeight : CGFloat = 160.0
+    public var videoViewHeight : CGFloat = HeightsProvider.videoViewHeight
 
     private var topMargin: NSLayoutConstraint!
     
@@ -185,18 +185,15 @@ public final class VideoMessageCell: ConversationCell {
             DDLogError("Cannot save video: \(error)")
         }
     }
-
+    
+    public override func getPreviewContentHeight() -> CGFloat {
+        return HeightsProvider.heightForVideo()
+    }
 }
 
 
 extension VideoMessageCell: TransferViewDelegate {
     public func transferView(_ view: TransferView, didSelect action: MessageAction) {
         self.delegate.conversationCell?(self, didSelect: action)
-    }
-}
-
-extension VideoMessageCell: PreviewProvider {
-    func getPreviewContentHeight() -> CGFloat {
-        return min((UIScreen.isCompact() ? CGFloat(160.0) : standardCellHeight), videoViewHeight)
     }
 }

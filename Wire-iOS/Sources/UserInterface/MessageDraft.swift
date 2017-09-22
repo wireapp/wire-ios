@@ -82,13 +82,17 @@ extension MessageDraft: Shareable {
         }
     }
 
+    /*
+        The MessageDraft object doesn't show a preview right now.
+        To implement a preview view, just return a UIView here.
+        Don't forget to return the height of the view in `getHeight(forPreviewView:)`.
+     */
     public func previewView() -> UIView? {
         return nil
     }
     
     public func getHeight(for previewView: UIView?) -> CGFloat {
-        guard let previewView = previewView as? PreviewProvider else { return 0.0 }
-        return previewView.getPreviewContentHeight()
+        return 0.0
     }
     
 }

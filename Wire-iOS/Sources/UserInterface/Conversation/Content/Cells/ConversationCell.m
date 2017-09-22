@@ -656,6 +656,18 @@ static const CGFloat BurstContainerExpandedHeight = 40;
     }
 }
 
+#pragma mark - Preview Provider delegate
+
+-(void)preparePreview
+{
+    self.contentLayoutMargins = UIEdgeInsetsZero;
+}
+
+-(CGFloat)getPreviewContentHeight
+{
+    return [HeightsProvider compressedSizeForView: self.messageContentView];
+}
+
 #pragma mark - Message observation
 
 - (BOOL)updateForMessage:(MessageChangeInfo *)change
@@ -739,16 +751,6 @@ static const CGFloat BurstContainerExpandedHeight = 40;
 - (void)messageToolboxViewDidSelectDelete:(MessageToolboxView *)messageToolboxView
 {
     [self.delegate conversationCell:self didSelectAction:MessageActionDelete];
-}
-
-@end
-
-@implementation ConversationCell (PreviewProvider)
-
--(CGFloat)getPreviewContentHeight
-{
-    CGFloat height = [self.messageContentView systemLayoutSizeFittingSize:UILayoutFittingCompressedSize].height;static const CGFloat standardCellHeight = 200.0;
-    return MIN(([UIScreen isCompact] ? 160.0 : standardCellHeight), height);
 }
 
 @end

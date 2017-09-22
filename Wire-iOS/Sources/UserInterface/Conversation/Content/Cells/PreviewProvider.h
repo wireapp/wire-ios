@@ -16,9 +16,9 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+#import <Foundation/Foundation.h>
 
-@objc protocol PreviewProvider {
-    //func previewView() -> UIView? //to be implemented...
-    func getPreviewContentHeight() -> CGFloat
-}
+@protocol PreviewProvider <NSObject>
+-(void)preparePreview;
+-(CGFloat)getPreviewContentHeight;
+@end

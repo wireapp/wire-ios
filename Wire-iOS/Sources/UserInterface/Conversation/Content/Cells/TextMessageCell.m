@@ -455,6 +455,21 @@
     [self showMenu];
 }
 
+#pragma mark - Preview Provider delegate
+
+-(void)preparePreview
+{
+    [super preparePreview];
+    self.smallLinkAttachments = TRUE;
+    self.linkAttachmentContainer.layoutMargins = UIEdgeInsetsZero;
+    self.messageTextView.backgroundColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorBackground];
+    self.messageTextView.layer.cornerRadius = 4.0;
+    self.messageTextView.layer.masksToBounds = TRUE;
+    self.messageTextView.textContainerInset = UIEdgeInsetsMake(8, 8, 10, 8);
+    self.messageTextView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
+    self.messageTextView.textContainer.maximumNumberOfLines = 2;
+}
+
 @end
 
 
