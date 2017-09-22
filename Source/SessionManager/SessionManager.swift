@@ -108,9 +108,11 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     public let accountManager: AccountManager
     public fileprivate(set) var userSession: ZMUserSession?
     public fileprivate(set) var unauthenticatedSession: UnauthenticatedSession?
-
+    public let groupQueue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
+    
     let application: ZMApplication
-    var authenticationToken: ZMAuthenticationObserverToken?
+    var postLoginAuthenticationToken: Any?
+    var preLoginAuthenticationToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
     let reachability: ReachabilityProvider & ReachabilityTearDown
 
@@ -236,8 +238,11 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
         self.unauthenticatedSessionFactory = unauthenticatedSessionFactory
         self.reachability = reachability
         super.init()
-        authenticationToken = ZMUserSessionAuthenticationNotification.addObserver(self)
 
+        postLoginAuthenticationToken = PostLoginAuthenticationNotification.addObserver(
+            self,
+            queue: self.groupQueue)
+        
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
         } else {
@@ -303,8 +308,10 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     
     fileprivate func logoutCurrentSession(deleteCookie: Bool = true, error : Error?) {
         tearDownObservers()
+
         userSession?.closeAndDeleteCookie(deleteCookie)
         userSession = nil
+
         delegate?.sessionManagerDidLogout(error: error)
         
         createUnauthenticatedSession()
@@ -348,8 +355,8 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
             preconditionFailure("Unable to create session for \(account)")
         }
         let selfUser = ZMUser.selfUser(inUserSession: session)
-        teamObserver = TeamChangeInfo.add(observer: self, for: nil)
-        selfObserver = UserChangeInfo.add(observer: self, forBareUser: selfUser!)
+        teamObserver = TeamChangeInfo.add(observer: self, for: nil, managedObjectContext: session.managedObjectContext) // TODO need per user session token
+        selfObserver = UserChangeInfo.add(observer: self, forBareUser: selfUser!, managedObjectContext: session.managedObjectContext) // TODO need per user session token
 
         session.callNotificationStyle = self.callNotificationStyle
 
@@ -361,6 +368,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
             session.setEmailCredentials(authenticationStatus?.emailCredentials())
             if let registered = authenticationStatus?.completedRegistration {
                 session.syncManagedObjectContext.registeredOnThisDevice = registered
+                session.syncManagedObjectContext.registeredOnThisDeviceBeforeConversationInitialization = registered
             }
 
             session.managedObjectContext.performGroupedBlock { [weak self] in
@@ -375,22 +383,16 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
         self.unauthenticatedSession?.tearDown()
         let unauthenticatedSession = unauthenticatedSessionFactory.session(withDelegate: self)
         self.unauthenticatedSession = unauthenticatedSession
+        self.preLoginAuthenticationToken = unauthenticatedSession.addAuthenticationObserver(self)
         delegate?.sessionManagerCreated(unauthenticatedSession: unauthenticatedSession)
     }
     
     fileprivate func tearDownObservers() {
-        if let teamObserver = teamObserver {
-            TeamChangeInfo.remove(observer: teamObserver, for: nil)
-        }
-        if let userObserver = selfObserver {
-            UserChangeInfo.remove(observer: userObserver, forBareUser: nil)
-        }
+        teamObserver = nil // TODO need per user session token
+        selfObserver = nil // TODO need per user session token
     }
-
+    
     deinit {
-        if let authenticationToken = authenticationToken {
-            ZMUserSessionAuthenticationNotification.removeObserver(for: authenticationToken)
-        }
         tearDownObservers()
         blacklistVerificator?.teardown()
         userSession?.tearDown()
@@ -499,36 +501,41 @@ extension SessionManager: UnauthenticatedSessionDelegate {
 
 // MARK: - ZMAuthenticationObserver
 
-extension SessionManager: ZMAuthenticationObserver {
+extension SessionManager: PostLoginAuthenticationObserver {
 
-    @objc public func clientRegistrationDidSucceed() {
+    @objc public func clientRegistrationDidSucceed(accountId: UUID) {
         log.debug("Tearing down unauthenticated session as reaction to successfull client registration")
         unauthenticatedSession?.tearDown()
         unauthenticatedSession = nil
     }
-
-    @objc public func authenticationDidSucceed() {
-        if nil != userSession {
-            return RequestAvailableNotification.notifyNewRequestsAvailable(self)
+    
+    public func accountDeleted(accountId: UUID) {
+        logoutCurrentSession(deleteCookie: true, error: NSError(domain: ZMUserSessionErrorDomain, code: Int(ZMUserSessionErrorCode.accountDeleted.rawValue), userInfo: nil))
+        
+        if let account = accountManager.account(with: accountId) {
+            delete(account: account)
         }
     }
     
-    public func authenticationDidFail(_ error: Error) {
-        let error = error as NSError
+    public func clientRegistrationDidFail(_ error: NSError, accountId: UUID) {
+        delegate?.sessionManagerDidLogout(error: error)
         
+        if unauthenticatedSession == nil {
+            createUnauthenticatedSession()
+        }
+    }
+    
+    public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
         guard let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)) else {
             return
         }
         
         switch userSessionErrorCode {
-        case .accountDeleted:
-            logoutCurrentSession(deleteCookie: true, error: error)
-            if let deletedAccount = accountManager.selectedAccount {
-                delete(account: deletedAccount)
-            }
         case .clientDeletedRemotely,
              .accessTokenExpired:
+            
             logoutCurrentSession(deleteCookie: true, error: error)
+            
         default:
             delegate?.sessionManagerDidLogout(error: error)
             
@@ -538,4 +545,23 @@ extension SessionManager: ZMAuthenticationObserver {
         }
     }
 
+}
+
+extension SessionManager : PreLoginAuthenticationObserver {
+    
+    @objc public func authenticationDidSucceed() {
+        if nil != userSession {
+            return RequestAvailableNotification.notifyNewRequestsAvailable(self)
+        }
+    }
+    
+    public func authenticationDidFail(_ error: NSError) {
+        delegate?.sessionManagerDidLogout(error: error)
+        
+        if unauthenticatedSession == nil {
+            createUnauthenticatedSession()
+        }
+    }
+    
+    
 }
