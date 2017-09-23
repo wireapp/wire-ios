@@ -62,8 +62,6 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 @property (atomic) ZMNetworkState networkState;
 @property (nonatomic) ZMBlacklistVerificator *blackList;
 @property (nonatomic) ZMAPNSEnvironment *apnsEnvironment;
-@property (nonatomic) ZMPushRegistrant *pushRegistrant;
-@property (nonatomic) ZMApplicationRemoteNotification *applicationRemoteNotification;
 @property (nonatomic) ZMStoredLocalNotification *pendingLocalNotification;
 @property (nonatomic) LocalNotificationDispatcher *localNotificationDispatcher;
 @property (nonatomic) NSMutableArray* observersToken;
@@ -87,30 +85,9 @@ static NSString * const AppstoreURL = @"https://itunes.apple.com/us/app/zeta-cli
 - (void)pushChannelDidChange:(NotificationInContext *)note;
 @end
 
-
-NSURL *__nullable CBCreateTemporaryDirectoryAndReturnURL(void);
-
-
-NSURL *__nullable CBCreateTemporaryDirectoryAndReturnURL()
-{
-    NSError *error = nil;
-    NSURL *directoryURL = [NSURL fileURLWithPath:[NSTemporaryDirectory() stringByAppendingPathComponent:[[NSProcessInfo processInfo] globallyUniqueString]] isDirectory:YES];
-    [[NSFileManager defaultManager] createDirectoryAtURL:directoryURL withIntermediateDirectories:YES attributes:nil error:&error];
-    if (error) {
-        return nil;
-    }
-    
-    return directoryURL;
-}
-
 @implementation ZMUserSession
 
 ZM_EMPTY_ASSERTING_INIT()
-
-+ (BOOL)shouldSendOnlyEncrypted
-{
-    return [[NSProcessInfo processInfo] environment][@"ZMEncryptionOnly"] != nil;
-}
 
 - (void)dealloc
 {
@@ -266,9 +243,6 @@ ZM_EMPTY_ASSERTING_INIT()
         [self registerForBackgroundNotifications];
         [self registerForRequestToOpenConversationNotification];
         
-        [self.syncManagedObjectContext performGroupedBlockAndWait:^{
-            [self enablePushNotifications];
-        }];
         [self enableBackgroundFetch];
 
         self.storedDidSaveNotifications = [[ContextDidSaveNotificationPersistence alloc] initWithAccountContainer:self.storeProvider.accountContainer];
@@ -401,7 +375,7 @@ ZM_EMPTY_ASSERTING_INIT()
         NSManagedObjectID *objectID = note.object;
         id managedObject = [self.managedObjectContext objectWithID:objectID];
         if(managedObject != nil) {
-            [self.requestToOpenViewDelegate showConversation:managedObject];
+            [self.requestToOpenViewDelegate userSession:self showConversation:managedObject];
         }
     }];
 }
@@ -444,13 +418,6 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)registerForRemoteNotifications
 {
     [self.managedObjectContext performGroupedBlock:^{
-        // Refresh the Voip token if needed
-        NSData *actualToken = self.pushRegistrant.pushToken;
-        if (actualToken != nil && ![actualToken isEqual:self.managedObjectContext.pushKitToken.deviceToken]){
-            self.managedObjectContext.pushKitToken = nil;
-            [self setPushKitToken:actualToken];
-        }
-        
         // Request the current token, the rest is taken care of
         [self setupPushNotificationsForApplication:self.application];
     }];
@@ -460,15 +427,6 @@ ZM_EMPTY_ASSERTING_INIT()
 {
     // instead of relying on the tokens we have cached locally we should always ask the OS about the latest tokens
     [self.managedObjectContext performGroupedBlock:^{
-        
-        // (1) Refresh VoIP token
-        NSData *pushKitToken = self.pushRegistrant.pushToken;
-        if (pushKitToken != nil) {
-            self.managedObjectContext.pushKitToken = nil;
-            [self setPushKitToken:pushKitToken];
-        } else {
-            ZMLogError(@"The OS did not provide a valid VoIP token, pushRegistry might be nil");
-        }
         
         // (2) Refresh "normal" remote notification token
         // we need to set the current push token to nil,
@@ -580,25 +538,6 @@ ZM_EMPTY_ASSERTING_INIT()
 @end
 
 
-
-@implementation ZMUserSession (Test)
-
-- (NSArray *)allManagedObjectContexts
-{
-    NSMutableArray *mocs = [NSMutableArray array];
-    if (self.managedObjectContext != nil) {
-        [mocs addObject:self.managedObjectContext];
-    }
-    if (self.syncManagedObjectContext != nil) {
-        [mocs addObject:self.syncManagedObjectContext];
-    }
-    return mocs;
-}
-
-@end
-
-
-
 @implementation ZMUserSession (PushToken)
 
 
@@ -645,6 +584,11 @@ ZM_EMPTY_ASSERTING_INIT()
             ZMLogError(@"Failed to save pushKit token marked for deletion");
         }
     }
+}
+
+- (BOOL)isAuthenticated
+{
+    return self.authenticationStatus.isAuthenticated;
 }
 
 @end
