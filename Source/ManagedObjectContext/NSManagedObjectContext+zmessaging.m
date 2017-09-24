@@ -66,6 +66,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 
 @implementation NSManagedObjectContext (zmessaging)
 
+- (BOOL)zm_isValidContext
+{
+    return self.zm_isSyncContext || self.zm_isUserInterfaceContext || self.zm_isSearchContext;
+}
+
 - (id)validUserInfoValueOfClass:(Class)class forKey:(NSString *)key
 {
     id value = self.userInfo[key];
