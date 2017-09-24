@@ -23,6 +23,8 @@ public class LocalNotificationDispatcher: NSObject {
     
     public static let ZMShouldHideNotificationContentKey = "ZMShouldHideNotificationContentKey"
     
+    public weak var userSession: ZMUserSession?
+    
     let eventNotifications: ZMLocalNotificationSet
     let messageNotifications: ZMLocalNotificationSet
     let callingNotifications: ZMLocalNotificationSet
@@ -33,6 +35,8 @@ public class LocalNotificationDispatcher: NSObject {
     let syncMOC: NSManagedObjectContext
     private(set) var isTornDown: Bool
     private var observers: [Any] = []
+    
+    var localNotificationBuffer = [UILocalNotification]()
     
     @objc(initWithManagedObjectContext:application:)
     public init(in managedObjectContext: NSManagedObjectContext,
