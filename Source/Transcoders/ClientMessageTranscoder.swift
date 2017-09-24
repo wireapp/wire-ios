@@ -118,7 +118,7 @@ extension ClientMessageTranscoder {
                 }
             }
             
-            if let updateMessage = updateResult.message, event.source == .pushNotification {
+            if let updateMessage = updateResult.message, event.source == .pushNotification || event.source == .webSocket {
                 if let genericMessage = ZMGenericMessage(from: event) {
                     self.localNotificationDispatcher.process(genericMessage)
                 }
