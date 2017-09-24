@@ -46,7 +46,6 @@
 #import "KeyboardAvoidingViewController.h"
 
 #import "PhoneSignInViewController.h"
-#import "InvitationFlowViewController.h"
 
 #import "AnalyticsTracker+Registration.h"
 
@@ -65,17 +64,13 @@
 @property (nonatomic) BOOL initialConstraintsCreated;
 @property (nonatomic) BOOL hasPushedPostRegistrationStep;
 @property (nonatomic) NSArray<UserClient *>* userClients;
+@property (nonatomic) id initialSyncObserverToken;
 
 @end
 
 
 
 @implementation RegistrationViewController
-
-- (void)dealloc
-{
-    [ZMUserSession removeInitalSyncCompletionObserver:self];
-}
 
 - (void)viewDidLoad
 {
@@ -89,7 +84,9 @@
     self.unregisteredUser = [ZMIncompleteRegistrationUser new];
     self.unregisteredUser.accentColorValue = [UIColor indexedAccentColor];
     
-    [ZMUserSession addInitalSyncCompletionObserver:self];
+    if (nil != [ZMUserSession sharedSession]) {
+        self.initialSyncObserverToken = [ZMUserSession addInitialSyncCompletionObserver:self userSession:[ZMUserSession sharedSession]];
+    }
     
     [self setupBackgroundViewController];
     [self setupNavigationController];
@@ -165,14 +162,6 @@
 + (RegistrationFlow)registrationFlow
 {
     return IS_IPAD ? RegistrationFlowEmail : RegistrationFlowPhone;
-}
-
-- (void)presentInvitationToRegisterAsUser:(ZMIncompleteRegistrationUser *)unregisteredUser
-{
-    InvitationFlowViewController *invitationFlowViewController = [[InvitationFlowViewController alloc] initWithUnregisteredUser:unregisteredUser];
-    self.rootNavigationController.backButtonEnabled = NO;
-    self.rootNavigationController.logoEnabled = NO;
-    [self.rootNavigationController pushViewController:invitationFlowViewController animated:YES];
 }
 
 - (void)presentNoHistoryViewController:(ContextType)type
@@ -256,14 +245,9 @@
     DDLogDebug(@"Failed to fetch invitation with error: %@", error);
 }
 
-- (void)didReceiveInvitationToRegisterAsUser:(ZMIncompleteRegistrationUser *)user
-{
-    [self presentInvitationToRegisterAsUser:user];
-}
-
 #pragma mark - ZMInitialSyncCompletionObserver
 
-- (void)initialSyncCompleted:(NSNotification *)notification
+- (void)initialSyncCompleted
 {
     self.rootNavigationController.showLoadingView = NO;
     

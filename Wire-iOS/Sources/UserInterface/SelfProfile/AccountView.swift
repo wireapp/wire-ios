@@ -84,8 +84,9 @@ class DotView: UIView {
             centerView.edges == inset(selfView.edges, 1, 1, 1, 1)
         }
         
-        if let selfUser = ZMUser.selfUser() {
-            userObserver = UserChangeInfo.add(observer: self, forBareUser: selfUser)
+        if let userSession = ZMUserSession.shared(),
+            let selfUser = ZMUser.selfUser() {
+            userObserver = UserChangeInfo.add(observer: self, for: selfUser, userSession: userSession)
         }
     }
     
@@ -164,8 +165,8 @@ public class BaseAccountView: UIView, AccountViewType {
         self.account = account
         super.init(frame: .zero)
         
-        if let userSession = SessionManager.shared?.userSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, forBareUser: ZMUser.selfUser(inUserSession: userSession))
+        if let userSession = SessionManager.shared?.activeUserSession {
+            selfUserObserver = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(inUserSession: userSession), userSession: userSession)
         }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor
@@ -278,8 +279,8 @@ public final class PersonalAccountView: BaseAccountView {
         }
 
         if let userSession = ZMUserSession.shared() {
-            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: userSession))
-            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession))
+            conversationListObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.conversations(inUserSession: userSession), userSession: userSession)
+            connectionRequestObserver = ConversationListChangeInfo.add(observer: self, for: ZMConversationList.pendingConnectionConversations(inUserSession: userSession), userSession: userSession)
         }
         
         self.imageViewContainer.addSubview(userImageView)
