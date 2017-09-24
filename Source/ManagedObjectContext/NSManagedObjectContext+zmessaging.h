@@ -48,6 +48,9 @@ extern NSString * _Nonnull const IsEventContextKey;
 /// Returns @c YES if the context should refresh objects following the policy for the UI context
 @property (readonly) BOOL zm_shouldRefreshObjectsWithUIContextPolicy;
 
+/// Returns @c YES if the context is still valid, false if it has been torn down
+@property (readonly) BOOL zm_isValidContext;
+
 /// Returns @c self in case this is a sync context, or attached sync context, if present
 @property (nonatomic, null_unspecified) NSManagedObjectContext* zm_syncContext;
 

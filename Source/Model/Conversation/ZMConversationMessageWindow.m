@@ -66,7 +66,9 @@
 
 - (void)dealloc
 {
-    [self.conversation.managedObjectContext.messageWindowObserverCenter removeMessageWindow: self];
+    if (self.conversation.managedObjectContext.zm_isValidContext) {
+        [self.conversation.managedObjectContext.messageWindowObserverCenter removeMessageWindow: self];
+    }
 }
 
 
