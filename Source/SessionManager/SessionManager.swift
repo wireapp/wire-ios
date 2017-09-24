@@ -35,6 +35,10 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     func sessionManagerDidBlacklistCurrentVersion()
 }
 
+public protocol LocalMessageNotificationResponder : class {
+    func processLocalMessage(_ notification: UILocalNotification, forSession session: ZMUserSession)
+}
+
 /// The `SessionManager` class handles the creation of `ZMUserSession` and `UnauthenticatedSession`
 /// objects, the handover between them as well as account switching.
 ///
@@ -103,8 +107,10 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     public let appVersion: String
     var isAppVersionBlacklisted = false
     public weak var delegate: SessionManagerDelegate? = nil
+    public weak var localMessageNotificationResponder: LocalMessageNotificationResponder?
     public let accountManager: AccountManager
     public fileprivate(set) var activeUserSession: ZMUserSession?
+
     public fileprivate(set) var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     public fileprivate(set) var unauthenticatedSession: UnauthenticatedSession?
     public weak var requestToOpenViewDelegate: ZMRequestsToOpenViewsDelegate?
@@ -295,6 +301,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     public func select(_ account: Account, completion: ((ZMUserSession)->())? = nil) {
         delegate?.sessionManagerWillOpenAccount(account)
         tearDownObservers()
+
         activeUserSession?.callNotificationStyle = .pushNotifications
         
         activeUserSession = nil
@@ -381,6 +388,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
     
     fileprivate func createSession(for account: Account, with provider: LocalStoreProviderProtocol, completion: @escaping (ZMUserSession) -> Void) {
         let session: ZMUserSession
+
         if let backgroundSession = self.backgroundUserSessions[account.userIdentifier] {
             session = backgroundSession
         }
@@ -390,6 +398,8 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
             }
             newSession.requestToOpenViewDelegate = self
             session = newSession
+            session.sessionManager = self
+
             self.backgroundUserSessions[account.userIdentifier] = newSession
         }
         
@@ -450,7 +460,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
             )
         }
     }
-    
+
     // Creates the user session for @c account given, calls @c completion when done.
     fileprivate func activateBackgroundSession(for account: Account, with provider: LocalStoreProviderProtocol, completion: @escaping (ZMUserSession)->()) {
         guard let newSession = authenticatedSessionFactory.session(for: account, storeProvider: provider) else {
@@ -471,7 +481,7 @@ public typealias LaunchOptions = [UIApplicationLaunchOptionsKey : Any]
             return
         }
         userSession.closeAndDeleteCookie(false)
-
+        self.tearDownConversationListObservers()
         self.backgroundUserSessions[accountId] = nil
     }
     
@@ -680,7 +690,7 @@ extension SessionManager: ZMConversationListObserver {
         }
     }
 }
-        
+
 extension SessionManager : PreLoginAuthenticationObserver {
     
     public func authenticationDidFail(_ error: NSError) {
