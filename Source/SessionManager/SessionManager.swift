@@ -301,8 +301,6 @@ public protocol LocalMessageNotificationResponder : class {
     public func select(_ account: Account, completion: ((ZMUserSession)->())? = nil) {
         delegate?.sessionManagerWillOpenAccount(account)
         tearDownObservers()
-
-        activeUserSession?.callNotificationStyle = .pushNotifications
         
         activeUserSession = nil
         
@@ -469,7 +467,7 @@ public protocol LocalMessageNotificationResponder : class {
         self.backgroundUserSessions[account.userIdentifier] = newSession
         newSession.requestToOpenViewDelegate = self
         pushDispatcher.add(client: newSession)
-        newSession.callNotificationStyle = .pushNotifications
+        newSession.callNotificationStyle = self.callNotificationStyle
 
         log.debug("Created ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
         completion(newSession)
