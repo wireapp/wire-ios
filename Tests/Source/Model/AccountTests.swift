@@ -45,11 +45,15 @@ final class AccountTests: ZMConversationTestsBase {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
-        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData()
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
 
         // we create and store an account
         do {
-            let account = Account(userName: userName, userIdentifier: id, teamName: team, imageData: image)
+            let account = Account(userName: userName,
+                                  userIdentifier: id,
+                                  teamName: team,
+                                  imageData: image,
+                                  unreadConversationCount: count)
             try account.write(to: url)
         }
 
@@ -61,6 +65,7 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account.teamName, team)
         XCTAssertEqual(account.userIdentifier, id)
         XCTAssertEqual(account.imageData, image)
+        XCTAssertEqual(account.unreadConversationCount, count)
     }
 
 }

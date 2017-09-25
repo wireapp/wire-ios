@@ -66,7 +66,7 @@ public final class AccountManager: NSObject {
 
     /// Adds an account to the manager and persists it.
     /// - parameter account: The account to add.
-    @objc(addAccount:) public func add(_ account: Account) {
+    @objc(addOrUpdateAccount:) public func addOrUpdate(_ account: Account) {
         store.add(account)
         updateAccounts()
     }
@@ -74,7 +74,7 @@ public final class AccountManager: NSObject {
     /// Adds an account to the mananger and immediately and selects it.
     /// - parameter account: The account to add and select.
     @objc(addAndSelectAccount:) public func addAndSelect(_ account: Account) {
-        add(account)
+        addOrUpdate(account)
         select(account)
     }
 

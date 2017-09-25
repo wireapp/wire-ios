@@ -53,7 +53,7 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account = Account(userName: "Jacob", userIdentifier: .create())
 
         // when
-        manager.add(account)
+        manager.addOrUpdate(account)
 
         // then
         XCTAssertNil(manager.selectedAccount)
@@ -66,7 +66,7 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account = Account(userName: "Jacob", userIdentifier: .create())
 
         // when
-        manager.add(account)
+        manager.addOrUpdate(account)
 
         // then
         XCTAssertNil(manager.selectedAccount)
@@ -86,7 +86,7 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account = Account(userName: "Jacob", userIdentifier: .create())
 
         // when
-        manager.add(account)
+        manager.addOrUpdate(account)
         manager.select(account)
 
         // then
@@ -123,8 +123,8 @@ final class AccountManagerTests: ZMConversationTestsBase {
             let account2 = Account(userName: "Vytis", userIdentifier: .create(), teamName: "Wire")
 
             // when
-            manager.add(account1)
-            manager.add(account2)
+            manager.addOrUpdate(account1)
+            manager.addOrUpdate(account2)
             manager.select(account2)
 
             // then
@@ -149,7 +149,7 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account = Account(userName: "Jacob", userIdentifier: .create())
 
         // when
-        manager.add(account)
+        manager.addOrUpdate(account)
         manager.select(account)
 
         // then
@@ -189,8 +189,8 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account2 = Account(userName: "Jacob", userIdentifier: .create(), teamName: "Wire")
 
         // when
-        manager.add(account2)
-        manager.add(account1)
+        manager.addOrUpdate(account2)
+        manager.addOrUpdate(account1)
 
         // then
         XCTAssertEqual(manager.accounts, [account1, account2])
@@ -203,8 +203,8 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account2 = Account(userName: "Vytis", userIdentifier: .create(), teamName: "Wire")
 
         // when
-        manager.add(account2)
-        manager.add(account1)
+        manager.addOrUpdate(account2)
+        manager.addOrUpdate(account1)
 
         // then
         XCTAssertEqual(manager.accounts, [account1, account2])
@@ -219,20 +219,20 @@ final class AccountManagerTests: ZMConversationTestsBase {
         let account4 = Account(userName: "Vytis", userIdentifier: .create(), teamName: "Wire")
 
         // when
-        manager.add(account4)
-        manager.add(account2)
+        manager.addOrUpdate(account4)
+        manager.addOrUpdate(account2)
 
         // then
         XCTAssertEqual(manager.accounts, [account2, account4])
 
         // when
-        manager.add(account3)
+        manager.addOrUpdate(account3)
 
         // then
         XCTAssertEqual(manager.accounts, [account2, account3, account4])
 
         // when
-        manager.add(account1)
+        manager.addOrUpdate(account1)
 
         // then
         XCTAssertEqual(manager.accounts, [account1, account2, account3, account4])
