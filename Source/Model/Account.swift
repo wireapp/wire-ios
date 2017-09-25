@@ -37,15 +37,22 @@ public final class Account: NSObject {
     
     public var unreadConversationCount: Int = 0 {
         didSet {
-            NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
+            if oldValue != self.unreadConversationCount {
+                NotificationInContext(name: .AccountUnreadCountDidChangeNotification, context: self).post()
+            }
         }
     }
 
-    public required init(userName: String, userIdentifier: UUID, teamName: String? = nil, imageData: Data? = nil) {
+    public required init(userName: String,
+                         userIdentifier: UUID,
+                         teamName: String? = nil,
+                         imageData: Data? = nil,
+                         unreadConversationCount: Int = 0) {
         self.userName = userName
         self.userIdentifier = userIdentifier
         self.teamName = teamName
         self.imageData = imageData
+        self.unreadConversationCount = unreadConversationCount
         super.init()
     }
     
@@ -84,7 +91,7 @@ extension Account {
     /// The use of a separate enum, instead of using #keyPath
     /// is intentional here to allow easy renaming of properties.
     private enum Key: String {
-        case name, identifier, team, image
+        case name, identifier, team, image, unreadConversationCount
     }
 
     public convenience init?(json: [String: Any]) {
@@ -94,7 +101,8 @@ extension Account {
             userName: name,
             userIdentifier: id,
             teamName: json[Key.team.rawValue] as? String,
-            imageData: (json[Key.image.rawValue] as? String).flatMap { Data(base64Encoded: $0) }
+            imageData: (json[Key.image.rawValue] as? String).flatMap { Data(base64Encoded: $0) },
+            unreadConversationCount: (json[Key.unreadConversationCount.rawValue] as? Int) ?? 0
         )
     }
 
@@ -109,6 +117,7 @@ extension Account {
         if let imageData = imageData {
             json[Key.image.rawValue] = imageData.base64EncodedString()
         }
+        json[Key.unreadConversationCount.rawValue] = self.unreadConversationCount
         return json
     }
 
