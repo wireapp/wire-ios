@@ -18,6 +18,7 @@
 
 
 import Foundation
+import WireUtilities
 
 /// A notification that is tied to a specific context. It mimics
 /// the behavior of a regular NSNotification but is always linked to
@@ -157,18 +158,3 @@ extension NotificationInContext {
         return self.userInfo[UserInfoKeys.changedKeys.rawValue] as? [String]
     }
 }
-
-public class SelfUnregisteringNotificationCenterToken : NSObject {
-    
-    private let token : Any
-    
-    deinit {
-        NotificationCenter.default.removeObserver(token)
-    }
-    
-    public init(_ token : Any) {
-        self.token = token
-    }
-    
-}
-
