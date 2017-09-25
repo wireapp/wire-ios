@@ -191,6 +191,8 @@ public class SharingSession {
 
     let transportSession: ZMTransportSession
     
+    var reachability: ZMReachability?
+    
     private var contextDirectory: ManagedObjectContextDirectory!
     
     /// The `ZMConversationListDirectory` containing all conversation lists
@@ -258,7 +260,7 @@ public class SharingSession {
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].flatMap{ $0.host }
-        let reachability = ZMReachability(serverNames: serverNames, observer: nil, queue: .main, group: reachabilityGroup)
+        let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
         
         let transportSession =  ZMTransportSession(
             baseURL: environment.backendURL,
@@ -275,6 +277,8 @@ public class SharingSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
         )
+        
+        self.reachability = reachability
 
     }
     
@@ -341,6 +345,7 @@ public class SharingSession {
             NotificationCenter.default.removeObserver(token)
             contextSaveObserverToken = nil
         }
+        reachability?.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
         StorageStack.reset()
