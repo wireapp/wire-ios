@@ -46,9 +46,6 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
-
-NSString * const ZMTransportSessionReachabilityChangedNotificationName = @"ZMTransportSessionReachabilityChanged";
-
 NSString * const ZMTransportSessionNewRequestAvailableNotification = @"ZMTransportSessionNewRequestAvailable";
 
 static NSString * const TaskTimerKey = @"task";
@@ -94,6 +91,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @property (nonatomic) id<RequestRecorder> requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider,ReachabilityTearDown> reachability;
+@property (nonatomic) id reachabilityObserverToken;
 
 @end
 
@@ -249,6 +247,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         _requestScheduler = requestScheduler;
         self.reachability = reachability;
         self.requestScheduler.schedulerState = ZMTransportRequestSchedulerStateNormal;
+        self.reachabilityObserverToken = [self.reachability addReachabilityObserver:self queue:self.workQueue];
         
         if( ! self.reachability.mayBeReachable) {
             [self schedulerWentOffline:self.requestScheduler];
@@ -287,6 +286,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     self.tornDown = YES;
     
+    self.reachabilityObserverToken = nil;
     [self.transportPushChannel closeAndRemoveConsumer];
     [self.workGroup enter];
     [self.workQueue addOperationWithBlock:^{
@@ -322,16 +322,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (ZMAccessToken *)accessToken {
     return self.accessTokenHandler.accessToken;
-}
-
-- (void)setupReachabilityWithClass:(Class)reachabilityClass
-{
-    Require(self.reachability == nil);
-    RequireString(self.baseURL.host != nil, "Invalid base URL host");
-    RequireString(self.websocketURL.host != nil, "Invalid WebSocket URL host");
-    
-    NSArray *serverNames = @[self.baseURL.host, self.websocketURL.host];
-    _reachability = [[reachabilityClass alloc] initWithServerNames:serverNames observer:self queue:self.workQueue group:self.workGroup];
 }
 
 - (NSString *)tasksDescription;
@@ -766,8 +756,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     } else {
         [networkStateDelegate didGoOffline];
     }
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionReachabilityChangedNotificationName object:nil];
 }
 
 - (void)updateNetworkStatusFromDidReadDataFromNetwork;
