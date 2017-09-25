@@ -291,7 +291,6 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.workGroup enter];
     [self.workQueue addOperationWithBlock:^{
         [self.urlSessionSwitch tearDown];
-        [self.reachability tearDown];
         [self.workGroup leave];
     }];
 }
