@@ -31,6 +31,7 @@
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
 		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
 		168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */; };
+		16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */; };
 		16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */; };
 		16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */; };
 		3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
@@ -210,6 +211,7 @@
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
 		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
 		168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueueTests.swift; sourceTree = "<group>"; };
+		16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUnregisteringNotificationCenterToken.swift; sourceTree = "<group>"; };
 		16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMEType.swift"; sourceTree = "<group>"; };
 		16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMETypeTests.swift"; sourceTree = "<group>"; };
 		3E88BD381B1F3EA300232589 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -579,6 +581,7 @@
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
 				163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */,
+				16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -893,6 +896,7 @@
 				3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */,
 				091799641B7E04FE00E60DD9 /* ZMAPNSEnvironment.m in Sources */,
 				54181A561F594FD800155ABC /* FileManager+FileProtectionLock.swift in Sources */,
+				16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */,
 				16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */,
 				870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */,
 				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,
