@@ -51,12 +51,18 @@ private class MockURLSession: SessionProtocol {
 }
 
 private class MockReachability: NSObject, ReachabilityProvider, ReachabilityTearDown {
+
     let mayBeReachable = true
     let isMobileConnection = true
     let oldMayBeReachable = true
     let oldIsMobileConnection = true
     
     func tearDown() {}
+    func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any { return NSObject() }
+    func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
+        return NSObject()
+    }
+    
 }
 
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {

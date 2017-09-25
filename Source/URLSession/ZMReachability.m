@@ -19,6 +19,7 @@
 
 @import SystemConfiguration;
 @import WireSystem;
+@import WireUtilities;
 
 #import "ZMReachability.h"
 #import <libkern/OSAtomic.h>
@@ -27,6 +28,7 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
+NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChangedNotification";
 
 @interface ZMReachability() <ReachabilityProvider,ReachabilityTearDown>
 {
@@ -34,8 +36,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 }
 
 @property (nonatomic, copy) NSArray *names;
-@property (nonatomic, weak) id<ZMReachabilityObserver> reachabilityObserver;
-@property (nonatomic) NSOperationQueue *observerQueue; ///< calls to the observer will always be performed on this queue
 @property (nonatomic, copy) NSArray *reachabilityReferences;
 @property (nonatomic) dispatch_queue_t workQueue;
 @property (nonatomic) ZMSDispatchGroup *group;
@@ -52,13 +52,11 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 @implementation ZMReachability
 
-- (instancetype)initWithServerNames:(NSArray *)names observer:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)observerQueue group:(ZMSDispatchGroup *)group;
+- (instancetype)initWithServerNames:(NSArray *)names group:(ZMSDispatchGroup *)group;
 {
     self = [super init];
     if (self) {
         self.names = [[NSSet setWithArray:names] allObjects];
-        self.reachabilityObserver = observer;
-        self.observerQueue = observerQueue;
         self.group = group;
         self.workQueue = dispatch_queue_create("ZMReachability", 0);
         self.referenceToFlag = [NSMapTable strongToStrongObjectsMapTable];
@@ -89,6 +87,32 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 - (void)dealloc;
 {
     RequireString(_tornDown != 0, "Object was never torn down.");
+}
+
+- (id)addReachabilityObserver:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)queue
+{
+    ZM_WEAK(observer);
+    return [self addReachabilityObserverOnQueue:queue block:^(id<ReachabilityProvider> provider) {
+        ZM_STRONG(observer);
+        [observer reachabilityDidChange:provider];
+    }];
+}
+
+- (id)addReachabilityObserverOnQueue:(nullable NSOperationQueue *)queue block:(ReachabilityObserverBlock)block
+{
+    ZM_WEAK(self);
+    id token = [[NSNotificationCenter defaultCenter] addObserverForName:ZMReachabilityChangedNotificationName object:self queue:queue usingBlock:^(NSNotification * _Nonnull note) {
+        NOT_USED(note);
+        ZM_STRONG(self);
+        block(self);
+    }];
+    
+    return [[SelfUnregisteringNotificationCenterToken alloc] init:token];
+}
+
+- (void)notifyReachabilityDidChange
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:ZMReachabilityChangedNotificationName object:self];
 }
 
 static void networkReachabilityCallBack(SCNetworkReachabilityRef ref, SCNetworkReachabilityFlags flags, void *info)
@@ -182,15 +206,11 @@ static CFStringRef copyDescription(const void *info)
         ZMLogInfo(@"FINAL REACHABILITY: %d", globalReachable);
     }
     
-    [self.group enter];
-    [self.observerQueue addOperationWithBlock:^{
-        self.oldMayBeReachable = self.mayBeReachable;
-        self.oldIsMobileConnection = self.isMobileConnection;
-        self.mayBeReachable = globalReachable;
-        self.isMobileConnection = isMobileConnection;
-        [self.reachabilityObserver reachabilityDidChange:self];
-        [self.group leave];
-    }];
+    self.oldMayBeReachable = self.mayBeReachable;
+    self.oldIsMobileConnection = self.isMobileConnection;
+    self.mayBeReachable = globalReachable;
+    self.isMobileConnection = isMobileConnection;
+    [self notifyReachabilityDidChange];
 }
 
 - (NSString *)description;

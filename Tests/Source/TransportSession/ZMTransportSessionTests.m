@@ -2169,6 +2169,11 @@ static XCTestCase *currentTestCase;
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
+- (void)testItRegistersAsObserverOfReachability
+{
+    XCTAssertEqual(self.reachability.observerCount, 1);
+}
+
 - (void)testThatItCallsDidReceiveDataOnTheReachabilityDelegate
 {
     // given
@@ -2201,30 +2206,6 @@ static XCTestCase *currentTestCase;
     
     // then
     [observer verify];
-}
-
-- (void)testThatItSendsTransportSessionReachabilityChangeNotificationOnReachabilityChanges
-{
-    // expect
-    [self expectationForNotification:ZMTransportSessionReachabilityChangedNotificationName object:nil handler:nil];
-    
-    // when
-    [self.sut reachabilityDidChange:self.sut.reachability];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
-}
-
-- (void)testThatItSendsTransportSessionReachabilityChangeNotificationOnReachabilityChangesToOffline
-{
-    // given
-    id reachbilityMock = [OCMockObject mockForClass:[ZMReachability class]];
-    [[[reachbilityMock stub] andReturnValue:@NO] mayBeReachable];
-
-    // expect
-    [self expectationForNotification:ZMTransportSessionReachabilityChangedNotificationName object:nil handler:nil];
-
-    // when
-    [self.sut reachabilityDidChange:reachbilityMock];
-    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 - (void)testThatWhenSettingTheNetworkStateDelegateItIsCalledWithTheCurrentStatus

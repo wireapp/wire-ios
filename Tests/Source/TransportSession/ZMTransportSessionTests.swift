@@ -20,6 +20,17 @@ import Foundation
 import WireTransport
 
 @objc public class FakeReachability: NSObject, ReachabilityProvider, ReachabilityTearDown {
+    
+    public var observerCount = 0
+    public func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {
+        observerCount += 1
+        return NSObject()
+    }
+    
+    public func addReachabilityObserver(on queue: OperationQueue?, block: @escaping ReachabilityObserverBlock) -> Any {
+        return NSObject()
+    }
+
     public var mayBeReachable: Bool = true
     public var isMobileConnection: Bool = true
     public var oldMayBeReachable: Bool = true

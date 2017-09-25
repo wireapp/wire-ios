@@ -54,7 +54,6 @@ typedef NS_ENUM(NSInteger, ZMTransportSessionErrorCode) {
     ZMTransportSessionErrorCodeTryAgainLater, ///< c.f. @code -[NSError isTryAgainLaterError] @endcode
 };
 
-extern NSString * const ZMTransportSessionReachabilityChangedNotificationName;
 extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 
 /// Return type for an enqueue operation
