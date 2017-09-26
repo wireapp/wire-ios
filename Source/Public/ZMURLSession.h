@@ -28,6 +28,8 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ZMURLSessionDelegate;
 
 extern NSString * const ZMURLSessionBackgroundIdentifier;
+extern NSString * const ZMURLSessionForegroundIdentifier;
+extern NSString * const ZMURLSessionVoipIdentifier;
 
 @interface ZMURLSession : NSObject
 
