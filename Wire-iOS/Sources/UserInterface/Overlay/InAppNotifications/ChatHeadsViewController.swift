@@ -18,7 +18,6 @@
 
 import UIKit
 import Cartography
-import WireDataModel
 
 public extension UIViewController {
     
@@ -81,7 +80,7 @@ class ChatHeadsViewController: UIViewController {
         }
         
         // format title
-        var title: NSAttributedString? = titleText(conversation: conversation, account: account)
+        var title: NSAttributedString? = ChatHeadTextFormatter.titleText(conversation: conversation, teamName: account.teamName, isAccountActive: account.isActive)
 
         // if call notification & not a team, no title
         if [ZMIncomingCallCategory, ZMMissedCallCategory].contains(note.category ?? "") {
@@ -90,15 +89,18 @@ class ChatHeadsViewController: UIViewController {
             }
         }
         
-        let content: NSAttributedString
+        let contentCandidate: NSAttributedString?
         
         // if it is a message, extract the content for formatting
         if let message = note.message(in: conversation, in: session.managedObjectContext) {
-            content = text(for: message, isAccountActive: account.isActive)
+            contentCandidate = ChatHeadTextFormatter.text(for: message, isAccountActive: account.isActive)
         } else {
-            // use the alert body
-            guard let alertBody = note.alertBody else { return }
-            content = NSAttributedString(string: alertBody, attributes: [NSFontAttributeName: FontSpec(.medium, .regular).font!])
+            guard let noteText = ChatHeadTextFormatter.text(for: note) else { return }
+            contentCandidate = noteText
+        }
+        
+        guard let content = contentCandidate else {
+            return
         }
         
         chatHeadView = ChatHeadView(
@@ -140,68 +142,6 @@ class ChatHeadsViewController: UIViewController {
     }
     
     // MARK: - Private Helpers
-    
-    private func text(for message: ZMConversationMessage, isAccountActive: Bool) -> NSAttributedString {
-        var result = ""
-        
-        if Message.isText(message) {
-            
-            result = (message.textMessageData!.messageText as NSString).resolvingEmoticonShortcuts() ?? ""
-            
-            if message.isEphemeral {
-                result = result.obfuscated()
-            }
-            
-            if message.conversation?.conversationType == .group {
-                if let senderName = message.sender?.displayName {
-                    result = "\(senderName): \(result)"
-                }
-            }
-            
-        } else if Message.isImage(message) {
-            result = "notifications.shared_a_photo".localized
-        } else if Message.isKnock(message) {
-            result = "notifications.pinged".localized
-        } else if Message.isVideo(message) {
-            result = "notifications.sent_video".localized
-        } else if Message.isAudio(message) {
-            result = "notifications.sent_audio".localized
-        } else if Message.isFileTransfer(message) {
-            result = "notifications.sent_file".localized
-        } else if Message.isLocation(message) {
-            result = "notifications.sent_location".localized
-        }
-        
-        let attr: [String : AnyObject] = [NSFontAttributeName: font(for: message)]
-        return NSAttributedString(string: result, attributes: attr)
-    }
-    
-    private func font(for message: ZMConversationMessage) -> UIFont {
-        let font = FontSpec(.medium, .regular).font!
-        
-        if message.isEphemeral {
-            return UIFont(name: "RedactedScript-Regular", size: font.pointSize)!
-        }
-        return font
-    }
-    
-    private func titleText(conversation: ZMConversation, account: Account) -> NSAttributedString {
-        
-        let regularFont: [String: AnyObject] = [NSFontAttributeName: FontSpec(.medium, .regular).font!.withSize(14)]
-        let mediumFont: [String: AnyObject] = [NSFontAttributeName: FontSpec(.medium, .medium).font!.withSize(14)]
-        
-        // if team & background account
-        if let teamName = account.teamName, !account.isActive {
-            // "Name in Team"
-            let result = NSMutableAttributedString(string: conversation.displayName + " ", attributes: mediumFont)
-            result.append(NSMutableAttributedString(string: "in ", attributes: regularFont))
-            result.append(NSAttributedString(string: teamName, attributes: mediumFont))
-            return result
-            
-        } else {
-            return NSAttributedString(string: conversation.displayName, attributes: mediumFont)
-        }
-    }
     
     private func shouldDisplay(note: UILocalNotification, conversation: ZMConversation, account: Account) -> Bool {
         
