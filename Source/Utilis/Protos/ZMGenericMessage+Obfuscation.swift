@@ -19,7 +19,7 @@
 
 import Foundation
 
-extension String {
+public extension String {
     
     static func randomChar() -> UnicodeScalar {
         let string = "abcdefghijklmnopqrstuvxyz"
@@ -28,7 +28,7 @@ extension String {
         return chars[random]
     }
     
-    func obfuscated() -> String {
+    public func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
         for char in self.unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
