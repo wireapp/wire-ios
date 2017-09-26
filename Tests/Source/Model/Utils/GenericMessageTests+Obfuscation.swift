@@ -33,6 +33,31 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         return asset
     }
     
+    func testThatItObfuscatesEmojis(){
+        // given
+        let text = "📲"
+        let message = ZMGenericMessage.message(text: text, nonce: "bar", expiresAfter: NSNumber(value: 1.0))
+        
+        // when
+        let obfuscatedMessage = message.obfuscatedMessage()
+        
+        // then
+        XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
+        XCTAssertNotNil(obfuscatedMessage?.hasText())
+    }
+    func testThatItObfuscatesCyrillic(){
+        // given
+        let text = "привет мир!"
+        let message = ZMGenericMessage.message(text: text, nonce: "bar", expiresAfter: NSNumber(value: 1.0))
+        
+        // when
+        let obfuscatedMessage = message.obfuscatedMessage()
+        
+        // then
+        XCTAssertNotEqual(obfuscatedMessage?.text.content, text)
+        XCTAssertNotNil(obfuscatedMessage?.hasText())
+    }
+    
     func testThatItObfuscatesTextMessages(){
         // given
         let text = "foo"
