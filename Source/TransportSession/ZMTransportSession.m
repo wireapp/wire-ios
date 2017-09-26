@@ -144,12 +144,12 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-+ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)shardContainerIdentifier
++ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)shardContainerIdentifier userIdentifier:(NSUUID *)userIdentifier
 {
     NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
-    NSString *sessionIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
+    NSString *resolvedBundleIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
     
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:sessionIdentifier];
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:[ZMTransportSession identifierWithPrefix:resolvedBundleIdentifier userIdentifier:userIdentifier]];
     [self setUpConfiguration:configuration];
     configuration.sharedContainerIdentifier = shardContainerIdentifier;
     return configuration;
@@ -165,6 +165,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
++ (NSString *)identifierWithPrefix:(NSString *)prefix userIdentifier:(NSUUID *)userIdentifier
+{
+    return [NSString stringWithFormat:@"%@-%@", prefix, userIdentifier.transportString];
+}
+
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
                    websocketURL:(NSURL *)websocketURL
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
@@ -172,12 +177,18 @@ static NSInteger const DefaultMaximumRequests = 6;
              initialAccessToken:(ZMAccessToken *)initialAccessToken
       sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
 {
-    NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:@"ZMTransportSession"];
-    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:@"ZMTransportSession init"];
+    NSUUID *userIdentifier = cookieStorage.userIdentifier;
+    NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
+    ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
     
-    ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:@"foreground-session"];
-    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:[[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:sharedContainerIdentifier] delegate:self delegateQueue:queue identifier:@"background-session"];
-    ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:@"voip-session"];
+    NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
+    ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:foregroundIdentifier];
+    
+    NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
+    NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:sharedContainerIdentifier userIdentifier:userIdentifier];
+    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:backgroundSessionConfiguration delegate:self delegateQueue:queue identifier:backgroundIdentifier];
+    NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
+    ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:voipIdentifier];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     

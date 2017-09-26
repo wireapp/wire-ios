@@ -48,7 +48,6 @@ static dispatch_queue_t isolationQueue()
 @interface ZMPersistentCookieStorage ()
 
 @property (nonatomic, readonly) NSString *serverName;
-@property (nonatomic, readonly) NSUUID *userIdentifier;
 
 @end
 

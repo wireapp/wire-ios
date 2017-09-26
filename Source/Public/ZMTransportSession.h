@@ -73,6 +73,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
+@property (nonatomic, readonly) ZMURLSessionSwitch *urlSessionSwitch;
 @property (nonatomic, copy) void (^requestLoopDetectionCallback)(NSString*);
 @property (nonatomic, readonly) id<ReachabilityProvider,ReachabilityTearDown> reachability;
 

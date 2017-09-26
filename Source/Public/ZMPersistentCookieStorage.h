@@ -34,6 +34,7 @@ NS_ASSUME_NONNULL_BEGIN
 - (void)deleteKeychainItems;
 
 @property (nonatomic, nullable) NSData *authenticationCookieData;
+@property (nonatomic, readonly) NSUUID *userIdentifier;
 
 @end
 

@@ -37,6 +37,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 2;
 NSString * const ZMURLSessionBackgroundIdentifier = @"background-session";
+NSString * const ZMURLSessionForegroundIdentifier = @"foreground-session";
+NSString * const ZMURLSessionVoipIdentifier = @"voip-session";
 
 @interface ZMURLSession ()
 
@@ -85,6 +87,7 @@ ZM_EMPTY_ASSERTING_INIT();
     ZMURLSession *session = [[ZMURLSession alloc] initWithDelegate:delegate identifier:identifier];
     if(session) {
         session->_backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:session delegateQueue:queue];
+        session->_backingSession.sessionDescription = identifier;
     }
     return session;
 }
