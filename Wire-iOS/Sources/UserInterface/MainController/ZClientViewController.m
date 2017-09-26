@@ -117,7 +117,6 @@
         self.proximityMonitorManager = [ProximityMonitorManager new];
         self.mediaPlaybackManager = [[MediaPlaybackManager alloc] initWithName:@"conversationMedia"];
         self.messageCountTracker = [[LegacyMessageTracker alloc] initWithManagedObjectContext:ZMUserSession.sharedSession.syncManagedObjectContext];
-        [[SessionManager shared] setRequestToOpenViewDelegate:self];
 
         [AVSProvider.shared.mediaManager registerMedia:self.mediaPlaybackManager withOptions:@{ @"media" : @"external "}];
         
