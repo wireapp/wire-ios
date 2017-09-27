@@ -665,7 +665,7 @@ static const CGFloat BurstContainerExpandedHeight = 40;
 
 -(CGFloat)getPreviewContentHeight
 {
-    return [HeightsProvider compressedSizeForView: self.messageContentView];
+    return [CellSizesProvider compressedSizeForView: self.messageContentView];
 }
 
 #pragma mark - Message observation

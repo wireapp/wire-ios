@@ -61,6 +61,7 @@
 
 @property (nonatomic) CGSize originalImageSize;
 @property (nonatomic) CGSize imageSize;
+@property (nonatomic) BOOL showsPreview;
 
 @end
 
@@ -205,11 +206,14 @@ static const CGFloat ImageToolbarMinimumSize = 192;
     [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeLeft relation:NSLayoutRelationLessThanOrEqual];
     self.imageRightConstraint = [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight];
     self.imageRightConstraint.active = NO;
-    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight];
-    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeLeft];
     
-    [self.imageViewContainer autoPinEdgeToSuperviewEdge:ALEdgeBottom];
-    self.imageWidthConstraint = [self.imageViewContainer autoSetDimension:ALDimensionWidth toSize:0];
+    NSLayoutRelation rightRelation = self.showsPreview ? NSLayoutRelationEqual : NSLayoutRelationGreaterThanOrEqual;
+    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeRight relation: rightRelation];
+    [self.imageViewContainer autoPinEdgeToSuperviewMargin:ALEdgeLeft];
+    [NSLayoutConstraint autoSetPriority:ALLayoutPriorityDefaultHigh + 1 forConstraints:^{
+        [self.imageViewContainer autoPinEdgeToSuperviewEdge:ALEdgeBottom];
+        self.imageWidthConstraint = [self.imageViewContainer autoSetDimension:ALDimensionWidth toSize:0];
+    }];
     
     NSMutableArray<NSLayoutConstraint *> *insideConstraints = [NSMutableArray array];
     [insideConstraints addObject:[self.imageToolbarView autoPinEdge:ALEdgeLeft toEdge:ALEdgeLeft ofView:self.imageViewContainer]];
@@ -295,14 +299,15 @@ static const CGFloat ImageToolbarMinimumSize = 192;
     // request
     [convMessage requestImageDownload]; // there is no harm in calling this if the full content is already available
 
-    const CGFloat scaleFactor = imageMessageData.isAnimatedGIF ? 1 : 0.5;
-    self.originalImageSize = CGSizeApplyAffineTransform(imageMessageData.originalSize, CGAffineTransformMakeScale(scaleFactor, scaleFactor));
-    self.imageSize = CGSizeMake(MAX(48, self.originalImageSize.width), MAX(48, self.originalImageSize.height));
+    self.originalImageSize = [CellSizesProvider originalSizeFor: imageMessageData];
+    self.imageSize = [CellSizesProvider getMinimumSizeFor:self.originalImageSize];
     
     if (self.autoStretchVertically) {
         self.fullImageView.contentMode = [self imageSmallerThanMinimumSize] ? UIViewContentModeLeft : UIViewContentModeScaleAspectFill;
-    }
-    else {
+    } else if (self.showsPreview) {
+        BOOL isSmall = self.imageSize.height < [CellSizesProvider standardCellHeight];
+        self.fullImageView.contentMode = isSmall ? UIViewContentModeScaleAspectFit : UIViewContentModeScaleAspectFill;
+    } else {
         self.fullImageView.contentMode = UIViewContentModeScaleAspectFill;
     }
 
@@ -580,13 +585,14 @@ static const CGFloat ImageToolbarMinimumSize = 192;
 -(void)preparePreview
 {
     [super preparePreview];
-    self.autoStretchVertically = FALSE;
+    self.autoStretchVertically = NO;
+    self.showsPreview = YES;
     self.defaultLayoutMargins = UIEdgeInsetsZero;
 }
 
 -(CGFloat)getPreviewContentHeight
 {
-    return [HeightsProvider heightForImage: [self.fullImageView image]];
+    return [CellSizesProvider heightForImage: [self.fullImageView image]];
 }
 
 @end

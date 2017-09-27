@@ -28,7 +28,7 @@ public final class VideoMessageCell: ConversationCell {
     private let videoMessageView = VideoMessageView()
     private let obfuscationView = ObfuscationView(icon: .videoMessage)
 
-    public var videoViewHeight : CGFloat = HeightsProvider.videoViewHeight
+    public var videoViewHeight : CGFloat = CellSizesProvider.videoViewHeight
 
     private var topMargin: NSLayoutConstraint!
     
@@ -187,7 +187,7 @@ public final class VideoMessageCell: ConversationCell {
     }
     
     public override func getPreviewContentHeight() -> CGFloat {
-        return HeightsProvider.heightForVideo()
+        return CellSizesProvider.heightForVideo()
     }
 }
 

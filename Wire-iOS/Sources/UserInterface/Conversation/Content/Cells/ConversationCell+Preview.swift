@@ -27,10 +27,10 @@ extension ConversationCell {
     
     func prepareLayoutForPreview(message: ZMMessage? = nil) {
         let layoutProperties = ConversationCellLayoutProperties()
-        layoutProperties.showSender       = false
+        layoutProperties.showSender = false
         layoutProperties.showUnreadMarker = false
         layoutProperties.showBurstTimestamp = false
-        layoutProperties.topPadding       = 0
+        layoutProperties.topPadding = 0
         layoutProperties.alwaysShowDeliveryState = false
         
         self.configure(for: message, layoutProperties: layoutProperties)
