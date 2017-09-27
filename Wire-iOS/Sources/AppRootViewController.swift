@@ -36,6 +36,16 @@ class AppRootViewController : UIViewController {
     fileprivate let transitionQueue : DispatchQueue = DispatchQueue(label: "transitionQueue")
     fileprivate var isClassyInitialized = false
     
+    fileprivate weak var requestToOpenViewDelegate: ZMRequestsToOpenViewsDelegate? {
+        didSet {
+            if let delegate = requestToOpenViewDelegate {
+                performWhenRequestsToOpenViewsDelegateAvailable?(delegate)
+                performWhenRequestsToOpenViewsDelegateAvailable = nil
+            }
+        }
+    }
+    
+    fileprivate var performWhenRequestsToOpenViewsDelegateAvailable: ((ZMRequestsToOpenViewsDelegate)->())?
     
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
@@ -43,6 +53,7 @@ class AppRootViewController : UIViewController {
         classyCache = ClassyCache()
         fileBackupExcluder = FileBackupExcluder()
         avsLogObserver = AVSLogObserver()
+        MagicConfig.shared()
         
         mainWindow = UIWindow()
         mainWindow.frame = UIScreen.main.bounds
@@ -66,13 +77,6 @@ class AppRootViewController : UIViewController {
         overlayWindow.makeKeyAndVisible()
         mainWindow.makeKey()
         
-        let isCallkitEnabled = !Settings.shared().disableCallKit
-        var isCallkitSupported = false
-        if #available(iOS 10, *) {
-            isCallkitSupported = TARGET_OS_SIMULATOR == 0
-        }
-        ZMUserSession.useCallKit = isCallkitEnabled && isCallkitSupported
-        
         configureMediaManager()
         
         if let appGroupIdentifier = Bundle.main.appGroupIdentifier {
@@ -81,6 +85,7 @@ class AppRootViewController : UIViewController {
         }
         
         NotificationCenter.default.addObserver(self, selector: #selector(onContentSizeCategoryChange), name: Notification.Name.UIContentSizeCategoryDidChange, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidEnterBackground), name: Notification.Name.UIApplicationDidEnterBackground, object: nil)
         
         transition(to: .headless)
         
@@ -117,6 +122,9 @@ class AppRootViewController : UIViewController {
             blacklistDownloadInterval: Settings.shared().blacklistDownloadInterval)
         { sessionManager in
             self.sessionManager = sessionManager
+            self.sessionManager?.localMessageNotificationResponder = self
+            self.sessionManager?.requestToOpenViewDelegate = self
+            sessionManager.updateCallNotificationStyleFromSettings()
         }
     }
     
@@ -154,6 +162,7 @@ class AppRootViewController : UIViewController {
     
     func transition(to appState: AppState, completionHandler: (() -> Void)? = nil) {
         var viewController : UIViewController? = nil
+        requestToOpenViewDelegate = nil
         
         switch appState {
         case .blacklisted:
@@ -170,6 +179,8 @@ class AppRootViewController : UIViewController {
             registrationViewController.signInError = error
             viewController = registrationViewController
         case .authenticated(completedRegistration: let completedRegistration):
+            // TODO: CallKit only with 1 account
+            sessionManager?.updateCallNotificationStyleFromSettings()
             UIColor.setAccentOverride(.undefined)
             mainWindow.tintColor = UIColor.accent()
             executeAuthenticatedBlocks()
@@ -183,7 +194,10 @@ class AppRootViewController : UIViewController {
         }
         
         if let viewController = viewController {
-            transition(to: viewController, animated: true, completionHandler: completionHandler)
+            transition(to: viewController, animated: true) {
+                self.requestToOpenViewDelegate = viewController as? ZMRequestsToOpenViewsDelegate
+                completionHandler?()
+            }
         } else {
             completionHandler?()
         }
@@ -248,7 +262,6 @@ class AppRootViewController : UIViewController {
         
         if !isClassyInitialized && isClassyRequired(for: appState) {
             isClassyInitialized = true
-            MagicConfig.shared()
             
             let windows = [mainWindow, overlayWindow]
             DispatchQueue.main.async {
@@ -351,4 +364,50 @@ extension AppRootViewController : AppStateControllerDelegate {
         enqueueTransition(to: appState)
     }
     
+}
+
+// MARK: - RequestToOpenViewsDelegate
+
+extension AppRootViewController : ZMRequestsToOpenViewsDelegate {
+    
+    public func showConversationList(for userSession: ZMUserSession!) {
+        whenRequestsToOpenViewsDelegateAvailable(do: { delegate in
+            delegate.showConversationList(for: userSession)
+        })
+    }
+    
+    public func userSession(_ userSession: ZMUserSession!, show conversation: ZMConversation!) {
+        whenRequestsToOpenViewsDelegateAvailable(do: { delegate in
+            delegate.userSession(userSession, show: conversation)
+        })
+    }
+    
+    public func userSession(_ userSession: ZMUserSession!, show message: ZMMessage!, in conversation: ZMConversation!) {
+        whenRequestsToOpenViewsDelegateAvailable(do: { delegate in
+            delegate.userSession(userSession, show: message, in: conversation)
+        })
+    }
+    
+    internal func whenRequestsToOpenViewsDelegateAvailable(do closure: @escaping (ZMRequestsToOpenViewsDelegate)->()) {
+        if let delegate = self.requestToOpenViewDelegate {
+            closure(delegate)
+        }
+        else {
+            self.performWhenRequestsToOpenViewsDelegateAvailable = closure
+        }
+    }
+}
+
+// MARK: - Application Icon Badge Number
+
+extension AppRootViewController : LocalMessageNotificationResponder {
+
+    func processLocalMessage(_ notification: UILocalNotification, forSession session: ZMUserSession) {
+        (self.overlayWindow.rootViewController as! NotificationWindowRootViewController).show(notification)
+    }
+    
+    @objc fileprivate func applicationDidEnterBackground() {
+        let unreadConversations = sessionManager?.accountManager.totalUnreadCount ?? 0
+        UIApplication.shared.applicationIconBadgeNumber = unreadConversations
+    }
 }

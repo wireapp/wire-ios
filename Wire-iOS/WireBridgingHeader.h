@@ -64,6 +64,8 @@
 #import "UserImageView+Magic.h"
 #import "CameraPreviewView.h"
 #import "VoiceChannelCollectionViewLayout.h"
+#import "ContrastUserImageView.h"
+#import "PassthroughTouchesView.h"
 
 // View Controllers
 #import "ZClientViewController.h"
@@ -157,6 +159,7 @@
 #import "AVSLogObserver.h"
 #import "Analytics+Performance.h"
 #import "UIScreen+Compact.h"
+#import "NSString+EmoticonSubstitution.h"
 
 // Camera
 #import "CameraController.h"
