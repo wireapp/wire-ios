@@ -82,6 +82,11 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         }
     }
     
+    func testThatBackgorundSessionIsBackground() {
+        XCTAssertTrue(sut.urlSessionSwitch.backgroundSession.isBackgroundSession)
+        XCTAssertFalse(sut.urlSessionSwitch.foregroundSession.isBackgroundSession)
+    }
+    
     func testThatItConfiguresSessionsCorrectly() {
         // given
         let userID = userIdentifier.transportString()
