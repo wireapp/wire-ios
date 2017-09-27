@@ -97,7 +97,7 @@ extension ShareViewController {
         
         if self.showPreview {
             
-            let height = self.shareable.getHeight(for: self.shareablePreviewView!)
+            let height = self.shareable.height(for: self.shareablePreviewView!)
             
             constrain(self.containerView, self.shareablePreviewWrapper!, self.shareablePreviewView!, self.tokenField) { view, shareablePreviewWrapper, shareablePreviewView, tokenField in
                 

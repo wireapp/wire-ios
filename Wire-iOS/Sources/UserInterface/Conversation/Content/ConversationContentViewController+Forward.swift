@@ -117,7 +117,7 @@ extension ZMMessage: Shareable {
         return cell
     }
     
-    public func getHeight(for previewView: UIView?) -> CGFloat {
+    public func height(for previewView: UIView?) -> CGFloat {
         guard let previewView = previewView as? PreviewProvider else { return 0.0 }
         return previewView.getPreviewContentHeight()
     }

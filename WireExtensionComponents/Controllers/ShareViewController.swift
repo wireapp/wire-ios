@@ -28,7 +28,7 @@ public protocol Shareable {
     associatedtype I: ShareDestination
     func share<I>(to: [I])
     func previewView() -> UIView?
-    func getHeight(for previewView: UIView?) -> CGFloat
+    func height(for previewView: UIView?) -> CGFloat
     
 }
 

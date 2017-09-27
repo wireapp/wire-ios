@@ -224,8 +224,7 @@
             articleView.authorLabel.numberOfLines = 1;
             
             if(showImage) {
-                BOOL isScreenCompact = [UIScreen mainScreen].bounds.size.height <= 568;
-                articleView.imageHeight = isScreenCompact ? 75.0 : 125.0;
+                articleView.imageHeight = [UIScreen isCompact] ? 75.0 : 125.0;
             }
         }
         articleView.translatesAutoresizingMaskIntoConstraints = NO;
@@ -460,11 +459,11 @@
 -(void)preparePreview
 {
     [super preparePreview];
-    self.smallLinkAttachments = TRUE;
+    self.smallLinkAttachments = YES;
     self.linkAttachmentContainer.layoutMargins = UIEdgeInsetsZero;
     self.messageTextView.backgroundColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorBackground];
     self.messageTextView.layer.cornerRadius = 4.0;
-    self.messageTextView.layer.masksToBounds = TRUE;
+    self.messageTextView.layer.masksToBounds = YES;
     self.messageTextView.textContainerInset = UIEdgeInsetsMake(8, 8, 10, 8);
     self.messageTextView.textContainer.lineBreakMode = NSLineBreakByTruncatingTail;
     self.messageTextView.textContainer.maximumNumberOfLines = 2;
