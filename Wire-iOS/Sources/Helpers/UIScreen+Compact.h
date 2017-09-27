@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2017 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,11 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class LinkInteractionTextView;
+#import <UIKit/UIKit.h>
 
-@interface TextMessageCell ()
-@property (nonatomic) LinkInteractionTextView *messageTextView;
-// Using @c smallLinkAttachments = YES imply that the cell is not going to be re-used.
-@property (nonatomic) BOOL smallLinkAttachments;
-@property (nonatomic) UIView *linkAttachmentContainer;
+@interface UIScreen (Compact)
+
++(BOOL)isCompact;
+
 @end
