@@ -409,9 +409,13 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         let account = self.createAccount()
         
         // WHEN
+        let sessionLoadedExpectation = self.expectation(description: "Session loaded")
         self.sessionManager!.withSession(for: account, perform: { session in
             XCTAssertNotNil(session.managedObjectContext)
+            sessionLoadedExpectation.fulfill()
         })
+        
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         
         // THEN
         XCTAssertNotNil(self.sessionManager!.backgroundUserSessions[account.userIdentifier])
@@ -533,13 +537,9 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         realSessionManager.tearDownAllBackgroundSessions()
     }
     
-    func testThatItLoadsAccountForPush() {
-        // GIVEN
-        let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
-        self.sessionManager?.accountManager.addOrUpdate(account)
-
+    func prepareSession(for account: Account) {
         weak var weakSession: ZMUserSession? = nil
-        var payload: [AnyHashable: Any] = [:]
+        
         autoreleasepool {
             var session: ZMUserSession! = nil
             self.sessionManager?.withSession(for: account, perform: { createdSession in
@@ -551,12 +551,7 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
             
             let selfUser = ZMUser.selfUser(inUserSession: session)!
             selfUser.remoteIdentifier = currentUserIdentifier
-            
-            payload = ["data": [
-                "user": selfUser.remoteIdentifier?.transportString()
-                ]
-            ]
-            
+        
             self.sessionManager!.tearDownAllBackgroundSessions()
             XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
             session = nil
@@ -564,6 +559,19 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         }
         self.userSession = nil
         XCTAssertNil(weakSession)
+    }
+    
+    func testThatItLoadsAccountForPush() {
+        // GIVEN
+        let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
+        self.sessionManager?.accountManager.addOrUpdate(account)
+
+        self.prepareSession(for: account)
+        
+        let payload: [AnyHashable: Any] = ["data": [
+            "user": currentUserIdentifier.transportString()
+            ]
+        ]
         
         // WHEN
         let pushCompleted = self.expectation(description: "Push completed")
@@ -578,7 +586,41 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
             }
         })
         
-        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 10))
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+    }
+    
+    func testThatItLoadsOnlyOneAccountForPush() {
+        // GIVEN
+        let account = Account(userName: "Test Account", userIdentifier: currentUserIdentifier)
+        self.sessionManager?.accountManager.addOrUpdate(account)
+        
+        self.prepareSession(for: account)
+        
+        let payload: [AnyHashable: Any] = ["data": [
+            "user": currentUserIdentifier.transportString()
+            ]
+        ]
+        
+        // WHEN
+        let pushCompleted1 = self.expectation(description: "Push completed 1")
+        var userSession1: ZMUserSession!
+        let pushCompleted2 = self.expectation(description: "Push completed 2")
+        var userSession2: ZMUserSession!
+        self.sessionManager?.pushDispatcher.didReceiveRemoteNotification(payload, fetchCompletionHandler: { _ in
+            pushCompleted1.fulfill()
+            userSession1 = self.sessionManager!.backgroundUserSessions[account.userIdentifier]
+        })
+        self.sessionManager?.pushDispatcher.didReceiveRemoteNotification(payload, fetchCompletionHandler: { _ in
+            pushCompleted2.fulfill()
+            userSession2 = self.sessionManager!.backgroundUserSessions[account.userIdentifier]
+        })
+        
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertNotNil(userSession1)
+        XCTAssertNotNil(userSession2)
+        XCTAssertEqual(userSession1, userSession2)
+        // CLEANUP
+        self.sessionManager!.tearDownAllBackgroundSessions()
     }
     
     func setupSession() -> ZMUserSession {
@@ -589,9 +631,14 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         manager.addAndSelect(account)
         
         var session: ZMUserSession! = nil
+        
+        let sessionLoadExpectation = self.expectation(description: "Session loaded")
         self.sessionManager?.withSession(for: account, perform: { createdSession in
             session = createdSession
+            sessionLoadExpectation.fulfill()
         })
+        
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
         
         let selfUser = ZMUser.selfUser(in: session.managedObjectContext)
         selfUser.remoteIdentifier = currentUserIdentifier
@@ -626,6 +673,8 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         // WHEN
         self.sessionManager?.didReceiveLocal(notification: localNotification, application: self.application!)
         
+        XCTAssertTrue(self.wait(withTimeout: 0.1) { return self.sessionManager!.activeUserSession != nil })
+        
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
@@ -651,8 +700,13 @@ class SessionManagerTests_MultiUserSession: IntegrationTest {
         XCTAssertNil(self.sessionManager!.activeUserSession)
         
         // WHEN
-        self.sessionManager?.handleAction(with: nil, for: localNotification, with: [:], completionHandler: {_ in}, application: self.application!)
-       
+        let completionExpectation = self.expectation(description: "Completed action")
+        self.sessionManager?.handleAction(with: nil, for: localNotification, with: [:], completionHandler: {_ in
+            completionExpectation.fulfill()
+        }, application: self.application!)
+
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // THEN
