@@ -142,17 +142,24 @@ class MetaStreamContainerTests: XCTestCase {
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
     }
+        
+    func testThatItExtractsTheHead_toEndOfString_whenItDoesNotHaveEndTag() {
+        let junk = Array(repeating: "JUNK", count: MetaStreamContainer.fetchLimit).joined(separator: "-")
+        let head = "<head data-network=\"123\">\nheader\n" + junk
+        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
+    }
     
     // MARK: - Helper
     
-    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, line: UInt = #line) {
+    func assertThatItExtractsTheCorrectHead(_ html: String, expectedHead: String, encoding: String.Encoding = .utf8, file: StaticString = #file, line: UInt = #line) {
         // when
         sut.addData(html.data(using: encoding)!)
         
         // then
-        XCTAssertTrue(sut.reachedEndOfHead)
-        guard let head = sut.head else { return XCTFail("Head was nil", line: line) }
-        XCTAssertEqual(head, expectedHead, line: line)
+        XCTAssertTrue(sut.reachedEndOfHead, "Should reach end of head", file: file, line: line)
+        guard let head = sut.head else { return XCTFail("Head was nil", file: file, line: line) }
+        XCTAssertEqual(head, expectedHead, "Should have expected head", file: file, line: line)
     }
     
     func assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead(_ head: String, shouldUpdate: Bool = true, encoding: String.Encoding = .utf8, line: UInt = #line) {

@@ -22,6 +22,8 @@ import Foundation
 
 final class MetaStreamContainer {
     
+    static let fetchLimit = 50_000 // maximum number of characters to take if we can't find </head>
+    
     var bytes = Data()
     
     var stringContent: String? {
@@ -30,11 +32,10 @@ final class MetaStreamContainer {
     
     var head: String? {
         guard let content = stringContent else { return nil }
-        let startRange = content.range(of: OpenGraphXMLNode.headStart.rawValue)
-        let endRange = content.range(of: OpenGraphXMLNode.headEnd.rawValue)
+        guard let startRange = content.range(of: OpenGraphXMLNode.headStart.rawValue) else { return nil }
         
-        guard let start = startRange?.lowerBound, let end = endRange?.upperBound else { return nil }
-        let result = content.characters[start..<end].map { String($0) }.joined(separator: "")
+        let upperBound = content.range(of: OpenGraphXMLNode.headEnd.rawValue)?.upperBound ?? content.endIndex
+        let result = content.substring(with: startRange.lowerBound..<upperBound)
         return result
     }
     
@@ -48,7 +49,7 @@ final class MetaStreamContainer {
 
     private func updateReachedEndOfHead(withData data: Data) {
         guard let string = parseString(from: data)?.lowercased() else { return }
-        if string.contains(OpenGraphXMLNode.headEnd.rawValue) {
+        if string.contains(OpenGraphXMLNode.headEnd.rawValue) || string.characters.count > MetaStreamContainer.fetchLimit {
             reachedEndOfHead = true
         }
     }
