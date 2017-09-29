@@ -36,7 +36,7 @@ final public class AssetAnalytics {
 
     func trackUploadFinished(for message: ZMAssetClientMessage, with response: ZMTransportResponse) {
         let messageObjectId = message.objectID
-        let uiMoc = self.moc.zm_userInterface!
+        guard let uiMoc = self.moc.zm_userInterface else { return }
 
         uiMoc.performGroupedBlock {
             let userInfo: [String: Any] = [FileUploadRequestStrategyNotification.requestStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
@@ -49,7 +49,7 @@ final public class AssetAnalytics {
 
     func trackUploadFailed(for message: ZMAssetClientMessage, with request: ZMTransportRequest?) {
         let messageObjectId = message.objectID
-        let uiMoc = self.moc.zm_userInterface!
+        guard let uiMoc = self.moc.zm_userInterface else { return }
 
         uiMoc.performGroupedBlock {
             let userInfo: [String: Any] = [FileUploadRequestStrategyNotification.requestStartTimestampKey: request?.startOfUploadTimestamp ?? Date()]
