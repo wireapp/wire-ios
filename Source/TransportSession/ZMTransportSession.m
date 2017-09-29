@@ -536,7 +536,8 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 + (void)notifyNewRequestsAvailable:(id<NSObject>)sender
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionNewRequestAvailableNotification object:sender];
+    NOT_USED(sender);
+    [[NSNotificationCenter defaultCenter] postNotificationName:ZMTransportSessionNewRequestAvailableNotification object:self];
 }
 
 - (ZMTransportResponse *)transportResponseFromURLResponse:(NSURLResponse *)URLResponse data:(NSData *)data error:(NSError *)error;
