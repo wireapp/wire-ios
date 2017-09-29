@@ -82,7 +82,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                    reachability:(id<ReachabilityProvider,ReachabilityTearDown>)reachability
              initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
-      sharedContainerIdentifier:(nullable NSString *)sharedContainerIdentifier;
+     applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier;
 
 - (void)tearDown;
 

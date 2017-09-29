@@ -69,7 +69,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSOperationQueue *workQueue;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
-@property (nonatomic) NSString *sharedContainerIdentifier;
+@property (nonatomic) NSString *applicationGroupIdentifier;
 
 @property (nonatomic) ZMTransportPushChannel *transportPushChannel;
 
@@ -107,7 +107,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                    cookieStorage:nil
                     reachability:nil
               initialAccessToken:nil
-       sharedContainerIdentifier:nil];
+      applicationGroupIdentifier:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -144,14 +144,14 @@ static NSInteger const DefaultMaximumRequests = 6;
     return configuration;
 }
 
-+ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)shardContainerIdentifier userIdentifier:(NSUUID *)userIdentifier
++ (NSURLSessionConfiguration *)backgroundSessionConfigurationWithSharedContainerIdentifier:(NSString *)sharedContainerIdentifier userIdentifier:(NSUUID *)userIdentifier
 {
     NSString *bundleIdentifier = [NSBundle mainBundle].bundleIdentifier;
     NSString *resolvedBundleIdentifier = bundleIdentifier ? bundleIdentifier : @"com.wire.background-session";
     
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:[ZMTransportSession identifierWithPrefix:resolvedBundleIdentifier userIdentifier:userIdentifier]];
     [self setUpConfiguration:configuration];
-    configuration.sharedContainerIdentifier = shardContainerIdentifier;
+    configuration.sharedContainerIdentifier = sharedContainerIdentifier;
     return configuration;
 }
 
@@ -175,7 +175,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                    reachability:(id<ReachabilityProvider,ReachabilityTearDown>)reachability
              initialAccessToken:(ZMAccessToken *)initialAccessToken
-      sharedContainerIdentifier:(NSString *)sharedContainerIdentifier
+     applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
 {
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
@@ -185,7 +185,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:foregroundIdentifier];
     
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
-    NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:sharedContainerIdentifier userIdentifier:userIdentifier];
+    NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
     ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:backgroundSessionConfiguration delegate:self delegateQueue:queue identifier:backgroundIdentifier];
     NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
     ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:voipIdentifier];
