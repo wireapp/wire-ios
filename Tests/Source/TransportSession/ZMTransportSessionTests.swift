@@ -59,7 +59,7 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
         cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier)
         reachability = FakeReachability()
-        sut = ZMTransportSession(baseURL: baseURL, websocketURL: baseURL, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, sharedContainerIdentifier: containerIdentifier)
+        sut = ZMTransportSession(baseURL: baseURL, websocketURL: baseURL, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier)
     }
     
     override func tearDown() {
