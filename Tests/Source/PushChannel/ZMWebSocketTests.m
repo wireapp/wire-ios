@@ -126,6 +126,7 @@
 - (void)testThatItAnswersAPingWithAPong
 {
     // given
+    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
@@ -133,12 +134,11 @@
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
             [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"foo" object:nil];
+            [expectation fulfill];
         }];
     };
     [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
     
-    [self expectationForNotification:@"foo" object:nil handler:nil];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5 handler:nil]);
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -156,18 +156,18 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
+    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
             [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"foo" object:nil];
+            [expectation fulfill];
         }];
     };
     [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
     
-    [self expectationForNotification:@"foo" object:nil handler:nil];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -316,7 +316,8 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
-    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+
     // when
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
@@ -324,12 +325,11 @@
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
             [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"foo" object:nil];
+            [expectation fulfill];
         }];
     };
     [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
     
-    [self expectationForNotification:@"foo" object:nil handler:nil];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -344,7 +344,8 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 101", @"Connection: upgrade", @"Upgrade: websocket", @"Sec-WebSocket-Accept: websocket"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r"];
-    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+
     // when
     [self.fakeUIContext performGroupedBlock:^{
         [self.sut networkSocketDidOpen:self.networkSocketMock];
@@ -352,7 +353,7 @@
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
             [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"foo" object:nil];
+            [expectation fulfill];
         }];
     };
     [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
@@ -401,7 +402,8 @@
 {
     // given
     NSString *stringData = [[@[@"HTTP/1.1 400", @"Server: Apache"] componentsJoinedByString:@"\r\n"] stringByAppendingString:@"\r\n\r\n"];
-    
+    XCTestExpectation *expectation = [self expectationWithDescription:@"didReceiveData"];
+
     // when
     [self performIgnoringZMLogError:^{
         [self.fakeUIContext performGroupedBlock:^{
@@ -410,12 +412,11 @@
         void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
             [self.fakeUIContext performGroupedBlock:^{
                 [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
-                [[NSNotificationCenter defaultCenter] postNotificationName:@"foo" object:nil];
+                [expectation fulfill];
             }];
         };
         [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
         
-        [self expectationForNotification:@"foo" object:nil handler:nil];
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
         WaitForAllGroupsToBeEmpty(0.5);
     }];
