@@ -239,8 +239,8 @@ class CallStateObserverTests : MessagingTest {
         self.syncMOC.performGroupedBlockAndWait {
             // given when
             self.conversation.conversationType = .group
-            self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false), conversationId: self.conversation.remoteIdentifier!, userId: self.sender.remoteIdentifier!, timeStamp: nil)
-            self.sut.callCenterDidChange(callState: .terminating(reason: .normal), conversationId: self.conversation.remoteIdentifier!, userId: self.sender.remoteIdentifier!, timeStamp: nil)
+            self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false, degraded: false), conversation: self.conversation, user: self.sender, timeStamp: nil)
+            self.sut.callCenterDidChange(callState: .terminating(reason: .normal), conversation: self.conversation, user: self.sender, timeStamp: nil)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -254,8 +254,8 @@ class CallStateObserverTests : MessagingTest {
         self.syncMOC.performGroupedBlockAndWait {
             // given when
             self.conversation.conversationType = .group
-            self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false), conversationId: self.conversation.remoteIdentifier!, userId: self.sender.remoteIdentifier!, timeStamp: nil)
-            self.sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversationId: self.conversation.remoteIdentifier!, userId: self.sender.remoteIdentifier!, timeStamp: nil)
+            self.sut.callCenterDidChange(callState: .incoming(video: false, shouldRing: false, degraded: false), conversation: self.conversation, user: self.sender, timeStamp: nil)
+            self.sut.callCenterDidChange(callState: .terminating(reason: .anweredElsewhere), conversation: self.conversation, user: self.sender, timeStamp: nil)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
