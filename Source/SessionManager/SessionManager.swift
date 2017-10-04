@@ -755,6 +755,16 @@ extension SessionManager: ZMConversationListObserver {
             updateUnreadCount(for: accountID)
         }
     }
+    
+    func updateAppIconBadge() {
+        DispatchQueue.main.async {
+            for (accountID, session) in self.backgroundUserSessions {
+                let account = self.accountManager.account(with: accountID)
+                account?.unreadConversationCount = Int(ZMConversation.unreadConversationCount(in: session.managedObjectContext))
+            }
+            self.application.applicationIconBadgeNumber = self.accountManager.totalUnreadCount
+        }
+    }
 }
 
 extension SessionManager : PreLoginAuthenticationObserver {
