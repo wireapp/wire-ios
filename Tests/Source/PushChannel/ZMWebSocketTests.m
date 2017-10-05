@@ -40,7 +40,10 @@
 
 @end
 
-
+@interface ZMWebSocketTests (Handshake)
+@end
+@interface ZMWebSocketTests (NetworkSocket)
+@end
 
 @implementation ZMWebSocketTests
 

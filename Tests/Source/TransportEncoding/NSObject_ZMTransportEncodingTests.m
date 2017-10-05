@@ -23,6 +23,11 @@
 @interface NSObjectZMTransportEncodingTests : XCTestCase
 @end
 
+@interface NSObjectZMTransportEncodingTests (NSDate)
+@end
+@interface NSObjectZMTransportEncodingTests (NSUUID)
+@end
+
 @implementation NSObjectZMTransportEncodingTests
 @end
 

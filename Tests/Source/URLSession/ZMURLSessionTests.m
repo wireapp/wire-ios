@@ -45,7 +45,10 @@
 
 @end
 
-
+@interface ZMURLSessionTests (Delegate)
+@end
+@interface ZMURLSessionTests (TaskGeneration)
+@end
 
 static NSString * const TaskKey = @"response";
 static NSString * const RequestKey = @"request";
@@ -71,8 +74,8 @@ static NSString * const DataKey = @"data";
                                              delegateQueue:self.queue
                                                 identifier:@"test-session"];
 
-    self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://a.exmaple.com/"]];
-    self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://b.exmaple.com/"]];
+    self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example.com/"]];
+    self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.example.com/"]];
     self.taskA = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:nil];
     self.taskB = [self.sut taskWithRequest:self.URLRequestB bodyData:nil transportRequest:nil];
 }
@@ -85,7 +88,6 @@ static NSString * const DataKey = @"data";
     self.finishedBackgroundSessions = nil;
     self.receivedDataCount = 0;
     self.firedTimers = nil;
-
     [self.sut tearDown];
     self.sut = nil;
     [super tearDown];
@@ -110,9 +112,8 @@ static NSString * const DataKey = @"data";
     ++self.receivedDataCount;
 }
 
-- (void)URLSession:(ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)transportRequest responseData:(NSData *)responseData;
+- (void)URLSession:(__unused ZMURLSession *)URLSession taskDidComplete:(NSURLSessionTask *)task transportRequest:(ZMTransportRequest *)transportRequest responseData:(NSData *)responseData;
 {
-    XCTAssertEqual(URLSession, self.sut);
     NSMutableDictionary *arguments = [NSMutableDictionary dictionary];
     if (task != nil) {
         arguments[TaskKey] = task;
@@ -269,7 +270,7 @@ static NSString * const DataKey = @"data";
 - (void)testThatItCallsTheDelegateWhenItReceivesAResponse;
 {
     // given
-    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"http://foo.example.com"] MIMEType:@"application/binary" expectedContentLength:1234 textEncodingName:@"utf8"];
+    NSURLResponse *response = [[NSURLResponse alloc] initWithURL:[NSURL URLWithString:@"https://foo.example.com"] MIMEType:@"application/binary" expectedContentLength:1234 textEncodingName:@"utf8"];
     XCTestExpectation *e = [self expectationWithDescription:@"completion handler"];
     
     // when
@@ -314,8 +315,8 @@ static NSString * const DataKey = @"data";
 - (void)testThatItAddsAuthenticationTokenToRedirect
 {
     // given
-    NSString *initialURL = @"http://example.com/initial";
-    NSString *finalURL = @"http://example.com/final";
+    NSString *initialURL = @"https://example.com/initial";
+    NSString *finalURL = @"https://example.com/final";
     NSString *tokenValue = @"abc123456";
     NSString *tokenKey = @"Authorization";
     
@@ -348,8 +349,8 @@ willPerformHTTPRedirection:response
 - (void)testThatItDoesNotFollowRedirectsIfSpecified
 {
     // given
-    NSString *initialURL = @"http://example.com/initial";
-    NSString *finalURL = @"http://example.com/final";
+    NSString *initialURL = @"https://example.com/initial";
+    NSString *finalURL = @"https://example.com/final";
 
     NSMutableURLRequest *originalRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:initialURL]];
     NSURLSessionDataTask *originalTask = [self.sut.backingSession dataTaskWithRequest:originalRequest];
@@ -473,6 +474,7 @@ willPerformHTTPRedirection:response
     }
     
     // then
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
     XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
     
     if (shouldDecrease && shouldFailInsteadOfRetry) {
@@ -510,8 +512,8 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
-    self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://a.exmaple.com/"]];
-    self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://b.exmaple.com/"]];
+    self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example.com/"]];
+    self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.example.com/"]];
     self.taskA = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:nil];
     self.taskB = [self.sut taskWithRequest:self.URLRequestB bodyData:nil transportRequest:nil];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -535,7 +537,7 @@ willPerformHTTPRedirection:response
 - (void)testThatItCreatesADataTask;
 {
     // given
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://baz.example.com/1/"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
     
     // when
     NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:nil];
@@ -552,7 +554,7 @@ willPerformHTTPRedirection:response
     [self performIgnoringZMLogError:^{
         // given
         [self setupBackgroundSession];
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://baz.example.com/1/"]];
+        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
         
         // when
         NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:nil];
@@ -568,7 +570,7 @@ willPerformHTTPRedirection:response
 - (void)testThatItCreatesAnUploadTask;
 {
     // given
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://baz.example.com/1/"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
     NSData *bodyData = [NSData dataWithBytes:(uint8_t[]){1, 2, 3} length:3];
     
     // when
@@ -585,7 +587,7 @@ willPerformHTTPRedirection:response
 {
     // given
     [self setupMockBackgroundSession];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://baz.example.com/1/"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
     NSData *bodyData = [NSData dataWithBytes:(uint8_t[]){1, 2, 3} length:3];
     
     self.sut.temporaryFiles = [OCMockObject mockForClass:ZMTemporaryFileListForBackgroundRequests.class];
@@ -612,7 +614,7 @@ willPerformHTTPRedirection:response
     NSURLSessionTask *mockTask = [OCMockObject niceMockForClass:FakeDataTask.class];
     [[[(id)mockTask stub] andReturnValue:OCMOCK_VALUE(taskID)] taskIdentifier];
     
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"http://baz.example.com/1/"]];
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
     NSData *bodyData = [NSData dataWithBytes:(uint8_t[]){1, 2, 3} length:3];
 
     self.sut.temporaryFiles = [OCMockObject mockForClass:ZMTemporaryFileListForBackgroundRequests.class];
@@ -647,7 +649,7 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
 
-    NSString *path = @"http://baz.example.com/1/";
+    NSString *path = @"https://baz.example.com/1/";
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
     NSString *contentType = @"multipart/mixed; boundary=frontier";
     ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];

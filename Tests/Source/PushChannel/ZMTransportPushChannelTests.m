@@ -78,7 +78,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     self.userAgentString = @"pushChannel/1234";
     self.clientID = @"kasd8923jas0p";
     self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.pushChannelURL = [NSURL URLWithString:@"http://pushchannel.example.com/foo"];
+    self.pushChannelURL = [NSURL URLWithString:@"https://pushchannel.example.com/foo"];
 
     self.scheduler = [OCMockObject mockForClass:ZMTransportRequestScheduler.class];
     [[self.scheduler expect] tearDown];

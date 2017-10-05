@@ -30,6 +30,8 @@
 
 @end
 
+@interface ZMPersistentCookieStorageTests (HTTPCookie)
+@end
 
 @implementation ZMPersistentCookieStorageTests
 
@@ -248,7 +250,7 @@
                                    @"Connection": @"keep-alive",
                                    @"Set-Cookie": @"zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure",
                                    @"Content-Length": @"214"};
-    NSURL *URL = [NSURL URLWithString:@"http://zeta.example.com/login"];
+    NSURL *URL = [NSURL URLWithString:@"https://zeta.example.com/login"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
     [self.sut setCookieDataFromResponse:response forURL:URL];
     XCTAssertNotNil(self.sut.authenticationCookieData);
@@ -279,7 +281,7 @@
                                    @"Connection": @"keep-alive",
                                    @"Set-Cookie": @"UTTER GARBAGE",
                                    @"Content-Length": @"214"};
-    NSURL *URL = [NSURL URLWithString:@"http://zeta.example.com/login"];
+    NSURL *URL = [NSURL URLWithString:@"https://zeta.example.com/login"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
     
     // when
@@ -302,7 +304,7 @@
                                    @"Connection": @"keep-alive",
                                    @"Set-Cookie": @"zuid.challenge=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure",
                                    @"Content-Length": @"214"};
-    NSURL *URL = [NSURL URLWithString:@"http://zeta.example.com/login"];
+    NSURL *URL = [NSURL URLWithString:@"https://zeta.example.com/login"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
 
     // when
@@ -325,7 +327,7 @@
                                    @"Connection": @"keep-alive",
                                    @"Set-Cookie": @"zuid=wjCWn1Y1pBgYrFCwuU7WK2eHpAVY8Ocu-rUAWIpSzOcvDVmYVc9Xd6Ovyy-PktFkamLushbfKgBlIWJh6ZtbAA==.1721442805.u.7eaaa023.08326f5e-3c0f-4247-a235-2b4d93f921a4; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=wire.com; HttpOnly; Secure",
                                    @"Content-Length": @"214"};
-    NSURL *URL = [NSURL URLWithString:@"http://zeta.example.com/login"];
+    NSURL *URL = [NSURL URLWithString:@"https://zeta.example.com/login"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:headerFields];
     
     // when

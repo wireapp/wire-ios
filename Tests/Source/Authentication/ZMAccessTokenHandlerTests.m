@@ -52,6 +52,14 @@
 
 @end
 
+@interface ZMAccessTokenHandlerTests (General)
+@end
+@interface ZMAccessTokenHandlerTests (ConsumeTasks)
+@end
+@interface ZMAccessTokenHandlerTests (Backoff)
+@end
+@interface ZMAccessTokenHandlerTests (Response)
+@end
 
 @implementation ZMAccessTokenHandlerTests
 
@@ -60,7 +68,7 @@
 #if TARGET_IPHONE_SIMULATOR
     [ZMPersistentCookieStorage setDoNotPersistToKeychain:YES];
 #endif
-    NSURL *baseURL = [NSURL URLWithString:@"http://www.example.com"];
+    NSURL *baseURL = [NSURL URLWithString:@"https://www.example.com"];
 
     self.taskCount = 0;
     self.failureCount = 0;
@@ -81,7 +89,7 @@
 }
 
 - (void)createSutWithAccessToken:(ZMAccessToken *)accessToken {
-    NSURL *baseURL = [NSURL URLWithString:@"http://www.example.com"];
+    NSURL *baseURL = [NSURL URLWithString:@"https://www.example.com"];
 
     self.sut = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL
                                                cookieStorage:self.cookieStorage
@@ -110,7 +118,7 @@
 
 - (void)setAuthenticationCookieData;
 {
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
     NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL
                                                               statusCode:200

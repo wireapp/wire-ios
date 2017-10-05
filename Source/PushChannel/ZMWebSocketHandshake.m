@@ -67,6 +67,8 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
                 *error = [NSError errorWithDomain:ZMWebSocketHandshakeErrorDomain code:1 userInfo:@{NSLocalizedDescriptionKey: @"Response did not end within range."}];
             }
             return ZMWebSocketHandshakeError;
+        } else {
+            return ZMWebSocketHandshakeNeedsMoreData;
         }
     }
 
@@ -100,7 +102,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
     }
     
     if ((allHeaderFields != nil) && (httpVersion != nil)) {
-        NSURL *URL = [NSURL URLWithString:@"http://example.com"];
+        NSURL *URL = [NSURL URLWithString:@"https://example.com"];
         self.response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:statusCode HTTPVersion:httpVersion headerFields:allHeaderFields];
     }
     

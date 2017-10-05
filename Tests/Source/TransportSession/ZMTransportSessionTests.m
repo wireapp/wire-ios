@@ -359,7 +359,28 @@ static XCTestCase *currentTestCase;
 
 @end
 
-
+@interface ZMTransportSessionTests(AccessTokens_Cookies_Login)
+@end
+@interface ZMTransportSessionTests(URLResponseForwardingToTheScheduler)
+@end
+@interface ZMTransportSessionTests(CookieAndAccessTokenRenewal)
+@end
+@interface ZMTransportSessionTests(PushChannel)
+@end
+@interface ZMTransportSessionTests(ImageDownload)
+@end
+@interface ZMTransportSessionTests(Timeout)
+@end
+@interface ZMTransportSessionTests(Backoff)
+@end
+@interface ZMTransportSessionTests(Reachability)
+@end
+@interface ZMTransportSessionTests(Background)
+@end
+@interface ZMTransportSessionTests(ExpirationDate)
+@end
+@interface ZMTransportSessionTests(RequestLoop)
+@end
 
 @interface ZMTransportSessionTests (Helper)
 
@@ -396,8 +417,8 @@ static XCTestCase *currentTestCase;
     [[(id)self.URLSessionSwitch stub] tearDown];
     [self verifyMockLater:self.URLSessionSwitch];
     
-    self.baseURL = [NSURL URLWithString:@"http://base.example.com"];
-    self.webSocketURL = [NSURL URLWithString:@"http://websocket.example.com"];
+    self.baseURL = [NSURL URLWithString:@"https://base.example.com"];
+    self.webSocketURL = [NSURL URLWithString:@"https://websocket.example.com"];
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host userIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
     
@@ -460,7 +481,7 @@ static XCTestCase *currentTestCase;
 
 - (void)setAuthenticationCookieData;
 {
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
     NSDictionary *headers = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL
                                                               statusCode:200
@@ -534,8 +555,8 @@ static XCTestCase *currentTestCase;
 - (void)testThatItUsesTheBaseURL
 {
     // given
-    NSURL *url = [NSURL URLWithString:@"http://test1.example.com"];
-    NSURL *url2 = [NSURL URLWithString:@"http://test2.example.com"];
+    NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
+    NSURL *url2 = [NSURL URLWithString:@"https://test2.example.com"];
     [[(id) self.URLSessionSwitch stub] tearDown];
     [self.sut tearDown];
     self.sut = [[ZMTransportSession alloc]
@@ -749,7 +770,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItSendsARequestThatShuouldUseForegroundSessionOnlyOnForegroundSessionWhenURLSwitchIsInBackground
 {
     // given
-    NSURL *url = [NSURL URLWithString:@"http://test1.example.com"];
+    NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
@@ -788,7 +809,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItSendsARequestOnBackgroundSessionWhenURLSwitchIsOnBackground
 {
     // given
-    NSURL *url = [NSURL URLWithString:@"http://test1.example.com"];
+    NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
@@ -1631,7 +1652,7 @@ static XCTestCase *currentTestCase;
 {
     // Set cookie on cookie storage:
     NSDictionary *originalHeaders = @{@"Set-Cookie": @"zuid=bar; Expires=Sun, 21-Jul-2024 09:06:45 GMT; Domain=example.com; HttpOnly; Secure"};
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com"];
     NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:originalHeaders];
     [self.sut.cookieStorage setCookieDataFromResponse:response forURL:URL];
 }
