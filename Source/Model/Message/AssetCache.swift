@@ -119,6 +119,11 @@ public class ImageAssetCache : NSObject {
         self.cache = PINAssetCache(name: "images", MBLimit: MBLimit, location: location)
     }
     
+    /// Returns true if the asset data for the given message and format exist, else false
+    open func hasAssetData(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool) -> Bool {
+        return self.cache.hasDataForKey(ImageAssetCache.cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
+    }
+    
     /// Returns the asset data for a given message and format tag. This will probably cause I/O
     open func assetData(_ messageID: UUID, format: ZMImageFormat, encrypted: Bool) -> Data? {
         return self.cache.assetData(ImageAssetCache.cacheKeyForAsset(messageID, format: format, encrypted: encrypted))
