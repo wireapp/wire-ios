@@ -1,2 +1,2 @@
-github "wireapp/ocmock" ~> 3.3.1
-github "wireapp/wire-ios-system" ~> 18.0
+github "wireapp/ocmock" ~> 3.4
+github "wireapp/wire-ios-system" ~> 19.0
