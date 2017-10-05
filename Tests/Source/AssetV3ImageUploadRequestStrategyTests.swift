@@ -95,6 +95,22 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
     
     // MARK: – Request Generation
     
+    func testThatItDoesNotGenerateARequestWhenTheImageDataIsMissing() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let message = self.createFileMessageWithPreview()            
+            let assetCache = self.syncMOC.zm_imageAssetCache!
+            XCTAssertTrue(assetCache.hasAssetData(message.nonce, format: .original, encrypted: false))
+
+            // WHEN
+            assetCache.deleteAssetData(message.nonce, format: .original, encrypted: false)
+            XCTAssertFalse(assetCache.hasAssetData(message.nonce, format: .original, encrypted: false))
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
+    
     func testThatItDoesNotGenerateARequestWhenTheImageIsNotProcessed() {
         XCTAssertNil(sut.nextRequest())
     }

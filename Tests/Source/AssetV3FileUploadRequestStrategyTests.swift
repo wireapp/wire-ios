@@ -163,6 +163,28 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
     }
 
 // MARK: – Request Generation
+    
+    func testThatItDoesNotGenerateARequestWhenTheFileDataIsMissing() {
+        // if asset data is missing in cache, then ZMLog warning is produced
+        self.performIgnoringZMLogError {
+            self.syncMOC.performGroupedBlockAndWait {
+                
+                // GIVEN
+                let message = self.createFileMessage()
+                self.prepareUpload(of: message)
+                
+                let assetCache = self.syncMOC.zm_fileAssetCache
+                XCTAssertTrue(assetCache.hasDataOnDisk(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
+                
+                // WHEN
+                assetCache.deleteAssetData(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true)
+                XCTAssertFalse(assetCache.hasDataOnDisk(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
+                
+                // THEN
+                XCTAssertNil(self.sut.nextRequest())
+            }
+        }
+    }
 
     func testThatItDoesNotGenerateARequestIfTheUploadedStateIsWrong() {
         self.syncMOC.performGroupedBlockAndWait {
