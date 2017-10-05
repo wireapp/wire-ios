@@ -64,6 +64,8 @@ extension ZMAssetClientMessage {
 
 
 public final class AssetV3FileUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+    
+    fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
     fileprivate let requestFactory = AssetRequestFactory()
     fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync!
@@ -151,6 +153,28 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
     public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
      // no-op
     }
+    
+    public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
+        guard let message = managedObject as? ZMAssetClientMessage else {
+            zmLog.warn("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))")
+            return false
+        }
+        
+        guard let name = message.fileMessageData?.filename else {
+            zmLog.warn("Message file data does not contain filename")
+            return false
+        }
+
+        guard managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message.nonce, fileName: name, encrypted: true) else {
+            // if the asset data is missing, we should delete the message
+            managedObjectContext.delete(message)
+            managedObjectContext.enqueueDelayedSave()
+            zmLog.warn("Asset data is missing from file cache. Message nonce: \(message.nonce)")
+            return false
+        }
+        
+        return true
+    }
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
@@ -163,11 +187,10 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
 
         return nil
     }
-
+    
     private func requestToUploadFullAsset(for message: ZMAssetClientMessage) -> ZMUpstreamRequest? {
         guard let name = message.fileMessageData?.filename else { fatal("Message file data does not contain filename") }
-        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { fatal("Could not find file in cache")  }
-        
+        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { fatal("Could not find file in cache") }
         guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in

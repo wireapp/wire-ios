@@ -98,6 +98,8 @@ extension ZMAssetClientMessage {
 /// `Asset.Preview` generic message will be updated and the state of the message updated accordingly.
 public final class AssetV3ImageUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
+    fileprivate let zmLog = ZMSLog(tag: "Asset V3")
+    
     fileprivate let preprocessor: ZMImagePreprocessingTracker
     fileprivate let requestFactory = AssetRequestFactory()
     fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync!
@@ -241,6 +243,13 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
+        guard managedObjectContext.zm_imageAssetCache.hasAssetData(message.nonce, format: .medium, encrypted: true) else {
+            // if the asset data is missing, we should delete the message
+            managedObjectContext.delete(message)
+            managedObjectContext.enqueueDelayedSave()
+            zmLog.warn("Asset data is missing from image cache. Message nonce: \(message.nonce)")
+            return false
+        }
         
         let imageAssetStorage = message.imageAssetStorage
         if imageAssetStorage.shouldReprocess(for: .medium) && true == message.fileMessageData?.v3_isImage {
