@@ -80,6 +80,31 @@ extension ImageAssetCacheTests {
         
     }
     
+    func testThatHasAssetData() {
+        
+        // given
+        let sut = ImageAssetCache(MBLimit: 5)
+        let id = UUID.create()
+        sut.storeAssetData(id, format: .medium, encrypted: false, data: testData())
+        
+        // then
+        XCTAssertTrue(sut.hasAssetData(id, format: .medium, encrypted: false))
+    }
+    
+    func testThatHasNoAssetData() {
+        
+        // given
+        let sut = ImageAssetCache(MBLimit: 5)
+        let id = UUID.create()
+        sut.storeAssetData(id, format: .medium, encrypted: false, data: testData())
+        
+        // when
+        sut.deleteAssetData(id, format: .medium, encrypted: false)
+        
+        // then
+        XCTAssertFalse(sut.hasAssetData(id, format: .medium, encrypted: false))
+    }
+    
     func testThatRetrievingMissingAssetsReturnsNil() {
         
         // given
