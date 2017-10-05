@@ -24,6 +24,11 @@
 
 @end
 
+@interface ZMUpdateEventTests (Source)
+@end
+@interface ZMUpdateEventTests (Transient)
+@end
+
 @implementation ZMUpdateEventTests
 
 - (NSDictionary *)typesMapping

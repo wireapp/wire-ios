@@ -38,7 +38,8 @@
 
 @end
 
-
+@interface ZMPushChannelConnectionTests (WebSocket)
+@end
 
 @implementation ZMPushChannelConnectionTests
 
@@ -189,7 +190,7 @@
     self.sut = nil;
     WaitForAllGroupsToBeEmpty(0.5);
     
-    NSURL *expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"http://some.funcky.socket.example.com/?client=%@", self.clientID]];
+    NSURL *expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://some.funcky.socket.example.com/?client=%@", self.clientID]];
     NSDictionary *expectedHeaders = self.accessToken.httpHeaders;
     id webSocketMock = [OCMockObject niceMockForClass:ZMWebSocket.class];
     [[[[webSocketMock stub] classMethod] andReturn:webSocketMock] alloc];

@@ -37,7 +37,16 @@
 
 @end
 
-
+@interface ZMTransportRequestTests (ResponseMediaTypes)
+@end
+@interface ZMTransportRequestTests (HTTPHeaders)
+@end
+@interface ZMTransportRequestTests (Payload)
+@end
+@interface ZMTransportRequestTests (TimeoutOverride)
+@end
+@interface ZMTransportRequestTests (Debugging)
+@end
 
 @implementation ZMTransportRequestTests
 
@@ -722,7 +731,7 @@
     // The encoded transport data is approximately 46k bytes.
     ZMTransportRequest *sut = [ZMTransportRequest requestWithPath:@"/foo" method:ZMMethodPOST payload:payload shouldCompress:YES];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    NSString *expected = @"H4sIAAAAAAAAA4XaS08qWRhG4f/C1DMoLlVQJzkD+yjeFRCvn"
+    NSString *expected = @"H4sIAAAAAAAAE4XaS08qWRhG4f/C1DMoLlVQJzkD+yjeFRCvn"
     @"R5wEwUUBRS10/+9k056sNdgffM9eJLlpeqt/effldFgNa78zH5UxoPNoPKzMpwUeWc2and"
     @"7O+t5b5GV/eXubvfXr8o/P/4/XPXD0+RwzQ9vk8N1PfzHbnK44YdTc+6HU3Phh1NzUw//T"
     @"s0tP5yaSz+cmque8HeKrnrDvVRd9Yh7+PHwintwe8Y9uL3jPtwech9uL7kPt6fch9tbtlN"

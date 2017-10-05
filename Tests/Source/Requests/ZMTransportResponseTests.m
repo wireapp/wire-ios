@@ -24,7 +24,8 @@
 @interface ZMTransportResponseTests : ZMTBaseTest
 @end
 
-
+@interface ZMTransportResponseTests (ContentType)
+@end
 
 @implementation ZMTransportResponseTests
 
@@ -175,7 +176,7 @@
 - (void)testThatItCanBeCreatedFromAnHTTPResponseWithoutABody;
 {
     // given
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
     NSDictionary *headerFields = @{@"Connection": @"keep-alive",
                                    @"Content-Length": @"0",
                                    @"Date": @"Thu, 07 Aug 2014 13:29:08 GMT",
@@ -196,7 +197,7 @@
     NSString *content = @"{\"foo\":\"bar\"}";
     NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
     NSDictionary *headerFields = @{@"Connection": @"keep-alive",
                                    @"Content-Length": [NSString stringWithFormat:@"%lu", (unsigned long) contentData.length],
                                    @"Date": @"Thu, 07 Aug 2014 13:29:08 GMT",
@@ -221,7 +222,7 @@
 - (void)testThatItDetectsContentTypeFromMIME;
 {
     NSHTTPURLResponse *(^responseForType)(NSString *) = ^(NSString *type){
-        NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+        NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
         return [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type": type}];
     };
     
@@ -238,7 +239,7 @@
 - (void)testThatItDetectsImageContentTypeFromData;
 {
     NSHTTPURLResponse *(^responseForType)(NSString *) = ^(NSString *type){
-        NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+        NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
         return [[NSHTTPURLResponse alloc] initWithURL:URL statusCode:200 HTTPVersion:@"HTTP/1.1" headerFields:@{@"Content-Type": type}];
     };
     
@@ -248,7 +249,7 @@
 - (void)testThatItDetectsAnEmptyResponseAsSuch;
 {
     // given
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
     NSDictionary *headerFields = @{@"Connection": @"keep-alive",
                                    @"Content-Length": @"0",
                                    @"Date": @"Thu, 07 Aug 2014 13:29:08 GMT",
@@ -269,7 +270,7 @@
     NSString *content = @"{\"foo\":\"bar\"}";
     NSData *contentData = [content dataUsingEncoding:NSUTF8StringEncoding];
     
-    NSURL *URL = [NSURL URLWithString:@"http://www.example.com/"];
+    NSURL *URL = [NSURL URLWithString:@"https://www.example.com/"];
     NSDictionary *headerFields = @{@"Connection": @"keep-alive",
                                    @"Content-Length": [NSString stringWithFormat:@"%lu", (unsigned long) contentData.length],
                                    @"Date": @"Thu, 07 Aug 2014 13:29:08 GMT",
