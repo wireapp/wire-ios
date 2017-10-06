@@ -63,7 +63,6 @@
         id value = user.name;
         
         id validator = [OCMockObject mockForClass:[ZMStringLengthValidator class]];
-        validator = [OCMockObject partialMockForObject:validator];
         [[[validator reject] andForwardToRealObject] validateValue:[OCMArg anyObjectRef]
                                                mimimumStringLength:2
                                                 maximumSringLength:64

@@ -210,32 +210,8 @@
     NSArray *tags2 = [self.tagger tagsInRange:NSMakeRange(0, self.tagger.string.length) scheme:NSLinguisticTagSchemeScript options:0 tokenRanges:nil];
     
     // then
-    XCTAssertEqualObjects(tags1.firstObject, @"Hani");
-    XCTAssertEqualObjects(tags2.firstObject, @"Hani");
-}
-
-- (void)testThatChineseNamesAreSeparatedCorrectly
-{
-    // given
-    NSString *name1 = @"李淑蒙";              // Lǐ Shūméng - Lǐ (李) is the secondName, Shūméng (淑蒙) the firstName
-
-    // when
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-
-    // then
-    XCTAssertEqualObjects(nameComp1.givenName, @"李淑蒙");
-}
-
-- (void)testThatChineseNamesReturnFirstTwoCharactersAsInitials
-{
-    // given
-    NSString *name1 = @"李淑蒙";
-    
-    // when
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-    
-    // then
-    XCTAssertEqualObjects(nameComp1.initials, @"李淑");
+    XCTAssertEqualObjects(tags1.firstObject, @"Hans");
+    XCTAssertEqualObjects(tags2.firstObject, @"Hant");
 }
 
 - (void)testThatChineseNamesReturnOneCharactersIfTheNameConsistsOfOnlyOneCharacter
@@ -248,88 +224,6 @@
     
     // then
     XCTAssertEqualObjects(nameComp3.initials, @"李");
-}
-
-# pragma mark - Japanese
-
-
-//     JAPANESE NAMES http://en.wikipedia.org/wiki/Japanese_name
-//
-//     Usually 1 surname, 1 given name, 0 middle name
-//
-//     family name precedes the given name, separated by a space
-//     surnames mostly comprised of one, two or three kanji characters
-//     Use of a space in given names (to separate first and middle names) is not allowed
-//
-//     People with mixed Japanese and foreign parentage may have middle names
-//
-//     usually written in kanji (Chinese characters), some names use hiragana or even katakana, or a mixture of kanji and kana.
-//     may include archaic versions of characters, very uncommon kanji, or even kanji which no longer exist in modern Japanese
-//
-//     formal reference: family name
-//     informal situations and cases where the speaker is older than, superior to, or very familiar with the named individual: given name
-//
-//     Forming abbreviations by concatenating the first two morae of two names common for celebrities
-
-
-/// XXX: Disabled this test because it does not work on iOS 8.3
-- (void)DISABLED_testThatLinguisticTraggerRecognizesJapanese
-{
-    // given
-    NSString *name1 = @"ツルネン マルテイ";         // katakana for Tsurunen Marutei
-    NSString *name2 = @"有道 出人";                // kanji for Arudou Debito
-    NSString *name3 = @"ひら がな";                // hiragana
-    
-    // when
-    self.tagger.string = name1;
-    NSArray *tags1 = [self.tagger tagsInRange:NSMakeRange(0, self.tagger.string.length) scheme:NSLinguisticTagSchemeScript options:0 tokenRanges:nil];
-    
-    self.tagger.string = name2;
-    NSArray *tags2 = [self.tagger tagsInRange:NSMakeRange(0, self.tagger.string.length) scheme:NSLinguisticTagSchemeScript options:0 tokenRanges:nil];
-    
-    self.tagger.string = name3;
-    NSArray *tags3 = [self.tagger tagsInRange:NSMakeRange(0, self.tagger.string.length) scheme:NSLinguisticTagSchemeScript options:0 tokenRanges:nil];
-    
-    // then
-    XCTAssertEqualObjects(tags1.firstObject, @"Jpan");
-    XCTAssertEqualObjects(tags2.firstObject, @"Hani"); // problematic since this is also chinese, the only difference is that japanese family and given names are separated by white space
-    XCTAssertEqualObjects(tags3.firstObject, @"Hani"); // problematic since this is also chinese, the only difference is that japanese family and given names are separated by white space
-}
-
-- (void)testThatSecondComponentIsGivenNameInJapanesNames
-{
-    // given
-    NSString *name1 = @"ツルネン マルテイ";         // katakana for Tsurunen Marutei
-    NSString *name2 = @"有道 出人";                // kanji for Arudou Debito
-    NSString *name3 = @"ひら がな";                // hiragana
-    
-    // when
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
-    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
-    
-    // then
-    XCTAssertEqualObjects(nameComp1.givenName, @"マルテイ");
-    XCTAssertEqualObjects(nameComp2.givenName, @"出人");
-    XCTAssertEqualObjects(nameComp3.givenName, @"がな");
-}
-
-- (void)testThatItReturnsFirstTwoCharactersForInitialsOfJapanesNames
-{
-    // given
-    NSString *name1 = @"ツルネン マルテイ";         // katakana for Tsurunen Marutei
-    NSString *name2 = @"有道 出人";                // kanji for Arudou Debito
-    NSString *name3 = @"ひ";                // hiragana
-    
-    // when
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
-    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
-    
-    // then
-    XCTAssertEqualObjects(nameComp1.initials, @"ツル");
-    XCTAssertEqualObjects(nameComp2.initials, @"有道");
-    XCTAssertEqualObjects(nameComp3.initials, @"ひ");
 }
 
 # pragma mark - Hindi / Devanagari
@@ -464,66 +358,6 @@
 
 # pragma mark - Mixed Language Sets
 
-- (void)DISABLE_testThatMixedNamesReturnFirstComponentAsFirstName
-{
-    // This fails on CI only, for some obscure reasons
-    // given
-    NSString *name2 = @"李淑蒙 (shumeng)";    // Lǐ Shūméng - Lǐ (李) is the secondName, Shūméng (淑蒙) the firstName
-    NSString *name3 = @"shumeng (李淑蒙)";    // should use the chinese name as "firstName"
-    
-    // when
-    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
-    PersonName *nameComp3 = [PersonName personWithName:name3 schemeTagger:self.tagger];
-    
-    // then
-    XCTAssertEqualObjects(nameComp2.givenName, @"李淑蒙");
-    XCTAssertEqualObjects(nameComp3.givenName, @"shumeng");
-}
-
-- (void)DISABLE_testThatMixedNamesReturnFirstLettersOfFirstAndLastComponent
-{
-    // This fails on CI only, for some obscure reasons
-    // given
-    NSString *name1 = @"李淑蒙 (shumeng)";
-    NSString *name2 = @"shumeng (李淑蒙)";
-    
-    // when
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
-    
-    // then
-    XCTAssertEqualObjects(nameComp1.initials, @"李s");
-    XCTAssertEqualObjects(nameComp2.initials, @"s李");
-    
-}
-
-- (void)testItGetsTheFullCharacterForComposedCharactersThatSpanMoreThanOneStringIndexPoint;
-{
-    NSString *name1 = @"𠀲𫝶𫝷𫝚𫞉𫟘善屠屮 𠂎";
-    NSString *name2 = @"( 𝓐𝓑 𝓑";
-
-    PersonName *nameComp1 = [PersonName personWithName:name1 schemeTagger:self.tagger];
-    PersonName *nameComp2 = [PersonName personWithName:name2 schemeTagger:self.tagger];
-
-    XCTAssertNotEqual(nameComp1.components.count, 0u);
-    XCTAssertNotEqual(nameComp2.components.count, 0u);
-
-    NSString *first1 = [nameComp1.components[0] zmFirstComposedCharacter];
-    NSString *second1 = [nameComp1.components[0] zmSecondComposedCharacter];
-    XCTAssertEqualObjects(first1, @"𠀲");
-    XCTAssertEqualObjects(second1, @"𫝶");
-    
-    NSString *first2 = [nameComp2.components[0] zmFirstComposedCharacter];
-    NSString *second2 = [nameComp2.components[0] zmSecondComposedCharacter];
-    XCTAssertEqualObjects(first2, @"𝓐");
-    XCTAssertEqualObjects(second2, @"𝓑");
-//
-//    NSRange r0 = [foo rangeOfComposedCharacterSequenceAtIndex:0];
-//    NSRange r1 = [foo rangeOfComposedCharacterSequenceAtIndex:NSMaxRange(r0)];
-//    NSLog(@"%@", NSStringFromRange(r0));
-//    NSLog(@"%@", NSStringFromRange(r1));
-}
-
 - (void)testThatTheSecondComposedCharacterReturnsNilWhenTheStringIsShorterThan2;
 {
     XCTAssertNil([@"" zmSecondComposedCharacter]);
@@ -534,16 +368,6 @@
 - (void)testThatTheFirstComposedCharacterReturnsNilWhenTheStringIsEmpty;
 {
     XCTAssertNil([@"" zmFirstComposedCharacter]);
-}
-
-
-- (void)testThatTheInitialsAreGeneratedCorrectlyIfThereIsOnlyOneCompositeCharacter
-{
-    // C.f. https://wearezeta.atlassian.net/browse/MEC-656
-    
-    XCTAssertEqualObjects([PersonName personWithName:@"" schemeTagger:self.tagger].initials, @"");
-    XCTAssertEqualObjects([PersonName personWithName:@"A" schemeTagger:self.tagger].initials, @"A");
-    XCTAssertEqualObjects([PersonName personWithName:@"𝓐" schemeTagger:self.tagger].initials, @"𝓐");
 }
 
 @end

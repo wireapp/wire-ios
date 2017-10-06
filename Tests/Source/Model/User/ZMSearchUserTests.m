@@ -182,8 +182,6 @@
     OCMockObject *userSession = [OCMockObject niceMockForProtocol:@protocol(ZMManagedObjectContextProvider)];
     [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
     
-    OCMockObject *userClassMock = [OCMockObject niceMockForClass:ZMUser.class];
-    [[[userClassMock stub] andReturn:[[NSOrderedSet alloc] initWithObject:user1]] usersWithRemoteIDs:OCMOCK_ANY inContext:OCMOCK_ANY];
     [self.uiMOC saveOrRollback];
     
     // when
@@ -191,6 +189,7 @@
 
     // then
     XCTAssertEqualObjects(searchUser.user, user1);
+    [userSession stopMocking];
 }
 
 @end

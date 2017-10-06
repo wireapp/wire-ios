@@ -517,7 +517,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.genericMessage(
-            asset: .asset(withOriginal: .original(withSize: 256, mimeType: mimeType, name: name!)),
+            asset: .asset(withOriginal: .original(withSize: 256, mimeType: mimeType, name: name)),
             messageID: nonce.transportString()
         )
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
@@ -726,7 +726,7 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = ZMAssetClientMessage.insertNewObject(in: uiMOC)
         sut.nonce = .create()
-        let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: name!)), messageID: sut.nonce.transportString())
+        let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: name)), messageID: sut.nonce.transportString())
         sut.add(original)
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertNotNil(sut.fileMessageData)
@@ -860,36 +860,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(sut.progress, 0.0)
         }
     }
-
-    // TODO: This logic does not work with the assets v3 implementation at the moment.
-    // If we set the transfer state to downloaded the strategies responsible for uploading the message will no longer
-    // pick it up. The logic in `requestFileDownload` has to be adjusted to take this into account and perform
-    // additional checks whether the file has alreday been succesfully uploaded if the sender was self.
-    func DISABLED_testThatItSetsTheTransferStateToDonwloadedWhen_RequestFileDownload_IsCalledButFileIsAlreadyOnDisk() {
-        self.syncMOC.performAndWait {
-            
-            // given
-            let fileMetadata = self.addFile()
-            
-            let sut = ZMAssetClientMessage.assetClientMessage(
-                with: fileMetadata,
-                nonce: UUID.create(),
-                managedObjectContext: self.syncMOC,
-                expiresAfter: 0
-            )!
-            
-            sut.transferState = .uploaded
-            sut.delivered = true
-            XCTAssertNotNil(sut.fileMessageData)
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
-            
-            // when
-            sut.fileMessageData?.requestFileDownload()
-            
-            // then
-            XCTAssertEqual(sut.transferState, ZMFileTransferState.downloaded)
-        }
-    }
     
     func testThatItItReturnsTheGenericMessageDataAndInculdesTheNotUploadedWhenItIsPresent_Placeholder() {
         self.syncMOC.performAndWait {
@@ -929,7 +899,7 @@ extension ZMAssetClientMessageTests {
             // given
             let sut = ZMAssetClientMessage.insertNewObject(in: self.syncMOC)
             sut.nonce = .create()
-            let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: self.name!)), messageID: sut.nonce.transportString())
+            let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: self.name)), messageID: sut.nonce.transportString())
             sut.add(original)
             XCTAssertNotNil(sut.fileMessageData)
             XCTAssertTrue(self.syncMOC.saveOrRollback())

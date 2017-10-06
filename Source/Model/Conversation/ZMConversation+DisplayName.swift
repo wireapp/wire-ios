@@ -54,8 +54,9 @@ public extension ZMConversation {
         }
 
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
-        let activeNames: [String] = otherActiveParticipants.flatMap {
-            guard let user = $0 as? ZMUser, user != selfUser && user.displayName?.characters.count > 0 else { return nil }
+
+        let activeNames: [String] = otherActiveParticipants.flatMap { (user) -> String? in
+            guard let user = user as? ZMUser, user != selfUser && user.displayName?.characters.count > 0 else { return nil }
             return user.displayName
         }
 
