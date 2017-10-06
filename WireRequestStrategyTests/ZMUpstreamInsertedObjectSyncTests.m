@@ -111,19 +111,10 @@ static NSString *foo = @"foo";
 
     [[[(id) self.mockTranscoder stub] andCall:@selector(transcoderDependentObjectForUpdate:) onObject:self] dependentObjectNeedingUpdateBeforeProcessingObject:OCMOCK_ANY];
 
-    // stub mock entity predicate
-    id mockMockEntity = [OCMockObject mockForClass:MockEntity.class];
-    [[[[mockMockEntity stub] andReturn:[NSSortDescriptor sortDescriptorWithKey:@"field2" ascending:YES]] classMethod] defaultSortDescriptors];
-    
-    
     self.sut = [[ZMUpstreamInsertedObjectSync alloc] initWithTranscoder:self.mockTranscoder
                                                              entityName:MockEntity.entityName
                                                    managedObjectContext:self.testMOC];
-    [self verifyMockLater:self.mockTranscoder];
-    // stop mocking entity
-    [mockMockEntity verify];
-    [mockMockEntity stopMocking];
-    
+    [self verifyMockLater:self.mockTranscoder];    
 }
 
 - (void)tearDown
