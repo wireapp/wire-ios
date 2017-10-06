@@ -78,10 +78,10 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let message = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create(), fetchLinkPreview: true)!
+            let message = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create(), fetchLinkPreview: true)
             
             //when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
+            guard let payloadAndStrategy = message?.encryptedMessagePayloadData() else {
                 XCTFail()
                 return
             }
@@ -102,11 +102,11 @@ extension ClientMessageTests_OTR {
             
             //given
             self.syncConversation.messageDestructionTimeout = 10
-            let message = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create(), fetchLinkPreview: true)
-            XCTAssertTrue((message?.isEphemeral)!)
+            guard let message = self.syncConversation.appendOTRMessage(withText: self.name!, nonce: UUID.create(), fetchLinkPreview: true) else { XCTFail(); return }
+            XCTAssertTrue(message.isEphemeral)
             
             //when
-            guard let payloadAndStrategy = message?.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
             
             //then
             switch payloadAndStrategy.strategy {

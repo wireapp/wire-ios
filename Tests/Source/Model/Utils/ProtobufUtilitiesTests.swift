@@ -242,7 +242,7 @@ class ProtobufUtilitiesTests: XCTestCase {
             permanentURL: "www.example.com/permanent",
             offset: 42,
             title: "Title",
-            summary: name!,
+            summary: name,
             imageAsset: nil
         )
     }
