@@ -79,8 +79,7 @@ static NSString *foo = @"foo";
     [self verifyMockLater:self.mockLocallyModifiedSet];
 
     // stub mock entity predicate
-    id mockMockEntity = [OCMockObject mockForClass:MockEntity.class];
-    [[[[mockMockEntity expect] andReturn:[NSPredicate predicateWithFormat:@"%K != %@", FieldUsedInPredicate, ValueUsedToFailPredicate]] classMethod] predicateForObjectsThatNeedToBeUpdatedUpstream];
+    MockEntity.predicateForObjectsThatNeedToBeUpdatedUpstream = [NSPredicate predicateWithFormat:@"%K != %@", FieldUsedInPredicate, ValueUsedToFailPredicate];
     
     self.sut = [[ZMUpstreamModifiedObjectSync alloc] initWithTranscoder:self.mockTranscoder
                                                              entityName:MockEntity.entityName
@@ -89,10 +88,6 @@ static NSString *foo = @"foo";
                                                              keysToSync:self.trackedKeys.allObjects
                                                    managedObjectContext:self.testMOC
                                                locallyModifiedObjectSet:self.mockLocallyModifiedSet];
-    
-    // stop mocking entity
-    [mockMockEntity verify];
-    [mockMockEntity stopMocking];
     
     XCTAssertEqual(self.sut.updatedObjects, self.mockLocallyModifiedSet);
     [self verifyMockLater:self.mockTranscoder];

@@ -26,6 +26,17 @@
 @dynamic mockEntities;
 @dynamic modifiedKeys;
 
+static NSPredicate *_predicateForObjectsThatNeedToBeUpdatedUpstream = nil;
++ (void)setPredicateForObjectsThatNeedToBeUpdatedUpstream:(NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream
+{
+    _predicateForObjectsThatNeedToBeUpdatedUpstream = predicateForObjectsThatNeedToBeUpdatedUpstream;
+}
+
++ (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream
+{
+    return _predicateForObjectsThatNeedToBeUpdatedUpstream;
+}
+
 +(NSString *)sortKey {
     return @"field";
 }

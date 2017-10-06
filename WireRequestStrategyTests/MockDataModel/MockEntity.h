@@ -31,4 +31,7 @@
 
 @property (nonatomic) NSMutableSet *mockEntities;
 
+@property (class, nonatomic) NSPredicate *predicateForObjectsThatNeedToBeUpdatedUpstream;
+
 @end
+
