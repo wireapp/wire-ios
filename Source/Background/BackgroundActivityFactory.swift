@@ -37,7 +37,7 @@ import WireUtilities
         return ZMBackgroundActivity.begin(withName: name, groupQueue: mainGroupQueue, application: application)
     }
     
-    @objc open func backgroundActivity(withName name: String, expirationHandler handler:@escaping ((Void) -> Void)) -> ZMBackgroundActivity?
+    @objc open func backgroundActivity(withName name: String, expirationHandler handler:@escaping (() -> Void)) -> ZMBackgroundActivity?
     {
         guard let mainGroupQueue = mainGroupQueue, let application = application else { return nil }
         return ZMBackgroundActivity.begin(withName: name, groupQueue: mainGroupQueue, expirationHandler: handler, application: application)
