@@ -106,7 +106,6 @@ NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay = 3.0;
 const NSUInteger ZMConversationMaxEncodedTextMessageLength = 1500;
 const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTextMessageLength - 50; // Empirically we verified that the encoding adds 44 bytes
 
-
 @interface ZMConversation ()
 
 @property (nonatomic) NSString *normalizedUserDefinedName;
@@ -683,6 +682,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text fetchLinkPreview:(BOOL)fetchPreview;
 {
+    ZMLogWithLevelAndTag(ZMLogLevelInfo, @"Network", @"appendMessageWithText on %@", self.remoteIdentifier.transportString);
+    
     VerifyReturnNil(![text zmHasOnlyWhitespaceCharacters]);
     VerifyReturnNil(text != nil);
 
