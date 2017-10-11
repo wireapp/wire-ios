@@ -41,7 +41,10 @@ open class AbstractRequestStrategy : NSObject, RequestStrategy {
     }
     
     open func nextRequest() -> ZMTransportRequest? {
-        guard let applicationStatus = self.applicationStatus else { return nil }
+        guard let applicationStatus = self.applicationStatus else {
+            zmLog.error("applicationStatus is missing")
+            return nil
+        }
         
         let prerequisites = AbstractRequestStrategy.prerequisites(forApplicationStatus: applicationStatus)
         
