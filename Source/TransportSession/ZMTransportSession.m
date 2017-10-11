@@ -361,7 +361,9 @@ static NSInteger const DefaultMaximumRequests = 6;
     //
     // N.B.: This method needs to be thread safe!
     //
+    ZMLogInfo(@"%p: attemptToEnqueueSyncRequestWithGenerator", self);
     if (self.tornDown) {
+        ZMLogInfo(@"%p: torn down", self);
         return [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
     }
     self.firstRequestFired = YES;
