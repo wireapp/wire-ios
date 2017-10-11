@@ -19,10 +19,12 @@
 import Foundation
 import WireRequestStrategy
 
+fileprivate let zmLog = ZMSLog(tag: "Network")
 
 /// Creates network requests to send client messages,
 /// and parses received client messages
 public class ClientMessageTranscoder: AbstractRequestStrategy {
+
     
     fileprivate let requestFactory: ClientMessageRequestFactory
     private(set) fileprivate var upstreamObjectSync: ZMUpstreamInsertedObjectSync!
@@ -49,6 +51,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+        zmLog.info("ClientMessageTranscoder: nextRequestIfAllowed")
         return self.upstreamObjectSync.nextRequest()
     }
 }
@@ -71,8 +74,13 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
     }
     
     public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
+        
         guard let message = managedObject as? ZMClientMessage,
-            !message.isExpired else { return nil }
+            !message.isExpired else {
+                zmLog.info("Cannot create request: message = \(managedObject) message.isExpired = \((managedObject as? ZMClientMessage)?.isExpired ?? false)")
+                return nil
+        }
+        
         let request = self.requestFactory.upstreamRequestForMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!)!
         if message.genericMessage?.hasConfirmation() == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
             request.forceToVoipSession()
