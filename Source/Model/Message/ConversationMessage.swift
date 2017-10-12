@@ -200,7 +200,7 @@ extension ZMMessage {
     }
     
     public var hasBeenDeleted: Bool {
-        return visibleInConversation == nil && hiddenInConversation != nil;
+        return isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
     }
     
     public var updatedAt : Date? {
