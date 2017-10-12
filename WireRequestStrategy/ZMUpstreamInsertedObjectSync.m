@@ -42,7 +42,7 @@
 
 @end
 
-
+static NSString* ZMLogTag = @"Network";
 
 @implementation ZMUpstreamInsertedObjectSync
 
@@ -65,6 +65,7 @@
     if(self) {
         self.ignoredObjects = [NSMutableSet set];
         self.transcoder = transcoder;
+        _logPredicateActivity = NO;
         _transcodeSupportsExpiration = [transcoder respondsToSelector:@selector(requestExpiredForObject:forKeys:)];
          
         self.insertedObjects = [[ZMLocallyInsertedObjectSet alloc] init];
@@ -110,6 +111,9 @@
     for(ZMManagedObject *obj in objects) {
         if ([obj isKindOfClass:[NSManagedObject class]] && obj.entity == self.trackedEntity)
         {
+            if (self.logPredicateActivity) {
+                ZMLogInfo(@"%@: obj: %@, self.insertPredicate = %@, [self shouldAddInsertedObject:obj] = %d", self, obj, self.insertPredicate, [self shouldAddInsertedObject:obj]);
+            }
             if([self.insertPredicate evaluateWithObject:obj] && [self shouldAddInsertedObject:obj])
             {
                 [self addInsertedObject:obj];
@@ -131,6 +135,9 @@
 {
     BOOL passedFilter = (self.filter == nil ||
                          (self.filter != nil && [self.filter evaluateWithObject:object]));
+    if (self.logPredicateActivity) {
+        ZMLogInfo(@"%@: passFilter = %d", self, passedFilter);
+    }
     return passedFilter;
 }
 
@@ -158,8 +165,15 @@
 /// returns false if object has dependencies, adding it to insertedObjectsWithDependencies
 - (BOOL)addInsertedObject:(ZMManagedObject *)mo
 {
+    if (self.logPredicateActivity) {
+        ZMLogInfo(@"%@: addInsertedObject for %@", self, mo);
+    }
     if (self.insertedObjectsWithDependencies) {
         id dependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
+        if (self.logPredicateActivity) {
+            ZMLogInfo(@"%@: dependency = %@", self, dependency);
+        }
+
         if (dependency != nil) {
             [self.insertedObjectsWithDependencies addDependentObject:mo dependency:dependency];
             return NO;
