@@ -695,6 +695,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                                          object:self
                                        userInfo:nil
      ] post];
+    ZMLogWithLevelAndTag(ZMLogLevelInfo, @"Network", @"appendMessageWithText message: %@", message);
+
     return message;
 }
 
