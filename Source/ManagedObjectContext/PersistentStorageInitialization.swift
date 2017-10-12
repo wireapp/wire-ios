@@ -75,7 +75,7 @@ class PersistentStorageInitialization {
     /// Observer token for application becoming available
     fileprivate var applicationProtectedDataDidBecomeAvailableObserver: Any! = nil
     
-    fileprivate static func executeWhenFileIsAccessible(_ file: URL, usingBlock block: @escaping (Void) -> Void) {
+    fileprivate static func executeWhenFileIsAccessible(_ file: URL, usingBlock block: @escaping () -> Void) {
         // We need to handle the case when the database file is encrypted by iOS and user never entered the passcode
         // We use default core data protection mode NSFileProtectionCompleteUntilFirstUserAuthentication
         let storageInitialization = PersistentStorageInitialization()
