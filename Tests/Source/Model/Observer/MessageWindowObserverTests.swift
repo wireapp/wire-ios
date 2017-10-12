@@ -445,7 +445,7 @@ extension MessageWindowObserverTests {
     }
     
     
-    func checkThatItNotifiesAboutUserChange(in window: ZMConversationMessageWindow, modifier: ((Void) -> Void), callBack: ((UserChangeInfo) -> Void)){
+    func checkThatItNotifiesAboutUserChange(in window: ZMConversationMessageWindow, modifier: (() -> Void), callBack: ((UserChangeInfo) -> Void)){
         self.token = MessageWindowChangeInfo.add(observer: windowObserver, for: window)
         
         // when
