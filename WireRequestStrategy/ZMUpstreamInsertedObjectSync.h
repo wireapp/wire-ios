@@ -34,6 +34,7 @@
 @interface ZMUpstreamInsertedObjectSync : NSObject <ZMContextChangeTracker, ZMRequestGenerator>
 
 @property (nonatomic, readonly) BOOL hasCurrentlyRunningRequests;
+@property (nonatomic)           BOOL logPredicateActivity;
 
 - (instancetype)initWithTranscoder:(id<ZMUpstreamTranscoder>)transcoder
                         entityName:(NSString *)entityName
