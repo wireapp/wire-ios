@@ -620,6 +620,7 @@
     XCTAssertNil(newMessage);
     XCTAssertNil(message.visibleInConversation);
     XCTAssertTrue(message.isZombieObject);
+    XCTAssertTrue(message.hasBeenDeleted);
     XCTAssertNil(message.textMessageData);
     XCTAssertNil(message.sender);
     XCTAssertNil(message.senderClientID);
