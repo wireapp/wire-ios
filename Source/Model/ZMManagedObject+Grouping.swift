@@ -115,9 +115,9 @@ extension NSManagedObjectContext {
             let ids = finalResult.filter {
                 ($0["count"] as? Int ?? 0) > 1
             }.flatMap {
-                $0["remoteIdentifier"] as? String
+                $0[keyPath]
             }
-
+            
             let fetchAllDuplicatesRequest = NSFetchRequest<T>()
             fetchAllDuplicatesRequest.entity = entity
             fetchAllDuplicatesRequest.predicate = NSPredicate(format: "%K IN %@", argumentArray: [keyPath, ids])
