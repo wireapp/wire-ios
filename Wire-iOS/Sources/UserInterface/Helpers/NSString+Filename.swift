@@ -29,10 +29,22 @@ extension NSString {
 
     static private let transforms = [kCFStringTransformStripCombiningMarks, kCFStringTransformToLatin, kCFStringTransformToUnicodeName]
 
+    
+    /// convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
     var normalizedFilename: String {
         let ref = NSMutableString(string: self) as CFMutableString
         type(of: self).transforms.forEach { CFStringTransform(ref, nil, $0, false) }
-        return (ref as String).replacingOccurrences(of: " ", with: "-")
+        
+        let retString = ref as String
+        
+        let characterSet = NSMutableCharacterSet() //create an empty mutable set
+        characterSet.formUnion(with: CharacterSet.alphanumerics)
+        characterSet.addCharacters(in: "_-.")
+
+        let unsafeChars = characterSet.inverted
+        let strippedString = retString.components(separatedBy: unsafeChars).joined(separator: "")
+        
+        return strippedString
     }
 
     static func filenameForSelfUser() -> NSString {
