@@ -38,8 +38,8 @@ extern NSString * __nonnull const UserClientsKey;
 
 @property (nonnull, nonatomic) NSOrderedSet *activeConversations;
 
-@property (nonnull, nonatomic) NSOrderedSet *showingUserAdded;
-@property (nonnull, nonatomic) NSOrderedSet *showingUserRemoved;
+@property (nonnull, nonatomic) NSSet *showingUserAdded;
+@property (nonnull, nonatomic) NSSet *showingUserRemoved;
 
 @property (nonnull, nonatomic) NSSet<Team *> *createdTeams;
 

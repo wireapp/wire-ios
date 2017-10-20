@@ -180,7 +180,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 @dynamic clients;
 @dynamic handle;
 @dynamic addressBookEntry;
-@dynamic membership;
 
 - (UserClient *)selfClient
 {

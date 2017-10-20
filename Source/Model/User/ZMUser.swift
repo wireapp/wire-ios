@@ -193,6 +193,20 @@ extension ZMUser {
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?
     
+    /// Conversation in which the user is active, according to the server
+    @NSManaged var lastServerSyncedActiveConversations: NSOrderedSet
+    
+    /// Conversations created by this user
+    @NSManaged var conversationsCreated: Set<ZMConversation>
+    
+    /// Team membership for this user
+    @NSManaged internal(set) var membership: Member?
+
+    /// Reactions expressed by this user
+    @NSManaged var reactions: Set<Reaction>
+    
+    /// System messages referencing this user
+    @NSManaged var systemMessages: Set<ZMSystemMessage>
     
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
