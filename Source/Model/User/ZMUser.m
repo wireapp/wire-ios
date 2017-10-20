@@ -147,6 +147,10 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 
 - (BOOL)isSelfUser
 {
+    if ([self isZombieObject]) {
+        return false;
+    }
+    
     return self == [self.class selfUserInContext:self.managedObjectContext];
 }
 
