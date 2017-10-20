@@ -200,7 +200,7 @@ extension ZMUser {
     @NSManaged var conversationsCreated: Set<ZMConversation>
     
     /// Team membership for this user
-    @NSManaged internal(set) var membership: Member?
+    @NSManaged public internal(set) var membership: Member?
 
     /// Reactions expressed by this user
     @NSManaged var reactions: Set<Reaction>
