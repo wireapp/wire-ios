@@ -31,11 +31,12 @@ extension NSString {
 
     
     /// convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
+    /// TODO: write unit test, test with very long name
     var normalizedFilename: String {
         let ref = NSMutableString(string: self) as CFMutableString
         type(of: self).transforms.forEach { CFStringTransform(ref, nil, $0, false) }
         
-        let retString = ref as String
+        let retString = (ref as String).replacingOccurrences(of: " ", with: "-")
         
         let characterSet = NSMutableCharacterSet() //create an empty mutable set
         characterSet.formUnion(with: CharacterSet.alphanumerics)
