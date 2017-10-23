@@ -30,8 +30,8 @@ extension NSString {
     static private let transforms = [kCFStringTransformStripCombiningMarks, kCFStringTransformToLatin, kCFStringTransformToUnicodeName]
 
     
-    /// convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
-    /// TODO: write unit test, test with very long name
+    /// Convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
+    /// Space will be converted to underscore first.
     var normalizedFilename: String {
         let ref = NSMutableString(string: self) as CFMutableString
         type(of: self).transforms.forEach { CFStringTransform(ref, nil, $0, false) }
