@@ -168,16 +168,6 @@ struct TypeMap {
     CFStringRef name;
     ZMUpdateEventType type;
 } const TypeMapping[] = {
-    { CFSTR("call.device-info"), ZMUpdateEventCallDeviceInfo },
-    { CFSTR("call.flow-active"), ZMUpdateEventCallFlowActive },
-    { CFSTR("call.flow-add"), ZMUpdateEventCallFlowAdd },
-    { CFSTR("call.flow-delete"), ZMUpdateEventCallFlowDelete },
-    { CFSTR("call.info"), ZM_ALLOW_DEPRECATED(ZMUpdateEventCallInfo) },
-    { CFSTR("call.participants"), ZMUpdateEventCallParticipants },
-    { CFSTR("call.remote-candidates-add"), ZMUpdateEventCallCandidatesAdd },
-    { CFSTR("call.remote-candidates-update"), ZMUpdateEventCallCandidatesUpdate },
-    { CFSTR("call.remote-sdp"), ZMUpdateEventCallRemoteSDP },
-    { CFSTR("call.state"), ZMUpdateEventCallState },
     { CFSTR("conversation.asset-add"), ZMUpdateEventConversationAssetAdd },
     { CFSTR("conversation.connect-request"), ZMUpdateEventConversationConnectRequest },
     { CFSTR("conversation.create"), ZMUpdateEventConversationCreate },
@@ -191,9 +181,6 @@ struct TypeMap {
     { CFSTR("conversation.otr-asset-add"), ZMUpdateEventConversationOtrAssetAdd },
     { CFSTR("conversation.rename"), ZMUpdateEventConversationRename },
     { CFSTR("conversation.typing"), ZMUpdateEventConversationTyping },
-    { CFSTR("conversation.voice-channel"), ZMUpdateEventConversationVoiceChannel },
-    { CFSTR("conversation.voice-channel-activate"), ZMUpdateEventConversationVoiceChannelActivate },
-    { CFSTR("conversation.voice-channel-deactivate"), ZMUpdateEventConversationVoiceChannelDeactivate },
     { CFSTR("user.connection"), ZMUpdateEventUserConnection },
     { CFSTR("user.new"), ZMUpdateEventUserNew },
     { CFSTR("user.push-remove"), ZMUpdateEventUserPushRemove },
@@ -236,57 +223,6 @@ struct TypeMap {
     NSString *type = transportData[@"type"];
     self.type = [[self class] updateEventTypeForEventTypeString:type];
     return (self.type != ZMUpdateEventUnknown);
-}
-
-- (BOOL)isFlowEvent;
-{
-    switch (self.type) {
-        case ZMUpdateEventCallCandidatesAdd:
-        case ZMUpdateEventCallCandidatesUpdate:
-        case ZMUpdateEventCallFlowActive:
-        case ZMUpdateEventCallFlowAdd:
-        case ZMUpdateEventCallFlowDelete:
-        case ZMUpdateEventCallRemoteSDP:
-            return YES;
-        case ZMUpdateEventUnknown:
-        case ZMUpdateEventCallParticipants:
-        case ZM_ALLOW_DEPRECATED(ZMUpdateEventCallInfo):
-        case ZMUpdateEventCallDeviceInfo:
-        case ZMUpdateEventCallState:
-        case ZMUpdateEventConversationAssetAdd:
-        case ZMUpdateEventConversationConnectRequest:
-        case ZMUpdateEventConversationCreate:
-        case ZMUpdateEventConversationKnock:
-        case ZMUpdateEventConversationMemberJoin:
-        case ZMUpdateEventConversationMemberLeave:
-        case ZMUpdateEventConversationMemberUpdate:
-        case ZMUpdateEventConversationMessageAdd:
-        case ZMUpdateEventConversationClientMessageAdd:
-        case ZMUpdateEventConversationOtrMessageAdd:
-        case ZMUpdateEventConversationOtrAssetAdd:
-        case ZMUpdateEventConversationRename:
-        case ZMUpdateEventConversationTyping:
-        case ZMUpdateEventConversationVoiceChannel:
-        case ZMUpdateEventConversationVoiceChannelActivate:
-        case ZMUpdateEventConversationVoiceChannelDeactivate:
-        case ZMUpdateEventUserConnection:
-        case ZMUpdateEventUserNew:
-        case ZMUpdateEventUserUpdate:
-        case ZMUpdateEventUserPushRemove:
-        case ZMUpdateEventUserContactJoin:
-        case ZMUpdateEventUserClientAdd:
-        case ZMUpdateEventUserClientRemove:
-        case ZMUpdateEventTeamCreate:
-        case ZMUpdateEventTeamDelete:
-        case ZMUpdateEventTeamUpdate:
-        case ZMUpdateEventTeamMemberJoin:
-        case ZMUpdateEventTeamMemberLeave:
-        case ZMUpdateEventTeamMemberUpdate:
-        case ZMUpdateEventTeamConversationCreate:
-        case ZMUpdateEventTeamConversationDelete:
-        case ZMUpdateEvent_LAST:
-            return NO;
-    }
 }
 
 - (BOOL)isEncrypted
@@ -353,8 +289,4 @@ struct TypeMap {
             self.debugInformation];
 }
 
-
 @end
-
-
-

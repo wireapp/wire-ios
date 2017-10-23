@@ -34,16 +34,6 @@
 - (NSDictionary *)typesMapping
 {
     return @{
-             @"call.device-info" : @(ZMUpdateEventCallDeviceInfo),
-             @"call.flow-active" : @(ZMUpdateEventCallFlowActive),
-             @"call.flow-add" : @(ZMUpdateEventCallFlowAdd),
-             @"call.flow-delete" : @(ZMUpdateEventCallFlowDelete),
-             @"call.info" : ZM_ALLOW_DEPRECATED(@(ZMUpdateEventCallInfo)),
-             @"call.participants": @(ZMUpdateEventCallParticipants),
-             @"call.remote-candidates-add" : @(ZMUpdateEventCallCandidatesAdd),
-             @"call.remote-candidates-update" : @(ZMUpdateEventCallCandidatesUpdate),
-             @"call.remote-sdp" : @(ZMUpdateEventCallRemoteSDP),
-             @"call.state" : @(ZMUpdateEventCallState),
              @"conversation.asset-add" : @(ZMUpdateEventConversationAssetAdd),
              @"conversation.connect-request" : @(ZMUpdateEventConversationConnectRequest),
              @"conversation.create" : @(ZMUpdateEventConversationCreate),
@@ -57,9 +47,6 @@
              @"conversation.otr-asset-add" : @(ZMUpdateEventConversationOtrAssetAdd),
              @"conversation.rename" : @(ZMUpdateEventConversationRename),
              @"conversation.typing" : @(ZMUpdateEventConversationTyping),
-             @"conversation.voice-channel" : @(ZMUpdateEventConversationVoiceChannel),
-             @"conversation.voice-channel-activate" : @(ZMUpdateEventConversationVoiceChannelActivate),
-             @"conversation.voice-channel-deactivate" : @(ZMUpdateEventConversationVoiceChannelDeactivate),
              @"user.connection" : @(ZMUpdateEventUserConnection),
              @"user.new" : @(ZMUpdateEventUserNew),
              @"user.push-remove" : @(ZMUpdateEventUserPushRemove),
@@ -645,78 +632,6 @@
     
     // then
     XCTAssertTrue(event.isTransient);
-}
-
-
-- (void)testThatItDetectsFlowEvents;
-{
-    for (ZMUpdateEventType type = ZMUpdateEventUnknown; type < ZMUpdateEvent_LAST; type++) {
-        // given
-        BOOL expected = NO;
-        switch (type) {
-            case ZMUpdateEventUnknown:
-                continue;
-            case ZMUpdateEventCallCandidatesAdd:
-            case ZMUpdateEventCallCandidatesUpdate:
-            case ZMUpdateEventCallFlowActive:
-            case ZMUpdateEventCallFlowAdd:
-            case ZMUpdateEventCallFlowDelete:
-            case ZMUpdateEventCallRemoteSDP:
-                expected = YES;
-                break;
-            case ZMUpdateEventCallParticipants:
-            case ZM_ALLOW_DEPRECATED(ZMUpdateEventCallInfo):
-            case ZMUpdateEventCallDeviceInfo:
-            case ZMUpdateEventCallState:
-            case ZMUpdateEventConversationAssetAdd:
-            case ZMUpdateEventConversationConnectRequest:
-            case ZMUpdateEventConversationCreate:
-            case ZMUpdateEventConversationKnock:
-            case ZMUpdateEventConversationMemberJoin:
-            case ZMUpdateEventConversationMemberLeave:
-            case ZMUpdateEventConversationMemberUpdate:
-            case ZMUpdateEventConversationMessageAdd:
-            case ZMUpdateEventConversationClientMessageAdd:
-            case ZMUpdateEventConversationOtrMessageAdd:
-            case ZMUpdateEventConversationOtrAssetAdd:
-            case ZMUpdateEventConversationRename:
-            case ZMUpdateEventConversationTyping:
-            case ZMUpdateEventConversationVoiceChannel:
-            case ZMUpdateEventConversationVoiceChannelActivate:
-            case ZMUpdateEventConversationVoiceChannelDeactivate:
-            case ZMUpdateEventUserConnection:
-            case ZMUpdateEventUserNew:
-            case ZMUpdateEventUserUpdate:
-            case ZMUpdateEventUserPushRemove:
-            case ZMUpdateEventUserContactJoin:
-            case ZMUpdateEventUserClientAdd:
-            case ZMUpdateEventUserClientRemove:
-            case ZMUpdateEventTeamCreate:
-            case ZMUpdateEventTeamDelete:
-            case ZMUpdateEventTeamUpdate:
-            case ZMUpdateEventTeamMemberJoin:
-            case ZMUpdateEventTeamMemberLeave:
-            case ZMUpdateEventTeamMemberUpdate:
-            case ZMUpdateEventTeamConversationCreate:
-            case ZMUpdateEventTeamConversationDelete:
-            case ZMUpdateEvent_LAST:
-                break;
-        }
-        __block NSString *typeString;
-        [self.typesMapping enumerateKeysAndObjectsUsingBlock:^(NSString *name, NSNumber *encodedType, BOOL *stop) {
-            if (encodedType.intValue == (int) type) {
-                *stop = YES;
-                typeString = name;
-            }
-        }];
-        XCTAssertNotNil(typeString, @"%d", (int) type);
-        
-        // when
-        ZMUpdateEvent *sut = [ZMUpdateEvent eventFromEventStreamPayload:@{@"type": typeString} uuid:nil];
-        
-        // then
-        XCTAssertEqual(sut.isFlowEvent, expected, @"%d", (int) type);
-    }
 }
 
 @end
