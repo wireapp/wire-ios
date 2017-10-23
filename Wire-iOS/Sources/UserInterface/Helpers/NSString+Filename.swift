@@ -47,19 +47,39 @@ extension NSString {
         
         return strippedString
     }
+    
+    
+    /// return a filename with length <= 255 characters with additional number of characters to reserve
+    ///
+    /// - Parameter numReservedChar: number for characters to reserve. It should < 255 and >= 0.
+    /// - Returns: trimmed filename with length <= (255 - numReservedChar)
+    func trimmedFilename(numReservedChar: Int) -> String {
+        // reserve 5 characters for dash and file extension, 37 char for UUID prefix
+        let offset = -(normalizedFilename.count - 255 + numReservedChar + 5 + 37)
+        
+        if offset > 0 {
+            return String(self)
+        }
 
-    /// return a file name with length < 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
+        let start = normalizedFilename.startIndex
+
+        let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: offset)
+        let result = normalizedFilename[start..<end]
+        let trimmedFilename = String(result)
+    
+        return trimmedFilename ?? ""
+    }
+
+    /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
     ///
     /// - Returns: a string <= 214 characters
     static func filenameForSelfUser() -> NSString {
         let dateString = dateFormatter.string(from: Date())
         let normalizedFilename = ZMUser.selfUser().name!.normalizedFilename
 
-        let start = normalizedFilename.startIndex
-        // reserve 5 characters for dash and file extension, 37 char for UUID prefix
-        let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: -(normalizedFilename.count - 255 + dateString.count + 5 + 37))
-        let result = normalizedFilename[start..<end]
-        let trimmedFilename = String(result)
-        return "\(trimmedFilename ?? "")-\(dateString)" as NSString
+        let numReservedChar = dateString.count
+        let trimmedFilename = normalizedFilename.trimmedFilename(numReservedChar: numReservedChar)
+        
+        return "\(trimmedFilename)-\(dateString)" as NSString
     }
 }
