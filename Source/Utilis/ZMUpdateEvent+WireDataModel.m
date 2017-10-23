@@ -28,8 +28,7 @@
 
 - (BOOL)canUnarchiveConversation:(ZMConversation *)conversation
 {
-    if ( ! conversation.isArchived ||
-        (conversation.isSilenced && self.type != ZMUpdateEventConversationVoiceChannelActivate)) {
+    if ( ! conversation.isArchived || conversation.isSilenced) {
         return NO;
     }
     
@@ -55,7 +54,6 @@
         case ZMUpdateEventConversationKnock:
         case ZMUpdateEventConversationMemberJoin:
         case ZMUpdateEventConversationMessageAdd:
-        case ZMUpdateEventConversationVoiceChannelActivate:
         {
             BOOL olderEvent = ((self.timeStamp != nil) &&
                                ([self.timeStamp compare:conversation.archivedChangedTimestamp] == NSOrderedAscending));
@@ -67,22 +65,11 @@
         case ZMUpdateEventConversationOtrAssetAdd:
             return !olderClearTimestamp;
             
-        case ZMUpdateEventCallCandidatesAdd:
-        case ZMUpdateEventCallCandidatesUpdate:
-        case ZMUpdateEventCallDeviceInfo:
-        case ZMUpdateEventCallFlowActive:
-        case ZMUpdateEventCallFlowAdd:
-        case ZMUpdateEventCallFlowDelete:
-        case ZMUpdateEventCallParticipants:
-        case ZMUpdateEventCallRemoteSDP:
-        case ZMUpdateEventCallState:
         case ZMUpdateEventConversationConnectRequest:
         case ZMUpdateEventConversationCreate:
         case ZMUpdateEventConversationMemberUpdate:
         case ZMUpdateEventConversationRename:
         case ZMUpdateEventConversationTyping:
-        case ZMUpdateEventConversationVoiceChannel:
-        case ZMUpdateEventConversationVoiceChannelDeactivate:
         case ZMUpdateEventUnknown:
         case ZMUpdateEventUserConnection:
         case ZMUpdateEventUserNew:
@@ -96,7 +83,7 @@
 
 - (NSDate *)timeStamp
 {
-    if (self.isTransient || self.type == ZMUpdateEventCallState || self.type == ZMUpdateEventUserConnection) {
+    if (self.isTransient || self.type == ZMUpdateEventUserConnection) {
         return nil;
     }
     return [self.payload dateForKey:@"time"];
@@ -107,32 +94,12 @@
     if (self.type == ZMUpdateEventUserConnection) {
         return [[self.payload optionalDictionaryForKey:@"connection"] optionalUuidForKey:@"to"];
     }
+    
     if (self.type == ZMUpdateEventUserContactJoin) {
         return [[self.payload optionalDictionaryForKey:@"user"] optionalUuidForKey:@"id"];
     }
-    if (self.type == ZMUpdateEventCallState) {
-        return [self firstJoinedParticipantIDForCallEvent];
-    }
-    return [self.payload optionalUuidForKey:@"from"];
-}
 
-- (NSUUID *)firstJoinedParticipantIDForCallEvent
-{
-    if (self.type != ZMUpdateEventCallState) {
-        return nil;
-    }
-    NSDictionary *participantInfo = [self.payload optionalDictionaryForKey:@"participants"];
-    if (participantInfo.count == 0) {
-        return nil;
-    }
-    __block NSString *senderUUID;
-    [participantInfo enumerateKeysAndObjectsUsingBlock:^(NSString* remoteIDString, NSDictionary *info, BOOL * _Nonnull stop) {
-        if ([[info optionalStringForKey:@"state"] isEqualToString:@"joined"]) {
-            senderUUID = remoteIDString;
-            *stop = YES;
-        }
-    }];
-    return [NSUUID uuidWithTransportString:senderUUID];
+    return [self.payload optionalUuidForKey:@"from"];
 }
 
 - (NSUUID *)conversationUUID;
@@ -179,57 +146,6 @@
             break;
     }
 }
-
-
-- (ZMCallEventType)callEventTypeOnManagedObjectContext:(NSManagedObjectContext *)context;
-{
-    if (self.type != ZMUpdateEventCallState) {
-        return ZMCallEventTypeNone;
-    }
-    
-    NSDictionary *participantInfo = [self.payload optionalDictionaryForKey:@"participants"];
-    
-    if (participantInfo == nil) {
-        return ZMCallEventTypeUndefined;
-    }
-    __block BOOL selfUserIsJoined = NO;
-    __block BOOL isVideoCall = NO;
-    __block BOOL otherUserIsJoined = NO;
-    __block NSUInteger otherJoinedUsers = 0;
-    
-    ZMConversation *conversation = [ZMConversation fetchObjectWithRemoteIdentifier:self.conversationUUID inManagedObjectContext:context];
-    if (conversation == nil) {
-        return ZMCallEventTypeUndefined;
-    }
-    
-    ZMUser *selfUser = [ZMUser selfUserInContext:context];
-    NSString *selfUserIDString = selfUser.remoteIdentifier.transportString;
-    
-    [participantInfo enumerateKeysAndObjectsUsingBlock:^(NSString* remoteIDString, NSDictionary *info, BOOL * _Nonnull stop) {
-        NOT_USED(*stop);
-        if ([[info optionalNumberForKey:@"videod"] boolValue]) {
-            isVideoCall = YES;
-        }
-        if ([[info optionalStringForKey:@"state"] isEqualToString:@"joined"]) {
-            if ([remoteIDString isEqualToString:selfUserIDString]) {
-                selfUserIsJoined = YES;
-            } else {
-                otherUserIsJoined = YES;
-                otherJoinedUsers++;
-            }
-        }
-    }];
-    
-    if (!selfUserIsJoined && !otherUserIsJoined) {
-        return ZMCallEventTypeCallEnded;
-    } else if (selfUserIsJoined) {
-        return ZMCallEventTypeSelfUserJoined;
-    } else if (otherUserIsJoined && otherJoinedUsers == 1) {
-        return isVideoCall ? ZMCallEventTypeIncomingVideoCall : ZMCallEventTypeIncomingCall;
-    }
-    return ZMCallEventTypeUndefined;
-}
-
 
 - (NSMutableSet *)usersFromUserIDsInManagedObjectContext:(NSManagedObjectContext *)context createIfNeeded:(BOOL)createIfNeeded;
 {
