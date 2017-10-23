@@ -29,13 +29,13 @@ extension NSString {
     ///
     /// - Returns: a string <= 214 characters
     static func filenameForSelfUser() -> NSString {
-        let dateString = dateFormatter.string(from: Date())
+        let dateString = "-" + dateFormatter.string(from: Date())
         let normalizedFilename = ZMUser.selfUser().name!.normalizedFilename
         
         let numReservedChar = dateString.count
         let trimmedFilename = normalizedFilename.trimmedFilename(numReservedChar: numReservedChar)
         
-        return "\(trimmedFilename)-\(dateString)" as NSString
+        return "\(trimmedFilename)\(dateString)" as NSString
     }
 
 }
