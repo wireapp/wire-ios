@@ -19,23 +19,12 @@
 import Foundation
 
 extension NSString {
-    fileprivate static let dateFormatter : DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd-hh.mm.ss"
-        return formatter
-    }()
 
     /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
     ///
     /// - Returns: a string <= 214 characters
     static func filenameForSelfUser() -> NSString {
-        let dateString = "-" + dateFormatter.string(from: Date())
-        let normalizedFilename = ZMUser.selfUser().name!.normalizedFilename
-        
-        let numReservedChar = dateString.count
-        let trimmedFilename = normalizedFilename.trimmedFilename(numReservedChar: numReservedChar)
-        
-        return "\(trimmedFilename)\(dateString)" as NSString
+        return ZMUser.selfUser().filename
     }
 
 }
