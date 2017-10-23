@@ -491,6 +491,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
 {
     [self performBlockAndWait:^{
         self.userInfo[IsSyncContextKey] = @YES;
+        self.userInfo[DisplayNameGeneratorKey] = [[DisplayNameGenerator alloc] initWithManagedObjectContext:self];
     }];
 }
 
