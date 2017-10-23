@@ -20,7 +20,7 @@
 import Foundation
 
 public extension String {
-    static private let transforms = [kCFStringTransformStripCombiningMarks, kCFStringTransformToLatin, kCFStringTransformToUnicodeName]
+    static private let transforms = [kCFStringTransformToLatin, kCFStringTransformStripCombiningMarks, kCFStringTransformToUnicodeName]
     
     /// Convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
     /// Space will be converted to underscore first.
@@ -44,10 +44,10 @@ public extension String {
     /// return a filename with length <= 255 characters with additional number of characters to reserve
     ///
     /// - Parameter numReservedChar: number for characters to reserve. It should < 255 and >= 0.
-    /// - Returns: trimmed filename with length <= (255 - numReservedChar)
+    /// - Returns: trimmed filename with length <= (255 - 5 - 37 - numReservedChar)
     public func trimmedFilename(numReservedChar: Int) -> String {
         // reserve 5 characters for dash and file extension, 37 char for UUID prefix
-        let offset = -(normalizedFilename.count - 255 + numReservedChar + 5 + 37)
+        let offset = -(normalizedFilename.count - 255 + numReservedChar + 4 + 37)
         
         if offset > 0 {
             return String(self)

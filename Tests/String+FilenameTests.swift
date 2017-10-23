@@ -25,10 +25,30 @@ class String_FilenameTests: XCTestCase {
         // GIVEN
         let username = "John Smith"
         
-        let filename = username.trimmedFilename(numReservedChar: 0)
+        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: 0)
         
         // WHEN & THEN
-        XCTAssertEqual(filename, "John_Smith")
+        XCTAssertEqual(filename, "John-Smith")
+    }
+
+    func testEmojiUserNameToLongFileName() {
+        // GIVEN
+        let username = "🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰"
+        
+        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: 0)
+        
+        // WHEN & THEN
+        XCTAssertEqual(filename.count, 255 - 4 - 37)
+    }
+
+    func testChineseUserNameToLatinFileName() {
+        // GIVEN
+        let username = "使用者"
+        
+        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: 0)
+        
+        // WHEN & THEN
+        XCTAssertEqual(filename, "shi-yong-zhe")
     }
     
 }
