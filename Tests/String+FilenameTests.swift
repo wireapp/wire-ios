@@ -30,13 +30,11 @@ class String_FilenameTests: XCTestCase {
         XCTAssertEqual(filename, "John-Smith")
     }
 
-    func testEmojiUserNameToLongFileName() {
+    func testEmojiUserNameWithUUIDPrefixAndExtensionToFileName() {
         // GIVEN
         let username = "🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰"
         let filename = username.normalizedFilename.trimmedFilename(numReservedChar: 0)
-        
         let uuidString = UUID.create().uuidString
-        
         let exampleFileName = uuidString + "_" + filename + ".mp4"
         
         // WHEN & THEN
