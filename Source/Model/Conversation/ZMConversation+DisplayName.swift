@@ -22,18 +22,37 @@ public extension ZMConversation {
     static private var emptyConversationEllipsis: String {
         return "…"
     }
+    
+    static private var emptyGroupConversationName: String {
+        return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
+    }
 
+    /// This is equal to the meaningful display name, if it exists, otherwise a
+    /// fallback placeholder name is used.
+    ///
     public var displayName: String {
+        let result = self.meaningfulDisplayName
+        switch conversationType {
+        case .oneOnOne, .connection: return result ?? ZMConversation.emptyConversationEllipsis
+        case .group: return result ?? ZMConversation.emptyGroupConversationName
+        case .self, .invalid: return result ?? ""
+        }
+    }
+    
+    /// A meaningful display name is one that can be constructed from the conversation
+    /// data, rather than relying on a fallback placeholder name, such as "…" or "Empty conversation".
+    ///
+    public var meaningfulDisplayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()
         case .oneOnOne: return oneOnOneDisplayName()
-        case .self: return managedObjectContext.map(ZMUser.selfUser)?.name ?? ""
-        case .invalid: return ""
+        case .self: return managedObjectContext.map(ZMUser.selfUser)?.name
+        case .invalid: return nil
         }
     }
-
-    private func connectionDisplayName() -> String {
+    
+    private func connectionDisplayName() -> String? {
         precondition(conversationType == .connection)
 
         let name: String?
@@ -43,10 +62,10 @@ public extension ZMConversation {
             name = userDefinedName
         }
 
-        return name ?? ZMConversation.emptyConversationEllipsis
+        return name
     }
 
-    private func groupDisplayName() -> String {
+    private func groupDisplayName() -> String? {
         precondition(conversationType == .group)
 
         if let userDefined = userDefinedName, userDefined.characters.count > 0 {
@@ -59,22 +78,18 @@ public extension ZMConversation {
             guard let user = user as? ZMUser, user != selfUser && user.displayName?.characters.count > 0 else { return nil }
             return user.displayName
         }
-
-        if activeNames.count > 0 {
-            return activeNames.joined(separator: ", ")
-        } else {
-            return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
-        }
+        
+        return activeNames.isEmpty ? nil : activeNames.joined(separator: ", ")
     }
 
-    private func oneOnOneDisplayName() -> String {
+    private func oneOnOneDisplayName() -> String? {
         precondition(conversationType == .oneOnOne)
 
         let other = otherActiveParticipants.firstObject as? ZMUser ?? connectedUser
         if let name = other?.name, name.characters.count > 0 {
             return name
         } else {
-            return ZMConversation.emptyConversationEllipsis
+            return nil
         }
     }
 

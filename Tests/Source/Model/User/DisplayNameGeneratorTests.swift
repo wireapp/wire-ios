@@ -358,5 +358,66 @@ extension DisplayNameGeneratorTests {
         }
     }
     
+    func testThatItGeneratesAMeaningfulConversationDisplayName() {
+        // given
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.name = "Biff Tannen"
+        
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        user1.name = "Emmett Brown"
+        user2.name = "Marty McFly"
+        
+        let groupConversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [user1, user2])!
+        groupConversation.userDefinedName = "Future Stuff"
+       
+        let groupConversationNoName = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [user1, user2])!
+        
+        let oneOnOneConversation = ZMConversation.insertNewObject(in: uiMOC)
+        oneOnOneConversation.conversationType = .oneOnOne
+        oneOnOneConversation.connection = ZMConnection.insertNewObject(in: uiMOC)
+        oneOnOneConversation.connection?.to = user1
+        
+        let connectionConversation = ZMConversation.insertNewObject(in: uiMOC)
+        connectionConversation.conversationType = .connection
+        connectionConversation.connection = ZMConnection.insertNewObject(in: uiMOC)
+        connectionConversation.connection?.to = user2
+        
+        let selfConversation = ZMConversation.insertNewObject(in: uiMOC)
+        selfConversation.conversationType = .self
+        
+        // then
+        XCTAssertEqual(groupConversation.meaningfulDisplayName, "Future Stuff")
+        XCTAssertEqual(groupConversationNoName.meaningfulDisplayName, "Emmett, Marty")
+        XCTAssertEqual(oneOnOneConversation.meaningfulDisplayName, "Emmett Brown")
+        XCTAssertEqual(connectionConversation.meaningfulDisplayName, "Marty McFly")
+        XCTAssertEqual(selfConversation.meaningfulDisplayName, "Biff Tannen")
+    }
     
+    func testThatItReturnsNilIfNoMeaningfulConversationDisplayNameAvailable() {
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        
+        let groupConversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [user1, user2])!
+        
+        let oneOnOneConversation = ZMConversation.insertNewObject(in: uiMOC)
+        oneOnOneConversation.conversationType = .oneOnOne
+        
+        let connectionConversation = ZMConversation.insertNewObject(in: uiMOC)
+        connectionConversation.conversationType = .connection
+        
+        let selfConversation = ZMConversation.insertNewObject(in: uiMOC)
+        selfConversation.conversationType = .self
+        
+        let invalidConversation = ZMConversation.insertNewObject(in: uiMOC)
+        invalidConversation.conversationType = .invalid
+        
+        // then
+        XCTAssertNil(groupConversation.meaningfulDisplayName)
+        XCTAssertNil(oneOnOneConversation.meaningfulDisplayName)
+        XCTAssertNil(connectionConversation.meaningfulDisplayName)
+        XCTAssertNil(selfConversation.meaningfulDisplayName)
+        XCTAssertNil(invalidConversation.meaningfulDisplayName)
+    }
 }
