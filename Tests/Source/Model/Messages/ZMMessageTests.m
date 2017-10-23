@@ -425,7 +425,6 @@ NSString * const ReactionsKey = @"reactions";
                             @(ZMUpdateEventConversationOtrMessageAdd),
                             @(ZMUpdateEventConversationOtrAssetAdd),
                             @(ZMUpdateEventConversationAssetAdd),
-                            @(ZMUpdateEventConversationVoiceChannelDeactivate),
                             @(ZMUpdateEventConversationKnock),
                             ];
     for(NSUInteger evt = 0; evt < ZMUpdateEvent_LAST; ++evt) {
@@ -783,8 +782,7 @@ NSString * const ReactionsKey = @"reactions";
         @(ZMUpdateEventConversationMemberJoin),
         @(ZMUpdateEventConversationMemberLeave),
         @(ZMUpdateEventConversationRename),
-        @(ZMUpdateEventConversationConnectRequest),
-        @(ZMUpdateEventConversationVoiceChannelDeactivate)
+        @(ZMUpdateEventConversationConnectRequest)
     ];
     
     for(NSUInteger evt = 0; evt < ZMUpdateEvent_LAST; ++evt) {
@@ -912,8 +910,6 @@ NSString * const ReactionsKey = @"reactions";
     [self checkThatUpdateEventType:ZMUpdateEventConversationRename generatesSystemMessageType:ZMSystemMessageTypeConversationNameChanged failureRecorder:NewFailureRecorder()];
     
     [self checkThatUpdateEventType:ZMUpdateEventConversationConnectRequest generatesSystemMessageType:ZMSystemMessageTypeConnectionRequest failureRecorder:NewFailureRecorder()];
-    
-    [self checkThatUpdateEventType:ZMUpdateEventConversationVoiceChannelDeactivate generatesSystemMessageType:ZMSystemMessageTypeMissedCall failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
@@ -1173,40 +1169,6 @@ NSString * const ReactionsKey = @"reactions";
     
     // then
     XCTAssertEqual(messages.count, 0u);
-}
-
-- (void)testThatItIncreasesUnreadCountForVoiceChannelDeactiveEventFromOtherUser
-{
-    // given
-    NSDate *oldDate = [[NSDate date] dateByAddingTimeInterval:-30];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    conversation.conversationType = ZMConversationTypeOneOnOne;
-    conversation.lastReadServerTimeStamp = oldDate;
-
-    XCTAssertNotNil(conversation);
-    
-    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    sender.remoteIdentifier = [NSUUID createUUID];
-    
-    [self.uiMOC saveOrRollback];
-    
-    // add selfUser to the conversation
-    __block ZMSystemMessage *message;
-    [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationVoiceChannelDeactivate inConversation:conversation withUsersIDs:@[] senderID:sender.remoteIdentifier];
-    }];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
-    
-    // then
-    XCTAssertEqual(messages.count, 1u);
-    XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, oldDate);
-    XCTAssertNotEqualObjects(conversation.lastReadServerTimeStamp, [(ZMMessage *)messages.lastObject serverTimestamp]);
-
 }
 
 - (void)testThatItMarksSentConnectionRequestMessageAsReadOnUpdateEvent

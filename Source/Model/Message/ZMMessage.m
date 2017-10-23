@@ -879,18 +879,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
         return nil;
     }
     
-    if (type == ZMSystemMessageTypeMissedCall)
-    {
-        NSString *reason = [[updateEvent.payload dictionaryForKey:@"data"] optionalStringForKey:@"reason"];
-
-        // When we cancel a call we placed before it connected we already insert the missed call system message
-        // locally and ignore the update event. (This whole logic can be removed once group calls are on v3).
-        BOOL selfReason = [[ZMUser selfUserInContext:moc].remoteIdentifier isEqual:updateEvent.senderUUID];
-        if (![reason isEqualToString:@"missed"] || selfReason) {
-            return nil;
-        }
-    }
-    
     NSMutableSet *usersSet = [NSMutableSet set];
     for(NSString *userId in [[updateEvent.payload dictionaryForKey:@"data"] optionalArrayForKey:@"user_ids"])
     {
@@ -975,6 +963,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
             case ZMSystemMessageTypeMessageDeletedForEveryone:
             case ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged:
             case ZMSystemMessageTypeTeamMemberLeave:
+            case ZMSystemMessageTypeMissedCall:
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:
@@ -983,7 +972,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
             case ZMSystemMessageTypeNewConversation:
             case ZMSystemMessageTypeParticipantsAdded:
             case ZMSystemMessageTypeParticipantsRemoved:
-            case ZMSystemMessageTypeMissedCall:
                 return NO;
         }
     }];
@@ -1023,8 +1011,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
              @(ZMUpdateEventConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
              @(ZMUpdateEventConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
              @(ZMUpdateEventConversationRename) : @(ZMSystemMessageTypeConversationNameChanged),
-             @(ZMUpdateEventConversationConnectRequest) : @(ZMSystemMessageTypeConnectionRequest),
-             @(ZMUpdateEventConversationVoiceChannelDeactivate) : @(ZMSystemMessageTypeMissedCall)
+             @(ZMUpdateEventConversationConnectRequest) : @(ZMSystemMessageTypeConnectionRequest)
              };
 }
 

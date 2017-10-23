@@ -32,16 +32,6 @@
 - (NSDictionary *)typesMapping
 {
     return @{
-             @"call.device-info" : @(ZMUpdateEventCallDeviceInfo),
-             @"call.flow-active" : @(ZMUpdateEventCallFlowActive),
-             @"call.flow-add" : @(ZMUpdateEventCallFlowAdd),
-             @"call.flow-delete" : @(ZMUpdateEventCallFlowDelete),
-             @"call.info" : ZM_ALLOW_DEPRECATED(@(ZMUpdateEventCallInfo)),
-             @"call.participants": @(ZMUpdateEventCallParticipants),
-             @"call.remote-candidates-add" : @(ZMUpdateEventCallCandidatesAdd),
-             @"call.remote-candidates-update" : @(ZMUpdateEventCallCandidatesUpdate),
-             @"call.remote-sdp" : @(ZMUpdateEventCallRemoteSDP),
-             @"call.state" : @(ZMUpdateEventCallState),
              @"conversation.asset-add" : @(ZMUpdateEventConversationAssetAdd),
              @"conversation.connect-request" : @(ZMUpdateEventConversationConnectRequest),
              @"conversation.create" : @(ZMUpdateEventConversationCreate),
@@ -55,9 +45,6 @@
              @"conversation.otr-asset-add" : @(ZMUpdateEventConversationOtrAssetAdd),
              @"conversation.rename" : @(ZMUpdateEventConversationRename),
              @"conversation.typing" : @(ZMUpdateEventConversationTyping),
-             @"conversation.voice-channel" : @(ZMUpdateEventConversationVoiceChannel),
-             @"conversation.voice-channel-activate" : @(ZMUpdateEventConversationVoiceChannelActivate),
-             @"conversation.voice-channel-deactivate" : @(ZMUpdateEventConversationVoiceChannelDeactivate),
              @"user.connection" : @(ZMUpdateEventUserConnection),
              @"user.new" : @(ZMUpdateEventUserNew),
              @"user.push-remove" : @(ZMUpdateEventUserPushRemove),
@@ -113,7 +100,6 @@
         case ZMUpdateEventConversationClientMessageAdd:
         case ZMUpdateEventConversationOtrMessageAdd:
         case ZMUpdateEventConversationOtrAssetAdd:
-        case ZMUpdateEventConversationVoiceChannelActivate:
             XCTAssertTrue(canUnarchive);
             break;
         default:
@@ -225,22 +211,5 @@
     // then
     XCTAssertFalse(canUnarchive);
 }
-
-- (void)testThatItReturns_YES_IfTheConversationIsSilenced_VoiceChannelActive_Events
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = NSUUID.createUUID;
-    conversation.isArchived = YES;
-    conversation.isSilenced = YES;
-    
-    // when
-    ZMUpdateEvent *event = [self eventWithType:@"conversation.voice-channel-activate" conversation:conversation payloadData:@{}];
-    BOOL canUnarchive = [event canUnarchiveConversation:conversation];
-    
-    // then
-    XCTAssertTrue(canUnarchive);
-}
-
 
 @end

@@ -26,7 +26,7 @@
 
 - (BOOL)canUnarchiveConversation:(nonnull ZMConversation *)conversation;
 
-/// May be nil (e.g. for call state events)
+/// May be nil (e.g. transient events)
 - (nullable NSDate *)timeStamp;
 - (nullable NSUUID *)senderUUID;
 - (nullable NSUUID *)conversationUUID;
@@ -37,20 +37,3 @@
 - (nonnull NSMutableSet *)usersFromUserIDsInManagedObjectContext:(nonnull NSManagedObjectContext *)context createIfNeeded:(BOOL)createIfNeeded;
 
 @end
-
-
-typedef NS_ENUM(NSUInteger, ZMCallEventType) {
-    ZMCallEventTypeNone,
-    ZMCallEventTypeCallEnded,
-    ZMCallEventTypeIncomingCall,
-    ZMCallEventTypeIncomingVideoCall,
-    ZMCallEventTypeSelfUserJoined,
-    ZMCallEventTypeUndefined
-};
-
-@interface ZMUpdateEvent (Calling)
-
-- (ZMCallEventType)callEventTypeOnManagedObjectContext:(nonnull NSManagedObjectContext *)context;
-
-@end
-

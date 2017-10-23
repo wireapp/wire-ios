@@ -248,7 +248,7 @@ extension Conversationtests_Teams {
         XCTAssertEqual(message.serverTimestamp, timestamp)
         XCTAssertFalse(message.shouldGenerateUnreadCount())
         guard let lastModified = conversation?.lastModifiedDate else { XCTFail("Conversation should have last modified date"); return }
-        XCTAssertNotEqualWithAccuracy(lastModified.timeIntervalSince1970, timestamp.timeIntervalSince1970, 0.1, "Message should not change lastModifiedDate")
+        XCTAssertNotEqual(lastModified.timeIntervalSince1970, timestamp.timeIntervalSince1970, accuracy: 0.1, "Message should not change lastModifiedDate")
     }
 }
 
