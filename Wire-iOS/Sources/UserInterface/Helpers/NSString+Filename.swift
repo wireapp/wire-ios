@@ -48,16 +48,16 @@ extension NSString {
         return strippedString
     }
 
-    /// return a file name with length < 255 - 4(reserve for extension) characters
+    /// return a file name with length < 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
     ///
-    /// - Returns: a string <= 251 characters
+    /// - Returns: a string <= 214 characters
     static func filenameForSelfUser() -> NSString {
         let dateString = dateFormatter.string(from: Date())
         let normalizedFilename = ZMUser.selfUser().name!.normalizedFilename
 
         let start = normalizedFilename.startIndex
-        // reserve 5 characters for dash and file extension
-        let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: -(normalizedFilename.count - 255 + dateString.count + 5))
+        // reserve 5 characters for dash and file extension, 37 char for UUID prefix
+        let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: -(normalizedFilename.count - 255 + dateString.count + 5 + 37))
         let result = normalizedFilename[start..<end]
         let trimmedFilename = String(result)
         return "\(trimmedFilename ?? "")-\(dateString)" as NSString
