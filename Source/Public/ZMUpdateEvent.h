@@ -41,16 +41,6 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
     
     ZMUpdateEventUnknown = 0,
     
-    ZMUpdateEventCallCandidatesAdd,
-    ZMUpdateEventCallCandidatesUpdate,
-    ZMUpdateEventCallDeviceInfo,
-    ZMUpdateEventCallFlowActive,
-    ZMUpdateEventCallFlowAdd,
-    ZMUpdateEventCallFlowDelete,
-    ZMUpdateEventCallState,
-    ZMUpdateEventCallInfo ZM_DEPRECATED("Use ZMUpdateEventCallState"), ///< Deprecated. Should not be used
-    ZMUpdateEventCallParticipants,
-    ZMUpdateEventCallRemoteSDP,
     ZMUpdateEventConversationAssetAdd,
     ZMUpdateEventConversationConnectRequest,
     ZMUpdateEventConversationCreate,
@@ -64,9 +54,6 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
     ZMUpdateEventConversationOtrAssetAdd,
     ZMUpdateEventConversationRename,
     ZMUpdateEventConversationTyping,
-    ZMUpdateEventConversationVoiceChannel,
-    ZMUpdateEventConversationVoiceChannelActivate,
-    ZMUpdateEventConversationVoiceChannelDeactivate,
     ZMUpdateEventUserConnection,
     ZMUpdateEventUserNew,
     ZMUpdateEventUserUpdate,
@@ -98,9 +85,6 @@ typedef NS_ENUM(NSUInteger, ZMUpdateEventType) {
 
 /// True if the event will not appear in the notification stream
 @property (nonatomic, readonly) BOOL isTransient;
-
-/// True if the event type concerns calling flows
-@property (nonatomic, readonly) BOOL isFlowEvent;
 
 /// True if the event contains cryptobox-encrypted data
 @property (nonatomic, readonly) BOOL isEncrypted;
