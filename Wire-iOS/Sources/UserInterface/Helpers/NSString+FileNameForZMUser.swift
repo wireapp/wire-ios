@@ -20,9 +20,9 @@ import Foundation
 
 extension NSString {
 
-    /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
+    /// Return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix) characters
     ///
-    /// - Returns: a string <= 214 characters
+    /// - Returns: a filename <= 214 characters
     static func filenameForSelfUser() -> NSString {
         return ZMUser.selfUser().filename
     }
