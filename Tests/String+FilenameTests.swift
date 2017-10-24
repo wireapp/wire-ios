@@ -41,6 +41,18 @@ class String_FilenameTests: XCTestCase {
         XCTAssertEqual(exampleFileName.count, 255)
     }
 
+    func testEmojiUserNameWithUUIDPrefixAndAndSubfixAndExtensionToFileName() {
+        // GIVEN
+        let username = "🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰"
+        let suffix = "_dummy_date_stamp"
+        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: UInt8(suffix.count))
+        let uuidString = UUID.create().uuidString
+        let exampleFileName = uuidString + "_" + filename + suffix + ".mp4"
+        
+        // WHEN & THEN
+        XCTAssertEqual(exampleFileName.count, 255)
+    }
+
     func testChineseUserNameToLatinFileName() {
         // GIVEN
         let username = "使用者"
