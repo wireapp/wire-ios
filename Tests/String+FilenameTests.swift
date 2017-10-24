@@ -45,7 +45,7 @@ class String_FilenameTests: XCTestCase {
         // GIVEN
         let username = "🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰🇭🇰"
         let suffix = "_dummy_date_stamp"
-        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: UInt8(suffix.count))
+        let filename = username.normalizedFilename.trimmedFilename(numReservedChar: suffix.count)
         let uuidString = UUID.create().uuidString
         let exampleFileName = uuidString + "_" + filename + suffix + ".mp4"
         
