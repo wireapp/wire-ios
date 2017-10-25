@@ -502,4 +502,25 @@ extension ZMUserTests {
         XCTAssertEqual(users.count, 3)
         XCTAssertEqual(users, [user1, user2, user3])
     }
+    
+    // MARK: - Filename
+    func testFilenameForUser() {
+        // Given
+        let user = ZMUser.insert(in: self.uiMOC, name: "Some body with a very long name and a emoji 🇭🇰 and some Chinese 中文 and some German Fußgängerübergänge")
+        
+        // When
+        let filename = user.filename
+        
+        // Then
+        XCTAssertEqual(filename.length, 214)
+        XCTAssertTrue(filename.hasPrefix("Some"))
+        XCTAssertTrue(filename.contains("body"))
+        
+        /// check ends with a date stamp, e.g. -2017-10-24-11.05.43
+        let pattern = "^.*[0-9-.]{20,20}$"
+        let regexp = try! NSRegularExpression(pattern: pattern, options: [])
+        let matches = regexp.matches(in: filename as String, options: [], range: NSMakeRange(0, filename.length))
+        
+        XCTAssertTrue(matches.count > 0)
+    }
 }
