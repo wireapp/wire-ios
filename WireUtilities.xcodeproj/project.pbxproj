@@ -112,6 +112,8 @@
 		BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
+		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
+		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
 		F991CE1D1CB64205004D8465 /* ZMPropertyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7891CAE9F900039E10C /* NSString+Normalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -305,6 +307,8 @@
 		BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Apply.swift"; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
+		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
+		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
 		F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSOrderedSetTests.swift; path = Source/NSOrderedSetTests.swift; sourceTree = "<group>"; };
 		F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPropertyValidator.h; sourceTree = "<group>"; };
@@ -427,6 +431,7 @@
 				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
 				3E88BD391B1F3EA300232589 /* Products */,
+				EF18C7C01F9E28620085A832 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -537,6 +542,7 @@
 		54CA31141B74F2C400B820C0 /* Public */ = {
 			isa = PBXGroup;
 			children = (
+				EF18C7D11F9E37CA0085A832 /* String+Filename.swift */,
 				F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */,
 				F9C9A7B41CAEAE570039E10C /* ZMAccentColorValidator.h */,
 				F9C9A7B51CAEAE570039E10C /* ZMEmailAddressValidator.h */,
@@ -584,6 +590,14 @@
 				16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */,
 			);
 			path = Public;
+			sourceTree = "<group>";
+		};
+		EF18C7C01F9E28620085A832 /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */,
+			);
+			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		F9C9A79F1CAEACB10039E10C /* Validation */ = {
@@ -647,6 +661,7 @@
 				BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */,
 				BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */,
 				877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */,
+				EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */,
 				54181A511F594E6F00155ABC /* FileManager+MoveTests.swift */,
 				54181A571F59516600155ABC /* FileManager+ProtectionTests.swift */,
 			);
@@ -866,6 +881,7 @@
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
 				87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */,
+				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
@@ -943,6 +959,7 @@
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
 				546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */,
 				163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */,
+				EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */,
 				546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */,
 				09F027D01B721DA300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m in Sources */,
 			);
@@ -1030,6 +1047,7 @@
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Debug;
@@ -1039,6 +1057,7 @@
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
+				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Release;
