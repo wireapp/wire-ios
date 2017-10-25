@@ -3528,7 +3528,6 @@ static NSString *const CONVERSATION_ID_REQUEST_PREFIX = @"/conversations?ids=";
 {
     // given
     self.sut = (id) [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:self.mockApplicationStatus localNotificationDispatcher:self.mockLocalNotificationDispatcher syncStatus:self.mockSyncStatus];
-
     
     NSUUID *otherUserID = [NSUUID createUUID];
     NSUUID *conversationID = [NSUUID createUUID];
