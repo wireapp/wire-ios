@@ -51,6 +51,7 @@
 		BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; };
 		BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
+		F1202A761FA0830000296B4B /* crash.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1202A751FA0830000296B4B /* crash.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -144,6 +145,7 @@
 		BF7699871D34F881009C378B /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF057941D25434E004A2C29 /* WireLinkPreviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLinkPreviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1202A751FA0830000296B4B /* crash.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -227,6 +229,7 @@
 				BF21CC7A1E925A9E00A874F5 /* wire_head.txt */,
 				BF21CC7B1E925A9E00A874F5 /* yahoo_sports_head.txt */,
 				BF21CC7C1E925A9E00A874F5 /* youtube_head.txt */,
+				F1202A751FA0830000296B4B /* crash.txt */,
 			);
 			name = Fixtures;
 			sourceTree = "<group>";
@@ -419,6 +422,7 @@
 				BF21CC931E925AA300A874F5 /* nytimes_head.txt in Resources */,
 				BF21CC9C1E925AA300A874F5 /* youtube_head.txt in Resources */,
 				BF21CC921E925AA300A874F5 /* medium_head.txt in Resources */,
+				F1202A761FA0830000296B4B /* crash.txt in Resources */,
 				BF21CC941E925AA300A874F5 /* polygon_head.txt in Resources */,
 				BF21CC9B1E925AA300A874F5 /* yahoo_sports_head.txt in Resources */,
 			);

@@ -32,10 +32,17 @@ final class MetaStreamContainer {
     
     var head: String? {
         guard let content = stringContent else { return nil }
-        guard let startRange = content.range(of: OpenGraphXMLNode.headStart.rawValue) else { return nil }
+        var startBound = content.range(of: OpenGraphXMLNode.headStart.rawValue)?.lowerBound ??
+                           content.range(of: OpenGraphXMLNode.headStartNoAttributes.rawValue)?.lowerBound ??
+                           content.startIndex
         
         let upperBound = content.range(of: OpenGraphXMLNode.headEnd.rawValue)?.upperBound ?? content.endIndex
-        let result = content.substring(with: startRange.lowerBound..<upperBound)
+
+        if startBound >= upperBound {
+            startBound = content.startIndex
+        }
+
+        let result = content.substring(with: startBound..<upperBound)
         return result
     }
     

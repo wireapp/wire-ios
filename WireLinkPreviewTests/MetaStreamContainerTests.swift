@@ -94,6 +94,23 @@ class MetaStreamContainerTests: XCTestCase {
         let html = "<!DOCTYPE html><html lang=\"en\">\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head)
     }
+
+    func testThatItExtractsTheHead_whenHeadStartIsMissing() {
+        let html = "<!DOCTYPE html><html lang=\"en\">header</head>"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: html)
+    }
+
+    func testThatItExtractsTheHead_whenHeadStartIsMissingButContainsHeader() {
+        let html = "<!DOCTYPE html><html lang=\"en\"><header>some</header>header</head>"
+        assertThatItExtractsTheCorrectHead(html, expectedHead: html)
+    }
+
+    func testThatItExtractsTheHead_whenHeadStartIsAfterEnd() {
+        let head = "<head>"
+        let body = "<!DOCTYPE html><html lang=\"en\">header</head>"
+        let html = body + head
+        assertThatItExtractsTheCorrectHead(html, expectedHead: body)
+    }
     
     func testThatItExtractsTheHead_whenOneASeparateLine() {
         let head = "<head>\nheader\n</head>"

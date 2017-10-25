@@ -44,6 +44,12 @@ class IntegrationTests: XCTestCase {
         let mockData = OpenGraphMockDataProvider.washingtonPostData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
+
+    func testThatItParsesSampleDataWithoutCrash() {
+        let expectation = OpenGraphDataExpectation(numberOfImages: 30, type: "article", siteNameString: "iPhone Photography School", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let mockData = OpenGraphMockDataProvider.crashingData()
+        assertThatItCanParseSampleData(mockData, expected: expectation)
+    }
     
     func testThatItParsesSampleDataYouTube() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
@@ -130,7 +136,7 @@ class IntegrationTests: XCTestCase {
         var result: OpenGraphData?
         sut.requestOpenGraphData(fromURL: URL(string: mockData.urlString)!) { data in
             result = data
-            XCTAssertNotNil(data)
+            XCTAssertNotNil(data, line: line)
             completionExpectation.fulfill()
         }
 
@@ -140,12 +146,12 @@ class IntegrationTests: XCTestCase {
         }
         
         // then
-        XCTAssertEqual(data.content != nil, expected.hasDescription, line: line)
-        XCTAssertEqual(data.foursquareMetaData != nil, expected.hasFoursquareMetaData, line: line)
-        XCTAssertEqual(data.type, expected.type, line: line)
-        XCTAssertEqual(data.siteNameString, expected.siteNameString, line: line)
-        XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, line: line)
-        XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, line: line)
+        XCTAssertEqual(data.content != nil, expected.hasDescription, expected.hasDescription ? "Should have description" : "Should not have description", line: line)
+        XCTAssertEqual(data.foursquareMetaData != nil, expected.hasFoursquareMetaData, expected.hasFoursquareMetaData ? "Should have Foursquare metadata" : "Should not have Foursquare metadata", line: line)
+        XCTAssertEqual(data.type, expected.type, "Type should be \(expected.type ?? "nil"), found:\(data.type)", line: line)
+        XCTAssertEqual(data.siteNameString, expected.siteNameString, "Site name should be \(expected.siteNameString ?? "nil"), found: \(data.siteNameString ?? "nil")", line: line)
+        XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, "User generated image should match", line: line)
+        XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, "Should have \(expected.numberOfImages) images, found:\(data.imageUrls.count)",line: line)
     }
     
 }

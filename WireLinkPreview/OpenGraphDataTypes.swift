@@ -25,7 +25,8 @@ enum OpenGraphAttribute: String {
 }
 
 enum OpenGraphXMLNode: String {
-    case headStart = "<head"
+    case headStart = "<head "
+    case headStartNoAttributes = "<head>"
     case headEnd = "</head>"
 }
 

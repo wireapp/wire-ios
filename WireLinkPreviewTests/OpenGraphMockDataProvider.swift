@@ -137,6 +137,23 @@ class OpenGraphMockDataProvider: NSObject {
         )
     }
 
+    static func crashingData() -> OpenGraphMockData {
+        let expected = OpenGraphData(
+            title: "The 7 Best iPhone Apps That Turn Photos Into Drawings",
+            type: "article",
+            url: "https://iphonephotographyschool.com/apps-that-turn-photos-into-drawings/",
+            imageUrls: ["https://cdn.iphonephotographyschool.com/wp-content/uploads/2017/03/iPhone-Apps-That-Turn-Photos-Into-Drawings-1.jpg"],
+            siteName: "iPhone Photography School",
+            description: "Discover 7 fantastic iPhone apps that turn photos into drawings and sketches. Get creative and turn your photos into works of art in seconds!"
+        )
+
+        return OpenGraphMockData(
+            head: fixtureWithName("crash"),
+            expected: expected,
+            urlString: expected.url
+        )
+    }
+
     static func instagramData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Instagram photo by Silvan Dähn • Aug 5, 2015 at 4:27pm UTC",
