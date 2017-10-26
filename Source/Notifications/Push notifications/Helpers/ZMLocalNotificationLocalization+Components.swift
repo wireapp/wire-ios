@@ -48,22 +48,23 @@ public extension NSString {
         
         let convTypeKey = (conversation.conversationType != .oneOnOne) ? GroupKey : OneOnOneKey
         keyComponents.append(convTypeKey)
-
         
         if let userName = userName, !userName.isEmpty {
-            arguments.append(userName)
+            if conversation.conversationType == .group {
+                // we only want the user name if we're in a group conversation, since
+                // otherwise the sender name will be displayed in the notification title
+                arguments.append(userName)
+            }
         } else {
             keyComponents.append(NoUserNameKey)
         }
         
-        if (conversation.conversationType != .oneOnOne) {
-            if convName == nil || convName!.isEmpty {
+        if conversation.conversationType == .group {
+            if convName?.isEmpty ?? true {
                 keyComponents.append(NoConversationNameKey)
             }
-            else {
-                arguments.append(convName!)
-            }
         }
+        
         let localizationString = (self as String) + "." + keyComponents.joined(separator: ".")
         return LocalizationInfo(localizationString: localizationString as String, arguments: arguments)
     }
