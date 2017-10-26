@@ -43,7 +43,6 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
         
         self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsWhileInBackground]
         self.upstreamObjectSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: ZMClientMessage.entityName(), managedObjectContext: moc)
-        self.upstreamObjectSync.logPredicateActivity = true
         self.deleteOldEphemeralMessages()
     }
     
@@ -52,7 +51,6 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        zmLog.info("ClientMessageTranscoder: nextRequestIfAllowed")
         return self.upstreamObjectSync.nextRequest()
     }
 }
@@ -202,16 +200,9 @@ extension ClientMessageTranscoder {
     }
     
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
-        zmLog.info("\(self): shouldCreateRequest for \(managedObject)")
         guard let message = managedObject as? ZMClientMessage,
             !managedObject.isZombieObject,
-            let genericMessage = message.genericMessage else {
-                zmLog.info("\(self): message is of incorrect type or isZombie=\(managedObject.isZombieObject)")
-                if let message = managedObject as? ZMClientMessage {
-                    zmLog.info("message.genericMessage = \(message.genericMessage.debugDescription)")
-                }
-                return false
-        }
+            let genericMessage = message.genericMessage else { return false }
         if genericMessage.hasConfirmation() == true {
             let messageNonce = UUID(uuidString: genericMessage.confirmation.messageId)
             let sentMessage = ZMMessage.fetch(withNonce: messageNonce, for: message.conversation!, in: message.managedObjectContext!)
@@ -227,7 +218,6 @@ extension ClientMessageTranscoder {
             return nil
         }
         
-        zmLog.info("\(self): message.dependentObjectNeedingUpdateBeforeProcessing = \(message.dependentObjectNeedingUpdateBeforeProcessing.debugDescription)")
         return message.dependentObjectNeedingUpdateBeforeProcessing
     }
 }
