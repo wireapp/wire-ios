@@ -56,7 +56,6 @@
         LocalNotificationDispatcher *dispatcher = self.localNotificationDispatcher;
         [dispatcher processEvents:decryptedEvents liveEvents:YES prefetchResult:nil];
         [self.syncMOC enqueueDelayedSave];
-        [dispatcher processBuffer];
     }];
 }
 

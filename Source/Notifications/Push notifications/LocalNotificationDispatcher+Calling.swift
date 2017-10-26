@@ -21,51 +21,27 @@ import Foundation
 public extension LocalNotificationDispatcher {
     
     public func process(callState: CallState, in conversation: ZMConversation, sender: ZMUser) {
+        // missed call notification are handled separately
+        // but if call was answered elsewhere then proceed
+        switch callState {
+        case .terminating(reason: let reason):
+            switch reason {
+            case .anweredElsewhere: break
+            default: return
+            }
+        default: break
+        }
         
-        let note =  notification(for: conversation, sender: sender)
-        
+        let note = ZMLocalNotification(callState: callState, conversation: conversation, sender: sender)
         callingNotifications.cancelNotifications(conversation)
-        
-        note.update(forCallState: callState)
-        scheduleNotification(note)
+        note.apply(scheduleLocalNotification)
+        note.apply(callingNotifications.addObject)
     }
     
     public func processMissedCall(in conversation: ZMConversation, sender: ZMUser) {
-        let note =  notification(for: conversation, sender: sender)
-        
+        let note = ZMLocalNotification(callState: .terminating(reason: .canceled), conversation: conversation, sender: sender)
         callingNotifications.cancelNotifications(conversation)
-        
-        note.updateForMissedCall()
-        scheduleNotification(note)
-    }
-    
-    private func scheduleNotification(_ note: ZMLocalNotification) {
-        if let uiNote = note.uiNotifications.first {
-            callingNotifications.addObject(note)
-            self.scheduleUILocalNotification(uiNote)
-        }
-    }
-    
-    private func notification(for conversation: ZMConversation, sender: ZMUser) -> ZMLocalNotificationForCallState {
-        if let callStateNote = callingNotifications.notifications.first(where: { $0.isCallStateNote(for: conversation, by: sender) }) as? ZMLocalNotificationForCallState {
-            return callStateNote
-        }
-        
-        return ZMLocalNotificationForCallState(conversation: conversation, sender: sender)
-    }
-    
-}
-
-extension ZMLocalNotification {
-    
-    /// Returns whether this notification is a call state notification matching conversation and sender
-    fileprivate func isCallStateNote(for conversation: ZMConversation, by sender: ZMUser) -> Bool {
-        guard let callStateNotification = self as? ZMLocalNotificationForCallState,
-            callStateNotification.conversation == conversation,
-            callStateNotification.sender == sender
-        else {
-                return false
-        }
-        return true
+        note.apply(scheduleLocalNotification)
+        note.apply(callingNotifications.addObject)
     }
 }
