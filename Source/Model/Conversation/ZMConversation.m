@@ -681,9 +681,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 }
 
 - (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text fetchLinkPreview:(BOOL)fetchPreview;
-{
-    ZMLogWithLevelAndTag(ZMLogLevelInfo, @"Network", @"appendMessageWithText on %@", self.remoteIdentifier.transportString);
-    
+{    
     VerifyReturnNil(![text zmHasOnlyWhitespaceCharacters]);
     VerifyReturnNil(text != nil);
 
