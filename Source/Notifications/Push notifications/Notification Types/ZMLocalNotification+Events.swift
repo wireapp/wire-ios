@@ -19,38 +19,38 @@
 
 extension ZMLocalNotification {
     
-    // for each supported event type, use the corresponding notification constructor.
+    // for each supported event type, use the corresponding notification builder.
     //
     convenience init?(event: ZMUpdateEvent, conversation: ZMConversation?, managedObjectContext moc: NSManagedObjectContext) {
-        var constructor: NotificationBuilder?
+        var builder: NotificationBuilder?
         
         switch event.type {
         case .conversationOtrMessageAdd:
-            constructor = ReactionEventNotificationBuilder(
+            builder = ReactionEventNotificationBuilder(
                 event: event, conversation: conversation, managedObjectContext: moc)
             
         case .conversationCreate:
-            constructor = ConversationCreateEventNotificationBuilder(
+            builder = ConversationCreateEventNotificationBuilder(
                 event: event, conversation: conversation, managedObjectContext: moc)
             
         case .userConnection:
-            constructor = UserConnectionEventNotificationBuilder(
+            builder = UserConnectionEventNotificationBuilder(
                 event: event, conversation: conversation, managedObjectContext: moc)
             
         case .userContactJoin:
-            constructor = NewUserEventNotificationBuilder(
+            builder = NewUserEventNotificationBuilder(
                 event: event, conversation: conversation, managedObjectContext: moc)
             
         default:
             return nil
         }
         
-        self.init(conversation: conversation, type: .event(event.type), constructor: constructor!)
+        self.init(conversation: conversation, type: .event(event.type), builder: builder!)
     }
     
 }
 
-// Base class for event notification constructors. Subclass this for each
+// Base class for event notification builders. Subclass this for each
 // event type, and override the components specific for that type.
 ///
 fileprivate class EventNotificationBuilder: NotificationBuilder {
@@ -60,6 +60,7 @@ fileprivate class EventNotificationBuilder: NotificationBuilder {
     
     var sender: ZMUser?
     var conversation: ZMConversation?
+    fileprivate var teamName: String?
     
     /// set to true if notification depends / refers to a specific conversation
     var requiresConversation : Bool { return false }
@@ -101,14 +102,11 @@ fileprivate class EventNotificationBuilder: NotificationBuilder {
     }
     
     func titleText() -> String? {
-        var title = conversation?.meaningfulDisplayName ?? ""
-        
-        if let teamName = ZMUser.selfUser(in: moc).team?.name {
-            title.append(" in \(teamName)")
+        if let moc = conversation?.managedObjectContext {
+            teamName = ZMUser.selfUser(in: moc).team?.name
         }
-
-        let trimmed = title.trimmingCharacters(in: .whitespaces)
-        return trimmed.isEmpty ? nil : trimmed
+        
+        return ZMPushStringTitle.localizedString(withConversationName: conversation?.meaningfulDisplayName, teamName: teamName)
     }
     
     func bodyText() -> String {
@@ -145,6 +143,9 @@ fileprivate class EventNotificationBuilder: NotificationBuilder {
         if let eventTime = event.timeStamp() {
             userInfo[EventTimeKey] = eventTime
         }
+        
+        userInfo[ConversationNameStringKey] = conversation?.meaningfulDisplayName
+        userInfo[TeamNameStringKey] = teamName
         
         return userInfo
     }
@@ -204,8 +205,8 @@ private class ReactionEventNotificationBuilder: EventNotificationBuilder {
 private class ConversationCreateEventNotificationBuilder: EventNotificationBuilder {
     
     override func titleText() -> String? {
-        if let teamName = ZMUser.selfUser(in: moc).team?.name { return "in \(teamName)" }
-        else { return nil }
+        teamName = ZMUser.selfUser(in: moc).team?.name
+        return ZMPushStringTitle.localizedString(withConversationName: nil, teamName: teamName)
     }
     
     override func bodyText() -> String {

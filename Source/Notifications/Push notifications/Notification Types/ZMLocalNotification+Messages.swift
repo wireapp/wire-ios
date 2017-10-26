@@ -24,8 +24,8 @@ extension ZMLocalNotification {
     convenience init?(message: ZMMessage) {
         guard message.conversation?.remoteIdentifier  != nil else { return nil }
         let contentType = ZMLocalNotificationContentType.typeForMessage(message)
-        let constructor = MessageNotificationBuilder(message: message, contentType: contentType)
-        self.init(conversation: message.conversation, type: .message(contentType), constructor: constructor)
+        let builder = MessageNotificationBuilder(message: message, contentType: contentType)
+        self.init(conversation: message.conversation, type: .message(contentType), builder: builder)
         self.isEphemeral = message.isEphemeral
     }
     
@@ -33,6 +33,7 @@ extension ZMLocalNotification {
         
         fileprivate let message: ZMMessage
         fileprivate let contentType: ZMLocalNotificationContentType
+        fileprivate var teamName: String?
         
         private var sender: ZMUser!
         var conversation: ZMConversation?
@@ -75,16 +76,11 @@ extension ZMLocalNotification {
         }
         
         func titleText() -> String? {
-            guard let conversation = conversation else { return nil }
-            var title = conversation.displayName
-            
-            if let moc = conversation.managedObjectContext,
-                let teamName = ZMUser.selfUser(in: moc).team?.name {
-                title += " in \(teamName)"
+            if let moc = conversation?.managedObjectContext {
+                teamName = ZMUser.selfUser(in: moc).team?.name
             }
             
-            let trimmed = title.trimmingCharacters(in: CharacterSet(charactersIn: " …"))
-            return trimmed.isEmpty ? nil : trimmed
+            return ZMPushStringTitle.localizedString(withConversationName: conversation?.meaningfulDisplayName, teamName: teamName)
         }
         
         func bodyText() -> String {
@@ -140,6 +136,8 @@ extension ZMLocalNotification {
             userInfo[MessageNonceIDStringKey] = message.nonce.transportString()
             userInfo[ConversationIDStringKey] = conversationID.transportString()
             userInfo[EventTimeKey] = eventTime
+            userInfo[ConversationNameStringKey] = conversation?.meaningfulDisplayName
+            userInfo[TeamNameStringKey] = teamName
             return userInfo
         }
     }
@@ -154,8 +152,8 @@ extension ZMLocalNotification {
     convenience init?(systemMessage: ZMSystemMessage) {
         guard systemMessage.conversation?.remoteIdentifier != nil else { return nil }
         let contentType = ZMLocalNotificationContentType.typeForMessage(systemMessage)
-        let constructor = SystemMessageNotificationBuilder(message: systemMessage)
-        self.init(conversation: systemMessage.conversation, type: .message(contentType), constructor: constructor)
+        let builder = SystemMessageNotificationBuilder(message: systemMessage)
+        self.init(conversation: systemMessage.conversation, type: .message(contentType), builder: builder)
     }
     
     private class SystemMessageNotificationBuilder : MessageNotificationBuilder {
@@ -217,8 +215,8 @@ extension ZMLocalNotification {
     }
     
     convenience init?(expiredMessageIn conversation: ZMConversation) {
-        let constructor = FailedMessageNotificationBuilder(conversation: conversation)
-        self.init(conversation: conversation, type: .failedMessage, constructor: constructor)
+        let builder = FailedMessageNotificationBuilder(conversation: conversation)
+        self.init(conversation: conversation, type: .failedMessage, builder: builder)
     }
     
     private func configureforExpiredMessage(in conversation: ZMConversation!) {
@@ -234,6 +232,7 @@ extension ZMLocalNotification {
     private class FailedMessageNotificationBuilder: NotificationBuilder {
         
         var conversation: ZMConversation?
+        private var teamName: String?
         
         init(conversation: ZMConversation?) {
             self.conversation = conversation
@@ -244,16 +243,11 @@ extension ZMLocalNotification {
         }
         
         func titleText() -> String? {
-            guard let conversation = conversation else { return nil }
-            var title = conversation.meaningfulDisplayName ?? ""
-            
-            if let moc = conversation.managedObjectContext,
-                let teamName = ZMUser.selfUser(in: moc).team?.name {
-                title += " in \(teamName)"
+            if let moc = conversation?.managedObjectContext {
+                teamName = ZMUser.selfUser(in: moc).team?.name
             }
             
-            let trimmed = title.trimmingCharacters(in: .whitespaces)
-            return trimmed.isEmpty ? nil : trimmed
+            return ZMPushStringTitle.localizedString(withConversationName: conversation?.meaningfulDisplayName, teamName: teamName)
         }
         
         func bodyText() -> String {
@@ -284,6 +278,8 @@ extension ZMLocalNotification {
             var userInfo = [AnyHashable: Any]()
             userInfo[SelfUserIDStringKey] = selfUserID.transportString()
             userInfo[ConversationIDStringKey] = conversationID.transportString()
+            userInfo[ConversationNameStringKey] = conversation?.meaningfulDisplayName
+            userInfo[TeamNameStringKey] = teamName
             return userInfo
         }
     }
