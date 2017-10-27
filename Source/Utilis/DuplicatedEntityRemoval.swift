@@ -18,7 +18,7 @@
 
 import Foundation
 
-struct DuplicatedEntityRemoval {
+enum DuplicatedEntityRemoval {
     
     static func removeDuplicated(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
@@ -126,7 +126,10 @@ extension ZMUser {
         
         // NOTE:
         // we are not merging clients since they are re-created on demand
-        
+        // but we need to delete them so they would get recreated with correct relations
+        user.clients.forEach {
+            user.managedObjectContext?.delete($0)
+        }
         self.connection = ZMManagedObject.firstNonNullAndDeleteSecond(self.connection, user.connection)
         self.addressBookEntry = ZMManagedObject.firstNonNullAndDeleteSecond(self.addressBookEntry, user.addressBookEntry)
         self.lastServerSyncedActiveConversations = self.lastServerSyncedActiveConversations.adding(orderedSet: user.lastServerSyncedActiveConversations)

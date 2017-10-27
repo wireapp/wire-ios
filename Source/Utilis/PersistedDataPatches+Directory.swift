@@ -26,7 +26,8 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "43.0.4", block: ZMConversation.migrateAllSecureWithIgnored),
         PersistedDataPatch(version: "58.4.1", block: Team.deleteLocalTeamsAndMembers),
         PersistedDataPatch(version: "62.1.0", block: Member.migrateRemoteIdentifiers),
-        PersistedDataPatch(version: "78.1.0", block: DuplicatedEntityRemoval.removeDuplicated)
+        PersistedDataPatch(version: "78.1.0", block: DuplicatedEntityRemoval.removeDuplicated),
+        PersistedDataPatch(version: "81.2.1", block: InvalidClientsRemoval.removeInvalid)
     ]
 
 }
