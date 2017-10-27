@@ -40,7 +40,6 @@ GCC_PREPROCESSOR_DEFINITIONS = DEBUG=0 ZM_MAJOR_VERSION=$(MAJOR_VERSION) $(inher
 
 
 // Swift Compiler - Code Generation
-//
-// this causes a crash - must leave it commented for now
-// SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
+
+SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
 

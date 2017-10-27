@@ -552,6 +552,26 @@ extension DuplicatedEntityRemovalTests {
         // THEN
         XCTAssertEqual(user1.reactions, Set([reaction1, reaction2]))
     }
+
+    public func testThatItMergesUsers_DeletesClients() throws {
+
+        // GIVEN
+        let user1 = createUser()
+        let user2 = createUser()
+        user2.remoteIdentifier = user1.remoteIdentifier
+        _ = createClient(user: user2)
+        _ = createClient(user: user2)
+        self.moc.saveOrRollback()
+
+        // WHEN
+        user1.merge(with: user2)
+        self.moc.saveOrRollback()
+
+        // THEN
+        let allClients = try self.moc.fetch(UserClient.sortedFetchRequest()!)
+        XCTAssertEqual(user1.clients.count, 0)
+        XCTAssertEqual(allClients.count, 0)
+    }
     
     public func testThatItMergesUsers_ShowingUserAdded() {
         
