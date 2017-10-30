@@ -966,7 +966,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : userClient.transportData,
                                       @"type" : @"user.client-add"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
         }
     }
     
@@ -981,7 +981,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : @{ @"id" : userClient.identifier },
                                       @"type" : @"user.client-remove"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
         }
     }
     return pushEvents;
@@ -1011,7 +1011,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"time": NSDate.date.transportString
                                       };
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
         }
     }
     return pushEvents;
@@ -1028,8 +1028,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         
         if (event.conversation.selfIdentifier == nil) {
             NSDictionary *dict = [event.transportData asDictionary];
-            //If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil than it is conversation to wich self user was invited
-            //We need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
+            // If user_ids (joined users) contains self user identifier, but self identifier of conversation is nil then it is a conversation to which the self user was invited,
+            // we need to set its self identifier to self user, so that transport session can build payload for this conversation with selfInfo
             if ([event.type isEqualToString:@"conversation.member-join"] &&
                 [[dict valueForKeyPath:@"data.user_ids"] containsObject:self.selfUser.identifier])
             {
@@ -1040,10 +1040,13 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             }
         }
         
-        id e = [MockPushEvent eventWithPayload:event.transportData
-                                              uuid:[NSUUID timeBasedUUID]
-                                   isTransient:NO];
-        [pushEvents addObject:e];
+        // Member join/leave doesn't generate push events for the change initiator but are still present in the notification stream.
+        BOOL silentPush = !includeEventsForUserThatInitiatedChanges && ([event.type isEqualToString:@"conversation.member-join"] || [event.type isEqualToString:@"conversation.member-leave"]);
+        id pushEvent = [MockPushEvent eventWithPayload:event.transportData
+                                                  uuid:[NSUUID timeBasedUUID]
+                                           isTransient:NO
+                                              isSilent:silentPush];
+        [pushEvents addObject:pushEvent];
     }
     return pushEvents;
 }
@@ -1062,7 +1065,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             NSDictionary *userPayload = user.changePushPayload;
             if (userPayload != nil) {
                 [userPayload description];
-                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
+                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
             }
         }
     }
@@ -1086,7 +1089,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                 continue;
             }
             
-            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] isTransient:NO]];
+            [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.connection", @"connection" : connection.transportData} uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
         }
     }
     return pushEvents;
@@ -1098,10 +1101,23 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         return [event1.timestamp compare:event2.timestamp];
     }];
     
-    [self.generatedPushEvents addObjectsFromArray:events];
+    NSArray<MockPushEvent *> *regularEvents = [events filterWithBlock:^BOOL(MockPushEvent *event) {
+        return !event.isSilent;
+    }];
     
-    if(self.shouldSendPushChannelEvents) {
-        for(MockPushEvent *event in events) {
+    NSArray<MockPushEvent *> *silentEvents = [events filterWithBlock:^BOOL(MockPushEvent *event) {
+        return event.isSilent;
+    }];
+    
+    [self.generatedPushEvents addObjectsFromArray:regularEvents];
+    [self.generatedPushEvents addObjectsFromArray:silentEvents];
+    
+    if (self.shouldSendPushChannelEvents) {
+        for (MockPushEvent *event in events) {
+            
+            if (event.isSilent) {
+                continue;
+            }
             
             LogNetwork(@"<<<--- Push channel event(%@): %@", event.uuid, event.payload);
             
@@ -1128,7 +1144,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                   @"from": user.identifier,
                                   @"data": @{@"status": started ? @"started" : @"stopped"},
                                   @"type": @"conversation.typing"};
-        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES];
+        MockPushEvent *event = [MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:YES isSilent:NO];
         [self firePushEvents:@[event]];
     }];
 }
