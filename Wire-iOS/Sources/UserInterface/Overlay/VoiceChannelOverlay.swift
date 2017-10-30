@@ -621,13 +621,13 @@ extension VoiceChannelOverlay: UICollectionViewDelegateFlowLayout {
         
         let numberOfItems: CGFloat = CGFloat(collectionView.numberOfItems(inSection: 0))
         let contentWidth: CGFloat = numberOfItems * participantsCollectionViewLayout.itemSize.width + max(numberOfItems - 1, 0) * participantsCollectionViewLayout.minimumLineSpacing
-        let frameWidth : CGFloat = participantsCollectionView.frame.size.width
+        let frameWidth: CGFloat = participantsCollectionView.frame.size.width
         
         let insets: UIEdgeInsets
         
         if contentWidth < frameWidth {
             // Align content in center of frame
-            let horizontalInset = frameWidth - contentWidth
+            let horizontalInset: CGFloat = frameWidth - contentWidth
             insets = UIEdgeInsets(top: 0, left: horizontalInset / 2, bottom: 0, right: horizontalInset / 2)
         } else {
             insets = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24)
