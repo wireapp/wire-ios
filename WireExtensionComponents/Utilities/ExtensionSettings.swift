@@ -36,7 +36,7 @@ private enum ExtensionSettingsKey: String {
         switch self {
         // In case the user opted out and we did not yet migrate the opt out value
         // into the shared settings (which is only done from the main app).
-        case .disableCrashAndAnalyticsSharing: return true
+        case .disableCrashAndAnalyticsSharing: return false
         case .disableLinkPreviews: return false
         }
     }
