@@ -84,7 +84,7 @@ const NSTimeInterval ConversationUploadMaxVideoDuration = 4.0f * 60.0f; // 4 min
             NSString *destLocationString = [basePath stringByAppendingPathComponent:@"BigFile.bin"];
             NSURL *destLocation = [NSURL fileURLWithPath:destLocationString];
             
-            NSData *randomData = [NSData secureRandomDataOfLength:[[ZMUserSession sharedSession] maxUploadFileSize] + 1];
+            NSData *randomData = [NSData secureRandomDataOfLength:(NSUInteger)[[ZMUserSession sharedSession] maxUploadFileSize] + 1];
             [randomData writeToURL:destLocation atomically:YES];
             
             [self uploadFileAtURL:destLocation];
