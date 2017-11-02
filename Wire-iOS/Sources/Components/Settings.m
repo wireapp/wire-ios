@@ -158,7 +158,6 @@ NSString * const UserDefaultDisableLinkPreviews = @"DisableLinkPreviews";
 - (void)migrateHockeyAndOptOutSettingsToSharedDefaults
 {
     if (! [self.defaults boolForKey:UserDefaultDidMigrateHockeySettingInitially]) {
-        ExtensionSettings.shared.disableCrashAndAnalyticsSharing = YES;
         ExtensionSettings.shared.disableLinkPreviews = self.disableLinkPreviews;
         [self.defaults setBool:YES forKey:UserDefaultDidMigrateHockeySettingInitially];
     }
