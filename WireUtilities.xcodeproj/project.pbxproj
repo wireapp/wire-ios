@@ -64,7 +64,6 @@
 		546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */; };
 		546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */; };
 		54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */; };
-		54B515931EF7F9AC000D3777 /* test-host-ios.xcconfig in Resources */ = {isa = PBXBuildFile; fileRef = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */; };
 		54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */; };
 		54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */; };
 		54CA31291B74F36B00B820C0 /* Functional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CA31151B74F36B00B820C0 /* Functional.swift */; };
@@ -832,7 +831,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54B515931EF7F9AC000D3777 /* test-host-ios.xcconfig in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
