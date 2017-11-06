@@ -28,13 +28,23 @@ public extension ZMUser {
     /// return a file name with length <= 255 - 4(reserve for extension) - 37(reserve for WireDataModel UUID prefix for meta) characters
     ///
     /// - Returns: a string <= 214 characters
-    var filename: NSString {
+    func filename(suffix: NSString? = nil)-> NSString {
         let dateString = "-" + ZMUser.dateFormatter.string(from: Date())
         let normalizedFilename = name!.normalizedFilename
         
-        let numReservedChar = dateString.count
+        var numReservedChar = dateString.count
+        
+        if let suffixUnwrapped = suffix {
+            numReservedChar += suffixUnwrapped.length
+        }
+        
         let trimmedFilename = normalizedFilename.trimmedFilename(numReservedChar: numReservedChar)
         
-        return "\(trimmedFilename)\(dateString)" as NSString
+        if let suffixUnwrapped = suffix {
+            return "\(trimmedFilename)\(dateString)\(suffixUnwrapped)" as NSString
+        }
+        else {
+            return "\(trimmedFilename)\(dateString)" as NSString
+        }
     }
 }
