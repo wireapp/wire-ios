@@ -63,9 +63,6 @@
 		F1DABFAA1E9B8B6100AD2324 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F1DABFAB1E9B8B6100AD2324 /* ZMConversation+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABFA01E9B8B6100AD2324 /* ZMConversation+Conversation.swift */; };
 		F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */; };
-		F1DDDDF01F3C665100BAFE82 /* Cartfile.private in Resources */ = {isa = PBXBuildFile; fileRef = F1DDDDED1F3C665100BAFE82 /* Cartfile.private */; };
-		F1DDDDF11F3C665100BAFE82 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F1DDDDEE1F3C665100BAFE82 /* Cartfile.resolved */; };
-		F1DDDDF21F3C665100BAFE82 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = F1DDDDEF1F3C665100BAFE82 /* Cartfile */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -476,9 +473,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1DDDDF21F3C665100BAFE82 /* Cartfile in Resources */,
-				F1DDDDF01F3C665100BAFE82 /* Cartfile.private in Resources */,
-				F1DDDDF11F3C665100BAFE82 /* Cartfile.resolved in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
