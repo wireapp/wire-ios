@@ -30,30 +30,18 @@
 @interface MockConversation ()
 
 @property (nonatomic, readonly) NSMutableOrderedSet *mutableActiveUsers;
-@property (nonatomic, readonly) NSMutableSet *mutableInactiveUsers;
 
 @end
 
 
 @implementation MockConversation
 
-@dynamic archived;
-@dynamic clearedEventID;
 @dynamic creator;
 @dynamic identifier;
 @dynamic selfIdentifier;
-@dynamic lastEvent;
-@dynamic lastEventTime;
-@dynamic lastRead;
-@dynamic muted;
-@dynamic mutedTime;
 @dynamic name;
-@dynamic status;
-@dynamic statusRef;
-@dynamic statusTime;
 @dynamic type;
 @dynamic activeUsers;
-@dynamic inactiveUsers;
 @dynamic events;
 @dynamic otrArchived;
 @dynamic otrArchivedRef;
@@ -71,7 +59,6 @@
     [addedUsers insertObject:creator atIndex:0];
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
-    conversation.lastEventTime = [NSDate date];
     conversation.creator = creator;
     [conversation.mutableActiveUsers addObject:creator];
     return conversation;
@@ -85,7 +72,6 @@
     [addedUsers insertObject:creator atIndex:0];
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
-    conversation.lastEventTime = [NSDate date];
     conversation.creator = creator;
     [conversation.mutableActiveUsers addObject:creator];
     return conversation;
@@ -128,9 +114,7 @@
     event.type = [MockEvent stringFromType:type];
     event.data = [data asTransportData];
     
-    self.lastEventTime = event.time;
     if (event.identifier) {
-        self.lastEvent = event.identifier;
         [self.mutableEvents addObject:event];
     }
     
@@ -140,11 +124,6 @@
 - (NSMutableOrderedSet *)mutableActiveUsers;
 {
     return [self mutableOrderedSetValueForKey:@"activeUsers"];
-}
-
-- (NSMutableSet *)mutableInactiveUsers;
-{
-    return [self mutableSetValueForKey:@"inactiveUsers"];
 }
 
 - (NSMutableOrderedSet *)mutableEvents;
@@ -181,8 +160,6 @@
     data[@"name"] = self.name ?: [NSNull null];
     data[@"id"] = self.identifier ?: [NSNull null];
     data[@"type"] = self.transportConversationType;
-    data[@"last_event_time"] = self.lastEventTime ? [self.lastEventTime transportString] : [NSNull null];
-    data[@"last_event"] = self.lastEvent ?: [NSNull null];
     
     data[@"team"] = self.team.identifier ?: [NSNull null];
 
@@ -196,20 +173,7 @@
         if([activeUser.identifier isEqualToString:self.selfIdentifier]) { // self user should not be in others
             continue;
         }
-        [others addObject:@{
-                           @"status": @0,
-                           @"id": activeUser.identifier
-                           }];
-    }
-    
-    for (MockUser *inactiveUser in self.inactiveUsers) {
-        if([inactiveUser.identifier isEqualToString:self.selfIdentifier]) { // self user should not be in others
-            continue;
-        }
-        [others addObject:@{
-                            @"status": @1,
-                            @"id": inactiveUser.identifier
-                            }];
+        [others addObject:@{ @"id": activeUser.identifier }];
     }
     
     members[@"others"] = others;
@@ -220,13 +184,7 @@
 - (NSDictionary *)selfInfoDictionary
 {
     NSMutableDictionary *selfInfo = [NSMutableDictionary dictionary];
-    selfInfo[@"status"] = @(self.status);
-    selfInfo[@"muted"] = @(self.muted);
-    selfInfo[@"muted_time"] = self.mutedTime ? [self.mutedTime transportString] : [NSNull null];
-    selfInfo[@"archived"] = self.archived ?: [NSNull null];
     selfInfo[@"id"] = self.selfIdentifier;
-    selfInfo[@"last_read"] = self.lastRead ?: [NSNull null];
-    selfInfo[@"cleared"] = self.clearedEventID ?: [NSNull null];
     selfInfo[@"otr_muted_ref"] = self.otrMutedRef ?: [NSNull null];
     selfInfo[@"otr_muted"] = @(self.otrMuted);
     selfInfo[@"otr_archived_ref"] = self.otrArchivedRef ?: [NSNull null];
@@ -239,7 +197,7 @@
 + (NSFetchRequest *)sortedFetchRequest;
 {
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"Conversation"];
-    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"lastEventTime" ascending:YES];
+    NSSortDescriptor *sd = [NSSortDescriptor sortDescriptorWithKey:@"identifier" ascending:YES];
     request.sortDescriptors = @[sd];
     request.predicate = [NSPredicate predicateWithFormat:@"type != %d", (int) ZMTConversationTypeInvalid];
     return request;
@@ -305,31 +263,23 @@
     return [self eventIfNeededByUser:fromClient.user type:ZMTUpdateEventConversationOTRAssetAdd data:eventData];
 }
 
-- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;
+- (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
-    self.archived = self.lastEvent;
-    if (shouldIncludeOTR) {
-        self.otrArchivedRef = self.lastEventTime.transportString;
-        self.otrArchived = YES;
-    }
+    self.otrArchivedRef = referenceDate.transportString;
+    self.otrArchived = YES;
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
-- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR
+- (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
-    self.clearedEventID = self.lastEvent;
-    self.lastRead = self.lastEvent;
-    if (shouldIncludeOTR) {
-        self.otrArchivedRef = self.lastEventTime.transportString;
-        self.otrArchived = YES;
-    }
+    self.otrArchivedRef = referenceDate.transportString;
+    self.otrArchived = YES;
     return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
-- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;
+- (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
-    self.archived = self.lastEvent;
-    return [self remotelyClearHistoryFromUser:fromUser includeOTR:shouldIncludeOTR];
+    return [self remotelyClearHistoryFromUser:fromUser referenceDate:referenceDate];
 }
 
 - (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;
@@ -431,7 +381,6 @@
     }
     for(MockUser *user in addedUsers) {
         [self.mutableActiveUsers addObject:user];
-        [self.mutableInactiveUsers removeObject:user];
     }
     NSDictionary *data = @{
                        @"user_ids" : [addedUsers mapWithBlock:^NSString *(MockUser *obj) {
@@ -454,7 +403,6 @@
 
 - (MockEvent *)removeUsersByUser:(MockUser *)byUser removedUser:(MockUser *)removedUser;
 {
-    [self.mutableInactiveUsers addObject:removedUser];
     [self.mutableActiveUsers removeObject:removedUser];
     
     NSDictionary *data = @{@"user_ids" : @[removedUser.identifier] };

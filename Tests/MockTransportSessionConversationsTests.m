@@ -788,11 +788,9 @@
         XCTAssertNotNil(event);
         if ([[MockEvent persistentEvents] containsObject:@(event.eventType)]) {
             XCTAssertNotNil(event.identifier);
-            XCTAssertEqualObjects(conversation.lastEvent, event.identifier);
         }
         XCTAssertEqual(event.from, selfUser);
         XCTAssertEqualObjects(event.conversation, conversation);
-        XCTAssertEqualObjects(conversation.lastEventTime, event.time);
         XCTAssertEqualObjects(event.data, [expectedPayloadData asTransportData]);
     }];
 }
@@ -1000,7 +998,6 @@
     
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertEqualObjects(groupConversation.activeUsers.set, ([NSSet setWithObjects:selfUser, user2, nil]) );
-        XCTAssertEqualObjects(groupConversation.inactiveUsers, ([NSSet setWithObject:user1]) );
     }];
 }
 
@@ -1051,7 +1048,6 @@
     [self.sut.managedObjectContext performGroupedBlock:^{
         NSOrderedSet *activeUsers = groupConversation.activeUsers;
         XCTAssertEqualObjects(activeUsers, ([NSOrderedSet orderedSetWithObjects:selfUser, user1, user2, user3, nil]) );
-        XCTAssertEqualObjects(groupConversation.inactiveUsers, [NSSet set] );
     }];
 }
 
@@ -1095,7 +1091,6 @@
     XCTAssertNil(response.transportSessionError);
     [self.sut.managedObjectContext performBlockAndWait:^{
         XCTAssertEqualObjects(groupConversation.activeUsers.set, ([NSSet setWithObjects:selfUser, user1, user2, nil]) );
-        XCTAssertEqualObjects(groupConversation.inactiveUsers, [NSSet set] );
     }];
 }
 
@@ -1233,7 +1228,6 @@
         [session insertSelfUserWithName:@"Me Myself"];
         conversation = [session insertSelfConversationWithSelfUser:self.sut.selfUser];
         conversationID = conversation.identifier;
-        conversation.archived = @"3.43";
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -1294,16 +1288,18 @@
     // GIVEN
     __block MockConversation *conversation;
     __block NSString *conversationID;
+    NSDate *mutedDate = [NSDate date];
+    
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         [session insertSelfUserWithName:@"Me Myself"];
         conversation = [session insertSelfConversationWithSelfUser:self.sut.selfUser];
         conversationID = conversation.identifier;
-        conversation.muted = YES;
+        conversation.otrMuted = YES;
+        conversation.otrMutedRef = mutedDate.transportString;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    NSDate *mutedTime = [[NSDate date] dateByAddingTimeInterval:-50];
-    NSDictionary *payload = @{ @"otr_muted_ref":  mutedTime.transportString,
+    NSDictionary *payload = @{ @"otr_muted_ref":  mutedDate.transportString,
                                @"otr_muted" : @0 };
     
     NSString *path = [NSString stringWithFormat:@"/conversations/%@/self", conversationID];
@@ -1317,7 +1313,7 @@
         XCTAssertEqual(response.HTTPStatus, 200);
         XCTAssertEqualObjects(response.payload, nil);
         XCTAssertFalse(conversation.otrMuted);
-        XCTAssertEqualObjects(conversation.otrMutedRef, mutedTime.transportString);
+        XCTAssertEqualObjects(conversation.otrMutedRef, mutedDate.transportString);
     }];
     
 }

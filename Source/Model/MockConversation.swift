@@ -25,7 +25,6 @@ extension MockConversation {
         conversation.type = .group
         conversation.team = team
         conversation.identifier = UUID.create().transportString()
-        conversation.lastEventTime = Date()
         conversation.creator = creator
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: users)
         return conversation

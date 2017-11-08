@@ -36,30 +36,18 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 @interface MockConversation : NSManagedObject
 
-@property (nonatomic, nullable) NSString *archived;
 @property (nonatomic, nullable) NSString *otrArchivedRef;
 @property (nonatomic, nullable) NSString *otrMutedRef;
 @property (nonatomic) BOOL otrArchived;
 @property (nonatomic) BOOL otrMuted;
 
-@property (nonatomic, nullable) NSString *clearedEventID;
 @property (nonatomic, nullable) MockUser *creator;
 @property (nonatomic, nonnull) NSString *identifier;
 @property (nonatomic, nonnull) NSString *selfIdentifier;
-@property (nonatomic, nullable) NSString *lastEvent;
-@property (nonatomic, nullable) NSDate *lastEventTime;
-@property (nonatomic, nullable) NSString *lastRead;
-@property (nonatomic) BOOL muted;
-@property (nonatomic, nullable) NSDate *mutedTime;
 @property (nonatomic, readonly, nullable) NSString *name;
-@property (nonatomic) int16_t status;
-@property (nonatomic, nullable) NSString *statusRef;
-@property (nonatomic, nullable) NSDate *statusTime;
 @property (nonatomic) ZMTConversationType type;
 /// participants that are not self
 @property (nonatomic, readonly, nonnull) NSOrderedSet *activeUsers;
-/// participants that are not self
-@property (nonatomic, readonly, nonnull) NSSet *inactiveUsers;
 
 @property (nonatomic, readonly, nonnull) NSOrderedSet *events;
 
@@ -97,9 +85,9 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (nonnull MockEvent *)insertKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce;
 - (nonnull MockEvent *)insertHotKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce ref:(nonnull NSString *)eventID;
 - (nonnull MockEvent *)insertTypingEventFromUser:(nonnull MockUser *)fromUser isTyping:(BOOL)isTyping;
-- (nonnull MockEvent *)remotelyArchiveFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
-- (nonnull MockEvent *)remotelyClearHistoryFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
-- (nonnull MockEvent *)remotelyDeleteFromUser:(nonnull MockUser *)fromUser includeOTR:(BOOL)shouldIncludeOTR;;
+- (nonnull MockEvent *)remotelyArchiveFromUser:(nonnull MockUser *)fromUser referenceDate:(nonnull NSDate *)referenceDate;
+- (nonnull MockEvent *)remotelyClearHistoryFromUser:(nonnull MockUser *)fromUser referenceDate:(nonnull NSDate *)referenceDate;
+- (nonnull MockEvent *)remotelyDeleteFromUser:(nonnull MockUser *)fromUser referenceDate:(nonnull NSDate *)referenceDate;
 
 - (void)insertImageEventsFromUser:(nonnull MockUser *)fromUser;
 - (void)insertPreviewImageEventFromUser:(nonnull MockUser *)fromUser correlationID:(nonnull NSUUID *)correlationID none:(nonnull NSUUID *)nonce;

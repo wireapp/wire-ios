@@ -481,7 +481,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     [conversation.managedObjectContext performBlockAndWait:^{
         NSDictionary *dict = (id) data;
         XCTAssertTrue([dict isKindOfClass:[NSDictionary class]]);
-        NSArray *keys = @[@"creator", @"id", @"last_event", @"last_event_time", @"members", @"name", @"type", @"team"];
+        NSArray *keys = @[@"creator", @"id", @"members", @"name", @"type", @"team"];
         AssertDictionaryHasKeys(dict, keys);
         
         XCTAssertEqualObjects(dict[@"creator"], conversation.creator ? conversation.creator.identifier: [NSNull null]);
@@ -493,52 +493,29 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         
         NSDictionary *selfMember = members[@"self"];
         XCTAssertTrue([selfMember isKindOfClass:[NSDictionary class]]);
-        keys = @[@"archived", @"id", @"muted", @"muted_time", @"status", @"last_read", @"cleared", @"otr_muted", @"otr_muted_ref", @"otr_archived", @"otr_archived_ref"];
+        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_archived", @"otr_archived_ref"];
         AssertDictionaryHasKeys(selfMember, keys);
         
-        XCTAssertEqualObjects(selfMember[@"status"], @(conversation.status));
-        XCTAssertEqualObjects(selfMember[@"status_time"], [conversation.statusTime transportString]);
-        XCTAssertEqualObjects(selfMember[@"status_ref"], conversation.statusRef);
-        XCTAssertEqualObjects(selfMember[@"last_read"], [NSNull null]);
-        XCTAssertEqualObjects(selfMember[@"muted_time"], conversation.mutedTime ? [conversation.mutedTime transportString] : [NSNull null]);
-        XCTAssertEqualObjects(selfMember[@"muted"], @(conversation.muted));
         XCTAssertEqualObjects(selfMember[@"otr_muted"], @(conversation.otrMuted));
         XCTAssertEqualObjects(selfMember[@"otr_muted_ref"], conversation.otrMutedRef ?: [NSNull null]);
         XCTAssertEqualObjects(selfMember[@"otr_archived"], @(conversation.otrArchived));
         XCTAssertEqualObjects(selfMember[@"otr_archived_ref"], conversation.otrArchivedRef ?: [NSNull null]);
-        
-        XCTAssertEqualObjects(selfMember[@"archived"], [NSNull null]);
         XCTAssertEqualObjects(selfMember[@"id"], conversation.selfIdentifier);
-        XCTAssertEqualObjects(selfMember[@"cleared"], conversation.clearedEventID ? conversation.clearedEventID : [NSNull null]);
 
         NSMutableSet *activeOtherIDs = [NSMutableSet set];
         for (MockUser *user in conversation.activeUsers) {
             [activeOtherIDs addObject:user.identifier];
         }
         
-        NSMutableSet *inactiveOtherIDs = [NSMutableSet set];
-        for (MockUser *user in conversation.activeUsers) {
-            [inactiveOtherIDs addObject:user.identifier];
-        }
-        
         NSArray *others = members[@"others"];
         
         XCTAssertTrue([others isKindOfClass:[NSArray class]]);
-        XCTAssertEqual(conversation.activeUsers.count + conversation.inactiveUsers.count, 1 + others.count);
         for (NSDictionary *otherDict in others) {
             XCTAssertTrue([otherDict isKindOfClass:[NSDictionary class]]);
-            keys = @[@"id", @"status"];
+            keys = @[@"id"];
             AssertDictionaryHasKeys(otherDict, keys);
-            
-            NSNumber *status = otherDict[@"status"];
             NSString *uuidString = otherDict[@"id"];
-            if([status intValue] == 0) {
-                XCTAssertTrue([activeOtherIDs containsObject:uuidString], @"id %@ not found", uuidString);
-            }
-            else if([status intValue] == 1) {
-                XCTAssertTrue([inactiveOtherIDs containsObject:uuidString], @"id %@ not found", uuidString);
-            }
-            
+            XCTAssertTrue([activeOtherIDs containsObject:uuidString], @"id %@ not found", uuidString);
         }
         
         XCTAssertEqualObjects(dict[@"name"], conversation.name ?: [NSNull null]);
@@ -546,8 +523,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         XCTAssertNotNil(dict[@"type"]);
         ZMTConversationType t = (ZMTConversationType) ((NSNumber *)dict[@"type"]).intValue;
         XCTAssertEqual(t, conversation.type);
-        XCTAssertEqualObjects(dict[@"last_event_time"], [conversation.lastEventTime transportString]);
-        XCTAssertEqualObjects(dict[@"last_event"], conversation.lastEvent ?: [NSNull null]);
     }];
 }
 
