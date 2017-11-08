@@ -34,11 +34,8 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         
-        
         NSUUID *user1UUID = [NSUUID createUUID];
         NSUUID *user2UUID = [NSUUID createUUID];
-        NSUUID *user3UUID = [NSUUID createUUID];
-        
         
         ZMUser *user4 = [self createUserOnMoc:self.syncMOC];
         ZMUser *user5 = [self createUserOnMoc:self.syncMOC];
@@ -55,35 +52,19 @@
         XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user6, nil]));
         
         NSDictionary *payload = @{
-                                  @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                                   @"name" : [NSNull null],
                                   @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                                  @"last_event" : @"5.800112314308490f",
                                   @"members" : @{
                                           @"self" : @{
-                                                  @"status" : @0,
-                                                  @"muted_time" : [NSNull null],
-                                                  @"status_ref" : @"0.0",
-                                                  @"last_read" : @"5.800112314308490f",
-                                                  @"muted" : [NSNull null],
-                                                  @"archived" : [NSNull null],
-                                                  @"status_time" : @"2014-03-14T16:47:37.573Z",
                                                   @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
                                                   },
                                           @"others" : @[
                                                   @{
-                                                      @"status": @0,
                                                       @"id": [user1UUID transportString]
                                                       },
                                                   @{
-                                                      @"status": @0,
                                                       @"id": [user2UUID transportString]
-                                                      },
-                                                  @{
-                                                      @"status": @1,
-                                                      @"id": [user3UUID transportString]
-                                                      },
-                                                  
+                                                      }
                                                   ]
                                           },
                                   @"type" : @0,
@@ -95,7 +76,7 @@
         
         // then
         XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user4, user5, nil]));
-        XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user6, nil]));
+        XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, [NSMutableOrderedSet orderedSet]);
     }];
 }
 
@@ -182,7 +163,7 @@
 }
 
 
-- (void)testThatWhenAParticipantHasBeenAddedOnTheClientAndTheServerWeDoSyncItAnymore
+- (void)testThatWhenAParticipantHasBeenAddedOnTheClientAndTheServerWeDoNotSyncItAnymore
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -193,11 +174,9 @@
     
     NSUUID *user1UUID = [NSUUID createUUID];
     NSUUID *user2UUID = [NSUUID createUUID];
-    NSUUID *user3UUID = [NSUUID createUUID];
-    
     
     ZMUser *user4 = [self createUser];
-    ZMUser *user5 = [self createUser];
+    ZMUser *user5 = [self createUser]; // will also added by the server
     ZMUser *user6 = [self createUser];
     
     [conversation addParticipant:user4];
@@ -211,36 +190,20 @@
     XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user6, nil]));
     
     NSDictionary *payload = @{
-                              @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                               @"name" : [NSNull null],
                               @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                              @"last_event" : @"5.800112314308490f",
                               @"members" : @{
                                       @"self" : @{
-                                              @"status" : @0,
-                                              @"muted_time" : [NSNull null],
-                                              @"status_ref" : @"0.0",
-                                              @"last_read" : @"5.800112314308490f",
-                                              @"muted" : [NSNull null],
-                                              @"archived" : [NSNull null],
-                                              @"status_time" : @"2014-03-14T16:47:37.573Z",
                                               @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
                                               },
                                       @"others" : @[
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user1UUID transportString]
                                                   },
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user2UUID transportString]
                                                   },
                                               @{
-                                                  @"status": @1,
-                                                  @"id": [user3UUID transportString]
-                                                  },
-                                              @{
-                                                  @"status": @0,
                                                   @"id": [user5.remoteIdentifier transportString]
                                                   },
                                               
@@ -262,7 +225,7 @@
     
     // then
     XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user4, nil]));
-    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user6, nil]));
+    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, [NSMutableOrderedSet orderedSet]);
 }
 
 
@@ -278,7 +241,6 @@
     
     NSUUID *user1UUID = [NSUUID createUUID];
     NSUUID *user2UUID = [NSUUID createUUID];
-    NSUUID *user3UUID = [NSUUID createUUID];
     
     
     ZMUser *user4 = [self createUser];
@@ -290,45 +252,25 @@
     [conversation addParticipant:user6];
     
     [conversation synchronizeAddedUser:user6];
-    [conversation removeParticipant:user6];
+    [conversation removeParticipant:user6]; // // will also removed by the server
     
     XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user4, user5, nil]));
     XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user6, nil]));
     
     NSDictionary *payload = @{
-                              @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                               @"name" : [NSNull null],
                               @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                              @"last_event" : @"5.800112314308490f",
                               @"members" : @{
                                       @"self" : @{
-                                              @"status" : @0,
-                                              @"muted_time" : [NSNull null],
-                                              @"status_ref" : @"0.0",
-                                              @"last_read" : @"5.800112314308490f",
-                                              @"muted" : [NSNull null],
-                                              @"archived" : [NSNull null],
-                                              @"status_time" : @"2014-03-14T16:47:37.573Z",
                                               @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
                                               },
                                       @"others" : @[
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user1UUID transportString]
                                                   },
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user2UUID transportString]
-                                                  },
-                                              @{
-                                                  @"status": @1,
-                                                  @"id": [user3UUID transportString]
-                                                  },
-                                              @{
-                                                  @"status": @1,
-                                                  @"id": [user6.remoteIdentifier transportString]
-                                                  },
-                                              
+                                                  }
                                               ]
                                       },
                               @"type" : @0,
@@ -347,95 +289,8 @@
     
     // then
     XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user4, user5, nil]));
-    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
+    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, [NSMutableOrderedSet orderedSet]);
 }
-
-
-
-- (void)testThatWhenMovingAParticipantFromActiveToInactiveWeDoNotAddItAgain
-{
-    
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    NSUUID *uuid = NSUUID.createUUID;
-    conversation.remoteIdentifier = uuid;
-    
-    
-    ZMUser *user1 = [self createUser];
-    ZMUser *user2 = [self createUser];
-    ZMUser *user3 = [self createUser];
-    
-    [conversation addParticipant:user1]; [conversation synchronizeAddedUser:user1];
-    [conversation addParticipant:user2]; [conversation synchronizeAddedUser:user2];
-    [conversation addParticipant:user3]; [conversation synchronizeAddedUser:user3];
-    
-    [self.uiMOC saveOrRollback];
-    
-    XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSet]));
-    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
-    
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedInactiveParticipantsKey]);
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedActiveParticipantsKey]);
-    
-    
-    NSDictionary *payload = @{
-                              @"last_event_time" : @"2014-04-30T16:30:16.625Z",
-                              @"name" : [NSNull null],
-                              @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                              @"last_event" : @"5.800112314308490f",
-                              @"members" : @{
-                                      @"self" : @{
-                                              @"status" : @0,
-                                              @"muted_time" : [NSNull null],
-                                              @"status_ref" : @"0.0",
-                                              @"last_read" : @"5.800112314308490f",
-                                              @"muted" : [NSNull null],
-                                              @"archived" : [NSNull null],
-                                              @"status_time" : @"2014-03-14T16:47:37.573Z",
-                                              @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
-                                              },
-                                      @"others" : @[
-                                              @{
-                                                  @"status": @0,
-                                                  @"id": [user1.remoteIdentifier transportString]
-                                                  },
-                                              @{
-                                                  @"status": @0,
-                                                  @"id": [user2.remoteIdentifier transportString]
-                                                  },
-                                              @{
-                                                  @"status": @1,
-                                                  @"id": [user3.remoteIdentifier transportString]
-                                                  }
-                                              
-                                              ]
-                                      },
-                              @"type" : @0,
-                              @"id" : [uuid transportString]
-                              };
-    
-    // when
-    XCTAssert([self.uiMOC saveOrRollback]);
-    NSManagedObjectID *moid = conversation.objectID;
-    [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *syncConversation = (id) [self.syncMOC objectWithID:moid];
-        [syncConversation updateWithTransportData:payload serverTimeStamp:nil];
-        XCTAssert([self.syncMOC saveOrRollback]);
-    }];
-    [self.uiMOC refreshObject:conversation mergeChanges:NO];
-    
-    // then
-    XCTAssertEqualObjects(conversation.unsyncedActiveParticipants, ([NSMutableOrderedSet orderedSet]));
-    XCTAssertEqualObjects(conversation.unsyncedInactiveParticipants, ([NSMutableOrderedSet orderedSet]));
-    
-    XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSMutableOrderedSet orderedSetWithObjects:user1, user2, nil]));
-    
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedActiveParticipantsKey]);
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedInactiveParticipantsKey]);
-}
-
-
 
 - (void)testThatWhenMovingAParticipantFromInactiveToActiveWeDoNotRemoveItAgain
 {
@@ -466,32 +321,20 @@
     
     
     NSDictionary *payload = @{
-                              @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                               @"name" : [NSNull null],
                               @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                              @"last_event" : @"5.800112314308490f",
                               @"members" : @{
                                       @"self" : @{
-                                              @"status" : @0,
-                                              @"muted_time" : [NSNull null],
-                                              @"status_ref" : @"0.0",
-                                              @"last_read" : @"5.800112314308490f",
-                                              @"muted" : [NSNull null],
-                                              @"archived" : [NSNull null],
-                                              @"status_time" : @"2014-03-14T16:47:37.573Z",
                                               @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
                                               },
                                       @"others" : @[
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user1.remoteIdentifier transportString]
                                                   },
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user2.remoteIdentifier transportString]
                                                   },
                                               @{
-                                                  @"status": @0,
                                                   @"id": [user3.remoteIdentifier transportString]
                                                   }
                                               
@@ -933,82 +776,6 @@
     
     XCTAssertNoThrow([conversation setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]]);
     
-}
-
-- (void)testThatIsActiveMemberIsTrueWhenUpdatingFromTransportData
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    conversation.isSelfAnActiveMember = NO;
-    
-    NSDictionary *payload = @{
-                              @"creator" : @"39562cc3-717d-4395-979c-5387ae17f5c3",
-                              @"id" : conversation.remoteIdentifier.transportString,
-                              @"last_event" : @"1.800122000a4a0dd1",
-                              @"last_event_time" : @"2014-06-02T12:50:43.047Z",
-                              @"members" : @{
-                                      @"others" : @[],
-                                      @"self" : @{
-                                              @"archived" : [NSNull null],
-                                              @"id" : @"39562cc3-717d-4395-979c-5387ae17f5c3",
-                                              @"last_read" : @"1.800122000a4a0dd1",
-                                              @"muted" : [NSNull null],
-                                              @"muted_time" : [NSNull null],
-                                              @"status" : @0,
-                                              @"status_ref" : @"0.0",
-                                              @"status_time" : @"2014-06-02T12:50:43.047Z"
-                                              }
-                                      },
-                              @"name" : [NSNull null],
-                              @"type" : @1
-                              };
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
-    }];
-    
-    // then
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-}
-
-- (void)testThatIsActiveMemberIsFalseWhenUpdatingFromTransportData
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.isSelfAnActiveMember = YES;
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    NSDictionary *payload = @{
-                              @"creator" : @"39562cc3-717d-4395-979c-5387ae17f5c3",
-                              @"id" : conversation.remoteIdentifier.transportString,
-                              @"last_event" : @"1.800122000a4a0dd1",
-                              @"last_event_time" : @"2014-06-02T12:50:43.047Z",
-                              @"members" : @{
-                                      @"others" : @[],
-                                      @"self" : @{
-                                              @"archived" : [NSNull null],
-                                              @"id" : @"39562cc3-717d-4395-979c-5387ae17f5c3",
-                                              @"last_read" : @"1.800122000a4a0dd1",
-                                              @"muted" : [NSNull null],
-                                              @"muted_time" : [NSNull null],
-                                              @"status" : @1,
-                                              @"status_ref" : @"0.0",
-                                              @"status_time" : @"2014-06-02T12:50:43.047Z"
-                                              }
-                                      },
-                              @"name" : [NSNull null],
-                              @"type" : @1
-                              };
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
-    }];
-    
-    // then
-    XCTAssertFalse(conversation.isSelfAnActiveMember);
-
 }
 
 - (void)testThatActiveParticipantsContainsSelf

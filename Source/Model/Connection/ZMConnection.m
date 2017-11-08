@@ -389,9 +389,7 @@ struct stringAndStatus {
         }
     }
     
-    if (connection.conversation.lastServerTimeStamp == nil) {
-        connection.conversation.needsToBeUpdatedFromBackend = YES;
-    }
+    connection.conversation.needsToBeUpdatedFromBackend = YES;
 }
 
 + (ZMConversationType)conversationTypeForConnectionStatus:(ZMConnectionStatus)status
