@@ -51,6 +51,7 @@
     RequireString(self.conversation != nil, "No conversation");
     NSArray *addedUsers = @[self.to];
     [self.conversation addUsersByUser:self.from addedUsers:addedUsers];
+    self.conversation.type = ZMTConversationTypeOneOnOne;
 }
 
 + (NSFetchRequest *)sortedFetchRequest;
