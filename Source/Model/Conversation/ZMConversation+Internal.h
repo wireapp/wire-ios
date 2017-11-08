@@ -193,6 +193,7 @@ NS_ASSUME_NONNULL_END
 
 - (void)internalAddParticipants:(nonnull NSSet<ZMUser *> *)participants isAuthoritative:(BOOL)isAuthoritative;
 - (void)internalRemoveParticipants:(nonnull NSSet<ZMUser *> *)participants sender:(nonnull ZMUser *)sender;
+- (void)internalRemoveParticipants:(nonnull NSSet<ZMUser *> *)participants sender:(nonnull ZMUser *)sender isAuthoritative:(BOOL)isAuthoritative;
 
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *otherActiveParticipants;

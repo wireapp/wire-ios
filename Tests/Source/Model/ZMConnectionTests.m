@@ -282,34 +282,6 @@
     }];
 }
 
-- (void)testThatInsertingAConnectionDoesNotMarkTheExistingConversationAsNeededToBeDownloadedIfItHasALastServerTimeStamp;
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        // given
-        ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conv.lastServerTimeStamp = [NSDate date];
-        conv.remoteIdentifier = [NSUUID createUUID];
-        
-        NSDictionary *payload =     // expected JSON response
-        @{
-          @"status": @"accepted",
-          @"from": @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-          @"to": @"c3308f1d-82ee-49cd-897f-2a32ed9ae1d9",
-          @"last_update": @"2014-04-16T15:01:45.762Z",
-          @"conversation": conv.remoteIdentifier.transportString,
-          @"message": @"Hi Marco C,\n\nLet's connect in Zeta.\n\nJohn"
-          };
-        
-        // when
-        ZMConnection *connection = [ZMConnection connectionFromTransportData:payload managedObjectContext:self.syncMOC];
-        
-        // then
-        XCTAssertNotNil(connection);
-        XCTAssertNotNil(connection.conversation);
-        XCTAssertFalse(connection.conversation.needsToBeUpdatedFromBackend);
-    }];
-}
-
 - (void)testThatItReturnsNilIfMandatoryFieldsAreEmpty
 {
     [self.syncMOC performGroupedBlockAndWait:^{

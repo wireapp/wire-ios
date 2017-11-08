@@ -178,19 +178,13 @@ class ZMConversationTests_Teams: BaseTeamTests {
 
     private func payloadForConversationMetaData(_ conversation: ZMConversation, activeUsers: [ZMUser], teamId: UUID?) -> [String: Any] {
         var payload: [String: Any] = [
-            "last_event_time": "2014-04-30T16:30:16.625Z",
             "name": NSNull(),
             "type": NSNumber(value: ZMBackendConversationType.convTypeGroup.rawValue),
             "id": conversation.remoteIdentifier!.transportString(),
             "creator": UUID.create().transportString(),
             "members": [
-                "others": activeUsers.map { ["status": NSNumber(value: 0), "id": $0.remoteIdentifier!.transportString()] },
+                "others": activeUsers.map { ["id": $0.remoteIdentifier!.transportString()] },
                 "self": [
-                    "status": NSNumber(value: 0),
-                    "muted_time": NSNull(),
-                    "status_ref": "0.0",
-                    "last_read": "5.800112314308490f",
-                    "status_time": "2014-03-14T16:47:37.573Z",
                     "id": "3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
                     "otr_archived": NSNumber(value: 0),
                     "otr_archived_ref": NSNull(),

@@ -1905,27 +1905,17 @@
         NSDictionary *payload = @{
                                   @"creator" : userID.transportString,
                                   @"id" : convID.transportString,
-                                  @"last_event" : @"10.aabb",
-                                  @"last_event_time" : @"2014-08-08T18:08:17.723Z",
                                   @"type" : @0,
                                   @"name" : @"Boo",
                                   @"members" :
                                       @{
                                           @"others" : @[
                                                   @{
-                                                      @"id" : userID.transportString,
-                                                      @"status" : @0
+                                                      @"id" : userID.transportString
                                                       }
                                                   ],
                                           @"self" : @{
-                                                  @"archived" : [NSNull null],
                                                   @"id" : @"90c74fe0-cef7-446a-affb-6cba0e75d5da",
-                                                  @"last_read" : @"5a4.800122000a64d6bf",
-                                                  @"muted" : [NSNull null],
-                                                  @"muted_time" : [NSNull null],
-                                                  @"status" : @0,
-                                                  @"status_ref" : @"0.0",
-                                                  @"status_time" : @"2014-06-18T12:08:44.428Z"
                                                   }
                                           },
                                   };

@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -26,7 +26,6 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
-static NSString *const ConversationInfoStatusKey = @"status";
 static NSString *const ConversationInfoNameKey = @"name";
 static NSString *const ConversationInfoTypeKey = @"type";
 static NSString *const ConversationInfoIDKey = @"id";
@@ -35,7 +34,6 @@ static NSString *const ConversationInfoOthersKey = @"others";
 static NSString *const ConversationInfoMembersKey = @"members";
 static NSString *const ConversationInfoCreatorKey = @"creator";
 static NSString *const ConversationInfoTeamIdKey = @"team";
-static NSString *const ConversationInfoLastEventTimeKey = @"last_event_time";
 
 NSString *const ZMConversationInfoOTRMutedValueKey = @"otr_muted";
 NSString *const ZMConversationInfoOTRMutedReferenceKey = @"otr_muted_ref";
@@ -75,9 +73,8 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     
     self.conversationType = [self conversationTypeFromTransportData:[transportData numberForKey:ConversationInfoTypeKey]];
     
-    NSDate *lastTimeStamp = serverTimeStamp ?: [transportData dateForKey:ConversationInfoLastEventTimeKey];
-    [self updateLastModifiedDateIfNeeded:lastTimeStamp];
-    [self updateLastServerTimeStampIfNeeded:lastTimeStamp];
+    [self updateLastModifiedDateIfNeeded:serverTimeStamp];
+    [self updateLastServerTimeStampIfNeeded:serverTimeStamp];
     
     NSDictionary *selfStatus = [[transportData dictionaryForKey:ConversationInfoMembersKey] dictionaryForKey:@"self"];
     if(selfStatus != nil) {
@@ -109,23 +106,31 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 
 - (void)updateMembersWithPayload:(NSDictionary *)members
 {
-    NSArray *users = [members arrayForKey:ConversationInfoOthersKey];
-    for(NSDictionary *userDict in [users asDictionaries]) {
+    NSArray *usersInfos = [members arrayForKey:ConversationInfoOthersKey];
+    NSMutableOrderedSet<ZMUser *> *users = [NSMutableOrderedSet orderedSet];
+    NSMutableOrderedSet<ZMUser *> *lastSyncedUsers = [NSMutableOrderedSet orderedSet];
+    
+    if (self.mutableLastServerSyncedActiveParticipants != nil) {
+        lastSyncedUsers = self.mutableLastServerSyncedActiveParticipants;
+    }
+    
+    for (NSDictionary *userDict in [usersInfos asDictionaries]) {
         
         NSUUID *userId = [userDict uuidForKey:ConversationInfoIDKey];
-        if(userId == nil) {
+        if (userId == nil) {
             continue;
         }
-        ZMUser *user = [ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext];
         
-        if([[userDict numberForKey:ConversationInfoStatusKey] intValue] == 0) {
-            [self internalAddParticipants:[NSSet setWithObject:user] isAuthoritative:YES];
-        }
-        else {
-            [self.mutableOtherActiveParticipants removeObject:user];
-            [self.mutableLastServerSyncedActiveParticipants removeObject:user];
-        }
+        [users addObject:[ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext]];
     }
+    
+    NSMutableOrderedSet<ZMUser *> *addedUsers = [users mutableCopy];
+    [addedUsers minusOrderedSet:lastSyncedUsers];
+    NSMutableOrderedSet<ZMUser *> *removedUsers = [lastSyncedUsers mutableCopy];
+    [removedUsers minusOrderedSet:users];
+    
+    [self internalAddParticipants:addedUsers.set isAuthoritative:YES];
+    [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext] isAuthoritative:YES];
 }
 
 - (void)updateTeamWithIdentifier:(NSUUID *)teamId
@@ -156,10 +161,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 /// Pass timeStamp when the timeStamp equals the time of the lastRead / cleared event, otherwise pass nil
 - (void)updateSelfStatusFromDictionary:(NSDictionary *)dictionary timeStamp:(NSDate *)timeStamp previousLastServerTimeStamp:(NSDate *)previousLastServerTimestamp
 {
-    NSNumber *status = [dictionary optionalNumberForKey:ConversationInfoStatusKey];
-    if(status != nil) {
-        self.isSelfAnActiveMember = status.integerValue == 0;
-    }
+    self.isSelfAnActiveMember = YES;
     
     [self updateIsSilencedWithPayload:dictionary];
     if ([self updateIsArchivedWithPayload:dictionary] && self.isArchived && previousLastServerTimestamp != nil) {

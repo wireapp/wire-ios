@@ -28,27 +28,17 @@
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation conversationType:(ZMBackendConversationType)conversationType isArchived:(BOOL)isArchived archivedRef:(NSDate *)archivedRef isSilenced:(BOOL)isSilenced
     silencedRef: (NSDate *)silencedRef;
 {
-    return  [self payloadForMetaDataOfConversation:conversation conversationType:conversationType activeUserIDs:@[] inactiveUserIDs:@[]  lastServerTimestamp:nil isArchived:isArchived archivedRef:archivedRef isSilenced:isSilenced silencedRef:silencedRef teamID:nil];
+    return  [self payloadForMetaDataOfConversation:conversation conversationType:conversationType activeUserIDs:@[] isArchived:isArchived archivedRef:archivedRef isSilenced:isSilenced silencedRef:silencedRef teamID:nil];
 }
 
-- (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation activeUserIDs:(NSArray <NSUUID *>*)activeUserIDs inactiveUserIDs:(NSArray <NSUUID *>*)inactiveUserIDs;
+- (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation activeUserIDs:(NSArray <NSUUID *>*)activeUserIDs
 {
-    return  [self payloadForMetaDataOfConversation:conversation conversationType:1 activeUserIDs:activeUserIDs inactiveUserIDs:inactiveUserIDs  lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
-}
-
-- (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation
-                                     activeUserIDs:(NSArray <NSUUID *>*)activeUserIDs
-                                   inactiveUserIDs:(NSArray <NSUUID *>*)inactiveUserIDs
-                               lastServerTimestamp:(NSDate*)lastServerTimestamp
-{
-    return  [self payloadForMetaDataOfConversation:conversation conversationType:1 activeUserIDs:activeUserIDs inactiveUserIDs:inactiveUserIDs lastServerTimestamp:lastServerTimestamp isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
+    return  [self payloadForMetaDataOfConversation:conversation conversationType:1 activeUserIDs:activeUserIDs isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
 }
 
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation
                                   conversationType:(ZMBackendConversationType)conversationType
                                      activeUserIDs:(NSArray <NSUUID *>*)activeUserIDs
-                                   inactiveUserIDs:(NSArray <NSUUID *>*)inactiveUserIDs
-                               lastServerTimestamp:(NSDate*)lastServerTimestamp
                                         isArchived:(BOOL)isArchived
                                        archivedRef:(NSDate *)archivedRef
                                         isSilenced:(BOOL)isSilenced
@@ -58,31 +48,16 @@
     NSMutableArray *others = [NSMutableArray array];
     for (NSUUID *uuid in activeUserIDs) {
         NSDictionary *userInfo = @{
-                                   @"status": @0,
                                    @"id": [uuid transportString]
                                    };
         [others addObject:userInfo];
     }
     
-    for (NSUUID *uuid in inactiveUserIDs) {
-        NSDictionary *userInfo = @{
-                                   @"status": @1,
-                                   @"id": [uuid transportString]
-                                   };
-        [others addObject:userInfo];
-    }
-
     NSDictionary *payload = @{
-                              @"last_event_time" : lastServerTimestamp ? [lastServerTimestamp transportString] :@"2014-04-30T16:30:16.625Z",
                               @"name" : [NSNull null],
                               @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
                               @"members" : @{
                                       @"self" : @{
-                                              @"status" : @0,
-                                              @"muted_time" : [NSNull null],
-                                              @"status_ref" : @"0.0",
-                                              @"last_read" : @"5.800112314308490f",
-                                              @"status_time" : @"2014-03-14T16:47:37.573Z",
                                               @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
                                               @"otr_archived" : @(isArchived),
                                               @"otr_archived_ref" : archivedRef ? [archivedRef transportString] : [NSNull null],
@@ -105,20 +80,21 @@
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
+        NSDate *serverTimestamp = [NSDate date];
         NSDate *archivedDate = [NSDate date];
         NSDate *silencedDate = [archivedDate dateByAddingTimeInterval:10];
         
         NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup isArchived:YES archivedRef:archivedDate isSilenced:YES silencedRef:silencedDate];
         
         // when
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
-        XCTAssertEqualObjects(conversation.lastServerTimeStamp, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         
         XCTAssertTrue(conversation.isArchived);
         XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
@@ -137,23 +113,23 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         
         NSUUID *user1UUID = [NSUUID createUUID];
         NSUUID *user2UUID = [NSUUID createUUID];
-        NSUUID *user3UUID = [NSUUID createUUID];
         
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs: @[user3UUID]];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID]];
         
         // when
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeSelf);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
         
         ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
@@ -162,11 +138,8 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
         
-        XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSOrderedSet orderedSetWithObjects:user1, user2, nil]) );
-        
-        ZMUser *user3 = [ZMUser userWithRemoteID:user3UUID createIfNeeded:NO inContext:self.syncMOC];
-        XCTAssertNotNil(user3);
-                
+        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
+                        
         XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
         XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
         
@@ -203,6 +176,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
 
@@ -210,16 +184,16 @@
         NSUUID *user2UUID = [NSUUID createUUID];
         NSUUID *teamID = [NSUUID createUUID];
 
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:teamID];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:teamID];
 
         // when
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
@@ -229,7 +203,7 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSOrderedSet orderedSetWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNil(conversation.team);
         XCTAssertEqualObjects(conversation.teamRemoteIdentifier, teamID);
 
@@ -246,6 +220,7 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
 
@@ -253,16 +228,16 @@
         NSUUID *user2UUID = [NSUUID createUUID];
         Team *team = [Team fetchOrCreateTeamWithRemoteIdentifier:NSUUID.createUUID createIfNeeded:YES inContext:self.syncMOC created:nil];
 
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:team.remoteIdentifier];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:team.remoteIdentifier];
 
         // when
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
@@ -272,7 +247,7 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSOrderedSet orderedSetWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNotNil(conversation.team);
         XCTAssertFalse(conversation.team.needsToBeUpdatedFromBackend);
         XCTAssertFalse(conversation.team.needsToRedownloadMembers);
@@ -291,24 +266,24 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
 
         NSUUID *user1UUID = [NSUUID createUUID];
         NSUUID *user2UUID = [NSUUID createUUID];
 
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] inactiveUserIDs:nil lastServerTimestamp:nil isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:ZMConvTypeGroup activeUserIDs:@[user1UUID, user2UUID] isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil teamID:nil];
 
         // when
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
 
         // then
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, [NSDate dateWithTransportString:payload[@"last_event_time"]]);
+        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
-
 
         ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user1);
@@ -316,7 +291,7 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants, ([NSOrderedSet orderedSetWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNil(conversation.team);
         XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
         XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
@@ -339,7 +314,7 @@
         NSUUID *user2UUID = [NSUUID createUUID];
         NSUUID *user3UUID = [NSUUID createUUID];
         
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID, user3UUID] inactiveUserIDs:@[]];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation activeUserIDs:@[user1UUID, user2UUID, user3UUID]];
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:nil];
         XCTAssertTrue([self.syncMOC saveOrRollback]);
@@ -377,19 +352,10 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         NSDictionary *payload = @{
-                                  @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                                   @"name" : [NSNull null],
                                   @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                                  @"last_event" : @"5.800112314308490f",
                                   @"members" : @{
                                           @"self" : @{
-                                                  @"status" : @0,
-                                                  @"muted_time" : [NSNull null],
-                                                  @"status_ref" : @"0.0",
-                                                  @"last_read" : @"5.800112314308490f",
-                                                  @"muted" : [NSNull null],
-                                                  @"archived" : [NSNull null],
-                                                  @"status_time" : @"2014-03-14T16:47:37.573Z",
                                                   @"id" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9"
                                                   },
                                           },
@@ -417,10 +383,8 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         NSDictionary *payload = @{
-                                  @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                                   @"name" : [NSNull null],
                                   @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                                  @"last_event" : @"5.800112314308490f",
                                   @"members" : @{
                                           @"others" : @[]
                                           },
@@ -448,10 +412,8 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         NSDictionary *payload = @{
-                                  @"last_event_time" : @4,
                                   @"name" : @5,
                                   @"creator" : @6,
-                                  @"last_event" : @7,
                                   @"members" : @8,
                                   @"type" : @"goo",
                                   @"id" : @100
@@ -477,10 +439,8 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         NSDictionary *payload = @{
-                                  @"last_event_time" : @"2014-04-30T16:30:16.625Z",
                                   @"name" : [NSNull null],
                                   @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
-                                  @"last_event" : @"5.800112314308490f",
                                   @"members" : @{
                                           @"others" : @3
                                           },
