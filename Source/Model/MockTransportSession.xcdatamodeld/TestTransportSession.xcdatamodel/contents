@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="12141" systemVersion="16E195" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="16G29" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -16,29 +16,18 @@
         <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="connectionsTo" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Conversation" representedClassName="MockConversation" syncable="YES">
-        <attribute name="archived" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="clearedEventID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastEvent" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="lastEventTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="lastRead" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="muted" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="mutedTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="otrArchived" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="otrArchivedRef" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="otrMuted" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="otrMutedRef" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="selfIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="status" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="statusRef" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="statusTime" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="activeUsers" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="activeConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="conversation" inverseEntity="Connection" syncable="YES"/>
         <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Event" inverseName="conversation" inverseEntity="Event" syncable="YES"/>
-        <relationship name="inactiveUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="inactiveConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team" syncable="YES"/>
     </entity>
     <entity name="Event" representedClassName="MockEvent" syncable="YES">
@@ -105,7 +94,7 @@
         <relationship name="createdConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="createdEvents" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Event" inverseName="from" inverseEntity="Event" syncable="YES"/>
         <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team" syncable="YES"/>
-        <relationship name="inactiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="inactiveUsers" inverseEntity="Conversation" syncable="YES"/>
+        <relationship name="inactiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" syncable="YES"/>
         <relationship name="invitations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="PersonalInvitation" inverseName="inviter" inverseEntity="PersonalInvitation" syncable="YES"/>
         <relationship name="memberships" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="user" inverseEntity="Member" syncable="YES"/>
         <relationship name="pictures" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Picture" inverseName="user" inverseEntity="Picture" syncable="YES"/>
@@ -129,7 +118,7 @@
     <elements>
         <element name="Asset" positionX="0" positionY="0" width="128" height="120"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="405"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="240"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
