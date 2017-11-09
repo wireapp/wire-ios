@@ -84,7 +84,7 @@ extension Member {
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
         guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init),
-            let user = ZMUser(remoteID: id, createIfNeeded: true, in: context) else { return nil }
+            let user = ZMUser.fetchAndMerge(with: id, createIfNeeded: true, in: context) else { return nil }
 
         let member = getOrCreateMember(for: user, in: team, context: context)
         member.updatePermissions(with: payload)

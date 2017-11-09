@@ -30,7 +30,7 @@ extension Team {
         }
 
         if let creatorId = (payload[TeamTransportKey.creator.rawValue] as? String).flatMap(UUID.init) {
-            creator = ZMUser(remoteID: creatorId, createIfNeeded: true, in: managedObjectContext!)
+            creator = ZMUser.fetchAndMerge(with: creatorId, createIfNeeded: true, in: managedObjectContext!)
             creator?.needsToBeUpdatedFromBackend = true
         }
 
