@@ -26,6 +26,8 @@
 
 @implementation MockTransportSessionEmailPhoneVerificationTests
 
+// MARK:- Phone activation and validation
+
 
 - (void)testThatItReturns400WhenRequestingTheVerificationEmailAndTheEmailAddressIsMissing
 {
@@ -107,6 +109,89 @@
     XCTAssertEqual(response.HTTPStatus, 200);
 }
 
+- (void)testThatItCanRequestTheEmailNumberValidationCode
+{
+    // GIVEN
+    NSDictionary *requestPayload = @{@"email":@"john@smith.com"};
+
+    // WHEN
+    NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+}
+
+- (void)testThatItReturnsDuplicatedEmailWhenRequestingTheEmailValidationCodeForAnExistingEmail
+{
+    // GIVEN
+    NSString *email = @"john@smith.com";
+    NSDictionary *requestPayload = @{@"email":email};
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        MockUser *user = [session insertUserWithName:@"foo"];
+        user.email = email;
+    }];
+
+    // WHEN
+    NSString *path = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
+    ZMTransportResponse *response = [self responseForPayload:requestPayload path:path method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 409);
+}
+
+- (void)testThatItAcceptsTheDryRunOfAEmailValidationIfTheValidationCodeWasRequested
+{
+    // GIVEN
+    NSString *email = @"john@smith.com";
+    NSDictionary *codeRequestPayload = @{@"email":email};
+    NSDictionary *validationPayload = @{@"email":email,@"code":self.sut.emailActivationCode,@"dryrun":@YES};
+    NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
+    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertTrue([self.sut.emailsWaitingForVerificationForRegistration containsObject:email]);
+
+}
+
+- (void)testThatItRejectsTheDryRunResultOfAEmailValidationIfTheValidationCodeWasNotRequested
+{
+    // GIVEN
+    NSString *email = @"john@smith.com";
+    NSDictionary *validationPayload = @{@"email":email,@"code":self.sut.emailActivationCode,@"dryrun":@YES};
+    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
+
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
+}
+
+- (void)testThatItRemovesAnEmailFromTheListOfToValidateIfWithoutDryRun
+{
+    // GIVEN
+    NSString *email = @"john@smith.com";
+    NSDictionary *codeRequestPayload = @{@"email":email};
+    NSDictionary *validationPayload = @{@"email":email,@"code":self.sut.emailActivationCode};
+    NSString *codeRequestPath = [NSString pathWithComponents:@[@"/", @"activate", @"send"]];
+    NSString *validationPath = [NSString pathWithComponents:@[@"/", @"activate"]];
+    [self responseForPayload:codeRequestPayload path:codeRequestPath method:ZMMethodPOST];
+
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:validationPayload path:validationPath method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertFalse([self.sut.emailsWaitingForVerificationForRegistration containsObject:email]);
+}
+
+// MARK:- Phone activation and validation
 
 - (void)testThatItCanRequestThePhoneNumberValidationCode
 {
