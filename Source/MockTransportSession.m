@@ -73,6 +73,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForLogin;
 @property (nonatomic) NSMutableSet *phoneNumbersWaitingForVerificationForProfile;
 
+@property (nonatomic) NSMutableSet *emailsWaitingForVerificationForRegistration;
+
 /// The mapping between the taskIdentifiers on ZMTransportRequest, can be used to cancel the request
 @property (nonatomic) NSMutableDictionary <NSNumber *, ZMTransportRequest *> *taskIdentifierMapping;
 
@@ -125,7 +127,9 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.phoneNumbersWaitingForVerificationForRegistration = [NSMutableSet set];
         self.phoneNumbersWaitingForVerificationForLogin = [NSMutableSet set];
         self.phoneNumbersWaitingForVerificationForProfile = [NSMutableSet set];
-        
+
+        self.emailsWaitingForVerificationForRegistration = [NSMutableSet set];
+
         self.pushTokens = [NSMutableArray array];
         _nonCompletedRequests = [NSMutableArray array];
     }
@@ -780,6 +784,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     [self.whitelistedEmails addObject:email];
     
+    [self.emailsWaitingForVerificationForRegistration addObject:email];
+
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
     fetchRequest.predicate = [NSPredicate predicateWithFormat:@"email == %@", email];
     NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];

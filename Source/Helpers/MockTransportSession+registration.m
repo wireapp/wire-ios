@@ -171,13 +171,27 @@
         
         NSString *code = [userDetails optionalStringForKey:@"code"];
         NSString *phone = [userDetails optionalStringForKey:@"phone"];
+        NSString *email = [userDetails optionalStringForKey:@"email"];
+
         BOOL dryrun = ((NSNumber *)[userDetails optionalNumberForKey:@"dryrun"]).boolValue;
         
-        if(code == nil || phone == nil) {
+        if(code == nil && (phone == nil || email == nil)) {
             return [self errorResponseWithCode:400 reason:@"missing-key"];
         }
-        
-        if([self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]) {
+
+        if([self.emailsWaitingForVerificationForRegistration containsObject:email]){
+            if(![code isEqualToString:self.emailActivationCode]) {
+                return [self errorResponseWithCode:404 reason:@"not-found"];
+            }
+            else {
+                if(!dryrun) {
+                    [self.emailsWaitingForVerificationForRegistration removeObject:email];
+                }
+                return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+
+            }
+        }
+        else if([self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone]) {
             if(![code isEqualToString:self.phoneVerificationCodeForRegistration]) {
                 return [self errorResponseWithCode:404 reason:@"not-found"];
             }
@@ -234,6 +248,9 @@
                ) {
                 return [self errorResponseWithCode:409 reason:@"key-exists"];
             }
+
+            [self.emailsWaitingForVerificationForRegistration addObject:email];
+
         }
         else if(phone != nil) {
             if([self userWithPhone:phone] != nil) {

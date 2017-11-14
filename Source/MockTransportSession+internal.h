@@ -41,6 +41,9 @@
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForRegistration;
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForLogin;
 @property (nonatomic, readonly) NSMutableSet *phoneNumbersWaitingForVerificationForProfile;
+
+@property (nonatomic, readonly) NSMutableSet *emailsWaitingForVerificationForRegistration;
+
 @property (atomic, weak, readonly) id<ZMPushChannelConsumer> pushChannelConsumer;
 @property (atomic) BOOL clientCompletedLogin;
 
