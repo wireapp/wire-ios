@@ -34,7 +34,7 @@ static NSString *LocalizedDescriptionStringFromZMUserSessionErrorCode(ZMUserSess
         CFStringRef name;
     } const TypeMapping[] = {
         { ZMUserSessionNoError, CFSTR("User session no error") },
-        { ZMUserSessionUnkownError, CFSTR("User session unkown error") },
+        { ZMUserSessionUnknownError, CFSTR("User session unknown error") },
         { ZMUserSessionNeedsCredentials, CFSTR("User session needs credentials") },
         { ZMUserSessionInvalidCredentials, CFSTR("User session invalid credentials") },
         { ZMUserSessionAccountIsPendingActivation, CFSTR("User session account is pending activation") },
@@ -119,10 +119,26 @@ static NSString *LocalizedDescriptionStringFromZMUserSessionErrorCode(ZMUserSess
     return nil;
 }
 
++ (instancetype)blacklistedEmailWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 403 && [[response payloadLabel] isEqualToString:@"blacklisted-email"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionBlacklistedEmail userInfo:nil];
+    }
+    return nil;
+}
+
 + (instancetype)invalidEmailWithResponse:(ZMTransportResponse *)response
 {
     if (response.HTTPStatus == 400 && [[response payloadLabel] isEqualToString:@"invalid-email"]) {
         return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidEmail userInfo:nil];
+    }
+    return nil;
+}
+
++ (__nullable instancetype)emailAddressInUseErrorWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 409 && [[response payloadLabel] isEqualToString:@"key-exists"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionEmailIsAlreadyRegistered userInfo:nil];
     }
     return nil;
 }
@@ -139,6 +155,14 @@ static NSString *LocalizedDescriptionStringFromZMUserSessionErrorCode(ZMUserSess
 {
     if (response.HTTPStatus == 400 && [[response payloadLabel] isEqualToString:@"invalid-invitation-code"]) {
         return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidInvitationCode userInfo:nil];
+    }
+    return nil;
+}
+
++ (instancetype)invalidActivationCodeWithResponse:(ZMTransportResponse *)response
+{
+    if (response.HTTPStatus == 404 && [[response payloadLabel] isEqualToString:@"invalid-code"]) {
+        return [NSError userSessionErrorWithErrorCode:ZMUserSessionInvalidActivationCode userInfo:nil];
     }
     return nil;
 }
