@@ -19,6 +19,7 @@
 
 @import WireSystem;
 @import WireUtilities;
+@import WireTransport;
 
 #import "ZMMessageTimer.h"
 #import "ZMMessage+Internal.h"
@@ -67,9 +68,11 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)startTimerForMessageIfNeeded:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo
 {
     if ( ![self isTimerRunningForMessage:message] ) {
+        ZMBackgroundActivity *bgActivity = [BackgroundActivityFactory.sharedInstance backgroundActivityWithName:@"MessageTimer"];
         ZMTimer *timer = [ZMTimer timerWithTarget:self];
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo ?: @{}];
         info[@"message"] = message;
+        info[@"bgActivity"] = bgActivity;
         timer.userInfo = [NSDictionary dictionaryWithDictionary:info];
         [self.objectToTimerMap setObject:timer forKey:message];
         
@@ -80,7 +83,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (BOOL)isTimerRunningForMessage:(ZMMessage *)message
 {
-    return [self.objectToTimerMap objectForKey:message] != nil;
+    return [self timerForMessage:message] != nil;
 }
 
 - (void)timerDidFire:(ZMTimer *)timer
@@ -91,7 +94,6 @@ ZM_EMPTY_ASSERTING_INIT()
     RequireString(strongMoc != nil, "MOC is nil");
     
     [strongMoc performGroupedBlock:^{
-        [self removeTimerForMessage:message];
         
         if (message == nil || message.isZombieObject) {
             return;
@@ -99,13 +101,18 @@ ZM_EMPTY_ASSERTING_INIT()
         if (self.timerCompletionBlock != nil) {
             self.timerCompletionBlock(message, timer.userInfo);
         }
+
+        // it's important to remove timer last, b/c in the case we're in the background
+        // we want to call endActivity after the completion block finishes.
+        [self removeTimerForMessage:message];
     }];
+    
 }
 
 
 - (void)stopTimerForMessage:(ZMMessage *)message;
 {
-    ZMTimer *timer = [self.objectToTimerMap objectForKey:message];
+    ZMTimer *timer = [self timerForMessage:message];
     if(timer == nil) {
         return;
     }
@@ -116,14 +123,27 @@ ZM_EMPTY_ASSERTING_INIT()
 
 
 - (void)removeTimerForMessage:(ZMMessage *)message {
+    ZMTimer *timer = [self timerForMessage:message];
+    [self endBackgroundActivityForTimer:timer];
     [self.objectToTimerMap removeObjectForKey:message];
 }
 
+- (ZMTimer *)timerForMessage:(ZMMessage *)message
+{
+    return [self.objectToTimerMap objectForKey:message];
+}
+
+- (void)endBackgroundActivityForTimer:(ZMTimer *)timer
+{
+    ZMBackgroundActivity *bgActivity = timer.userInfo[@"bgActivity"];
+    [bgActivity endActivity];
+}
 
 - (void)tearDown;
 {
     for (ZMTimer *timer in self.objectToTimerMap.objectEnumerator) {
         [timer cancel];
+        [self endBackgroundActivityForTimer:timer];
     }
     
     self.tearDownCalled = YES;
