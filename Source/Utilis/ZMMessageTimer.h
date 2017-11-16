@@ -51,4 +51,7 @@
 /// Returns YES if there is a timer for this message
 - (BOOL)isTimerRunningForMessage:(ZMMessage *)message;
 
+/// Returns the timer created for this message
+- (ZMTimer *)timerForMessage:(ZMMessage *)message;
+
 @end
