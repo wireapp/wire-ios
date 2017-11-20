@@ -184,10 +184,11 @@ class AppRootViewController : UIViewController {
         case .unauthenticated(error: let error):
             UIColor.setAccentOverride(ZMUser.pickRandomAccentColor())
             mainWindow.tintColor = UIColor.accent()
-            let registrationViewController = RegistrationViewController()
-            registrationViewController.delegate = appStateController
-            registrationViewController.signInError = error
-            viewController = registrationViewController
+            let landingViewController = LandingViewController()
+            landingViewController.delegate = self
+
+            landingViewController.signInError = error
+            viewController = landingViewController
         case .authenticated(completedRegistration: let completedRegistration):
             // TODO: CallKit only with 1 account
             sessionManager?.updateCallNotificationStyleFromSettings()
@@ -450,5 +451,33 @@ extension AppRootViewController  {
     
     func onUserGrantedAudioPermissions() {
         sessionManager?.updateCallNotificationStyleFromSettings()
+    }
+}
+
+// MARK: - Transition form LandingViewController to RegistrationViewController
+
+extension AppRootViewController : LandingViewControllerDelegate {
+    func landingViewControllerDidChooseCreateTeam() {
+        ///TODO: transit to create team UI
+    }
+
+    func landingViewControllerDidChooseLogin() {
+        let registrationViewController = RegistrationViewController()
+        registrationViewController.delegate = appStateController
+
+
+        transition(to: registrationViewController, animated: true) {
+            self.requestToOpenViewDelegate = registrationViewController as? ZMRequestsToOpenViewsDelegate
+            registrationViewController.showLogin = true
+        }
+    }
+
+    func landingViewControllerDidChooseCreateAccount() {
+        let registrationViewController = RegistrationViewController()
+        registrationViewController.delegate = appStateController
+
+        transition(to: registrationViewController, animated: true) {
+            self.requestToOpenViewDelegate = registrationViewController as? ZMRequestsToOpenViewsDelegate
+        }
     }
 }
