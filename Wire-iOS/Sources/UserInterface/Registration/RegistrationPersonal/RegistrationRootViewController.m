@@ -103,6 +103,17 @@
     [self createConstraints];
 }
 
+
+/**
+ Setter of showLogin. When this is set to true, switch to login tab animatied. Else animates to register tab
+
+ @param newValue showLogin's new value
+ */
+- (void)setShowLogin: (BOOL)newValue{
+    _showLogin = newValue;
+    [self.registrationTabBarController selectIndex:_showLogin ? 1 : 0 animated:YES];
+}
+
 - (Account *)firstAuthenticatedAccount {
     Account *selectedAccount = SessionManager.shared.accountManager.selectedAccount;
     
