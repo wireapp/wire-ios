@@ -22,7 +22,7 @@ import Cartography
 
 class AccessoryTextField : UITextField {
 
-    enum TextFieldType {
+    enum Kind {
         case email
         case name
         case password
@@ -33,7 +33,7 @@ class AccessoryTextField : UITextField {
     static let placeholderFont = FontSpec(.small, .semibold).font!
     static private let ConfirmButtonWidth: CGFloat = 32
 
-    var textFieldType: TextFieldType = .unknown {
+    var kind: Kind {
         didSet{
             setupTextFieldProperties()
         }
@@ -61,16 +61,10 @@ class AccessoryTextField : UITextField {
     let placeholderInsets: UIEdgeInsets
 
 
-    /// init with textFieldType for keyboard style and validator type
+    /// init with type for keyboard style and validator type
     ///
-    /// - Parameter textFieldType: the type for text field
-    convenience init(textFieldType: TextFieldType) {
-        self.init()
-
-        self.textFieldType = textFieldType
-    }
-
-    init() {
+    /// - Parameter kind: the type for text field
+    init(kind: Kind = .unknown) {
         let leftInset: CGFloat = 24
 
         var topInset: CGFloat = 0
@@ -84,6 +78,7 @@ class AccessoryTextField : UITextField {
         }
 
         placeholderInsets = UIEdgeInsets(top: topInset, left: leftInset, bottom: 0, right: 16)
+        self.kind = kind
 
         super.init(frame: .zero)
 
@@ -117,15 +112,15 @@ class AccessoryTextField : UITextField {
     }
 
     private func setupTextFieldProperties() {
-        switch textFieldType {
+        switch kind {
         case .email:
-            break
+            keyboardType = .emailAddress
         case .password:
             isSecureTextEntry = true
         case .name:
-            break
+            keyboardType = .asciiCapable
         case .unknown:
-            break
+            keyboardType = .asciiCapable
         }
     }
 
@@ -133,6 +128,7 @@ class AccessoryTextField : UITextField {
         createConstraints()
 
         self.addTarget(self, action: #selector(textFieldDidChange(textField:)), for: .editingChanged)
+        setupTextFieldProperties()
     }
 
     private func createConstraints() {
