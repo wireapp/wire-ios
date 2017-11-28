@@ -23,6 +23,7 @@ public struct OpenGraphData {
     let title: String
     let type: String
     let url: String
+    let resolvedURL: String
     let imageUrls: [String]
 
     let siteName: OpenGraphSiteName
@@ -32,10 +33,11 @@ public struct OpenGraphData {
     
     var foursquareMetaData: FoursquareMetaData?
     
-    init(title: String, type: String?, url: String, imageUrls: [String], siteName: String? = nil, description: String? = nil, userGeneratedImage: Bool = false) {
+    init(title: String, type: String?, url: String, resolvedURL: String, imageUrls: [String], siteName: String? = nil, description: String? = nil, userGeneratedImage: Bool = false) {
         self.title = title
         self.type = type ?? OpenGraphTypeType.website.rawValue
         self.url = url
+        self.resolvedURL = resolvedURL
         self.imageUrls = imageUrls
         self.siteNameString = siteName
         self.siteName = siteName.map { OpenGraphSiteName(string: $0) ?? .other } ?? .other
@@ -71,7 +73,7 @@ extension OpenGraphData {
     
     typealias PropertyMapping = [OpenGraphPropertyType: String]
     
-    init?(propertyMapping mapping: PropertyMapping, images: [String]) {
+    init?(propertyMapping mapping: PropertyMapping, resolvedURL: URL, images: [String]) {
         guard let title = mapping[.title],
             let url = mapping[.url] else { return nil }
      
@@ -79,6 +81,7 @@ extension OpenGraphData {
             title: title,
             type: mapping[.type],
             url: url,
+            resolvedURL: resolvedURL.absoluteString,
             imageUrls: images,
             siteName: mapping[.siteName],
             description: mapping[.description],
@@ -108,7 +111,7 @@ public func ==(lhs: FoursquareMetaData, rhs: FoursquareMetaData) -> Bool {
 
 extension Article {
     public convenience init(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
-        self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
+        self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         summary = openGraphData.content
         guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
@@ -120,7 +123,7 @@ extension FoursquareLocation {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type  == OpenGraphTypeType.foursquare.rawValue && openGraphData.siteName == .foursquare else { return nil }
         
-        self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
+        self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
         longitude = openGraphData.foursquareMetaData?.longitude
@@ -133,7 +136,7 @@ extension FoursquareLocation {
 extension InstagramPicture {
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.instagram.rawValue && openGraphData.siteName == .instagram else { return nil }
-        self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
+        self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
         guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
@@ -145,7 +148,7 @@ extension TwitterStatus {
 
     public convenience init?(openGraphData: OpenGraphData, originalURLString: String, offset: Int) {
         guard openGraphData.type == OpenGraphTypeType.article.rawValue && openGraphData.siteName == .twitter else { return nil }
-        self.init(originalURLString: originalURLString, permamentURLString: openGraphData.url, offset: offset)
+        self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         
         message = tweetContentFromOpenGraphData(openGraphData)
         author = tweetAuthorFromOpenGraphData(openGraphData)
