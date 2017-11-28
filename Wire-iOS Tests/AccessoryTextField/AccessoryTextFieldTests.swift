@@ -22,7 +22,7 @@ import XCTest
 
 final class AccessoryTextFieldTests: ZMSnapshotTestCase {
     var sut: AccessoryTextField!
-    
+
     override func setUp() {
         super.setUp()
         sut = AccessoryTextField()
@@ -30,8 +30,8 @@ final class AccessoryTextFieldTests: ZMSnapshotTestCase {
     }
 
     override func tearDown() {
-        super.tearDown()
         sut = nil
+        super.tearDown()
     }
 
     func testThatItShowsEmptyTextField() {
