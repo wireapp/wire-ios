@@ -17,7 +17,7 @@
 //
 
 import Foundation
-import SafariServices
+import WireSyncEngine
 
 typealias ValueSubmitted = (String) -> ()
 
@@ -35,12 +35,16 @@ final class TeamCreationFlowController: NSObject {
     let registrationStatus: RegistrationStatus
     var nextState: TeamCreationState?
     var currentController: TeamCreationStepController!
+    weak var registrationDelegate: RegistrationViewControllerDelegate?
+    var syncToken: Any?
+    var sessionManagerToken: Any?
 
     init(navigationController: UINavigationController, registrationStatus: RegistrationStatus) {
         self.navigationController = navigationController
         self.registrationStatus = registrationStatus
         super.init()
         registrationStatus.delegate = self
+        sessionManagerToken = SessionManager.shared?.addSessionManagerCreatedSessionObserver(self)
     }
 
     func startFlow() {
@@ -51,48 +55,23 @@ final class TeamCreationFlowController: NSObject {
 
 // MARK: - Creating step controller
 extension TeamCreationFlowController {
-    func createViewController(for state: TeamCreationState) -> TeamCreationStepController {
-        let mainView = state.mainViewDescription
+    func createViewController(for description: TeamCreationStepDescription) -> TeamCreationStepController {
+        let mainView = description.mainViewDescription
         mainView.valueSubmitted = { [weak self] (value: String) in
             self?.advanceState(with: value)
         }
 
-        let backButton = state.backButtonDescription
+        let backButton = description.backButtonDescription
         backButton?.buttonTapped = { [weak self] in
             self?.rewindState()
         }
 
-        let secondaryViews = self.secondaryViews(for: state)
-        let controller = TeamCreationStepController(headline: currentState.headline,
-                                                    subtext: currentState.subtext,
+        let controller = TeamCreationStepController(headline: description.headline,
+                                                    subtext: description.subtext,
                                                     mainView: mainView,
                                                     backButton: backButton,
-                                                    secondaryViews: secondaryViews)
+                                                    secondaryViews: description.secondaryViews)
         return controller
-    }
-
-    func secondaryViews(for state: TeamCreationState) -> [ViewDescriptor] {
-        switch state  {
-        case .setTeamName:
-            let whatIsWire = ButtonDescription(title: "What is Wire for teams?", accessibilityIdentifier: "wire_for_teams_button")
-            whatIsWire.buttonTapped = { [weak self] in
-                let webview = SFSafariViewController(url: URL(string: "https://wire.com/en/create-team/")!)
-                self?.navigationController.present(webview, animated: true, completion: nil)
-            }
-            return [whatIsWire]
-        case let .verifyEmail(teamName: _, email: email):
-            let resendCode = ButtonDescription(title: "Resend code", accessibilityIdentifier: "resend_button")
-            resendCode.buttonTapped = { [weak self] in
-                self?.registrationStatus.sendActivationCode(to: email)
-            }
-            let changeEmail = ButtonDescription(title: "Change Email", accessibilityIdentifier: "change_email_button")
-            changeEmail.buttonTapped = { [weak self] in
-                self?.rewindState()
-            }
-            return [resendCode, changeEmail]
-        case .setEmail, .setFullName, .setPassword:
-            return []
-        }
     }
 }
 
@@ -100,29 +79,52 @@ extension TeamCreationFlowController {
 extension TeamCreationFlowController {
     fileprivate func advanceState(with value: String) {
         self.nextState = currentState.nextState(with: value) // Calculate next state
-        advanceIfNeeded()
+        if let next = self.nextState {
+            advanceIfNeeded(to: next)
+        }
     }
 
-    fileprivate func advanceIfNeeded() {
-        if let next = self.nextState {
-            switch next {
-            case .setTeamName:
-                nextState = nil // Nothing to do
-            case .setEmail:
-                pushNext() // Pushing email step
-            case let .verifyEmail(teamName: _, email: email):
-                registrationStatus.sendActivationCode(to: email) // Sending activation code to email
-            case let .setFullName(teamName: _, email: email, activationCode: activationCode):
-                registrationStatus.checkActivationCode(email: email, code: activationCode)
-            case .setPassword:
-                pushNext()
-            }
+    fileprivate func advanceIfNeeded(to next: TeamCreationState) {
+        switch next {
+        case .setTeamName:
+            nextState = nil // Nothing to do
+        case .setEmail:
+            pushNext() // Pushing email step
+        case let .verifyEmail(teamName: _, email: email):
+            registrationStatus.sendActivationCode(to: email) // Sending activation code to email
+        case let .setFullName(teamName: _, email: email, activationCode: activationCode):
+            registrationStatus.checkActivationCode(email: email, code: activationCode)
+        case .setPassword:
+            pushNext()
+        case let .createTeam(teamName: teamName, email: email, activationCode: activationCode, fullName: fullName, password: password):
+            let teamToRegister = TeamToRegister(teamName: teamName, email: email, emailCode:activationCode, fullName: fullName, password: password, accentColor: ZMUser.pickRandomAccentColor())
+            registrationStatus.create(team: teamToRegister)
         }
     }
 
     fileprivate func pushController(for state: TeamCreationState) {
-        currentController = createViewController(for: state)
-        navigationController.pushViewController(currentController, animated: true)
+
+        var stepDescription: TeamCreationStepDescription?
+
+        switch state {
+        case .setTeamName:
+            stepDescription = SetTeamNameStepDescription(controller: navigationController)
+        case .setEmail:
+            stepDescription = SetEmailStepDescription(controller: navigationController)
+        case let .verifyEmail(teamName: _, email: email):
+            stepDescription = VerifyEmailStepDescription(email: email, delegate: self)
+        case .setFullName:
+            stepDescription = SetFullNameStepDescription()
+        case .setPassword:
+            stepDescription = SetPasswordStepDescription()
+        case .createTeam:
+            fatal("No controller should be pushed, we have already registered a team!")
+        }
+
+        if let description = stepDescription {
+            currentController = createViewController(for: description)
+            navigationController.pushViewController(currentController, animated: true)
+        }
     }
 
     fileprivate func pushNext() {
@@ -146,9 +148,31 @@ extension TeamCreationFlowController {
     }
 }
 
+extension TeamCreationFlowController: VerifyEmailStepDescriptionDelegate {
+    func resendActivationCode(to email: String) {
+        registrationStatus.sendActivationCode(to: email)
+    }
+
+    func changeEmail() {
+        rewindState()
+    }
+}
+
+extension TeamCreationFlowController: SessionManagerCreatedSessionObserver {
+    func sessionManagerCreated(userSession : ZMUserSession) {
+        self.sessionManagerToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
+    }
+}
+
+extension TeamCreationFlowController: ZMInitialSyncCompletionObserver {
+    func initialSyncCompleted() {
+        registrationDelegate?.registrationViewControllerDidCompleteRegistration()
+    }
+}
+
 extension TeamCreationFlowController: RegistrationStatusDelegate {
     public func teamRegistered() {
-        pushNext()
+
     }
 
     public func teamRegistrationFailed(with error: Error) {
