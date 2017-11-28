@@ -23,13 +23,16 @@ import WireLinkPreview
 extension LinkPreview {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
-        self.init(originalURLString: protocolBuffer.url, permamentURLString: protocolBuffer.permanentURLString, offset: Int(protocolBuffer.urlOffset))
+        self.init(originalURLString: protocolBuffer.url,
+                  permanentURLString: protocolBuffer.permanentURLString,
+                  resolvedURLString: protocolBuffer.permanentURLString,
+                  offset: Int(protocolBuffer.urlOffset))
     }
     
     public var protocolBuffer: ZMLinkPreview {
         let linkPreviewBuilder = ZMLinkPreview.builder()!
         linkPreviewBuilder.setUrl(originalURLString)
-        linkPreviewBuilder.setPermanentUrl(permanentURL?.absoluteString ?? originalURLString)
+        linkPreviewBuilder.setPermanentUrl(permanentURL?.absoluteString ?? resolvedURL?.absoluteString ?? originalURLString)
         linkPreviewBuilder.setUrlOffset(Int32(characterOffsetInText))
         return linkPreviewBuilder.build()
     }
@@ -52,7 +55,10 @@ extension ZMLinkPreview {
 extension Article {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
-        self.init(originalURLString: protocolBuffer.url, permamentURLString: protocolBuffer.permanentURLString, offset: Int(protocolBuffer.urlOffset))
+        self.init(originalURLString: protocolBuffer.url,
+                  permanentURLString: protocolBuffer.permanentURLString,
+                  resolvedURLString: protocolBuffer.permanentURLString,
+                  offset: Int(protocolBuffer.urlOffset))
         let newTitle = protocolBuffer.hasArticle() ? protocolBuffer.article.title : protocolBuffer.title
         title = newTitle?.removingExtremeCombiningCharacters
         let newSummary = protocolBuffer.hasArticle() ? protocolBuffer.article.summary : protocolBuffer.summary
@@ -62,7 +68,7 @@ extension Article {
     override public var protocolBuffer: ZMLinkPreview {
         return ZMLinkPreview.linkPreview(
             withOriginalURL: originalURLString,
-            permanentURL: permanentURL?.absoluteString ?? originalURLString,
+            permanentURL: permanentURL?.absoluteString ?? resolvedURL?.absoluteString ?? originalURLString,
             offset: Int32(characterOffsetInText),
             title: title,
             summary: summary,
@@ -74,7 +80,10 @@ extension Article {
 extension TwitterStatus {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
-        self.init(originalURLString: protocolBuffer.url, permamentURLString: protocolBuffer.permanentURLString, offset: Int(protocolBuffer.urlOffset))
+        self.init(originalURLString: protocolBuffer.url,
+                  permanentURLString: protocolBuffer.permanentURLString,
+                  resolvedURLString: protocolBuffer.permanentURLString,
+                  offset: Int(protocolBuffer.urlOffset))
         let newMessage = protocolBuffer.hasTweet() ? protocolBuffer.title : protocolBuffer.article.title
         message = newMessage?.removingExtremeCombiningCharacters
         let newAuthor = protocolBuffer.hasTweet() ? protocolBuffer.tweet.author : nil
@@ -86,7 +95,7 @@ extension TwitterStatus {
     override public var protocolBuffer : ZMLinkPreview {
         return ZMLinkPreview.linkPreview(
             withOriginalURL: originalURLString,
-            permanentURL: permanentURL?.absoluteString ?? originalURLString,
+            permanentURL: permanentURL?.absoluteString ?? resolvedURL?.absoluteString ?? originalURLString,
             offset: Int32(characterOffsetInText),
             title: message,
             summary: nil,

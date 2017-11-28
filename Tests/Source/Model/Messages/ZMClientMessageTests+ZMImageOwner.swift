@@ -33,7 +33,8 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         let nonce = UUID()
         let article = Article(
             originalURLString: "example.com/article/original",
-            permamentURLString: "http://www.example.com/article/1",
+            permanentURLString: "http://www.example.com/article/1",
+            resolvedURLString: "http://www.example.com/article/1",
             offset: 12
         )
         article.title = "title"
