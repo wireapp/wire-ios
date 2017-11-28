@@ -24,15 +24,17 @@ import Foundation
     
     open let originalURLString: String
     open let permanentURL: URL?
+    open let resolvedURL: URL?
     open let characterOffsetInText: Int
     open var imageURLs = [URL]()
     open var imageData = [Data]()
     
     public typealias DownloadCompletion = (_ successful: Bool) -> Void
     
-    public init(originalURLString: String, permamentURLString: String, offset: Int) {
+    public init(originalURLString: String, permanentURLString: String, resolvedURLString: String, offset: Int) {
         self.originalURLString = originalURLString
-        permanentURL = URL(string: permamentURLString)
+        permanentURL = URL(string: permanentURLString)
+        resolvedURL = URL(string: resolvedURLString)
         characterOffsetInText = offset
         super.init()
     }

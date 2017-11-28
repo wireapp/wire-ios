@@ -65,7 +65,7 @@ final class OpenGraphScanner: NSObject {
     private func createObjectAndComplete(_ xmlDocument: ONOXMLDocument) {
         insertMissingUrlIfNeeded()
         insertMissingTitleIfNeeded(xmlDocument)
-        let data = OpenGraphData(propertyMapping: contentsByProperty, images: images)
+        let data = OpenGraphData(propertyMapping: contentsByProperty, resolvedURL: originalURL, images: images)
         completion(data)
     }
 

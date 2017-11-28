@@ -31,7 +31,7 @@ class OpenGraphDataTests: XCTestCase {
         let images = ["www.example.com/image"]
         
         // when
-        guard let sut = OpenGraphData(propertyMapping: mapping, images: images) else { return XCTFail() }
+        guard let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images) else { return XCTFail() }
         
         // then
         XCTAssertEqual(sut.title, title)
@@ -52,7 +52,7 @@ class OpenGraphDataTests: XCTestCase {
         let images = ["www.example.com/image"]
 
         // when
-        let sut = OpenGraphData(propertyMapping: mapping, images: images)
+        let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images)
 
         // then
         XCTAssertNotNil(sut)
@@ -66,7 +66,7 @@ class OpenGraphDataTests: XCTestCase {
         let images = ["www.example.com/image"]
         
         // when
-        let sut = OpenGraphData(propertyMapping: mapping, images: images)
+        let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: "www.example.com/image")!, images: images)
         
         // then
         XCTAssertNil(sut)
@@ -164,7 +164,7 @@ class OpenGraphDataTests: XCTestCase {
         let images = ["www.example.com/image"]
         
         // when
-        guard let sut = OpenGraphData(propertyMapping: mapping, images: images) else { return XCTFail(line: line) }
+        guard let sut = OpenGraphData(propertyMapping: mapping, resolvedURL: URL(string: url)!, images: images) else { return XCTFail(line: line) }
         
         XCTAssertEqual(sut.siteName, expected, line: line)
         XCTAssertEqual(sut.siteNameString, siteNameString, line: line)
