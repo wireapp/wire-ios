@@ -45,7 +45,7 @@ extension ZMClientMessage {
     
     public var linkPreview: LinkPreview? {
         
-        guard let linkPreview = self.self.firstZMLinkPreview else { return nil }
+        guard let linkPreview = self.firstZMLinkPreview else { return nil }
         if linkPreview.hasTweet() {
             return TwitterStatus(protocolBuffer: linkPreview)
         } else if linkPreview.hasArticle() {
