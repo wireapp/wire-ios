@@ -127,13 +127,7 @@ extension ZMClientMessage: ZMImageOwner {
             ?? self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce, format: .medium, encrypted: false)
     }
     
-    var hasImageData: Bool {
-        //  If we already have processed the image, we can check the protobuf if it has an image,
-        // there is a case however when sending a message that we don't have processed it yet but have the original image in the cache.
-        if self.imageData != nil {
-            return true
-        }
-        
+    var hasImageData: Bool {        
         guard let linkPreview = self.firstZMLinkPreview else { return false }
         return linkPreview.article.hasImage() || linkPreview.hasImage()
     }
