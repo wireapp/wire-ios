@@ -125,33 +125,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         // then
         XCTAssertFalse(willHaveAnImage)
     }
-    
-    func testThatItHasImageReturnsTrueIfTheImageIsNotYetProcessedButTheOriginalIsInTheCache() {
-        // given
-        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
-        let nonce = UUID.create()
-
-        let preview = TwitterStatus(
-            originalURLString: "example.com/article/original",
-            permanentURLString: "http://www.example.com/article/1",
-            resolvedURLString: "http://www.example.com/article/1",
-            offset: 42
-        )
         
-        preview.author = "Author"
-        preview.message = name
-        let genericMessage = ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString())
-        clientMessage.add(genericMessage.data())
-        clientMessage.nonce = nonce
-        uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .original, encrypted: false, data: .secureRandomData(ofLength: 256))
-        
-        // when
-        let willHaveAnImage = clientMessage.textMessageData!.hasImageData
-        
-        // then
-        XCTAssertTrue(willHaveAnImage)
-    }
-    
     func testThatItReturnsImageDataIdentifier_whenArticleHasImage() {
         // given
         let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)

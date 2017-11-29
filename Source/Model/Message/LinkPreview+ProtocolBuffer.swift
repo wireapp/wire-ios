@@ -37,6 +37,14 @@ extension LinkPreview {
         return linkPreviewBuilder.build()
     }
     
+    fileprivate func createImageAssetIfAvailable() -> ZMAsset? {
+        guard let imageData = imageData.first else { return nil }
+        
+        let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 0, height: 0)
+        let original = ZMAssetOriginal.original(withSize: UInt64(imageData.count), mimeType: "image/jpeg", name: nil, imageMetaData: imageMetaData)
+        return ZMAsset.asset(withOriginal: original, preview: nil)
+    }
+    
 }
 
 extension ZMLinkPreview {
@@ -72,7 +80,7 @@ extension Article {
             offset: Int32(characterOffsetInText),
             title: title,
             summary: summary,
-            imageAsset: nil
+            imageAsset: createImageAssetIfAvailable()
         )
     }
 }
@@ -99,7 +107,7 @@ extension TwitterStatus {
             offset: Int32(characterOffsetInText),
             title: message,
             summary: nil,
-            imageAsset: nil,
+            imageAsset: createImageAssetIfAvailable(),
             tweet: ZMTweet.tweet(withAuthor: author, username: username)
         )
     }
