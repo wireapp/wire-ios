@@ -45,6 +45,8 @@ final class TeamCreationStepController: UIViewController {
 
     private var keyboardOffset: NSLayoutConstraint!
     private var mainViewAlignVerticalCenter: NSLayoutConstraint!
+    private var mainViewWidthRegular: NSLayoutConstraint!
+    private var mainViewWidthCompact: NSLayoutConstraint!
 
     init(description: TeamCreationStepDescription) {
         self.stepDescription = description
@@ -89,9 +91,14 @@ final class TeamCreationStepController: UIViewController {
         NotificationCenter.default.removeObserver(self)
     }
 
+    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        updateMainViewWidthConstraint()
+    }
+
     // MARK: - Keyboard shown/hide
 
-    func updateKeyboardOffset(keyboardHeight: CGFloat){
+    func updateKeyboardOffset(keyboardHeight: CGFloat) {
         self.keyboardOffset.constant = -(keyboardHeight + 10)
         UIView.performWithoutAnimation {
             self.view.layoutIfNeeded()
@@ -168,12 +175,27 @@ final class TeamCreationStepController: UIViewController {
         [backButton, headlineLabel, subtextLabel, mainViewContainer, errorViewContainer, secondaryViewsStackView].flatMap {$0}.forEach { self.view.addSubview($0) }
     }
 
+    fileprivate func updateMainViewWidthConstraint() {
+        guard UIDevice.current.userInterfaceIdiom == .pad else { return }
+
+        switch self.traitCollection.horizontalSizeClass {
+        case .compact:
+            mainViewWidthRegular.isActive = false
+            mainViewWidthCompact.isActive = true
+        default:
+            mainViewWidthCompact.isActive = false
+            mainViewWidthRegular.isActive = true
+        }
+    }
+
     private func createConstraints() {
         if let backButton = backButton {
 
-            var backButtonTopMargin: CGFloat = 12 + 20
+            var backButtonTopMargin: CGFloat
             if #available(iOS 10.0, *) {
                 backButtonTopMargin = 12
+            } else {
+                backButtonTopMargin = 32
             }
 
             constrain(view, backButton, headlineLabel) { view, backButton, headlineLabel in
@@ -181,11 +203,8 @@ final class TeamCreationStepController: UIViewController {
                 backButton.top == view.topMargin + backButtonTopMargin
                 backButton.height == 20
 
-
                 headlineLabel.top >= backButton.bottomMargin + 20
             }
-
-
         }
 
         constrain(view, secondaryViewsStackView, errorViewContainer, mainViewContainer) { view, secondaryViewsStackView, errorViewContainer, mainViewContainer in
@@ -207,12 +226,13 @@ final class TeamCreationStepController: UIViewController {
             self.mainViewAlignVerticalCenter.isActive = false
 
             mainViewContainer.centerX == view.centerX
-            switch UIApplication.shared.keyWindow?.traitCollection.horizontalSizeClass {
-            case .regular?:
-                mainViewContainer.width == 375
+
+            switch UIDevice.current.userInterfaceIdiom {
+            case .pad:
+                mainViewWidthRegular = mainViewContainer.width == 375
+                mainViewWidthCompact = mainViewContainer.width == view.width
             default:
                 mainViewContainer.width == view.width
-                break
             }
 
             mainViewContainer.height >= 56
@@ -237,8 +257,9 @@ final class TeamCreationStepController: UIViewController {
             mainView.top == mainViewContainer.top + 56 ~ LayoutPriority(500)
             mainView.top <= mainViewContainer.top + 5
 
-            mainView.leading == mainViewContainer.leadingMargin
-            mainView.trailing == mainViewContainer.trailingMargin
+            mainView.leading == mainViewContainer.leading
+            mainView.trailing == mainViewContainer.trailing
+            mainView.bottom == mainViewContainer.bottom
         }
 
         constrain(errorViewContainer, errorLabel) { errorViewContainer, errorLabel in
@@ -249,16 +270,16 @@ final class TeamCreationStepController: UIViewController {
             errorLabel.bottomMargin == errorViewContainer.bottomMargin
         }
 
-
         headlineLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         subtextLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
         errorLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
+
+        updateMainViewWidthConstraint()
     }
 }
 
 // MARK: - Error handling
 extension TeamCreationStepController {
-
     func clearError() {
         errorLabel.text = nil
         self.errorViewContainer.setNeedsLayout()
@@ -270,4 +291,3 @@ extension TeamCreationStepController {
     }
 
 }
-
