@@ -34,6 +34,7 @@ import WireTesting
     override public func setUp() {
         super.setUp()
         self.clearStorageFolder()
+        MainPersistentStoreRelocator.hostBundleIdentifier = Bundle.main.bundleIdentifier!
         try! FileManager.default.createDirectory(at: self.applicationContainer, withIntermediateDirectories: true)
         let legacyDatabaseDirectory = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
         try! FileManager.default.createDirectory(at: legacyDatabaseDirectory, withIntermediateDirectories: true)
