@@ -21,10 +21,12 @@ import Cartography
 
 final class TeamCreationStepController: UIViewController {
 
-    static let headlineFont = FontSpec(.large, .light, .largeTitle).font!
-    static let subtextFont = FontSpec(.normal, .regular).font!
-    static let errorFont = FontSpec(.small, .semibold).font!
-    static let textButtonFont = FontSpec(.small, .semibold).font!
+
+    /// headline font size is fixed and not affected by dynamic type setting
+    static let headlineFont = UIFont.systemFont(ofSize: 40)
+    static let subtextFont      = FontSpec(.normal, .regular).font!
+    static let errorFont        = FontSpec(.small, .semibold).font!
+    static let textButtonFont   = FontSpec(.small, .semibold).font!
 
     let stepDescription: TeamCreationStepDescription
 
@@ -146,6 +148,9 @@ final class TeamCreationStepController: UIViewController {
         headlineLabel.textColor = UIColor.Team.textColor
         headlineLabel.text = stepDescription.headline
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
+        if #available(iOS 10.0, *) {
+            headlineLabel.adjustsFontForContentSizeCategory = false
+        } 
 
         subtextLabel = UILabel()
         subtextLabel.textAlignment = .center
@@ -167,7 +172,7 @@ final class TeamCreationStepController: UIViewController {
 
         errorLabel = UILabel()
         errorLabel.textAlignment = .center
-        errorLabel.font = TeamCreationStepController.errorFont.allCaps()
+        errorLabel.font = TeamCreationStepController.errorFont
         errorLabel.textColor = UIColor.Team.errorMessageColor
         errorLabel.translatesAutoresizingMaskIntoConstraints = false
         errorViewContainer.addSubview(errorLabel)
@@ -242,28 +247,27 @@ final class TeamCreationStepController: UIViewController {
                 mainViewContainer.width == view.width
             }
 
-            mainViewContainer.height >= 56
-            mainViewContainer.height == 2 * 56 ~ LayoutPriority(500) // Space for two text fields, compressed for iPhone 4s
         }
 
         constrain(view, mainViewContainer, subtextLabel, headlineLabel) { view, inputViewsContainer, subtextLabel, headlineLabel in
             headlineLabel.top >= view.topMargin + 20
             headlineLabel.bottom == subtextLabel.top - 24 ~ LayoutPriority(750)
-            headlineLabel.bottom <= subtextLabel.top - 5
             headlineLabel.leading == view.leadingMargin
             headlineLabel.trailing == view.trailingMargin
 
-            subtextLabel.bottom == inputViewsContainer.top - 24 ~ LayoutPriority(750)
-            subtextLabel.bottom <= inputViewsContainer.top - 5
+            subtextLabel.top >= headlineLabel.bottom + 5
             subtextLabel.leading == view.leadingMargin
             subtextLabel.trailing == view.trailingMargin
+            subtextLabel.height >= 19
+
+            inputViewsContainer.top >= subtextLabel.bottom + 5
+            inputViewsContainer.top == subtextLabel.bottom + 80 ~ LayoutPriority(800)
         }
 
         constrain(mainViewContainer, mainView) { mainViewContainer, mainView in
             mainView.height == 56
-            mainView.top == mainViewContainer.top + 56 ~ LayoutPriority(500)
-            mainView.top <= mainViewContainer.top + 5
 
+            mainView.top == mainViewContainer.top
             mainView.leading == mainViewContainer.leading
             mainView.trailing == mainViewContainer.trailing
             mainView.bottom == mainViewContainer.bottom
@@ -275,6 +279,7 @@ final class TeamCreationStepController: UIViewController {
             errorLabel.trailing == errorViewContainer.trailingMargin
             errorLabel.topMargin == errorViewContainer.topMargin
             errorLabel.bottomMargin == errorViewContainer.bottomMargin
+            errorLabel.height >= 19
         }
 
         headlineLabel.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
@@ -293,7 +298,7 @@ extension TeamCreationStepController {
     }
 
     func displayError(_ error: Error) {
-        errorLabel.text = error.localizedDescription
+        errorLabel.text = error.localizedDescription.uppercased()
         self.errorViewContainer.setNeedsLayout()
     }
 
