@@ -67,7 +67,8 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     func createArticle() -> Article {
         let article = Article(
             originalURLString: "example.com/article",
-            permamentURLString: "https://example.com/permament",
+            permanentURLString: "https://example.com/permament",
+            resolvedURLString: "https://example.com/permament",
             offset: 0
         )
         article.title = "title"
