@@ -97,7 +97,7 @@ extension LinkPreviewPreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -125,7 +125,7 @@ extension LinkPreviewPreprocessorTests {
             
             // GIVEN
             let URL = "http://www.example.com"
-            self.mockDetector.nextResult = [LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)]
+            self.mockDetector.nextResult = [LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
             message = self.createMessage()
             
             // WHEN
@@ -194,7 +194,7 @@ extension LinkPreviewPreprocessorTests {
             
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -223,7 +223,7 @@ extension LinkPreviewPreprocessorTests {
             
             // GIVEN
             let URL = "http://www.example.com"
-            let preview = LinkPreview(originalURLString: "example.com", permamentURLString: URL, offset: 0)
+            let preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
