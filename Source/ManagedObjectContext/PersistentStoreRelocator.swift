@@ -35,6 +35,9 @@ extension URL {
 public struct MainPersistentStoreRelocator {
     /// Returns the list of possible locations for legacy stores. If accountIdentifier is supplied it also 
     /// includes account directories used after multiple account support was added.
+    
+    public static var hostBundleIdentifier = Bundle.main.infoDictionary?["HostBundleIdentifier"] as? String
+    
     static func possiblePreviousStoreFiles(applicationContainer: URL, accountIdentifier: UUID?) -> [URL] {
         let locations = possibleLegacyAccountFolders(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier)
         return locations.map{ $0.appendingStoreFile() }
@@ -43,7 +46,8 @@ public struct MainPersistentStoreRelocator {
     static func possibleLegacyAccountFolders(applicationContainer: URL, accountIdentifier: UUID?) -> [URL] {
         var accountsFolders = possibleCommonLegacyDirectories()
         
-        let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        guard let hostBundleIdentifier = hostBundleIdentifier else { return [] }
+        let sharedContainerAccountFolder = applicationContainer.appendingPathComponent(hostBundleIdentifier)
         accountsFolders.append(sharedContainerAccountFolder)
         
         if let accountIdentifier = accountIdentifier {
@@ -54,7 +58,8 @@ public struct MainPersistentStoreRelocator {
     }
 
     static func possibleLegacyKeystoreFolders(applicationContainer: URL, accountIdentifier: UUID) -> [URL] {
-        let bundleIdFolder = applicationContainer.appendingPathComponent(Bundle.main.bundleIdentifier!)
+        guard let hostBundleIdentifier = hostBundleIdentifier else { return [] }
+        let bundleIdFolder = applicationContainer.appendingPathComponent(hostBundleIdentifier)
         let bundleIdAccountFolder = bundleIdFolder.appendingPathComponent(accountIdentifier.uuidString)
         return possibleCommonLegacyDirectories() + [applicationContainer, bundleIdAccountFolder]
     }
