@@ -23,7 +23,7 @@ extension ZMUserSessionErrorCode: LocalizedError {
         let bundle = Bundle(for: ZMUserSession.self)
         switch self {
         case .blacklistedEmail:
-            return bundle.localizedString(forKey: "user_session.error.balcklisted-email", value: nil, table: "ZMLocalizable")
+            return bundle.localizedString(forKey: "user_session.error.blacklisted-email", value: nil, table: "ZMLocalizable")
         case .emailIsAlreadyRegistered:
             return bundle.localizedString(forKey: "user_session.error.email-exists", value: nil, table: "ZMLocalizable")
         case .invalidEmail:

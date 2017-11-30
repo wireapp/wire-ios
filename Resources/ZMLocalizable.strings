@@ -20,10 +20,10 @@
 
 "conversation.username.groupingSeparator" = ", ";
 
-"user_session.error.balcklisted-email" = "E-mail address has been blacklisted";
-"user_session.error.email-exists" = "E-mail address is already in use";
-"user_session.error.invalid-email" = "Invalid e-mail";
-"user_session.error.invalid-code" = "Invalid activation code";
-"user_session.error.unauthorized-email" = "Unauthorized e-mail";
-"user_session.error.unknown" = "Unknown error";
+"user_session.error.blacklisted-email" = "Email address has been blacklisted";
+"user_session.error.email-exists" = "Email address is already in use";
+"user_session.error.invalid-email" = "Please enter a valid email address";
+"user_session.error.invalid-code" = "Please enter a valid code";
+"user_session.error.unauthorized-email" = "Unauthorized email address";
+"user_session.error.unknown" = "Something went wrong, please try again";
 
