@@ -65,7 +65,6 @@ class AccessoryTextField: UITextField {
         iconButton.setBackgroundImageColor(UIColor.Team.inactiveButtonColor, for: .disabled)
 
         iconButton.accessibilityIdentifier = "AccessoryTextFieldConfirmButton"
-
         iconButton.isEnabled = false
 
         return iconButton

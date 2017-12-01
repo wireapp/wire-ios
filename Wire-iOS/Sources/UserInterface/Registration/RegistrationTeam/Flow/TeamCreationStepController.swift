@@ -22,11 +22,13 @@ import Cartography
 final class TeamCreationStepController: UIViewController {
 
 
-    /// headline font size is fixed and not affected by dynamic type setting
-    static let headlineFont = UIFont.systemFont(ofSize: 40)
-    static let subtextFont      = FontSpec(.normal, .regular).font!
-    static let errorFont        = FontSpec(.small, .semibold).font!
-    static let textButtonFont   = FontSpec(.small, .semibold).font!
+    /// headline font size is fixed and not affected by dynamic type setting,
+    static let headlineFont         = UIFont.systemFont(ofSize: 40, weight: UIFontWeightLight)
+    /// For 320 pt width screen
+    static let headlineSmallFont    = UIFont.systemFont(ofSize: 32, weight: UIFontWeightLight)
+    static let subtextFont          = FontSpec(.normal, .regular).font!
+    static let errorFont            = FontSpec(.small, .semibold).font!
+    static let textButtonFont       = FontSpec(.small, .semibold).font!
 
     let stepDescription: TeamCreationStepDescription
 
@@ -97,6 +99,7 @@ final class TeamCreationStepController: UIViewController {
     public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
         updateMainViewWidthConstraint()
+        updateHeadlineLabelFont()
     }
 
     // MARK: - Keyboard shown/hide
@@ -139,18 +142,21 @@ final class TeamCreationStepController: UIViewController {
         }
     }
 
+    // MARK: - View creation
+
+    fileprivate func updateHeadlineLabelFont() {
+        headlineLabel.font = self.view.frame.size.width > 320 ? TeamCreationStepController.headlineFont : TeamCreationStepController.headlineSmallFont
+    }
+
     private func createViews() {
         backButton = stepDescription.backButton?.create()
 
         headlineLabel = UILabel()
         headlineLabel.textAlignment = .center
-        headlineLabel.font = TeamCreationStepController.headlineFont
         headlineLabel.textColor = UIColor.Team.textColor
         headlineLabel.text = stepDescription.headline
         headlineLabel.translatesAutoresizingMaskIntoConstraints = false
-        if #available(iOS 10.0, *) {
-            headlineLabel.adjustsFontForContentSizeCategory = false
-        } 
+        updateHeadlineLabelFont()
 
         subtextLabel = UILabel()
         subtextLabel.textAlignment = .center
@@ -210,10 +216,13 @@ final class TeamCreationStepController: UIViewController {
                 backButtonTopMargin = 32
             }
 
+            let backButtonSize = UIImage.size(for: .tiny)
+
             constrain(view, backButton, headlineLabel) { view, backButton, headlineLabel in
                 backButton.leading == view.leading + 16
                 backButton.top == view.topMargin + backButtonTopMargin
-                backButton.height == 20
+                backButton.height == backButtonSize
+                backButton.height == backButton.width
 
                 headlineLabel.top >= backButton.bottomMargin + 20
             }
