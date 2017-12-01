@@ -30,6 +30,8 @@ final class TeamCreationStepController: UIViewController {
     static let errorFont            = FontSpec(.small, .semibold).font!
     static let textButtonFont       = FontSpec(.small, .semibold).font!
 
+    static let mainViewHeight: CGFloat = 56
+
     let stepDescription: TeamCreationStepDescription
 
     private var stackView: UIStackView!
@@ -274,7 +276,7 @@ final class TeamCreationStepController: UIViewController {
         }
 
         constrain(mainViewContainer, mainView) { mainViewContainer, mainView in
-            mainView.height == 56
+            mainView.height == TeamCreationStepController.mainViewHeight
 
             mainView.top == mainViewContainer.top
             mainView.leading == mainViewContainer.leading

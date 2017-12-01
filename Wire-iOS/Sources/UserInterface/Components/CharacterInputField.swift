@@ -96,7 +96,8 @@ public class CharacterInputField: UIControl, UITextInputTraits {
     
     class CharacterView: UIView {
         private let label = UILabel()
-        
+        public let parentSize: CGSize
+
         var character: Character? = .none {
             didSet {
                 if let character = self.character {
@@ -109,7 +110,9 @@ public class CharacterInputField: UIControl, UITextInputTraits {
             }
         }
         
-        init() {
+        init(parentSize: CGSize) {
+            self.parentSize = parentSize
+
             super.init(frame: .zero)
             
             self.layer.cornerRadius = 4
@@ -128,16 +131,22 @@ public class CharacterInputField: UIControl, UITextInputTraits {
         }
         
         override var intrinsicContentSize: CGSize {
-            return CGSize(width: 50, height: 56)
+            return CGSize(width: parentSize.width > 320 ? 50 : 44, height: parentSize.height)
         }
     }
     
     // MARK: - Overrides
     
-    init(maxLength: Int, characterSet: CharacterSet) {
+    /// init method with custom settings
+    ///
+    /// - Parameters:
+    ///   - maxLength: number of textfield will be created
+    ///   - characterSet: characterSet accepted
+    ///   - size: size of the view to be created (we take the width to calculate the size of each textField, the height for each textField's height)
+    init(maxLength: Int, characterSet: CharacterSet, size: CGSize) {
         self.maxLength = maxLength
         self.characterSet = characterSet
-        characterViews = (0..<maxLength).map { _ in CharacterView() }
+        characterViews = (0..<maxLength).map { _ in CharacterView(parentSize: size) }
 
         super.init(frame: .zero)
         
