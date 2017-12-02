@@ -95,7 +95,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
 {
     NSMutableData *randomData = [NSMutableData dataWithLength:length];
     int success = SecRandomCopyBytes(kSecRandomDefault, length, randomData.mutableBytes);
-    Require(success == 0);
+    Require(success == errSecSuccess);
     return randomData;
 }
 
@@ -120,7 +120,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"SymmetricEncryption";
     {
         uint8_t random[kCCBlockSizeAES128];
         int success = SecRandomCopyBytes(kSecRandomDefault, sizeof(random), random);
-        Require(success == 0);
+        Require(success == errSecSuccess);
         size_t bytesWritten = 0;
         void * const dataOut = ((uint8_t *) [result mutableBytes]) + byteCountWritten;
         size_t const dataOutAvailable = resultLength - byteCountWritten;
