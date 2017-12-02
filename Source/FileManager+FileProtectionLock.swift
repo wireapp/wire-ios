@@ -57,7 +57,7 @@ extension FileManager {
     /// Executes the given block when the file system is unlocked and returns a token.
     /// This token needs to be retain in order for the block to be called.
     ///
-    public func executeWhenFileSystemIsAccessible(_ block: @escaping (Void) -> Void) -> Any? {
+    public func executeWhenFileSystemIsAccessible(_ block: @escaping () -> Void) -> Any? {
         
         #if os(iOS)
         // We need to handle the case when the database file is encrypted by iOS and user never entered the passcode

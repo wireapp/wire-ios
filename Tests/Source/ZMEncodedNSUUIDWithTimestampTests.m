@@ -48,7 +48,7 @@ static unsigned long HOUR_IN_SEC = 60 * 60;
 {
     uint8_t random[kCCKeySizeAES256];
     int success = SecRandomCopyBytes(kSecRandomDefault, kCCKeySizeAES256, random);
-    XCTAssert(success == 0);
+    XCTAssert(success == errSecSuccess);
     return [NSData dataWithBytes:random length:kCCKeySizeAES256];
 }
 

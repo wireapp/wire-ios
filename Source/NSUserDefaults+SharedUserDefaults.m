@@ -62,7 +62,7 @@
             //create new key
         NSMutableData *newKey = [NSMutableData dataWithLength:kCCKeySizeAES256];
         int success = SecRandomCopyBytes(kSecRandomDefault, newKey.length, (uint8_t *) newKey.mutableBytes);
-        Require(success == 0);
+        Require(success == errSecSuccess);
         key = newKey;
         
 #if TARGET_OS_IPHONE
