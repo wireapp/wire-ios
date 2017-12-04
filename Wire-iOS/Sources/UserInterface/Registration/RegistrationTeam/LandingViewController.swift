@@ -157,7 +157,7 @@ final class LandingViewController: UIViewController {
 
         constrain(logoView, headline, headerContainerView) { logoView, headline, headerContainerView in
             ///reserver space for status bar(20pt)
-            logoView.top >= headerContainerView.top + (16 + 20)
+            logoView.top >= headerContainerView.top + 36
             logoView.top == headerContainerView.top + 72 ~ LayoutPriority(500)
             logoView.centerX == headerContainerView.centerX
             logoView.width == 96
@@ -186,7 +186,7 @@ final class LandingViewController: UIViewController {
             selfView, buttonStackView, loginHintsLabel, loginButton in
             buttonStackView.bottom <= loginHintsLabel.top - 16
 
-            loginHintsLabel.top == loginButton.top - 16
+            loginHintsLabel.bottom == loginButton.top - 16
             loginHintsLabel.centerX == selfView.centerX
 
             loginButton.top == loginHintsLabel.bottom + 4
