@@ -75,21 +75,6 @@ final class LandingViewController: UIViewController {
         return label
     }()
 
-    fileprivate let buttonStackView: UIStackView = {
-        let stackView = UIStackView()
-        stackView.distribution = .fillEqually
-        stackView.spacing = 24
-
-        switch (UIApplication.shared.keyWindow?.traitCollection.horizontalSizeClass) {
-        case .regular?:
-            stackView.axis = .horizontal
-        default:
-            stackView.axis = .vertical
-        }
-
-        return stackView
-    }()
-
     let createAccountButton: LandingButton = {
         let title = "landing.create_account.title".localized && LandingViewController.buttonTitleAttribute
         let subtitle = ("\n" + "landing.create_account.subtitle".localized) && LandingViewController.buttonSubtitleAttribute
@@ -102,6 +87,9 @@ final class LandingViewController: UIViewController {
     }()
 
     let createTeamButton: LandingButton = {
+        let alignCenterStyle = NSMutableParagraphStyle()
+        alignCenterStyle.alignment = NSTextAlignment.center
+
         let title = "landing.create_team.title".localized && LandingViewController.buttonTitleAttribute
         let subtitle = ("\n" + "landing.create_team.subtitle".localized) && LandingViewController.buttonSubtitleAttribute
 
@@ -112,6 +100,7 @@ final class LandingViewController: UIViewController {
         return button
     }()
 
+    let containerView = UIView()
     let headerContainerView = UIView()
 
     let loginHintsLabel: UILabel = {
@@ -142,13 +131,11 @@ final class LandingViewController: UIViewController {
 
         self.view.backgroundColor = UIColor.Team.background
 
-        [headerContainerView, buttonStackView, loginHintsLabel, loginButton].forEach(view.addSubview)
+        [headerContainerView, containerView, loginHintsLabel, loginButton].forEach(view.addSubview)
 
         [logoView, headline].forEach(headerContainerView.addSubview)
 
-        [createAccountButton, createTeamButton].forEach() { button in
-            buttonStackView.addArrangedSubview(button)
-        }
+        [createAccountButton, createTeamButton].forEach(containerView.addSubview)
 
         self.createConstraints()
     }
@@ -170,21 +157,21 @@ final class LandingViewController: UIViewController {
 
         }
 
-        constrain(self.view, headerContainerView, buttonStackView) { selfView, headerContainerView, buttonStackView in
+        constrain(self.view, headerContainerView, containerView) { selfView, headerContainerView, containerView in
 
             headerContainerView.width == selfView.width
             headerContainerView.centerX == selfView.centerX
             headerContainerView.top == selfView.top
 
-            buttonStackView.centerX == selfView.centerX
-            buttonStackView.centerY == selfView.centerY
+            containerView.width == selfView.width
+            containerView.centerX == selfView.centerX
+            containerView.centerY == selfView.centerY
 
-            headerContainerView.bottom == buttonStackView.top
+            headerContainerView.bottom == containerView.top
         }
 
-        constrain(self.view, buttonStackView, loginHintsLabel, loginButton) {
-            selfView, buttonStackView, loginHintsLabel, loginButton in
-            buttonStackView.bottom <= loginHintsLabel.top - 16
+        constrain(self.view, containerView, loginHintsLabel, loginButton) { selfView, containerView, loginHintsLabel, loginButton in
+            containerView.bottom <= loginHintsLabel.top - 16
 
             loginHintsLabel.top == loginButton.top - 16
             loginHintsLabel.centerX == selfView.centerX
@@ -194,9 +181,19 @@ final class LandingViewController: UIViewController {
             loginButton.bottom == selfView.bottomMargin - 32 ~ LayoutPriority(500)
         }
 
-        [createAccountButton, createTeamButton].forEach() { button in
-            button.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
-            button.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .horizontal)
+        constrain(containerView, createAccountButton, createTeamButton) { containerView, createAccountButton, createTeamtButton in
+
+            createAccountButton.top == containerView.top
+            createTeamtButton.bottom == containerView.bottom
+
+            createAccountButton.centerX == containerView.centerX
+            createAccountButton.width == containerView.width
+
+            createTeamtButton.top == createAccountButton.bottom + 24
+            createTeamtButton.centerX == containerView.centerX
+            createTeamtButton.width == containerView.width
+
+            createAccountButton.height == createTeamtButton.height
         }
     }
 
