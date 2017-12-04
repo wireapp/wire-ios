@@ -37,9 +37,18 @@
 /// @param onlyForUserId if not nil, only return missing recipients matching this user ID
 - (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
 
+/// Returns a list of missing clients for broascasting that were not included in the list of intendend recipients
+/// @param recipients list of intender recipients
+/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
+- (NSDictionary *)missedClients:(NSDictionary *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
+
 /// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
 - (NSDictionary *)redundantClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation;
+
+/// Returns a list of redundant clients for broascasting that were included in the list of intendend recipients
+/// @param recipients list of intender recipients
+- (NSDictionary *)redundantClients:(NSDictionary *)recipients;
 
 - (MockUserClient *)otrMessageSenderFromClientId:(ZMClientId *)sender;
 
@@ -48,9 +57,18 @@
 /// @param onlyForUserId if not nil, only return missing recipients matching this user ID
 - (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
 
+/// Returns a list of missing clients for broascasting that were not included in the list of intendend recipients
+/// @param recipients list of intender recipients
+/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
+- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
+
 /// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
 - (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation;
+
+/// Returns a list of redundant clients for broascasting that were included in the list of intendend recipients
+/// @param recipients list of intender recipients
+- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients;
 
 
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation

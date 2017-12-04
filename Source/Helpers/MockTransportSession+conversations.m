@@ -23,12 +23,10 @@
 @import WireProtos;
 @import WireDataModel;
 
-#import "MockTransportSession+internal.h"
-#import "MockTransportSession.h"
+#import "MockTransportSession+conversations.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 #import "MockTransportSession+assets.h"
 #import "MockTransportSession+OTR.h"
-#import <WireMockTransport/WireMockTransport-Swift.h>
 
 
 
