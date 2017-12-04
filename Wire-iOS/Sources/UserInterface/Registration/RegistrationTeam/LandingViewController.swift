@@ -56,13 +56,6 @@ final class LandingViewController: UIViewController {
         return [NSForegroundColorAttributeName: UIColor.Team.textColor, NSParagraphStyleAttributeName: alignCenterStyle, NSFontAttributeName:lightFont]
     }()
 
-    // MARK: - constraints for iPad
-
-    private var logoAlignTop: NSLayoutConstraint!
-    private var loginButtonAlignBottom: NSLayoutConstraint!
-    private var loginHintAlignTop: NSLayoutConstraint!
-    private var headlineAlignBottom: NSLayoutConstraint!
-
     // MARK: - subviews
 
     let logoView: UIImageView = {
@@ -86,6 +79,13 @@ final class LandingViewController: UIViewController {
         let stackView = UIStackView()
         stackView.distribution = .fillEqually
         stackView.spacing = 24
+
+        switch (UIApplication.shared.keyWindow?.traitCollection.horizontalSizeClass) {
+        case .regular?:
+            stackView.axis = .horizontal
+        default:
+            stackView.axis = .vertical
+        }
 
         return stackView
     }()
@@ -151,15 +151,6 @@ final class LandingViewController: UIViewController {
         }
 
         self.createConstraints()
-
-        updateStackViewAxis()
-        updateConstraintsForIPad()
-    }
-
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        updateConstraintsForIPad()
     }
 
     private func createConstraints() {
@@ -167,7 +158,7 @@ final class LandingViewController: UIViewController {
         constrain(logoView, headline, headerContainerView) { logoView, headline, headerContainerView in
             ///reserver space for status bar(20pt)
             logoView.top >= headerContainerView.top + 36
-            logoAlignTop = logoView.top == headerContainerView.top + 72 ~ LayoutPriority(500)
+            logoView.top == headerContainerView.top + 72 ~ LayoutPriority(500)
             logoView.centerX == headerContainerView.centerX
             logoView.width == 96
             logoView.height == 31
@@ -177,9 +168,6 @@ final class LandingViewController: UIViewController {
             headline.height >= 18
             headline.bottom <= headerContainerView.bottom - 16
 
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                headlineAlignBottom = headline.bottom == headerContainerView.bottom - 80
-            }
         }
 
         constrain(self.view, headerContainerView, buttonStackView) { selfView, headerContainerView, buttonStackView in
@@ -200,47 +188,15 @@ final class LandingViewController: UIViewController {
 
             loginHintsLabel.bottom == loginButton.top - 16
             loginHintsLabel.centerX == selfView.centerX
-            if UIDevice.current.userInterfaceIdiom == .pad {
-                loginHintAlignTop = loginHintsLabel.top == buttonStackView.bottom + 80
-            }
-
 
             loginButton.top == loginHintsLabel.bottom + 4
             loginButton.centerX == selfView.centerX
-            loginButtonAlignBottom = loginButton.bottom == selfView.bottomMargin - 32 ~ LayoutPriority(500)
+            loginButton.bottom == selfView.bottomMargin - 32 ~ LayoutPriority(500)
         }
 
         [createAccountButton, createTeamButton].forEach() { button in
             button.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .vertical)
             button.setContentCompressionResistancePriority(UILayoutPriorityRequired, for: .horizontal)
-        }
-    }
-
-    fileprivate func updateConstraintsForIPad() {
-        guard UIDevice.current.userInterfaceIdiom == .pad else { return }
-
-        switch self.traitCollection.horizontalSizeClass {
-        case .compact:
-            loginHintAlignTop.isActive = false
-            headlineAlignBottom.isActive = false
-            logoAlignTop.isActive = true
-            loginButtonAlignBottom.isActive = true
-        default:
-            logoAlignTop.isActive = false
-            loginButtonAlignBottom.isActive = false
-            loginHintAlignTop.isActive = true
-            headlineAlignBottom.isActive = true
-        }
-    }
-
-    func updateStackViewAxis() {
-        guard UIDevice.current.userInterfaceIdiom == .pad else { return }
-
-        switch self.traitCollection.horizontalSizeClass {
-        case .regular:
-            buttonStackView.axis = .horizontal
-        default:
-            buttonStackView.axis = .vertical
         }
     }
 
