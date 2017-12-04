@@ -68,6 +68,33 @@ extension MockUser {
     }
 }
 
+// MARK: - Broadcasting
+extension MockUser {
+    
+    @objc public var connectionsAndTeamMembers : Set<MockUser> {
+        
+        let acceptedUsers : (Any) -> MockUser? = { connection in
+            guard let connection = connection as? MockConnection, MockConnection.status(from: connection.status) == .accepted else { return nil }
+            return connection.to == self ? connection.from : connection.to
+        }
+        
+        let connectedToUsers : [MockUser] = self.connectionsTo.flatMap(acceptedUsers)
+        let connectedFromUsers : [MockUser] = self.connectionsFrom.flatMap(acceptedUsers)
+        
+        let teamMembers = self.memberships?.first?.team.members.map({ $0.user }) ?? []
+        
+        var users = Set<MockUser>()
+        users.formUnion(connectedToUsers)
+        users.formUnion(connectedFromUsers)
+        users.formUnion(teamMembers)
+        users.formUnion([self])
+        
+        return users
+    }
+    
+}
+
+
 // MARK: - Images
 extension MockUser {
     @objc public var mediumImageIdentifier: String? {

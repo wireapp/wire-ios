@@ -34,8 +34,18 @@
 
 - (NSDictionary *)missedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
 {
+    return [self missedClients:recipients users:conversation.activeUsers.set sender:sender onlyForUserId:onlyForUserId];
+}
+
+- (NSDictionary *)missedClients:(NSDictionary *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
+{
+    return [self missedClients:recipients users:self.selfUser.connectionsAndTeamMembers sender:sender onlyForUserId:onlyForUserId];
+}
+
+- (NSDictionary *)missedClients:(NSDictionary *)recipients users:(NSSet<MockUser *> *)users sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
+{
     NSMutableDictionary *missedClients = [NSMutableDictionary new];
-    for (MockUser *user in conversation.activeUsers) {
+    for (MockUser *user in users) {
         if (onlyForUserId != nil && ![[NSUUID uuidWithTransportString:user.identifier] isEqual:[NSUUID uuidWithTransportString:onlyForUserId]]) {
             continue;
         }
@@ -58,10 +68,20 @@
 
 - (NSDictionary *)redundantClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation
 {
+    return [self redundantClients:recipients users:conversation.activeUsers.set];
+}
+
+- (NSDictionary *)redundantClients:(NSDictionary *)recipients
+{
+    return [self redundantClients:recipients users:self.selfUser.connectionsAndTeamMembers];
+}
+
+- (NSDictionary *)redundantClients:(NSDictionary *)recipients users:(NSSet<MockUser *> *)users
+{
     NSMutableDictionary *redundantClients = [NSMutableDictionary new];
     for (NSString *userId in recipients) {
         NSDictionary *recipientPayload = recipients[userId];
-        MockUser *user = [conversation.activeUsers filteredOrderedSetUsingPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", userId]].firstObject;
+        MockUser *user = [users filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", userId]].anyObject;
         NSArray *recipientClients = [recipientPayload allKeys];
         NSSet *userClients = [user.clients mapWithBlock:^id(MockUserClient *client) {
             return client.identifier;
@@ -86,9 +106,19 @@
 
 - (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
 {
+    return [self missedClientsFromRecipients:recipients users:conversation.activeUsers.set sender:sender onlyForUserId:onlyForUserId];
+}
+
+- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
+{
+    return [self missedClientsFromRecipients:recipients users:self.selfUser.connectionsAndTeamMembers sender:sender onlyForUserId:onlyForUserId];
+}
+
+- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients users:(NSSet<MockUser *> *)users sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
+{
     NSMutableDictionary *missedClients = [NSMutableDictionary new];
 
-    for (MockUser *user in conversation.activeUsers) {
+    for (MockUser *user in users) {
         if (onlyForUserId != nil && ![[NSUUID uuidWithTransportString:user.identifier] isEqual:[NSUUID uuidWithTransportString:onlyForUserId]]) {
             continue;
         }
@@ -120,9 +150,19 @@
 
 - (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation
 {
+    return [self redundantClientsFromRecipients:recipients users:conversation.activeUsers.set];
+}
+
+- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients
+{
+    return [self redundantClientsFromRecipients:recipients users:self.selfUser.connectionsAndTeamMembers];
+}
+
+- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients users:(NSSet<MockUser *> *)users
+{
     NSMutableDictionary *redundantClients = [NSMutableDictionary new];
     
-    for (MockUser *user in conversation.activeUsers) {
+    for (MockUser *user in users) {
         ZMUserEntry *userEntry = [[recipients filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUserEntry  * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
             NSUUID *uuid = [[NSUUID alloc] initWithUUIDBytes:evaluatedObject.user.uuid.bytes];
             NSUUID *userId = [NSUUID uuidWithTransportString:user.identifier];
