@@ -20,10 +20,10 @@
 
 "conversation.username.groupingSeparator" = ", ";
 
-"user_session.error.blacklisted-email" = "Email address has been blacklisted";
+"user_session.error.blacklisted-email" = "This email address is not allowed";
 "user_session.error.email-exists" = "This email address has already been registered";
-"user_session.error.invalid-email" = "Please enter a valid email address";
+"user_session.error.invalid-email" = "This email address is invalid";
 "user_session.error.invalid-code" = "Please enter a valid code";
-"user_session.error.unauthorized-email" = "Unauthorized email address";
+"user_session.error.unauthorized-email" = "Something went wrong, please try again";
 "user_session.error.unknown" = "Something went wrong, please try again";
 
