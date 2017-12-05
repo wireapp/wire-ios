@@ -22,6 +22,7 @@ import Foundation
 
 private let log = ZMSLog(tag: "Accounts")
 
+public let AccountManagerDidUpdateAccountsNotificationName = Notification.Name("AccountManagerDidUpdateAccountsNotification")
 
 fileprivate extension UserDefaults {
 
@@ -129,6 +130,8 @@ public final class AccountManager: NSObject {
         } else {
             selectedAccount = computedAccount
         }
+        
+        NotificationCenter.default.post(name: AccountManagerDidUpdateAccountsNotificationName, object: self)
     }
     
     public func account(with id: UUID) -> Account? {
