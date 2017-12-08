@@ -787,7 +787,7 @@
 
 // Landing screen
 
-"landing.title" = "Secure messenger for everyone.";
+"landing.title" = "Secure messaging for everyone.";
 "landing.create_account.title" = "Create an account";
 "landing.create_account.subtitle" = "for personal use";
 "landing.create_team.title" = "Create a team";
