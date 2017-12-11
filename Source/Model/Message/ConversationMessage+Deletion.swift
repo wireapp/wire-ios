@@ -110,12 +110,12 @@ extension ZMMessage {
 extension ZMClientMessage {
     override var isEditableMessage : Bool {
         if let genericMsg = genericMessage {
-            return  genericMsg.hasEdited() ||
-                   (genericMsg.hasText() && (deliveryState == .sent || deliveryState == .delivered))
+            return (self.sender?.isSelfUser ?? false) &&
+                   (genericMsg.hasEdited() ||
+                       (genericMsg.hasText() && !isEphemeral && (deliveryState == .sent || deliveryState == .delivered)))
         }
         return false
     }
-
 }
 
 
