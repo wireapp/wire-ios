@@ -155,7 +155,12 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 
 - (BOOL)isUnreadMessage
 {
-    return (self.conversation != nil) && (self.conversation.lastReadServerTimeStamp != nil) && (self.serverTimestamp != nil) && ([self.serverTimestamp compare:self.conversation.lastReadServerTimeStamp] == NSOrderedDescending);
+    NSDate *lastReadTimeStamp = self.conversation.lastReadServerTimeStamp;
+    
+    // has conversation && (no last read timestamp || last read timstamp is earlier than msg timestamp)
+    return self.conversation != nil &&
+            (lastReadTimeStamp == nil ||
+             (self.serverTimestamp != nil && [self.serverTimestamp compare:lastReadTimeStamp] == NSOrderedDescending));
 }
 
 - (BOOL)shouldGenerateUnreadCount
