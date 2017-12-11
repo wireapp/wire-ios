@@ -81,6 +81,8 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 /// This is read only. Use -setVisibleWindowFromMessage:toMessage: to update this.
 /// This will return @c nil if the last read message has not yet been sync'd to this device, or if the conversation has no last read message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastReadMessage;
+/// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
+@property (nonatomic, readonly, nullable) ZMMessage *lastEditableMessage;
 
 @property (nonatomic) BOOL isSilenced;
 @property (nonatomic) BOOL isMuted DEPRECATED_ATTRIBUTE;

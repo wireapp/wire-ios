@@ -82,6 +82,7 @@ static NSString *const DraftMessageTextKey = @"draftMessageText";
 static NSString *const IsPendingConnectionConversationKey = @"isPendingConnectionConversation";
 static NSString *const LastModifiedDateKey = @"lastModifiedDate";
 static NSString *const LastReadMessageKey = @"lastReadMessage";
+static NSString *const lastEditableMessageKey = @"lastEditableMessage";
 static NSString *const LastServerSyncedActiveParticipantsKey = @"lastServerSyncedActiveParticipants";
 static NSString *const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
 static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
@@ -867,6 +868,18 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return message;
 }
 
+- (ZMMessage *)lastEditableMessage;
+{
+    __block ZMMessage *result;
+    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse
+                                    usingBlock:^(ZMMessage *message, NSUInteger ZM_UNUSED idx, BOOL *stop) {
+                                            if ([message isEditableMessage]) {
+                                                result = message;
+                                                *stop = YES;
+                                            }
+                                    }];
+    return result;
+}
 
 + (NSSet *)keyPathsForValuesAffectingLastReadMessage
 {
