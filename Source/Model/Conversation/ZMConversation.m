@@ -45,6 +45,7 @@
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "NSPredicate+ZMSearch.h"
 
+static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 
 NSString *const ZMConversationConnectionKey = @"connection";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
@@ -1020,6 +1021,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     [self resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]];
     [self resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]];
+    
+    ZMLogDebug(@"resetParticipantsBackToLastServerSync, mutableOtherActiveParticipants.count = %li", self.mutableOtherActiveParticipants.count);
 }
 
 - (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
@@ -1589,6 +1592,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     [self.mutableOtherActiveParticipants removeObjectsInArray:otherUsers.allObjects];
     [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:otherUsers];
+    
+    ZMLogDebug(@"internalRemoveParticipants, mutableOtherActiveParticipants.count = %li", self.mutableOtherActiveParticipants.count);
 }
 
 @dynamic isSelfAnActiveMember;
