@@ -122,7 +122,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
     }
     
     
-    func testThatItDoesNotNotifyObserversWhenTheConversationHasNoLastRead() {
+    func testThatItNotifiesObserversWhenTheConversationHasNoLastRead() {
         
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
@@ -136,7 +136,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(self.testObserver!.unreadMessageNotes.count, 0)
+        XCTAssertEqual(self.testObserver!.unreadMessageNotes.count, 1)
     }
     
     func testThatItDoesNotNotifyObserversWhenItHasNoConversation() {
