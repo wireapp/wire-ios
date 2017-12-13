@@ -78,7 +78,10 @@ extension HTTPURLResponse {
     var contentTypeImage: Bool {
         let contentTypeKey = HeaderKey.contentType.rawValue
         guard let contentType = allHeaderFields[contentTypeKey] as? String ?? allHeaderFields[contentTypeKey.lowercased()] as? String else { return false }
-        return contentType.contains("image")
+        
+        // we don't consider svg a valid image type b/c UIImage doesn't directly
+        // support it
+        return contentType.contains("image") && !contentType.contains("svg")
     }
 
 }
