@@ -273,7 +273,7 @@ ZM_EMPTY_ASSERTING_INIT();
         id <ZMUpstreamTranscoder> localTranscoder = self.transcoder;
         NSSet *keysToParse = [self.updatedObjects keysToParseAfterSyncingToken:token];
         if(response.result == ZMTransportResponseStatusSuccess) {
-            BOOL transcoderNeedsMoreRequests = [transcoder updateUpdatedObject:objectWithKeys.object requestUserInfo:userInfo response:response keysToParse:keysToParse];
+            BOOL transcoderNeedsMoreRequests = [localTranscoder updateUpdatedObject:objectWithKeys.object requestUserInfo:userInfo response:response keysToParse:keysToParse];
             BOOL needsMoreRequests = (keysToParse.count > 0) && transcoderNeedsMoreRequests;
             if (needsMoreRequests) {
                 [self.updatedObjects didNotFinishToSynchronizeToken:token];
