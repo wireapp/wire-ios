@@ -113,6 +113,10 @@ class ImageDownloaderTests: XCTestCase {
         assertThatItReturnsTheImageData(true, withHeaderFields: ["content-type": "image/gif"])
     }
     
+    func testThatItDoesNotReturnTheDataIfTheResponseHeaderContainsContentTypeImage_SVG() {
+        assertThatItReturnsTheImageData(false, withHeaderFields: ["content-type": "image/svg"])
+    }
+    
     func testThatItDoesNotReturnTheDataInTheCompletionIfTheResponseHeaderDoesNotContainContentTypeImage() {
         assertThatItReturnsTheImageData(false, withHeaderFields: ["Content-Type": "text/html"])
     }
