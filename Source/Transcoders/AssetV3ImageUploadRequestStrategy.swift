@@ -226,10 +226,10 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
         guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         if message.uploadState == .uploadingThumbnail {
-            request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request] response in
+            request.add(ZMCompletionHandler(on: managedObjectContext) { [weak request, weak self] response in
                 message.associatedTaskIdentifier = nil
                 if response.result == .expired || response.result == .temporaryError || response.result == .tryAgainLater {
-                    self.failUpload(of: message, keys: [#keyPath(ZMAssetClientMessage.uploadState)], request: request)
+                    self?.failUpload(of: message, keys: [#keyPath(ZMAssetClientMessage.uploadState)], request: request)
                 }
             })
 
