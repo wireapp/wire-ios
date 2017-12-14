@@ -546,7 +546,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploaded)
     }
     
-    func testThatItUpdatesTheTransferStateWhenTheNotUploadedCanceledMessageIsMerged()
+    func testThatItDeletesTheMessageWhenTheNotUploadedCanceledMessageIsMerged()
     {
         // given
         let nonce = UUID.create()
@@ -560,7 +560,7 @@ extension ZMAssetClientMessageTests {
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.cancelledUpload)
+        XCTAssertTrue(sut.isZombieObject)
     }
     
     /// This is testing a race condition on the receiver side if the sender cancels but not fast enough, and he BE just got the entire payload
@@ -580,7 +580,7 @@ extension ZMAssetClientMessageTests {
         sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent())
         
         // then
-        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.cancelledUpload)
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploaded)
     }
     
     func testThatItUpdatesTheTransferStateWhenTheNotUploadedFailedMessageIsMerged()
