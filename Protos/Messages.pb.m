@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 #import "Messages.pb.h"
 // @@protoc_insertion_point(imports)
 
@@ -55,6 +54,26 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   }
 }
 
+BOOL ZMEncryptionAlgorithmIsValidValue(ZMEncryptionAlgorithm value) {
+  switch (value) {
+    case ZMEncryptionAlgorithmAESCBC:
+    case ZMEncryptionAlgorithmAESGCM:
+      return YES;
+    default:
+      return NO;
+  }
+}
+NSString *NSStringFromZMEncryptionAlgorithm(ZMEncryptionAlgorithm value) {
+  switch (value) {
+    case ZMEncryptionAlgorithmAESCBC:
+      return @"ZMEncryptionAlgorithmAESCBC";
+    case ZMEncryptionAlgorithmAESGCM:
+      return @"ZMEncryptionAlgorithmAESGCM";
+    default:
+      return nil;
+  }
+}
+
 @interface ZMGenericMessage ()
 @property (strong) NSString* messageId;
 @property (strong) ZMText* text;
@@ -73,6 +92,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
 @property (strong) ZMConfirmation* confirmation;
 @property (strong) ZMReaction* reaction;
 @property (strong) ZMEphemeral* ephemeral;
+@property (strong) ZMAvailability* availability;
 @end
 
 @implementation ZMGenericMessage
@@ -196,6 +216,13 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
   hasEphemeral_ = !!_value_;
 }
 @synthesize ephemeral;
+- (BOOL) hasAvailability {
+  return !!hasAvailability_;
+}
+- (void) setHasAvailability:(BOOL) _value_ {
+  hasAvailability_ = !!_value_;
+}
+@synthesize availability;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -215,6 +242,7 @@ NSString *NSStringFromZMClientAction(ZMClientAction value) {
     self.confirmation = [ZMConfirmation defaultInstance];
     self.reaction = [ZMReaction defaultInstance];
     self.ephemeral = [ZMEphemeral defaultInstance];
+    self.availability = [ZMAvailability defaultInstance];
   }
   return self;
 }
@@ -309,6 +337,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasAvailability) {
+    if (!self.availability.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -362,6 +395,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasEphemeral) {
     [output writeMessage:18 value:self.ephemeral];
+  }
+  if (self.hasAvailability) {
+    [output writeMessage:19 value:self.availability];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -422,6 +458,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasEphemeral) {
     size_ += computeMessageSize(18, self.ephemeral);
+  }
+  if (self.hasAvailability) {
+    size_ += computeMessageSize(19, self.availability);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -554,6 +593,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasAvailability) {
+    [output appendFormat:@"%@%@ {\n", indent, @"availability"];
+    [self.availability writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -638,6 +683,11 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.ephemeral storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"ephemeral"];
   }
+  if (self.hasAvailability) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.availability storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"availability"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -683,6 +733,8 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasReaction || [self.reaction isEqual:otherMessage.reaction]) &&
       self.hasEphemeral == otherMessage.hasEphemeral &&
       (!self.hasEphemeral || [self.ephemeral isEqual:otherMessage.ephemeral]) &&
+      self.hasAvailability == otherMessage.hasAvailability &&
+      (!self.hasAvailability || [self.availability isEqual:otherMessage.availability]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -737,6 +789,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasEphemeral) {
     hashCode = hashCode * 31 + [self.ephemeral hash];
+  }
+  if (self.hasAvailability) {
+    hashCode = hashCode * 31 + [self.availability hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -831,6 +886,9 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasEphemeral) {
     [self mergeEphemeral:other.ephemeral];
+  }
+  if (other.hasAvailability) {
+    [self mergeAvailability:other.availability];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -999,6 +1057,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setEphemeral:[subBuilder buildPartial]];
+        break;
+      }
+      case 154: {
+        ZMAvailabilityBuilder* subBuilder = [ZMAvailability builder];
+        if (self.hasAvailability) {
+          [subBuilder mergeFrom:self.availability];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setAvailability:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1484,6 +1551,276 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearEphemeral {
   resultGenericMessage.hasEphemeral = NO;
   resultGenericMessage.ephemeral = [ZMEphemeral defaultInstance];
+  return self;
+}
+- (BOOL) hasAvailability {
+  return resultGenericMessage.hasAvailability;
+}
+- (ZMAvailability*) availability {
+  return resultGenericMessage.availability;
+}
+- (ZMGenericMessageBuilder*) setAvailability:(ZMAvailability*) value {
+  resultGenericMessage.hasAvailability = YES;
+  resultGenericMessage.availability = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setAvailabilityBuilder:(ZMAvailabilityBuilder*) builderForValue {
+  return [self setAvailability:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeAvailability:(ZMAvailability*) value {
+  if (resultGenericMessage.hasAvailability &&
+      resultGenericMessage.availability != [ZMAvailability defaultInstance]) {
+    resultGenericMessage.availability =
+      [[[ZMAvailability builderWithPrototype:resultGenericMessage.availability] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.availability = value;
+  }
+  resultGenericMessage.hasAvailability = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearAvailability {
+  resultGenericMessage.hasAvailability = NO;
+  resultGenericMessage.availability = [ZMAvailability defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMAvailability ()
+@property ZMAvailabilityType type;
+@end
+
+@implementation ZMAvailability
+
+- (BOOL) hasType {
+  return !!hasType_;
+}
+- (void) setHasType:(BOOL) _value_ {
+  hasType_ = !!_value_;
+}
+@synthesize type;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.type = ZMAvailabilityTypeNONE;
+  }
+  return self;
+}
+static ZMAvailability* defaultZMAvailabilityInstance = nil;
++ (void) initialize {
+  if (self == [ZMAvailability class]) {
+    defaultZMAvailabilityInstance = [[ZMAvailability alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMAvailabilityInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMAvailabilityInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasType) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasType) {
+    [output writeEnum:1 value:self.type];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasType) {
+    size_ += computeEnumSize(1, self.type);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMAvailability*) parseFromData:(NSData*) data {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromData:data] build];
+}
++ (ZMAvailability*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMAvailability*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromInputStream:input] build];
+}
++ (ZMAvailability*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAvailability*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMAvailability*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMAvailability*)[[[ZMAvailability builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMAvailabilityBuilder*) builder {
+  return [[ZMAvailabilityBuilder alloc] init];
+}
++ (ZMAvailabilityBuilder*) builderWithPrototype:(ZMAvailability*) prototype {
+  return [[ZMAvailability builder] mergeFrom:prototype];
+}
+- (ZMAvailabilityBuilder*) builder {
+  return [ZMAvailability builder];
+}
+- (ZMAvailabilityBuilder*) toBuilder {
+  return [ZMAvailability builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasType) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"type", NSStringFromZMAvailabilityType(self.type)];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasType) {
+    [dictionary setObject: @(self.type) forKey: @"type"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMAvailability class]]) {
+    return NO;
+  }
+  ZMAvailability *otherMessage = other;
+  return
+      self.hasType == otherMessage.hasType &&
+      (!self.hasType || self.type == otherMessage.type) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasType) {
+    hashCode = hashCode * 31 + self.type;
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+BOOL ZMAvailabilityTypeIsValidValue(ZMAvailabilityType value) {
+  switch (value) {
+    case ZMAvailabilityTypeNONE:
+    case ZMAvailabilityTypeAVAILABLE:
+    case ZMAvailabilityTypeAWAY:
+    case ZMAvailabilityTypeBUSY:
+      return YES;
+    default:
+      return NO;
+  }
+}
+NSString *NSStringFromZMAvailabilityType(ZMAvailabilityType value) {
+  switch (value) {
+    case ZMAvailabilityTypeNONE:
+      return @"ZMAvailabilityTypeNONE";
+    case ZMAvailabilityTypeAVAILABLE:
+      return @"ZMAvailabilityTypeAVAILABLE";
+    case ZMAvailabilityTypeAWAY:
+      return @"ZMAvailabilityTypeAWAY";
+    case ZMAvailabilityTypeBUSY:
+      return @"ZMAvailabilityTypeBUSY";
+    default:
+      return nil;
+  }
+}
+
+@interface ZMAvailabilityBuilder()
+@property (strong) ZMAvailability* resultAvailability;
+@end
+
+@implementation ZMAvailabilityBuilder
+@synthesize resultAvailability;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultAvailability = [[ZMAvailability alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultAvailability;
+}
+- (ZMAvailabilityBuilder*) clear {
+  self.resultAvailability = [[ZMAvailability alloc] init];
+  return self;
+}
+- (ZMAvailabilityBuilder*) clone {
+  return [ZMAvailability builderWithPrototype:resultAvailability];
+}
+- (ZMAvailability*) defaultInstance {
+  return [ZMAvailability defaultInstance];
+}
+- (ZMAvailability*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMAvailability*) buildPartial {
+  ZMAvailability* returnMe = resultAvailability;
+  self.resultAvailability = nil;
+  return returnMe;
+}
+- (ZMAvailabilityBuilder*) mergeFrom:(ZMAvailability*) other {
+  if (other == [ZMAvailability defaultInstance]) {
+    return self;
+  }
+  if (other.hasType) {
+    [self setType:other.type];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMAvailabilityBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMAvailabilityBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 8: {
+        ZMAvailabilityType value = (ZMAvailabilityType)[input readEnum];
+        if (ZMAvailabilityTypeIsValidValue(value)) {
+          [self setType:value];
+        } else {
+          [unknownFields mergeVarintField:1 value:value];
+        }
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasType {
+  return resultAvailability.hasType;
+}
+- (ZMAvailabilityType) type {
+  return resultAvailability.type;
+}
+- (ZMAvailabilityBuilder*) setType:(ZMAvailabilityType) value {
+  resultAvailability.hasType = YES;
+  resultAvailability.type = value;
+  return self;
+}
+- (ZMAvailabilityBuilder*) clearType {
+  resultAvailability.hasType = NO;
+  resultAvailability.type = ZMAvailabilityTypeNONE;
   return self;
 }
 @end
@@ -5472,19 +5809,13 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
 @end
 
 @interface ZMConfirmation ()
-@property (strong) NSString* messageId;
 @property ZMConfirmationType type;
+@property (strong) NSString* firstMessageId;
+@property (strong) NSMutableArray * moreMessageIdsArray;
 @end
 
 @implementation ZMConfirmation
 
-- (BOOL) hasMessageId {
-  return !!hasMessageId_;
-}
-- (void) setHasMessageId:(BOOL) _value_ {
-  hasMessageId_ = !!_value_;
-}
-@synthesize messageId;
 - (BOOL) hasType {
   return !!hasType_;
 }
@@ -5492,10 +5823,19 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
   hasType_ = !!_value_;
 }
 @synthesize type;
+- (BOOL) hasFirstMessageId {
+  return !!hasFirstMessageId_;
+}
+- (void) setHasFirstMessageId:(BOOL) _value_ {
+  hasFirstMessageId_ = !!_value_;
+}
+@synthesize firstMessageId;
+@synthesize moreMessageIdsArray;
+@dynamic moreMessageIds;
 - (instancetype) init {
   if ((self = [super init])) {
-    self.messageId = @"";
     self.type = ZMConfirmationTypeDELIVERED;
+    self.firstMessageId = @"";
   }
   return self;
 }
@@ -5511,22 +5851,31 @@ static ZMConfirmation* defaultZMConfirmationInstance = nil;
 - (instancetype) defaultInstance {
   return defaultZMConfirmationInstance;
 }
+- (NSArray *)moreMessageIds {
+  return moreMessageIdsArray;
+}
+- (NSString*)moreMessageIdsAtIndex:(NSUInteger)index {
+  return [moreMessageIdsArray objectAtIndex:index];
+}
 - (BOOL) isInitialized {
-  if (!self.hasMessageId) {
+  if (!self.hasType) {
     return NO;
   }
-  if (!self.hasType) {
+  if (!self.hasFirstMessageId) {
     return NO;
   }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
-  if (self.hasMessageId) {
-    [output writeString:1 value:self.messageId];
+  if (self.hasFirstMessageId) {
+    [output writeString:1 value:self.firstMessageId];
   }
   if (self.hasType) {
     [output writeEnum:2 value:self.type];
   }
+  [self.moreMessageIdsArray enumerateObjectsUsingBlock:^(NSString *element, NSUInteger idx, BOOL *stop) {
+    [output writeString:3 value:element];
+  }];
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -5536,11 +5885,20 @@ static ZMConfirmation* defaultZMConfirmationInstance = nil;
   }
 
   size_ = 0;
-  if (self.hasMessageId) {
-    size_ += computeStringSize(1, self.messageId);
+  if (self.hasFirstMessageId) {
+    size_ += computeStringSize(1, self.firstMessageId);
   }
   if (self.hasType) {
     size_ += computeEnumSize(2, self.type);
+  }
+  {
+    __block SInt32 dataSize = 0;
+    const NSUInteger count = self.moreMessageIdsArray.count;
+    [self.moreMessageIdsArray enumerateObjectsUsingBlock:^(NSString *element, NSUInteger idx, BOOL *stop) {
+      dataSize += computeStringSizeNoTag(element);
+    }];
+    size_ += dataSize;
+    size_ += (SInt32)(1 * count);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -5577,21 +5935,25 @@ static ZMConfirmation* defaultZMConfirmationInstance = nil;
   return [ZMConfirmation builderWithPrototype:self];
 }
 - (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
-  if (self.hasMessageId) {
-    [output appendFormat:@"%@%@: %@\n", indent, @"messageId", self.messageId];
+  if (self.hasFirstMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"firstMessageId", self.firstMessageId];
   }
   if (self.hasType) {
     [output appendFormat:@"%@%@: %@\n", indent, @"type", NSStringFromZMConfirmationType(self.type)];
   }
+  [self.moreMessageIdsArray enumerateObjectsUsingBlock:^(id obj, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"moreMessageIds", obj];
+  }];
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
-  if (self.hasMessageId) {
-    [dictionary setObject: self.messageId forKey: @"messageId"];
+  if (self.hasFirstMessageId) {
+    [dictionary setObject: self.firstMessageId forKey: @"firstMessageId"];
   }
   if (self.hasType) {
     [dictionary setObject: @(self.type) forKey: @"type"];
   }
+  [dictionary setObject:self.moreMessageIds forKey: @"moreMessageIds"];
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -5603,20 +5965,24 @@ static ZMConfirmation* defaultZMConfirmationInstance = nil;
   }
   ZMConfirmation *otherMessage = other;
   return
-      self.hasMessageId == otherMessage.hasMessageId &&
-      (!self.hasMessageId || [self.messageId isEqual:otherMessage.messageId]) &&
+      self.hasFirstMessageId == otherMessage.hasFirstMessageId &&
+      (!self.hasFirstMessageId || [self.firstMessageId isEqual:otherMessage.firstMessageId]) &&
       self.hasType == otherMessage.hasType &&
       (!self.hasType || self.type == otherMessage.type) &&
+      [self.moreMessageIdsArray isEqualToArray:otherMessage.moreMessageIdsArray] &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
   __block NSUInteger hashCode = 7;
-  if (self.hasMessageId) {
-    hashCode = hashCode * 31 + [self.messageId hash];
+  if (self.hasFirstMessageId) {
+    hashCode = hashCode * 31 + [self.firstMessageId hash];
   }
   if (self.hasType) {
     hashCode = hashCode * 31 + self.type;
   }
+  [self.moreMessageIdsArray enumerateObjectsUsingBlock:^(NSString *element, NSUInteger idx, BOOL *stop) {
+    hashCode = hashCode * 31 + [element hash];
+  }];
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
 }
@@ -5680,11 +6046,18 @@ NSString *NSStringFromZMConfirmationType(ZMConfirmationType value) {
   if (other == [ZMConfirmation defaultInstance]) {
     return self;
   }
-  if (other.hasMessageId) {
-    [self setMessageId:other.messageId];
-  }
   if (other.hasType) {
     [self setType:other.type];
+  }
+  if (other.hasFirstMessageId) {
+    [self setFirstMessageId:other.firstMessageId];
+  }
+  if (other.moreMessageIdsArray.count > 0) {
+    if (resultConfirmation.moreMessageIdsArray == nil) {
+      resultConfirmation.moreMessageIdsArray = [[NSMutableArray alloc] initWithArray:other.moreMessageIdsArray];
+    } else {
+      [resultConfirmation.moreMessageIdsArray addObjectsFromArray:other.moreMessageIdsArray];
+    }
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -5708,7 +6081,7 @@ NSString *NSStringFromZMConfirmationType(ZMConfirmationType value) {
         break;
       }
       case 10: {
-        [self setMessageId:[input readString]];
+        [self setFirstMessageId:[input readString]];
         break;
       }
       case 16: {
@@ -5720,24 +6093,12 @@ NSString *NSStringFromZMConfirmationType(ZMConfirmationType value) {
         }
         break;
       }
+      case 26: {
+        [self addMoreMessageIds:[input readString]];
+        break;
+      }
     }
   }
-}
-- (BOOL) hasMessageId {
-  return resultConfirmation.hasMessageId;
-}
-- (NSString*) messageId {
-  return resultConfirmation.messageId;
-}
-- (ZMConfirmationBuilder*) setMessageId:(NSString*) value {
-  resultConfirmation.hasMessageId = YES;
-  resultConfirmation.messageId = value;
-  return self;
-}
-- (ZMConfirmationBuilder*) clearMessageId {
-  resultConfirmation.hasMessageId = NO;
-  resultConfirmation.messageId = @"";
-  return self;
 }
 - (BOOL) hasType {
   return resultConfirmation.hasType;
@@ -5753,6 +6114,43 @@ NSString *NSStringFromZMConfirmationType(ZMConfirmationType value) {
 - (ZMConfirmationBuilder*) clearType {
   resultConfirmation.hasType = NO;
   resultConfirmation.type = ZMConfirmationTypeDELIVERED;
+  return self;
+}
+- (BOOL) hasFirstMessageId {
+  return resultConfirmation.hasFirstMessageId;
+}
+- (NSString*) firstMessageId {
+  return resultConfirmation.firstMessageId;
+}
+- (ZMConfirmationBuilder*) setFirstMessageId:(NSString*) value {
+  resultConfirmation.hasFirstMessageId = YES;
+  resultConfirmation.firstMessageId = value;
+  return self;
+}
+- (ZMConfirmationBuilder*) clearFirstMessageId {
+  resultConfirmation.hasFirstMessageId = NO;
+  resultConfirmation.firstMessageId = @"";
+  return self;
+}
+- (NSMutableArray *)moreMessageIds {
+  return resultConfirmation.moreMessageIdsArray;
+}
+- (NSString*)moreMessageIdsAtIndex:(NSUInteger)index {
+  return [resultConfirmation moreMessageIdsAtIndex:index];
+}
+- (ZMConfirmationBuilder *)addMoreMessageIds:(NSString*)value {
+  if (resultConfirmation.moreMessageIdsArray == nil) {
+    resultConfirmation.moreMessageIdsArray = [[NSMutableArray alloc]init];
+  }
+  [resultConfirmation.moreMessageIdsArray addObject:value];
+  return self;
+}
+- (ZMConfirmationBuilder *)setMoreMessageIdsArray:(NSArray *)array {
+  resultConfirmation.moreMessageIdsArray = [[NSMutableArray alloc] initWithArray:array];
+  return self;
+}
+- (ZMConfirmationBuilder *)clearMoreMessageIds {
+  resultConfirmation.moreMessageIdsArray = nil;
   return self;
 }
 @end
@@ -7087,6 +7485,8 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
 @property (strong) ZMAssetImageMetaData* image;
 @property (strong) ZMAssetVideoMetaData* video;
 @property (strong) ZMAssetAudioMetaData* audio;
+@property (strong) NSString* source;
+@property (strong) NSString* caption;
 @end
 
 @implementation ZMAssetOriginal
@@ -7133,6 +7533,20 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
   hasAudio_ = !!_value_;
 }
 @synthesize audio;
+- (BOOL) hasSource {
+  return !!hasSource_;
+}
+- (void) setHasSource:(BOOL) _value_ {
+  hasSource_ = !!_value_;
+}
+@synthesize source;
+- (BOOL) hasCaption {
+  return !!hasCaption_;
+}
+- (void) setHasCaption:(BOOL) _value_ {
+  hasCaption_ = !!_value_;
+}
+@synthesize caption;
 - (instancetype) init {
   if ((self = [super init])) {
     self.mimeType = @"";
@@ -7141,6 +7555,8 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value) {
     self.image = [ZMAssetImageMetaData defaultInstance];
     self.video = [ZMAssetVideoMetaData defaultInstance];
     self.audio = [ZMAssetAudioMetaData defaultInstance];
+    self.source = @"";
+    self.caption = @"";
   }
   return self;
 }
@@ -7189,6 +7605,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   if (self.hasAudio) {
     [output writeMessage:6 value:self.audio];
   }
+  if (self.hasSource) {
+    [output writeString:7 value:self.source];
+  }
+  if (self.hasCaption) {
+    [output writeString:8 value:self.caption];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -7215,6 +7637,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   }
   if (self.hasAudio) {
     size_ += computeMessageSize(6, self.audio);
+  }
+  if (self.hasSource) {
+    size_ += computeStringSize(7, self.source);
+  }
+  if (self.hasCaption) {
+    size_ += computeStringSize(8, self.caption);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -7278,6 +7706,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasSource) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"source", self.source];
+  }
+  if (self.hasCaption) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"caption", self.caption];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -7305,6 +7739,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
    [self.audio storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"audio"];
   }
+  if (self.hasSource) {
+    [dictionary setObject: self.source forKey: @"source"];
+  }
+  if (self.hasCaption) {
+    [dictionary setObject: self.caption forKey: @"caption"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -7328,6 +7768,10 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
       (!self.hasVideo || [self.video isEqual:otherMessage.video]) &&
       self.hasAudio == otherMessage.hasAudio &&
       (!self.hasAudio || [self.audio isEqual:otherMessage.audio]) &&
+      self.hasSource == otherMessage.hasSource &&
+      (!self.hasSource || [self.source isEqual:otherMessage.source]) &&
+      self.hasCaption == otherMessage.hasCaption &&
+      (!self.hasCaption || [self.caption isEqual:otherMessage.caption]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -7349,6 +7793,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   }
   if (self.hasAudio) {
     hashCode = hashCode * 31 + [self.audio hash];
+  }
+  if (self.hasSource) {
+    hashCode = hashCode * 31 + [self.source hash];
+  }
+  if (self.hasCaption) {
+    hashCode = hashCode * 31 + [self.caption hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -7411,6 +7861,12 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
   if (other.hasAudio) {
     [self mergeAudio:other.audio];
   }
+  if (other.hasSource) {
+    [self setSource:other.source];
+  }
+  if (other.hasCaption) {
+    [self setCaption:other.caption];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -7469,6 +7925,14 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setAudio:[subBuilder buildPartial]];
+        break;
+      }
+      case 58: {
+        [self setSource:[input readString]];
+        break;
+      }
+      case 66: {
+        [self setCaption:[input readString]];
         break;
       }
     }
@@ -7610,6 +8074,38 @@ static ZMAssetOriginal* defaultZMAssetOriginalInstance = nil;
 - (ZMAssetOriginalBuilder*) clearAudio {
   resultOriginal.hasAudio = NO;
   resultOriginal.audio = [ZMAssetAudioMetaData defaultInstance];
+  return self;
+}
+- (BOOL) hasSource {
+  return resultOriginal.hasSource;
+}
+- (NSString*) source {
+  return resultOriginal.source;
+}
+- (ZMAssetOriginalBuilder*) setSource:(NSString*) value {
+  resultOriginal.hasSource = YES;
+  resultOriginal.source = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearSource {
+  resultOriginal.hasSource = NO;
+  resultOriginal.source = @"";
+  return self;
+}
+- (BOOL) hasCaption {
+  return resultOriginal.hasCaption;
+}
+- (NSString*) caption {
+  return resultOriginal.caption;
+}
+- (ZMAssetOriginalBuilder*) setCaption:(NSString*) value {
+  resultOriginal.hasCaption = YES;
+  resultOriginal.caption = value;
+  return self;
+}
+- (ZMAssetOriginalBuilder*) clearCaption {
+  resultOriginal.hasCaption = NO;
+  resultOriginal.caption = @"";
   return self;
 }
 @end
@@ -8905,6 +9401,7 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
 @property (strong) NSData* sha256;
 @property (strong) NSString* assetId;
 @property (strong) NSString* assetToken;
+@property ZMEncryptionAlgorithm encryption;
 @end
 
 @implementation ZMAssetRemoteData
@@ -8937,12 +9434,20 @@ static ZMAssetAudioMetaData* defaultZMAssetAudioMetaDataInstance = nil;
   hasAssetToken_ = !!_value_;
 }
 @synthesize assetToken;
+- (BOOL) hasEncryption {
+  return !!hasEncryption_;
+}
+- (void) setHasEncryption:(BOOL) _value_ {
+  hasEncryption_ = !!_value_;
+}
+@synthesize encryption;
 - (instancetype) init {
   if ((self = [super init])) {
     self.otrKey = [NSData data];
     self.sha256 = [NSData data];
     self.assetId = @"";
     self.assetToken = @"";
+    self.encryption = ZMEncryptionAlgorithmAESCBC;
   }
   return self;
 }
@@ -8980,6 +9485,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   if (self.hasAssetToken) {
     [output writeString:5 value:self.assetToken];
   }
+  if (self.hasEncryption) {
+    [output writeEnum:6 value:self.encryption];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -9000,6 +9508,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   }
   if (self.hasAssetToken) {
     size_ += computeStringSize(5, self.assetToken);
+  }
+  if (self.hasEncryption) {
+    size_ += computeEnumSize(6, self.encryption);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -9048,6 +9559,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   if (self.hasAssetToken) {
     [output appendFormat:@"%@%@: %@\n", indent, @"assetToken", self.assetToken];
   }
+  if (self.hasEncryption) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"encryption", NSStringFromZMEncryptionAlgorithm(self.encryption)];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -9062,6 +9576,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   }
   if (self.hasAssetToken) {
     [dictionary setObject: self.assetToken forKey: @"assetToken"];
+  }
+  if (self.hasEncryption) {
+    [dictionary setObject: @(self.encryption) forKey: @"encryption"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -9082,6 +9599,8 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
       (!self.hasAssetId || [self.assetId isEqual:otherMessage.assetId]) &&
       self.hasAssetToken == otherMessage.hasAssetToken &&
       (!self.hasAssetToken || [self.assetToken isEqual:otherMessage.assetToken]) &&
+      self.hasEncryption == otherMessage.hasEncryption &&
+      (!self.hasEncryption || self.encryption == otherMessage.encryption) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -9097,6 +9616,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   }
   if (self.hasAssetToken) {
     hashCode = hashCode * 31 + [self.assetToken hash];
+  }
+  if (self.hasEncryption) {
+    hashCode = hashCode * 31 + self.encryption;
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -9153,6 +9675,9 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   if (other.hasAssetToken) {
     [self setAssetToken:other.assetToken];
   }
+  if (other.hasEncryption) {
+    [self setEncryption:other.encryption];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -9188,6 +9713,15 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
       }
       case 42: {
         [self setAssetToken:[input readString]];
+        break;
+      }
+      case 48: {
+        ZMEncryptionAlgorithm value = (ZMEncryptionAlgorithm)[input readEnum];
+        if (ZMEncryptionAlgorithmIsValidValue(value)) {
+          [self setEncryption:value];
+        } else {
+          [unknownFields mergeVarintField:6 value:value];
+        }
         break;
       }
     }
@@ -9255,6 +9789,22 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
 - (ZMAssetRemoteDataBuilder*) clearAssetToken {
   resultRemoteData.hasAssetToken = NO;
   resultRemoteData.assetToken = @"";
+  return self;
+}
+- (BOOL) hasEncryption {
+  return resultRemoteData.hasEncryption;
+}
+- (ZMEncryptionAlgorithm) encryption {
+  return resultRemoteData.encryption;
+}
+- (ZMAssetRemoteDataBuilder*) setEncryption:(ZMEncryptionAlgorithm) value {
+  resultRemoteData.hasEncryption = YES;
+  resultRemoteData.encryption = value;
+  return self;
+}
+- (ZMAssetRemoteDataBuilder*) clearEncryption {
+  resultRemoteData.hasEncryption = NO;
+  resultRemoteData.encryption = ZMEncryptionAlgorithmAESCBC;
   return self;
 }
 @end
@@ -9480,6 +10030,7 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
 @interface ZMExternal ()
 @property (strong) NSData* otrKey;
 @property (strong) NSData* sha256;
+@property ZMEncryptionAlgorithm encryption;
 @end
 
 @implementation ZMExternal
@@ -9498,10 +10049,18 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
   hasSha256_ = !!_value_;
 }
 @synthesize sha256;
+- (BOOL) hasEncryption {
+  return !!hasEncryption_;
+}
+- (void) setHasEncryption:(BOOL) _value_ {
+  hasEncryption_ = !!_value_;
+}
+@synthesize encryption;
 - (instancetype) init {
   if ((self = [super init])) {
     self.otrKey = [NSData data];
     self.sha256 = [NSData data];
+    self.encryption = ZMEncryptionAlgorithmAESCBC;
   }
   return self;
 }
@@ -9530,6 +10089,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   if (self.hasSha256) {
     [output writeData:2 value:self.sha256];
   }
+  if (self.hasEncryption) {
+    [output writeEnum:3 value:self.encryption];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -9544,6 +10106,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   }
   if (self.hasSha256) {
     size_ += computeDataSize(2, self.sha256);
+  }
+  if (self.hasEncryption) {
+    size_ += computeEnumSize(3, self.encryption);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -9586,6 +10151,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   if (self.hasSha256) {
     [output appendFormat:@"%@%@: %@\n", indent, @"sha256", self.sha256];
   }
+  if (self.hasEncryption) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"encryption", NSStringFromZMEncryptionAlgorithm(self.encryption)];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -9594,6 +10162,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   }
   if (self.hasSha256) {
     [dictionary setObject: self.sha256 forKey: @"sha256"];
+  }
+  if (self.hasEncryption) {
+    [dictionary setObject: @(self.encryption) forKey: @"encryption"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -9610,6 +10181,8 @@ static ZMExternal* defaultZMExternalInstance = nil;
       (!self.hasOtrKey || [self.otrKey isEqual:otherMessage.otrKey]) &&
       self.hasSha256 == otherMessage.hasSha256 &&
       (!self.hasSha256 || [self.sha256 isEqual:otherMessage.sha256]) &&
+      self.hasEncryption == otherMessage.hasEncryption &&
+      (!self.hasEncryption || self.encryption == otherMessage.encryption) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -9619,6 +10192,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   }
   if (self.hasSha256) {
     hashCode = hashCode * 31 + [self.sha256 hash];
+  }
+  if (self.hasEncryption) {
+    hashCode = hashCode * 31 + self.encryption;
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -9669,6 +10245,9 @@ static ZMExternal* defaultZMExternalInstance = nil;
   if (other.hasSha256) {
     [self setSha256:other.sha256];
   }
+  if (other.hasEncryption) {
+    [self setEncryption:other.encryption];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -9696,6 +10275,15 @@ static ZMExternal* defaultZMExternalInstance = nil;
       }
       case 18: {
         [self setSha256:[input readData]];
+        break;
+      }
+      case 24: {
+        ZMEncryptionAlgorithm value = (ZMEncryptionAlgorithm)[input readEnum];
+        if (ZMEncryptionAlgorithmIsValidValue(value)) {
+          [self setEncryption:value];
+        } else {
+          [unknownFields mergeVarintField:3 value:value];
+        }
         break;
       }
     }
@@ -9731,6 +10319,22 @@ static ZMExternal* defaultZMExternalInstance = nil;
 - (ZMExternalBuilder*) clearSha256 {
   resultExternal.hasSha256 = NO;
   resultExternal.sha256 = [NSData data];
+  return self;
+}
+- (BOOL) hasEncryption {
+  return resultExternal.hasEncryption;
+}
+- (ZMEncryptionAlgorithm) encryption {
+  return resultExternal.encryption;
+}
+- (ZMExternalBuilder*) setEncryption:(ZMEncryptionAlgorithm) value {
+  resultExternal.hasEncryption = YES;
+  resultExternal.encryption = value;
+  return self;
+}
+- (ZMExternalBuilder*) clearEncryption {
+  resultExternal.hasEncryption = NO;
+  resultExternal.encryption = ZMEncryptionAlgorithmAESCBC;
   return self;
 }
 @end
