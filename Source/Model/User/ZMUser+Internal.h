@@ -30,6 +30,7 @@
 extern NSString * __nonnull const SessionObjectIDKey;
 extern NSString * __nonnull const ZMUserActiveConversationsKey;
 extern NSString * __nonnull const UserClientsKey;
+extern NSString * __nonnull const AvailabilityKey;
 
 @interface ZMUser (Internal)
 
@@ -95,6 +96,7 @@ extern NSString * __nonnull const UserClientsKey;
 
 + (nonnull NSPredicate *)predicateForMediumImageNeedingToBeUpdatedFromBackend;
 + (nonnull NSPredicate *)predicateForSmallImageNeedingToBeUpdatedFromBackend;
++ (nonnull NSPredicate *)predicateForSelfUser;
 + (nonnull NSPredicate *)predicateForUsersOtherThanSelf;
 + (nonnull NSPredicate *)predicateForMediumImageDownloadFilter;
 + (nonnull NSPredicate *)predicateForSmallImageDownloadFilter;

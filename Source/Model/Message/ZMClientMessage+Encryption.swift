@@ -97,49 +97,56 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
 
 extension ZMGenericMessage {
+        
+    public func encryptedMessagePayloadData(_ conversation: ZMConversation, externalData: Data?) -> (data: Data, strategy: MissingClientsStrategy)? {
+        guard let context = conversation.managedObjectContext else { return nil }
+        
+        let recipientsAndStrategy = recipientUsersforMessage(in: conversation, selfUser: ZMUser.selfUser(in: context))
+        if let data = encryptedMessagePayloadData(for: recipientsAndStrategy.users, externalData: nil, context: context) {
+            return (data, recipientsAndStrategy.strategy)
+        }
+        
+        return nil
+    }
     
-    /// Returns the payload encrypted for each recipients in the conversation, 
-    /// and the strategy to use to handle missing clients
-    public func encryptedMessagePayloadData(_ conversation: ZMConversation,
-                                             externalData: Data?)
-        -> (data: Data, strategy: MissingClientsStrategy)?
-    {
-        guard let context = conversation.managedObjectContext
-        else { return nil }
+    public func encryptedMessagePayloadDataForBroadcast(context: NSManagedObjectContext) -> (data: Data, strategy: MissingClientsStrategy)? {
+        let recipients = ZMUser.connectionsAndTeamMembers(in: context)
+        
+        if let data = encryptedMessagePayloadData(for: recipients, externalData: nil, context: context) {
+            return (data, MissingClientsStrategy.doNotIgnoreAnyMissingClient)
+        }
+        
+        return nil
+    }
+    
+    fileprivate func encryptedMessagePayloadData(for recipients: Set<ZMUser>, externalData: Data?, context: NSManagedObjectContext) -> Data? {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.remoteIdentifier != nil
-        else { return nil }
+            else { return nil }
         
         let encryptionContext = selfClient.keysStore.encryptionContext
-        var messageDataAndStrategy : (data: Data, strategy: MissingClientsStrategy)?
+        var messageData : Data?
         
         encryptionContext.perform { (sessionsDirectory) in
-            let messageAndStrategy = self.otrMessage(selfClient,
-                conversation: conversation,
-                externalData: externalData,
-                sessionDirectory: sessionsDirectory
-            )
-            var messageData = messageAndStrategy.message.data()
+            let message = otrMessage(selfClient, recipients: recipients, externalData: externalData, sessionDirectory: sessionsDirectory)
+
+            messageData = message.data()
             
             // message too big?
             if let data = messageData, UInt(data.count) > ZMClientMessageByteSizeExternalThreshold && externalData == nil {
                 // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
                 // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
                 sessionsDirectory.discardCache()
-                messageData = self.encryptedMessageDataWithExternalDataBlob(conversation)!.data
-            }
-            if let data = messageData {
-                messageDataAndStrategy = (data: data, strategy: messageAndStrategy.strategy)
+                messageData = self.encryptedMessageDataWithExternalDataBlob(recipients, context: context)
             }
         }
-        return messageDataAndStrategy
+        return messageData
     }
-    
     
     func recipientUsersforMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
     
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
-            guard self.hasConfirmation(), self.confirmation.messageId != nil else { return nil }
-            guard let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.messageId), for:conversation, in:conversation.managedObjectContext!) else { return nil }
+            guard self.hasConfirmation(), self.confirmation.firstMessageId != nil else { return nil }
+            guard let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.firstMessageId), for:conversation, in:conversation.managedObjectContext!) else { return nil }
             guard let sender = message.sender else { return nil }
             return Set(arrayLiteral: sender)
         }
@@ -167,7 +174,7 @@ extension ZMGenericMessage {
         var specifiedUsersOnly = true
         if self.hasConfirmation() || self.hasEphemeral() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
-                let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.messageId)" : ""
+                let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.firstMessageId)" : ""
                 fatal("confirmation need a recipient\n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue), connection: \(String(describing: conversation.connection))\(confirmationInfo)")
             }
             recipientUsers = recipients
@@ -200,6 +207,19 @@ extension ZMGenericMessage {
         let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: recipients, blob: externalData)
         
         return (message: message, strategy: strategy)
+    }
+    
+    /// Returns a message with recipients
+    fileprivate func otrMessage(_ selfClient: UserClient,
+                                recipients: Set<ZMUser>,
+                                externalData: Data?,
+                                sessionDirectory: EncryptionSessionsDirectory) -> ZMNewOtrMessage {
+        
+        let userEntries = self.recipientsWithEncryptedData(selfClient, recipients: recipients, sessionDirectory: sessionDirectory)
+        let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
+        let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: userEntries, blob: externalData)
+        
+        return message
     }
     
     /// Returns the recipients and the encrypted data for each recipient
@@ -261,6 +281,15 @@ extension ZMGenericMessage {
         
         let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: NSUUID().transportString())
         return externalGenericMessage.encryptedMessagePayloadData(conversation, externalData: encryptedDataWithKeys.data)
+    }
+    
+    fileprivate func encryptedMessageDataWithExternalDataBlob(_ recipients: Set<ZMUser>, context: NSManagedObjectContext) -> Data? {
+        
+        guard let encryptedDataWithKeys = ZMGenericMessage.encryptedDataWithKeys(from: self)
+            else {return nil}
+        
+        let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: NSUUID().transportString())
+        return externalGenericMessage.encryptedMessagePayloadData(for: recipients, externalData: encryptedDataWithKeys.data, context: context)
     }
 }
 

@@ -310,7 +310,7 @@ class DatabaseMigrationTests: DatabaseBaseTest {
     
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_2_31_0_ToCurrentModelVersion() {
         
-        ["2-24-1", "2-25-0", "2-26-0", "2-27-0", "2-28-0", "2-29-0", "2-30-0", "2-31-0"].forEach { storeFile in
+        ["2-24-1", "2-25-0", "2-26-0", "2-27-0", "2-28-0", "2-29-0", "2-30-0", "2-31-0", "2-39-0"].forEach { storeFile in
             // GIVEN
             self.createDatabaseWithOlderModelVersion(versionName: storeFile)
             

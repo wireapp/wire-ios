@@ -76,6 +76,9 @@ class GenericMessageTests: ZMTBaseTest {
             },
             {
                 return ZMGenericMessage.knock(nonce: NSUUID().transportString(), expiresAfter: 10)
+            },
+            {
+                return ZMGenericMessage.genericMessage(withAvailability: .away)
             }
         ]
         

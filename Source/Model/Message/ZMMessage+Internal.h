@@ -81,7 +81,6 @@ extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
 
 /// Removes the message only for clients of the selfUser
 + (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide * _Nonnull)hiddenMessage
-                                      fromUser:(ZMUser * _Nonnull)user
                         inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Removes the message for all participants of the message's conversation

@@ -91,7 +91,8 @@
     self.hasConfirmation ||
     self.hasEphemeral ||
     self.hasCalling ||
-    self.hasExternal;
+    self.hasExternal ||
+    self.hasAvailability;
 }
 
 

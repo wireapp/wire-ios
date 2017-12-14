@@ -551,3 +551,42 @@ extension ZMUserTests {
         checkFilenameIsValid(pattern: pattern, filename: filename)
     }
 }
+
+// MARK: - Availability
+extension ZMUserTests {
+    
+    func testThatWeCanUpdateAvailabilityFromGenericMessage() {
+        let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
+        XCTAssertEqual(user.availability, .none)
+                
+        // when
+        user.updateAvailability(from: ZMGenericMessage.genericMessage(withAvailability: .away))
+        
+        // then
+        XCTAssertEqual(user.availability, .away)
+    }
+    
+    func testThatWeAllowModifyingAvailabilityOnTheSelfUser() {
+        // given
+        XCTAssertEqual(selfUser.availability, .none)
+        
+        // when
+        selfUser.availability = .away
+        
+        // then
+        XCTAssertEqual(selfUser.availability, .away)
+    }
+    
+    func testThatWeDontAllowModifyingAvailabilityOnOtherUsers() {
+        // given
+        let user = ZMUser.insert(in: self.uiMOC, name: "Foo")
+        XCTAssertEqual(user.availability, .none)
+        
+        // when
+        user.availability = .away
+        
+        // then
+        XCTAssertEqual(user.availability, .none)
+    }
+    
+}

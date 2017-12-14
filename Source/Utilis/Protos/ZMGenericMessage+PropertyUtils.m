@@ -118,7 +118,7 @@
 + (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
 {
     ZMConfirmationBuilder *builder = [ZMConfirmation builder];
-    builder.messageId = messageID;
+    builder.firstMessageId = messageID;
     builder.type = confirmationType;
     return [builder build];
 }

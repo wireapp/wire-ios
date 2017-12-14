@@ -159,6 +159,13 @@ public extension ZMGenericMessage {
         let asset = ZMAsset.asset(withOriginal: original, preview: nil)
         return ZMGenericMessage.genericMessage(asset: asset, messageID: nonce, expiresAfter: timeout)
     }
+        
+    public static func genericMessage(withAvailability availability : Availability) -> ZMGenericMessage {
+        let messageBuilder = ZMGenericMessage.builder()!
+        _ = messageBuilder.setAvailability(ZMAvailability.availability(availability))
+        _ = messageBuilder.setMessageId(UUID().transportString())
+        return messageBuilder.build()
+    }
     
     // MARK: Text
 
@@ -552,6 +559,27 @@ public extension ZMTweet {
         }
         return builder.build()
     }
+}
+
+public extension ZMAvailability {
+    
+    public static func availability(_ availability : Availability) -> ZMAvailability {
+        let builder = ZMAvailability.builder()!
+        
+        switch availability {
+        case .none:
+            builder.setType(.NONE)
+        case .available:
+            builder.setType(.AVAILABLE)
+        case .away:
+            builder.setType(.AWAY)
+        case .busy:
+            builder.setType(.BUSY)
+        }
+        
+        return builder.build()
+    }
+    
 }
 
 
