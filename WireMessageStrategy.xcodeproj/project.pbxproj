@@ -19,6 +19,8 @@
 		16D0E0851DF8954F0075DF8F /* OTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0841DF8954F0075DF8F /* OTREntity.swift */; };
 		16D0E08A1DF9994E0075DF8F /* OTREntityTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E0881DF999460075DF8F /* OTREntityTranscoderTests.swift */; };
 		16D0E08C1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */; };
+		16D138391FD5AFC2001B4411 /* AvailabilityRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D138381FD5AFC2001B4411 /* AvailabilityRequestStrategyTests.swift */; };
+		16D95A451FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D95A441FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift */; };
 		5400E16F1E6099AE00B6E27E /* MessagingTestBase.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5400E16E1E6099AD00B6E27E /* MessagingTestBase.swift */; };
 		5418CD9F1E55D734004AF1A4 /* ClientMessageTranscoderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5418CD9E1E55D734004AF1A4 /* ClientMessageTranscoderTests.swift */; };
 		5418CDA11E55D78D004AF1A4 /* MessageExpirationTimerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5418CDA01E55D78D004AF1A4 /* MessageExpirationTimerTests.swift */; };
@@ -153,6 +155,8 @@
 		16D0E0841DF8954F0075DF8F /* OTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntity.swift; sourceTree = "<group>"; };
 		16D0E0881DF999460075DF8F /* OTREntityTranscoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntityTranscoderTests.swift; sourceTree = "<group>"; };
 		16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = GenericMessageRequestStrategyTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
+		16D138381FD5AFC2001B4411 /* AvailabilityRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityRequestStrategyTests.swift; sourceTree = "<group>"; };
+		16D95A441FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AvailabilityRequestStrategy.swift; sourceTree = "<group>"; };
 		5400E16E1E6099AD00B6E27E /* MessagingTestBase.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessagingTestBase.swift; sourceTree = "<group>"; };
 		5418CD9E1E55D734004AF1A4 /* ClientMessageTranscoderTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = ClientMessageTranscoderTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		5418CDA01E55D78D004AF1A4 /* MessageExpirationTimerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageExpirationTimerTests.swift; sourceTree = "<group>"; };
@@ -415,6 +419,7 @@
 				BFABEB8D1E647C5D003BE9F3 /* GenericMessageNotificationRequestStrategy.swift */,
 				16D0E0801DF88B820075DF8F /* OTREntityTranscoder.swift */,
 				54327FE91E548A6700B08FFC /* SystemMessageEventsConsumer.swift */,
+				16D95A441FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift */,
 			);
 			path = Transcoders;
 			sourceTree = "<group>";
@@ -514,6 +519,7 @@
 				16D0E08B1DF9C6770075DF8F /* GenericMessageRequestStrategyTests.swift */,
 				BFABEB8F1E647CE0003BE9F3 /* GenericMessageNotificationRequestStrategyTests.swift */,
 				BFED61C01E5C59C700F352F8 /* LinkPreviewUploadRequestStrategyTests.swift */,
+				16D138381FD5AFC2001B4411 /* AvailabilityRequestStrategyTests.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -758,6 +764,7 @@
 				F9F0573D1D93DC8100FA1AAD /* ZMMessage+Dependency.swift in Sources */,
 				16D0E0851DF8954F0075DF8F /* OTREntity.swift in Sources */,
 				F9F057411D93DD5300FA1AAD /* ClientMessageRequestFactory.swift in Sources */,
+				16D95A451FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift in Sources */,
 				54C8A39A1F751738004961DF /* ZMConversation+Notifications.swift in Sources */,
 				BF3A460C1DD46FD500F5B16A /* AssetV3FileUploadRequestStrategy.swift in Sources */,
 				16D0E0791DF822E10075DF8F /* GenericMessageRequestStrategy.swift in Sources */,
@@ -798,6 +805,7 @@
 				BFABEB901E647CE0003BE9F3 /* GenericMessageNotificationRequestStrategyTests.swift in Sources */,
 				54FAE67F1E39FD1900E6DE42 /* MessagingTest+Encryption.swift in Sources */,
 				5418CDA31E55D838004AF1A4 /* CryptoBoxUpdateEventsTests.swift in Sources */,
+				16D138391FD5AFC2001B4411 /* AvailabilityRequestStrategyTests.swift in Sources */,
 				BF260C551DCA28C1009C97D9 /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
 				CED80BAE1E03FAD50053915D /* FetchingClientRequestStrategyTests.swift in Sources */,
 				BFC32F8F1DD1E7A100EDD540 /* AssetV3ImageUploadRequestStrategyTests.swift in Sources */,

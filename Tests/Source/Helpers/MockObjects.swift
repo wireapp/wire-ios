@@ -71,6 +71,11 @@ public class MockApplicationStatus : NSObject, ApplicationStatus {
         return mockConfirmationStatus.messagesConfirmed
     }
     
+    public var slowSyncWasRequested = false
+    public func requestSlowSync() {
+        slowSyncWasRequested = true
+    }
+    
 }
 
 

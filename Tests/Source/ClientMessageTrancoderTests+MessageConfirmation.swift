@@ -38,7 +38,7 @@ extension ClientMessageTranscoderTests {
             // THEN
             guard let confirmationMessage = self.lastConfirmationMessage else { return XCTFail() }
             XCTAssertTrue(confirmationMessage.genericMessage!.hasConfirmation())
-            XCTAssertEqual(confirmationMessage.genericMessage!.confirmation.messageId, event.messageNonce()!.transportString())
+            XCTAssertEqual(confirmationMessage.genericMessage!.confirmation.firstMessageId, event.messageNonce()!.transportString())
         }
     }
     

@@ -204,7 +204,7 @@ extension ClientMessageTranscoder {
             !managedObject.isZombieObject,
             let genericMessage = message.genericMessage else { return false }
         if genericMessage.hasConfirmation() == true {
-            let messageNonce = UUID(uuidString: genericMessage.confirmation.messageId)
+            let messageNonce = UUID(uuidString: genericMessage.confirmation.firstMessageId)
             let sentMessage = ZMMessage.fetch(withNonce: messageNonce, for: message.conversation!, in: message.managedObjectContext!)
             return (sentMessage?.sender != nil)
                 || (message.conversation?.connectedUser != nil)

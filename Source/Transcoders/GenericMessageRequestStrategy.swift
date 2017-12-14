@@ -20,7 +20,7 @@ import Foundation
 import WireRequestStrategy
 
 public class GenericMessageEntity : OTREntity {
-    
+
     public var message : ZMGenericMessage
     public var conversation : ZMConversation?
     public var completionHandler : ((_ response: ZMTransportResponse) -> Void)?
@@ -32,12 +32,29 @@ public class GenericMessageEntity : OTREntity {
         self.completionHandler = completionHandler
     }
     
+    public var context: NSManagedObjectContext {
+        return conversation!.managedObjectContext!
+    }
+    
     public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
+        guard let conversation  = conversation else { return nil }
+        
+        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
     }
     
     public func missesRecipients(_ recipients: Set<UserClient>!) {
         // no-op
+    }
+    
+    public func detectedRedundantClients() {
+        // if the BE tells us that these users are not in the
+        // conversation anymore, it means that we are out of sync
+        // with the list of participants
+        conversation?.needsToBeUpdatedFromBackend = true
+    }
+    
+    public func detectedMissingClient(for user: ZMUser) {
+        conversation?.checkIfMissingActiveParticipant(user)
     }
     
     public func expire() {

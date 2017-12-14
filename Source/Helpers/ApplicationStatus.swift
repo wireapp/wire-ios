@@ -50,5 +50,7 @@ public protocol ApplicationStatus : class {
     var deliveryConfirmation : DeliveryConfirmationDelegate { get }
 
     var notificationFetchStatus: BackgroundNotificationFetchStatus { get }
+    
+    func requestSlowSync()
 
 }

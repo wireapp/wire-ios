@@ -228,7 +228,8 @@ extension MessagingTestBase {
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()
         conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
-        conversation.connection!.to = user
+        conversation.connection?.to = user
+        conversation.connection?.status = .accepted
         conversation.mutableOtherActiveParticipants.add(user)
         self.syncMOC.saveOrRollback()
         return conversation
