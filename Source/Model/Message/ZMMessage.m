@@ -356,13 +356,8 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     }
 }
 
-+ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage fromUser:(ZMUser *)user inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage inManagedObjectContext:(NSManagedObjectContext *)moc;
 {
-    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-    if(user != selfUser) {
-        return;
-    }
-    
     NSUUID *conversationID = [NSUUID uuidWithTransportString:hiddenMessage.conversationId];
     ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:NO inContext:moc];
     
@@ -442,8 +437,8 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     
     NSArray *confirmationReceipts = [possibleMatches filterWithBlock:^BOOL(ZMClientMessage *candidateConfirmationReceipt) {
         if (candidateConfirmationReceipt.genericMessage.hasConfirmation &&
-            candidateConfirmationReceipt.genericMessage.confirmation.hasMessageId &&
-            [candidateConfirmationReceipt.genericMessage.confirmation.messageId isEqual:self.nonce.transportString]) {
+            candidateConfirmationReceipt.genericMessage.confirmation.hasFirstMessageId &&
+            [candidateConfirmationReceipt.genericMessage.confirmation.firstMessageId isEqual:self.nonce.transportString]) {
             return YES;
         }
         return NO;

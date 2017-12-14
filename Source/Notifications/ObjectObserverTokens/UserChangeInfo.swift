@@ -41,7 +41,8 @@ extension ZMUser : ObjectInSnapshot {
             #keyPath(ZMUser.isPendingApprovalBySelfUser),
             #keyPath(ZMUser.clients),
             #keyPath(ZMUser.handle),
-            #keyPath(ZMUser.team)
+            #keyPath(ZMUser.team),
+            #keyPath(ZMUser.availability)
         ]
     }
 
@@ -124,6 +125,10 @@ extension ZMUser : ObjectInSnapshot {
 
     public var teamsChanged : Bool {
         return changedKeys.contains(#keyPath(ZMUser.team))
+    }
+    
+    public var availabilityChanged : Bool {
+        return changedKeys.contains(#keyPath(ZMUser.availability))
     }
 
     open let user: ZMBareUser

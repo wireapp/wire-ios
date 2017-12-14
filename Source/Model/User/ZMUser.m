@@ -79,6 +79,7 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+NSString *const AvailabilityKey = @"availability";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -414,7 +415,6 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
                                            LocalMediumRemoteIdentifierDataKey,
                                            LocalSmallProfileRemoteIdentifierDataKey,
                                            NormalizedEmailAddressKey,
-                                           NormalizedNameKey,
                                            SystemMessagesKey,
                                            UserClientsKey,
                                            ShowingUserAddedKey,

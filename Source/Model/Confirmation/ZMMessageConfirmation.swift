@@ -59,7 +59,7 @@ open class ZMMessageConfirmation: ZMManagedObject {
         
         guard genericMessage.hasConfirmation(),
             let moc = conversation.managedObjectContext,
-            let messageUUID = UUID(uuidString: genericMessage.confirmation.messageId),
+            let messageUUID = UUID(uuidString: genericMessage.confirmation.firstMessageId),
             let message = ZMMessage.fetch(withNonce: messageUUID, for: conversation, in: moc),
             let originalSender = message.sender, originalSender.isSelfUser
         else { return nil }

@@ -31,10 +31,7 @@
 @import WireDataModel;
 
 @interface ZMClientMessageTests : BaseZMMessageTests
-
 @end
-
-
 
 @implementation ZMClientMessageTests
 
@@ -402,6 +399,29 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     NSDictionary *data = @{ @"sender": senderClientID, @"text" : [ZMGenericMessage sessionResetWithNonce:nonce.transportString].data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data];
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    
+    // then
+    XCTAssertNil(sut);
+    XCTAssertEqual(conversation.messages.count, 0u);
+}
+
+- (void)testThatItDoesNotCreateMessageFromAvailabilityMessage
+{
+    // given
+    NSString *senderClientID = [NSString createAlphanumericalString];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    NSDictionary *data = @{ @"sender": senderClientID, @"text" : [ZMGenericMessage genericMessageWithAvailability:AvailabilityAway].data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data];
     ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
     XCTAssertNotNil(event);

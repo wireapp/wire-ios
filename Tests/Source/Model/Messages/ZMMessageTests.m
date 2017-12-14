@@ -1887,7 +1887,6 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatAMessageIsRemovedWhenAskForDeletionWithMessageHide;
 {
     // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     
@@ -1908,7 +1907,7 @@ NSString * const ReactionsKey = @"reactions";
     
     //when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMMessage removeMessageWithRemotelyHiddenMessage:hidden fromUser:selfUser inManagedObjectContext:self.uiMOC];
+        [ZMMessage removeMessageWithRemotelyHiddenMessage:hidden inManagedObjectContext:self.uiMOC];
     }];
     [self.uiMOC saveOrRollback];
     

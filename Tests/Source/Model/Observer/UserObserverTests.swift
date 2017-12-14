@@ -36,6 +36,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case TrustLevel = "trustLevelChanged"
         case Handle = "handleChanged"
         case Teams = "teamsChanged"
+        case Availability = "availabilityChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = [
@@ -47,7 +48,8 @@ class UserObserverTests : NotificationDispatcherTestBase {
         .ConnectionState,
         .TrustLevel,
         .Teams,
-        .Handle
+        .Handle,
+        .Availability
     ]
     
     var userObserver : UserObserver!
@@ -493,7 +495,7 @@ extension UserObserverTests {
         XCTAssertEqual(userChangeInfos.map { $0.clientsChanged }, [true, false])
     }
     
-    func testThatItNotifiesAboutAnAddedTeam(){
+    func testThatItNotifiesAboutAnAddedTeam() {
         // given
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
@@ -506,6 +508,17 @@ extension UserObserverTests {
                                                         member.user = $0
                                                         member.team = team },
                                                      expectedChangedField: .Teams)
+    }
+    
+    func testThatItNotifiesAboutChangeInAvailability() {
+        // given
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        self.uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier : { $0.updateAvailability(.away) },
+                                                     expectedChangedField: .Availability)
     }
 }
 

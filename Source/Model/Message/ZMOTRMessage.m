@@ -159,6 +159,11 @@ NSString * const DeliveredKey = @"delivered";
     
     ZMConversation *conversation = [self.class conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
     VerifyReturnNil(conversation != nil);
+    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+    
+    if (conversation.conversationType == ZMConversationTypeSelf && ![updateEvent.senderUUID isEqual:selfUser.remoteIdentifier]) {
+        return nil; // don't process messages in the self conversation not sent from the self user
+    }
     
     if (message.hasLastRead && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMConversation updateConversationWithZMLastReadFromSelfConversation:message.lastRead inContext:moc];
@@ -167,8 +172,7 @@ NSString * const DeliveredKey = @"delivered";
         [ZMConversation updateConversationWithZMClearedFromSelfConversation:message.cleared inContext:moc];
     }
     if (message.hasHidden && conversation.conversationType == ZMConversationTypeSelf) {
-        ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:updateEvent.senderUUID inManagedObjectContext:moc];
-        [ZMMessage removeMessageWithRemotelyHiddenMessage:message.hidden fromUser:user inManagedObjectContext:moc];
+        [ZMMessage removeMessageWithRemotelyHiddenMessage:message.hidden inManagedObjectContext:moc];
         return nil;
     }
     if (message.hasDeleted) {
@@ -198,7 +202,7 @@ NSString * const DeliveredKey = @"delivered";
         }
     }
     
-    if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction || message.hasCalling) {
+    if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction || message.hasCalling || message.hasAvailability) {
         return nil;
     }
     
