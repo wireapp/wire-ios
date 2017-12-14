@@ -150,6 +150,10 @@ class ApplicationStatusDirectory : ApplicationStatus {
         return deliveryConfirmationDummy
     }
     
+    func requestSlowSync() {
+        // we don't do slow syncing in the share engine
+    }
+    
 }
 
 
