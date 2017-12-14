@@ -46,6 +46,7 @@ extension ZMAssetClientMessage {
     /// The generic asset message that is constructed by merging
     /// all generic messages from the dataset that contain an asset
     public var genericAssetMessage: ZMGenericMessage? {
+        guard !isZombieObject else { return nil }
         
         if self.cachedGenericAssetMessage == nil {
             self.cachedGenericAssetMessage = self.genericMessageMergedFromDataSet(filter: {
@@ -193,11 +194,11 @@ extension ZMAssetClientMessage {
             self.transferState = .uploaded
         }
         
-        if let assetData = message.assetData,
-            assetData.hasNotUploaded() {
+        if let assetData = message.assetData, assetData.hasNotUploaded(), self.transferState != .uploaded {
             switch assetData.notUploaded {
             case .CANCELLED:
                 self.transferState = .cancelledUpload
+                self.managedObjectContext?.delete(self)
             case .FAILED:
                 self.transferState = .failedUpload
             }
