@@ -23,6 +23,7 @@ import XCTest
 
 class MockOTREntity : OTREntity {
     
+    var context: NSManagedObjectContext
     public var isExpired: Bool = false
     public func expire() {
         isExpired = true
@@ -38,13 +39,23 @@ class MockOTREntity : OTREntity {
     
     var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable?
     
-    init(conversation: ZMConversation) {
+    init(conversation: ZMConversation, context: NSManagedObjectContext) {
         self.conversation = conversation
+        self.context = context
     }
     
     var hashValue: Int {
         return self.conversation!.hashValue
     }
+    
+    func detectedRedundantClients() {
+        conversation?.needsToBeUpdatedFromBackend = true
+    }
+    
+    func detectedMissingClient(for user: ZMUser) {
+        conversation?.checkIfMissingActiveParticipant(user)
+    }
+    
 }
 
 func ==(lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {
@@ -60,7 +71,7 @@ class OTREntityTranscoderTests : MessagingTestBase {
     override func setUp() {
         super.setUp()
         
-        self.mockEntity = MockOTREntity(conversation: self.groupConversation)
+        self.mockEntity = MockOTREntity(conversation: self.groupConversation, context: syncMOC)
         self.sut = OTREntityTranscoder(context: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
     }
     

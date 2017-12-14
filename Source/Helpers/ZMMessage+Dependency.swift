@@ -25,11 +25,29 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 // MARK: - Dependent objects
 extension ZMOTRMessage: OTREntity {
 
+    public var context: NSManagedObjectContext {
+        return managedObjectContext!
+    }
+
     /// Which object this message depends on when sending
     override public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
-        let dependent: AnyHashable? = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity()
+        guard let conversation = conversation else { return nil }
+        
+        let dependent: AnyHashable? = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
+    
+    public func detectedRedundantClients() {
+        // if the BE tells us that these users are not in the
+        // conversation anymore, it means that we are out of sync
+        // with the list of participants
+        conversation?.needsToBeUpdatedFromBackend = true
+    }
+    
+    public func detectedMissingClient(for user: ZMUser) {
+        conversation?.checkIfMissingActiveParticipant(user)
+    }
+    
 }
 
 /// Message that can block following messages

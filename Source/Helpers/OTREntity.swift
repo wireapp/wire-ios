@@ -24,12 +24,21 @@ private let zmLog = ZMSLog(tag: "Dependencies")
 
 public protocol OTREntity:  DependencyEntity, Hashable {
     
-    var conversation: ZMConversation? { get }
+    var context : NSManagedObjectContext { get }
     
     /// Add clients as missing recipients for this entity. If we want to resend
     /// the entity, we need to make sure those missing recipients are fetched
     /// or sending the entity will fail again.
     func missesRecipients(_ recipients: Set<WireDataModel.UserClient>!)
+    
+    /// if the BE tells us that these users are not in the
+    /// conversation anymore, it means that we are out of sync
+    /// with the list of participants
+    func detectedRedundantClients()
+    
+    /// This method is called when BE doesn't find clients
+    /// in the uploaded payload.
+    func detectedMissingClient(for user: ZMUser)
 }
 
 /// HTTP status of a request that has
@@ -53,10 +62,8 @@ private let ErrorLabel = "label"
 extension OTREntity {
     
     /// Which object this message depends on when sending
-    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity() -> ZMManagedObject? {
-        
-        guard let conversation = self.conversation else { return nil }
-        
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(in conversation : ZMConversation) -> ZMManagedObject? {
+                
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error
@@ -77,22 +84,28 @@ extension OTREntity {
             zmLog.debug("conversations has security level ignored")
             return conversation
         }
-        
+    
+        let activeParticipants = conversation.activeParticipants.set as! Set<ZMUser>
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: activeParticipants)
+    }
+    
+    /// Which objects this message depends on when sending it to a list recipients
+    public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients : Set<ZMUser>) -> ZMManagedObject? {
         // If we are missing clients, we need to refetch the clients before retrying
-        if let selfClient = ZMUser.selfUser(in: conversation.managedObjectContext!).selfClient(),
-            let missingClients = selfClient.missingClients , missingClients.count > 0
+        if let selfClient = ZMUser.selfUser(in: context).selfClient(),
+           let missingClients = selfClient.missingClients , missingClients.count > 0
         {
-            let activeParticipants = conversation.activeParticipants.array as! [ZMUser]
-            let activeClients = activeParticipants.flatMap {
+            let recipientClients = recipients.flatMap {
                 return Array($0.clients)
             }
-            // Don't block sending of messages in conversations that are not affected by missing clients
-            if !missingClients.intersection(Set(activeClients)).isEmpty {
+            // Don't block sending of messages if they that are not affected by the missing clients
+            if !missingClients.intersection(recipientClients).isEmpty {
                 // make sure that we fetch those clients, even if we somehow gave up on fetching them
                 selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
                 return selfClient
             }
         }
+        
         return nil
     }
 
@@ -120,10 +133,7 @@ extension OTREntity {
         if let redundantMap = payload[RedundantLabel] as? [String:AnyObject],
             !redundantMap.isEmpty
         {
-            // if the BE tells us that these users are not in the
-            // conversation anymore, it means that we are out of sync
-            // with the list of participants
-            self.conversation?.needsToBeUpdatedFromBackend = true
+            detectedRedundantClients()
         }
         
         if let missingMap = payload[MissingLabel] as? [String:AnyObject] {
@@ -140,7 +150,7 @@ extension OTREntity {
             
             // user
             guard let userID = UUID(uuidString: pair.0) else { return [] }
-            guard let user = ZMUser(remoteID: userID, createIfNeeded: false, in: self.conversation!.managedObjectContext!) else { return [] }
+            guard let user = ZMUser(remoteID: userID, createIfNeeded: false, in: self.context) else { return [] }
             
             // clients
             guard let clientIDs = pair.1 as? [String] else { fatal("Deleted client ID is not parsed properly") }
@@ -164,14 +174,14 @@ extension OTREntity {
             
             // user
             guard let userID = UUID(uuidString: pair.0) else { return [] }
-            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.conversation!.managedObjectContext!)!
+            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.context)!
             
             // client
             guard let clientIDs = pair.1 as? [String] else { fatal("Missing client ID is not parsed properly") }
             let clients = clientIDs.map { UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)! }
             
             // is this user not there?
-            self.conversation?.checkIfMissingActiveParticipant(user)
+            detectedMissingClient(for: user)
             
             return clients
         })
@@ -184,7 +194,7 @@ extension OTREntity {
     fileprivate func registersNewMissingClients(_ missingClients: Set<UserClient>) {
         guard missingClients.count > 0 else { return }
         
-        let selfClient = ZMUser.selfUser(in: self.conversation!.managedObjectContext!).selfClient()!
+        let selfClient = ZMUser.selfUser(in: self.context).selfClient()!
         selfClient.missesClients(missingClients)
         self.missesRecipients(missingClients)
         
