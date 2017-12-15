@@ -320,14 +320,12 @@ extension ZMUserTests {
 }
 
 extension ZMUser {
-    static func insert(in moc: NSManagedObjectContext, name: String, handle: String? = nil, connected: Bool = true) -> ZMUser {
+    static func insert(in moc: NSManagedObjectContext, name: String, handle: String? = nil, connectionStatus: ZMConnectionStatus = .accepted) -> ZMUser {
         let user = ZMUser.insertNewObject(in: moc)
         user.name = name
         user.setHandle(handle)
         let connection = ZMConnection.insertNewSentConnection(to: user)
-        if connected {
-            connection?.status = .accepted
-        }
+        connection?.status = connectionStatus
         
         return user
     }
@@ -354,8 +352,8 @@ extension ZMUserTests {
     func testPredicateFilteringConnectedNonBotUsers() {
         // Given
         let anna = ZMUser.insert(in: self.uiMOC, name: "anna", handle: ZMUser.annaBotHandle)
-        let other = ZMUser.insert(in: self.uiMOC, name: "Nobody", handle: "no-b", connected: false)
-        let user = ZMUser.insert(in: self.uiMOC, name: "Some one", handle: "yes-b", connected: true)
+        let other = ZMUser.insert(in: self.uiMOC, name: "Nobody", handle: "no-b", connectionStatus: .pending)
+        let user = ZMUser.insert(in: self.uiMOC, name: "Some one", handle: "yes-b", connectionStatus: .accepted)
         let all = NSArray(array: [anna, user, other])
         
         // When
@@ -368,9 +366,9 @@ extension ZMUserTests {
     
     func testPredicateFilteringConnectedUsers() {
         // Given
-        let anna = ZMUser.insert(in: self.uiMOC, name: "anna", handle: ZMUser.annaBotHandle, connected: true)
-        let connectedUser = ZMUser.insert(in: self.uiMOC, name: "Body no", handle: "no-b", connected: true)
-        let user = ZMUser.insert(in: self.uiMOC, name: "Body yes", handle: "yes-b", connected: false)
+        let anna = ZMUser.insert(in: self.uiMOC, name: "anna", handle: ZMUser.annaBotHandle, connectionStatus: .accepted)
+        let connectedUser = ZMUser.insert(in: self.uiMOC, name: "Body no", handle: "no-b", connectionStatus: .accepted)
+        let user = ZMUser.insert(in: self.uiMOC, name: "Body yes", handle: "yes-b", connectionStatus: .pending)
         
         let all = NSArray(array: [anna, connectedUser, user])
         
@@ -387,8 +385,8 @@ extension ZMUserTests {
     
     func testPredicateFilteringConnectedUsersByHandle() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connected: true)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connected: true)
+        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
         
         let all = NSArray(array: [user1, user2])
         
@@ -402,8 +400,8 @@ extension ZMUserTests {
 
     func testPredicateFilteringConnectedUsersByHandleWithAtSymbol() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connected: true)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connected: true)
+        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
         
         let all = NSArray(array: [user1, user2])
         
@@ -417,8 +415,8 @@ extension ZMUserTests {
 
     func testThatThePredicateUsesTheNormalizedQueryToMatchHandlesWhenSearchingWithLeadingAtSymbol() {
         // Given
-        let user1 = ZMUser.insert(in: uiMOC, name: "Teapot", handle: "vanessa", connected: true)
-        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connected: true)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Teapot", handle: "vanessa", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connectionStatus: .accepted)
         let users = [user1, user2] as NSArray
 
         // When
@@ -432,8 +430,8 @@ extension ZMUserTests {
 
     func testThatItStripsWhiteSpaceBeforeSearching() {
         // Given
-        let user1 = ZMUser.insert(in: uiMOC, name: "Vanessa", handle: "abc", connected: true)
-        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connected: true)
+        let user1 = ZMUser.insert(in: uiMOC, name: "Vanessa", handle: "abc", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connectionStatus: .accepted)
         let users = [user1, user2] as NSArray
 
         do {
@@ -459,8 +457,8 @@ extension ZMUserTests {
 
     func testPredicateFilteringConnectedUsersByHandlePrefix() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "alonghandle", connected: true)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connected: true)
+        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "alonghandle", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
         
         let all = NSArray(array: [user1, user2])
         
@@ -474,8 +472,8 @@ extension ZMUserTests {
     
     func testPredicateFilteringConnectedUsersStripsDiactricMarks() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Šőmė body", handle: "hand", connected: true)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connected: true)
+        let user1 = ZMUser.insert(in: self.uiMOC, name: "Šőmė body", handle: "hand", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "yes-b", connectionStatus: .accepted)
         
         let all = NSArray(array: [user1, user2])
         
@@ -489,9 +487,9 @@ extension ZMUserTests {
     
     func testPredicateFilteringForAllUsers() {
         // Given
-        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connected: true)
-        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "no-b", connected: true)
-        let user3 = ZMUser.insert(in: self.uiMOC, name: "Yes body", handle: "yes-b", connected: false)
+        let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "ab", connectionStatus: .accepted)
+        let user2 = ZMUser.insert(in: self.uiMOC, name: "No body", handle: "no-b", connectionStatus: .accepted)
+        let user3 = ZMUser.insert(in: self.uiMOC, name: "Yes body", handle: "yes-b", connectionStatus: .pending)
 
         let all = NSArray(array: [user1, user2, user3])
         
@@ -587,6 +585,38 @@ extension ZMUserTests {
         
         // then
         XCTAssertEqual(user.availability, .none)
+    }
+    
+    func testThatConnectionsAndTeamMembersReturnsExpectedUsers() {
+        // given
+        _ = ZMUser.insert(in: uiMOC, name: "user1", handle: "handl1", connectionStatus: .pending)
+        _ = ZMUser.insert(in: uiMOC, name: "user2", handle: "handl1", connectionStatus: .blocked)
+        _ = ZMUser.insert(in: uiMOC, name: "user3", handle: "handl1", connectionStatus: .cancelled)
+        _ = ZMUser.insert(in: uiMOC, name: "user4", handle: "handl1", connectionStatus: .ignored)
+        _ = ZMUser.insert(in: uiMOC, name: "user5", handle: "handl1", connectionStatus: .sent)
+        _ = ZMUser.insert(in: uiMOC, name: "user6", handle: "handl1", connectionStatus: .invalid)
+        let connectedUser = ZMUser.insert(in: uiMOC, name: "user7", handle: "handl1", connectionStatus: .accepted)
+        let connectedUserWithoutHandle = ZMUser.insert(in: uiMOC, name: "user8", handle: nil, connectionStatus: .accepted)
+        
+        let team = Team.insertNewObject(in: uiMOC)
+        let teamUser = ZMUser.insertNewObject(in: uiMOC)
+        teamUser.remoteIdentifier = .create()
+        
+        let membership = Member.insertNewObject(in: uiMOC)
+        membership.team = team
+        membership.user = teamUser
+        membership.remoteIdentifier = teamUser.remoteIdentifier
+        
+        let selfMembership = Member.insertNewObject(in: uiMOC)
+        selfMembership.team = team
+        selfMembership.user = selfUser
+        selfMembership.remoteIdentifier = selfUser.remoteIdentifier
+        
+        // when
+        let connectionsAndTeamMembers = ZMUser.connectionsAndTeamMembers(in: uiMOC)
+
+        // then
+        XCTAssertEqual(Set<ZMUser>(arrayLiteral: connectedUser, connectedUserWithoutHandle, teamUser, selfUser), connectionsAndTeamMembers)
     }
     
 }

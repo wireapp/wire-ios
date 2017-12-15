@@ -48,7 +48,7 @@ extension ZMUser {
         
         let selfUser = ZMUser.selfUser(in: context)
         let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-        request.predicate = ZMUser.predicateForConnectedNonBotUsers
+        request.predicate = ZMUser.predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
         
         let connectedUsers = context.fetchOrAssert(request: request)
         connectionsAndTeamMembers.formUnion(connectedUsers)
