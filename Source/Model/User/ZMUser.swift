@@ -143,8 +143,7 @@ extension ZMUser {
     public static func predicateForUsers(withSearch query: String, excludingBots: Bool, connectionStatuses: [Int16]? ) -> NSPredicate {
         var allPredicates = [[NSPredicate]]()
         if let statuses = connectionStatuses {
-            let statusPredicate = NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), statuses)
-            allPredicates.append([statusPredicate])
+            allPredicates.append([predicateForUsers(withConnectionStatuses: statuses)])
         }
 
         let normalizedQuery = query.normalizedAndTrimmed()
@@ -163,6 +162,11 @@ extension ZMUser {
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }
         
         return NSCompoundPredicate(andPredicateWithSubpredicates: orPredicates)
+    }
+    
+    @objc(predicateForUsersWithConnectionStatusInArray:)
+    public static func predicateForUsers(withConnectionStatuses connectionStatuses: [Int16]) -> NSPredicate {
+        return NSPredicate(format: "(%K IN (%@))", #keyPath(ZMUser.connection.status), connectionStatuses)
     }
 
 }
