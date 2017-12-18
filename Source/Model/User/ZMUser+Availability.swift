@@ -21,7 +21,7 @@ import Foundation
 
 @objc
 public enum Availability : Int {
-    case none, available, away, busy
+    case none, available, busy, away
 }
 
 extension Availability {
