@@ -540,10 +540,28 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
-        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
+        sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent())
         
         // then
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploaded)
+    }
+    
+    func testThatItDoesntUpdateTheTransferStateWhenTheUploadedMessageIsMergedButDoesntContainAssetId()
+    {
+        // given
+        let nonce = UUID.create()
+        let sut = ZMAssetClientMessage.insertNewObject(in: uiMOC)
+        sut.nonce = nonce
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertNotNil(sut)
+        
+        // when
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
+        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        
+        // then
+        XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploading)
     }
     
     func testThatItDeletesTheMessageWhenTheNotUploadedCanceledMessageIsMerged()
@@ -574,7 +592,8 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let uploadedMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
         sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent())
         let canceledMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce.transportString())
         sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent())
