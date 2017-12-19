@@ -116,7 +116,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     NSMutableDictionary *headers = [@{@"Upgrade": @"websocket",
                               @"Host": self.URL.host,
                               @"Connection": @"Upgrade",
-                              @"Sec-WebSocket-Key": @"dGhlIHNhbXBsZSBub25jZQ==",
+                              @"Sec-WebSocket-Key": [self generateWebSocketNonce],
                               @"Sec-WebSocket-Version": @"13"} mutableCopy];
     [headers addEntriesFromDictionary:self.additionalHeaderFields];
     [headers enumerateKeysAndObjectsUsingBlock:^(NSString *headerField, NSString *headerValue, BOOL * ZM_UNUSED stop){
@@ -238,6 +238,18 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 - (void)didReceivePong;
 {
     ZMLogDebug(@"Received PONG");
+}
+
+-(NSString*)generateWebSocketNonce
+{
+    NSUInteger dataLength = 16;
+    NSMutableData* data = [NSMutableData dataWithCapacity:dataLength];
+    for(unsigned int i = 0; i < dataLength / 4; i++) {
+        u_int32_t randomBits = arc4random();
+        [data appendBytes:(void*)&randomBits length:4];
+    }
+    NSString *base64String = [data base64EncodedStringWithOptions:0];
+    return base64String;
 }
 
 @end
