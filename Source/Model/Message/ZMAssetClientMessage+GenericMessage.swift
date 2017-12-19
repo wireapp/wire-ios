@@ -181,17 +181,15 @@ extension ZMAssetClientMessage {
             }
         }
         
-        if let assetData = message.assetData,
-            assetData.hasUploaded()
+        if let assetData = message.assetData, assetData.hasUploaded()
         {
-            let isVersion_3 = assetData.uploaded.hasAssetId()
-            if isVersion_3 { // V3, we directly access the protobuf for the assetId
+            if assetData.uploaded.hasAssetId() { // V3, we directly access the protobuf for the assetId
                 self.version = 3
-            } else { // V2
-                self.assetId = (eventData["id"] as? String).flatMap { UUID(uuidString: $0) }
+                self.transferState = .uploaded
+            } else if let assetId = (eventData["id"] as? String).flatMap({ UUID(uuidString: $0) })  { // V2
+                self.assetId = assetId
+                self.transferState = .uploaded
             }
-            
-            self.transferState = .uploaded
         }
         
         if let assetData = message.assetData, assetData.hasNotUploaded(), self.transferState != .uploaded {
