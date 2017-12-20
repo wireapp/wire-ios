@@ -20,7 +20,7 @@
 @import Foundation;
 @import WireSystem;
 
-@class ZMDataBuffer;
+@class DataBuffer;
 
 
 typedef NS_ENUM(uint8_t, ZMWebSocketFrameType) {
@@ -49,7 +49,7 @@ typedef NS_ENUM(NSInteger, ZMWebSocketFrameErrorCode) {
 
 /// The passed in error will be set to @c ZMWebSocketFrameErrorDomain and one of
 /// @c ZMWebSocketFrameErrorCodeDataTooShort or @c ZMWebSocketFrameErrorCodeParseError
-- (instancetype)initWithDataBuffer:(ZMDataBuffer *)dataBuffer error:(NSError **)error NS_DESIGNATED_INITIALIZER ZM_NON_NULL(1, 2);
+- (instancetype)initWithDataBuffer:(DataBuffer *)dataBuffer error:(NSError **)error NS_DESIGNATED_INITIALIZER ZM_NON_NULL(1, 2);
 
 /// Creates a binary frame with the given payload.
 - (instancetype)initWithBinaryFrameWithPayload:(NSData *)payload NS_DESIGNATED_INITIALIZER;

@@ -19,19 +19,18 @@
 
 @import WireTesting;
 @import WireUtilities;
-
-#import "ZMDataBuffer.h"
+@import WireTransport;
 
 @interface ZMDataBufferTests : XCTestCase
 
-@property (nonatomic) ZMDataBuffer *sut;
+@property (nonatomic) DataBuffer *sut;
 
 @end
 
 @implementation ZMDataBufferTests
 
 - (void)setUp {
-    self.sut = [[ZMDataBuffer alloc] init];
+    self.sut = [[DataBuffer alloc] init];
     [super setUp];
 }
 
@@ -42,8 +41,8 @@
 
 - (void)testThatItStartsEmpty
 {
-    XCTAssertNotNil(self.sut.data);
-    XCTAssertEqual(dispatch_data_get_size(self.sut.data), 0u);
+    XCTAssertNotNil(self.sut.objcData);
+    XCTAssertEqual(dispatch_data_get_size(self.sut.objcData), 0u);
 }
 
 - (void)testThatItAppendsDataFromEmpty
@@ -52,8 +51,8 @@
     dispatch_data_t data = [@"test foo bar" dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
     
     // when
-    [self.sut addData:data];
-    dispatch_data_t bufferData = self.sut.data;
+    [self.sut appendData:data];
+    dispatch_data_t bufferData = self.sut.objcData;
     
     // then
     XCTAssertEqualObjects(data, bufferData);
@@ -66,11 +65,11 @@
     dispatch_data_t data2 = [@"222" dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
     dispatch_data_t expectedData = [@"111222" dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
     
-    [self.sut addData:data1];
+    [self.sut appendData:data1];
     
     // when
-    [self.sut addData:data2];
-    dispatch_data_t bufferData = self.sut.data;
+    [self.sut appendData:data2];
+    dispatch_data_t bufferData = self.sut.objcData;
     
     // then
     XCTAssertEqualObjects(expectedData, bufferData);
@@ -83,12 +82,12 @@
     dispatch_data_t data1 = [@"aaaabbcc" dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
     dispatch_data_t expectedData = [@"cc" dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
     
-    [self.sut addData:data1];
+    [self.sut appendData:data1];
     
     // when
-    [self.sut clearUntilOffset:4];
-    [self.sut clearUntilOffset:2];
-    dispatch_data_t bufferData = self.sut.data;
+    [self.sut clearUntil:4];
+    [self.sut clearUntil:2];
+    dispatch_data_t bufferData = self.sut.objcData;
     
     // then
     XCTAssertEqualObjects(expectedData, bufferData);

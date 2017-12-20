@@ -18,8 +18,9 @@
 
 
 #import "ZMWebSocketFrame.h"
-#import "ZMDataBuffer.h"
 #import "ZMTLogging.h"
+#import <WireTransport/WireTransport-Swift.h>
+
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL_LOW_LEVEL;
 
@@ -85,7 +86,7 @@ typedef union websocket_header_t {
     return [self initWithBinaryFrameWithPayload:nil];
 }
 
-- (instancetype)initWithDataBuffer:(ZMDataBuffer *)dataBuffer error:(NSError **)error
+- (instancetype)initWithDataBuffer:(DataBuffer *)dataBuffer error:(NSError **)error
 {
     self = [super init];
     if (self) {
@@ -222,9 +223,9 @@ typedef union websocket_header_t {
     }
 }
 
-- (BOOL)parseDataBuffer:(ZMDataBuffer *)dataBuffer error:(NSError **)error
+- (BOOL)parseDataBuffer:(DataBuffer *)dataBuffer error:(NSError **)error
 {
-    NSData *data = (id) dataBuffer.data;
+    NSData *data = (id) dataBuffer.objcData;
     struct Header ws = {};
     
     {
@@ -331,7 +332,7 @@ typedef union websocket_header_t {
         
         // We got a whole message:
         NSData *frameData = [data subdataWithRange:NSMakeRange(0, messageLength)];
-        [dataBuffer clearUntilOffset:messageLength];
+        [dataBuffer clearUntil:(int)messageLength];
         
         ZMLogInfo(@"opcode=%d(FIN:%d) NO=%d headerSize=%zu len=%lld inbuffer=%zu", ws.opcode, (int)ws.fin, ws.N0, ws.headerSize, ws.N, messageLength);
         

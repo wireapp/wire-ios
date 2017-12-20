@@ -18,8 +18,8 @@
 
 
 #import "ZMWebSocketHandshake.h"
-#import "ZMDataBuffer.h"
-//#import "NSData+Testing.h"
+#import <WireTransport/WireTransport-Swift.h>
+
 @import WireSystem;
 
 
@@ -31,7 +31,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
 
 @interface ZMWebSocketHandshake ()
 
-@property (nonatomic) ZMDataBuffer *buffer;
+@property (nonatomic) DataBuffer *buffer;
 @property (nonatomic) NSHTTPURLResponse *response;
 
 @end
@@ -41,7 +41,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
 
 @implementation ZMWebSocketHandshake
 
-- (instancetype)initWithDataBuffer:(ZMDataBuffer *)buffer;
+- (instancetype)initWithDataBuffer:(DataBuffer *)buffer;
 {
     self = [super init];
     if (self) {
@@ -56,7 +56,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
     if (error) {
         *error = nil;
     }
-    NSData *entireData = (id) self.buffer.data;
+    NSData *entireData = (id) self.buffer.objcData;
     static NSUInteger const MaxResponseLength = 500;
     NSUInteger const length = MIN(entireData.length, MaxResponseLength);
     NSRange responseRange = [entireData rangeOfData:[NSData dataWithBytes:"\r\n\r\n" length:4] options:0 range:NSMakeRange(0, length)];
@@ -151,7 +151,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
     
     if (allHeadersPresent) {
         if(clear) {
-            [self.buffer clearUntilOffset:NSMaxRange(responseRange)];
+            [self.buffer clearUntil:(int)NSMaxRange(responseRange)];
         }
         return ZMWebSocketHandshakeCompleted;
     }
