@@ -20,19 +20,19 @@
 @import XCTest;
 @import WireTesting;
 @import OCMock;
+@import WireTransport;
 
 #import "ZMWebSocket.h"
-#import "ZMNetworkSocket.h"
 
 
 @interface ZMWebSocketTests : ZMTBaseTest <ZMWebSocketConsumer>
 
 @property (nonatomic) NSURL *URL;
-@property (nonatomic) ZMWebSocket *sut;
+@property (nonatomic) ZMWebSocket<NetworkSocketDelegate> *sut;
 @property (nonatomic) NSMutableArray *receivedData;
 @property (nonatomic) NSMutableArray *receivedText;
 @property (nonatomic) NSInteger closeCounter;
-@property (nonatomic) ZMNetworkSocket *networkSocketMock;
+@property (nonatomic) NetworkSocket *networkSocketMock;
 @property (nonatomic) NSInteger openCounter;
 @property (nonatomic) NSHTTPURLResponse *openResponse;
 @property (nonatomic) NSHTTPURLResponse *closeResponse;
@@ -50,21 +50,18 @@
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithData:(NSData *)data;
 {
     XCTAssertEqual(webSocket, self.sut);
-//    ZMAssertGroupQueue(self.uiMOC);
     [self.receivedData addObject:data];
 }
 
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithText:(NSString *)text;
 {
     XCTAssertEqual(webSocket, self.sut);
-//    ZMAssertGroupQueue(self.uiMOC);
     [self.receivedText addObject:text];
 }
 
 - (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
 {
     XCTAssertEqual(webSocket, self.sut);
-//    ZMAssertGroupQueue(self.uiMOC);
     ++self.closeCounter;
     self.closeResponse = response;
 }
@@ -72,18 +69,23 @@
 - (void)webSocketDidCompleteHandshake:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response
 {
     XCTAssertEqual(webSocket, self.sut);
-//    ZMAssertGroupQueue(self.uiMOC);
     ++self.openCounter;
     self.openResponse = response;
 }
 
 - (void)setUp {
     [super setUp];
-    self.networkSocketMock = [OCMockObject niceMockForClass:ZMNetworkSocket.class];
+    self.networkSocketMock = [OCMockObject niceMockForClass:NetworkSocket.class];
     [self verifyMockLater:self.networkSocketMock];
-    self.queue = dispatch_queue_create("ZMWebSocketTests.queue", 0);
+    self.queue = dispatch_get_main_queue();
     self.URL = [NSURL URLWithString:@"wss://echo.websocket.org"];
-    self.sut = [[ZMWebSocket alloc] initWithConsumer:self queue:self.queue group:self.fakeUIContext.dispatchGroup networkSocket:self.networkSocketMock url:self.URL additionalHeaderFields:nil];
+    self.sut = (id)[[ZMWebSocket alloc] initWithConsumer:self
+                                                   queue:self.queue
+                                                   group:self.fakeUIContext.dispatchGroup
+                                           networkSocket:self.networkSocketMock
+                                      networkSocketQueue:self.queue
+                                                     url:self.URL
+                                  additionalHeaderFields:nil];
     self.receivedData = [NSMutableArray array];
     self.receivedText = [NSMutableArray array];
     self.closeCounter = 0;
@@ -106,6 +108,7 @@
 
 - (void)testThatItNotifiesItsConsumerWhenItIsClosing
 {
+    WaitForAllGroupsToBeEmpty(0.5);
     // when
     [self.sut close];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -116,6 +119,7 @@
 
 - (void)testThatItNotifiesItsConsumerOnlyOnceWhenItIsClosing
 {
+    WaitForAllGroupsToBeEmpty(0.5);
     // when
     [self.sut close];
     [self.sut close];
@@ -136,11 +140,11 @@
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+            [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
             [expectation fulfill];
         }];
     };
-    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5 handler:nil]);
     WaitForAllGroupsToBeEmpty(0.5);
@@ -149,10 +153,10 @@
     dispatch_data_t pongData = dispatch_data_create(((uint8_t []){0x8a, 0}), 2, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
     
     // expect
-    [(ZMNetworkSocket *)[(id) self.networkSocketMock expect] writeDataToNetwork:pongData];
+    [(NetworkSocket *)[(id) self.networkSocketMock expect] writeData:(NSData *)pongData];
     
     // when
-    [self.sut networkSocket:self.networkSocketMock didReceiveData:pingData];
+    [self.sut didReceiveData:(NSData *)pingData networkSocket:self.networkSocketMock];
 }
 
 - (void)testThatItSendsAPing;
@@ -165,11 +169,11 @@
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+            [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
             [expectation fulfill];
         }];
     };
-    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
@@ -177,7 +181,7 @@
     dispatch_data_t pingData = dispatch_data_create(((uint8_t []){0x89, 0}), 2, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
     
     // expect
-    [(ZMNetworkSocket *)[(id) self.networkSocketMock expect] writeDataToNetwork:pingData];
+    [(NetworkSocket *)[(id) self.networkSocketMock expect] writeData:(NSData *)pingData];
     
     // when
     [self.sut sendPingFrame];
@@ -194,7 +198,7 @@
     // given
     __block NSData *sentData;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
-    [[(id) self.networkSocketMock expect] writeDataToNetwork:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[(id) self.networkSocketMock expect] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [expectation fulfill];
         sentData = obj;
         return YES;
@@ -234,10 +238,16 @@
     self.closeCounter = 0;
     self.openCounter = 0;
     
-    self.sut = [[ZMWebSocket alloc] initWithConsumer:self queue:self.queue group:self.fakeUIContext.dispatchGroup networkSocket:self.networkSocketMock url:self.URL additionalHeaderFields:extraHeaders];
+    self.sut = (id)[[ZMWebSocket alloc] initWithConsumer:self
+                                                   queue:self.queue
+                                                   group:self.fakeUIContext.dispatchGroup
+                                           networkSocket:self.networkSocketMock
+                                      networkSocketQueue:self.queue
+                                                     url:self.URL
+                                  additionalHeaderFields:extraHeaders];
     __block NSData *sentData;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
-    [[(id) self.networkSocketMock expect] writeDataToNetwork:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[(id) self.networkSocketMock expect] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [expectation fulfill];
         sentData = obj;
         return YES;
@@ -284,14 +294,13 @@
     NSData *dataToBeSent = [NSData dataWithBytes:((char []){'A', 'B'}) length:2];
     
     XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];
-    [[(id) self.networkSocketMock expect] writeDataToNetwork:[OCMArg checkWithBlock:^BOOL(id obj) {
+    [[(id) self.networkSocketMock stub] writeData:[OCMArg checkWithBlock:^BOOL(id obj) {
         [sentData addObject:obj];
         if (sentData.count == 2) {
             [expectation fulfill];
         }
         else if(sentData.count == 1) {
-            dispatch_data_t data = dispatch_data_create(httpResponse.bytes, httpResponse.length, dispatch_get_main_queue(), DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:data];
+            [self.sut didReceiveData:httpResponse networkSocket:self.networkSocketMock];
         }
         return YES;
     }]];
@@ -327,11 +336,11 @@
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+            [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
             [expectation fulfill];
         }];
     };
-    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
     
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
@@ -355,11 +364,11 @@
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+            [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
             [expectation fulfill];
         }];
     };
-    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
     WaitForAllGroupsToBeEmpty(0.1);
     
     // then
@@ -380,10 +389,10 @@
     }];
     void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
         [self.fakeUIContext performGroupedBlock:^{
-            [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+            [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
         }];
     };
-    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+    [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
     WaitForAllGroupsToBeEmpty(0.5);
     // (2) close
     [self.sut networkSocketDidClose:self.networkSocketMock];
@@ -414,11 +423,11 @@
         }];
         void(^sendDataToWebSocket)(id i) = ^(id ZM_UNUSED i){
             [self.fakeUIContext performGroupedBlock:^{
-                [self.sut networkSocket:self.networkSocketMock didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData];
+                [self.sut didReceiveData:[stringData dataUsingEncoding:NSUTF8StringEncoding] networkSocket:self.networkSocketMock];
                 [expectation fulfill];
             }];
         };
-        [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeDataToNetwork:OCMOCK_ANY];
+        [[[(id) self.networkSocketMock expect] andDo:sendDataToWebSocket] writeData:OCMOCK_ANY];
         
         XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
         WaitForAllGroupsToBeEmpty(0.5);
@@ -438,6 +447,7 @@
 
 - (void)testThatItCallsDidCloseWhenTheNetworkSocketCloses;
 {
+    WaitForAllGroupsToBeEmpty(0.5);
     // when
     [self.sut networkSocketDidClose:self.networkSocketMock];
     WaitForAllGroupsToBeEmpty(0.5);

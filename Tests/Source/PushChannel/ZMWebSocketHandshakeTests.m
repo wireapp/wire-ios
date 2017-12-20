@@ -21,14 +21,14 @@
 @import WireSystem;
 @import WireUtilities;
 @import WireTesting;
+@import WireTransport;
 
 #import "ZMWebSocketHandshake.h"
-#import "ZMDataBuffer.h"
 
 
 @interface ZMWebSocketHandshakeTests : ZMTBaseTest
 
-@property (nonatomic) ZMDataBuffer *buffer;
+@property (nonatomic) DataBuffer *buffer;
 @property (nonatomic) ZMWebSocketHandshake *sut;
 
 @end
@@ -37,7 +37,7 @@
 
 - (void)setUp {
     [super setUp];
-    self.buffer = [[ZMDataBuffer alloc] init];
+    self.buffer = [[DataBuffer alloc] init];
     self.sut = [[ZMWebSocketHandshake alloc] initWithDataBuffer:self.buffer];
 }
 
@@ -264,7 +264,7 @@
     XCTAssertEqual(didComplete, ZMWebSocketHandshakeCompleted);
     
     dispatch_data_t expectedRemainingData = [expectedRemainingString dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
-    XCTAssertEqualObjects(self.buffer.data, expectedRemainingData);
+    XCTAssertEqualObjects(self.buffer.objcData, expectedRemainingData);
 }
 
 
@@ -291,7 +291,7 @@
     XCTAssertEqual(didComplete, ZMWebSocketHandshakeCompleted);
     
     dispatch_data_t expectedRemainingData = [allData dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
-    XCTAssertEqualObjects(self.buffer.data, expectedRemainingData);
+    XCTAssertEqualObjects(self.buffer.objcData, expectedRemainingData);
 }
 
 
@@ -333,7 +333,7 @@
 
 - (void)fillBufferWithString:(NSString *)stringData {
     dispatch_data_t data = [stringData dataUsingEncoding:NSUTF8StringEncoding].dispatchData;
-    [self.buffer addData:data];
+    [self.buffer appendData:data];
 }
 
 @end

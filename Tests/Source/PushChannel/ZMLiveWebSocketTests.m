@@ -22,7 +22,6 @@
 @import WireTesting;
 
 #import "ZMWebSocket.h"
-#import "ZMNetworkSocket.h"
 
 
 @interface ZMLiveWebSocketTests : ZMTBaseTest <ZMWebSocketConsumer>
@@ -32,7 +31,7 @@
 @property (nonatomic) NSMutableArray *receivedData;
 @property (nonatomic) NSMutableArray *receivedText;
 @property (nonatomic) NSInteger closeCounter;
-@property (nonatomic) ZMNetworkSocket *networkSocketMock;
+@property (nonatomic) NetworkSocket *networkSocketMock;
 @property (nonatomic) NSInteger openCounter;
 @property (nonatomic) dispatch_queue_t queue;
 

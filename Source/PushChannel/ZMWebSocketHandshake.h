@@ -21,7 +21,7 @@
 
 
 
-@class ZMDataBuffer;
+@class DataBuffer;
 
 typedef NS_ENUM(int16_t, ZMWebSocketHandshakeResult) {
     ZMWebSocketHandshakeNeedsMoreData = 0,
@@ -31,7 +31,7 @@ typedef NS_ENUM(int16_t, ZMWebSocketHandshakeResult) {
 
 @interface ZMWebSocketHandshake : NSObject
 
-- (instancetype)initWithDataBuffer:(ZMDataBuffer *)buffer;
+- (instancetype)initWithDataBuffer:(DataBuffer *)buffer;
 - (ZMWebSocketHandshakeResult)parseAndClearBufferIfComplete:(BOOL)clear error:(NSError **)error;
 
 @property (nonatomic, readonly) NSHTTPURLResponse *response;
