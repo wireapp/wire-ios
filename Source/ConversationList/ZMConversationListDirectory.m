@@ -106,6 +106,7 @@ static NSString * const PendingKey = @"Pending";
              self.archivedConversations,
              self.conversationsIncludingArchived,
              self.unarchivedConversations,
+             self.clearedConversations
              ];
 }
 
