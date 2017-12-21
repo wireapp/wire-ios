@@ -189,4 +189,15 @@
     XCTAssertFalse([[NSSet setWithArray:list] intersectsSet:exepected]);
 }
 
+- (void)testThatAllListsAreIncluded
+{
+    ZMConversationListDirectory *directory = self.uiMOC.conversationListDirectory;
+    // when & then
+    XCTAssertTrue([directory.allConversationLists containsObject:directory.unarchivedConversations]);
+    XCTAssertTrue([directory.allConversationLists containsObject:directory.conversationsIncludingArchived]);
+    XCTAssertTrue([directory.allConversationLists containsObject:directory.archivedConversations]);
+    XCTAssertTrue([directory.allConversationLists containsObject:directory.pendingConnectionConversations]);
+    XCTAssertTrue([directory.allConversationLists containsObject:directory.clearedConversations]);
+}
+
 @end
