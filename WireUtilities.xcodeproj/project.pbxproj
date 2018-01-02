@@ -111,6 +111,7 @@
 		BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
+		EECE92301FFBC5540096387F /* UInt+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* UInt+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
@@ -306,6 +307,7 @@
 		BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Apply.swift"; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
+		EECE922F1FFBC5540096387F /* UInt+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UInt+Random.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
 		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
@@ -475,6 +477,7 @@
 				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				54181A551F594FD800155ABC /* FileManager+FileProtectionLock.swift */,
+				EECE922F1FFBC5540096387F /* UInt+Random.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -873,6 +876,7 @@
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
 				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
+				EECE92301FFBC5540096387F /* UInt+Random.swift in Sources */,
 				F9C9A7AC1CAEACB10039E10C /* ZMEmailAddressValidator.m in Sources */,
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
 				091799531B7DFA1500E60DD9 /* ZMMobileProvisionParser.m in Sources */,
