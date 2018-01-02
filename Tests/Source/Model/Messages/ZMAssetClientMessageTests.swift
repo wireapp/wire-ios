@@ -520,7 +520,7 @@ extension ZMAssetClientMessageTests {
             asset: .asset(withOriginal: .original(withSize: 256, mimeType: mimeType, name: name)),
             messageID: nonce.transportString()
         )
-        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.fileMessageData?.size, 256)
@@ -541,7 +541,7 @@ extension ZMAssetClientMessageTests {
         // when
         let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
         let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
-        sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploaded)
@@ -558,7 +558,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
-        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploading)
@@ -575,7 +575,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce.transportString())
-        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertTrue(sut.isZombieObject)
@@ -594,9 +594,9 @@ extension ZMAssetClientMessageTests {
         // when
         let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
         let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
-        sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         let canceledMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce.transportString())
-        sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.uploaded)
@@ -613,7 +613,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .FAILED, messageID: nonce.transportString())
-        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent())
+        sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.fileMessageData?.transferState, ZMFileTransferState.failedUpload)
@@ -639,7 +639,7 @@ extension ZMAssetClientMessageTests {
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())
         // when
         let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
-        sut.update(with: originalMessage, updateEvent: updateEvent)
+        sut.update(with: originalMessage, updateEvent: updateEvent, initialUpdate: true)
         
         // then
         XCTAssertEqual(sut.assetId, assetId)
@@ -1087,7 +1087,7 @@ extension ZMAssetClientMessageTests {
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
             
             // when
-            sut.update(with: genericMessage, updateEvent: updateEvent)
+            sut.update(with: genericMessage, updateEvent: updateEvent, initialUpdate: true)
             
             // then
             XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, uuid)
@@ -1135,7 +1135,7 @@ extension ZMAssetClientMessageTests {
             
             
             // when
-            sut.update(with: genericMessage, updateEvent: updateEvent)
+            sut.update(with: genericMessage, updateEvent: updateEvent, initialUpdate: true)
             
             // then
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
@@ -1182,7 +1182,7 @@ extension ZMAssetClientMessageTests {
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
             XCTAssertNil(sutInSyncContext.fileMessageData?.thumbnailAssetID)
             
-            sutInSyncContext.update(with: genericMessage, updateEvent: updateEvent) // Append preview
+            sutInSyncContext.update(with: genericMessage, updateEvent: updateEvent, initialUpdate: true) // Append preview
             XCTAssertTrue(self.syncMOC.saveOrRollback())
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -2159,7 +2159,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
         XCTAssertEqual(sut.version, 3)
@@ -2171,7 +2171,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let (preview, _) = previewGenericMessage(with: nonce.transportString())
-        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
         XCTAssertEqual(sut.version, 3)
@@ -2183,7 +2183,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: nil, token: nil)
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
         XCTAssertEqual(sut.version, 0)
@@ -2195,7 +2195,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let (preview, _) = previewGenericMessage(with: nonce.transportString(), assetId: nil, token: nil)
-        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
         XCTAssertEqual(sut.version, 0)
@@ -2209,8 +2209,8 @@ extension ZMAssetClientMessageTests {
         let assetId = UUID.create().transportString()
         let assetData = Data.secureRandomData(length: 512)
 
-        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), name: "document.pdf"), updateEvent: ZMUpdateEvent())
-        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent())
+        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), name: "document.pdf"), updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_fileAssetCache.storeAssetData(nonce, fileName: "document.pdf", encrypted: false, data: assetData)
 
 
@@ -2228,8 +2228,8 @@ extension ZMAssetClientMessageTests {
         let assetId = UUID.create().transportString()
         let assetData = Data.secureRandomData(length: 512)
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil), updateEvent: ZMUpdateEvent())
-        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent())
+        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil), updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: assetData)
 
         // then
@@ -2247,8 +2247,8 @@ extension ZMAssetClientMessageTests {
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
 
         // when
-        sut.update(with: original, updateEvent: ZMUpdateEvent())
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: false)
 
         // then
         XCTAssertTrue(sut.genericAssetMessage!.v3_isImage)
@@ -2268,8 +2268,8 @@ extension ZMAssetClientMessageTests {
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
 
         // when
-        sut.update(with: original, updateEvent: ZMUpdateEvent())
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: false)
 
         // then
         XCTAssertEqual("\(nonce.transportString())-123x4569", sut.imageMessageData?.imageDataIdentifier)
@@ -2281,7 +2281,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let (preview, previewMeta) = previewGenericMessage(with: nonce.transportString())
-        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: false)
 
         // then
         XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, previewMeta.assetId)
@@ -2294,7 +2294,7 @@ extension ZMAssetClientMessageTests {
         // when
         let previewData = Data.secureRandomData(length: 512)
         let (preview, _) = previewGenericMessage(with: nonce.transportString())
-        sut.update(with: preview, updateEvent: ZMUpdateEvent())
+        sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: previewData)
 
         // then
@@ -2314,8 +2314,8 @@ extension ZMAssetClientMessageTests {
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
 
         // when
-        sut.update(with: original, updateEvent: ZMUpdateEvent())
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: false)
 
         uiMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: data)
 
@@ -2335,8 +2335,8 @@ extension ZMAssetClientMessageTests {
         let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
 
         // when
-        sut.update(with: original, updateEvent: ZMUpdateEvent())
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent())
+        sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: false)
         XCTAssertEqual(sut.transferState, .uploaded)
 
         // when

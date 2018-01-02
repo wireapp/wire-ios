@@ -36,7 +36,7 @@ extern NSString * const DeliveredKey;
 - (void)doesNotMissRecipient:(UserClient *)recipient;
 - (void)doesNotMissRecipients:(NSSet<UserClient *> *)recipients;
 
-- (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent;
+- (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
 + (ZMMessage *)preExistingPlainMessageForGenericMessage:(ZMGenericMessage *)message
                                          inConversation:(ZMConversation *)conversation

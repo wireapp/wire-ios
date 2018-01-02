@@ -106,7 +106,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let remoteMessage = ZMGenericMessage.genericMessage(pbMessage: assetWithImage(), messageID: message.nonce.transportString())
         
         let event = thumbnailEvent(for: message)
-        message.update(with: remoteMessage, updateEvent: event)
+        message.update(with: remoteMessage, updateEvent: event, initialUpdate: true)
     
         // then
         XCTAssertTrue(message.genericAssetMessage!.hasEphemeral())

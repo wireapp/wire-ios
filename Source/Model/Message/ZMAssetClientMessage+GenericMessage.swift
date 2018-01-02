@@ -159,7 +159,7 @@ extension ZMAssetClientMessage {
         return isFileMessage ? self : nil
     }
     
-    public override func update(with message: ZMGenericMessage!, updateEvent: ZMUpdateEvent!) {
+    public override func update(with message: ZMGenericMessage!, updateEvent: ZMUpdateEvent!, initialUpdate: Bool) {
         self.add(message)
         
         if self.nonce == nil {
