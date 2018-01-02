@@ -540,6 +540,121 @@
     XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
 }
 
+- (void)testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichDoesntContainLinkPreviewUpdate
+{
+    // given
+    NSString *initialText = @"initial text";
+    NSString *modifiedText = @"modified text";
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    UserClient *selfClient = [self createSelfClient];
+    
+    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
+    [existingMessage addData:message.data];
+    existingMessage.visibleInConversation = conversation;
+    existingMessage.sender = self.selfUser;
+    existingMessage.senderClientID = selfClient.remoteIdentifier;
+    
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText nonce:nonce.transportString expiresAfter:nil];
+    NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    
+    // then
+    XCTAssertNotNil(sut);
+    XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
+}
+
+- (void)testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWhichContainLinkPreviewUpdateButModifiedText
+{
+    // given
+    NSString *initialText = @"initial text";
+    NSString *modifiedText = @"modified text";
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    UserClient *selfClient = [self createSelfClient];
+    
+    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
+    [existingMessage addData:message.data];
+    existingMessage.visibleInConversation = conversation;
+    existingMessage.sender = self.selfUser;
+    existingMessage.senderClientID = selfClient.remoteIdentifier;
+    
+    ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:modifiedText linkPreview:linkPreview nonce:nonce.transportString expiresAfter:nil];
+    
+    NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    
+    // then
+    XCTAssertNotNil(sut);
+    XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
+}
+
+- (void)testThatItUpdates_AnAlreadyExistingClientMessageWhichContainLinkPreviewUpdate
+{
+    // given
+    NSString *initialText = @"initial text";
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    UserClient *selfClient = [self createSelfClient];
+    
+    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
+    [existingMessage addData:message.data];
+    existingMessage.visibleInConversation = conversation;
+    existingMessage.sender = self.selfUser;
+    existingMessage.senderClientID = selfClient.remoteIdentifier;
+    
+    ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:initialText linkPreview:linkPreview nonce:nonce.transportString expiresAfter:nil];
+    
+    NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    
+    // then
+    XCTAssertNotNil(sut);
+    XCTAssertNotNil(existingMessage.linkPreview);
+    XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
+}
+
 - (void)testThatItUpdates_IsEncrypted_OnAnAlreadyExistingAssetMessageWithTheSameNonceWhenReceivingAnOTRAssetMessage
 {
     // given
