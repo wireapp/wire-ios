@@ -27,6 +27,8 @@ public extension UInt {
     ///
     public static func secureRandomNumber(upperBound: UInt) -> UInt {
         
+        guard upperBound != 0 else { return 0 }
+        
         var random: UInt
         
         // To eliminate modulo bias, we must ensure range of possible random
