@@ -33,7 +33,7 @@ public extension UInt {
         // numbers is evenly divisible by the upper bound. We do this by
         // trimming the excess remainder off the lower bound (0)
         //
-        let min = (max - upperBound + 1) % upperBound
+        let min = (UInt.min &- upperBound) % upperBound
         
         repeat {
             // get enough random bytes to fill UInt
