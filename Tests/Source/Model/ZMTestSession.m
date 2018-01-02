@@ -22,6 +22,7 @@
 
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+tests.h"
+@import WireTransport.Testing;
 
 @interface ZMTestSession ()
 
