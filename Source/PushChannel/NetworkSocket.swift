@@ -81,7 +81,17 @@ import Foundation
     }
     
     deinit {
-        assert(self.state == .stopped)
+        if let inputStream = self.inputStream {
+            inputStream.delegate = nil
+            inputStream.close()
+        }
+        
+        if let outputStream = self.outputStream {
+            outputStream.delegate = nil
+            outputStream.close()
+        }
+        
+        requireInternal(self.state == .stopped, "Socket is still running")
     }
     
     public func open() {
