@@ -24,12 +24,12 @@ public extension String {
     static func randomChar() -> UnicodeScalar {
         let string = "abcdefghijklmnopqrstuvxyz"
         let chars = Array(string.unicodeScalars)
-        let random = Int((drand48() * 100)) % chars.count
-        return chars[random]
+        let random = UInt.secureRandomNumber(upperBound: UInt(chars.count))
+        // in this case we know random will fit inside int
+        return chars[Int(random)]
     }
     
-    func obfuscated() -> String {
-        srand48(self.hashValue)
+    public func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
         for char in self.unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {

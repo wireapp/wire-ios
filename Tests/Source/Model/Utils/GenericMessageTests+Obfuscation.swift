@@ -71,6 +71,23 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertNotNil(obfuscatedMessage?.hasText())
     }
     
+    func testThatItObfuscatesTextMessageDifferentlyEachTime() {
+        // given
+        let text = "foo"
+        let message = ZMGenericMessage.message(text: text, nonce: "bar", expiresAfter: NSNumber(value: 1.0))
+        
+        // when
+        let obfuscatedMessage1 = message.obfuscatedMessage()
+        let obfuscatedMessage2 = message.obfuscatedMessage()
+        
+        // then
+        XCTAssertNotNil(obfuscatedMessage1?.hasText())
+        XCTAssertNotNil(obfuscatedMessage2?.hasText())
+        XCTAssertNotEqual(obfuscatedMessage1?.text.content, text)
+        XCTAssertNotEqual(obfuscatedMessage2?.text.content, text)
+        XCTAssertNotEqual(obfuscatedMessage1?.text.content, obfuscatedMessage2?.text.content)
+    }
+    
     func testThatItDoesNotObfuscateNonEphemeralTextMessages(){
         // given
         let text = "foo"
