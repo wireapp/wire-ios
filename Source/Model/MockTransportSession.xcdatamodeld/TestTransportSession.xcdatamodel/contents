@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="16G29" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="17C88" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="token" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="userProfilePictures" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Service" inverseName="assets" inverseEntity="Service" syncable="YES"/>
     </entity>
     <entity name="Connection" representedClassName="MockConnection" syncable="YES">
         <attribute name="lastUpdate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -65,6 +66,14 @@
         <relationship name="client" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="prekeys" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="lastPrekeyOfClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="UserClient" inverseName="lastPrekey" inverseEntity="UserClient" syncable="YES"/>
     </entity>
+    <entity name="Service" representedClassName=".MockService" syncable="YES">
+        <attribute name="accentID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="provider" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="assets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Asset" inverseName="userProfilePictures" inverseEntity="Asset" syncable="YES"/>
+    </entity>
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
@@ -116,7 +125,7 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Asset" positionX="0" positionY="0" width="128" height="120"/>
+        <element name="Asset" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="240"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
@@ -127,5 +136,6 @@
         <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
         <element name="User" positionX="0" positionY="0" width="128" height="360"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
+        <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
     </elements>
 </model>

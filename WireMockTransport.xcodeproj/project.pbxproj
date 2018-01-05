@@ -80,6 +80,9 @@
 		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
+		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
+		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
+		872A2EE41FFE85D000900B22 /* MockServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE31FFE85D000900B22 /* MockServicesTests.swift */; };
 		BF0F77811E93AC550060494E /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F77791E93AC550060494E /* WireDataModel.framework */; };
 		BF0F77821E93AC550060494E /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777A1E93AC550060494E /* WireLinkPreview.framework */; };
 		BF0F77831E93AC550060494E /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777B1E93AC550060494E /* WireCryptobox.framework */; };
@@ -255,6 +258,9 @@
 		54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireMockTransport.xcconfig; sourceTree = "<group>"; };
 		54CE5E691B7534C4007F3065 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
 		54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionObjectCreationTests.swift; sourceTree = "<group>"; };
+		872A2EDF1FFE761B00900B22 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
+		872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Services.swift"; sourceTree = "<group>"; };
+		872A2EE31FFE85D000900B22 /* MockServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServicesTests.swift; sourceTree = "<group>"; };
 		BF0F77791E93AC550060494E /* WireDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireDataModel.framework; path = Carthage/Build/iOS/WireDataModel.framework; sourceTree = "<group>"; };
 		BF0F777A1E93AC550060494E /* WireLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireLinkPreview.framework; path = Carthage/Build/iOS/WireLinkPreview.framework; sourceTree = "<group>"; };
 		BF0F777B1E93AC550060494E /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
@@ -361,6 +367,7 @@
 				5425EF031E1E3579006D7A01 /* MockTransportSession+notifications.h */,
 				5425EF041E1E3579006D7A01 /* MockTransportSession+notifications.m */,
 				F149F80F1ECC7A1B00B05E16 /* MockTransportSession+teams.swift */,
+				872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -386,6 +393,7 @@
 				54ADA7971E3B996100B90C7D /* MockUserClient+Protos.swift */,
 				09E393F71BB0339200F3EA1B /* MockPreKey.m */,
 				CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */,
+				872A2EDF1FFE761B00900B22 /* MockService.swift */,
 				547AC6371E37811C001458FD /* String+Random.swift */,
 				F149F82B1ECC9DC300B05E16 /* NSManagedObject+Additions.swift */,
 			);
@@ -482,6 +490,7 @@
 				F1782D901ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift */,
 				163EB0D01FD1BDD4005B8D8D /* MockTransportSessionBroadcastTests.swift */,
 				F190E0931E8C0218003E81F8 /* MockUserTests.swift */,
+				872A2EE31FFE85D000900B22 /* MockServicesTests.swift */,
 				54C902431B7532DD007162A8 /* Supporting Files */,
 				541797631CE1F86500C7646D /* WireMockTransportTests-ios-Bridging-Header.h */,
 			);
@@ -710,6 +719,7 @@
 				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
 				F149F82D1ECC9DC500B05E16 /* NSManagedObject+Additions.swift in Sources */,
 				09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */,
+				872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */,
 				F149F8711ECF1ED600B05E16 /* MockPushEvent.swift in Sources */,
 				54AE5A781B78FA43002757E9 /* MockTransportSession+PushToken.m in Sources */,
 				F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */,
@@ -730,6 +740,7 @@
 				5425EF061E1E3579006D7A01 /* MockTransportSession+notifications.m in Sources */,
 				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
 				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
+				872A2EE01FFE761B00900B22 /* MockService.swift in Sources */,
 				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
 				F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */,
 				5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */,
@@ -766,6 +777,7 @@
 				54AE5AA81B78FA62002757E9 /* MockTransportSessionLoginTests.m in Sources */,
 				F149F80E1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift in Sources */,
 				54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */,
+				872A2EE41FFE85D000900B22 /* MockServicesTests.swift in Sources */,
 				54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
