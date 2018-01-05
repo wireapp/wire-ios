@@ -38,6 +38,7 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     
+    @objc(insertServiceWithName:handle:accentID:identifier:provider:assets:)
     public func insertService(name: String, handle: String, accentID: Int, identifier: String, provider: String, assets: Set<MockAsset>) -> MockService {
         let mockService: MockService = MockService.insert(in: managedObjectContext)
         mockService.name = name

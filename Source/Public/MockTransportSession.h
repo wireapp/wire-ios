@@ -30,6 +30,8 @@
 @class MockPushEvent;
 @class MockTeam;
 @class MockMember;
+@class MockService;
+@class MockAsset;
 
 @protocol MockTransportSessionObjectCreation;
 @protocol UnauthenticatedTransportSessionDelegate;
@@ -174,6 +176,13 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users creator:(MockUser *)creator;
 - (void)deleteConversation:(nonnull MockConversation *)conversation;
 
+/// Support for services
+- (MockService *)insertServiceWithName:(NSString *)name
+                                handle:(NSString *)handle
+                              accentID:(NSInteger)accentID
+                            identifier:(NSString *)identifier
+                              provider:(NSString *)provider
+                                assets:(NSSet<MockAsset *> *)assets;
 @end
 
 @interface MockTransportSession (IsTyping)
