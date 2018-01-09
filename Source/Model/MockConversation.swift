@@ -30,3 +30,17 @@ extension MockConversation {
         return conversation
     }
 }
+
+extension MockConversation: EntityNamedProtocol {
+    public static var entityName: String {
+        return "Conversation"
+    }
+}
+
+public extension MockConversation {
+    public static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
+        let conversationPredicate = NSPredicate(format: "%K == %@", #keyPath(MockConversation.identifier), identifier)
+        return MockConversation.fetch(in: managedObjectContext, withPredicate: conversationPredicate)
+
+    }
+}

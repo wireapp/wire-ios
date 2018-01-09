@@ -38,6 +38,52 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     
+    @objc(processServiceRequest:)
+    public func processServiceRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
+        guard let payload = request.payload as? [String: Any?],
+              let serviceId = payload["service"] as? String,
+              let providerId = payload["provider"] as? String,
+              let conversationId = request.RESTComponents(index: 1) else {
+                return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+        
+        // Fetch conversation
+        guard let conversation = MockConversation.existingConversation(with: conversationId, managedObjectContext: managedObjectContext) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        guard let service = MockService.existingService(with: serviceId, provider: providerId, managedObjectContext: managedObjectContext) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        var newServiceUser: MockUser!
+        
+        self.performRemoteChanges { change in
+            newServiceUser = change.insertUser(withName: service.name)
+            change.addV3ProfilePicture(to: newServiceUser)
+            newServiceUser.accentID = Int16(service.accentID)
+        }
+        
+        conversation.addUsers(by: selfUser, addedUsers: [newServiceUser])
+        
+        let responsePayload: [String: Any?] = [
+            "id": newServiceUser.identifier,
+            "client": (newServiceUser.clients.anyObject() as! MockUserClient).identifier!,
+            "name": newServiceUser.name!,
+            "accent_id": newServiceUser.accentID,
+            "assets": newServiceUser.assetData,
+            "event": [
+                "type": "conversation.member-join",
+                "conversation": conversation.identifier,
+                "from": selfUser.identifier,
+                "time": Date().transportString(),
+                "data": ["user_ids": [newServiceUser.identifier]]
+            ]
+        ]
+        
+        return ZMTransportResponse(payload: responsePayload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+    }
+    
     @objc(insertServiceWithName:handle:accentID:identifier:provider:assets:)
     public func insertService(name: String, handle: String, accentID: Int, identifier: String, provider: String, assets: Set<MockAsset>) -> MockService {
         let mockService: MockService = MockService.insert(in: managedObjectContext)
