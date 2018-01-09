@@ -34,8 +34,16 @@ import Foundation
             accentID = 2
         }
     }
-    
+
     public static var entityName = "Service"
+
+    static public func existingService(with identifier: String, provider: String, managedObjectContext: NSManagedObjectContext) -> MockService? {
+        // Fetch service
+        let predicate = NSPredicate(format: "%K == %@ AND %K == %@", #keyPath(MockService.identifier), identifier, #keyPath(MockService.provider), provider)
+        let result: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)
+        
+        return result.first
+    }
     
     var payloadValues: [String : Any?] {
         return [
