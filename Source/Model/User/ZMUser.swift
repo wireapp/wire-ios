@@ -91,17 +91,16 @@ extension ProfileImageSize: CustomDebugStringConvertible {
     }
 }
 
+@objc public protocol ServiceUser: ZMBareUser {
+    var providerIdentifier: String { get }
+    var serviceIdentifier: String { get }
+}
+
 extension ZMUser {
-    @objc public static let ottoBotHandle = "ottothebot"
-    @objc public static let annaBotHandle = "annathebot"
-    
-    public static var nonBotUsersPredicate: NSPredicate {
-        return NSPredicate(format: "NOT (%K IN %@)", #keyPath(ZMUser.handle), [ottoBotHandle, annaBotHandle])
-    }
-    
+
     /// Retrieves all users (excluding bots), having ZMConnectionStatusAccepted connection statuses.
     @objc static var predicateForConnectedNonBotUsers: NSPredicate {
-        return predicateForUsers(withSearch: "", excludingBots: true, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        return predicateForUsers(withSearch: "", connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
     
     /// Retrieves connected users with name or handle matching search string
@@ -110,7 +109,7 @@ extension ZMUser {
     /// - Returns: predicate having search query and ZMConnectionStatusAccepted connection statuses
     @objc(predicateForConnectedUsersWithSearchString:)
     public static func predicateForConnectedUsers(withSearch query: String) -> NSPredicate {
-        return predicateForUsers(withSearch: query, excludingBots: false, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        return predicateForUsers(withSearch: query, connectionStatuses: [ZMConnectionStatus.accepted.rawValue])
     }
     
     /// Retrieves all users with name or handle matching search string
@@ -118,7 +117,7 @@ extension ZMUser {
     /// - Parameter query: search string
     /// - Returns: predicate having search query
     public static func predicateForAllUsers(withSearch query: String) -> NSPredicate {
-        return predicateForUsers(withSearch: query, excludingBots: false, connectionStatuses: nil)
+        return predicateForUsers(withSearch: query, connectionStatuses: nil)
     }
     
     /// Retrieves users with name or handle matching search string, having one of given connection statuses
@@ -129,18 +128,6 @@ extension ZMUser {
     /// - Returns: predicate having search query and supplied connection statuses
     @objc(predicateForUsersWithSearchString:connectionStatusInArray:)
     public static func predicateForUsers(withSearch query: String, connectionStatuses: [Int16]? ) -> NSPredicate {
-        return predicateForUsers(withSearch: query, excludingBots: false, connectionStatuses: connectionStatuses)
-    }
-    
-    /// Retrieves users with name or handle matching search string, having one of given connection statuses
-    ///
-    /// - Parameters:
-    ///   - query: search string
-    ///   - excludingBots: set to true to filter out anna and otto
-    ///   - connectionStatuses: an array of connections status of the users. E.g. for connected users it is [ZMConnectionStatus.accepted.rawValue]
-    /// - Returns: predicate having search query and supplied connection statuses
-    @objc(predicateForUsersWithSearchString:excludingBots:connectionStatusInArray:)
-    public static func predicateForUsers(withSearch query: String, excludingBots: Bool, connectionStatuses: [Int16]? ) -> NSPredicate {
         var allPredicates = [[NSPredicate]]()
         if let statuses = connectionStatuses {
             allPredicates.append([predicateForUsers(withConnectionStatuses: statuses)])
@@ -153,10 +140,6 @@ extension ZMUser {
             let normalizedHandle = normalizedQuery.strippingLeadingAtSign()
             let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), normalizedHandle)
             allPredicates.append([namePredicate, handlePredicate].flatMap {$0})
-        }
-    
-        if excludingBots {
-            allPredicates.append([ZMUser.nonBotUsersPredicate])
         }
         
         let orPredicates = allPredicates.map { NSCompoundPredicate(orPredicateWithSubpredicates: $0) }

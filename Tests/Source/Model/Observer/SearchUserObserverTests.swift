@@ -186,7 +186,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
         
         // when
-        XCTAssertTrue(searchUser.user.isPendingApprovalByOtherUser)
+        XCTAssertTrue(searchUser.user!.isPendingApprovalByOtherUser)
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
         XCTAssertEqual(testObserver2.receivedChangeInfo.count, 1)
         

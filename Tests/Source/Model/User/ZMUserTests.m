@@ -1614,52 +1614,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqual(connection.status, ZMConnectionStatusIgnored);
 }
 
-- (void)testThatItDetectsAnnaAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.handle = @"annathebot";
-    
-    // then
-    XCTAssertTrue(user.isBot);
-}
-
-
-- (void)testThatItDetectsOttoAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.handle = @"ottothebot";
-    
-    // then
-    XCTAssertTrue(user.isBot);
-}
-
-- (void)testThatItDoesNotDetectUserAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    user.handle = @"florence";
-    
-    // then
-    XCTAssertFalse(user.isBot);
-}
-
-- (void)testThatItDoesNotDetectUserWithoutHandleAsBot
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // then
-    XCTAssertFalse(user.isBot);
-}
-
 @end
 
 

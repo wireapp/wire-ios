@@ -334,55 +334,6 @@ extension ZMUser {
 // MARK: - Predicates
 extension ZMUserTests {
     
-    func testPredicateFilteringNonBotUsers() {
-        // Given
-        let anna = ZMUser.insert(in: uiMOC, name: "anna", handle: ZMUser.annaBotHandle)
-        let otto = ZMUser.insert(in: uiMOC, name: "otto", handle: ZMUser.ottoBotHandle)
-        let user = ZMUser.insert(in: uiMOC, name: "Some one")
-        let all = NSArray(array: [anna, otto, user])
-        
-        // When
-        let nonBots = all.filtered(using: ZMUser.nonBotUsersPredicate) as! [ZMUser]
-        
-        // Then
-        XCTAssertEqual(nonBots.count, 1)
-        XCTAssertEqual(nonBots, [user])
-    }
-    
-    func testPredicateFilteringConnectedNonBotUsers() {
-        // Given
-        let anna = ZMUser.insert(in: self.uiMOC, name: "anna", handle: ZMUser.annaBotHandle)
-        let other = ZMUser.insert(in: self.uiMOC, name: "Nobody", handle: "no-b", connectionStatus: .pending)
-        let user = ZMUser.insert(in: self.uiMOC, name: "Some one", handle: "yes-b", connectionStatus: .accepted)
-        let all = NSArray(array: [anna, user, other])
-        
-        // When
-        let connectedNonBots = all.filtered(using: ZMUser.predicateForConnectedNonBotUsers) as! [ZMUser]
-        
-        // Then
-        XCTAssertEqual(connectedNonBots.count, 1)
-        XCTAssertEqual(connectedNonBots, [user])
-    }
-    
-    func testPredicateFilteringConnectedUsers() {
-        // Given
-        let anna = ZMUser.insert(in: self.uiMOC, name: "anna", handle: ZMUser.annaBotHandle, connectionStatus: .accepted)
-        let connectedUser = ZMUser.insert(in: self.uiMOC, name: "Body no", handle: "no-b", connectionStatus: .accepted)
-        let user = ZMUser.insert(in: self.uiMOC, name: "Body yes", handle: "yes-b", connectionStatus: .pending)
-        
-        let all = NSArray(array: [anna, connectedUser, user])
-        
-        // When
-        let connectedBots = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "anna")) as! [ZMUser]
-        let connectedUsers = all.filtered(using: ZMUser.predicateForConnectedUsers(withSearch: "Body")) as! [ZMUser]
-
-        // Then
-        XCTAssertEqual(connectedBots.count, 1)
-        XCTAssertEqual(connectedBots, [anna])
-        XCTAssertEqual(connectedUsers.count, 1)
-        XCTAssertEqual(connectedUsers, [connectedUser])
-    }
-    
     func testPredicateFilteringConnectedUsersByHandle() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "yyy", connectionStatus: .accepted)
