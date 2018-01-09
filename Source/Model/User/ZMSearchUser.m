@@ -35,7 +35,7 @@ static NSCache *searchUserToMediumAssetIDCache;
 
 NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
-@interface ZMSearchUser ()
+@interface ZMSearchUser () <ServiceUser>
 {
     NSData *_imageSmallProfileData;
     NSString *_imageSmallProfileIdentifier;
@@ -47,6 +47,7 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @property (nonatomic) NSString *initials;
 @property (nonatomic) NSString *name; //< name received from BE
 @property (nonatomic) NSString *handle;
+@property (nonatomic) NSString *providerIdentifier; // for service
 
 @property (nonatomic) BOOL isConnected;
 @property (nonatomic) ZMAccentColor accentColorValue;
@@ -150,7 +151,8 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return searchUsers;
 }
 
-- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession
+- (instancetype)initWithPayload:(NSDictionary *)payload
+                    userSession:(id<ZMManagedObjectContextProvider>)userSession
 {
     NSUUID *identifier = [payload optionalUuidForKey:@"id"];
     NSNumber *accentId = [payload optionalNumberForKey:@"accent_id"];
@@ -165,6 +167,29 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
                          user:existingUser
                   userSession:userSession];
     
+    if (nil != payload[@"provider"]) {
+        self.providerIdentifier = payload[@"provider"];
+    }
+    
+    NSArray *assets = payload[@"assets"];
+    if (nil != assets && [assets isKindOfClass:[NSArray class]]) {
+        for (NSDictionary *asset in assets) {
+            NSString *type = asset[@"type"];
+            NSString *size = asset[@"size"];
+            NSString *key  = asset[@"key"];
+            
+            if (type.length == 0 || size.length == 0 || key.length == 0) {
+                continue;
+            }
+            
+            if ([type isEqualToString:@"image"]) {
+                if ([size isEqualToString:@"preview"]) {
+                    [ZMSearchUser.searchUserToMediumAssetIDCache setObject:[[SearchUserAssetObjC alloc] initWithAssetKey:key]
+                                                                    forKey:identifier];
+                }
+            }
+        }
+    }
     
     if (nil != self) {
         self.totalCommonConnections = [[payload optionalNumberForKey:ZMSearchUserTotalMutualFriendsKey] unsignedIntegerValue];
@@ -172,14 +197,19 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return self;
 }
 
-+ (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray userSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray
+                                        userSession:(id<ZMManagedObjectContextProvider>)userSession;
 {
     NSMutableArray <ZMSearchUser *> *searchUsers = [[NSMutableArray alloc] init];
     
     for (NSDictionary *payload in payloadArray) {
-        VerifyReturnNil([payload isKindOfClass:[NSDictionary class]]);
-        VerifyReturnNil([payload uuidForKey:@"id"] != nil);
-        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithPayload:payload userSession:userSession];
+        if (![payload isKindOfClass:[NSDictionary class]] ||
+            [payload uuidForKey:@"id"] == nil) {
+            continue;
+        }
+        
+        ZMSearchUser *searchUser = [[ZMSearchUser alloc] initWithPayload:payload
+                                                             userSession:userSession];
         if (searchUser != nil) {
             [searchUsers addObject:searchUser];
         }
@@ -251,7 +281,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return self.user ? self.user.accentColorValue : _accentColorValue;
 }
 
-
 - (NSUUID *)remoteIdentifier
 {
     return self.user ? self.user.remoteIdentifier : _remoteIdentifier;
@@ -271,6 +300,11 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 - (BOOL)isPendingApprovalByOtherUser;
 {
     return (self.user != nil) ? self.user.isPendingApprovalByOtherUser : _isPendingApprovalByOtherUser;
+}
+
+- (NSString *)serviceIdentifier
+{
+    return self.remoteIdentifier.transportString;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsPendingApprovalByOtherUser
@@ -348,6 +382,16 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return ((self.user == nil) ?
             (!self.isConnected && self.remoteIdentifier != nil) :
             self.user.canBeConnected);
+}
+
+- (id<ServiceUser>)serviceUser
+{
+    if (self.serviceIdentifier != nil && self.providerIdentifier != nil) {
+        return self;
+    }
+    else {
+        return nil;
+    }
 }
 
 - (NSString *)description
@@ -457,7 +501,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return _imageSmallProfileData;
 }
 
-
 + (NSSet *)keyPathsForValuesAffectingImageSmallProfileData
 {
     return [NSSet setWithObjects:@"user.imageSmallProfileData", nil];
@@ -554,7 +597,8 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     [searchUserObserverCenter notifyUpdatedSearchUser:self];
 }
 
-- (void)refreshData {
+- (void)refreshData
+{
     [self.user refreshData];
 }
 

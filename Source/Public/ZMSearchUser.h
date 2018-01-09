@@ -20,21 +20,27 @@
 #import <WireUtilities/ZMAccentColor.h>
 #import "ZMBareUser.h"
 
+NS_ASSUME_NONNULL_BEGIN
+
 @class ZMUser, ZMAddressBookContact;
+@protocol ServiceUser;
 
 @interface ZMSearchUser : NSObject <ZMBareUser>
 
 /// This property might be nil when there is no existing local user. It is set when connecting to the user.
 /// It should therefore only be observed after successful connection
-@property (nonatomic, readonly) ZMUser *user;
+@property (nonatomic, readonly, nullable) ZMUser *user;
 
 /// This property might be nil when there's no matching address book contact. It can also bet set without
 /// a matching user if we are searching the address book, in which case the `user` property is nil.
-@property (nonatomic, readonly) ZMAddressBookContact *contact;
+@property (nonatomic, readonly, nullable) ZMAddressBookContact *contact;
+
+@property (nonatomic, readonly, nullable) id<ServiceUser> serviceUser;
 
 @end
-
 
 
 @interface ZMSearchUser (Connections) <ZMBareUserConnection>
 @end
+
+NS_ASSUME_NONNULL_END

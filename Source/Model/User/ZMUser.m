@@ -270,11 +270,6 @@ NSString *const AvailabilityKey = @"availability";
     }
 }
 
-- (BOOL)isBot
-{
-    return [self.handle isEqualToString:ZMUser.annaBotHandle] || [self.handle isEqualToString:ZMUser.ottoBotHandle];
-}
-
 - (BOOL)canBeConnected;
 {
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
@@ -371,7 +366,8 @@ NSString *const AvailabilityKey = @"availability";
     return clientsRequiringUserAttention;
 }
 
-- (void)refreshData {
+- (void)refreshData
+{
     self.needsToBeUpdatedFromBackend = true;
 }
 
@@ -430,7 +426,7 @@ NSString *const AvailabilityKey = @"availability";
     return keys;
 }
 
-+ (instancetype)userWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc;
++ (instancetype)userWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
 {
     // We must only ever call this on the sync context. Otherwise, there's a race condition
     // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up

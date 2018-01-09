@@ -979,6 +979,5 @@
     XCTAssertEqualObjects(dataIdentifierA, dataIdentifierB);
 }
 
-
 @end
 
