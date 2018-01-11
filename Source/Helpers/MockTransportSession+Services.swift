@@ -62,6 +62,8 @@ extension MockTransportSession {
             newServiceUser = change.insertUser(withName: service.name)
             change.addV3ProfilePicture(to: newServiceUser)
             newServiceUser.accentID = Int16(service.accentID)
+            newServiceUser.serviceIdentifier = service.identifier
+            newServiceUser.providerIdentifier = service.provider
         }
         
         conversation.addUsers(by: selfUser, addedUsers: [newServiceUser])
