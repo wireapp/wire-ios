@@ -46,7 +46,11 @@ import Foundation
     @NSManaged public var invitations: NSOrderedSet
     
     @NSManaged public var memberships: Set<MockMember>?
-    
+
+    @NSManaged public var providerIdentifier: String?
+
+    @NSManaged public var serviceIdentifier: String?
+
     override public func awakeFromInsert() {
         if accentID == 0 {
             accentID = 2
