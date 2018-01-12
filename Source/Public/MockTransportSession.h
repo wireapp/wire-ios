@@ -182,7 +182,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
                               accentID:(NSInteger)accentID
                             identifier:(NSString *)identifier
                               provider:(NSString *)provider
-                                assets:(NSSet<MockAsset *> *)assets;
+                                assets:(NSSet<MockAsset *> *)assets
+                              pictures:(NSSet<MockPicture *> *)pictures;
 @end
 
 @interface MockTransportSession (IsTyping)

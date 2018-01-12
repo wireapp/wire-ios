@@ -24,11 +24,12 @@ import Foundation
     @NSManaged public var identifier: String
     @NSManaged public var name: String
     @NSManaged public var handle: String?
-    @NSManaged public var accentID: Int
+    @NSManaged public var accentID: Int32
     @NSManaged public var provider: String
     
     @NSManaged public var assets: Set<MockAsset>?
-    
+    @NSManaged public var pictures: Set<MockPicture>?
+
     override public func awakeFromInsert() {
         if accentID == 0 {
             accentID = 2
@@ -56,6 +57,10 @@ import Foundation
                 return ["type": "image",
                         "size": "preview",
                         "key": $0.identifier] as [String: String]
+            },
+            "pictures" : (self.pictures ?? Set()).map {
+                return ["id": $0.identifier,
+                        "info": $0.info] as [String: Any]
             }
         ]
     }
