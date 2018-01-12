@@ -32,7 +32,8 @@ final class AccountTests: ZMConversationTestsBase {
             userName: "Bruno",
             userIdentifier: .create(),
             teamName: "Wire",
-            imageData: verySmallJPEGData()
+            imageData: verySmallJPEGData(),
+            teamImageData: verySmallJPEGData()
         )
 
         // when
@@ -53,6 +54,7 @@ final class AccountTests: ZMConversationTestsBase {
                                   userIdentifier: id,
                                   teamName: team,
                                   imageData: image,
+                                  teamImageData: image,
                                   unreadConversationCount: count)
             try account.write(to: url)
         }
@@ -65,6 +67,7 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account.teamName, team)
         XCTAssertEqual(account.userIdentifier, id)
         XCTAssertEqual(account.imageData, image)
+        XCTAssertEqual(account.teamImageData, image)
         XCTAssertEqual(account.unreadConversationCount, count)
     }
 

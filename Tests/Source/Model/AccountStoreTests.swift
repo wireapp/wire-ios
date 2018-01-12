@@ -177,6 +177,33 @@ final class AccountStoreTests: ZMConversationTestsBase {
         XCTAssertEqual(account.userName, name)
         XCTAssertEqual(account.teamName, team)
         XCTAssertNil(account.imageData)
+        XCTAssertNil(account.teamImageData)
+    }
+    
+    func testThatItUpdatesAnExistingAccount_WithImages() {
+        // given
+        let store = AccountStore(root: url)
+        let uuid = UUID.create()
+        
+        do {
+            let account = Account(userName: "Silvan", userIdentifier: uuid)
+            XCTAssert(store.add(account))
+            XCTAssertEqual(store.load(), [account])
+        }
+        
+        // when
+        let name = "Marco", team = "Wire", image = verySmallJPEGData()
+        do {
+            let account = Account(userName: name, userIdentifier: uuid, teamName: team, imageData: image, teamImageData: image)
+            XCTAssert(store.add(account))
+        }
+        
+        // then
+        guard let account = store.load(uuid) else { return XCTFail("Unable to load account") }
+        XCTAssertEqual(account.userName, name)
+        XCTAssertEqual(account.teamName, team)
+        XCTAssertEqual(account.imageData, image)
+        XCTAssertEqual(account.teamImageData, image)
     }
 
     func testThatItCanLoadAnAccountByUUID() {

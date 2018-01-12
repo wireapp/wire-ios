@@ -34,6 +34,7 @@ public final class Account: NSObject {
     public var teamName: String?
     public let userIdentifier: UUID
     public var imageData: Data?
+    public var teamImageData: Data?
     
     public var unreadConversationCount: Int = 0 {
         didSet {
@@ -47,11 +48,13 @@ public final class Account: NSObject {
                          userIdentifier: UUID,
                          teamName: String? = nil,
                          imageData: Data? = nil,
+                         teamImageData: Data? = nil,
                          unreadConversationCount: Int = 0) {
         self.userName = userName
         self.userIdentifier = userIdentifier
         self.teamName = teamName
         self.imageData = imageData
+        self.teamImageData = teamImageData
         self.unreadConversationCount = unreadConversationCount
         super.init()
     }
@@ -65,6 +68,7 @@ public final class Account: NSObject {
         self.userName = account.userName
         self.teamName = account.teamName
         self.imageData = account.imageData
+        self.teamImageData = account.teamImageData
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -73,6 +77,7 @@ public final class Account: NSObject {
             && teamName == other.teamName
             && userIdentifier == other.userIdentifier
             && imageData == other.imageData
+            && teamImageData == other.teamImageData
     }
 
     public override var hash: Int {
@@ -80,7 +85,7 @@ public final class Account: NSObject {
     }
 
     public override var debugDescription: String {
-        return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n"
+        return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
     }
 }
 
@@ -91,7 +96,7 @@ extension Account {
     /// The use of a separate enum, instead of using #keyPath
     /// is intentional here to allow easy renaming of properties.
     private enum Key: String {
-        case name, identifier, team, image, unreadConversationCount
+        case name, identifier, team, image, teamImage, unreadConversationCount
     }
 
     public convenience init?(json: [String: Any]) {
@@ -102,6 +107,7 @@ extension Account {
             userIdentifier: id,
             teamName: json[Key.team.rawValue] as? String,
             imageData: (json[Key.image.rawValue] as? String).flatMap { Data(base64Encoded: $0) },
+            teamImageData: (json[Key.teamImage.rawValue] as? String).flatMap { Data(base64Encoded: $0) },
             unreadConversationCount: (json[Key.unreadConversationCount.rawValue] as? Int) ?? 0
         )
     }
@@ -116,6 +122,9 @@ extension Account {
         }
         if let imageData = imageData {
             json[Key.image.rawValue] = imageData.base64EncodedString()
+        }
+        if let teamImageData = teamImageData {
+            json[Key.teamImage.rawValue] = teamImageData.base64EncodedString()
         }
         json[Key.unreadConversationCount.rawValue] = self.unreadConversationCount
         return json
