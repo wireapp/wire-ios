@@ -54,31 +54,15 @@ class MockServicesTests: MockTransportSessionTests {
         XCTAssertEqual(response.httpStatus, 201)
         XCTAssertNotNil(response.payload?.asDictionary())
         XCTAssertEqual(conversation.activeUsers.count, 2)
-    }
-}
 
-extension MockServicesTests {
-    func testThatItServiceUserServiceIdentifierIsFilled() {
-        // given
-        let _ = sut.insertSelfUser(withName: "Antonio")
-        let service = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
-        let conversation = sut.insertConversation(withCreator: sut.selfUser, otherUsers: [], type: .group)
+        let conversationUser = conversation.activeUsers.firstObject as! MockUser
+        XCTAssertNil(conversationUser.serviceIdentifier)
+        XCTAssertNil(conversationUser.providerIdentifier)
 
-        XCTAssertEqual(conversation.activeUsers.count, 1)
-        // when
-        let payload = ["service": service.identifier,
-                       "provider": service.provider]
-        let response = sut.processServiceRequest(ZMTransportRequest(path: "/conversations/\(conversation.identifier)/bots", method: .methodPOST, payload: payload as ZMTransportData))
+        let serviceUser = conversation.activeUsers.lastObject as! MockUser
 
-        // then
-        XCTAssertEqual(response.httpStatus, 201)
-        XCTAssertNotNil(response.payload?.asDictionary())
-        XCTAssertEqual(conversation.activeUsers.count, 2)
-
-        let serviceUser = conversation.activeUsers[1] as! MockUser
-
-        XCTAssertNotNil(serviceUser.serviceIdentifier)
         XCTAssertEqual(serviceUser.serviceIdentifier, service.identifier)
+        XCTAssertEqual(serviceUser.providerIdentifier, service.provider)
     }
-
 }
+
