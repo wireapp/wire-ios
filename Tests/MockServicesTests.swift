@@ -22,8 +22,8 @@ import Foundation
 class MockServicesTests: MockTransportSessionTests {
     func testThatInsertedServiceCanBeQueried() {
         // given
-        let service1 = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
-        let _ = sut.insertService(name: "Other Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
+        let service1 = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
+        let _ = sut.insertService(name: "Other Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
         // when
         
         let response = sut.processServicesSearchRequest(ZMTransportRequest(path: "/services?tags=tutorial&start=Normal", method: .methodGET, payload: nil))
@@ -41,7 +41,7 @@ class MockServicesTests: MockTransportSessionTests {
     func testThatItCanAddServiceToTheConversation() {
         // given
         let _ = sut.insertSelfUser(withName: "Antonio")
-        let service = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set(), pictures: Set())
+        let service = sut.insertService(name: "Normal Service", handle: "", accentID: 5, identifier: UUID().transportString(), provider: UUID().transportString(), assets: Set())
         let conversation = sut.insertConversation(withCreator: sut.selfUser, otherUsers: [], type: .group)
         
         XCTAssertEqual(conversation.activeUsers.count, 1)

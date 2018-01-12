@@ -64,7 +64,6 @@ extension MockTransportSession {
             newServiceUser.accentID = Int16(service.accentID)
             newServiceUser.serviceIdentifier = service.identifier
             newServiceUser.providerIdentifier = service.provider
-            newServiceUser.pictures = NSOrderedSet(array: Array(service.pictures ?? Set()))
         }
         
         conversation.addUsers(by: selfUser, addedUsers: [newServiceUser])
@@ -81,24 +80,21 @@ extension MockTransportSession {
                 "from": selfUser.identifier,
                 "time": Date().transportString(),
                 "data": ["user_ids": [newServiceUser.identifier]]
-            ],
-            "picture": Array(newServiceUser.pictures)
-
+            ]
         ]
         
         return ZMTransportResponse(payload: responsePayload as ZMTransportData, httpStatus: 201, transportSessionError: nil)
     }
     
-    @objc(insertServiceWithName:handle:accentID:identifier:provider:assets:pictures:)
-    public func insertService(name: String, handle: String, accentID: Int, identifier: String, provider: String, assets: Set<MockAsset>, pictures: Set<MockPicture>) -> MockService {
+    @objc(insertServiceWithName:handle:accentID:identifier:provider:assets:)
+    public func insertService(name: String, handle: String, accentID: Int, identifier: String, provider: String, assets: Set<MockAsset>) -> MockService {
         let mockService: MockService = MockService.insert(in: managedObjectContext)
         mockService.name = name
         mockService.handle = handle
-        mockService.accentID = Int32(accentID)
+        mockService.accentID = accentID
         mockService.identifier = identifier
         mockService.provider = provider
         mockService.assets = assets
-        mockService.pictures = pictures
         managedObjectContext.saveOrRollback()
         return mockService
     }

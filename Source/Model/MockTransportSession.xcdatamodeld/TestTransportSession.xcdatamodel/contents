@@ -58,7 +58,6 @@
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="info" optional="YES" attributeType="Transformable" syncable="YES"/>
-        <relationship name="service" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Service" inverseName="pictures" inverseEntity="Service" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="pictures" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="PreKey" representedClassName="MockPreKey" syncable="YES">
@@ -74,7 +73,6 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="provider" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="assets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Asset" inverseName="userProfilePictures" inverseEntity="Asset" syncable="YES"/>
-        <relationship name="pictures" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Picture" inverseName="service" inverseEntity="Picture" syncable="YES"/>
     </entity>
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
         <attribute name="createdAt" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -137,7 +135,7 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="Service" positionX="9" positionY="153" width="128" height="148"/>
+        <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
         <element name="User" positionX="0" positionY="0" width="128" height="390"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
