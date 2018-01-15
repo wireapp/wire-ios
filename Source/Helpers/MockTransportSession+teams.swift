@@ -35,6 +35,8 @@ extension MockTransportSession {
             response = fetchAllTeams(query: request.queryParameters)
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1))
+        case "/teams/*/invitations":
+            response = sendTeamInvitation(with: request.RESTComponents(index: 1))
         case "/teams/*/members":
             response = fetchMembersForTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/members/*":
@@ -98,6 +100,19 @@ extension MockTransportSession {
         
         let hasMore = !paginatedTeams.isEmpty && (teams.last != paginatedTeams.last)
         return (Array(paginatedTeams), hasMore)
+    }
+    
+    private func sendTeamInvitation(with identifier: String?) -> ZMTransportResponse? {
+        guard let identifier = identifier else { return nil }
+        let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        
+        
+        if let permissionError = ensurePermission(.addTeamMember, in: team) {
+            return permissionError
+        }
+        
+        return ZMTransportResponse(payload: nil, httpStatus: 201, transportSessionError: nil)
     }
     
     private func fetchMembersForTeam(with identifier: String?) -> ZMTransportResponse? {
