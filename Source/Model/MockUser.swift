@@ -46,7 +46,11 @@ import Foundation
     @NSManaged public var invitations: NSOrderedSet
     
     @NSManaged public var memberships: Set<MockMember>?
-    
+
+    @NSManaged public var providerIdentifier: String?
+
+    @NSManaged public var serviceIdentifier: String?
+
     override public func awakeFromInsert() {
         if accentID == 0 {
             accentID = 2
@@ -154,7 +158,7 @@ extension MockUser {
     var data: [String : Any?] {
         precondition(self.accentID != 0, "Accent ID is not set")
         let pictureData = pictures.map(with: #selector(getter: transportData)) ?? []
-        return [
+        var payload : [String : Any?] = [
             "accent_id" : accentID,
             "name" : name,
             "id" : identifier,
@@ -162,6 +166,14 @@ extension MockUser {
             "picture" : pictureData.array,
             "assets" : assetData
         ]
+
+        if let providerIdentifier = self.providerIdentifier,
+           let servierIdentifier = self.serviceIdentifier {
+            payload["service"] = ["id": providerIdentifier,
+                                  "service" : servierIdentifier]
+        }
+
+        return payload
     }
     
     var assetData: [[String : Any]]? {
