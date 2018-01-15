@@ -96,6 +96,8 @@
         <attribute name="password" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="providerIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="serviceIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="activeConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="activeUsers" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="connectionsFrom" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Connection" inverseName="from" inverseEntity="Connection" syncable="YES"/>
@@ -133,9 +135,9 @@
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
-        <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="360"/>
-        <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
+        <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="390"/>
+        <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>
