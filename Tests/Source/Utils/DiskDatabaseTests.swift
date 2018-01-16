@@ -41,7 +41,6 @@ public class DiskDatabaseTest: ZMTBaseTest {
         super.setUp()
         
         accountId = .create()
-        let bundleIdentifier = Bundle.main.bundleIdentifier
         sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(UUID().uuidString)")
         cleanUp()
         createDatabase()
