@@ -72,6 +72,13 @@
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="provider" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="providerDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="providerEmail" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="providerName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="providerURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="serviceDescription" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="summary" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="tag" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="assets" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Asset" inverseName="userProfilePictures" inverseEntity="Asset" syncable="YES"/>
     </entity>
     <entity name="Team" representedClassName=".MockTeam" syncable="YES">
