@@ -311,7 +311,7 @@
     return @[@"prod-nginz-https.wire.com", @"prod-nginz-ssl.wire.com", @"prod-assets.wire.com", @"www.wire.com", @"wire.com"];
 }
 
-- (void)testPinnedHostsWithValidCertificateIsTrustedAreTrusted
+- (void)DISABLED_testPinnedHostsWithValidCertificateIsTrustedAreTrusted
 {
     // given
     SecTrustRef serverTrust = [self validTrustForProductionHost];
