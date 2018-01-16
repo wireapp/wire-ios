@@ -352,7 +352,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @implementation MockTransportSession (Mock)
 
 
-- (void)enqueueSearchRequest:(ZMTransportRequest *)request;
+- (void)enqueueOneTimeRequest:(ZMTransportRequest *)request;
 {
     [self attemptToEnqueueSyncRequestWithGenerator:^ZMTransportRequest *{
         return request;
