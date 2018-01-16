@@ -178,11 +178,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 /// Support for services
 - (MockService *)insertServiceWithName:(NSString *)name
-                                handle:(NSString *)handle
-                              accentID:(NSInteger)accentID
                             identifier:(NSString *)identifier
-                              provider:(NSString *)provider
-                                assets:(NSSet<MockAsset *> *)assets;
+                              provider:(NSString *)provider;
 @end
 
 @interface MockTransportSession (IsTyping)

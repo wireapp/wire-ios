@@ -26,8 +26,16 @@ import Foundation
     @NSManaged public var handle: String?
     @NSManaged public var accentID: Int
     @NSManaged public var provider: String
-    
+    @NSManaged public var summary: String?
+    @NSManaged public var serviceDescription: String?
+    @NSManaged public var tag: String?
+
     @NSManaged public var assets: Set<MockAsset>?
+
+    @NSManaged public var providerURL: String?
+    @NSManaged public var providerName: String?
+    @NSManaged public var providerEmail: String?
+    @NSManaged public var providerDescription: String?
     
     override public func awakeFromInsert() {
         if accentID == 0 {
@@ -52,6 +60,8 @@ import Foundation
             "handle" : handle,
             "accent_id" : accentID,
             "provider" : provider,
+            "summary" : summary ?? "",
+            "tag" : tag ?? "",
             "assets" : (self.assets ?? Set()).map {
                 return ["type": "image",
                         "size": "preview",
