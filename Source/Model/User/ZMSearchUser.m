@@ -35,7 +35,7 @@ static NSCache *searchUserToMediumAssetIDCache;
 
 NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
-@interface ZMSearchUser () <ServiceUser>
+@interface ZMSearchUser ()
 {
     NSData *_imageSmallProfileData;
     NSString *_imageSmallProfileIdentifier;
@@ -47,7 +47,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 @property (nonatomic) NSString *initials;
 @property (nonatomic) NSString *name; //< name received from BE
 @property (nonatomic) NSString *handle;
-@property (nonatomic) NSString *providerIdentifier; // for service
 
 @property (nonatomic) BOOL isConnected;
 @property (nonatomic) ZMAccentColor accentColorValue;
@@ -302,11 +301,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return (self.user != nil) ? self.user.isPendingApprovalByOtherUser : _isPendingApprovalByOtherUser;
 }
 
-- (NSString *)serviceIdentifier
-{
-    return self.remoteIdentifier.transportString;
-}
-
 + (NSSet *)keyPathsForValuesAffectingIsPendingApprovalByOtherUser
 {
     return [NSSet setWithObjects:@"user.isPendingApprovalByOtherUser", @"user", nil];
@@ -382,16 +376,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return ((self.user == nil) ?
             (!self.isConnected && self.remoteIdentifier != nil) :
             self.user.canBeConnected);
-}
-
-- (id<ServiceUser>)serviceUser
-{
-    if (self.serviceIdentifier != nil && self.providerIdentifier != nil) {
-        return self;
-    }
-    else {
-        return nil;
-    }
 }
 
 - (NSString *)description
