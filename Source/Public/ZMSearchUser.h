@@ -35,8 +35,6 @@ NS_ASSUME_NONNULL_BEGIN
 /// a matching user if we are searching the address book, in which case the `user` property is nil.
 @property (nonatomic, readonly, nullable) ZMAddressBookContact *contact;
 
-@property (nonatomic, readonly, nullable) id<ServiceUser> serviceUser;
-
 @end
 
 

@@ -79,6 +79,8 @@ static NSString *const ReactionsKey = @"reactions";
 static NSString *const AddressBookEntryKey = @"addressBookEntry";
 static NSString *const MembershipKey = @"membership";
 static NSString *const CreatedTeamsKey = @"createdTeams";
+static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
+static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
 
 @interface ZMBoxedSelfUser : NSObject
@@ -419,7 +421,9 @@ NSString *const AvailabilityKey = @"availability";
                                            AddressBookEntryKey,
                                            HandleKey, // this is not set on the user directly
                                            MembershipKey,
-                                           CreatedTeamsKey
+                                           CreatedTeamsKey,
+                                           ServiceIdentifierKey,
+                                           ProviderIdentifierKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -516,6 +520,19 @@ NSString *const AvailabilityKey = @"availability";
 
 - (void)updateWithTransportData:(NSDictionary *)transportData authoritative:(BOOL)authoritative
 {
+    NSDictionary *serviceData = transportData[@"service"];
+    if (serviceData != nil) {
+        NSString *serviceIdentifier = [serviceData optionalStringForKey:@"id"];
+        if (serviceIdentifier != nil) {
+            self.serviceIdentifier = serviceIdentifier;
+        }
+
+        NSString *providerIdentifier = [serviceData optionalStringForKey:@"provider"];
+        if (providerIdentifier != nil) {
+            self.providerIdentifier = providerIdentifier;
+        }
+    }
+
     NSUUID *remoteID = [transportData[@"id"] UUID];
     if (self.remoteIdentifier == nil) {
         self.remoteIdentifier = remoteID;
