@@ -350,7 +350,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self.urlSessionSwitch.backgroundSession getTasksWithCompletionHandler:completionHandler];
 }
 
-- (void)enqueueSearchRequest:(ZMTransportRequest *)searchRequest;
+- (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest;
 {
     OSAtomicIncrement32Barrier(&_numberOfRequestsInProgress);
     [self enqueueTransportRequest:searchRequest];

@@ -92,7 +92,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 /// Sets the access token success callback
 - (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
 
-- (void)enqueueSearchRequest:(ZMTransportRequest *)searchRequest;
+- (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest;
 - (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(ZMTransportRequestGenerator)requestGenerator;
 
 - (void)setNetworkStateDelegate:(nullable id<ZMNetworkStateDelegate>)delegate;
