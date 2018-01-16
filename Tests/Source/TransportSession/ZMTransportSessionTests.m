@@ -603,7 +603,7 @@ static XCTestCase *currentTestCase;
     ZMTransportRequest *request =[ZMTransportRequest requestWithPath:@"foo" method:ZMMethodGET payload:nil];
     
     // when
-    [self.sut enqueueSearchRequest:request];
+    [self.sut enqueueOneTimeRequest:request];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
