@@ -1,33 +1,29 @@
-## Checklist (please check before submitting)
+## What's new in this PR?
 
-* [ ] I checked the existing issues, and the issue was not reported before.
+### Issues
 
-## The problem
+_Briefly describe the issue you have solved or implemented with this pull request. If the PR contains multiple issues, use a bullet list._
 
-Briefly describe the issue you are experiencing (or the feature you want to see added to Wire).
-Tell us what you were trying to do and what happened instead.
+### Causes
 
-## Environment
+_Briefly describe the causes behind the issues. This could be helpful to understand the adopted solutions behind some nasty bugs or complex issues. (Optional)_
 
-* Wire version that exhibits the issue:
-* Last Wire version that did not exhibit the issue (if applicable):
-* iOS version used to run Wire:
-* iOS device type: 
-* Mobile network type (EDGE/LTE/Wi-Fi/Offline):
-* Exact date, time and timezone (only for the crash issues): 
+### Solutions
 
-## Details
+_Briefly describe the solutions you have implemented for the issues explained above._
 
-Describe the steps necessary to reproduce the problem in more details. The detailed description
-will help us to fix the issue faster.
+## Dependencies
 
-## Calling Debug logs (only for calling issues)
+_If there are some other pull requests related to this one (e.g. new releases of frameworks), specify them here. (Optional)_
 
-0. You have to have the iOS email client set up.
-1. Reproduce the issue.
-2. Go to Settings -> Advanced -> Calling Debug Report.
-3. Send the report.
+Needs releases with:
 
-## Screenshots
+- [ ] GitHub link to the pull request
 
-Please attach screenshots if you consider them as helpful to understand/reproduce the issue.
+## Notes
+
+_Specify here any other facts that you think are important for this issue. (Optional)_
+
+### Attachments
+
+_Attachments like images, videos, etc. (Optional)_
