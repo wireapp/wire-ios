@@ -208,10 +208,6 @@ public class SharingSession {
     public var canShare: Bool {
         return applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
     }
-    
-    /// To check if the user has already authenticated through LocalAuthentication
-    /// during the current session.
-    public var isLocalAuthenticationGranted : Bool = false
 
     /// List of non-archived conversations in which the user can write
     /// The list will be sorted by relevance
