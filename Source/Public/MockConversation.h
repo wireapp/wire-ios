@@ -46,7 +46,10 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, nonnull) NSString *selfIdentifier;
 @property (nonatomic, readonly, nullable) NSString *name;
 @property (nonatomic) ZMTConversationType type;
-/// participants that are not self
+/**
+  participants that are not self
+  mocks ZMConversation.activeParticipants
+ */
 @property (nonatomic, readonly, nonnull) NSOrderedSet *activeUsers;
 
 @property (nonatomic, readonly, nonnull) NSOrderedSet *events;

@@ -50,8 +50,8 @@ class MockServicesTests: MockTransportSessionTests {
 
         /// then
         if let service: [String: String] = data["service"] as? [String: String] {
-            XCTAssertEqual(service["id"], serviceUser.providerIdentifier)
-            XCTAssertEqual(service["service"], serviceUser.serviceIdentifier)
+            XCTAssertEqual(service["provider"], serviceUser.providerIdentifier)
+            XCTAssertEqual(service["id"], serviceUser.serviceIdentifier)
         } else {
             XCTFail("service is nil!")
         }
