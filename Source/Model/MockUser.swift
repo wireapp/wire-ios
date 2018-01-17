@@ -168,9 +168,9 @@ extension MockUser {
         ]
 
         if let providerIdentifier = self.providerIdentifier,
-           let servierIdentifier = self.serviceIdentifier {
-            payload["service"] = ["id": providerIdentifier,
-                                  "service" : servierIdentifier]
+           let serviceIdentifier = self.serviceIdentifier {
+            payload["service"] = ["provider": providerIdentifier,
+                                  "id" : serviceIdentifier]
         }
 
         return payload

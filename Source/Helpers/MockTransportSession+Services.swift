@@ -132,6 +132,10 @@ extension MockTransportSession {
                 "from": selfUser.identifier,
                 "time": Date().transportString(),
                 "data": ["user_ids": [newServiceUser.identifier]]
+            ],
+            "service": [
+                "provider": newServiceUser.providerIdentifier,
+                "id": newServiceUser.serviceIdentifier
             ]
         ]
         
