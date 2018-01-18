@@ -95,12 +95,19 @@ public extension ServiceUser {
     }
     
     fileprivate func requestToFetchProvider() -> ZMTransportRequest {
-        let path = "/providers/\(self.providerIdentifier)/"
+        guard let providerIdentifier = self.providerIdentifier else {
+            fatal("No serviceIdentifier or providerIdentifier")
+        }
+        let path = "/providers/\(providerIdentifier)/"
         return ZMTransportRequest(path: path, method: .methodGET, payload: nil)
     }
     
     fileprivate func requestToFetchDetails() -> ZMTransportRequest {
-        let path = "/providers/\(self.providerIdentifier)/services/\(self.serviceIdentifier)"
+        guard let providerIdentifier = self.providerIdentifier,
+            let serviceIdentifier = self.serviceIdentifier else {
+                fatal("No serviceIdentifier or providerIdentifier")
+        }
+        let path = "/providers/\(providerIdentifier)/services/\(serviceIdentifier)"
         return ZMTransportRequest(path: path, method: .methodGET, payload: nil)
     }
 }
