@@ -1102,7 +1102,11 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
         NSTimeInterval timeToDeletion = [message.destructionDate timeIntervalSinceNow];
         if (timeToDeletion > 0) {
             // The timer has not run out yet, we want to start a timer with the remaining time
-            [message restartDeletionTimer:timeToDeletion];
+            if (message.sender.isSelfUser) {
+                [message restartObfuscationTimer:timeToDeletion];
+            } else {
+                [message restartDeletionTimer:timeToDeletion];
+            }
         } else {
             // The timer has run out, we want to delete the message or obfuscate if we are the sender
             if (message.sender.isSelfUser) {
@@ -1130,6 +1134,20 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     }];
 }
 
+- (void)restartObfuscationTimer:(NSTimeInterval)remainingTime
+{
+    NSManagedObjectContext *syncContext = self.managedObjectContext;
+    if (!syncContext.zm_isSyncContext) {
+        syncContext = self.managedObjectContext.zm_syncContext;
+    }
+    [syncContext performGroupedBlock:^{
+        NSError *error;
+        ZMMessage *message = [syncContext existingObjectWithID:self.objectID error:&error];
+        if (error == nil && message != nil) {
+            NOT_USED([syncContext.zm_messageObfuscationTimer startObfuscationTimerWithMessage:message timeout:remainingTime]);
+        }
+    }];
+}
 
 @end
 
