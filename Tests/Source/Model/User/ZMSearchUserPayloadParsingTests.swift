@@ -35,7 +35,6 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         XCTAssertEqual(user.handle, "@user")
         XCTAssertEqual(user.remoteIdentifier, uuid)
         XCTAssertEqual(user.accentColorValue, ZMAccentColor.init(rawValue: 5))
-        XCTAssertNil(user.serviceUser)
         XCTAssertFalse(user.isServiceUser)
     }
     
@@ -53,10 +52,9 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let user = ZMSearchUser(payload: payload, userSession: self)!
         
         // then
-        XCTAssertNotNil(user.serviceUser)
-        XCTAssert(user.isServiceUser)
-        XCTAssertEqual(user.serviceUser!.providerIdentifier, provider.transportString())
-        XCTAssertEqual(user.serviceUser!.serviceIdentifier, uuid.transportString())
+        XCTAssertTrue(user.isServiceUser)
+        XCTAssertEqual(user.providerIdentifier, provider.transportString())
+        XCTAssertEqual(user.serviceIdentifier, uuid.transportString())
     }
     
     func testThatItParsesService_ImageIdentifier() throws {

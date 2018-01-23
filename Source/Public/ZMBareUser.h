@@ -39,7 +39,6 @@
 @property (nonatomic, readonly) NSString *smallProfileImageCacheKey;
 @property (nonatomic, readonly) NSString *mediumProfileImageCacheKey;
 
-
 @property (nonatomic, readonly) BOOL isConnected;
 @property (nonatomic, readonly) ZMAccentColor accentColorValue;
 
