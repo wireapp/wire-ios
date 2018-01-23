@@ -27,12 +27,10 @@
 		5418CDA31E55D838004AF1A4 /* CryptoBoxUpdateEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5418CDA21E55D838004AF1A4 /* CryptoBoxUpdateEventsTests.swift */; };
 		54327FE61E545A8900B08FFC /* ClientMessageTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE51E545A8900B08FFC /* ClientMessageTranscoder.swift */; };
 		54327FE81E54636400B08FFC /* MessageExpirationTimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE71E54636400B08FFC /* MessageExpirationTimer.swift */; };
-		54327FEA1E548A6700B08FFC /* SystemMessageEventsConsumer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54327FE91E548A6700B08FFC /* SystemMessageEventsConsumer.swift */; };
 		543BE0591F698BD4007D7409 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54E03A3C1E93C5810089AC69 /* WireDataModel.framework */; };
 		5442A7341E4224DB00415104 /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */; };
 		548A553F1E6576D500680179 /* ZMOTRMessageMissingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548A553D1E6576C000680179 /* ZMOTRMessageMissingTests.swift */; };
 		548F88AD1E54ABE700D179C7 /* PushMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548F88AC1E54ABE700D179C7 /* PushMessageHandler.swift */; };
-		548F88B01E54C32D00D179C7 /* SystemMessageEventsConsumerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 548F88AE1E54C32900D179C7 /* SystemMessageEventsConsumerTests.swift */; };
 		54979CB71E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54979CB61E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift */; };
 		54B2CBA21E5DE39E00BFFEAE /* ClientMessageTranscoderTests+Depedency.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B2CBA01E5DE35800BFFEAE /* ClientMessageTranscoderTests+Depedency.swift */; };
 		54B2CBA41E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B2CBA31E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift */; };
@@ -163,7 +161,6 @@
 		5418CDA21E55D838004AF1A4 /* CryptoBoxUpdateEventsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; lineEnding = 0; path = CryptoBoxUpdateEventsTests.swift; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.swift; };
 		54327FE51E545A8900B08FFC /* ClientMessageTranscoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientMessageTranscoder.swift; sourceTree = "<group>"; };
 		54327FE71E54636400B08FFC /* MessageExpirationTimer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MessageExpirationTimer.swift; sourceTree = "<group>"; };
-		54327FE91E548A6700B08FFC /* SystemMessageEventsConsumer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemMessageEventsConsumer.swift; sourceTree = "<group>"; };
 		5442A7331E4224DB00415104 /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
 		545BB63E1E573AA500A717CE /* libs.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = libs.xcconfig; sourceTree = "<group>"; };
 		545BB63F1E573AA500A717CE /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
@@ -185,7 +182,6 @@
 		545BB6501E573AA500A717CE /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		548A553D1E6576C000680179 /* ZMOTRMessageMissingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMOTRMessageMissingTests.swift; sourceTree = "<group>"; };
 		548F88AC1E54ABE700D179C7 /* PushMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushMessageHandler.swift; sourceTree = "<group>"; };
-		548F88AE1E54C32900D179C7 /* SystemMessageEventsConsumerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SystemMessageEventsConsumerTests.swift; sourceTree = "<group>"; };
 		54979CB61E37CC95005EA09F /* EncryptionSessionDirectory+UpdateEvents.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "EncryptionSessionDirectory+UpdateEvents.swift"; sourceTree = "<group>"; };
 		54B2CBA01E5DE35800BFFEAE /* ClientMessageTranscoderTests+Depedency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTranscoderTests+Depedency.swift"; sourceTree = "<group>"; };
 		54B2CBA31E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTrancoderTests+MessageConfirmation.swift"; sourceTree = "<group>"; };
@@ -418,7 +414,6 @@
 				16D0E0781DF822E10075DF8F /* GenericMessageRequestStrategy.swift */,
 				BFABEB8D1E647C5D003BE9F3 /* GenericMessageNotificationRequestStrategy.swift */,
 				16D0E0801DF88B820075DF8F /* OTREntityTranscoder.swift */,
-				54327FE91E548A6700B08FFC /* SystemMessageEventsConsumer.swift */,
 				16D95A441FCF0B6E00C96069 /* AvailabilityRequestStrategy.swift */,
 			);
 			path = Transcoders;
@@ -502,7 +497,6 @@
 				54B2CBA01E5DE35800BFFEAE /* ClientMessageTranscoderTests+Depedency.swift */,
 				54B2CBA31E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift */,
 				5418CDA01E55D78D004AF1A4 /* MessageExpirationTimerTests.swift */,
-				548F88AE1E54C32900D179C7 /* SystemMessageEventsConsumerTests.swift */,
 				F9F057E61D954C1400FA1AAD /* ClientMessageRequestFactoryTests.swift */,
 				F9F057E81D954CD700FA1AAD /* FilePreprocessorTests.swift */,
 				5418CDA21E55D838004AF1A4 /* CryptoBoxUpdateEventsTests.swift */,
@@ -784,7 +778,6 @@
 				548F88AD1E54ABE700D179C7 /* PushMessageHandler.swift in Sources */,
 				16D0E0811DF88B820075DF8F /* OTREntityTranscoder.swift in Sources */,
 				CED80BAC1E03FAC40053915D /* FetchingClientRequestStrategy.swift in Sources */,
-				54327FEA1E548A6700B08FFC /* SystemMessageEventsConsumer.swift in Sources */,
 				BFED61BD1E5C52E700F352F8 /* LinkPreviewUploadRequestStrategy.swift in Sources */,
 				F9F057D81D943DA200FA1AAD /* LinkPreviewAssetUploadRequestStrategy.swift in Sources */,
 			);
@@ -813,7 +806,6 @@
 				160C314C1E8426A70012E4BC /* AbstractRequestStrategyTests.swift in Sources */,
 				54B2CBA41E5DE73C00BFFEAE /* ClientMessageTrancoderTests+MessageConfirmation.swift in Sources */,
 				F963E94A1D9A67FF00098AD3 /* RequestStrategyTestBase.swift in Sources */,
-				548F88B01E54C32D00D179C7 /* SystemMessageEventsConsumerTests.swift in Sources */,
 				BFA94E671DCC9CEF00782005 /* AssetV3DownloadRequestStrategyTests.swift in Sources */,
 				F963E9461D95955700098AD3 /* MissingClientsMapTests.swift in Sources */,
 				F963E9321D958A6500098AD3 /* LinkPreviewAssetDownloadRequestStrategyTests.swift in Sources */,
