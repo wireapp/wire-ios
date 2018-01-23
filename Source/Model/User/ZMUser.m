@@ -148,6 +148,11 @@ NSString *const AvailabilityKey = @"availability";
 @implementation ZMUser
 
 
+- (BOOL)isServiceUser
+{
+    return self.serviceIdentifier != nil && self.providerIdentifier != nil;
+}
+
 - (BOOL)isSelfUser
 {
     if ([self isZombieObject]) {
