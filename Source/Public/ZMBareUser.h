@@ -70,6 +70,12 @@
 @property (nonatomic, readonly, copy) NSString *connectionRequestMessage;
 @property (nonatomic, readonly) NSUInteger totalCommonConnections;
 
+
+/**
+ return true if this user is a serviceUser
+ */
+@property (nonatomic, readonly) BOOL isServiceUser;
+
 @end
 
 

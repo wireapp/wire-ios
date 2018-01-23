@@ -38,3 +38,4 @@ extension ZMSearchUser: ServiceUserChecker {
         return serviceUserChecker
     }
 }
+
