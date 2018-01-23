@@ -32,10 +32,3 @@ extension ZMSearchUser: ServiceUser {
         return self.remoteIdentifier.transportString()
     }
 }
-
-extension ZMSearchUser: ServiceUserChecker {
-    public var serviceUser: ServiceUser? {
-        return serviceUserChecker
-    }
-}
-

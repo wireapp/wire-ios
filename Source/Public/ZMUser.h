@@ -41,8 +41,6 @@ extern NSString *const ZMPersistedClientIdKey;
 /// New self clients which the self user hasn't been informed about (only valid for the self user)
 @property (nonatomic, readonly) NSSet<UserClient *> *clientsRequiringUserAttention;
 
-- (NSString *)displayNameInConversation:(ZMConversation *)conversation;
-
 @end
 
 

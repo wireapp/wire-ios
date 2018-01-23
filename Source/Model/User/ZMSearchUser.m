@@ -260,6 +260,11 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
     return self.user ? self.user.isTeamMember : NO;
 }
 
+- (BOOL)isServiceUser
+{
+    return self.serviceIdentifier != nil && self.providerIdentifier != nil;
+}
+
 - (BOOL)isGuestInConversation:(ZMConversation *)conversation
 {
     return self.user ? [self.user isGuestInConversation:conversation] : NO;
@@ -369,11 +374,6 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 - (BOOL)isSelfUser
 {
     return self.user.isSelfUser;
-}
-
-- (BOOL)isServiceUser
-{
-    return [self serviceUser] != nil;
 }
 
 - (BOOL)canBeConnected

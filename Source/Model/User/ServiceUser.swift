@@ -22,19 +22,3 @@ import Foundation
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
-
-@objc public protocol ServiceUserChecker: ServiceUser {
-    var serviceUser: ServiceUser? { get }
-}
-
-public extension ServiceUserChecker {
-
-    /// objc does not support default implementation in protocol extension, here is the implementation of serviceUser property
-    public var serviceUserChecker: ServiceUser? {
-        guard let _ = serviceIdentifier , let _ = providerIdentifier else {
-            return nil
-        }
-
-        return self
-    }
-}

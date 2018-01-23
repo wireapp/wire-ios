@@ -147,7 +147,6 @@ NSString *const AvailabilityKey = @"availability";
 
 @implementation ZMUser
 
-
 - (BOOL)isServiceUser
 {
     return self.serviceIdentifier != nil && self.providerIdentifier != nil;
@@ -250,14 +249,6 @@ NSString *const AvailabilityKey = @"availability";
 {
     PersonName *personName = [self.managedObjectContext.zm_displayNameGenerator personNameFor:self];
     return personName.givenName ?: @"";
-}
-
-- (NSString *)displayNameInConversation:(ZMConversation *)conversation;
-{
-    if (conversation == nil) {
-        return self.displayName;
-    }
-    return [self.managedObjectContext.zm_displayNameGenerator displayNameFor:self in:conversation];
 }
 
 - (NSString *)initials
