@@ -149,7 +149,6 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         // GIVEN
         let data = self.data(forResource: "animated", extension: "gif")!
         let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
-        message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
         message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         

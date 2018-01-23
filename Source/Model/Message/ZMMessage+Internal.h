@@ -35,8 +35,6 @@
 
 @protocol UserClientType;
 
-extern NSString * _Nonnull const ZMMessageIsEncryptedKey;
-extern NSString * _Nonnull const ZMMessageIsPlainTextKey;
 extern NSString * _Nonnull const ZMMessageIsExpiredKey;
 extern NSString * _Nonnull const ZMMessageMissingRecipientsKey;
 extern NSString * _Nonnull const ZMMessageImageTypeKey;

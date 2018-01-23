@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		161541BA1E27EBD400AC2FFB /* ZMConversation+Calling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 161541B91E27EBD400AC2FFB /* ZMConversation+Calling.swift */; };
+		16283618201747410027082D /* store2-41-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 162836162017466E0027082D /* store2-41-0.wiredatabase */; };
 		16313D621D227DC1001B2AB3 /* LinkPreview+ProtocolBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16313D611D227DC1001B2AB3 /* LinkPreview+ProtocolBuffer.swift */; };
 		1651F9BE1D3554C800A9FAE8 /* ZMClientMessageTests+TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1651F9BD1D3554C800A9FAE8 /* ZMClientMessageTests+TextMessage.swift */; };
 		165911551DF054AD007FA847 /* ZMConversation+Predicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165911541DF054AD007FA847 /* ZMConversation+Predicates.swift */; };
@@ -460,6 +461,8 @@
 
 /* Begin PBXFileReference section */
 		161541B91E27EBD400AC2FFB /* ZMConversation+Calling.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Calling.swift"; sourceTree = "<group>"; };
+		1628361520173C280027082D /* zmessaging2.42.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.42.0.xcdatamodel; sourceTree = "<group>"; };
+		162836162017466E0027082D /* store2-41-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-41-0.wiredatabase"; path = "Tests/Resources/store2-41-0.wiredatabase"; sourceTree = SOURCE_ROOT; };
 		16313D611D227DC1001B2AB3 /* LinkPreview+ProtocolBuffer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "LinkPreview+ProtocolBuffer.swift"; sourceTree = "<group>"; };
 		1651F9BD1D3554C800A9FAE8 /* ZMClientMessageTests+TextMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessageTests+TextMessage.swift"; sourceTree = "<group>"; };
 		165911541DF054AD007FA847 /* ZMConversation+Predicates.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Predicates.swift"; sourceTree = "<group>"; };
@@ -1903,6 +1906,7 @@
 				BF491CD61F0402F80055EE44 /* store2-31-0.wiredatabase */,
 				16E7DA261FD995810065B6A6 /* store2-39-0.wiredatabase */,
 				EF451EA520066E53005C12F1 /* store2-40-0.wiredatabase */,
+				162836162017466E0027082D /* store2-41-0.wiredatabase */,
 				F91EAAC41D885D720010ACBE /* video.mp4 */,
 				F9A708591CAEEC0700C2F5FE /* Test-Bridging-Header.h */,
 				5495BC421E019F1B004253ED /* audio.m4a */,
@@ -2129,6 +2133,7 @@
 				BF8E024D1E606846003310E1 /* store2-26-0.wiredatabase in Resources */,
 				54829DB51DE6F7BA009100D3 /* store2-7.wiredatabase in Resources */,
 				F91EAAC61D885D7B0010ACBE /* video.mp4 in Resources */,
+				16283618201747410027082D /* store2-41-0.wiredatabase in Resources */,
 				54829DAD1DE6F7BA009100D3 /* store1-24.wiredatabase in Resources */,
 				F9A706F71CAEE31C00C2F5FE /* animated.gif in Resources */,
 				54829DB01DE6F7BA009100D3 /* store1-28.wiredatabase in Resources */,
@@ -2792,6 +2797,7 @@
 		F189988C1E7BE03800E579A2 /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				1628361520173C280027082D /* zmessaging2.42.0.xcdatamodel */,
 				EF2CBDA8200627940004F65E /* zmessaging2.41.0.xcdatamodel */,
 				16D95A431FCEF9A900C96069 /* zmessaging2.40.0.xcdatamodel */,
 				F9ABE8841F02673E00D83214 /* zmessaging2.39.0.xcdatamodel */,
@@ -2823,7 +2829,7 @@
 				F18998A41E7BE03800E579A2 /* zmessaging2.8.xcdatamodel */,
 				F18998A51E7BE03800E579A2 /* zmessaging2.9.xcdatamodel */,
 			);
-			currentVersion = EF2CBDA8200627940004F65E /* zmessaging2.41.0.xcdatamodel */;
+			currentVersion = 1628361520173C280027082D /* zmessaging2.42.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

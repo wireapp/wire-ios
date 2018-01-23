@@ -41,7 +41,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
     
     func testThatItCreatesTheBackgroundActivityWhenTimerStarted() {
         // given
-        let message = createClientTextMessage("hello", encrypted: false)
+        let message = createClientTextMessage(withText: "hello")
         
         // when
         sut.start(forMessageIfNeeded: message, fire: Date(timeIntervalSinceNow: 1.0), userInfo: [:])
@@ -55,7 +55,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
     
     func testThatItRemovesTheInternalTimerAfterTimerFired() {
         // given
-        let message = createClientTextMessage("hello", encrypted: false)
+        let message = createClientTextMessage(withText: "hello")
         let expectation = self.expectation(description: "timer fired")
         sut.timerCompletionBlock = { _, _ in expectation.fulfill() }
         
@@ -69,7 +69,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
 
     func testThatItRemovesTheInternalTimerWhenTimerStopped() {
         // given
-        let message = createClientTextMessage("hello", encrypted: false)
+        let message = createClientTextMessage(withText: "hello")
         sut.start(forMessageIfNeeded: message, fire: Date(), userInfo: [:])
         
         // when

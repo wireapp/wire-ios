@@ -38,11 +38,6 @@ extern NSString * const DeliveredKey;
 
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
-+ (ZMMessage *)preExistingPlainMessageForGenericMessage:(ZMGenericMessage *)message
-                                         inConversation:(ZMConversation *)conversation
-                                 inManagedObjectContext:(NSManagedObjectContext *)moc
-                                         prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
-
 + (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                                      inManagedObjectContext:(NSManagedObjectContext *)moc
                                              prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;

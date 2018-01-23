@@ -41,8 +41,6 @@
 static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
-NSString * const ZMMessageIsEncryptedKey = @"isEncrypted";
-NSString * const ZMMessageIsPlainTextKey = @"isPlainText";
 NSString * const ZMMessageIsExpiredKey = @"isExpired";
 NSString * const ZMMessageMissingRecipientsKey = @"missingRecipients";
 NSString * const ZMMessageServerTimestampKey = @"serverTimestamp";
@@ -678,8 +676,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
                              ZMMessageEventIDDataKey,
                              ZMMessageUsersKey,
                              ZMMessageClientsKey,
-                             ZMMessageIsEncryptedKey,
-                             ZMMessageIsPlainTextKey,
                              ZMMessageHiddenInConversationKey,
                              ZMMessageMissingRecipientsKey,
                              ZMMessageMediumDataLoadedKey,
@@ -722,43 +718,11 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     return [[super shortDebugDescription] stringByAppendingFormat:@", \'%@\'", self.text];
 }
 
-+ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                              inManagedObjectContext:(NSManagedObjectContext *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
++ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent __unused *)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext __unused *)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult __unused *)prefetchResult
 {
-    NSDictionary *eventData = [updateEvent.payload dictionaryForKey:@"data"];
-    NSString *text = [eventData stringForKey:@"content"];
-    NSUUID *nonce = [eventData uuidForKey:@"nonce"];
-    
-    VerifyReturnNil(nonce != nil);
-    
-    ZMConversation *conversation = [self conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
-    VerifyReturnNil(conversation != nil);
-    
-    ZMClientMessage *preExistingClientMessage = [ZMClientMessage fetchMessageWithNonce:nonce
-                                                                       forConversation:conversation
-                                                                inManagedObjectContext:moc
-                                                                        prefetchResult:prefetchResult];
-    if(preExistingClientMessage != nil) {
-        preExistingClientMessage.isPlainText = YES;
-        return nil;
-    }
-    
-    ZMTextMessage *message = [ZMTextMessage fetchMessageWithNonce:nonce
-                                                  forConversation:conversation
-                                           inManagedObjectContext:moc
-                                               prefetchResult:prefetchResult];
-    if(message == nil) {
-        message = [ZMTextMessage insertNewObjectInManagedObjectContext:moc];
-    }
-    
-    message.isPlainText = YES;
-    message.isEncrypted = NO;
-    message.nonce = nonce;
-    [message updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:NO];
-    message.text = text;
-    
-    return message;
+    return nil;
 }
 
 - (NSString *)messageText
@@ -896,8 +860,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
-    message.isEncrypted = NO;
-    message.isPlainText = YES;
     
     if (type == ZMSystemMessageTypeParticipantsAdded || type == ZMSystemMessageTypeParticipantsRemoved) {
         [conversation insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:message];

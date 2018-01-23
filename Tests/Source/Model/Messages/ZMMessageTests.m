@@ -212,10 +212,14 @@ NSString * const ReactionsKey = @"reactions";
         NSDate *oldTimeStamp = [NSDate dateWithTimeIntervalSinceReferenceDate:400000000];
         NSDate *newTimeStamp = [NSDate dateWithTimeIntervalSinceReferenceDate:450000000];
 
-
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        ZMTextMessage *msg = [ZMTextMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        
+        ZMClientMessage *msg = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *nonce = [NSUUID createUUID];
+        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
+        [msg addData:textMessage.data];
+        
         msg.visibleInConversation = conversation;
         msg.nonce = NSUUID.createUUID;
         msg.serverTimestamp = oldTimeStamp;
@@ -227,8 +231,7 @@ NSString * const ReactionsKey = @"reactions";
         XCTAssertNotNil(event);
         
         // when
-        id msg2 = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
-        XCTAssertEqual(msg2, msg);
+        [msg updateWithUpdateEvent:event forConversation:conversation isUpdatingExistingMessage:NO];
         
         // then
         XCTAssertEqualWithAccuracy(msg.serverTimestamp.timeIntervalSinceReferenceDate, newTimeStamp.timeIntervalSinceReferenceDate, 0.1);
@@ -241,7 +244,12 @@ NSString * const ReactionsKey = @"reactions";
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        ZMTextMessage *msg = [ZMTextMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+
+        ZMClientMessage *msg = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *nonce = [NSUUID createUUID];
+        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
+        [msg addData:textMessage.data];
+        
         msg.visibleInConversation = conversation;
         msg.nonce = NSUUID.createUUID;
         msg.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:400000000];
@@ -252,8 +260,7 @@ NSString * const ReactionsKey = @"reactions";
         XCTAssertNotNil(event);
         
         // when
-        id msg2 = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
-        XCTAssertEqual(msg2, msg);
+        [msg updateWithUpdateEvent:event forConversation:conversation isUpdatingExistingMessage:NO];
         
         // then
         XCTAssertEqualWithAccuracy(msg.serverTimestamp.timeIntervalSinceReferenceDate, 450000000, 1);
@@ -883,8 +890,6 @@ NSString * const ReactionsKey = @"reactions";
     FHAssertNotNil(fr, user2);
     FHAssertEqual(fr, conversation.messages.count, 1u);
     FHAssertEqual(fr, message, conversation.messages.firstObject);
-    FHAssertFalse(fr, message.isEncrypted);
-    FHAssertTrue(fr, message.isPlainText);
 }
 
 - (void)checkThatUpdateEventTypeDoesNotGenerateMessage:(ZMUpdateEventType)updateEventType {
@@ -1224,330 +1229,6 @@ NSString * const ReactionsKey = @"reactions";
 @end
 
 
-
-
-@implementation ZMMessageTests (CreateMessageFromUpdateEvent)
-
-- (void)testThatItCreatesTextMessagesFromUpdateEvent
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertNotNil(sut);
-    XCTAssertEqualObjects(sut.conversation, conversation);
-    XCTAssertEqualObjects(sut.sender.remoteIdentifier.transportString, payload[@"from"]);
-    XCTAssertEqualObjects(sut.serverTimestamp.transportString, payload[@"time"]);
-    XCTAssertFalse(sut.isEncrypted);
-    XCTAssertTrue(sut.isPlainText);
-    XCTAssertEqualObjects(sut.nonce, nonce);
-    XCTAssertEqualObjects(sut.text, self.name);
-}
-
-- (void)testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce
-{
-    // given
-    NSUUID *nonce = [NSUUID createUUID];
-
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMClientMessage *clientMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    clientMessage.visibleInConversation = conversation;
-    clientMessage.nonce = nonce;
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertNil(sut);
-    XCTAssertEqual(conversation.messages.count, 1u);
-    XCTAssertEqual(conversation.messages.firstObject, clientMessage);
-}
-
-- (void)testThatItUpdatesIsPlainTextOnAlreadyExistingClientMessageWithTheSameNonceWhenReceivingATextMessageFromUpdateEvent
-{
-    // given
-    NSUUID *nonce = [NSUUID createUUID];
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMClientMessage *clientMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    clientMessage.visibleInConversation = conversation;
-    clientMessage.nonce = nonce;
-    XCTAssertFalse(clientMessage.isPlainText);
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertTrue(clientMessage.isPlainText);
-}
-
-- (void)testThatItUsesPrefetchedMessageInsteadOfPerformingAFetchRequestWhenUpdatingAClientMessageMessageFromTextMessageUpdateEvent
-{
-    [self checkThatItDoesExecuteAFetchRequestForExistingMessagesWhenReceivingUpdateEvent:NO];
-}
-
-- (void)testThatItFetchesMessageWhenThereAreNoPrefetchedMessagesWhenUpdatingAClientMessageMessageFromTextMessageUpdateEvent
-{
-    [self checkThatItDoesExecuteAFetchRequestForExistingMessagesWhenReceivingUpdateEvent:YES];
-}
-
-- (void)checkThatItDoesExecuteAFetchRequestForExistingMessagesWhenReceivingUpdateEvent:(BOOL)shouldExecuteFetchRequest
-{
-    // given
-    NSUUID *nonce = [NSUUID createUUID];
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMClientMessage *clientMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    clientMessage.visibleInConversation = conversation;
-    clientMessage.nonce = nonce;
-    XCTAssertFalse(clientMessage.isPlainText);
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    NSDictionary *data = @{ @"content" : @"Super updated mega content", @"nonce" : nonce.transportString };
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // expect
-    id mockContext = [OCMockObject partialMockForObject:self.uiMOC];
-    __block BOOL didPerformRequest = NO;
-    
-    [[[[mockContext stub] andDo:^(NSInvocation *invocation) {
-        __unsafe_unretained NSFetchRequest *firstArgument;
-        [invocation getArgument:&firstArgument atIndex:2];
-        
-        if([firstArgument.entityName isEqualToString:ZMClientMessage.entityName]) {
-            didPerformRequest = YES;
-        }
-    }] andForwardToRealObject] executeFetchRequestOrAssert:OCMOCK_ANY];
-    
-    NSMutableDictionary *mapping = [NSMutableDictionary dictionary];
-    mapping[nonce] = [NSMutableSet setWithObject:clientMessage];
-    
-    ZMFetchRequestBatchResult *prefetchResult = [[ZMFetchRequestBatchResult alloc] init];
-    id mockResult = [OCMockObject partialMockForObject:prefetchResult];
-    [[[mockResult stub] andReturn:mapping] messagesByNonce];
-    
-    // We need to turn the message into a fault
-    [self.uiMOC refreshObject:clientMessage mergeChanges:NO];
-    XCTAssertTrue(clientMessage.isFault);
-    
-    // when
-    [self performPretendingUiMocIsSyncMoc:^{
-        [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event
-                                     inManagedObjectContext:mockContext
-                                             prefetchResult:shouldExecuteFetchRequest ? nil : prefetchResult];
-    }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertTrue(clientMessage.isPlainText);
-    XCTAssertEqual(didPerformRequest, shouldExecuteFetchRequest);
-    
-    // after
-    [mockContext stopMocking];
-    [mockResult stopMocking];
-}
-
-- (void)testThatItUpdatesAMessageWithTheSameNonceIfItsAlreadyPresentFromUpdateEvent
-{
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-
-    
-    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    textMessage.visibleInConversation = conversation;
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    textMessage.nonce = nonce;
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertEqualObjects(sut, textMessage);
-    
-    __block NSInteger count = 0;
-    [ZMTextMessage enumerateObjectsInContext:self.uiMOC withBlock:^(ZMManagedObject *obj, BOOL *stop) {
-        NOT_USED(obj);
-        NOT_USED(stop);
-        ++count;
-    }];
-    
-    XCTAssertEqual(count, 1);
-}
-
-- (void)testThatTheServerTimestampForAnExistingMessageIsUpdatedFromUpdatedEvent
-{
-    
-    NSDate *originalDate = [NSDate dateWithTimeIntervalSinceNow:-10000];
-    NSDate *middleDate = [NSDate dateWithTimeIntervalSinceNow:10];
-    NSDate *finalDate = [NSDate dateWithTimeIntervalSinceNow:100];
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    ZMTextMessage *textMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    textMessage.visibleInConversation = conversation;
-    textMessage.serverTimestamp = originalDate;
-    
-    NSUUID *nonce = [NSUUID createUUID];
-    textMessage.nonce = nonce;
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSMutableDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    payload[@"time"] = middleDate.transportString;
-    
-    // when
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertEqual(sut, textMessage);
-    XCTAssertEqualWithAccuracy(sut.serverTimestamp.timeIntervalSinceReferenceDate, middleDate.timeIntervalSinceReferenceDate, 0.1);
-    
-    // when
-    payload[@"time"] = finalDate.transportString;
-    event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertEqualWithAccuracy(sut.serverTimestamp.timeIntervalSinceReferenceDate, finalDate.timeIntervalSinceReferenceDate, 0.01);
-}
-
-- (void)testThatItReturnsNilIfTheNonceIsMissing
-{
-
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self performIgnoringZMLogError:^{
-            sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-        }];
-    }];
-    
-    // then
-    XCTAssertNil(sut);
-
-}
-
-- (void)testThatItReturnsNilIfTheConversationIsMissing
-{
-    
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : [NSUUID createUUID].transportString
-                           };
-    
-    NSMutableDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    [payload removeObjectForKey:@"conversation"];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        [self performIgnoringZMLogError:^{
-            sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-        }];
-    }];
-
-    // then
-    XCTAssertNil(sut);
-    
-}
-
-@end
-
-
-
 @implementation ZMMessageTests (CreateImageMessageFromUpdateEvent)
 
 - (NSMutableDictionary *)previewImageDataWithCorrelationID:(NSUUID *)correlationID
@@ -1746,8 +1427,6 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqualObjects(message.sender.remoteIdentifier.transportString, payload[@"from"]);
     XCTAssertEqualObjects(message.serverTimestamp.transportString, payload[@"time"]);
     XCTAssertEqualObjects(message.senderClientID, senderClientID);
-    XCTAssertTrue(message.isEncrypted);
-    XCTAssertFalse(message.isPlainText);
     XCTAssertEqualObjects(message.nonce, nonce);
 }
 

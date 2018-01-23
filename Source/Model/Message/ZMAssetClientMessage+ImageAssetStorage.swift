@@ -113,11 +113,12 @@ extension ZMAssetClientMessage: ImageAssetStorage {
 
     public func updateMessage(imageData: Data, for format: ZMImageFormat) -> AnyObject? {
         guard let moc = self.managedObjectContext else { return nil }
+        
         moc.zm_imageAssetCache.storeAssetData(self.nonce,
                                               format: format,
-                                              encrypted: self.isEncrypted,
+                                              encrypted: self.hasEncryptedAsset,
                                               data: imageData)
-        if self.isEncrypted {
+        if self.hasEncryptedAsset {
             let otrKey: Data?
             let sha256: Data?
             
