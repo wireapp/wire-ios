@@ -163,6 +163,28 @@
     }];
 }
 
+- (void)testThatItAutomaticallyClosesWhenDeallocated
+{
+    // GIVEN
+    self.sut = [[NetworkSocket alloc] initWithUrl:[NSURL URLWithString:@"https://www.apple.com/"]
+                                         delegate:self
+                                            queue:self.queue
+                                    callbackQueue:self.queue
+                                            group:self.dispatchGroup];
+    XCTAssertNotNil(self.sut);
+    
+    // WHEN
+    [self expectationForNotification:@"ZMNetworkSocketClosed" object:nil handler:^BOOL(NSNotification *notification) {
+        NOT_USED(notification);
+        return YES;
+    }];
+    
+    self.sut = nil;
+    
+    // THEN
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:5 handler:nil]);
+}
+
 - (void)didReceiveData:(NSData *)data networkSocket:(NetworkSocket *)socket
 {
     XCTAssertEqual(socket, self.sut);
@@ -173,7 +195,9 @@
 - (void)networkSocketDidClose:(NetworkSocket *)socket
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ZMNetworkSocketClosed" object:socket];
-    XCTAssertEqual(socket, self.sut);
+    if (self.sut != nil) {
+        XCTAssertEqual(socket, self.sut);
+    }
     self.closeCounter++;
 }
 
