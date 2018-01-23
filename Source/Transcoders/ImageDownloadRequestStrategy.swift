@@ -82,10 +82,10 @@ extension ImageDownloadRequestStrategy : ZMDownstreamTranscoder {
         } else {
             if message.imageMessageData != nil {
                 guard let assetId = message.assetId?.transportString() else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, isEncrypted: message.isEncrypted)
+                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, isEncrypted: message.hasEncryptedAsset)
             } else if (message.fileMessageData != nil) {
                 guard let assetId = message.fileMessageData?.thumbnailAssetID else { return nil }
-                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, isEncrypted: message.isEncrypted)
+                return requestFactory.requestToGetAsset(assetId, inConversation: conversation.remoteIdentifier!, isEncrypted: message.hasEncryptedAsset)
             }
         }
         
