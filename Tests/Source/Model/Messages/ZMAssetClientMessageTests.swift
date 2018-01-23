@@ -120,7 +120,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         let imageData = self.verySmallJPEGData()
         XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: imageData, for: ZMImageFormat.preview))
         
-        let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.preview, encrypted: message.isEncrypted)
+        let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.preview, encrypted: false)
         AssertOptionalNotNil(storedData) { storedData in
             XCTAssertEqual(storedData, imageData)
         }
@@ -133,7 +133,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         let imageData = self.verySmallJPEGData()
         XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: imageData, for: ZMImageFormat.medium))
         
-        let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.medium, encrypted: message.isEncrypted)
+        let storedData = self.uiMOC.zm_imageAssetCache.assetData(message.nonce, format: ZMImageFormat.medium, encrypted: false)
         AssertOptionalNotNil(storedData) { storedData in
             XCTAssertEqual(storedData, imageData)
         }
@@ -143,7 +143,6 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         //given
         let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC);
         message.nonce = UUID.create()
-        message.isEncrypted = true
         let imageData = self.verySmallJPEGData()
         
         self.uiMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: ZMImageFormat.medium, encrypted: false, data: imageData)
@@ -168,7 +167,6 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         //given
         let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC);
         message.nonce = UUID.create()
-        message.isEncrypted = true
         let imageData = self.verySmallJPEGData()
         
         //store original image
@@ -197,7 +195,6 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         
         let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC);
         message.nonce = UUID.create()
-        message.isEncrypted = true
         let imageData = self.verySmallJPEGData()
         
         self.uiMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: ZMImageFormat.medium, encrypted: false, data: imageData)
@@ -1586,7 +1583,6 @@ extension ZMAssetClientMessageTests {
         let dataPreview = "FOOOOOO".data(using: String.Encoding.utf8)!
         let dataMedium = "xxxxxxxxx".data(using: String.Encoding.utf8)!
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
-        message.isEncrypted = true
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/tiff")
         
         // when
@@ -1663,7 +1659,6 @@ extension ZMAssetClientMessageTests {
             
             // given
             let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
-            message.isEncrypted = true
             let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/tiff")
             let data = sampleProcessedImageData(format)
             
@@ -1819,9 +1814,6 @@ extension ZMAssetClientMessageTests {
             XCTAssertEqual(sut!.conversation, conversation)
             XCTAssertEqual(sut!.sender?.remoteIdentifier!.transportString(), payload["from"] as? String)
             XCTAssertEqual(sut!.serverTimestamp?.transportString(), payload["time"] as? String)
-            
-            XCTAssertTrue(sut!.isEncrypted)
-            XCTAssertFalse(sut!.isPlainText)
             XCTAssertEqual(sut!.nonce, nonce)
             XCTAssertEqual(sut!.imageAssetStorage.genericMessage(for: format)?.data(), genericMessage.data())
             XCTAssertEqual(sut!.assetId, format == .medium ? mediumAssetId : nil)
@@ -1862,9 +1854,6 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.sender?.remoteIdentifier!.transportString(), payload["from"] as? String)
         XCTAssertEqual(sut.serverTimestamp?.transportString(), payload["time"] as? String)
         XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, thumbnailId.transportString())
-        
-        XCTAssertTrue(sut.isEncrypted)
-        XCTAssertFalse(sut.isPlainText)
         XCTAssertEqual(sut.nonce, nonce)
         XCTAssertNotNil(sut.fileMessageData)
     }
@@ -2030,14 +2019,12 @@ extension ZMAssetClientMessageTests {
                 managedObjectContext: self.syncMOC,
                 expiresAfter: 0
             )!
-            sut.isEncrypted = true
             sut.visibleInConversation = ZMConversation.insertNewObject(in:self.syncMOC)
             sut.conversation?.remoteIdentifier = UUID()
             sut.sender = ZMUser.selfUser(in: self.syncMOC)
             sut.sender?.remoteIdentifier = UUID()
             
             XCTAssertNotNil(sut.fileMessageData, line: line)
-            XCTAssertTrue(sut.isEncrypted, line: line)
             XCTAssertTrue(self.syncMOC.saveOrRollback(), line: line)
             
             // when
@@ -2053,14 +2040,12 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = createAssetClientMessageWithSampleImageAndEncryptionKeys(true, storeEncrypted: false, storeProcessed: false)
         
-        sut.isEncrypted = true
         sut.visibleInConversation = ZMConversation.insertNewObject(in:uiMOC)
         sut.conversation?.remoteIdentifier = UUID()
         sut.sender = ZMUser.selfUser(in: uiMOC)
         sut.sender?.remoteIdentifier = UUID()
         
         XCTAssertNil(sut.fileMessageData, line: line)
-        XCTAssertTrue(sut.isEncrypted, line: line)
         XCTAssertNotNil(sut.imageAssetStorage, line: line)
         XCTAssertNotNil(sut.imageMessageData, line: line)
         XCTAssertTrue(uiMOC.saveOrRollback(), line: line)

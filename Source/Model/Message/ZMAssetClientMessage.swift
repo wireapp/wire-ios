@@ -91,6 +91,23 @@ import Foundation
         return self.asset?.hasDownloadedFile ?? false
     }
     
+    // Wheather the referenced asset is encrypted
+    public var hasEncryptedAsset : Bool {
+        var hasEncryptionKeys = false
+        
+        if self.fileMessageData != nil {
+            if let remote = self.genericAssetMessage?.assetData?.preview.remote, remote.hasOtrKey() {
+                hasEncryptionKeys = true
+            }
+        } else if self.imageMessageData != nil {
+            if let imageAsset = self.genericMessage(for: .medium)?.imageAssetData, imageAsset.hasOtrKey() {
+                hasEncryptionKeys = true
+            }
+        }
+        
+        return hasEncryptionKeys
+    }
+    
     /// The asset endpoint version used to generate this message
     /// values lower than 3 represent an enpoint version of 2
     @NSManaged public var version: Int16

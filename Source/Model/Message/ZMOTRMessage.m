@@ -71,22 +71,19 @@ NSString * const DeliveredKey = @"delivered";
 
 - (ZMDeliveryState)deliveryState
 {
-    if (self.isEncrypted) {
-        //we set server time stamp in awake from insert to be able to sort messages
-        //probably we need to store "deliveryTimestamp" separately and check it here
-        if (self.isExpired) {
-            return ZMDeliveryStateFailedToSend;
-        }
-        if (self.delivered == NO) {
-            return ZMDeliveryStatePending;
-        }
-        if (self.confirmations.count == 0){
-            return ZMDeliveryStateSent;
-        }
-        return ZMDeliveryStateDelivered;
+    //we set server time stamp in awake from insert to be able to sort messages
+    //probably we need to store "deliveryTimestamp" separately and check it here
+    if (self.isExpired) {
+        return ZMDeliveryStateFailedToSend;
+    }
+    else if (self.delivered == NO) {
+        return ZMDeliveryStatePending;
+    }
+    else if (self.confirmations.count == 0){
+        return ZMDeliveryStateSent;
     }
     else {
-        return [super deliveryState];
+        return ZMDeliveryStateDelivered;
     }
 }
 
@@ -124,19 +121,6 @@ NSString * const DeliveredKey = @"delivered";
     NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
 }
 
-+ (ZMMessage *)preExistingPlainMessageForGenericMessage:(ZMGenericMessage *)message
-                                         inConversation:(ZMConversation *)conversation
-                                 inManagedObjectContext:(NSManagedObjectContext *)moc
-                                         prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
-{
-    Class messageClass = [ZMGenericMessage entityClassForPlainMessageForGenericMessage:message];
-    return [messageClass fetchMessageWithNonce:[NSUUID uuidWithTransportString:message.messageId]
-                               forConversation:conversation
-                        inManagedObjectContext:moc
-                                prefetchResult:prefetchResult];
-}
-
-
 + (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                                      inManagedObjectContext:(NSManagedObjectContext *)moc
                                              prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
@@ -151,8 +135,6 @@ NSString * const DeliveredKey = @"delivered";
     }
     VerifyReturnNil(message != nil);
     
-    BOOL encrypted = [updateEvent isEncrypted];
-
     if (!message.knownMessage) {
         [UnknownMessageAnalyticsTracker tagUnknownMessageWithAnalytics:moc.analytics];
     }
@@ -206,15 +188,6 @@ NSString * const DeliveredKey = @"delivered";
         return nil;
     }
     
-    ZMMessage *preExistingPlainMessage = [ZMOTRMessage preExistingPlainMessageForGenericMessage:message
-                                                                                 inConversation:conversation
-                                                                         inManagedObjectContext:moc
-                                                                                 prefetchResult:prefetchResult];
-    if (preExistingPlainMessage != nil) {
-        preExistingPlainMessage.isEncrypted = encrypted;
-        return nil;
-    }
-    
     NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
     
     Class messageClass = [ZMGenericMessage entityClassForGenericMessage:message];
@@ -235,8 +208,6 @@ NSString * const DeliveredKey = @"delivered";
         return nil;
     }
     
-    clientMessage.isEncrypted = encrypted;
-    clientMessage.isPlainText = !encrypted;
     clientMessage.nonce = nonce;
     clientMessage.senderClientID = updateEvent.senderClientID;
     

@@ -88,7 +88,6 @@ extension ZMMessage {
         let edited = ZMGenericMessage(editMessage: nonce.transportString(), newText: newText, nonce: NSUUID().transportString())
         
         guard let newMessage = conversation.appendClientMessage(with: edited.data()) else { return nil }
-        newMessage.isEncrypted = true
         newMessage.updatedTimestamp = newMessage.serverTimestamp
         newMessage.serverTimestamp = serverTimestamp
         let oldIndex = conversation.messages.index(of: self)

@@ -78,8 +78,6 @@ public final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
         let systemMessage = ZMSystemMessage.insertNewObject(in: self.moc)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
-        systemMessage.isEncrypted = false
-        systemMessage.isPlainText = true
         systemMessage.users = users ?? Set()
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()

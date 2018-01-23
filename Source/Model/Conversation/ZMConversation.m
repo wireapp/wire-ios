@@ -1218,7 +1218,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
     [message addData:genericMessage.data];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    message.isEncrypted = YES;
     
     if (expires) {
         [message setExpirationDate];
@@ -1278,7 +1277,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                                                             managedObjectContext:self.managedObjectContext
                                                                     expiresAfter:self.messageDestructionTimeout];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    message.isEncrypted = YES;
     [message updateCategoryCache];
     [self sortedAppendMessage:message];
     [self unarchiveIfNeeded];
@@ -1291,7 +1289,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
     ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
-    message.isEncrypted = YES;
     return message;
 }
 
@@ -1301,7 +1298,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
     ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
-    message.isEncrypted = YES;
     return message;
 }
 
@@ -1314,7 +1310,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                                                             expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
     message.linkPreviewState = fetchPreview ? ZMLinkPreviewStateWaitingToBeProcessed : ZMLinkPreviewStateDone;
-    message.isEncrypted = YES;
     return message;
 }
 
@@ -1338,7 +1333,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce hidden:false imageData:imageDataWithoutMetadata];
-    message.isEncrypted = YES;
     return message;
 }
 
@@ -1355,8 +1349,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
     systemMessage.systemMessageType = ZMSystemMessageTypeNewConversation;
     systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.isEncrypted = NO;
-    systemMessage.isPlainText = YES;
     systemMessage.nonce = [NSUUID new];
     systemMessage.sender = self.creator;
     systemMessage.users = self.activeParticipants.set;
@@ -1451,7 +1443,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(selfConversation != nil);
     
     ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithData:messageData];
-    clientMessage.isEncrypted = YES;
     [clientMessage removeExpirationDate]; // Self messages don't expire since we always want to keep last read / cleared updates in-sync
     return clientMessage;
 }

@@ -347,7 +347,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(conversation.messages.count, 1)
         XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
     
-        XCTAssertTrue(fileMessage.isEncrypted)
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
@@ -386,7 +385,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         
             XCTAssertEqual(conversation.messages.count, 1)
             XCTAssertEqual(conversation.messages.firstObject as? ZMMessage, message)
-            XCTAssertTrue(message.isEncrypted)
     
             guard let locationMessageData = message.locationMessageData else {
                 XCTFail()
@@ -430,7 +428,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(conversation.messages.count, 1)
         XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
     
-        XCTAssertTrue(fileMessage.isEncrypted)
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
@@ -481,7 +478,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(conversation.messages.count, 1)
         XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
         
-        XCTAssertTrue(fileMessage.isEncrypted)
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
         XCTAssertNotNil(fileMessage.fileMessageData)
