@@ -25,6 +25,8 @@ import Foundation
     @objc(didReceiveData:networkSocket:)
     func didReceive(data: Data, on socket: NetworkSocket)
     
+    /// Called when the socket is closed. Might be called from the different queue than `callbackQueue` if the
+    /// `NetworkSocket` is torn down when deallocated.
     @objc(networkSocketDidClose:)
     func didClose(socket: NetworkSocket)
 }
@@ -81,17 +83,9 @@ import Foundation
     }
     
     deinit {
-        if let inputStream = self.inputStream {
-            inputStream.delegate = nil
-            inputStream.close()
+        if state != .stopped {
+            close(syncDelegate: true)
         }
-        
-        if let outputStream = self.outputStream {
-            outputStream.delegate = nil
-            outputStream.close()
-        }
-        
-        requireInternal(self.state == .stopped, "Socket is still running")
     }
     
     public func open() {
@@ -134,6 +128,10 @@ import Foundation
     }
     
     public func close() {
+        self.close(syncDelegate: false)
+    }
+    
+    private func close(syncDelegate: Bool) {
         preconditionQueue()
         
         guard self.state != .stopped else {
@@ -148,20 +146,25 @@ import Foundation
         outputStream?.delegate = nil
         outputStream?.close()
         
-        self.withDelegate { delegate in
+        self.withDelegate({ delegate in
             delegate.didClose(socket: self)
-        }
+        }, sync: syncDelegate)
         
         delegate = nil
     }
     
-    fileprivate func withDelegate(_ perform: @escaping (NetworkSocketDelegate)->()) {
+    fileprivate func withDelegate(_ perform: @escaping (NetworkSocketDelegate)->(), sync: Bool = false) {
         guard let delegate = self.delegate else {
             return
         }
-    
-        self.group.async(on: callbackQueue) {
+        
+        if sync {
             perform(delegate)
+        }
+        else {
+            self.group.async(on: callbackQueue) {
+                perform(delegate)
+            }
         }
     }
     
@@ -261,9 +264,9 @@ import Foundation
         }
         
         inputBuffer.removeLast(inputBufferCount - bytesRead)
-        self.withDelegate { delegate in
+        self.withDelegate({ delegate in
             delegate.didReceive(data: inputBuffer, on: self)
-        }
+        }, sync: false)
     }
 
     fileprivate func onHasSpaceAvailable() {
@@ -324,9 +327,9 @@ extension NetworkSocket: StreamDelegate {
         case (.connecting, .openCompleted):
             if aStream == outputStream {
                 self.state = .connected
-                self.withDelegate { delegate in
+                self.withDelegate({ delegate in
                     delegate.didOpen(socket: self)
-                }
+                }, sync: false)
             }
         case (.connected, .hasBytesAvailable):
             guard aStream == inputStream, checkTrust(for: aStream) else {
