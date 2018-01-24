@@ -217,8 +217,7 @@ extension ZMAssetClientMessage {
             }
         }
         
-        if let assetData = message.assetData,
-            assetData.original.hasImage() {
+        if let assetData = message.assetData, assetData.original.hasRasterImage {
             self.version = 3
         }
     }

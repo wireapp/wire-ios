@@ -70,7 +70,7 @@ public extension ZMGenericMessage {
 public extension ZMGenericMessage {
 
     var v3_isImage: Bool {
-        return assetData?.original.hasImage() == true
+        return assetData?.original.hasRasterImage ?? false
     }
 
     private var v3_uploadedAssetId: String? {
@@ -264,10 +264,10 @@ extension ZMGenericMessage {
     
     // Accessor helpers for ephemeral images
     public var imageAssetData : ZMImageAsset? {
-        if hasImage() {
+        if hasRasterImage {
             return image
         }
-        if hasEphemeral() && ephemeral.hasImage() {
+        if hasEphemeral() && ephemeral.hasRasterImage {
             return ephemeral.image
         }
         return nil
@@ -315,8 +315,8 @@ extension ZMGenericMessage {
         }
         return nil
     }
-}
 
+}
 
 public extension ZMEphemeral {
     
