@@ -221,6 +221,7 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
+
     func testThatItMarksDownloadAsFailedIfCannotDownload_PermanentError_V3() {
         
         var message : ZMMessage!
@@ -438,7 +439,78 @@ extension AssetV3DownloadRequestStrategyTests {
             XCTAssertEqual(message.category, [.image])
         }
     }
-
+    
+    
+    func testThatItRecategorizeMessageWithSvgAttachmentAfterDownloadingAssetContent() {
+        var message : ZMAssetClientMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            guard let plainTextData = ("<svg width=\"100\" height=\"100\">"
+                                        + "<rect width=\"100\" height=\"100\"/>"
+                                        + "</svg>").data(using: .utf8) else {
+                XCTFail("Unable to convert SVG to Data");
+                return;
+            }
+            
+            let key = Data.randomEncryptionKey()
+            let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+            let sha = encryptedData.zmSHA256Digest()
+            let messageId = UUID.create()
+            
+            let asset = ZMAssetBuilder()
+                .setOriginal(ZMAssetOriginalBuilder()
+                    .setMimeType("image/svg+xml")
+                    .setSize(UInt64(plainTextData.count))
+                    .setImage(ZMAssetImageMetaDataBuilder() // Even if we treat them as files, SVGs are sent as images.
+                        .setWidth(100)
+                        .setHeight(100)
+                        .setTag("medium")))
+                .setUploaded(ZMAssetRemoteDataBuilder()
+                    .setOtrKey(key)
+                    .setSha256(sha)
+                    .setAssetId("someId")
+                    .setAssetToken("someToken"))
+                .build()
+            
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
+            
+            let dict = ["recipient": self.selfClient.remoteIdentifier!,
+                        "sender": self.selfClient.remoteIdentifier!,
+                        "text": genericMessage.data().base64String()] as NSDictionary
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+                "type": "conversation.otr-message-add",
+                "data":dict,
+                "conversation":self.conversation.remoteIdentifier!.transportString(),
+                "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
+            
+            message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+            message.visibleInConversation = self.conversation
+            message.transferState = .downloading
+            
+            XCTAssertEqual(message.category, [.file])
+            XCTAssertNotEqual(message.category, [.image])
+            
+            self.sut.contextChangeTrackers.forEach { (tracker) in
+                tracker.objectsDidChange([message])
+            }
+            
+            let request = self.sut.nextRequest()
+            request?.markStartOfUploadTimestamp()
+            let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+            
+            // WHEN
+            request?.complete(with: response)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout:0.5))
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // THEN
+            XCTAssertEqual(message.category, [.file])
+            XCTAssertNotEqual(message.category, [.image])
+        }
+    }
+    
     func testThatItSendsTheNotificationIfCannotDownload_V3() {
         var token: Any? = nil
         self.syncMOC.performGroupedBlockAndWait {

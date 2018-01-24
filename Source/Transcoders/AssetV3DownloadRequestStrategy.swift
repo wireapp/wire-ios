@@ -135,7 +135,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
         let keys = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
 
-        if asset.original.hasImage() {
+        if asset.original.hasRasterImage {
             return storeAndDecryptImage(asset: asset, nonce: message.nonce, data: data, keys: keys)
         } else {
             return storeAndDecryptFile(asset: asset, nonce: message.nonce, data: data, keys: keys, name: filename)
@@ -143,7 +143,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func storeAndDecryptImage(asset: ZMAsset, nonce: UUID, data: Data, keys: DecryptionKeys) -> Bool {
-        precondition(asset.original.hasImage(), "Should only be called for assets with image")
+        precondition(asset.original.hasRasterImage, "Should only be called for assets with image")
 
         let cache = managedObjectContext.zm_imageAssetCache!
         cache.storeAssetData(nonce, format: .medium, encrypted: true, data: data)
@@ -155,7 +155,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func storeAndDecryptFile(asset: ZMAsset, nonce: UUID, data: Data, keys: DecryptionKeys, name: String) -> Bool {
-        precondition(!asset.original.hasImage(), "Should not be called for assets with image")
+        precondition(!asset.original.hasRasterImage, "Should not be called for assets with image")
 
         let cache = managedObjectContext.zm_fileAssetCache
         cache.storeAssetData(nonce, fileName: name, encrypted: true, data: data)
