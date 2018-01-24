@@ -456,8 +456,10 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     NSMutableArray *types = [NSMutableArray array];
     {
         for (NSString *uti in CFBridgingRelease(CGImageSourceCopyTypeIdentifiers())) {
-            NSString *mime = CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef) uti, kUTTagClassMIMEType));
-            if ((mime == nil) || [mime hasPrefix:@"image/x-"] || [mime hasPrefix:@"application/"]) {
+            CFStringRef mimeType = UTTypeCopyPreferredTagWithClass((__bridge CFStringRef) uti, kUTTagClassMIMEType);
+            NSString *mime = CFBridgingRelease(mimeType);
+            if ((mime == nil) || [mime hasPrefix:@"image/x-"] ||
+                UTTypeConformsTo(mimeType, kUTTypeScalableVectorGraphics) || [mime hasPrefix:@"application/"]) {
                 continue;
             }
             [types addObject:mime];
