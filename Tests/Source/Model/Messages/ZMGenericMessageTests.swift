@@ -89,5 +89,50 @@ class GenericMessageTests: ZMTBaseTest {
             XCTAssertTrue(message.knownMessage())
         }
     }
+    
+    func testThatGenericMessageHasImage_WhenHandlingImages() {
+        // given
+        let image = ZMImageAsset(data: verySmallJPEGData(), format: .medium)!
+        let imageMessage = ZMGenericMessage.genericMessage(pbMessage: image, messageID: "foo")
+        
+        // when & then
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(imageMessage.hasImage())
+    }
+    
+    func testThatGenericMessageHasImage_WhenHandlingEphemeralImages() {
+        // given
+        let image = ZMImageAsset(data: verySmallJPEGData(), format: .medium)!
+        let genericMessage = ZMGenericMessage.genericMessage(pbMessage: image,
+                                                             messageID: "foo",
+                                                             expiresAfter: NSNumber(value: 3.0))
+        
+        // when & then
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(genericMessage.ephemeral.hasImage())
+    }
+    
+    func testThatGenericMessageDoesNotHaveImage_WhenHandlingSvgAssets() {
+        // given
+        let svgMessage = ZMGenericMessage.genericMessage(withAssetSize: 100,
+                                                         mimeType: "image/svg+xml",
+                                                         name: "test",
+                                                         messageID: NSUUID().transportString())
+        
+        //when & then
+        XCTAssertTrue(!svgMessage.hasImage())
+    }
+    
+    func testThatGenericMessageDoesNotHaveImage_WhenHandlingEphemeralSvgAssets() {
+        // given
+        let svgMessage = ZMGenericMessage.genericMessage(withAssetSize: 100,
+                                                         mimeType: "image/svg+xml",
+                                                         name: "test",
+                                                         messageID: NSUUID().transportString(),
+                                                         expiresAfter: NSNumber(value: 3.0))
+        
+        // when & then
+        XCTAssertTrue(!svgMessage.ephemeral.hasImage())
+    }
 }
 

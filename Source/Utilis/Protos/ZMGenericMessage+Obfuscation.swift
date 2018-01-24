@@ -105,7 +105,7 @@ extension ZMAsset {
         var previewBuilder : ZMAssetPreviewBuilder? = nil
         if hasOriginal(), let original = original {
             originalBuilder = ZMAssetOriginal.builder()
-            if original.hasImage(), let image = original.image {
+            if original.hasRasterImage, let image = original.image {
                 let imageBuilder = ZMAssetImageMetaData.builder()!
                 imageBuilder.setTag(image.tag)
                 imageBuilder.setWidth(image.width)
