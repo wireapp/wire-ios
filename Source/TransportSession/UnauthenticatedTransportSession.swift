@@ -44,13 +44,13 @@ private let zmLog = ZMSLog(tag: "Network")
 
 fileprivate extension ZMTransportRequest {
     func log() -> Void {
-        zmLog.debug("[Unauthenticated] ----> Request: \(ZMTransportRequest.string(for: method))\n\(self)")
+        zmLog.debug("[Unauthenticated] ----> Request: \(description)")
     }
 }
 
 fileprivate extension ZMTransportResponse {
     func log() -> Void {
-        zmLog.debug("[Unauthenticated] <---- Response: \(String(describing: headers))\n\(String(describing: payload))")
+        zmLog.debug("[Unauthenticated] <---- Response: \(description)")
     }
 }
 
@@ -112,7 +112,7 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
                 preconditionFailure()
             }
             
-            transportResponse.log()
+            transportResponse?.log()
             request.complete(with: transportResponse)
             self?.decrement(notify: true)
         }
