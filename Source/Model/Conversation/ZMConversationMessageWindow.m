@@ -84,11 +84,9 @@
     const NSRange range = NSMakeRange(messages.count - numberOfMessages, numberOfMessages);
     NSMutableOrderedSet *newMessages = [NSMutableOrderedSet orderedSetWithOrderedSet:messages range:range copyItems:NO];
     if (self.conversation.clearedTimeStamp != nil) {
-        [newMessages filterUsingPredicate:[NSPredicate predicateWithFormat:@"%K == FALSE OR %K > conversation.%K",
-                                           DeliveredKey, ZMMessageServerTimestampKey, ZMConversationClearedTimeStampKey]];
-        
-        [newMessages filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMManagedObject *  _Nullable evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
-            return !evaluatedObject.isZombieObject;
+        [newMessages filterUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMMessage * _Nullable message, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
+            return !message.isZombieObject &&
+                   (message.deliveryState == ZMDeliveryStatePending || [message.serverTimestamp compare:self.conversation.clearedTimeStamp] == NSOrderedDescending);
         }]];
     }
     
