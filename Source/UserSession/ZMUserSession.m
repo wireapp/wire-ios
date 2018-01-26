@@ -22,7 +22,6 @@
 @import WireSystem;
 @import WireUtilities;
 @import WireDataModel;
-@import CallKit;
 @import CoreTelephony;
 
 #import "ZMUserSession+Background.h"
@@ -520,38 +519,6 @@ ZM_EMPTY_ASSERTING_INIT()
 - (OperationStatus *)operationStatus
 {
     return self.applicationStatusDirectory.operationStatus;
-}
-
-- (void)setCallNotificationStyle:(ZMCallNotificationStyle)callNotificationStyle
-{
-    _callNotificationStyle = callNotificationStyle;
-    
-    switch (callNotificationStyle) {
-        case ZMCallNotificationStylePushNotifications:
-            self.callKitDelegate = nil;
-            [self.mediaManager setUiStartsAudio:NO];
-            break;
-        case ZMCallNotificationStyleCallKit:
-        {
-            if (self.callKitDelegate != nil) {
-                return; // Don't re-create the CallKitDelegate if it already exists
-            }
-            
-            CXProvider *provider = [[CXProvider alloc] initWithConfiguration:[CallKitDelegate providerConfiguration]];
-            CXCallController *callController = [[CXCallController alloc] initWithQueue:dispatch_get_main_queue()];
-            
-            // Should be set when CallKit is used. Then AVS will not start
-            // the audio before the audio session is active
-            [self.mediaManager setUiStartsAudio:YES];
-            
-            self.callKitDelegate = [[CallKitDelegate alloc] initWithProvider:provider
-                                                              callController:callController
-                                                                 userSession:self
-                                                                 flowManager:self.flowManager
-                                                                mediaManager:self.mediaManager];
-        }
-            break;
-    }
 }
 
 @end
