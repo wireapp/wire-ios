@@ -107,6 +107,10 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 /// This method loads messages in a window when there are visible messages
 - (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;
 
+- (void)markAsRead;
+- (BOOL)canMarkAsUnread;
+- (void)markAsUnread;
+
 /// completes a pending lastRead save, e.g. when leaving the conversation view
 - (void)savePendingLastRead;
 

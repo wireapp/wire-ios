@@ -1853,6 +1853,68 @@
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, serverTimeStamp);
 }
 
+- (void)testThatItMarksTheMessagesAsRead;
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    
+    ZMMessage* unreadMessage = [self insertNonUnreadDotGeneratingMessageIntoConversation:conversation];
+    
+    XCTAssertEqual(conversation.lastReadMessage, nil);
+    
+    // WHEN
+    [conversation markAsRead];
+    
+    // THEN
+    XCTAssertEqual(conversation.lastReadMessage, unreadMessage);
+}
+
+- (void)testThatItCannotMarkAsUnreadEmptyConversation;
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    // WHEN & THEN
+    XCTAssertFalse([conversation canMarkAsUnread]);
+}
+
+- (void)testThatItCanMarkAsUnreadAConversation;
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
+    [conversation markAsRead];
+    // WHEN & THEN
+    XCTAssertTrue([conversation canMarkAsUnread]);
+}
+
+- (void)testThatItMakrksTheMessagesAsUnread;
+{
+    // GIVEN
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeConnection;
+    conversation.remoteIdentifier = NSUUID.createUUID;
+    
+    [self.uiMOC saveOrRollback];
+    
+    ZMMessage* unreadMessage = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
+
+    [conversation markAsRead];
+    XCTAssertEqual(conversation.lastReadMessage, unreadMessage);
+    
+    // WHEN
+    [conversation markAsUnread];
+    
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    // THEN
+    XCTAssertEqual(conversation.lastReadMessage, nil);
+}
+
 @end
 
 @implementation ZMConversationTests (LastEditableMessage)
