@@ -928,6 +928,66 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [self mutableOrderedSetValueForKey:LastServerSyncedActiveParticipantsKey];
 }
 
+- (void)markAsRead
+{
+    if (self.messages.count == 0) {
+        ZMLogError(@"No messages to mark as read in %@", self);
+        return;
+    }
+    
+    ZMMessage *lastMessage = self.messages.lastObject;
+    if (lastMessage == nil) {
+        return;
+    }
+    
+    [self updateLastReadServerTimeStampIfNeededWithTimeStamp:lastMessage.serverTimestamp andSync:YES];
+}
+
+- (BOOL)canMarkAsUnread
+{
+    if (self.messages.count == 0) {
+        return NO;
+    }
+    
+    if (self.estimatedUnreadCount > 0) {
+        return NO;
+    }
+    
+    if (nil == [self lastMessageCanBeConsideredUnread]) {
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (ZMMessage *)lastMessageCanBeConsideredUnread
+{
+    NSUInteger lastMessageIndexCanBeConsideredUnread = [self.messages.reversedOrderedSet indexOfObjectPassingTest:^BOOL(id<ZMConversationMessage> message, NSUInteger idx, BOOL *stop) {
+        NOT_USED(idx);
+        NOT_USED(stop);
+        return [Message isNormalMessage:message];
+    }];
+    
+    if (lastMessageIndexCanBeConsideredUnread != NSNotFound) {
+        return self.messages[self.messages.count - lastMessageIndexCanBeConsideredUnread - 1];
+    }
+    else {
+        return nil;
+    }
+}
+
+- (void)markAsUnread
+{
+    ZMMessage *lastMessageCanBeConsideredUnread = [self lastMessageCanBeConsideredUnread];
+    
+    if (lastMessageCanBeConsideredUnread == nil) {
+        ZMLogError(@"Cannot mark as read: no message to mark in %@", self);
+        return;
+    }
+    
+    [lastMessageCanBeConsideredUnread markAsUnread];
+}
+
 @end
 
 

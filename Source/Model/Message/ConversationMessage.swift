@@ -19,6 +19,8 @@
 
 import Foundation
 
+private var zmLog = ZMSLog(tag: "Message")
+
 @objc
 public enum ZMDeliveryState : UInt {
     case invalid = 0
@@ -109,6 +111,10 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// Returns whether this is a message that caused the security level of the conversation to degrade in this session (since the 
     /// app was restarted)
     var causedSecurityLevelDegradation : Bool { get }
+    
+    /// Marks the message as the last unread message in the conversation, moving the unread mark exactly before this
+    /// message.
+    func markAsUnread()
 }
 
 // MARK:- Conversation managed properties
@@ -128,6 +134,37 @@ extension ZMMessage {
 extension ZMMessage : ZMConversationMessage {
     public var causedSecurityLevelDegradation : Bool {
         return false
+    }
+    
+    public func markAsUnread() {
+        guard let serverTimestamp = self.serverTimestamp,
+              let conversation = self.conversation,
+              let managedObjectContext = self.managedObjectContext,
+              let syncContext = managedObjectContext.zm_sync else {
+                
+                zmLog.error("Cannot mark as unread message outside of the conversation.")
+                return
+        }
+        
+        let conversationID = conversation.objectID
+        
+        conversation.lastReadServerTimeStamp = Date(timeInterval: -0.01, since: serverTimestamp)
+        managedObjectContext.saveOrRollback()
+        
+        syncContext.performGroupedBlock {
+            guard let syncObject = try? syncContext.existingObject(with: conversationID),
+                  let syncConversation = syncObject as? ZMConversation else {
+                zmLog.error("Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched.")
+                return
+            }
+            
+            syncConversation.updateUnreadCount()
+            syncContext.saveOrRollback()
+            
+            NotificationInContext(name: ZMConversation.lastReadDidChangeNotificationName,
+                                  context: syncContext.notificationContext,
+                                  object: syncConversation).post()
+        }
     }
 }
 

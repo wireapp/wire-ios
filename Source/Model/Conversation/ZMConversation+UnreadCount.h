@@ -44,6 +44,9 @@
 /// call updateUnread() when updating the lastReadServerTimeStamp
 - (void)updateUnread;
 
+/// Sets the estimatedUnreadCount value
+- (BOOL)updateUnreadCount;
+
 /// call [updateUnreadMessagesWithMessage:] when inserting / updating a message
 - (void)updateUnreadMessagesWithMessage:(ZMMessage *)message;
 
