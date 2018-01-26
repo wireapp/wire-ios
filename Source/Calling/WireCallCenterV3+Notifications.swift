@@ -95,6 +95,7 @@ public protocol WireCallCenterCallStateObserver : class {
 public struct WireCallCenterCallStateNotification : SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterNotification")
     
+    weak var context : NSManagedObjectContext?
     let callState : CallState
     let conversationId : UUID
     let callerId : UUID
@@ -110,6 +111,7 @@ public protocol WireCallCenterMissedCallObserver : class {
 public struct WireCallCenterMissedCallNotification : SelfPostingNotification {
     static let notificationName = Notification.Name("WireCallCenterMissedCallNotification")
     
+    weak var context : NSManagedObjectContext?
     let conversationId : UUID
     let callerId : UUID
     let timestamp: Date
@@ -218,6 +220,20 @@ extension WireCallCenterV3 {
         return addCallStateObserver(observer: observer, context: userSession.managedObjectContext)
     }
     
+    /// Register observer of the call center call state in all user sessions.
+    /// Returns a token which needs to be retained as long as the observer should be active.
+    class func addGlobalCallStateObserver(observer: WireCallCenterCallStateObserver) -> Any  {
+        return NotificationInContext.addUnboundedObserver(name: WireCallCenterCallStateNotification.notificationName, context: nil) { [weak observer] (note) in
+            if let note = note.userInfo[WireCallCenterCallStateNotification.userInfoKey] as? WireCallCenterCallStateNotification,
+               let context = note.context,
+               let caller = ZMUser(remoteID: note.callerId, createIfNeeded: false, in: context),
+               let conversation = ZMConversation(remoteID: note.conversationId, createIfNeeded: false, in: context) {
+                
+                observer?.callCenterDidChange(callState: note.callState, conversation: conversation, caller: caller, timestamp: note.messageTime)
+            }
+        }
+    }
+    
     /// Register observer of the call center call state. This will inform you when there's an incoming call etc.
     /// Returns a token which needs to be retained as long as the observer should be active.
     internal class func addCallStateObserver(observer: WireCallCenterCallStateObserver, context: NSManagedObjectContext) -> Any  {
@@ -261,9 +277,23 @@ extension WireCallCenterV3 {
     internal class func addMissedCallObserver(observer: WireCallCenterMissedCallObserver, context: NSManagedObjectContext) -> Any  {
         return NotificationInContext.addObserver(name: WireCallCenterMissedCallNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
             if let note = note.userInfo[WireCallCenterMissedCallNotification.userInfoKey] as? WireCallCenterMissedCallNotification,
-               let conversation = ZMConversation(remoteID: note.conversationId, createIfNeeded: false, in: context),
-               let caller = ZMUser(remoteID: note.callerId, createIfNeeded: false, in: context) {
+               let caller = ZMUser(remoteID: note.callerId, createIfNeeded: false, in: context),
+               let conversation = ZMConversation(remoteID: note.conversationId, createIfNeeded: false, in: context) {
                     
+                observer?.callCenterMissedCall(conversation: conversation, caller: caller, timestamp: note.timestamp, video: note.video)
+            }
+        }
+    }
+    
+    /// Register observer of missed calls for in all user sessions
+    /// Returns a token which needs to be retained as long as the observer should be active.
+    class func addGlobalMissedCallObserver(observer: WireCallCenterMissedCallObserver) -> Any  {
+        return NotificationInContext.addUnboundedObserver(name: WireCallCenterMissedCallNotification.notificationName, context: nil) { [weak observer] note in
+            if let note = note.userInfo[WireCallCenterMissedCallNotification.userInfoKey] as? WireCallCenterMissedCallNotification,
+               let context = note.context,
+               let caller = ZMUser(remoteID: note.callerId, createIfNeeded: false, in: context),
+               let conversation = ZMConversation(remoteID: note.conversationId, createIfNeeded: false, in: context) {
+                
                 observer?.callCenterMissedCall(conversation: conversation, caller: caller, timestamp: note.timestamp, video: note.video)
             }
         }

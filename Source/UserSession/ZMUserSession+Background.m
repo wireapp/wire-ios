@@ -107,13 +107,6 @@ performFetchWithCompletionHandler:(void (^)(UIBackgroundFetchResult result))comp
     completionHandler(UIBackgroundFetchResultFailed);
 }
 
-- (BOOL)application:(id<ZMApplication>)application continueUserActivity:(NSUserActivity *)userActivity restorationHandler:(void (^)(NSArray * _Nullable))restorationHandler
-{
-    NOT_USED(application);
-    NOT_USED(restorationHandler);
-    return [self.callKitDelegate continueUserActivity:userActivity];
-}
-
 - (void)applicationDidEnterBackground:(NSNotification *)note;
 {
     NOT_USED(note);
