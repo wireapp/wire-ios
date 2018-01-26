@@ -29,41 +29,51 @@
 
 @implementation ZMServerTrustTests
 
+/*
+ The whole certificate chain for production.
+ 
+  ---
+ 
+ To export a certificate in ascii PEM format, run:
+ 
+ openssl s_client -connect wire.com:443 -showcerts
+ 
+ */
 - (NSArray *)productionCertificateChain
 {
-    NSString *cert0 =
-    @" \
-    MIIFDDCCA/SgAwIBAgIQC7HK4y3OxqQjbYqDk1wVrDANBgkqhkiG9w0BAQsFADBN \
-    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E \
-    aWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTYxMTAzMDAwMDAwWhcN \
-    MTgwMTA0MTIwMDAwWjBYMQswCQYDVQQGEwJDSDEMMAoGA1UECBMDWnVnMQwwCgYD \
-    VQQHEwNadWcxGDAWBgNVBAoTD1dpcmUgU3dpc3MgR21iSDETMBEGA1UEAwwKKi53 \
-    aXJlLmNvbTCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAK3mMwVrr51S \
-    mH4DTV93VY1J6iFbZeF6kJwnGOpv7FjNeU0ytG6PRSpzMTQD7Q8welYkb6WbChHn \
-    1/KYteSXLOLmYrmfNSEldW6sbabIyeemI3pnvfQ3GuXJN+aU4WLiuo2fLxuqSYmP \
-    ZkWPZxmnYneKli+7sAHqCJ8dpjjOx3qQgodjTl3fhI0OLAbH4G/pFq3FUJgc7yxz \
-    1A6MpJv5vgby9nidZ4zzYjPxqHl25iFtVjN4n7nGCaA/YPleTXx3wDa1btsOGHCw \
-    2ndAvOTW/FNbIBTZK4Dqs4Xf9cR6JNbjso6Hi0yBx2JK8r2wRJnZer/n9idRDNPh \
-    Y/b7HiNk2K0CAwEAAaOCAdswggHXMB8GA1UdIwQYMBaAFA+AYRyCMWHVLyjnjUY4 \
-    tCzhxtniMB0GA1UdDgQWBBT/SIDwnMHi0O3A0H/c3Jh8K19NnDAfBgNVHREEGDAW \
-    ggoqLndpcmUuY29tggh3aXJlLmNvbTAOBgNVHQ8BAf8EBAMCBaAwHQYDVR0lBBYw \
-    FAYIKwYBBQUHAwEGCCsGAQUFBwMCMGsGA1UdHwRkMGIwL6AtoCuGKWh0dHA6Ly9j \
-    cmwzLmRpZ2ljZXJ0LmNvbS9zc2NhLXNoYTItZzUuY3JsMC+gLaArhilodHRwOi8v \
-    Y3JsNC5kaWdpY2VydC5jb20vc3NjYS1zaGEyLWc1LmNybDBMBgNVHSAERTBDMDcG \
-    CWCGSAGG/WwBATAqMCgGCCsGAQUFBwIBFhxodHRwczovL3d3dy5kaWdpY2VydC5j \
-    b20vQ1BTMAgGBmeBDAECAjB8BggrBgEFBQcBAQRwMG4wJAYIKwYBBQUHMAGGGGh0 \
-    dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBGBggrBgEFBQcwAoY6aHR0cDovL2NhY2Vy \
-    dHMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0U0hBMlNlY3VyZVNlcnZlckNBLmNydDAM \
-    BgNVHRMBAf8EAjAAMA0GCSqGSIb3DQEBCwUAA4IBAQAYQUuP8OknxlnqihIOPMcy \
-    Rpg25val6hmnrIfm1H66kOFpnjwv/66MhikCbJBAKlbnmuxNd1zK30CT4tbcmy1u \
-    YzGxN8D5Am+pcmHg8vgmnyRt3QftHVVyu9ayoR0dGG2+00iTcY8Un0+c30ktaDE1 \
-    vSKxp0VQvyhW/FHxOzFWpub11MzuJ3wf3MkdpBQL604LKY+viYKt3eXDJUZPhDOK \
-    e9VCYGZLsAEGTRYMq3iIey76hbVojWYD0Hw4xHKMmM+AOiksN6WW22uxXXwRuYM+ \
-    uLl9qx1HBNoeCitFfYMh+pe7UUQFs1DVNaFwAbTlOwrU1Xif8xmbvZoMm4BJUYEj";
     
-    NSString *cert1 =
-    @"MIIElDCCA3ygAwIBAgIQAf2j627KdciIQ4tyS8+8kTANBgkqhkiG9w0BAQsFADBh \
-      MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3 \
+    NSString *cert0 = @"\
+    MIIE/jCCA+agAwIBAgIQBmeNK7xaqmvwoGsKbGiEuzANBgkqhkiG9w0BAQsFADBN \
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMScwJQYDVQQDEx5E \
+    aWdpQ2VydCBTSEEyIFNlY3VyZSBTZXJ2ZXIgQ0EwHhcNMTcxMjEyMDAwMDAwWhcN \
+    MTkwMjAxMTIwMDAwWjBKMQswCQYDVQQGEwJDSDEMMAoGA1UEBxMDWnVnMRgwFgYD \
+    VQQKEw9XaXJlIFN3aXNzIEdtYkgxEzARBgNVBAMMCioud2lyZS5jb20wggEiMA0G \
+    CSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQCt5jMFa6+dUph+A01fd1WNSeohW2Xh \
+    epCcJxjqb+xYzXlNMrRuj0UqczE0A+0PMHpWJG+lmwoR59fymLXklyzi5mK5nzUh \
+    JXVurG2myMnnpiN6Z730NxrlyTfmlOFi4rqNny8bqkmJj2ZFj2cZp2J3ipYvu7AB \
+    6gifHaY4zsd6kIKHY05d34SNDiwGx+Bv6RatxVCYHO8sc9QOjKSb+b4G8vZ4nWeM \
+    82Iz8ah5duYhbVYzeJ+5xgmgP2D5Xk18d8A2tW7bDhhwsNp3QLzk1vxTWyAU2SuA \
+    6rOF3/XEeiTW47KOh4tMgcdiSvK9sESZ2Xq/5/YnUQzT4WP2+x4jZNitAgMBAAGj \
+    ggHbMIIB1zAfBgNVHSMEGDAWgBQPgGEcgjFh1S8o541GOLQs4cbZ4jAdBgNVHQ4E \
+    FgQU/0iA8JzB4tDtwNB/3NyYfCtfTZwwHwYDVR0RBBgwFoIKKi53aXJlLmNvbYII \
+    d2lyZS5jb20wDgYDVR0PAQH/BAQDAgWgMB0GA1UdJQQWMBQGCCsGAQUFBwMBBggr \
+    BgEFBQcDAjBrBgNVHR8EZDBiMC+gLaArhilodHRwOi8vY3JsMy5kaWdpY2VydC5j \
+    b20vc3NjYS1zaGEyLWc2LmNybDAvoC2gK4YpaHR0cDovL2NybDQuZGlnaWNlcnQu \
+    Y29tL3NzY2Etc2hhMi1nNi5jcmwwTAYDVR0gBEUwQzA3BglghkgBhv1sAQEwKjAo \
+    BggrBgEFBQcCARYcaHR0cHM6Ly93d3cuZGlnaWNlcnQuY29tL0NQUzAIBgZngQwB \
+    AgIwfAYIKwYBBQUHAQEEcDBuMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdp \
+    Y2VydC5jb20wRgYIKwYBBQUHMAKGOmh0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNv \
+    bS9EaWdpQ2VydFNIQTJTZWN1cmVTZXJ2ZXJDQS5jcnQwDAYDVR0TAQH/BAIwADAN \
+    BgkqhkiG9w0BAQsFAAOCAQEAc6v6cf/EQmmeGU2nC87F6QgEIAIL3svgabImao3f \
+    01QFVxC0XX2Cf9+wofijspqq5Uj80nb04o5HNnZWX1agJmqp8jTYH2hw4+uiwFCl \
+    d0QEptHMrCwEAyyouf0/cl2dfRv2V8m29W6Qb4+7pc1rEbFLl3fywmjgzpGkr1+c \
+    KE7pwkpgKqhulKkE4CDXant0Slj7cvDisSPy/kInJ5uHI29Z/SBCpACyHah6lkdI \
+    QyTo4uem1XH6i5UP9sTvCAZl0acHcPsvcJ50LeJvJC7sPNXr60xZYLIK5LIVrSSR \
+    hxtOB1WPMbzIQc5bF2LcSjXJNvXA5+RCO79om91mlheqPQ==";
+    
+    NSString *cert1 = @"\
+    MIIElDCCA3ygAwIBAgIQAf2j627KdciIQ4tyS8+8kTANBgkqhkiG9w0BAQsFADBh \
+    MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3 \
     d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD \
     QTAeFw0xMzAzMDgxMjAwMDBaFw0yMzAzMDgxMjAwMDBaME0xCzAJBgNVBAYTAlVT \
     MRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxJzAlBgNVBAMTHkRpZ2lDZXJ0IFNIQTIg \
@@ -88,7 +98,7 @@
     c+LJMto4JQtV05od8GiG7S5BNO98pVAdvzr508EIDObtHopYJeS4d60tbvVS3bR0 \
     j6tJLp07kzQoH3jOlOrHvdPJbRzeXDLz";
     
-    NSString *cert2 = @" \
+    NSString *cert2 = @"\
     MIIDrzCCApegAwIBAgIQCDvgVpBCRrGhdWrJWZHHSjANBgkqhkiG9w0BAQUFADBh \
     MQswCQYDVQQGEwJVUzEVMBMGA1UEChMMRGlnaUNlcnQgSW5jMRkwFwYDVQQLExB3 \
     d3cuZGlnaWNlcnQuY29tMSAwHgYDVQQDExdEaWdpQ2VydCBHbG9iYWwgUm9vdCBD \
@@ -311,7 +321,7 @@
     return @[@"prod-nginz-https.wire.com", @"prod-nginz-ssl.wire.com", @"prod-assets.wire.com", @"www.wire.com", @"wire.com"];
 }
 
-- (void)DISABLED_testPinnedHostsWithValidCertificateIsTrustedAreTrusted
+- (void)testPinnedHostsWithValidCertificateIsTrustedAreTrusted
 {
     // given
     SecTrustRef serverTrust = [self validTrustForProductionHost];
