@@ -270,6 +270,9 @@ NSString *const AvailabilityKey = @"availability";
 
 - (BOOL)canBeConnected;
 {
+    if (self.isServiceUser) {
+        return NO;
+    }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
 }
 
