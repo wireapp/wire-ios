@@ -29,6 +29,6 @@ extension ZMSearchUser: ServiceUser {
     }
 
     public var serviceIdentifier: String? {
-        return self.remoteIdentifier.transportString()
+        return self.remoteIdentifier?.transportString()
     }
 }

@@ -378,6 +378,9 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
 
 - (BOOL)canBeConnected
 {
+    if (self.isServiceUser) {
+        return NO;
+    }
     return ((self.user == nil) ?
             (!self.isConnected && self.remoteIdentifier != nil) :
             self.user.canBeConnected);
