@@ -141,12 +141,14 @@ extension IntegrationTest {
         user3 = nil
         user4 = nil
         user5 = nil
+        serviceUser = nil
         selfToUser1Conversation = nil
         selfToUser2Conversation = nil
         connectionSelfToUser1 = nil
         connectionSelfToUser2 = nil
         selfConversation = nil
         groupConversation = nil
+        groupConversationWithServiceUser = nil
         application = nil
         resetInMemoryDatabases()
         deleteSharedContainerContent()
@@ -341,6 +343,22 @@ extension IntegrationTest {
             connectionSelfToUser2.lastUpdate = Date(timeIntervalSinceNow: -5)
             connectionSelfToUser2.conversation = selfToUser2Conversation
             self.connectionSelfToUser2 = connectionSelfToUser2
+        })
+    }
+
+    @objc
+    func createConversationsWithServiceUser() {
+        mockTransportSession.performRemoteChanges({ session in
+            let bot = session.insertUser(withName: "Botty the Bot")
+            bot.accentID = 3
+            session.addProfilePicture(to: bot)
+            session.addV3ProfilePicture(to: bot)
+            self.serviceUser = bot
+
+            let groupConversation = session.insertGroupConversation(withSelfUser:self.selfUser, otherUsers: [self.user1, self.user2, bot])
+            groupConversation.creator = self.user2;
+            groupConversation.changeName(by:self.selfUser, name:"Group conversation with bot")
+            self.groupConversationWithServiceUser = groupConversation
         })
     }
     
