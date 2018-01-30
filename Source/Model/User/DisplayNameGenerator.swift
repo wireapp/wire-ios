@@ -59,9 +59,11 @@ public class DisplayNameGenerator : NSObject {
     /// Can be used by the UI to return the displayNames for a conversation.
     /// Calculates a map for this conversation, as soon as another conversation's displayNames are requested, it discards the map
     @objc public func displayName(for user: ZMUser, in conversation: ZMConversation) -> String {
+
         if idToPersonNameMap[user.objectID]?.rawFullName == (user.name ?? ""),                  // the user name is still the same
            let map = currentDisplayNameMap, map.conversationObjectID == conversation.objectID,  // the current map is of the same conversation
-           let name = map.map[user.objectID]                                                    // the current map contains the user
+           let name = map.map[user.objectID],                                                   // the current map contains the user
+           !(name.isEmpty && !(user.name ?? "").isEmpty)                                        // the name contains a value or both the name and user's name are empty
         {
             return name
         }
@@ -82,7 +84,7 @@ public class DisplayNameGenerator : NSObject {
         }
         let countedGivenName = NSCountedSet(array: givenNames)
         var map = [NSManagedObjectID : String]()
-        conversation.activeParticipants.forEach{ user in
+        conversation.activeParticipants.forEach { user in
             guard let user = user as? ZMUser else { return }
             let personName = self.personName(for: user)
             if countedGivenName.count(for: personName.givenName) == 1
