@@ -146,6 +146,7 @@ public protocol LocalNotificationResponder : class {
     let application: ZMApplication
     var postLoginAuthenticationToken: Any?
     var preLoginAuthenticationToken: Any?
+    var callCenterObserverToken: Any?
     var blacklistVerificator: ZMBlacklistVerificator?
     let reachability: ReachabilityProvider & ReachabilityTearDown
     let pushDispatcher: PushDispatcher
@@ -338,6 +339,7 @@ public protocol LocalNotificationResponder : class {
         self.pushDispatcher.fallbackClient = self
         
         postLoginAuthenticationToken = PostLoginAuthenticationNotification.addObserver(self, queue: self.groupQueue)
+        callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
         
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
@@ -802,7 +804,6 @@ extension SessionManager: ZMConversationListObserver {
     
     @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
         updateAllUnreadCounts()
-        switchToActiveCallConversation()
     }
     
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -832,15 +833,6 @@ extension SessionManager: ZMConversationListObserver {
         }
     }
     
-    fileprivate func switchToActiveCallConversation() {
-        for userSession in backgroundUserSessions.values {
-            if let conversation =  userSession.callCenter?.activeCallConversations(in: userSession).first {
-                self.userSession(userSession, show: conversation)
-                break
-            }
-        }
-    }
-    
     public func updateAppIconBadge() {
         DispatchQueue.main.async {
             for (accountID, session) in self.backgroundUserSessions {
@@ -850,6 +842,23 @@ extension SessionManager: ZMConversationListObserver {
             self.application.applicationIconBadgeNumber = self.accountManager.totalUnreadCount
         }
     }
+}
+
+extension SessionManager : WireCallCenterCallStateObserver {
+    
+    public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?) {
+        guard let moc = conversation.managedObjectContext else { return }
+        
+        switch callState {
+        case .answered, .outgoing:
+            for (_, session) in backgroundUserSessions where session.managedObjectContext == moc && activeUserSession != session {
+                session.open(conversation, at: nil)
+            }
+        default:
+            return
+        }
+    }
+    
 }
 
 extension SessionManager : PreLoginAuthenticationObserver {
