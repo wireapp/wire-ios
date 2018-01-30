@@ -25,13 +25,13 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
     func testThatItReturnsFirstNameForUserWithDifferentFirstnames() {
         // given
         let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.name = "Rob A";
+        user1.name = "Rob A"
         let user2 = ZMUser.insertNewObject(in: uiMOC)
-        user2.name = "Henry B";
+        user2.name = "Henry B"
         let user3 = ZMUser.insertNewObject(in: uiMOC)
-        user3.name = "Arthur";
+        user3.name = "Arthur"
         let user4 = ZMUser.insertNewObject(in: uiMOC)
-        user4.name = "Kevin ()";
+        user4.name = "Kevin ()"
         uiMOC.saveOrRollback()
         
         // when
@@ -66,18 +66,18 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
     {
         // given
         let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.name = "\u{00C5}ron Meister";
+        user1.name = "\u{00C5}ron Meister"
         let user2 = ZMUser.insertNewObject(in: uiMOC)
-        user2.name = "A\u{030A}ron Hans";
+        user2.name = "A\u{030A}ron Hans"
         
-        let name2b = "A\u{030A}rif Hans";
+        let name2b = "A\u{030A}rif Hans"
         
         // when
         let generator = DisplayNameGenerator(managedObjectContext: uiMOC)
         
         // then
-        XCTAssertEqual(generator.givenName(for: user1), "\u{00C5}ron");
-        XCTAssertEqual(generator.givenName(for: user2), "\u{00C5}ron");
+        XCTAssertEqual(generator.givenName(for: user1), "\u{00C5}ron")
+        XCTAssertEqual(generator.givenName(for: user2), "\u{00C5}ron")
         
         // when
         user2.name = name2b
@@ -97,33 +97,33 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
         
         let generator = DisplayNameGenerator(managedObjectContext: uiMOC)
         let emptyString = ""
-        XCTAssertEqual(generator.givenName(for: user1), emptyString);
-        XCTAssertEqual(generator.givenName(for: user2), emptyString);
-        XCTAssertEqual(generator.givenName(for: user3), emptyString);
+        XCTAssertEqual(generator.givenName(for: user1), emptyString)
+        XCTAssertEqual(generator.givenName(for: user2), emptyString)
+        XCTAssertEqual(generator.givenName(for: user3), emptyString)
         
         // when
-        user1.name = "\u{00C5}ron Meister";
-        user2.name = "A\u{030A}ron Hans";
-        user3.name = "A\u{030A}ron WhatTheFuck";
+        user1.name = "\u{00C5}ron Meister"
+        user2.name = "A\u{030A}ron Hans"
+        user3.name = "A\u{030A}ron Müller"
         
         // then
-        XCTAssertEqual(generator.givenName(for: user1), "\u{00C5}ron");
-        XCTAssertEqual(generator.givenName(for: user2), "\u{00C5}ron");
-        XCTAssertEqual(generator.givenName(for: user3), "\u{00C5}ron");
+        XCTAssertEqual(generator.givenName(for: user1), "\u{00C5}ron")
+        XCTAssertEqual(generator.givenName(for: user2), "\u{00C5}ron")
+        XCTAssertEqual(generator.givenName(for: user3), "\u{00C5}ron")
     }
     
     func testThatItReturnsUpdatedFullNames()
     {
         // given
         let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.name = "Hans Meister";
+        user1.name = "Hans Meister"
         let generator = DisplayNameGenerator(managedObjectContext: uiMOC)
         
         // when
         user1.name = "Hans Master"
 
         // then
-        XCTAssertEqual(generator.givenName(for: user1), "Hans");
+        XCTAssertEqual(generator.givenName(for: user1), "Hans")
     }
     
 
@@ -132,16 +132,16 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
     {
         // given
         let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.name = "******";
+        user1.name = "******"
         let user2 = ZMUser.insertNewObject(in: uiMOC)
-        user2.name = "******";
+        user2.name = "******"
         
         // when
         let generator = DisplayNameGenerator(managedObjectContext: uiMOC)
         
         // then
-        XCTAssertEqual(generator.givenName(for: user1), user1.name);
-        XCTAssertEqual(generator.givenName(for: user2), user2.name);
+        XCTAssertEqual(generator.givenName(for: user1), user1.name)
+        XCTAssertEqual(generator.givenName(for: user2), user2.name)
     }
  
     func testThatItReturnsInitialsForUser()
@@ -151,27 +151,33 @@ class DisplayNameGeneratorTests : ZMBaseManagedObjectTest {
         let user2 = ZMUser.insertNewObject(in: uiMOC)
         let user3 = ZMUser.insertNewObject(in: uiMOC)
         let user4 = ZMUser.insertNewObject(in: uiMOC)
+        let user5 = ZMUser.insertNewObject(in: uiMOC)
 
-        user1.name = "Rob A";
-        user2.name = "Henry B";
-        user3.name = "Arthur The Extreme Superman";
-        user4.name = "Kevin ()";
+        user1.name = "Rob A"
+        user2.name = "Henry B"
+        user3.name = "Arthur The Extreme Superman"
+        user4.name = "Kevin ()"
+        user5.name = "Echo"
+        user5.serviceIdentifier = UUID.create().transportString()
+        user5.providerIdentifier = UUID.create().transportString()
         
         // when
         let generator = DisplayNameGenerator(managedObjectContext: uiMOC)
 
         // then
-        XCTAssertEqual(generator.initials(for: user1), "RA");
-        XCTAssertEqual(generator.initials(for: user2), "HB");
-        XCTAssertEqual(generator.initials(for: user3), "AS");
-        XCTAssertEqual(generator.initials(for: user4), "K");
+        XCTAssertEqual(generator.initials(for: user1), "RA")
+        XCTAssertEqual(generator.initials(for: user2), "HB")
+        XCTAssertEqual(generator.initials(for: user3), "AS")
+        XCTAssertEqual(generator.initials(for: user4), "K")
+        XCTAssertEqual(generator.initials(for: user5), "E")
+        XCTAssert(user5.isServiceUser)
     }
     
     func testThatItFetchesAllUsersWhenNotFetchedYet()
     {
         // given
         let user1 = ZMUser.insertNewObject(in: uiMOC)
-        user1.name = "Rob A";
+        user1.name = "Rob A"
 
         // when
         let givenName = user1.displayName
@@ -211,6 +217,37 @@ extension DisplayNameGeneratorTests {
         XCTAssertEqual(displayName1, user1.name)
         XCTAssertEqual(displayName2, user2.name)
         XCTAssertEqual(displayName3, "Mutti")
+    }
+    
+    func testThatItRecalculatesTheDisplayNamesInAConversationBasisWhenANameBecomesAvailable() {
+        // given
+        let user1 = ZMUser.insertNewObject(in: uiMOC)
+        let user2 = ZMUser.insertNewObject(in: uiMOC)
+        
+        user1.name = "Karl Heinz"
+        user2.name = ""
+        user2.serviceIdentifier = UUID.create().transportString()
+        user2.providerIdentifier = UUID.create().transportString()
+        XCTAssert(user2.isServiceUser)
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2])
+        
+        // when
+        let displayName1 = user1.displayName(in: conversation)
+        let displayName2 = user2.displayName(in: conversation)
+        
+        // then
+        XCTAssertEqual(displayName1, "Karl")
+        XCTAssertEqual(displayName2, "")
+        
+        // when
+        user2.name = "Echo"
+        let newDisplayName2 = user2.displayName(in: conversation)
+        
+        // then
+        XCTAssertEqual(newDisplayName2, "Echo")
     }
     
     func testThatItCalculatesTheDisplayNamesOnConversationBasis_OneOnOne(){
