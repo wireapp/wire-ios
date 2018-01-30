@@ -60,7 +60,8 @@ public extension ZMUser {
             return conversation.team == nil
                 && conversation.teamRemoteIdentifier != nil
         } else {
-            return ZMUser.selfUser(in: managedObjectContext!).hasTeam // There can't be guests in a team that doesn't exist
+            return !isServiceUser // Bots are never guests
+                && ZMUser.selfUser(in: managedObjectContext!).hasTeam // There can't be guests in a team that doesn't exist
                 && conversation.otherActiveParticipants.contains(self)
                 && membership == nil
         }

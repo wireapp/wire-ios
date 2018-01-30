@@ -78,6 +78,27 @@ class TeamTests: BaseTeamTests {
         XCTAssertTrue(guest.isGuest(in: conversation))
         XCTAssertFalse(guest.isTeamMember)
     }
+    
+    func testThatItDoesNotReturnABotAsGuestOfATeam() throws {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        
+        // we add an actual team member as well
+        createUserAndAddMember(to: team)
+        
+        // when
+        let guest = ZMUser.insertNewObject(in: uiMOC)
+        let bot = ZMUser.insertNewObject(in: uiMOC)
+        bot.serviceIdentifier = UUID.create().transportString()
+        bot.providerIdentifier = UUID.create().transportString()
+        XCTAssert(bot.isServiceUser)
+        let conversation = try team.addConversation(with: [guest, bot])!
+        
+        // then
+        XCTAssert(guest.isGuest(in: conversation))
+        XCTAssertFalse(bot.isGuest(in: conversation))
+        XCTAssertFalse(bot.isTeamMember)
+    }
 
     func testThatItDoesNotReturnUsersAsGuestsIfThereIsNoTeam() {
         // given
