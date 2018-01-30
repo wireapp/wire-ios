@@ -141,7 +141,13 @@
 
 + (nullable instancetype)eventFromEventStreamPayload:(id<ZMTransportData>)payload uuid:(NSUUID *)uuid
 {
-    return [[self alloc] initWithUUID:uuid payload:[payload asDictionary] transient:NO decrypted:NO source:ZMUpdateEventSourceDownload];
+    NSDictionary *dictionary = payload.asDictionary;
+
+    // Some payloads are wrapped inside "event" key (e.g. removing bot from conversation)
+    // Check for this before
+    NSDictionary *innerPayload = dictionary[@"event"] ?: dictionary;
+
+    return [[self alloc] initWithUUID:uuid payload:innerPayload transient:NO decrypted:NO source:ZMUpdateEventSourceDownload];
 }
 
 + (nullable instancetype)decryptedUpdateEventFromEventStreamPayload:(nonnull id<ZMTransportData>)payload uuid:(nullable NSUUID *)uuid transient:(BOOL)transient source:(ZMUpdateEventSource)source

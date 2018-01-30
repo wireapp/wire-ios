@@ -276,6 +276,29 @@
     XCTAssertEqualObjects(event.payload, payload);
 }
 
+- (void)testThatItSetsPayloadFromStreamEventWithWrappedPayload
+{
+    // given
+    NSDictionary *payload = @{
+        @"conversation" : @"0d30d26f-3b5e-4b7b-8f9a-efa2e5f9ca7c",
+        @"time" : @"2014-06-18T12:36:51.755Z",
+        @"data" : @{
+            @"content" : @"First! ;)",
+            @"nonce" : @"a80a81e3-9ff1-ac27-03ee-06bbc6d7b5cb"
+        },
+        @"from" : @"f76c1c7a-7278-4b70-9df7-eca7980f3a5d",
+        @"id" : @"8.800122000a68ee1d",
+        @"type" : @"conversation.message-add"
+    };
+    NSDictionary *wrappedPayload = @{ @"event" : payload };
+
+    // when
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:wrappedPayload uuid:nil];
+
+    // then
+    XCTAssertNotNil(event);
+    XCTAssertEqualObjects(event.payload, payload);
+}
 
 - (void)testThatItSetsIDToNilFromStreamEvent
 {
