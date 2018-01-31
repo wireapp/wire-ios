@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */ = {isa = PBXBuildFile; fileRef = 096A3A1D1B67CEF700565001 /* ZMSLogging.m */; };
+		16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */ = {isa = PBXBuildFile; fileRef = 16962EDB20221F970069D88D /* ZMSLogNotifications.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */ = {isa = PBXBuildFile; fileRef = 16962EDC20221F970069D88D /* ZMSLogNotifications.m */; };
 		54180BD81F459DCF0020D2BD /* MemoryReferenceDebugger.h in Headers */ = {isa = PBXBuildFile; fileRef = 54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		54180BD91F459DCF0020D2BD /* MemoryReferenceDebugger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */; };
 		54180BDE1F459DFF0020D2BD /* MemoryReferenceDebuggerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54180BDA1F459DFB0020D2BD /* MemoryReferenceDebuggerTests.m */; };
@@ -58,6 +60,8 @@
 		096A3A1D1B67CEF700565001 /* ZMSLogging.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; lineEnding = 0; path = ZMSLogging.m; sourceTree = "<group>"; xcLanguageSpecificationIdentifier = xcode.lang.objc; };
 		096A3A1E1B67CEF700565001 /* ZMSLog.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMSLog.swift; sourceTree = "<group>"; };
 		09F186211B68FD52007A3DA6 /* WireSystem-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "WireSystem-Info.plist"; sourceTree = "<group>"; };
+		16962EDB20221F970069D88D /* ZMSLogNotifications.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMSLogNotifications.h; sourceTree = "<group>"; };
+		16962EDC20221F970069D88D /* ZMSLogNotifications.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMSLogNotifications.m; sourceTree = "<group>"; };
 		3ECC35191AD436750089FD4B /* WireSystem.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireSystem.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MemoryReferenceDebugger.h; sourceTree = "<group>"; };
 		54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MemoryReferenceDebugger.swift; sourceTree = "<group>"; };
@@ -181,6 +185,8 @@
 				54F9BC4C1C48F55900BC09DB /* ZMSTestDetection.m */,
 				54FF9F0F1C48F67300B29ACE /* ZMSTimePoint.h */,
 				54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */,
+				16962EDB20221F970069D88D /* ZMSLogNotifications.h */,
+				16962EDC20221F970069D88D /* ZMSLogNotifications.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -232,6 +238,7 @@
 				548662521B344CB400298EFD /* ZMSDefines.h in Headers */,
 				546E9AB61B72536F00769771 /* ZMSLogging.h in Headers */,
 				5473E7CA1B31A95A00C6A937 /* WireSystem.h in Headers */,
+				16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */,
 				54F9BC4D1C48F55900BC09DB /* ZMSTestDetection.h in Headers */,
 				54180BD81F459DCF0020D2BD /* MemoryReferenceDebugger.h in Headers */,
 				5473E7CC1B31A95A00C6A937 /* ZMSAppleSystemLoggerWrapper.h in Headers */,
@@ -365,6 +372,7 @@
 				54F9BC4E1C48F55900BC09DB /* ZMSTestDetection.m in Sources */,
 				096A3A211B67CEF700565001 /* ZMSLogging.m in Sources */,
 				54DB81651DBFACE800AF495D /* CircularArray.swift in Sources */,
+				16962EDE20221F970069D88D /* ZMSLogNotifications.m in Sources */,
 				546E9AB51B7252B100769771 /* ZMSAppleSystemLoggerWrapper.m in Sources */,
 				54DB81631DBF66CF00AF495D /* ZMSLog+Levels.swift in Sources */,
 				54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */,
