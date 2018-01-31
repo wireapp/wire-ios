@@ -36,4 +36,5 @@ FOUNDATION_EXPORT const unsigned char ZMSystemVersionString[];
 #import <WireSystem/ZMSTimePoint.h>
 #import <WireSystem/ZMSTestDetection.h>
 #import <WireSystem/MemoryReferenceDebugger.h>
+#import <WireSystem/ZMSLogNotifications.h>
 
