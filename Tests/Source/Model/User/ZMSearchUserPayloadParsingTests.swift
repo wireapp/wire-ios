@@ -47,6 +47,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
                                       "handle": "@user",
                                       "accent_id": 5,
                                       "id": uuid.transportString(),
+                                      "summary": "Short summary",
                                       "provider": provider.transportString()]
         
         // when
@@ -54,6 +55,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         
         // then
         XCTAssertTrue(user.isServiceUser)
+        XCTAssertEqual(user.summary, "Short summary")
         XCTAssertEqual(user.providerIdentifier, provider.transportString())
         XCTAssertEqual(user.serviceIdentifier, uuid.transportString())
         XCTAssertFalse(user.canBeConnected)

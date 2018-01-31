@@ -22,3 +22,7 @@ import Foundation
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
 }
+
+@objc public protocol SearchServiceUser: ServiceUser {
+    var summary: String? { get }
+}

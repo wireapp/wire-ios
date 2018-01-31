@@ -62,7 +62,9 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 @property (nonatomic) NSString *completeAssetKey;
 
 @property (nonatomic, readwrite) NSUInteger totalCommonConnections;
-@property (nonatomic, readwrite, copy) NSString * _providerIdentifier;
+@property (nonatomic, readwrite, copy) NSString *providerIdentifier;
+
+@property (nonatomic, readwrite, copy) NSString *summary;
 
 + (NSCache *)searchUserToSmallProfileImageCache;
 + (NSCache *)searchUserToMediumImageCache;
