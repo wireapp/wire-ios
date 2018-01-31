@@ -18,16 +18,7 @@
 
 import Foundation
 
-extension ZMSearchUser: ServiceUser {
-    public var providerIdentifier: String? {
-        get {
-            return _providerIdentifier
-        }
-        set {
-            _providerIdentifier = newValue
-        }
-    }
-
+extension ZMSearchUser: SearchServiceUser {
     public var serviceIdentifier: String? {
         return self.remoteIdentifier?.transportString()
     }

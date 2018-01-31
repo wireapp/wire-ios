@@ -170,6 +170,10 @@ NSString *const ZMSearchUserTotalMutualFriendsKey = @"total_mutual_friends";
         self.providerIdentifier = payload[@"provider"];
     }
     
+    if (nil != payload[@"summary"]) {
+        self.summary = payload[@"summary"];
+    }
+    
     NSArray *assets = payload[@"assets"];
     if (nil != assets && [assets isKindOfClass:[NSArray class]]) {
         for (NSDictionary *asset in assets) {

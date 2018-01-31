@@ -23,7 +23,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class ZMUser, ZMAddressBookContact;
-@protocol ServiceUser;
 
 @interface ZMSearchUser : NSObject <ZMBareUser>
 
