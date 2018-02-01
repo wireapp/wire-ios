@@ -892,6 +892,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [super updateKeysThatHaveLocalModifications];
     NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];
     if (self.unsyncedInactiveParticipants.count > 0) {
+        ZMLogDebug(@"adding ZMConversationUnsyncedInactiveParticipantsKey to modified keys for %@", self.remoteIdentifier.transportString);
         [newKeys addObject:ZMConversationUnsyncedInactiveParticipantsKey];
     }
     if (self.unsyncedActiveParticipants.count > 0) {
@@ -906,6 +907,20 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (void)willSave
 {
     [super willSave];
+    
+    if (self.unsyncedInactiveParticipants.count > 0) {
+        ZMLogDebug(@"willSave (%@), mutableOtherActiveParticipants.count = %li, mutableLastServerSyncedActiveParticipants = %li",
+                   self.remoteIdentifier.transportString,
+                   self.mutableOtherActiveParticipants.count,
+                   self.mutableLastServerSyncedActiveParticipants.count);
+    }
+    
+    // NOTE: internal debug notification
+    if (self.unsyncedInactiveParticipants.count > 1) {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [[NSNotificationCenter defaultCenter] postNotificationName:ZMLoggingInconsistentStateNotificationName object:nil userInfo:@{ ZMLoggingDescriptionKey : @"unsyncedInactiveParticipants is unusually high" }];
+        });
+    }
     
     if (self.unsyncedInactiveParticipants.count == 0 && [self.keysThatHaveLocalModifications containsObject:ZMConversationUnsyncedInactiveParticipantsKey]) {
         [self resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]];
@@ -1082,7 +1097,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [self resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]];
     [self resetLocallyModifiedKeys:[NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]];
     
-    ZMLogDebug(@"resetParticipantsBackToLastServerSync, mutableOtherActiveParticipants.count = %li", self.mutableOtherActiveParticipants.count);
+    ZMLogDebug(@"resetParticipantsBackToLastServerSync (%@) mutableOtherActiveParticipants.count = %li", self.remoteIdentifier.transportString, self.mutableOtherActiveParticipants.count);
 }
 
 - (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
@@ -1644,7 +1659,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [self.mutableOtherActiveParticipants removeObjectsInArray:otherUsers.allObjects];
     [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:otherUsers];
     
-    ZMLogDebug(@"internalRemoveParticipants, mutableOtherActiveParticipants.count = %li", self.mutableOtherActiveParticipants.count);
+    ZMLogDebug(@"internalRemoveParticipants (%@), mutableOtherActiveParticipants.count = %li, mutableLastServerSyncedActiveParticipants = %li",
+               self.remoteIdentifier.transportString,
+               self.mutableOtherActiveParticipants.count,
+               self.mutableLastServerSyncedActiveParticipants.count);
 }
 
 @dynamic isSelfAnActiveMember;

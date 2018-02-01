@@ -26,6 +26,8 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 
+static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
+
 static NSString *const ConversationInfoNameKey = @"name";
 static NSString *const ConversationInfoTypeKey = @"type";
 static NSString *const ConversationInfoIDKey = @"id";
@@ -128,6 +130,8 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     [addedUsers minusOrderedSet:lastSyncedUsers];
     NSMutableOrderedSet<ZMUser *> *removedUsers = [lastSyncedUsers mutableCopy];
     [removedUsers minusOrderedSet:users];
+    
+    ZMLogDebug(@"updateMembersWithPayload (%@) added = %li removed = %li", self.remoteIdentifier.transportString, addedUsers.count, removedUsers.count);
     
     [self internalAddParticipants:addedUsers.set isAuthoritative:YES];
     [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext] isAuthoritative:YES];

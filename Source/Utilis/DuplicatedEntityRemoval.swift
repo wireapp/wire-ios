@@ -18,6 +18,8 @@
 
 import Foundation
 
+private let zmLog = ZMSLog(tag: "DuplicateEntity")
+
 enum DuplicatedEntityRemoval {
     
     static func removeDuplicated(in moc: NSManagedObjectContext) {
@@ -172,6 +174,10 @@ extension ZMConversation {
         self.mutableLastServerSyncedActiveParticipants?.union(conversation.mutableLastServerSyncedActiveParticipants ?? NSOrderedSet())
         self.mutableOtherActiveParticipants.removeAllObjects()
         self.mutableOtherActiveParticipants.union(self.mutableLastServerSyncedActiveParticipants ?? NSOrderedSet())
+        
+        zmLog.debug("Merged duplicate conversation \(self.remoteIdentifier?.transportString() ?? "N/A")")
+        zmLog.debug("mutableLastServerSyncedActiveParticipants = \(self.mutableLastServerSyncedActiveParticipants?.count ?? -1)")
+        zmLog.debug("mutableOtherActiveParticipants.count = \(self.mutableOtherActiveParticipants.count)")
     }
 }
 
