@@ -470,7 +470,16 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     ZMConversationType conversationType = [self internalConversationType];
     
-    if (conversationType == ZMConversationTypeGroup && self.teamRemoteIdentifier != nil && self.otherActiveParticipants.count == 1 && self.userDefinedName.length == 0) {
+    // Exception: the group conversation is considered a 1-1 if:
+    // 1. Belongs to the team.
+    // 2. Has no name given.
+    // 3. Conversation has only one other participant.
+    // 4. This participant is not a service user (bot).
+    if (conversationType == ZMConversationTypeGroup &&
+        self.teamRemoteIdentifier != nil &&
+        self.otherActiveParticipants.count == 1 &&
+        !self.otherActiveParticipants.firstObject.isServiceUser &&
+        self.userDefinedName.length == 0) {
         conversationType = ZMConversationTypeOneOnOne;
     }
     
