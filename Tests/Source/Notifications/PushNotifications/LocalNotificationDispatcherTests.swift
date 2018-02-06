@@ -229,7 +229,7 @@ extension LocalNotificationDispatcherTests {
         guard self.application.scheduledLocalNotifications.count == 1 else {
             return XCTFail("Wrong number of notifications")
         }
-        XCTAssertEqual(self.application.scheduledLocalNotifications[0].alertBody, ZMPushStringDefault.localizedStringForPushNotification())
+        XCTAssertEqual(self.application.scheduledLocalNotifications[0].alertBody, "New message")
         XCTAssertEqual(self.application.scheduledLocalNotifications[0].soundName, "new_message_apns.caf")
     
     }
@@ -294,7 +294,7 @@ extension LocalNotificationDispatcherTests {
         message.users = [self.selfUser]
         
         // notification content
-        let text = (ZMPushStringMemberJoin as NSString).localizedString(with: message.sender, conversation: message.conversation, otherUser: self.selfUser)!
+        let text = "\(message.sender!.name!) added you"
         
         // WHEN
         self.sut.process(message)
