@@ -18,8 +18,8 @@
 
 @import WireDataModel;
 @import WireTesting;
+@import WireRequestStrategy;
 
-#import "ZMLocallyModifiedObjectSet.h"
 #import "MockEntity.h"
 #import "MockModelObjectContextFactory.h"
 

@@ -19,11 +19,10 @@
 @import WireTransport;
 @import WireDataModel;
 @import WireTesting;
+@import WireRequestStrategy;
 
 #import "MockEntity.h"
 #import "MockModelObjectContextFactory.h"
-#import "ZMDownstreamObjectSync.h"
-#import "ZMSyncOperationSet.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 
 

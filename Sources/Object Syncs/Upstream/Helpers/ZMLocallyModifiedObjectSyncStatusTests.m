@@ -18,8 +18,7 @@
 
 @import WireDataModel;
 @import WireTesting;
-
-#import "ZMLocallyModifiedObjectSyncStatus.h"
+@import WireRequestStrategy;
 
 
 static NSString * Key1;

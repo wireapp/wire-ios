@@ -19,8 +19,7 @@
 
 @import WireTransport;
 @import WireTesting;
-
-#import "ZMRequestGenerator.h"
+@import WireRequestStrategy;
 
 
 
