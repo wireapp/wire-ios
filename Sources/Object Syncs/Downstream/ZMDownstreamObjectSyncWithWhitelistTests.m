@@ -23,12 +23,11 @@
 #import "MockEntity.h"
 #import "MockModelObjectContextFactory.h"
 #import "ZMDownstreamObjectSyncWithWhitelist+Internal.h"
-#import "ZMSyncOperationSet.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
 
 
 
-@interface ZMDownstreamObjectSyncWithWhitelistingTests : ZMTBaseTest
+@interface ZMDownstreamObjectSyncWithWhitelistTests : ZMTBaseTest
 
 @property (nonatomic) NSManagedObjectContext *moc;
 @property (nonatomic) id<ZMDownstreamTranscoder> transcoder;
@@ -39,7 +38,7 @@
 @property (nonatomic) NSPredicate *predicateForObjectsRequiringWhitelisting;
 @end
 
-@implementation ZMDownstreamObjectSyncWithWhitelistingTests
+@implementation ZMDownstreamObjectSyncWithWhitelistTests
 
 - (void)setUp {
     [super setUp];

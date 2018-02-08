@@ -25,7 +25,7 @@
 #import "MockModelObjectContextFactory.h"
 
 
-@interface ZMLocalInsertedObjectSetTests : ZMTBaseTest
+@interface ZMLocallyInsertedObjectSetTests : ZMTBaseTest
 
 @property (nonatomic) MockEntity *entity;
 @property (nonatomic) NSManagedObjectContext *testMOC;
@@ -34,7 +34,7 @@
 @end
 
 
-@implementation ZMLocalInsertedObjectSetTests
+@implementation ZMLocallyInsertedObjectSetTests
 
 - (void)setUp {
     [super setUp];

@@ -19,9 +19,9 @@
 
 @import WireTransport;
 @import WireTesting;
+@import WireRequestStrategy;
 
 #import "MockModelObjectContextFactory.h"
-#import "ZMRemoteIdentifierObjectSync.h"
 #import <objc/runtime.h>
 
 
