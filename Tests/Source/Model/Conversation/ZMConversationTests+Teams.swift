@@ -21,7 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 
-class Conversationtests_Teams: BaseTeamTests {
+class ConversationTests_Teams: BaseTeamTests {
 
     var team: Team!
     var user: ZMUser!
@@ -179,33 +179,18 @@ class Conversationtests_Teams: BaseTeamTests {
         XCTAssertEqual(conversation?.team, team)
     }
 
-    func testThatUIMethodThrowsWhenPermissionsAreInsuficcient() {
-        do {
-            // given
-            member.permissions = Permissions(rawValue: 0)
-            let otherUser = ZMUser.insertNewObject(in: uiMOC)
-
-            // when
-            _ = try team.addConversation(with: [otherUser])
-            XCTFail("Should not be executed")
-        } catch {
-            // then
-            XCTAssertEqual(error as! TeamError, TeamError.insufficientPermissions)
-        }
-    }
-
-    func testThatItCreatesAConversationWithOnlyAGuest() throws {
+    func testThatItCreatesAConversationWithOnlyAGuest() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
         let guest = ZMUser.insertNewObject(in: uiMOC)
 
         // when
-        let conversation = try team.addConversation(with: [guest])
+        let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [guest], in: team)
         XCTAssertNotNil(conversation)
     }
 
 
-    func testThatItCreatesAConversationWithAnotherMember() throws {
+    func testThatItCreatesAConversationWithAnotherMember() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
@@ -214,7 +199,7 @@ class Conversationtests_Teams: BaseTeamTests {
         otherMember.user = otherUser
 
         // when
-        let conversation = try team.addConversation(with: [otherUser])
+        let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team)
         XCTAssertNotNil(conversation)
         XCTAssertEqual(conversation?.otherActiveParticipants, [otherUser])
         XCTAssertTrue(otherUser.isTeamMember)
@@ -224,15 +209,15 @@ class Conversationtests_Teams: BaseTeamTests {
 }
 
 // MARK: - System messages
-extension Conversationtests_Teams {
-    func testThatItCreatesSystemMessageWithTeamMemberLeave() throws {
+extension ConversationTests_Teams {
+    func testThatItCreatesSystemMessageWithTeamMemberLeave() {
         // given
         let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
         let otherUser = ZMUser.insertNewObject(in: uiMOC)
         let otherMember = Member.insertNewObject(in: uiMOC)
         otherMember.team = team
         otherMember.user = otherUser
-        let conversation = try team.addConversation(with: [otherUser])
+        let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team)
         conversation?.lastModifiedDate = Date(timeIntervalSinceNow: -100)
         let timestamp = Date(timeIntervalSinceNow: -20)
         

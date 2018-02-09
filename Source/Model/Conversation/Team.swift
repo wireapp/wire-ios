@@ -74,23 +74,6 @@ public class Team: ZMManagedObject, TeamType {
     }
 }
 
-
-public enum TeamError: Error {
-    case insufficientPermissions
-}
-
-extension Team {
-
-    public func addConversation(with participants: Set<ZMUser>) throws -> ZMConversation? {
-        guard ZMUser.selfUser(in: managedObjectContext!).canCreateConversation else { throw TeamError.insufficientPermissions }
-        switch participants.count {
-        case 1: return ZMConversation.fetchOrCreateTeamConversation(in: managedObjectContext!, withParticipant: participants.first!, team: self)
-        default: return ZMConversation.insertGroupConversation(into: managedObjectContext!, withParticipants: Array(participants), in: self)
-        }
-    }
-
-}
-
 extension Team {
     
     public func members(matchingQuery query: String) -> [Member] {
