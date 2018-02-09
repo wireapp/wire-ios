@@ -87,6 +87,9 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.isAccessibilityElement = YES;
+        self.shouldGroupAccessibilityChildren = YES;
+        
         self.colorSchemeVariant = ColorSchemeVariantDark;
         self.contentView.translatesAutoresizingMaskIntoConstraints = NO;
 
@@ -148,7 +151,6 @@
         [self setNeedsUpdateConstraints];
         [self updateForContext];
         
-        self.showSeparatorLine = NO;
         self.mode = SearchResultCellSelectionModeNone;
     }
     return self;
@@ -256,7 +258,6 @@
         [self.successCheckmark removeFromSuperview];
         self.successCheckmark = nil;
         self.contentView.alpha = 1.0f;
-        self.showSeparatorLine = NO;
         self.mode = SearchResultCellSelectionModeNone;
         self.backgroundColor = UIColor.clearColor;
     }];
@@ -291,12 +292,31 @@
     self.instantConnectButton.hidden = ! canBeConnected;
     [self setNeedsUpdateConstraints];
     self.badgeUserImageView.user = (id)self.user;
+    
+    [self updateAccessibilityLabel];
 }
 
-- (void)setShowSeparatorLine:(BOOL)showSeparatorLine
+- (void)updateForConversation
 {
-    _showSeparatorLine = showSeparatorLine;
-    self.separatorLineView.hidden = !showSeparatorLine;
+    if (self.conversation.conversationType == ZMConversationTypeOneOnOne) {
+        ZMUser *otherUser = self.conversation.connectedUser;
+        self.user = otherUser;
+        self.badgeUserImageView.hidden = NO;
+        self.conversationImageView.conversation = nil;
+    }
+    else {
+        self.conversationImageView.conversation = self.conversation;
+        self.badgeUserImageView.hidden = YES;
+        self.user = nil;
+        self.nameLabel.text = self.conversation.displayName;
+    }
+    
+    [self updateAccessibilityLabel];
+}
+
+- (void)updateAccessibilityLabel
+{
+    self.accessibilityLabel = [NSString stringWithFormat:@"%@ - %@", self.nameLabel.text, self.subtitleLabel.text];
 }
 
 #pragma mark - Public API
@@ -370,18 +390,7 @@
 {
     _conversation = conversation;
     
-    if (conversation.conversationType == ZMConversationTypeOneOnOne) {
-        ZMUser *otherUser = conversation.connectedUser;
-        self.user = otherUser;
-        self.badgeUserImageView.hidden = NO;
-        self.conversationImageView.conversation = nil;
-    }
-    else {
-        self.conversationImageView.conversation = self.conversation;
-        self.badgeUserImageView.hidden = YES;
-        self.user = nil;
-        self.nameLabel.text = conversation.displayName;
-    }
+    [self updateForConversation];
 }
 
 - (void)setSelected:(BOOL)selected
@@ -390,9 +399,6 @@
 
     switch (self.mode) {
         case SearchResultCellSelectionModeNone:
-            break;
-        case SearchResultCellSelectionModeDimmedBackground:
-            self.backgroundColor = self.selected ? [UIColor colorWithWhite:0 alpha:0.08] : [UIColor clearColor];
             break;
         case SearchResultCellSelectionModeTrailingCheckmark: {
             UIColor *foregroundColor = [ColorScheme.defaultColorScheme colorWithName:ColorSchemeColorBackground];
@@ -409,9 +415,7 @@
 - (void)setHighlighted:(BOOL)highlighted
 {
     [super setHighlighted:highlighted];
-    if (self.mode == SearchResultCellSelectionModeDimmedBackground) {
-        self.backgroundColor = highlighted ? [UIColor colorWithWhite:0 alpha:0.08] : UIColor.clearColor;
-    }
+    self.backgroundColor = highlighted ? [UIColor colorWithWhite:0 alpha:0.08] : UIColor.clearColor;
 }
 
 #pragma mark - Override
