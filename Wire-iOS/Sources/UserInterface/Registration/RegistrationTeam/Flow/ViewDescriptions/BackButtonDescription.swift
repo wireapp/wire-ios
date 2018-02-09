@@ -20,16 +20,18 @@ import Foundation
 
 final class BackButtonDescription {
     var buttonTapped: (() -> ())? = nil
+    var accessibilityIdentifier: String? = "backButton"
 }
 
 extension BackButtonDescription: ViewDescriptor {
     func create() -> UIView {
         let button = IconButton()
-        button.tintColor = .black
+        button.setIconColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorIconNormal, variant: .light), for: .normal)
+        button.setIconColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorTextDimmed, variant: .light), for: .highlighted)
         button.translatesAutoresizingMaskIntoConstraints = false
         let iconType: ZetaIconType = UIApplication.isLeftToRightLayout ? .chevronLeft : .chevronRight
         button.setIcon(iconType, with: .small, for: .normal)
-        button.accessibilityIdentifier = "backButton"
+        button.accessibilityIdentifier = accessibilityIdentifier
         button.addTarget(self, action: #selector(BackButtonDescription.backButtonTapped(_:)), for: .touchUpInside)
         return button
     }

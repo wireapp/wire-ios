@@ -89,6 +89,13 @@ public class AddParticipantsViewController: UIViewController {
         self.init(context: .add(conversation))
     }
     
+    override open var title: String? {
+        didSet {
+            navigationItem.titleView = ConversationCreationTitleFactory.createTitleLabel(for: self.title ?? "")
+            navigationItem.titleView?.accessibilityIdentifier = "label.addpeople.title"
+        }
+    }
+    
     public init(context: Context) {
         viewModel = AddParticipantsViewModel(with: context)
         
@@ -129,9 +136,6 @@ public class AddParticipantsViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         updateValues()
 
-        
-        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(target: self, action: #selector(rightNavigationItemTapped))
-        navigationItem.rightBarButtonItem?.accessibilityIdentifier = "close"
         emptyResultLabel.text = everyoneHasBeenAddedText
         emptyResultLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground)
         emptyResultLabel.font = FontSpec(.normal, .none).font!
@@ -164,9 +168,6 @@ public class AddParticipantsViewController: UIViewController {
                                                selector: #selector(keyboardFrameWillChange(notification:)),
                                                name: NSNotification.Name.UIKeyboardWillChangeFrame,
                                                object: nil)
-    }
-
-    override public func viewDidLoad() {
         if viewModel.botCanBeAdded {
             view.addSubview(searchGroupSelector)
         }
@@ -181,13 +182,19 @@ public class AddParticipantsViewController: UIViewController {
         searchResultsViewController.didMove(toParentViewController: self)
         searchResultsViewController.searchResultsView?.emptyResultView = emptyResultLabel
         searchResultsViewController.searchResultsView?.backgroundColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorContentBackground)
-
+        
         createConstraints()
         updateSelectionValues()
-    }
-    
-    func createConstraints() {
         
+        if case .create = context {
+            let buttonDescriptor = BackButtonDescription()
+            buttonDescriptor.buttonTapped = { [weak self] in self?.backButtonTapped() }
+            buttonDescriptor.accessibilityIdentifier = "button.addpeople.back"
+            navigationItem.leftBarButtonItem = .init(customView: buttonDescriptor.create())
+        }
+    }
+
+    func createConstraints() {
         let margin = (searchResultsViewController.view as! SearchResultsView).accessoryViewMargin
         
         constrain(view, searchHeaderViewController.view, searchResultsViewController.view, confirmButton, bottomContainer) {
@@ -225,12 +232,17 @@ public class AddParticipantsViewController: UIViewController {
         }
     }
     
+    @objc private func backButtonTapped() {
+        navigationController?.popViewController(animated: true)
+    }
+    
     private func updateValues() {
         confirmButton.setTitle(viewModel.confirmButtonTitle, for: .normal)
-        title = viewModel.title
+        updateTitle()
+        navigationItem.rightBarButtonItem = viewModel.rightNavigationItem(target: self, action: #selector(rightNavigationItemTapped))
     }
 
-    func updateSelectionValues() {
+    fileprivate func updateSelectionValues() {
         // Update view model after selection changed
         if case .create(let values) = viewModel.context {
             let updated = ConversationCreationValues(name: values.name, participants: userSelection.users)
@@ -244,11 +256,19 @@ public class AddParticipantsViewController: UIViewController {
             searchResultsViewController.searchResultsView?.accessoryView = bottomContainer
         }
         
-        // Update titles
-        title = viewModel.title
+        updateTitle()
         
         // Notify delegate
         conversationCreationDelegate?.addParticipantsViewController(self, didPerform: .updatedUsers(userSelection.users))
+    }
+    
+    private func updateTitle() {
+        title = {
+            switch viewModel.context {
+            case .create(let values): return viewModel.title(with: values.participants)
+            case .add: return viewModel.title(with: userSelection.users)
+            }
+        }()
     }
     
     var emptySearchResultText : String {

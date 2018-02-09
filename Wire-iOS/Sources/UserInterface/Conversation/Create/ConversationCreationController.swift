@@ -30,6 +30,17 @@ final public class ConversationCreationValues {
     }
 }
 
+open class ConversationCreationTitleFactory {
+    static func createTitleLabel(for title: String) -> UILabel {
+        let titleLabel = UILabel()
+        titleLabel.font = FontSpec(.normal, .medium).font!.allCaps()
+        titleLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorIconNormal, variant: .light)
+        titleLabel.text = title
+        titleLabel.sizeToFit()
+        return titleLabel
+    }
+}
+
 final class ConversationCreationController: UIViewController {
 
     static let errorFont = FontSpec(.small, .semibold).font!
@@ -42,7 +53,6 @@ final class ConversationCreationController: UIViewController {
     private var mainViewContainer: UIView!
 
     private let backButtonDescription = BackButtonDescription()
-    private var backButton: UIView!
     fileprivate var nextButton: UIButton!
 
     private var textField: SimpleTextField!
@@ -51,9 +61,10 @@ final class ConversationCreationController: UIViewController {
     
     fileprivate var values: ConversationCreationValues?
 
-    fileprivate var onClose: (() -> ())?
+    typealias CreationCloseClosure = (ConversationCreationValues?) -> Void
+    fileprivate var onClose: CreationCloseClosure?
 
-    init(onClose: (() -> ())? = nil) {
+    init(onClose: CreationCloseClosure? = nil) {
         self.onClose = onClose
         super.init(nibName: nil, bundle: nil)
     }
@@ -71,9 +82,15 @@ final class ConversationCreationController: UIViewController {
 
         view.backgroundColor = UIColor.Team.background
         title = "create group".uppercased()
-
+        
+        setupNavigationBar()
         createViews()
         createConstraints()
+        
+        // try to overtake the first responder from the other view
+        if let _ = UIResponder.wr_currentFirst() {
+            self.textField.becomeFirstResponder()
+        }
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -82,33 +99,21 @@ final class ConversationCreationController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        textField.becomeFirstResponder()
         setNeedsStatusBarAppearanceUpdate()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        textField.becomeFirstResponder()
     }
 
     private func createViews() {
         mainViewContainer = UIView()
         mainViewContainer.translatesAutoresizingMaskIntoConstraints = false
 
-        backButtonDescription.buttonTapped = { [weak self] in self?.onClose?() }
-        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButtonDescription.create())
-
-        nextButton = ButtonWithLargerHitArea()
-        nextButton.setTitle("general.next".localized.uppercased(), for: .normal)
-        let textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorIconNormal, variant: .light)
-        nextButton.setTitleColor(textColor, for: .normal)
-        nextButton.setTitleColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorIconHighlighted, variant: .light), for: .highlighted)
-        nextButton.setTitleColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorIconShadow, variant: .light), for: .disabled)
-
-        nextButton.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
-        nextButton.titleLabel?.font = FontSpec(.medium, .medium).font!
-
-        navigationController?.navigationBar.titleTextAttributes = [NSForegroundColorAttributeName: ColorScheme.default().color(withName: ColorSchemeColorTextForeground),
-                                                  NSFontAttributeName: FontSpec(.normal, .medium).font!.allCaps()]
-
-        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: nextButton)
-
         textField = SimpleTextField()
+        textField.isAccessibilityElement = true
+        textField.accessibilityIdentifier = "textfield.newgroup.name"
         textField.placeholder = "conversation.create.group_name.placeholder".localized.uppercased()
         textField.textFieldDelegate = self
         mainViewContainer.addSubview(textField)
@@ -129,26 +134,35 @@ final class ConversationCreationController: UIViewController {
         }
     }
 
-    private func createConstraints() {
-        if let backButton = backButton {
+    private func setupNavigationBar() {
+        
+        // left button
+        backButtonDescription.buttonTapped = { [unowned self] in self.onClose?(self.values) }
+        backButtonDescription.accessibilityIdentifier = "button.newgroup.back"
 
-            var backButtonTopMargin: CGFloat
-            if #available(iOS 11.0, *) {
-                backButtonTopMargin = 12
-            } else {
-                backButtonTopMargin = 32
-            }
+        navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButtonDescription.create())
 
-            let backButtonSize = UIImage.size(for: .tiny)
-
-            constrain(view, backButton) { view, backButton in
-                backButton.leading == view.leading + 16
-                backButton.top == view.topMargin + backButtonTopMargin
-                backButton.height == backButtonSize
-                backButton.height == backButton.width
-            }
+        // title view
+        navigationItem.titleView = ConversationCreationTitleFactory.createTitleLabel(for: self.title ?? "")
+        
+        // right button
+        nextButton = ButtonWithLargerHitArea(type: .custom)
+        nextButton.accessibilityIdentifier = "button.newgroup.next"
+        nextButton.setTitle("general.next".localized.uppercased(), for: .normal)
+        nextButton.setTitleColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorIconNormal, variant: .light), for: .normal)
+        nextButton.setTitleColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorTextDimmed, variant: .light), for: .highlighted)
+        nextButton.setTitleColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorIconShadow, variant: .light), for: .disabled)
+        nextButton.titleLabel?.font = FontSpec(.medium, .medium).font!
+        
+        nextButton.addCallback(for: .touchUpInside) { [weak self] _ in
+            self?.tryToProceed()
         }
-
+        
+        navigationItem.rightBarButtonItem = UIBarButtonItem(customView: nextButton)
+    }
+    
+    private func createConstraints() {
+        
         constrain(view, errorViewContainer, mainViewContainer) { view, errorViewContainer, mainViewContainer in
             errorViewContainer.bottom == view.bottom - 25
             errorViewContainer.leading == view.leading
@@ -182,6 +196,7 @@ final class ConversationCreationController: UIViewController {
         case let .error(error):
             displayError(error)
         case let .valid(name):
+            textField.resignFirstResponder()
             let newValues = ConversationCreationValues(name: name, participants: values?.participants ?? [])
             values = newValues
             let participantsController = AddParticipantsViewController(context: .create(newValues))
@@ -189,8 +204,8 @@ final class ConversationCreationController: UIViewController {
             navigationController?.pushViewController(participantsController, animated: true)
         }
     }
-
-    @objc fileprivate func nextButtonTapped(_ sender: UIButton) {
+    
+    fileprivate func tryToProceed() {
         guard let value = textField.value else { return }
         proceedWith(value: value)
     }
@@ -204,8 +219,8 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
         switch action {
         case .updatedUsers(let users):
             values = values.map { .init(name: $0.name, participants: users) }
-        case .create: break
-            // TODO
+        case .create:
+            onClose?(values)
         }
     }
 }
@@ -219,7 +234,7 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
     }
 
     func textFieldReturnPressed(_ textField: SimpleTextField) {
-        nextButtonTapped(nextButton)
+        tryToProceed()
     }
 }
 
