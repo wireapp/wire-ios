@@ -116,10 +116,15 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 
 - (nonnull id<ZMConversationMessage>)appendKnock;
 
-/// Insert a new group conversation into the user session
-/// If a team is specified, exsiting conversations will be returned if there are any.
+///// Insert a new group conversation into the user session
 + (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
                                               withParticipants:(nonnull NSArray<ZMUser *> *)participants
+                                                        inTeam:(nullable Team *)team;
+
+/// Insert a new group conversation with name into the user session
++ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
+                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
+                                                          name:(nullable NSString*)name
                                                         inTeam:(nullable Team *)team;
 
 /// If that conversation exists, it is returned, @c nil otherwise.

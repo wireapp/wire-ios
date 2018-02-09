@@ -72,7 +72,7 @@ class TeamTests: BaseTeamTests {
 
         // when
         let guest = ZMUser.insertNewObject(in: uiMOC)
-        let conversation = try team.addConversation(with: [guest])!
+        guard let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [guest], in: team) else { XCTFail(); return }
 
         // then
         XCTAssertTrue(guest.isGuest(in: conversation))
@@ -92,7 +92,7 @@ class TeamTests: BaseTeamTests {
         bot.serviceIdentifier = UUID.create().transportString()
         bot.providerIdentifier = UUID.create().transportString()
         XCTAssert(bot.isServiceUser)
-        let conversation = try team.addConversation(with: [guest, bot])!
+        guard let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [guest, bot], in: team) else { XCTFail(); return }
         
         // then
         XCTAssert(guest.isGuest(in: conversation))
@@ -130,8 +130,8 @@ class TeamTests: BaseTeamTests {
             let guest = ZMUser.insertNewObject(in: uiMOC)
 
             // when
-            let conversation1 = try team1.addConversation(with: [guest])!
-            let conversation2 = try team2.addConversation(with: [otherUser])!
+        guard let conversation1 = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [guest], in: team1) else { XCTFail(); return }
+        guard let conversation2 = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team2) else { XCTFail(); return }
 
             // then
             XCTAssertTrue(guest.isGuest(in: conversation1))
