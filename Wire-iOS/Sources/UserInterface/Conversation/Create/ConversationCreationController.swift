@@ -94,12 +94,12 @@ final class ConversationCreationController: UIViewController {
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
-        return .default
+        return ColorScheme.default().variant == .dark ? .lightContent : .default
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setNeedsStatusBarAppearanceUpdate()
+        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(animated)
     }
     
     override func viewDidAppear(_ animated: Bool) {
