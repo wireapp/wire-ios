@@ -121,7 +121,6 @@
         [self.nameLabelStackView addArrangedSubview:self.subtitleLabel];
 
         self.separatorLineView = [[UIView alloc] initForAutoLayout];
-        self.separatorLineView.backgroundColor = [ColorScheme.defaultColorScheme colorWithName:ColorSchemeColorPaleSeparator];
         [self.swipeView addSubview:self.separatorLineView];
         
         self.trailingCheckmarkView = [[UIImageView alloc] initForAutoLayout];
@@ -205,7 +204,7 @@
 
         [self.separatorLineView autoPinEdgeToSuperviewEdge:ALEdgeTrailing];
         [self.separatorLineView autoPinEdgeToSuperviewEdge:ALEdgeBottom];
-        [self.separatorLineView autoSetDimension:ALDimensionHeight toSize:1];
+        [self.separatorLineView autoSetDimension:ALDimensionHeight toSize:UIScreen.hairline];
         [self.separatorLineView autoPinEdge:ALEdgeLeading toEdge:ALEdgeLeading ofView:self.nameLabel];
         
         self.initialConstraintsCreated = YES;
@@ -232,6 +231,7 @@
 {
     self.nameLabel.font = [UIFont fontWithMagicIdentifier:@"people_picker.search_results_mode.name_label_font"];
     self.nameLabel.textColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorTextForeground variant:self.colorSchemeVariant];
+    self.separatorLineView.backgroundColor = [ColorScheme.defaultColorScheme colorWithName:ColorSchemeColorCellSeparator variant:self.colorSchemeVariant];
 
     CGFloat squareImageWidth = [WAZUIMagic cgFloatForIdentifier:@"people_picker.search_results_mode.tile_image_diameter"];
     self.avatarViewSizeConstraint.constant = squareImageWidth;
