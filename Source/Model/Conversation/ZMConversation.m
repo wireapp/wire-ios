@@ -905,10 +905,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [NSSet setWithObjects:ZMConversationMessagesKey, ZMConversationLastReadServerTimeStampKey, nil];
 }
 
-- (void)updateKeysThatHaveLocalModifications;
+- (NSSet<NSString *> *)filterUpdatedLocallyModifiedKeys:(NSSet<NSString *> *)updatedKeys
 {
-    [super updateKeysThatHaveLocalModifications];
-    NSMutableSet *newKeys = [self.keysThatHaveLocalModifications mutableCopy];
+    NSMutableSet *newKeys = [super filterUpdatedLocallyModifiedKeys:updatedKeys].mutableCopy;
     if (self.unsyncedInactiveParticipants.count > 0) {
         ZMLogDebug(@"adding ZMConversationUnsyncedInactiveParticipantsKey to modified keys for %@", self.remoteIdentifier.transportString);
         [newKeys addObject:ZMConversationUnsyncedInactiveParticipantsKey];
@@ -917,9 +916,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         [newKeys addObject:ZMConversationUnsyncedActiveParticipantsKey];
     }
     
-    if( ![newKeys isEqual:self.keysThatHaveLocalModifications]) {
-        [self setLocallyModifiedKeys:newKeys];
+    // Don't sync the conversation name if it was set before inserting the conversation
+    // as it will already get synced when inserting the conversation on the backend.
+    if (self.isInserted && nil != self.userDefinedName && [newKeys containsObject:ZMConversationUserDefinedNameKey]) {
+        [newKeys removeObject:ZMConversationUserDefinedNameKey];
     }
+    
+    return newKeys;
 }
 
 - (void)willSave

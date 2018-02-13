@@ -183,6 +183,35 @@
     XCTAssertNotNil(entity.attributesByName[@"modifiedKeys"]);
 }
 
+- (void)testThatItIgnoresModifiedDisplayNameWhenInserting
+{
+    // Given
+    ZMConversation *sut = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    sut.userDefinedName = @"Name";
+    
+    // When
+    XCTAssert(sut.isInserted);
+    XCTAssert([self.uiMOC saveOrRollback]);
+    
+    // Then
+    XCTAssertFalse([sut.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
+}
+
+- (void)testThatItDoesNotIgnoreAModifiedDisplayNameWhenNotInserting
+{
+    // Given
+    ZMConversation *sut = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    XCTAssert([self.uiMOC saveOrRollback]);
+    XCTAssertFalse(sut.isInserted);
+    
+    // When
+    sut.userDefinedName = @"Name";
+    XCTAssert([self.uiMOC saveOrRollback]);
+    
+    // Then
+    XCTAssert([sut.keysThatHaveLocalModifications containsObject:ZMConversationUserDefinedNameKey]);
+}
+
 - (void)testThatWeCanSetAttributesOnConversation
 {
     [self checkConversationAttributeForKey:@"draftMessageText" value:@"It’s cold outside."];

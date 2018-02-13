@@ -539,9 +539,16 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     NSSet *oldKeys = self.keysThatHaveLocalModifications;
     NSMutableSet *newKeys = [oldKeys mutableCopy];
     [newKeys addObjectsFromArray:self.filteredChangedValues.allKeys ?: @[]];
-    if (! [oldKeys isEqualToSet:newKeys]) {
-        [self setKeysThatHaveLocalModifications:newKeys];
+    NSSet *filteredKeys = [self filterUpdatedLocallyModifiedKeys:newKeys];
+    if (! [oldKeys isEqualToSet:filteredKeys]) {
+        [self setKeysThatHaveLocalModifications:filteredKeys];
     }
+}
+
+// Subclasses should override to conditionally exclude modified keys.
+- (NSSet<NSString *> *)filterUpdatedLocallyModifiedKeys:(NSSet<NSString *> *)updatedKeys
+{
+    return updatedKeys;
 }
 
 @end
