@@ -68,6 +68,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, readonly) NSArray *updateEvents;
 
+@property (nonatomic, readwrite) id<ReachabilityProvider,ReachabilityTearDown> reachability;
+
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
 
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;

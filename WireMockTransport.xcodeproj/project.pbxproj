@@ -80,6 +80,8 @@
 		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
+		7C52BFF72033225500297DDA /* MockReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C52BFF52033225500297DDA /* MockReachability.h */; };
+		7C52BFF82033225500297DDA /* MockReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C52BFF62033225500297DDA /* MockReachability.m */; };
 		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
 		872A2EE21FFE7EE700900B22 /* MockTransportSession+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */; };
 		872A2EE41FFE85D000900B22 /* MockServicesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EE31FFE85D000900B22 /* MockServicesTests.swift */; };
@@ -258,6 +260,8 @@
 		54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireMockTransport.xcconfig; sourceTree = "<group>"; };
 		54CE5E691B7534C4007F3065 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
 		54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionObjectCreationTests.swift; sourceTree = "<group>"; };
+		7C52BFF52033225500297DDA /* MockReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockReachability.h; sourceTree = "<group>"; };
+		7C52BFF62033225500297DDA /* MockReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockReachability.m; sourceTree = "<group>"; };
 		872A2EDF1FFE761B00900B22 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
 		872A2EE11FFE7EE700900B22 /* MockTransportSession+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Services.swift"; sourceTree = "<group>"; };
 		872A2EE31FFE85D000900B22 /* MockServicesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockServicesTests.swift; sourceTree = "<group>"; };
@@ -412,6 +416,7 @@
 				54AE5A6E1B78FA43002757E9 /* MockTransportSession.h */,
 				541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */,
 				09E393F31BB0336A00F3EA1B /* MockPreKey.h */,
+				7C52BFF52033225500297DDA /* MockReachability.h */,
 				54AE5A701B78FA43002757E9 /* WireMockTransport.h */,
 			);
 			path = Public;
@@ -443,6 +448,7 @@
 		54C902351B7532DD007162A8 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				7C52BFF62033225500297DDA /* MockReachability.m */,
 				54AE5A4C1B78FA43002757E9 /* Helpers */,
 				54AE5A5A1B78FA43002757E9 /* MockTransportSession.m */,
 				F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */,
@@ -578,6 +584,7 @@
 				CE4750291C19F73500848CCB /* MockPersonalInvitation.h in Headers */,
 				CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */,
 				163EB0CE1FD1A658005B8D8D /* MockTransportSession+Broadcast.h in Headers */,
+				7C52BFF72033225500297DDA /* MockReachability.h in Headers */,
 				54AE5A891B78FA43002757E9 /* MockConnection.h in Headers */,
 				54AE5A791B78FA43002757E9 /* MockTransportSession+registration.h in Headers */,
 				54AE5A711B78FA43002757E9 /* MockTransportSession+assets.h in Headers */,
@@ -725,6 +732,7 @@
 				F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */,
 				F14741551EC462EB00A3688C /* MockMember.swift in Sources */,
 				547AC6361E377B5A001458FD /* MockUserClient.swift in Sources */,
+				7C52BFF82033225500297DDA /* MockReachability.m in Sources */,
 				09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */,
 				54AE5A741B78FA43002757E9 /* MockTransportSession+connections.m in Sources */,
 				163EB0CF1FD1A658005B8D8D /* MockTransportSession+Broadcast.m in Sources */,

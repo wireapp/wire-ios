@@ -28,6 +28,7 @@
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockPreKey.h"
+#import "MockReachability.h"
 #import "WireMockTransport/WireMockTransport-Swift.h"
 
 NSString * const ZMPushChannelStateChangeNotificationName = @"ZMPushChannelStateChangeNotification";
@@ -129,7 +130,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.phoneNumbersWaitingForVerificationForProfile = [NSMutableSet set];
 
         self.emailsWaitingForVerificationForRegistration = [NSMutableSet set];
-
+        
+        self.reachability = [[MockReachability alloc] init];
         self.pushTokens = [NSMutableArray array];
         _nonCompletedRequests = [NSMutableArray array];
     }
