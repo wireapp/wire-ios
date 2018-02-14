@@ -170,7 +170,7 @@ public class SharingSession {
     /// - NeedsMigration: The database needs a migration which is only done in the main app
     /// - LoggedOut: No user is logged in
     /// - missingSharedContainer: The shared container is missing
-    enum InitializationError: Error {
+    public enum InitializationError: Error {
         case needsMigration, loggedOut, missingSharedContainer
     }
     
@@ -194,8 +194,6 @@ public class SharingSession {
     private var contextSaveObserverToken: NSObjectProtocol?
 
     let transportSession: ZMTransportSession
-    
-    var reachability: ZMReachability?
     
     private var contextDirectory: ManagedObjectContextDirectory!
     
@@ -281,9 +279,6 @@ public class SharingSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
         )
-        
-        self.reachability = reachability
-
     }
     
     internal init(contextDirectory: ManagedObjectContextDirectory,
@@ -349,7 +344,7 @@ public class SharingSession {
             NotificationCenter.default.removeObserver(token)
             contextSaveObserverToken = nil
         }
-        reachability?.tearDown()
+        transportSession.reachability.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
         StorageStack.reset()
