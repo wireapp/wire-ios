@@ -34,7 +34,7 @@ ZM_EMPTY_ASSERTING_INIT()
     
     NSString *trimmedName = [*ioString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
     
-    // Eclude zero-width joiner (U+200D) used to create combined Emoji.
+    // Exclude zero-width joiner (U+200D) used to create combined Emoji.
     NSMutableCharacterSet *controlSet = NSCharacterSet.controlCharacterSet.mutableCopy;
     [controlSet removeCharactersInString:@"\u200D"];
     
