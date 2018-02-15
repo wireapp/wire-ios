@@ -36,6 +36,14 @@ class String_ExtremeCombiningCharactersTests: XCTestCase {
         XCTAssertEqual(string.removingExtremeCombiningCharacters, string)
     }
     
+    func testThatItDoesNotSplitCombinedEmoji() {
+        // GIVEN
+        let string = "👩‍👩‍👦‍👦"
+        
+        // WHEN & THEN
+        XCTAssertEqual(string.removingExtremeCombiningCharacters, string)
+    }
+    
     func testThatItPassesSmallExcessiveDiacritics() {
         // GIVEN
         let string = "t͞e̴s͟t"
