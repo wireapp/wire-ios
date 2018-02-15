@@ -33,10 +33,15 @@ ZM_EMPTY_ASSERTING_INIT()
     }
     
     NSString *trimmedName = [*ioString stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    if ([trimmedName rangeOfCharacterFromSet:[NSCharacterSet controlCharacterSet] options:NSLiteralSearch].location != NSNotFound) {
+    
+    // Exclude zero-width joiner (U+200D) used to create combined Emoji.
+    NSMutableCharacterSet *controlSet = NSCharacterSet.controlCharacterSet.mutableCopy;
+    [controlSet removeCharactersInString:@"\u200D"];
+    
+    if ([trimmedName rangeOfCharacterFromSet:controlSet options:NSLiteralSearch].location != NSNotFound) {
         NSMutableString *replaced = [trimmedName mutableCopy];
         do {
-            NSRange r = [replaced rangeOfCharacterFromSet:[NSCharacterSet controlCharacterSet] options:NSLiteralSearch];
+            NSRange r = [replaced rangeOfCharacterFromSet:controlSet options:NSLiteralSearch];
             if (r.location == NSNotFound) {
                 break;
             }
