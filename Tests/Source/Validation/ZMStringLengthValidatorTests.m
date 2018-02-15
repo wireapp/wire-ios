@@ -64,6 +64,39 @@
     XCTAssertNil(error);
 }
 
+- (void)testThatCombinedEmojiPassesValidation_3
+{
+    const NSString *originalValue = @"👨‍👧‍👦";
+    NSString *value = originalValue.copy;
+    NSError *error;
+    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    XCTAssertTrue(result);
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(originalValue, value);
+}
+
+- (void)testThatCombinedEmojiPassesValidation_4
+{
+    const NSString *originalValue = @"👩‍👩‍👦‍👦";
+    NSString *value = originalValue.copy;
+    NSError *error;
+    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    XCTAssertTrue(result);
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(originalValue, value);
+}
+
+- (void)testThatItRemovesControlCharactersBetweenCombinedEmoji
+{
+    const NSString *originalValue = @"👩‍👩‍👦‍👦/n👨‍👧‍👦";
+    NSString *value = originalValue.copy;
+    NSError *error;
+    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    XCTAssertTrue(result);
+    XCTAssertNil(error);
+    XCTAssertEqualObjects(originalValue, value);
+}
+
 - (void)testThatNilIsValid
 {
     NSString *value = nil;
