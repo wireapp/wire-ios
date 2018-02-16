@@ -38,10 +38,10 @@ import Foundation
     }
     
     @objc(validateValue:minimumStringLength:maximumStringLength:maximumByteLength:error:)
-    static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>,
-                              minimumStringLength: UInt32,
-                              maximumStringLength: UInt32,
-                              maximumByteLength: UInt32) throws {
+    static public func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>,
+                                     minimumStringLength: UInt32,
+                                     maximumStringLength: UInt32,
+                                     maximumByteLength: UInt32) throws {
         guard let string = ioValue.pointee as? String else {
             throw StringLengthError.tooShort
         }
