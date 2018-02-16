@@ -56,7 +56,7 @@ import Foundation
             throw StringLengthError.tooShort
         }
         
-        if trimmedString.characters.count > maximumStringLength {
+        if trimmedString.count > maximumStringLength {
             throw StringLengthError.tooLong
         }
         
