@@ -51,3 +51,11 @@ public extension UInt {
         return random % upperBound
     }
 }
+
+/// Extension for NSNumber so we can support ObjC
+public extension NSNumber {
+    public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
+        return UInt32(UInt.secureRandomNumber(upperBound: UInt(upperBound)))
+    }
+}
+
