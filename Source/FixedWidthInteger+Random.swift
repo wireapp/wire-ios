@@ -35,7 +35,7 @@ public extension FixedWidthInteger {
     ///
     public static func secureRandomNumber(upperBound: Self) -> Self {
         
-        guard upperBound != 0 else { return 0 }
+        guard upperBound != 0, upperBound != Self.min else { return 0 }
         
         var random: Self
         
