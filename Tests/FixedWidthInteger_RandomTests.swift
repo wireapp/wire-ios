@@ -18,15 +18,25 @@
 
 import XCTest
 
-class UInt_RandomTests: XCTestCase {
+class FixedWidthInteger_RandomTests: XCTestCase {
     
-    func testThatTheGeneratedNumberIsInRange() {
+    func testThatTheGeneratedNumberIsInRangeWithUInt() {
         
         let upperBound: UInt = 2
         let range = 0..<upperBound
         
         for _ in 0..<100 {
             XCTAssertTrue(range.contains(UInt.secureRandomNumber(upperBound: upperBound)))
+        }
+    }
+    
+    func testThatTheGeneratedNumberIsInRangeWithInt() {
+        
+        let upperBound: Int = 100
+        let range = -upperBound..<upperBound
+        
+        for _ in 0..<100 {
+            XCTAssertTrue(range.contains(Int.secureRandomNumber(upperBound: upperBound)))
         }
     }
     
@@ -38,4 +48,5 @@ class UInt_RandomTests: XCTestCase {
     func testThatItGeneratesANumberWhenThenUpperBoundIsMax() {
         XCTAssertNotNil(UInt.secureRandomNumber(upperBound: UInt.max))
     }
+    
 }
