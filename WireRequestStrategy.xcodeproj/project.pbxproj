@@ -312,9 +312,12 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1621D2211D75AB2D007108C2 /* MockDataModel */ = {
+		1621D2211D75AB2D007108C2 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
+				1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */,
+				1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */,
 				1621D2221D75AB2D007108C2 /* MockEntity.h */,
 				1621D2231D75AB2D007108C2 /* MockEntity.m */,
 				1621D2241D75AB2D007108C2 /* MockEntity2.h */,
@@ -322,20 +325,19 @@
 				1621D2261D75AB2D007108C2 /* MockModelObjectContextFactory.h */,
 				1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */,
 			);
-			path = MockDataModel;
+			path = Helpers;
 			sourceTree = "<group>";
 		};
 		166901601D707509000FE4AF = {
 			isa = PBXGroup;
 			children = (
-				547E664C1F7512FE008CB1FA /* Default-568h@2x.png */,
 				F9E9FB3D1DA4FFDB00B5B2C5 /* Cartfile */,
 				F9E9FB3E1DA4FFDB00B5B2C5 /* Cartfile.private */,
 				F9E9FB3F1DA4FFDB00B5B2C5 /* Cartfile.resolved */,
-				1669016C1D707509000FE4AF /* Sources */,
-				166901781D707509000FE4AF /* WireRequestStrategyTests */,
-				1669016B1D707509000FE4AF /* Products */,
 				166901841D7075D7000FE4AF /* Resources */,
+				1669016C1D707509000FE4AF /* Sources */,
+				166901781D707509000FE4AF /* Tests */,
+				1669016B1D707509000FE4AF /* Products */,
 				166902041D7082C7000FE4AF /* Frameworks */,
 			);
 			sourceTree = "<group>";
@@ -360,28 +362,25 @@
 				F1CD5D822024C1A0008C574E /* Request Syncs */,
 				F1CD5D812024C16B008C574E /* Object Syncs */,
 				1669016D1D707509000FE4AF /* WireRequestStrategy.h */,
-				1669016F1D707509000FE4AF /* Info.plist */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
-		166901781D707509000FE4AF /* WireRequestStrategyTests */ = {
+		166901781D707509000FE4AF /* Tests */ = {
 			isa = PBXGroup;
 			children = (
-				F154EDC51F447B6C00CB8184 /* WireRequestStrategyTestHost */,
-				1621D2211D75AB2D007108C2 /* MockDataModel */,
-				1669017B1D707509000FE4AF /* Info.plist */,
-				166902151D70910F000FE4AF /* WireRequestStrategyTests-Bridging-Header.h */,
-				1621D2311D75B221007108C2 /* NSManagedObjectContext+TestHelpers.h */,
-				1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */,
+				F154EDC51F447B6C00CB8184 /* Test Host */,
+				1621D2211D75AB2D007108C2 /* Helpers */,
+				F12CD7932035FC4400EAAEBC /* Resources */,
 			);
-			path = WireRequestStrategyTests;
+			path = Tests;
 			sourceTree = "<group>";
 		};
 		166901841D7075D7000FE4AF /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				166901851D7075D7000FE4AF /* Configurations */,
+				1669016F1D707509000FE4AF /* Info.plist */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -449,13 +448,22 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-		F154EDC51F447B6C00CB8184 /* WireRequestStrategyTestHost */ = {
+		F12CD7932035FC4400EAAEBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				1669017B1D707509000FE4AF /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		F154EDC51F447B6C00CB8184 /* Test Host */ = {
+			isa = PBXGroup;
+			children = (
+				547E664C1F7512FE008CB1FA /* Default-568h@2x.png */,
 				F154EDC61F447B6C00CB8184 /* AppDelegate.swift */,
 				F154EDD21F447B6C00CB8184 /* Info.plist */,
 			);
-			path = WireRequestStrategyTestHost;
+			path = "Test Host";
 			sourceTree = "<group>";
 		};
 		F1CD5D812024C16B008C574E /* Object Syncs */ = {
@@ -703,7 +711,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0820;
+				LastUpgradeCheck = 0900;
 				ORGANIZATIONNAME = "Wire GmbH";
 				TargetAttributes = {
 					166901691D707509000FE4AF = {
@@ -862,14 +870,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -893,7 +907,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
@@ -913,14 +926,20 @@
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
 				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
 				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
@@ -938,7 +957,6 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				SDKROOT = iphoneos;
 				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
@@ -965,7 +983,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = Sources/Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
@@ -992,7 +1010,7 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = Sources/Info.plist;
+				INFOPLIST_FILE = Resources/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
@@ -1016,11 +1034,11 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = WireRequestStrategyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(SRCROOT)/Carthage/Build/iOS/OCMock.framework";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Helpers/WireRequestStrategyTests-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
@@ -1041,11 +1059,11 @@
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/iOS",
 				);
-				INFOPLIST_FILE = WireRequestStrategyTests/Info.plist;
+				INFOPLIST_FILE = Tests/Resources/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks $(SRCROOT)/Carthage/Build/iOS/OCMock.framework";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_OBJC_BRIDGING_HEADER = "WireRequestStrategyTests/WireRequestStrategyTests-Bridging-Header.h";
+				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Helpers/WireRequestStrategyTests-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
 			};
@@ -1057,7 +1075,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				INFOPLIST_FILE = "$(SRCROOT)/WireRequestStrategyTests/WireRequestStrategyTestHost/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
@@ -1073,7 +1091,7 @@
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				DEVELOPMENT_TEAM = EDF3JCE8BC;
-				INFOPLIST_FILE = "$(SRCROOT)/WireRequestStrategyTests/WireRequestStrategyTestHost/Info.plist";
+				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
