@@ -1084,7 +1084,11 @@ NSString *const AvailabilityKey = @"availability";
     }
     
     // The backend limits to 128. We'll fly just a bit below the radar.
-    return [ZMStringLengthValidator validateValue:ioName mimimumStringLength:2 maximumSringLength:100 error:outError];
+    return *ioName == nil || [StringLengthValidator validateValue:ioName
+                                              minimumStringLength:2
+                                              maximumStringLength:100
+                                                maximumByteLength:INT_MAX
+                                                            error:outError];
 }
 
 + (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
@@ -1099,7 +1103,11 @@ NSString *const AvailabilityKey = @"availability";
 
 + (BOOL)validatePassword:(NSString **)ioPassword error:(NSError **)outError
 {
-    return [ZMStringLengthValidator validateValue:ioPassword mimimumStringLength:8 maximumSringLength:120 error:outError];
+    return [StringLengthValidator validateValue:ioPassword
+                            minimumStringLength:8
+                            maximumStringLength:120
+                              maximumByteLength:INT_MAX
+                                          error:outError];
 }
 
 + (BOOL)validatePhoneNumber:(NSString **)ioPhoneNumber error:(NSError **)outError
@@ -1114,15 +1122,11 @@ NSString *const AvailabilityKey = @"availability";
 
 + (BOOL)validatePhoneVerificationCode:(NSString **)ioVerificationCode error:(NSError **)outError
 {
-    if (*ioVerificationCode == nil) {
-        return NO;
-    }
-    else {
-        return [ZMStringLengthValidator validateValue:ioVerificationCode
-                                  mimimumStringLength:6
-                                   maximumSringLength:6
-                                                error:outError];
-    }
+    return [StringLengthValidator validateValue:ioVerificationCode
+                            minimumStringLength:6
+                            maximumStringLength:6
+                              maximumByteLength:INT_MAX
+                                          error:outError];
 }
 
 - (BOOL)validateValue:(id *)value forKey:(NSString *)key error:(NSError **)error
