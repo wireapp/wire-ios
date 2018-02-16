@@ -43,10 +43,11 @@
     user.name = @"Ilya";
     id value = user.name;
     
-    id validator = [OCMockObject mockForClass:[ZMStringLengthValidator class]];
+    id validator = [OCMockObject mockForClass:[StringLengthValidator class]];
     [[[validator expect] andForwardToRealObject] validateValue:[OCMArg anyObjectRef]
-                                           mimimumStringLength:2
-                                            maximumSringLength:100
+                                           minimumStringLength:2
+                                           maximumStringLength:100
+                                             maximumByteLength:INT_MAX
                                                          error:[OCMArg anyObjectRef]];
   
     BOOL result = [user validateValue:&value forKey:@"name" error:NULL];
@@ -62,10 +63,11 @@
         user.name = @"Ilya";
         id value = user.name;
         
-        id validator = [OCMockObject mockForClass:[ZMStringLengthValidator class]];
+        id validator = [OCMockObject mockForClass:[StringLengthValidator class]];
         [[[validator reject] andForwardToRealObject] validateValue:[OCMArg anyObjectRef]
-                                               mimimumStringLength:2
-                                                maximumSringLength:64
+                                               minimumStringLength:2
+                                               maximumStringLength:64
+                                                 maximumByteLength:256
                                                              error:[OCMArg anyObjectRef]];
         
         BOOL result = [user validateValue:&value forKey:@"name" error:NULL];

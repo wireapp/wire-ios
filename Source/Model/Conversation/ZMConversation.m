@@ -1797,7 +1797,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         return NO;
     }
     
-    return [ZMStringLengthValidator validateValue:ioName mimimumStringLength:1 maximumSringLength:64 error:outError];
+    return *ioName == nil || [StringLengthValidator validateValue:ioName
+                                              minimumStringLength:1
+                                              maximumStringLength:64
+                                                maximumByteLength:INT_MAX
+                                                            error:outError];
 }
 
 @end
