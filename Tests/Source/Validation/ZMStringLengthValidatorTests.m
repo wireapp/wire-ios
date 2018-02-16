@@ -18,8 +18,7 @@
 
 
 @import XCTest;
-
-#import "ZMStringLengthValidator.h"
+@import WireUtilities;
 
 @interface ZMStringLengthValidatorTests : XCTestCase
 
@@ -27,21 +26,11 @@
 
 @implementation ZMStringLengthValidatorTests
 
-- (void)setUp {
-    [super setUp];
-    // Put setup code here. This method is called before the invocation of each test method in the class.
-}
-
-- (void)tearDown {
-    // Put teardown code here. This method is called after the invocation of each test method in the class.
-    [super tearDown];
-}
-
 - (void)testThatTooShortStringsDoNotPassValidation
 {
     NSString *value = @"short";
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:15 maximumSringLength:100 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:15 maximumStringLength:100 maximumByteLength:100 error:&error];
     XCTAssertFalse(result);
     XCTAssertNotNil(error);
 }
@@ -50,7 +39,7 @@
 {
     NSString *value = @"long";
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:3 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:3 maximumByteLength:100 error:&error];
     XCTAssertFalse(result);
     XCTAssertNotNil(error);
 }
@@ -59,7 +48,7 @@
 {
     NSString *value = @"normal";
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:10 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:10 maximumByteLength:100 error:&error];
     XCTAssertTrue(result);
     XCTAssertNil(error);
 }
@@ -69,7 +58,7 @@
     const NSString *originalValue = @"👨‍👧‍👦";
     NSString *value = originalValue.copy;
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:64 maximumByteLength:100 error:&error];
     XCTAssertTrue(result);
     XCTAssertNil(error);
     XCTAssertEqualObjects(originalValue, value);
@@ -80,7 +69,7 @@
     const NSString *originalValue = @"👩‍👩‍👦‍👦";
     NSString *value = originalValue.copy;
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:64 maximumByteLength:100 error:&error];
     XCTAssertTrue(result);
     XCTAssertNil(error);
     XCTAssertEqualObjects(originalValue, value);
@@ -91,19 +80,19 @@
     const NSString *originalValue = @"👩‍👩‍👦‍👦/n👨‍👧‍👦";
     NSString *value = originalValue.copy;
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:64 error:&error];
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:64 maximumByteLength:100 error:&error];
     XCTAssertTrue(result);
     XCTAssertNil(error);
     XCTAssertEqualObjects(originalValue, value);
 }
 
-- (void)testThatNilIsValid
+- (void)testThatNilIsNotValid
 {
     NSString *value = nil;
     NSError *error;
-    BOOL result = [ZMStringLengthValidator validateValue:&value mimimumStringLength:1 maximumSringLength:10 error:&error];
-    XCTAssertTrue(result);
-    XCTAssertNil(error);
+    BOOL result = [StringLengthValidator validateValue:&value minimumStringLength:1 maximumStringLength:10 maximumByteLength:100 error:&error];
+    XCTAssertFalse(result);
+    XCTAssertNotNil(error);
 }
 
 - (void)testThatItReplacesNewlinesAndTabWithSpacesInThePhoneNumber;
@@ -113,7 +102,7 @@
     NSError *error;
     
     // when
-    [ZMStringLengthValidator validateValue:&phoneNumber mimimumStringLength:0 maximumSringLength:20 error:&error];
+    [StringLengthValidator validateValue:&phoneNumber minimumStringLength:0 maximumStringLength:20 maximumByteLength:100 error:&error];
     
     // then
     XCTAssertNil(error);

@@ -52,6 +52,5 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMAccentColorValidator.h>
 #import <WireUtilities/ZMEmailAddressValidator.h>
 #import <WireUtilities/ZMPhoneNumberValidator.h>
-#import <WireUtilities/ZMStringLengthValidator.h>
 #import <WireUtilities/ZMPropertyValidator.h>
 

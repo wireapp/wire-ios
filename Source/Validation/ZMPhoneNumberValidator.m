@@ -18,9 +18,9 @@
 
 
 @import WireSystem;
+#import <WireUtilities/WireUtilities-Swift.h>
 
 #import "ZMPhoneNumberValidator.h"
-#import "ZMStringLengthValidator.h"
 #import "ZMPropertyValidator.h"
 
 @interface NSString (zm_removeCharacterSet)
@@ -71,7 +71,11 @@ ZM_EMPTY_ASSERTING_INIT()
     }
     
     NSString *finalPhoneNumber = [@"+" stringByAppendingString:[*ioPhoneNumber stringByRemovingCharacters:@"+-. ()"]];
-    if (![ZMStringLengthValidator validateValue:&finalPhoneNumber mimimumStringLength:9 maximumSringLength:24 error:outError]) {
+    if (![StringLengthValidator validateValue:&finalPhoneNumber
+                          minimumStringLength:9
+                          maximumStringLength:24
+                            maximumByteLength:24
+                                        error:outError]) {
         return NO;
     }
     
