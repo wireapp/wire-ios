@@ -18,9 +18,9 @@
 
 
 @import WireSystem;
+#import <WireUtilities/WireUtilities-Swift.h>
 
 #import "ZMEmailAddressValidator.h"
-#import "ZMStringLengthValidator.h"
 #import "ZMPropertyValidator.h"
 
 @implementation ZMEmailAddressValidator
@@ -64,9 +64,10 @@ ZM_EMPTY_ASSERTING_INIT()
         return YES;
     }
     
-    if (![ZMStringLengthValidator validateValue:ioEmailAddress
-                            mimimumStringLength:0
-                             maximumSringLength:120
+    if (![StringLengthValidator validateValue:ioEmailAddress
+                          minimumStringLength:0
+                          maximumStringLength:120
+                            maximumByteLength:120
                                           error:outError]) {
         return NO;
     }
