@@ -35,7 +35,7 @@ public extension FixedWidthInteger {
     ///
     public static func secureRandomNumber(upperBound: Self) -> Self {
         
-        guard upperBound != 0, upperBound != Self.min else { return 0 }
+        assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
         
         var random: Self
         
