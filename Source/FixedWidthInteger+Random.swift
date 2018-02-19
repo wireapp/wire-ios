@@ -19,35 +19,51 @@
 
 import Foundation
 
-public extension UInt {
+public extension FixedWidthInteger {
+    
+    private var abs: Self {
+        if self < 0 {
+            return 0 - self
+        } else {
+            return self
+        }
+    }
     
     /// Returns a random number within the range [0, upperBound) using the
     /// Data.secureRandomData(length:) method. This implementation is
     /// modulo bias free.
     ///
-    public static func secureRandomNumber(upperBound: UInt) -> UInt {
+    public static func secureRandomNumber(upperBound: Self) -> Self {
         
-        guard upperBound != 0 else { return 0 }
+        assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
         
-        var random: UInt
+        var random: Self
         
         // To eliminate modulo bias, we must ensure range of possible random
         // numbers is evenly divisible by the upper bound. We do this by
         // trimming the excess remainder off the lower bound (0)
         //
-        let min = (UInt.min &- upperBound) % upperBound
+        let min = (Self.min &- upperBound) % upperBound
         
         repeat {
             // get enough random bytes to fill UInt
-            let data = Data.secureRandomData(length: UInt(MemoryLayout<UInt>.size))
+            let data = Data.secureRandomData(length: UInt(MemoryLayout<Self>.size))
             
             // extract the UInt
-            random = data.withUnsafeBytes { (pointer: UnsafePointer<UInt>) -> UInt in
+            random = data.withUnsafeBytes { (pointer: UnsafePointer<Self>) -> Self in
                 return pointer.pointee
             }
             
-        } while random < min
+        } while random.abs < min
         
         return random % upperBound
     }
 }
+
+/// Extension for NSNumber so we can support ObjC
+public extension NSNumber {
+    public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
+        return UInt32.secureRandomNumber(upperBound: upperBound)
+    }
+}
+
