@@ -1,4 +1,3 @@
-// 
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -18,6 +17,7 @@
 
 
 @import WireSystem;
+@import WireUtilities;
 #import "ZMWebSocket.h"
 #import "ZMWebSocketHandshake.h"
 #import "ZMWebSocketFrame.h"
@@ -274,7 +274,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     NSUInteger dataLength = 16;
     NSMutableData* data = [NSMutableData dataWithCapacity:dataLength];
     for(unsigned int i = 0; i < dataLength / 4; i++) {
-        u_int32_t randomBits = arc4random();
+        u_int32_t randomBits = [NSNumber secureRandomNumberWithUpperBound:UINT32_MAX];
         [data appendBytes:(void*)&randomBits length:4];
     }
     NSString *base64String = [data base64EncodedStringWithOptions:0];
