@@ -31,7 +31,7 @@ public extension Data {
     }
     
     public func zmHexEncodedString() -> String {
-        let hexDigits = Array("0123456789ABCDEF".utf16)
+        let hexDigits = Array("0123456789abcdef".utf16)
         var characters : [unichar] = []
         characters.reserveCapacity(count * 2)
         
