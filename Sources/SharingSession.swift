@@ -356,10 +356,6 @@ public class SharingSession {
         userInterfaceContext.zm_userImageCache = userImageCache
         syncContext.zm_userImageCache = userImageCache
         
-        let imageAssetCache = ImageAssetCache(MBLimit: 50, location: cachesDirectory)
-        userInterfaceContext.zm_imageAssetCache = imageAssetCache
-        syncContext.zm_imageAssetCache = imageAssetCache
-        
         let fileAssetcache = FileAssetCache(location: cachesDirectory)
         userInterfaceContext.zm_fileAssetCache = fileAssetcache
         syncContext.zm_fileAssetCache = fileAssetcache
