@@ -120,9 +120,10 @@
 {
     NSMutableSet *nonces = [NSMutableSet set];
     for (NSUInteger idx = 0; idx < count; idx++) {
-        ZMMessage *message = [ZMMessage insertNewObjectInManagedObjectContext:moc];
-        message.nonce = NSUUID.createUUID;
-        [nonces addObject:message.nonce];
+        NSUUID *nonce = NSUUID.createUUID;
+        ZMMessage *message = [[ZMMessage alloc] initWithNonce:nonce managedObjectContext:moc];
+        NOT_USED(message);
+        [nonces addObject:nonce];
     }
     
     [moc refreshAllObjects];

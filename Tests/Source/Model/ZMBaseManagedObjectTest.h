@@ -86,11 +86,6 @@
 
 - (nonnull ZMClientMessage *)createClientTextMessage;
 - (nonnull ZMClientMessage *)createClientTextMessageWithText:(nonnull NSString *)text;
-- (nonnull ZMAssetClientMessage *)createImageMessageWithImageData:(nonnull NSData *)imageData
-                                                   format:(ZMImageFormat)format
-                                                processed:(BOOL)processed
-                                                   stored:(BOOL)stored
-                                                      moc:(nonnull NSManagedObjectContext *)moc;
 
 @end
 

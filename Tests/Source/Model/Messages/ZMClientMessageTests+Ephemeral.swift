@@ -156,7 +156,7 @@ extension ZMClientMessageTests_Ephemeral {
             article.summary = "summary"
             let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
             let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create().transportString(), expiresAfter: NSNumber(value: timeout))
-            let message = self.syncConversation.appendClientMessage(with: genericMessage.data())!
+            let message = self.syncConversation.appendClientMessage(with: genericMessage)!
             message.linkPreviewState = .processed
             XCTAssertEqual(message.linkPreviewState, .processed)
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
@@ -244,7 +244,7 @@ extension ZMClientMessageTests_Ephemeral {
             XCTAssertNil(message.destructionDate)
 
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce.transportString(), nonce: UUID.create().transportString())
+            let delete = ZMGenericMessage(deleteMessage: message.nonce!.transportString(), nonce: UUID.create().transportString())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.syncUser1.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             
@@ -269,7 +269,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         self.syncMOC.performGroupedBlockAndWait {
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce.transportString(), nonce: UUID.create().transportString())
+            let delete = ZMGenericMessage(deleteMessage: message.nonce!.transportString(), nonce: UUID.create().transportString())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             
@@ -375,7 +375,7 @@ extension ZMClientMessageTests_Ephemeral {
     
     func hasDeleteMessage(for message: ZMMessage) -> Bool {
         guard let deleteMessage = (conversation.hiddenMessages.firstObject as? ZMClientMessage)?.genericMessage,
-            deleteMessage.hasDeleted(), deleteMessage.deleted.messageId == message.nonce.transportString()
+            deleteMessage.hasDeleted(), deleteMessage.deleted.messageId == message.nonce!.transportString()
             else { return false }
         return true
     }

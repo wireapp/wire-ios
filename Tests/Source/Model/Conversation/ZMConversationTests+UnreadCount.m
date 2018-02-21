@@ -224,7 +224,7 @@
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
-        ZMSystemMessage *missedCallMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *missedCallMessage = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         missedCallMessage.systemMessageType = ZMSystemMessageTypeMissedCall;
         missedCallMessage.visibleInConversation = conversation;
         missedCallMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
@@ -254,7 +254,7 @@
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
-        ZMSystemMessage *missedCallMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *missedCallMessage = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         missedCallMessage.systemMessageType = ZMSystemMessageTypeMissedCall;
         missedCallMessage.visibleInConversation = conversation;
         missedCallMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
@@ -283,7 +283,7 @@
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
-        ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         systemMessage.systemMessageType = ZMSystemMessageTypeConversationNameChanged;
         systemMessage.visibleInConversation = conversation;
         systemMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
@@ -315,7 +315,7 @@
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
-        ZMKnockMessage *knockMessage = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMKnockMessage *knockMessage = [[ZMKnockMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         knockMessage.visibleInConversation = conversation;
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         
@@ -344,7 +344,7 @@
         ZMMessage *message2 = (id)[conversation appendMessageWithText:@"huhu"];
         message2.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:10];
         
-        ZMKnockMessage *knockMessage = [ZMKnockMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMKnockMessage *knockMessage = [[ZMKnockMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         knockMessage.visibleInConversation = conversation;
         knockMessage.serverTimestamp = [message1.serverTimestamp dateByAddingTimeInterval:20];
         conversation.lastServerTimeStamp = knockMessage.serverTimestamp;

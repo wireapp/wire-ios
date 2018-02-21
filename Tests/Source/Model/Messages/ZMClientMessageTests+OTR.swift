@@ -363,7 +363,7 @@ extension ClientMessageTests_OTR {
             conversation.connection = connection
             
             let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID().transportString())
-            let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
+            let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation
             
@@ -386,7 +386,7 @@ extension ClientMessageTests_OTR {
             conversation.mutableOtherActiveParticipants.add(self.syncUser1)
             
             let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID().transportString())
-            let clientmessage = ZMClientMessage.insertNewObject(in: self.syncMOC)
+            let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation
             

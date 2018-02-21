@@ -1310,76 +1310,86 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [ZMConversation conversationWithRemoteID:selfUserID createIfNeeded:NO inContext:managedObjectContext];
 }
 
-- (ZMClientMessage *)appendGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
+- (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage
+{
+    return [self appendClientMessageWithGenericMessage:genericMessage expires:YES hidden:NO];
+}
+
+- (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
 {
     VerifyReturnNil(genericMessage != nil);
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
-    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
+    ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:[NSUUID uuidWithTransportString:genericMessage.messageId] managedObjectContext:self.managedObjectContext];
     [message addData:genericMessage.data];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     
     if (expires) {
         [message setExpirationDate];
     }
+    
     if(hidden) {
         message.hiddenInConversation = self;
-    }
-    else {
-        [self sortedAppendMessage:message];
-    }
-    return message;
-}
-
-- (ZMClientMessage *)appendClientMessageWithData:(NSData *)data
-{
-    VerifyReturnNil(data != nil);
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-    
-    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
-    [message addData:data];
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    [message setExpirationDate];
-    [message updateCategoryCache];
-    [self sortedAppendMessage:message];
-    [self unarchiveIfNeeded];
-    
-    return message;
-}
-
-- (ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(NSUUID *)nonce hidden:(BOOL)hidden imageData:(NSData *)imageData
-{
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-
-    ZMAssetClientMessage *message =
-    [ZMAssetClientMessage assetClientMessageWithOriginalImage:imageData
-                                                        nonce:nonce
-                                         managedObjectContext:self.managedObjectContext
-                                                 expiresAfter:self.messageDestructionTimeout];
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    [message updateCategoryCache];
-    if(hidden) {
-        message.hiddenInConversation = self;
-    }
-    else {
+    } else {
         [self sortedAppendMessage:message];
         [self unarchiveIfNeeded];
+        [message updateCategoryCache];
+        [message prepareToSend];
     }
+    
+    return message;
+}
+
+- (ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(NSUUID *)nonce imageData:(NSData *)imageData
+{
+    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
+    
+    
+    ZMAssetClientMessage *message =
+    [[ZMAssetClientMessage alloc] initWithOriginalImage:imageData
+                                                  nonce:nonce
+                                   managedObjectContext:self.managedObjectContext
+                                           expiresAfter:self.messageDestructionTimeout];
+
+    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
+    
+    [self sortedAppendMessage:message];
+    [self unarchiveIfNeeded];
+    [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:imageData];
+    [message updateCategoryCache];
+    [message prepareToSend];
+    
     return message;
 }
 
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce
 {
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
+    
+    NSData *data = [NSData dataWithContentsOfURL:fileMetadata.fileURL options:NSDataReadingMappedIfSafe error:nil];
+    if (data == nil) {
+        return nil;
+    }
+    
+    ZMAssetClientMessage *message =
+    [[ZMAssetClientMessage alloc] initWith:fileMetadata
+                                     nonce:nonce
+                      managedObjectContext:self.managedObjectContext
+                              expiresAfter:self.messageDestructionTimeout];
 
-    ZMAssetClientMessage *message = [ZMAssetClientMessage assetClientMessageWith:fileMetadata
-                                                                           nonce:nonce
-                                                            managedObjectContext:self.managedObjectContext
-                                                                    expiresAfter:self.messageDestructionTimeout];
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    [message updateCategoryCache];
     [self sortedAppendMessage:message];
     [self unarchiveIfNeeded];
+    
+    [self.managedObjectContext.zm_fileAssetCache storeAssetData:message encrypted:NO data:data];
+
+    if (fileMetadata.thumbnail != nil) {
+        [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:fileMetadata.thumbnail];
+    }
+    
+    [message updateCategoryCache];
+    [message prepareToSend];
+    
     return message;
 }
 
@@ -1388,7 +1398,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
     ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
-    ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
+    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
 }
 
@@ -1397,7 +1407,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
     ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
-    ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
+    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
 }
 
@@ -1408,7 +1418,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:text.stringByRemovingExtremeCombiningCharacters
                                                                    nonce:nonce.transportString
                                                             expiresAfter:@(self.messageDestructionTimeout)];
-    ZMClientMessage *message = [self appendClientMessageWithData:genericMessage.data];
+    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     message.linkPreviewState = fetchPreview ? ZMLinkPreviewStateWaitingToBeProcessed : ZMLinkPreviewStateDone;
     return message;
 }
@@ -1432,7 +1442,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         imageDataWithoutMetadata = imageData;
     }
     
-    ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce hidden:false imageData:imageDataWithoutMetadata];
+    ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce imageData:imageDataWithoutMetadata];
     return message;
 }
 
@@ -1446,10 +1456,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         }
     }
     
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.managedObjectContext];
+    ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:[NSUUID UUID] managedObjectContext:self.managedObjectContext];
     systemMessage.systemMessageType = ZMSystemMessageTypeNewConversation;
     systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    systemMessage.nonce = [NSUUID new];
     systemMessage.sender = self.creator;
     systemMessage.text = self.userDefinedName;
     systemMessage.users = self.activeParticipants.set;
@@ -1459,7 +1468,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     systemMessage.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
     
     [self sortedAppendMessage:systemMessage];
-    systemMessage.visibleInConversation = self;
 }
 
 - (NSUInteger)sortedAppendMessage:(ZMMessage *)message;
@@ -1490,8 +1498,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
        && ![localSystemMessagePredicate evaluateWithObject:message] && message.shouldUpdateLastModifiedDate) {
         self.lastModifiedDate = message.serverTimestamp;
     }
-    
-    [message prepareToSend];
     
     return index;
 }
@@ -1536,15 +1542,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @implementation ZMConversation (SelfConversation)
 
-+ (ZMClientMessage *)appendSelfConversationWithGenericMessageData:(NSData * )messageData managedObjectContext:(NSManagedObjectContext *)moc;
++ (ZMClientMessage *)appendSelfConversationWithGenericMessage:(ZMGenericMessage * )genericMessage managedObjectContext:(NSManagedObjectContext *)moc;
 {
-    VerifyReturnNil(messageData != nil);
+    VerifyReturnNil(genericMessage != nil);
 
     ZMConversation *selfConversation = [ZMConversation selfConversationInContext:moc];
     VerifyReturnNil(selfConversation != nil);
     
-    ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithData:messageData];
-    [clientMessage removeExpirationDate]; // Self messages don't expire since we always want to keep last read / cleared updates in-sync
+    ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithGenericMessage:genericMessage expires:NO hidden:NO];
     return clientMessage;
 }
 
@@ -1561,7 +1566,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:lastRead ofConversationWithID:convID.transportString nonce:nonce.transportString];
     VerifyReturnNil(message != nil);
     
-    return [self appendSelfConversationWithGenericMessageData:message.data managedObjectContext:conversation.managedObjectContext];
+    return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
 }
 
 + (void)updateConversationWithZMLastReadFromSelfConversation:(ZMLastRead *)lastRead inContext:(NSManagedObjectContext *)context
@@ -1590,7 +1595,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     ZMGenericMessage *message = [ZMGenericMessage messageWithClearedTimestamp:cleared ofConversationWithID:convID.transportString nonce:nonce.transportString];
     VerifyReturnNil(message != nil);
     
-    return [self appendSelfConversationWithGenericMessageData:message.data managedObjectContext:conversation.managedObjectContext];
+    return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
 }
 
 + (void)updateConversationWithZMClearedFromSelfConversation:(ZMCleared *)cleared inContext:(NSManagedObjectContext *)context

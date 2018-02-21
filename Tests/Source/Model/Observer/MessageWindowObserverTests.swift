@@ -67,7 +67,7 @@ class MessageWindowObserverTests : NotificationDispatcherTestBase {
         var messages = [ZMClientMessage]()
         
         (0..<messageCount).forEach {_ in
-            let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+            let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
             messages.append(message)
         }
         return messages
@@ -97,8 +97,8 @@ extension MessageWindowObserverTests {
     
     func testThatItDeallocates(){
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         // when
@@ -113,8 +113,8 @@ extension MessageWindowObserverTests {
     func testThatItNotifiesForClearingMessageHistory()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         let conversation = window.conversation
         message1.serverTimestamp = Date()
@@ -146,8 +146,8 @@ extension MessageWindowObserverTests {
     func testThatItNotifiesForAMessageUpdate()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -173,9 +173,9 @@ extension MessageWindowObserverTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "Foo"
         
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message1.sender = user
-        let message2 = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message2 = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -202,9 +202,9 @@ extension MessageWindowObserverTests {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "Foo"
         
-        let message1 = ZMSystemMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message1.users = Set([user])
-        let message2 = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message2 = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -228,8 +228,8 @@ extension MessageWindowObserverTests {
     func testThatItDoesNotNotifyIfThereAreNoConversationWindowChanges()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -245,8 +245,8 @@ extension MessageWindowObserverTests {
     
     func testThatItSetsNeedReloadAfterComingToForegroundEvenWithNoChanges() {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         let observerCenter = uiMOC.messageWindowObserverCenter
@@ -274,9 +274,9 @@ extension MessageWindowObserverTests {
     func testThatItNotifiesIfThereAreConversationWindowChangesWithInsert()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message3 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message3 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
@@ -303,8 +303,8 @@ extension MessageWindowObserverTests {
     func testThatItNotifiesIfThereAreConversationWindowChangesWithDeletes()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -331,8 +331,8 @@ extension MessageWindowObserverTests {
     func testThatItNotifiesIfThereAreConversationWindowChangesWithMoves()
     {
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMImageMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
@@ -361,9 +361,9 @@ extension MessageWindowObserverTests {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message3 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message3 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
         message1.visibleInConversation = conversation
         message2.visibleInConversation = conversation
@@ -394,9 +394,9 @@ extension MessageWindowObserverTests {
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message3 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message3 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         
         self.uiMOC.saveOrRollback()
@@ -426,8 +426,8 @@ extension MessageWindowObserverTests {
 
         let count = 500
         self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
-            let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-            let message2 = ZMClientMessage.insertNewObject(in: self.uiMOC)
+            let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
+            let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
             let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC, windowSize: 10)
             self.uiMOC.saveOrRollback()
 
@@ -435,7 +435,7 @@ extension MessageWindowObserverTests {
             
             self.startMeasuring()
             for _ in 1...count {
-                let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+                let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
                 message.visibleInConversation = window.conversation
                 self.uiMOC.saveOrRollback()
             }
@@ -474,7 +474,7 @@ extension MessageWindowObserverTests {
         let sender = ZMUser.insertNewObject(in:self.uiMOC)
         sender.name = "Hans"
         
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.sender = sender
 
         let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
@@ -493,7 +493,7 @@ extension MessageWindowObserverTests {
         let sender = ZMUser.insertNewObject(in:self.uiMOC)
         sender.name = "Hans A"
         
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.sender = sender
         
         let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
@@ -514,7 +514,7 @@ extension MessageWindowObserverTests {
         sender.remoteIdentifier = UUID.create()
         sender.mediumRemoteIdentifier = UUID.create()
         
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.sender = sender
         
         let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
@@ -535,7 +535,7 @@ extension MessageWindowObserverTests {
         sender.remoteIdentifier = UUID.create()
         sender.smallProfileRemoteIdentifier = UUID.create()
         
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.sender = sender
         
         let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
@@ -555,7 +555,7 @@ extension MessageWindowObserverTests {
         sender.remoteIdentifier = UUID.create()
         sender.smallProfileRemoteIdentifier = UUID.create()
         
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.sender = sender
         
         let window = createConversationWindowWithMessages([message], uiMoc: self.uiMOC)
@@ -577,8 +577,8 @@ extension MessageWindowObserverTests {
         let windowObserver1 = TestWindowObserver()
         let windowObserver2 = TestWindowObserver()
         
-        let message1 = ZMClientMessage.insertNewObject(in: self.uiMOC)
-        let message2 = ZMImageMessage.insertNewObject(in: self.uiMOC)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        let message2 = ZMImageMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let window = createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC)
         self.uiMOC.saveOrRollback()
         

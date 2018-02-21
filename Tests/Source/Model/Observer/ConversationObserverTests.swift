@@ -388,7 +388,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         var message : ZMMessage!
         self.syncMOC.performGroupedBlockAndWait{
             conversation = self.syncMOC.object(with: uiConversation.objectID) as! ZMConversation
-            message = ZMMessage.insertNewObject(in: self.syncMOC)
+            message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.visibleInConversation = conversation
             message.serverTimestamp = conversation.lastReadServerTimeStamp?.addingTimeInterval(10)
             self.syncMOC.saveOrRollback()
@@ -509,7 +509,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
     }
     
     func addUnreadMissedCall(_ conversation: ZMConversation) {
-        let systemMessage = ZMSystemMessage.insertNewObject(in: conversation.managedObjectContext!)
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: conversation.managedObjectContext!)
         systemMessage.systemMessageType = .missedCall;
         systemMessage.serverTimestamp = Date(timeIntervalSince1970:1231234)
         systemMessage.visibleInConversation = conversation

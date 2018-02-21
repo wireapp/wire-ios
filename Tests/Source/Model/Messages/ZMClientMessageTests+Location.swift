@@ -37,7 +37,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
         )
         
         // when
-        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
+        let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         clientMessage.add(message.data())
         
         // then
@@ -51,7 +51,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
     
     func testThatItDoesNotReturnLocationMessageDataWhenNotPresent() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
+        let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
         // then
         XCTAssertNil(clientMessage.locationMessageData)

@@ -150,10 +150,7 @@
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
 {
-    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatPreview encrypted:NO];
-    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatMedium encrypted:NO];
-    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:ZMImageFormatOriginal encrypted:NO];
-
+    [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self];
     self.originalSize = CGSizeZero;
     self.mediumRemoteIdentifier = nil;
 
@@ -219,10 +216,10 @@
 - (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties;
 {
     if (imageData == nil) {
-        [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:format encrypted:NO];
+        [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
     }
     else {
-        [self.managedObjectContext.zm_imageAssetCache storeAssetData:self.nonce format:format encrypted:NO data:imageData];
+        [self.managedObjectContext.zm_fileAssetCache storeAssetData:self format:format encrypted:NO data:imageData];
         switch (format) {
             case ZMImageFormatMedium:
                 self.mediumDataLoaded = YES;
@@ -244,7 +241,7 @@
 
 - (void)deleteImageDataForFormat:(ZMImageFormat)format;
 {
-    [self.managedObjectContext.zm_imageAssetCache deleteAssetData:self.nonce format:format encrypted:NO];
+    [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self format:format encrypted:NO];
 }
 
 - (NSData *)imageDataForFormat:(ZMImageFormat)format
@@ -253,7 +250,7 @@
         case ZMImageFormatPreview:
         case ZMImageFormatMedium:
         case ZMImageFormatOriginal:
-            return [self.managedObjectContext.zm_imageAssetCache assetData:self.nonce format:format encrypted:NO];
+            return [self.managedObjectContext.zm_fileAssetCache assetData:self format:format encrypted:NO];
         default:
             return nil;
     }

@@ -95,7 +95,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             let lastModified = Date(timeIntervalSince1970: 10)
             conversation.lastModifiedDate = lastModified
     
-            let systemMessage = ZMSystemMessage.insertNewObject(in: self.uiMOC)
+            let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
             systemMessage.systemMessageType = type
             systemMessage.serverTimestamp = lastModified.addingTimeInterval(100)
     

@@ -105,7 +105,7 @@
     if (conversation.lastServerTimeStamp == nil) {
         conversation.lastServerTimeStamp = [NSDate date];
     }
-    ZMMessage *message = [ZMMessage insertNewObjectInManagedObjectContext:conversation.managedObjectContext];
+    ZMMessage *message = [[ZMMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:conversation.managedObjectContext];
     message.serverTimestamp = [conversation.lastServerTimeStamp dateByAddingTimeInterval:5];
     message.visibleInConversation = conversation;
     [conversation resortMessagesWithUpdatedMessage:message];
@@ -118,7 +118,7 @@
 {
     NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     
-    ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message.serverTimestamp = newTime;
     conversation.lastServerTimeStamp = message.serverTimestamp;
     [conversation.mutableMessages addObject:message];
@@ -129,7 +129,7 @@
 {
     NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     
-    ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];;
     message.serverTimestamp = newTime;
     conversation.lastServerTimeStamp = message.serverTimestamp;
     [conversation.mutableMessages addObject:message];
@@ -140,7 +140,7 @@
 {
     NSDate *newTime = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:conversation.managedObjectContext];
+    ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:conversation.managedObjectContext];
     systemMessage.serverTimestamp = newTime;
     systemMessage.systemMessageType = ZMSystemMessageTypeNewClient;
     [conversation.mutableMessages addObject:systemMessage];
@@ -469,7 +469,7 @@
         
         for(NSUInteger i = 0; i < numberOfMessages; ++i) {
             NSString *text = [NSString stringWithFormat:@"Conversation test message %lu", (unsigned long)i];
-            ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+            ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
             message.text = text;
             message.visibleInConversation = conversation;
             message.sender = creator;
@@ -507,7 +507,7 @@
         
         for(NSUInteger i = 0; i < numberOfMessages; ++i) {
             NSString *text = [NSString stringWithFormat:@"Conversation test message %lu", (unsigned long)i];
-            ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+            ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
             message.text = text;
             message.visibleInConversation = conversation;
             message.sender = creator;
@@ -1569,7 +1569,7 @@
     
     // when
     conversation.lastReadServerTimeStamp = serverTimeStamp;
-    ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message.serverTimestamp = serverTimeStamp;
     [conversation.mutableMessages addObject:message];
     
@@ -1691,7 +1691,7 @@
 
 - (ZMMessage *)insertMessageIntoConversation:(ZMConversation *)conversation
 {
-    ZMTextMessage *message = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message.serverTimestamp = [[NSDate date] dateByAddingTimeInterval:2];
     message.text = [NSString stringWithFormat:@"Text %@", message.serverTimestamp];
     [conversation.mutableMessages addObject:message];
@@ -2402,13 +2402,13 @@
 - (void)testThatItRecalculatesLastReadMessageWhenLastReadServerTimeStampChanges
 {
     // given
-    ZMTextMessage *message1 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message1 = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message1.serverTimestamp = [NSDate date];
     
-    ZMTextMessage *message2 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message2 = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message2.serverTimestamp = [NSDate date];
     
-    ZMTextMessage *message3 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message3 = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message3.serverTimestamp = [NSDate date];
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2435,10 +2435,10 @@
 - (void)testThatItRecalculatesLastReadMessageWhenMessagesChanges
 {
     // given
-    ZMTextMessage *message1 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message1 = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message1.serverTimestamp = [NSDate date];
     
-    ZMTextMessage *message2 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *message2 = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     message2.serverTimestamp = [NSDate date];
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2892,7 +2892,7 @@
     conversation.conversationType = ZMConversationTypeOneOnOne;
     conversation.lastServerTimeStamp = messageDate;
     if(hasUnread) {
-        ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
+        ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.syncMOC];
         message.serverTimestamp = messageDate;
         conversation.lastReadServerTimeStamp = [messageDate dateByAddingTimeInterval:-1000];
         [conversation sortedAppendMessage:message];
@@ -3812,18 +3812,18 @@
         
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
-        [conversation appendOTRMessageWithImageData:self.verySmallJPEGData nonce:messageID];
+        id<ZMConversationMessage> message = [conversation appendOTRMessageWithImageData:self.verySmallJPEGData nonce:messageID];
         
         // store asset data
-        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatOriginal encrypted:NO data:imageData];
-        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatPreview encrypted:NO data:imageData];
-        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatMedium encrypted:NO data:imageData];
-        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatPreview encrypted:YES data:imageData];
-        [self.syncMOC.zm_imageAssetCache storeAssetData:messageID format:ZMImageFormatMedium encrypted:YES data:imageData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:imageData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatPreview encrypted:NO data:imageData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatMedium encrypted:NO data:imageData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatPreview encrypted:YES data:imageData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatMedium encrypted:YES data:imageData];
         
         // delete
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
-        NSData *contentData = message.data;
+        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = deleteMessage.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
         NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
@@ -3839,11 +3839,11 @@
         [self.syncMOC saveOrRollback];
         
         // then
-        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatOriginal encrypted:NO]);
-        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatPreview encrypted:NO]);
-        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatMedium encrypted:NO]);
-        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatPreview encrypted:YES]);
-        XCTAssertNil([self.syncMOC.zm_imageAssetCache assetData:messageID format:ZMImageFormatMedium encrypted:YES]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:message format:ZMImageFormatOriginal encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:message format:ZMImageFormatPreview encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:message format:ZMImageFormatMedium encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:message format:ZMImageFormatPreview encrypted:YES]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:message format:ZMImageFormatMedium encrypted:YES]);
     }];
 }
 
@@ -3867,15 +3867,15 @@
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         conversation.remoteIdentifier = [NSUUID createUUID];
         ZMFileMetadata *fileMetadata = [[ZMFileMetadata alloc] initWithFileURL:fileURL thumbnail:nil];
-        [conversation appendOTRMessageWithFileMetadata:fileMetadata nonce:messageID];
+        id<ZMConversationMessage> message = [conversation appendOTRMessageWithFileMetadata:fileMetadata nonce:messageID];
         
         // store asset data
-        [self.syncMOC.zm_fileAssetCache storeAssetData:messageID fileName:fileName encrypted:NO data:fileData];
-        [self.syncMOC.zm_fileAssetCache storeAssetData:messageID fileName:fileName encrypted:YES data:fileData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message encrypted:NO data:fileData];
+        [self.syncMOC.zm_fileAssetCache storeAssetData:message encrypted:YES data:fileData];
         
         // delete
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
-        NSData *contentData = message.data;
+        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        NSData *contentData = deleteMessage.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
         NSDictionary *payload = @{@"conversation" : selfUserID.transportString,
@@ -3890,9 +3890,12 @@
         [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
+        // re-create message with same nonce to access the cache
+        id<ZMConversationMessage> lookupMessage = [conversation appendMessageWithText:@"123"];
+        
         // then
-        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:messageID fileName:fileName encrypted:NO]);
-        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:messageID fileName:fileName encrypted:YES]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:lookupMessage encrypted:NO]);
+        XCTAssertNil([self.syncMOC.zm_fileAssetCache assetData:lookupMessage encrypted:YES]);
     }];
 }
 

@@ -83,7 +83,7 @@ extension ZMClientMessage {
 extension ZMClientMessage: ZMImageOwner {
     
     public func imageData(for format: ZMImageFormat) -> Data? {
-        return self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce, format: format, encrypted: false)
+        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: format, encrypted: false)
     }
     
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
@@ -95,7 +95,7 @@ extension ZMClientMessage: ZMImageOwner {
     }
     
     public func originalImageData() -> Data? {
-        return self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce, format: .original, encrypted: false)
+        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
     }
     
     public func originalImageSize() -> CGSize {
@@ -118,13 +118,13 @@ extension ZMClientMessage: ZMImageOwner {
     public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_imageAssetCache.deleteAssetData(self.nonce, format: .original, encrypted: false)
+        moc.zm_fileAssetCache.deleteAssetData(self, format: .original, encrypted: false)
         moc.enqueueDelayedSave()
     }
     
     var imageData: Data? {
-        return self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce, format: .original, encrypted: false)
-            ?? self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce, format: .medium, encrypted: false)
+        return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
+            ?? self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .medium, encrypted: false)
     }
     
     var hasImageData: Bool {        
@@ -135,7 +135,7 @@ extension ZMClientMessage: ZMImageOwner {
     public var imageDataIdentifier: String? {
         
         if self.imageData != nil {
-            return self.nonce.uuidString
+            return self.nonce?.uuidString
         }
         
         guard let linkPreview = self.firstZMLinkPreview else { return nil }
@@ -152,8 +152,8 @@ extension ZMClientMessage: ZMImageOwner {
         guard let linkPreview = self.firstZMLinkPreview else { return }
         guard let moc = self.managedObjectContext else { return }
         
-        moc.zm_imageAssetCache.storeAssetData(self.nonce, format: format, encrypted: false, data: imageData)
-        guard let keys = moc.zm_imageAssetCache.encryptFileAndComputeSHA256Digest(self.nonce, format: format) else { return }
+        moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
+        guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else { return }
         
         let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: Int32(properties?.size.width ?? 0), height: Int32(properties?.size.height ?? 0))
         let original = ZMAssetOriginal.original(withSize: UInt64(imageData.count), mimeType: properties?.mimeType ?? "", name: nil, imageMetaData: imageMetaData)
@@ -164,14 +164,14 @@ extension ZMClientMessage: ZMImageOwner {
             if genericMessage.hasText() || (genericMessage.hasEphemeral() && genericMessage.ephemeral.hasText()) {
                 let newMessage = ZMGenericMessage.message(text: self.textMessageData?.messageText ?? "",
                                                           linkPreview: updatedPreview,
-                                                          nonce: self.nonce.transportString(),
+                                                          nonce: self.nonce!.transportString(),
                                                           expiresAfter: self.deletionTimeout as NSNumber)
                 self.add(newMessage.data())
             } else if genericMessage.hasEdited() {
                 let newMessage = ZMGenericMessage(editMessage: genericMessage.edited.replacingMessageId,
                                                   newText: self.textMessageData?.messageText ?? "",
                                                   linkPreview: updatedPreview,
-                                                  nonce: self.nonce.transportString())
+                                                  nonce: self.nonce!.transportString())
                 self.add(newMessage.data())
             }
         }

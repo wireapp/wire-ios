@@ -74,10 +74,10 @@
     {
         ZMMessage *message;
         if (firstIsSystemMessage && i == 1) {
-            message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+            message = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
             ((ZMSystemMessage* )message).systemMessageType = systemMessageType;
         } else {
-            message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+            message = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
         }
         [self addMessage:message toConversation:conversation];
     }
@@ -97,7 +97,7 @@
 
 - (ZMSystemMessage *)appendSystemMessageOfType:(ZMSystemMessageType)systemMessageType inConversation:(ZMConversation *)conversation
 {
-    ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMSystemMessage *message = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     ((ZMSystemMessage* )message).systemMessageType = systemMessageType;
     [self addMessage:message toConversation:conversation];
     return message;
@@ -315,7 +315,7 @@
     ZMMessage *lastReadMessage = conversation.messages[7];
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:5];
-    ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *newMessage = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     
     // when
     [conversation.mutableMessages insertObject:newMessage atIndex:0];
@@ -334,7 +334,7 @@
     ZMMessage *lastReadMessage = conversation.messages[1];
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:10];
-    ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *newMessage = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     XCTAssertEqualObjects(sut.messages.reversedOrderedSet, conversation.messages);
     
     // when
@@ -352,7 +352,7 @@
     ZMMessage *lastReadMessage = conversation.messages[7];
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:5];
-    ZMTextMessage *newMessage = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMTextMessage *newMessage = [[ZMTextMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     
     // when
     [conversation.mutableMessages insertObject:newMessage atIndex:5];
@@ -371,7 +371,7 @@
     conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
 
     ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:30];
-    ZMClientMessage *newMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *newMessage = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     [conversation.mutableMessages addObject:newMessage];
 
     // when

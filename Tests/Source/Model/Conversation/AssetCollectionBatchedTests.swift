@@ -29,6 +29,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         super.setUp()
         delegate = MockAssetCollectionDelegate()
         conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID()
         uiMOC.saveOrRollback()
     }
     
@@ -36,7 +37,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         delegate = nil
         sut?.tearDown()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        uiMOC.zm_imageAssetCache.wipeCache()
+        uiMOC.zm_fileAssetCache.wipeCaches()
         sut = nil
         conversation = nil
         super.tearDown()
@@ -252,13 +253,9 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     func testThatItExcludesDefinedCategories_PreCategorized(){
         // given
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data,
-                                                              nonce: .create(),
-                                                              managedObjectContext: uiMOC,
-                                                              expiresAfter: 0)
+        let message = conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
         message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
-        conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         
         // when
@@ -280,10 +277,9 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     func testThatItExcludesDefinedCategories_NotPreCategorized(){
         // given
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
         message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
-        conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         
         // when
@@ -327,10 +323,9 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         // given
         insertAssetMessages(count: 1)
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
         message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
-        conversation.mutableMessages.add(message)
         uiMOC.saveOrRollback()
         
         // when

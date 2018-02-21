@@ -115,7 +115,24 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public var fileURL: URL? {
-        return self.asset?.fileURL;
+        guard let assetURL = asset?.fileURL, let filename = filename, let cacheKey = FileAssetCache.cacheKeyForAsset(self) else { return nil }
+        
+        var temporaryFileURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)
+        temporaryFileURL.appendPathComponent(cacheKey)
+        temporaryFileURL.appendPathComponent(filename)
+        
+        if FileManager.default.fileExists(atPath: temporaryFileURL.path) {
+            return temporaryFileURL
+        }
+        
+        do {
+            try FileManager.default.createDirectory(at: temporaryFileURL.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
+            try FileManager.default.linkItem(at: assetURL, to: temporaryFileURL)
+        } catch {
+            return nil
+        }
+        
+        return temporaryFileURL
     }
     
     public var previewData: Data? {
@@ -242,13 +259,14 @@ extension ZMAssetClientMessage: ZMFileMessageData {
 extension ZMAssetClientMessage {
     
     private func setAndSyncNotUploaded(_ notUploaded: ZMAssetNotUploaded) {
-        if self.genericAssetMessage?.assetData?.hasNotUploaded() == true {
-            // already canceled
-            return
+        guard genericAssetMessage?.assetData?.hasNotUploaded() == false,
+              let messageID = nonce?.transportString()
+        else {
+            return // already canceled or not yet sent
         }
-        
+                
         let notUploadedMessage = ZMGenericMessage.genericMessage(notUploaded: notUploaded,
-                                                                 messageID: self.nonce.transportString(),
+                                                                 messageID: messageID,
                                                                  expiresAfter: self.deletionTimeout as NSNumber)
         self.add(notUploadedMessage)
         self.uploadState = .uploadingFailed

@@ -202,13 +202,12 @@ NSString * const DeliveredKey = @"delivered";
     
     BOOL isNewMessage = NO;
     if (clientMessage == nil) {
-        clientMessage = [messageClass insertNewObjectInManagedObjectContext:moc];
+        clientMessage = [[messageClass alloc] initWithNonce:nonce managedObjectContext:moc];
         isNewMessage = YES;
     } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
         return nil;
     }
     
-    clientMessage.nonce = nonce;
     clientMessage.senderClientID = updateEvent.senderClientID;
     
     // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.

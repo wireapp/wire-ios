@@ -41,9 +41,9 @@
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
-    ZMTextMessage *message1 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message2 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMTextMessage *message3 = [ZMTextMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *message1 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    ZMClientMessage *message2 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    ZMClientMessage *message3 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];

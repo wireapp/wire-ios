@@ -32,7 +32,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
 
         // when
         uiMOC.perform {
-            ZMMessage.insertNewObject(in: self.uiMOC)
+            ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         }
 
         // then
@@ -42,7 +42,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
 
     func testThatItCallsTheCallbackWhenObjectsAreDeleted() {
         // given
-        let message = ZMMessage.insertNewObject(in: uiMOC)
+        let message = ZMMessage(nonce: UUID(), managedObjectContext: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         let changeExpectation = expectation(description: "The callback should be called")
@@ -62,7 +62,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
 
     func testThatItCallsTheCallbackWhenObjectsAreUpdated() {
         // given
-        let message = ZMMessage.insertNewObject(in: uiMOC)
+        let message = ZMMessage(nonce: UUID(), managedObjectContext: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
         let changeExpectation = expectation(description: "The callback should be called")
@@ -91,7 +91,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
         _ = sut
         sut = nil
         uiMOC.perform {
-            ZMMessage.insertNewObject(in: self.uiMOC)
+            ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         }
 
         // then

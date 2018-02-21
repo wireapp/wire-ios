@@ -101,7 +101,7 @@ extension ZMMessageTests_Confirmation {
         conversation.remoteIdentifier = .create()
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         message.markAsSent()
-        let confirmationUpdate = createMessageConfirmationUpdateEvent(message.nonce, conversationID: conversation.remoteIdentifier!)
+        let confirmationUpdate = createMessageConfirmationUpdateEvent(message.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: confirmationUpdate, in: self.uiMOC, prefetchResult: nil)
         }
@@ -173,7 +173,7 @@ extension ZMMessageTests_Confirmation {
         
         // when
         // other user sends confirmation
-        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         var messageUpdateResult : MessageUpdateResult?
         performPretendingUiMocIsSyncMoc {
             messageUpdateResult = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
@@ -211,7 +211,7 @@ extension ZMMessageTests_Confirmation {
 
         // when
         // other user sends confirmation
-        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
@@ -231,7 +231,7 @@ extension ZMMessageTests_Confirmation {
         
         // when
         // other user sends confirmation
-        let updateEvent = createMessageConfirmationUpdateEvent(sut.message!.nonce, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageConfirmationUpdateEvent(sut.message!.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
@@ -263,7 +263,7 @@ extension ZMMessageTests_Confirmation {
         }
         
         // when
-        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }

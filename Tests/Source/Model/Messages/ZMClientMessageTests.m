@@ -42,9 +42,8 @@
     
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMClientMessage *clientMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *clientMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     clientMessage.visibleInConversation = conversation;
-    clientMessage.nonce = nonce;
     
     NSDictionary *data = @{
                            @"content" : self.name,
@@ -139,7 +138,7 @@
 
 - (void)testThatAInsertedClientMessageHasADefaultLinkPreviewStateDone
 {
-    ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
 }
 
@@ -237,7 +236,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -319,7 +318,7 @@
     
     UserClient *selfClient = [self createSelfClient];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -356,7 +355,7 @@
     UserClient *selfClient = [self createSelfClient];
     NSString *unknownSender = [NSString createAlphanumericalString];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -393,7 +392,7 @@
     
     UserClient *selfClient = [self createSelfClient];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -430,7 +429,7 @@
     
     UserClient *selfClient = [self createSelfClient];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -468,7 +467,7 @@
     
     UserClient *selfClient = [self createSelfClient];
     
-    ZMClientMessage *existingMessage = [ZMClientMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce.transportString expiresAfter:nil];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
@@ -612,9 +611,8 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
-        ZMClientMessage *message = [ZMClientMessage insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *nonce = NSUUID.createUUID;
-        message.nonce = nonce;
+        ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.syncMOC];
         NSData *otrKey = NSData.randomEncryptionKey, *sha256 = NSData.zmRandomSHA256Key;
         
         // when
