@@ -33,7 +33,7 @@ import WireRequestStrategy
         let downloadFilter = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage, let genericMessage = message.genericMessage, genericMessage.textData != nil else { return false }
             guard let preview = genericMessage.linkPreviews.first, let remote: ZMAssetRemoteData = preview.remote  else { return false }
-            guard nil == managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false) else { return false }
+            guard nil == managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) else { return false }
             return remote.hasAssetId()
         }
         
@@ -72,20 +72,20 @@ import WireRequestStrategy
     
     func handleResponse(_ response: ZMTransportResponse!, forMessage message: ZMClientMessage) {
         guard response.result == .success else { return }
-        let cache = managedObjectContext.zm_imageAssetCache
+        let cache = managedObjectContext.zm_fileAssetCache
         
         let linkPreview = message.genericMessage?.linkPreviews.first
         guard let remote = linkPreview?.remote, let data = response.rawData else { return }
-        cache?.storeAssetData(message.nonce, format: .medium, encrypted: true, data: data)
+        cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
 
-        let success = cache?.decryptFileIfItMatchesDigest(
-            message.nonce,
+        let success = cache.decryptImageIfItMatchesDigest(
+            message,
             format: .medium,
             encryptionKey: remote.otrKey,
             sha256Digest: remote.sha256
         )
         
-        guard success! else { return }
+        guard success else { return }
         
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,

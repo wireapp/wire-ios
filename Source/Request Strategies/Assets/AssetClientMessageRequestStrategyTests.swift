@@ -117,7 +117,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             let previewMessage = ZMGenericMessage.genericMessage(
                 asset: .asset(withOriginal: nil, preview: previewAsset),
-                messageID: message.nonce.transportString(),
+                messageID: message.nonce!.transportString(),
                 expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
 
@@ -132,7 +132,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             var uploaded = ZMGenericMessage.genericMessage(
                 withUploadedOTRKey: otr,
                 sha256: sha,
-                messageID: message.nonce.transportString(),
+                messageID: message.nonce!.transportString(),
                 expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
             if assetId {
@@ -339,7 +339,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce.transportString())
+            let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce!.transportString())
             message.add(notUploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
         }
@@ -487,7 +487,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(isImage: false, preview: true, uploadState: .uploadingPlaceholder)
-            self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: self.mediumJPEGData())
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: self.mediumJPEGData())
         }
         
         // WHEN

@@ -99,7 +99,7 @@ extension ZMAssetClientMessage {
     
     /// Encrypts the plain text version of the file to the asset cache
     fileprivate func encryptFile() -> ZMImageAssetEncryptionKeys? {
-        return self.managedObjectContext?.zm_fileAssetCache.encryptFileAndComputeSHA256Digest(self.nonce, fileName: self.filename!)
+        return self.managedObjectContext?.zm_fileAssetCache.encryptFileAndComputeSHA256Digest(self)
     }
     
     /// Returns whether the message needs an encrypted version of the file that is not there yet
@@ -111,7 +111,7 @@ extension ZMAssetClientMessage {
             && self.genericAssetMessage?.assetData?.original.hasImage() == false
             && self.genericAssetMessage?.assetData?.uploaded.hasOtrKey() == false
             && self.managedObjectContext != nil
-            && self.managedObjectContext!.zm_fileAssetCache.assetData(self.nonce, fileName: self.filename!, encrypted: true) == nil
+            && self.managedObjectContext!.zm_fileAssetCache.assetData(self, encrypted: true) == nil
     }
     
     /// Adds Uploaded generic message
@@ -119,7 +119,7 @@ extension ZMAssetClientMessage {
         let msg = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: keys.otrKey,
             sha256: keys.sha256!,
-            messageID: self.nonce.transportString(),
+            messageID: self.nonce!.transportString(),
             expiresAfter: NSNumber(value: self.deletionTimeout)
         )
 

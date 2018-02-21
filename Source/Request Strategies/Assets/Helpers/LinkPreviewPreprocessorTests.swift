@@ -111,7 +111,7 @@ extension LinkPreviewPreprocessorTests {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
-            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertEqual(data, preview.imageData.first!)
             guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
@@ -136,7 +136,7 @@ extension LinkPreviewPreprocessorTests {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
-            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertNil(data)
             guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
@@ -209,7 +209,7 @@ extension LinkPreviewPreprocessorTests {
             // THEN
             XCTAssertEqual(self.mockDetector.downloadLinkPreviewsCallCount, 1)
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
-            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertEqual(data, preview.imageData.first!)
             guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
             XCTAssertTrue(genericMessage.hasEphemeral())

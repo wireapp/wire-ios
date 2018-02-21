@@ -323,7 +323,6 @@ extension MessagingTestBase {
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
-        let imageAssetCache = ImageAssetCache(MBLimit: 100)
         let fileAssetCache = FileAssetCache(location: nil)
         self.uiMOC.userInfo["TestName"] = self.name
         
@@ -332,12 +331,10 @@ extension MessagingTestBase {
             self.syncMOC.saveOrRollback()
             
             self.syncMOC.zm_userInterface = self.uiMOC
-            self.syncMOC.zm_imageAssetCache = imageAssetCache
             self.syncMOC.zm_fileAssetCache = fileAssetCache
         }
         
         self.uiMOC.zm_sync = self.syncMOC
-        self.uiMOC.zm_imageAssetCache = imageAssetCache
         self.uiMOC.zm_fileAssetCache = fileAssetCache
     }
     
@@ -355,8 +352,8 @@ extension MessagingTestBase {
     }
 
     fileprivate func deleteAllFilesInCache() {
-        let files = try! FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
-        files.forEach {
+        let files = try? FileManager.default.contentsOfDirectory(at: self.cacheFolder, includingPropertiesForKeys: [URLResourceKey.nameKey])
+        files?.forEach {
             try! FileManager.default.removeItem(at: $0)
         }
     }

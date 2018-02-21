@@ -82,7 +82,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: otrKey,
             sha256: sha,
-            messageID: message.nonce.transportString(),
+            messageID: message.nonce!.transportString(),
             expiresAfter: timer
         )
 
@@ -412,6 +412,7 @@ extension AssetV3DownloadRequestStrategyTests {
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data":dict,
+                "from" : self.selfClient.user!.remoteIdentifier!,
                 "conversation":self.conversation.remoteIdentifier!.transportString(),
                 "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
             
@@ -481,6 +482,7 @@ extension AssetV3DownloadRequestStrategyTests {
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data":dict,
+                "from" : self.selfClient.user!.remoteIdentifier!,
                 "conversation":self.conversation.remoteIdentifier!.transportString(),
                 "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
             

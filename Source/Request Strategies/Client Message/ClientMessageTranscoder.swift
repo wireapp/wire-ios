@@ -120,7 +120,7 @@ extension ClientMessageTranscoder {
                 if updateResult.needsConfirmation {
                     let confirmation = updateResult.message!.confirmReception()!
                     if event.source == .pushNotification {
-                        self.applicationStatus!.deliveryConfirmation.needsToConfirmMessage(confirmation.nonce)
+                        self.applicationStatus!.deliveryConfirmation.needsToConfirmMessage(confirmation.nonce!)
                     }
                 }
             }
@@ -163,7 +163,7 @@ extension ClientMessageTranscoder {
             message.managedObjectContext?.delete(message)
         }
         if genericMessage.hasConfirmation() {
-            self.applicationStatus?.deliveryConfirmation.didConfirmMessage(message.nonce)
+            self.applicationStatus?.deliveryConfirmation.didConfirmMessage(message.nonce!)
             message.managedObjectContext?.delete(message)
         }
     }

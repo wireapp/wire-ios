@@ -55,9 +55,9 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value:10)).data())
+            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value:10)).data())
         } else {
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce.transportString()).data())
+            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!.transportString()).data())
         }
         self.syncMOC.saveOrRollback()
         
@@ -97,7 +97,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         var linkPreview = message.genericMessage!.linkPreviews.first!
         linkPreview = linkPreview.update(withOtrKey: otrKey, sha256: sha256)
         
-        message.add(ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: linkPreview, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value:message.deletionTimeout)).data())
+        message.add(ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: linkPreview, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value:message.deletionTimeout)).data())
         
         return (otrKey, sha256)
     }
@@ -116,7 +116,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         // GIVEN
         let article = createArticle()
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
-        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         
         syncMOC.saveOrRollback()
         process(sut, message: message)
@@ -134,7 +134,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         // GIVEN
         let article = createArticle()
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
-        self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         process(sut, message: message)
         mockApplicationStatus.mockSynchronizationState = .unauthenticated
         
@@ -149,7 +149,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         // GIVEN
         let article = createArticle()
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .waitingToBeProcessed, linkPreview: article)
-        self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         process(sut, message: message)
         
         // WHEN
@@ -163,7 +163,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         // GIVEN
         let article = createArticle()
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .done, linkPreview: article)
-        self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         process(sut, message: message)
         
         // WHEN
@@ -189,7 +189,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
         let (otrKey, sha256) = encryptLinkPreview(inMessage: message);
         
-        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         _ = encryptLinkPreview(inMessage: message)
         message.linkPreviewState = .waitingToBeProcessed
         syncMOC.saveOrRollback()
@@ -217,7 +217,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let article = createArticle()
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article)
         _ = encryptLinkPreview(inMessage: message)
-        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         message.linkPreviewState = .processed
         syncMOC.saveOrRollback()
         
@@ -246,7 +246,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let message = createMessage(article.permanentURL!.absoluteString, linkPreviewState: .processed, linkPreview: article, isEphemeral : true)
         let (otrKey, sha256) = encryptLinkPreview(inMessage: message);
         
-        syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: true, data: article.imageData.first!)
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: true, data: article.imageData.first!)
         _ = encryptLinkPreview(inMessage: message)
         message.linkPreviewState = .waitingToBeProcessed
         syncMOC.saveOrRollback()
