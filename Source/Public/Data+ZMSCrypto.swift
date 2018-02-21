@@ -30,6 +30,19 @@ public extension Data {
         return (self as NSData).zmHMACSHA256Digest(withKey: key)
     }
     
+    public func zmHexEncodedString() -> String {
+        let hexDigits = Array("0123456789abcdef".utf16)
+        var characters : [unichar] = []
+        characters.reserveCapacity(count * 2)
+        
+        self.forEach { byte in
+            characters.append(hexDigits[Int(byte / 16)])
+            characters.append(hexDigits[Int(byte % 16)])
+        }
+        
+        return String(utf16CodeUnits: characters, count: characters.count)
+    }
+        
     public static func zmRandomSHA256Key() -> Data {
         return NSData.zmRandomSHA256Key()
     }
@@ -65,4 +78,5 @@ public extension Data {
     public static func randomEncryptionKey() -> Data {
         return NSData.randomEncryptionKey()
     }
+    
 }
