@@ -147,7 +147,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (BOOL)shouldBeOpen
 {
-    return !(self.clientID == nil || self.accessToken == nil || self.consumer == nil || !self.keepOpen);
+    return self.clientID != nil && self.accessToken != nil && self.consumer != nil && self.keepOpen && self.scheduler.reachability.mayBeReachable;
 }
 
 - (void)establishConnection
