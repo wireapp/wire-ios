@@ -192,11 +192,11 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
 
     fileprivate func deleteRequestData(forMessage message: ZMAssetClientMessage, includingEncryptedAssetData: Bool) {
         // delete request data
-        message.managedObjectContext?.zm_fileAssetCache.deleteRequestData(message.nonce)
+        message.managedObjectContext?.zm_fileAssetCache.deleteRequestData(message)
 
         // delete asset data
         if includingEncryptedAssetData {
-            message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(message.nonce, fileName: message.filename!, encrypted: true)
+            message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(message, encrypted: true)
         }
     }
 

@@ -199,8 +199,8 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             // The AssetClientMessageTranscoder will send the genericMessage as soon as there is an
             // asset ID, and will mark this message as sent afterwards.
             message.add(updated)
-            managedObjectContext.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
-            managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
+            managedObjectContext.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: true)
+            managedObjectContext.zm_fileAssetCache.deleteRequestData(message)
             // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
             return true
         } else if let updated = genericMessage.updatedPreview(withAssetId: assetId, token: token),
@@ -211,8 +211,8 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             // The AssetClientMessageTranscoder will send the genericMessage as soon as there is an
             // preview asset ID, afterwards the full asset will be uploaded.
             message.add(updated)
-            managedObjectContext.zm_imageAssetCache.deleteAssetData(message.nonce, format: .medium, encrypted: true)
-            managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
+            managedObjectContext.zm_fileAssetCache.deleteAssetData(message, format: .medium, encrypted: true)
+            managedObjectContext.zm_fileAssetCache.deleteRequestData(message)
             // We need more requests to actually upload the message data (see AssetClientMessageRequestStrategy)
             return true
         }
@@ -222,7 +222,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage else { fatal("Could not cast to ZMAssetClientMessage, it is \(type(of: managedObject)))") }
-        guard let data = managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true) else { fatal("Could not find image in cache") }
+        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true) else { fatal("Could not find image in cache") }
         guard let request = requestFactory.upstreamRequestForAsset(withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         if message.uploadState == .uploadingThumbnail {
@@ -243,11 +243,11 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
         guard let message = managedObject as? ZMAssetClientMessage else { return false }
-        guard managedObjectContext.zm_imageAssetCache.hasAssetData(message.nonce, format: .medium, encrypted: true) else {
+        guard managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message, format: .medium, encrypted: true) else {
             // if the asset data is missing, we should delete the message
             managedObjectContext.delete(message)
             managedObjectContext.enqueueDelayedSave()
-            zmLog.warn("Asset data is missing from image cache. Message nonce: \(message.nonce)")
+            zmLog.warn("Asset data is missing from image cache. Message nonce: \(message.nonce!)")
             return false
         }
         
@@ -282,7 +282,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
 
         guard keys.contains(#keyPath(ZMAssetClientMessage.uploadState)) else { return }
         message.didFailToUploadFileData()
-        managedObjectContext.zm_fileAssetCache.deleteRequestData(message.nonce)
+        managedObjectContext.zm_fileAssetCache.deleteRequestData(message)
         message.uploadState = .uploadingFailed
     }
 
@@ -299,7 +299,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             withImageSize: .zero,
             mimeType: "",
             size: message.size,
-            nonce: message.nonce.transportString(),
+            nonce: message.nonce!.transportString(),
             expiresAfter: NSNumber(value: message.deletionTimeout)
         )
         message.add(genericMessage)

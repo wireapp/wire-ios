@@ -48,7 +48,7 @@ extension ZMImagePreprocessingTracker {
         let imageFetchPredicate = NSPredicate(format: "%K == %d",ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
-            return nil != managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
+            return nil != managedObjectContext.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
         }
         
         let previewImagePreprocessor = ZMImagePreprocessingTracker(
@@ -104,7 +104,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrate
     var filterForAssetUpload: NSPredicate {
         return NSPredicate { [unowned self] object, _ in
             guard let message = object as? ZMClientMessage else { return false }
-            return nil != self.managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
+            return nil != self.managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true)
         }
     }
     
@@ -122,7 +122,7 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
         guard let message = managedObject as? ZMClientMessage else { return nil }
         guard keys.contains(ZMClientMessageLinkPreviewStateKey) else { return nil }
 
-        guard let imageData = managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true) else { return nil }
+        guard let imageData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true) else { return nil }
         return ZMUpstreamRequest(keys: [ZMClientMessageLinkPreviewStateKey], transportRequest: requestFactory.upstreamRequestForAsset(withData: imageData))
     }
     
@@ -145,7 +145,7 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
         
         if let linkPreview = message.genericMessage?.linkPreviews.first, !message.isObfuscated {
             let updatedPreview = linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
-            let genericMessage = ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
+            let genericMessage = ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(genericMessage.data())
             zmLog.debug("Uploaded image for message with linkPreview: \(linkPreview), genericMessage: \(String(describing: message.genericMessage))")
             message.linkPreviewState = .uploaded

@@ -160,16 +160,11 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
             return false
         }
         
-        guard let name = message.fileMessageData?.filename else {
-            zmLog.warn("Message file data does not contain filename")
-            return false
-        }
-
-        guard managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message.nonce, fileName: name, encrypted: true) else {
+        guard managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message, encrypted: true) else {
             // if the asset data is missing, we should delete the message
             managedObjectContext.delete(message)
             managedObjectContext.enqueueDelayedSave()
-            zmLog.warn("Asset data is missing from file cache. Message nonce: \(message.nonce)")
+            zmLog.warn("Asset data is missing from file cache. Message nonce: \(message.nonce!)")
             return false
         }
         
@@ -189,8 +184,7 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
     }
     
     private func requestToUploadFullAsset(for message: ZMAssetClientMessage) -> ZMUpstreamRequest? {
-        guard let name = message.fileMessageData?.filename else { fatal("Message file data does not contain filename") }
-        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message.nonce, fileName: name, encrypted: true) else { fatal("Could not find file in cache") }
+        guard let data = managedObjectContext.zm_fileAssetCache.assetData(message, encrypted: true) else { fatal("Could not find file in cache") }
         guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
@@ -287,11 +281,11 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
 
     fileprivate func deleteRequestData(forMessage message: ZMAssetClientMessage, includingEncryptedAssetData: Bool) {
         // delete request data
-        message.managedObjectContext?.zm_fileAssetCache.deleteRequestData(message.nonce)
+        message.managedObjectContext?.zm_fileAssetCache.deleteRequestData(message)
 
         // delete asset data
-        if includingEncryptedAssetData, let cacheKey = message.genericAssetMessage?.v3_fileCacheKey {
-            message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(message.nonce, fileName: cacheKey, encrypted: true)
+        if includingEncryptedAssetData {
+            message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(message, encrypted: true)
         }
     }
     

@@ -78,12 +78,12 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         guard let asset = assetClientMessage.genericAssetMessage?.assetData, response.result == .success else { return }
         guard let remote = asset.preview.remote, assetClientMessage.visibleInConversation != nil else { return }
 
-        let cache = managedObjectContext.zm_imageAssetCache!
-        cache.storeAssetData(assetClientMessage.nonce, format: .medium, encrypted: true, data: response.rawData!)
+        let cache = managedObjectContext.zm_fileAssetCache
+        cache.storeAssetData(assetClientMessage, format: .medium, encrypted: true, data: response.rawData!)
 
         // Decrypt the preview image file
-        let success = cache.decryptFileIfItMatchesDigest(
-            assetClientMessage.nonce,
+        let success = cache.decryptImageIfItMatchesDigest(
+            assetClientMessage,
             format: .medium,
             encryptionKey: remote.otrKey,
             sha256Digest: remote.sha256

@@ -70,7 +70,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
             self.conversation.messageDestructionTimeout = ephemeral ? 10 : 0
             let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
             message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as! ZMAssetClientMessage
-            self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .original, encrypted: false, data: self.imageData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: self.imageData)
             self.syncMOC.saveOrRollback()
         }
 
@@ -99,12 +99,12 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let message = self.createFileMessageWithPreview()            
-            let assetCache = self.syncMOC.zm_imageAssetCache!
-            XCTAssertTrue(assetCache.hasAssetData(message.nonce, format: .original, encrypted: false))
+            let assetCache = self.syncMOC.zm_fileAssetCache
+            XCTAssertTrue(assetCache.hasDataOnDisk(message, format: .original, encrypted: false))
 
             // WHEN
-            assetCache.deleteAssetData(message.nonce, format: .original, encrypted: false)
-            XCTAssertFalse(assetCache.hasAssetData(message.nonce, format: .original, encrypted: false))
+            assetCache.deleteAssetData(message, format: .original, encrypted: false)
+            XCTAssertFalse(assetCache.hasDataOnDisk(message, format: .original, encrypted: false))
             
             // THEN
             XCTAssertNil(self.sut.nextRequest())
@@ -197,8 +197,8 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssert(ZMAssetClientMessage.v3_imageProcessingFilter.evaluate(with: message), "Predicate does not match", line: line)
-            XCTAssertNil(self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true), line: line)
-            XCTAssertNil(self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false), line: line)
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true), line: line)
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false), line: line)
             
             self.sut.contextChangeTrackers.forEach {
                 $0.objectsDidChange(Set(arrayLiteral: message))
@@ -208,9 +208,9 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
     
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            let original = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .original, encrypted: false)
-            let mediumEncrypted = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: true)
-            let mediumPlain = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
+            let original = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
+            let mediumEncrypted = self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true)
+            let mediumPlain = self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
             
             XCTAssertNil(original, line: line)
             XCTAssertNotNil(mediumEncrypted, line: line)

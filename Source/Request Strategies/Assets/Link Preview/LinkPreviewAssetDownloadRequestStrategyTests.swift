@@ -29,11 +29,13 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
 
     var sut: LinkPreviewAssetDownloadRequestStrategy!
     var mockApplicationStatus : MockApplicationStatus!
+    var oneToOneconversationOnSync : ZMConversation!
     
     override func setUp() {
         super.setUp()
         mockApplicationStatus = MockApplicationStatus()
         mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        oneToOneconversationOnSync = syncMOC.object(with: oneToOneConversation.objectID) as! ZMConversation
 
         sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
     }
@@ -41,8 +43,9 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
     override func tearDown() {
         sut = nil
         mockApplicationStatus = nil
-        syncMOC.zm_imageAssetCache.wipeCache()
-        uiMOC.zm_imageAssetCache.wipeCache()
+        oneToOneconversationOnSync = nil
+        syncMOC.zm_fileAssetCache.wipeCaches()
+        uiMOC.zm_fileAssetCache.wipeCaches()
         super.tearDown()
     }
     
@@ -80,12 +83,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
     func testThatItGeneratesARequestForAWhitelistedMessageWithNoImageInCache() {
         // GIVEN
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
         // WHEN
@@ -101,12 +103,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     
     func testThatItGeneratesARequestForAWhitelistedEphemeralMessageWithNoImageInCache() {
         // GIVEN
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString(), expiresAfter: NSNumber(value: 20))
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
         // WHEN
@@ -121,9 +122,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     }
     
     func testThatItDoesNotGenerateARequestForAMessageWithoutALinkPreview() {
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let genericMessage = ZMGenericMessage.message(text: name!, nonce: UUID.create().transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
         // WHEN
@@ -137,14 +137,13 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     
     func testThatItDoesNotGenerateARequestForAMessageWithImageInCache() {
         // GIVEN
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID).preview
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
-        syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
         
         // WHEN
         message.requestImageDownload()
@@ -156,14 +155,13 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     
     func testThatItDoesNotGenerateARequestForAMessageWithoutArticleLinkPreview() {
         // GIVEN
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let linkPreview = createLinkPreviewAndKeys(assetID, article: false).preview
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
-        syncMOC.zm_imageAssetCache.storeAssetData(nonce, format: .medium, encrypted: false, data: .secureRandomData(length:256))
+        syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length:256))
         
         // WHEN
         message.requestImageDownload()
@@ -176,7 +174,6 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     // MARK: - Response Handling
     
     func testThatItDecryptsTheImageDataInTheRequestResponseAndDeletesTheEncryptedVersion() {
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
         let assetID = UUID.create().transportString()
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
@@ -184,7 +181,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let (linkPreview, _, _) = createLinkPreviewAndKeys(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
         // WHEN
@@ -200,19 +197,18 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
-        let actual = syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: false)
+        let actual = syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
         XCTAssertNotNil(actual)
         XCTAssertEqual(actual, data)
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: true))
+        XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
     }
     
-    func testThatItDoesNotDecyptTheImageDataInTheRequestResponseWhenTheResponseIsNotSuccesful() {
-        let message = ZMClientMessage.insertNewObject(in: syncMOC)
+    func testThatItDoesNotDecyptTheImageDataInTheRequestResponseWhenTheResponseIsNotSuccessful() {
         let assetID = UUID.create().transportString()
         let (linkPreview, _, _) = createLinkPreviewAndKeys(assetID)
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(text: name!, linkPreview: linkPreview, nonce: nonce.transportString())
-        message.add(genericMessage.data())
+        let message = oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
         // WHEN
@@ -228,8 +224,8 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: false))
-        XCTAssertNil(syncMOC.zm_imageAssetCache.assetData(nonce, format: .medium, encrypted: true))
+        XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false))
+        XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
     }
 }
 

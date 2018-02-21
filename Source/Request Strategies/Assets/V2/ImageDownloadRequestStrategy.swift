@@ -75,7 +75,7 @@ extension ImageDownloadRequestStrategy : ZMDownstreamTranscoder {
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         guard let message = object as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
         
-        if let existingData = managedObjectContext.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false) {
+        if let existingData = managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) {
             updateMediumImage(forMessage: message, imageData: existingData)
             managedObjectContext.enqueueDelayedSave()
             return nil

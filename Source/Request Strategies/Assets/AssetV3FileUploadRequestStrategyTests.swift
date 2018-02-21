@@ -94,7 +94,7 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
         message.uploadState = .uploadingFullAsset
 
         ZMChangeTrackerBootstrap.bootStrapChangeTrackers(sut.contextChangeTrackers, on: syncMOC)
-        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
+        XCTAssertNotNil(syncMOC.zm_fileAssetCache.assetData(message, encrypted: true))
     }
 
 // MARK: Preprocessing
@@ -141,8 +141,7 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
             // As soon as the upload to `/assets/v3` succeds, we delete the encrypted data.
             // This previously triggered the preprocessor again.
             message.managedObjectContext?.zm_fileAssetCache.deleteAssetData(
-                message.nonce,
-                fileName: message.genericAssetMessage!.v3_fileCacheKey,
+                message,
                 encrypted: true
             )
 
@@ -174,11 +173,11 @@ class AssetV3FileUploadRequestStrategyTests: MessagingTestBase {
                 self.prepareUpload(of: message)
                 
                 let assetCache = self.syncMOC.zm_fileAssetCache
-                XCTAssertTrue(assetCache.hasDataOnDisk(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
+                XCTAssertTrue(assetCache.hasDataOnDisk(message, encrypted: true))
                 
                 // WHEN
-                assetCache.deleteAssetData(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true)
-                XCTAssertFalse(assetCache.hasDataOnDisk(message.nonce, fileName: message.fileMessageData!.filename!, encrypted: true))
+                assetCache.deleteAssetData(message, encrypted: true)
+                XCTAssertFalse(assetCache.hasDataOnDisk(message, encrypted: true))
                 
                 // THEN
                 XCTAssertNil(self.sut.nextRequest())

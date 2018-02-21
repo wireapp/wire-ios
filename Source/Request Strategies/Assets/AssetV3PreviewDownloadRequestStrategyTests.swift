@@ -68,7 +68,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: otrKey,
             sha256: sha,
-            messageID: message.nonce.transportString(),
+            messageID: message.nonce!.transportString(),
             expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
         )
         
@@ -134,7 +134,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             
             // GIVEN
             let (message, _, _) = self.createMessage(in: self.conversation)!
-            let (previewGenericMessage, previewMeta) = self.createPreview(with: message.nonce.transportString())
+            let (previewGenericMessage, previewMeta) = self.createPreview(with: message.nonce!.transportString())
             
             message.add(previewGenericMessage)
             self.prepareDownload(of: message)
@@ -159,7 +159,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             
             let (message, _, _) = self.createMessage(in: self.conversation)!
-            let preview = self.createPreview(with: message.nonce.transportString())
+            let preview = self.createPreview(with: message.nonce!.transportString())
             previewMeta = preview.meta
             message.add(preview.genericMessage)
             self.prepareDownload(of: message)
@@ -193,7 +193,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         var previewMeta: AssetV3PreviewDownloadRequestStrategyTests.PreviewMeta!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(in: self.conversation)!.message
-            let preview = self.createPreview(with: message.nonce.transportString())
+            let preview = self.createPreview(with: message.nonce!.transportString())
             previewMeta = preview.meta
             
             message.add(preview.genericMessage)
@@ -229,12 +229,12 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         var previewGenericMessage: ZMGenericMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(in: self.conversation)!.message
-            previewGenericMessage = self.createPreview(with: message.nonce.transportString()).genericMessage
+            previewGenericMessage = self.createPreview(with: message.nonce!.transportString()).genericMessage
         }
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.zm_imageAssetCache.storeAssetData(message.nonce, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
             
             message.add(previewGenericMessage)
             self.prepareDownload(of: message)
@@ -258,7 +258,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(in: self.conversation)!.message
-            let (previewGenericMessage, _) = self.createPreview(with: message.nonce.transportString(), otr: key, sha: sha)
+            let (previewGenericMessage, _) = self.createPreview(with: message.nonce!.transportString(), otr: key, sha: sha)
         
             message.add(previewGenericMessage)
             self.prepareDownload(of: message)
@@ -279,7 +279,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            let data = self.syncMOC.zm_imageAssetCache.assetData(message.nonce, format: .medium, encrypted: false)
+            let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false)
             XCTAssertEqual(data, plainTextData)
             XCTAssertEqual(message.fileMessageData!.previewData, plainTextData)
         }

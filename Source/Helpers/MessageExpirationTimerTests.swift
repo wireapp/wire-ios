@@ -212,7 +212,7 @@ extension MessageExpirationTimerTests {
     
     /// Creates a message with expiration time
     fileprivate func clientMessage(expirationTime: TimeInterval) -> ZMClientMessage {
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         ZMMessage.setDefaultExpirationTime(expirationTime)
         message.setExpirationDate()
         XCTAssertTrue(self.uiMOC.saveOrRollback())

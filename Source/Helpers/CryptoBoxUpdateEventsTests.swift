@@ -39,7 +39,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             guard let decryptedMessage = ZMClientMessage.messageUpdateResult(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
                 return XCTFail()
             }
-            XCTAssertEqual(decryptedMessage.message?.nonce.transportString(), generic.messageId)
+            XCTAssertEqual(decryptedMessage.message?.nonce?.transportString(), generic.messageId)
             XCTAssertEqual(decryptedMessage.message?.textMessageData?.messageText, text)
         }
     }
@@ -64,7 +64,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             guard let decryptedMessage = ZMAssetClientMessage.messageUpdateResult(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
                 return XCTFail()
             }
-            XCTAssertEqual(decryptedMessage.message?.nonce.transportString(), generic.messageId)
+            XCTAssertEqual(decryptedMessage.message?.nonce?.transportString(), generic.messageId)
         }
     }
     
