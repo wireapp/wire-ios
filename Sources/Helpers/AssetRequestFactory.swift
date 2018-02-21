@@ -57,7 +57,7 @@ public final class AssetRequestFactory : NSObject {
 
     private func uploadURL(for message: ZMAssetClientMessage, in moc: NSManagedObjectContext, shareable: Bool, retention: Retention, data: Data) -> URL? {
         guard let multipartData = try? dataForMultipartAssetUploadRequest(data, shareable: shareable, retention: retention) else { return nil }
-        return moc.zm_fileAssetCache.storeRequestData(message.nonce, data: multipartData)
+        return moc.zm_fileAssetCache.storeRequestData(message, data: multipartData)
     }
     
 }

@@ -56,8 +56,8 @@
     self.conversation2.isArchived = YES;
     
     // message 2 is never than message 1
-    self.imageMessage1 = [ZMImageMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage2 = [ZMImageMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.imageMessage1 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessage2 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
     self.imageMessage2.serverTimestamp = [self.imageMessage1.serverTimestamp dateByAddingTimeInterval:0.1];
 }
 
