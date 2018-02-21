@@ -779,7 +779,7 @@
     ZMConversation *conv = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conv.conversationType = ZMConversationTypeOneOnOne;
     
-    ZMSystemMessage *systemMessage = [ZMSystemMessage insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     systemMessage.visibleInConversation = conv;
     systemMessage.systemMessageType = ZMSystemMessageTypeNewClient;
     systemMessage.sender = selfUser;

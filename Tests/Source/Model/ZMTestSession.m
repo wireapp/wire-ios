@@ -209,12 +209,10 @@
 
 - (void)setUpCaches
 {
-    self.uiMOC.zm_imageAssetCache = [[ImageAssetCache alloc] initWithMBLimit:5 location:nil];
     self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
     self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
     
     [self.syncMOC performGroupedBlockAndWait:^{
-        self.syncMOC.zm_imageAssetCache = self.uiMOC.zm_imageAssetCache;
         self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
         self.syncMOC.zm_userImageCache = self.uiMOC.zm_userImageCache;
     }];
@@ -224,11 +222,9 @@
 {
     [self.uiMOC.zm_fileAssetCache wipeCaches];
     [self.uiMOC.zm_userImageCache wipeCache];
-    [self.uiMOC.zm_imageAssetCache wipeCache];
     
     [self.syncMOC performGroupedBlockAndWait:^{
         [self.syncMOC.zm_fileAssetCache wipeCaches];
-        [self.syncMOC.zm_imageAssetCache wipeCache];
         [self.syncMOC.zm_userImageCache wipeCache];
     }];
     [PersonName.stringsToPersonNames removeAllObjects];

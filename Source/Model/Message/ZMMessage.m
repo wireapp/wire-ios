@@ -127,6 +127,18 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 @dynamic isObfuscated;
 @dynamic normalizedText;
 
+- (instancetype)initWithNonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)managedObjectContext
+{
+    NSEntityDescription *entity = [NSEntityDescription entityForName:[self.class entityName] inManagedObjectContext:managedObjectContext];
+    self = [super initWithEntity:entity insertIntoManagedObjectContext:managedObjectContext];
+    
+    if (self != nil) {
+        self.nonce = nonce;
+    }
+    
+    return self;
+}
+
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
 {
@@ -231,7 +243,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 - (ZMClientMessage *)confirmReception
 {
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce.transportString type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID].transportString];
-    return [self.conversation appendGenericMessage:genericMessage expires:NO hidden:YES];
+    return [self.conversation appendClientMessageWithGenericMessage:genericMessage expires:NO hidden:YES];
 }
 
 - (void)expire;
@@ -258,7 +270,6 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 - (void)awakeFromInsert;
 {
     [super awakeFromInsert];
-    self.nonce = [[NSUUID alloc] init];
     self.serverTimestamp = [self dateIgnoringNanoSeconds];
 }
 
@@ -848,7 +859,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
         [usersSet addObject:user];
     }
     
-    ZMSystemMessage *message = [ZMSystemMessage insertNewObjectInManagedObjectContext:moc];
+    ZMSystemMessage *message = [[ZMSystemMessage alloc] initWithNonce:NSUUID.UUID managedObjectContext:moc];
     message.systemMessageType = type;
     message.visibleInConversation = conversation;
     

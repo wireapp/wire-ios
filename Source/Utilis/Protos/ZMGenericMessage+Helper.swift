@@ -78,21 +78,9 @@ public extension ZMGenericMessage {
         return assetData?.uploaded.assetId
     }
 
-    var v3_fileCacheKey: String {
-        if let original = assetData?.original, original.hasName() {
-            return original.name
-        }
-
-        return ""
-    }
-
     var previewAssetId: String? {
         guard assetData?.preview.remote.hasAssetId() == true else { return nil }
         return assetData?.preview.remote.assetId
-    }
-
-    var v3_imageCacheKey: String? {
-        return v3_isImage ? v3_fileCacheKey : previewAssetId
     }
 
 }

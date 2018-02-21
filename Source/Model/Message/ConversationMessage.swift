@@ -32,6 +32,9 @@ public enum ZMDeliveryState : UInt {
 
 @objc
 public protocol ZMConversationMessage : NSObjectProtocol {
+    
+    /// Unique identifier for the message
+    var nonce: UUID? { get }
         
     /// The user who sent the message
     var sender: ZMUser? { get }

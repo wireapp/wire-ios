@@ -65,53 +65,83 @@ private struct FileCache : Cache {
     
     func assetData(_ key: String) -> Data? {
         let url = URLForKey(key)
-        let data: Data?
-        do {
-            data = try Data(contentsOf: url, options: .mappedIfSafe)
-        }
-        catch let error as NSError {
-            if error.code != NSFileReadNoSuchFileError {
-                zmLog.error("\(error)")
+        let coordinator = NSFileCoordinator()
+        var data: Data? = nil
+        
+        var error : NSError? = nil
+        coordinator.coordinate(readingItemAt: url, options: .withoutChanges, error: &error) { (url) in
+            do {
+                data = try Data(contentsOf: url, options: .mappedIfSafe)
             }
-            data = nil
+            catch let error as NSError {
+                if error.code != NSFileReadNoSuchFileError {
+                    zmLog.error("\(error)")
+                }
+            }
         }
+        
+        if let error = error {
+            if error.code != NSFileReadNoSuchFileError {
+                zmLog.error("Failed reading asset data for key = \(key): \(error)")
+            }
+        }
+        
         return data
     }
     
     func storeAssetData(_ data: Data, key: String) {
         let url = URLForKey(key)
-        FileManager.default.createFile(atPath: url.path, contents: data, attributes: [FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication])
-        do {
-            try (url as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
-        } catch {
-            _ = try? FileManager.default.removeItem(at: url)
-            fatal("Failed to exclude file from backup \(url) \(error)")
+        let coordinator = NSFileCoordinator()
+        
+        var error : NSError? = nil
+        coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { (url) in
+            FileManager.default.createFile(atPath: url.path, contents: data, attributes: [FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication])
+        }
+        
+        if let error = error {
+            zmLog.error("Failed storing asset data for key = \(key): \(error)")
         }
     }
     
-    func storeAssetFromURL(_ url: URL, key: String) {
-        guard url.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(url)") }
-        let finalURL = URLForKey(key)
-        do {
-            try FileManager.default.copyItem(at: url, to: finalURL)
-            try FileManager.default.setAttributes([FileAttributeKey.protectionKey : FileProtectionType.completeUntilFirstUserAuthentication], ofItemAtPath: finalURL.path)
-            try (finalURL as NSURL).setResourceValue(true, forKey: URLResourceKey.isExcludedFromBackupKey)
-        } catch {
-            _ = try? FileManager.default.removeItem(at: finalURL)
-            fatal("Failed to copy from \(url) to \(finalURL), \(error)")
+    func storeAssetFromURL(_ fromUrl: URL, key: String) {
+        guard fromUrl.scheme == NSURLFileScheme else { fatal("Can't save remote URL to cache: \(fromUrl)") }
+        
+        let toUrl = URLForKey(key)
+        let coordinator = NSFileCoordinator()
+        
+        var error : NSError? = nil
+        coordinator.coordinate(writingItemAt: toUrl, options: .forReplacing, error: &error) { (url) in
+            do {
+                try FileManager.default.copyItem(at: fromUrl, to: url)
+                try FileManager.default.setAttributes([FileAttributeKey.protectionKey : FileProtectionType.completeUntilFirstUserAuthentication], ofItemAtPath: url.path)
+            } catch {
+                fatal("Failed to copy from \(url) to \(url), \(error)")
+            }
         }
         
+        if let error = error {
+            zmLog.error("Failed to copy asset data from \(fromUrl)  for key = \(key): \(error)")
+        }
     }
     
     func deleteAssetData(_ key: String) {
         let url = URLForKey(key)
-        do {
-            try FileManager.default.removeItem(at: url)
-        }
-        catch let error as NSError {
-            if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
-                zmLog.error("Can't delete file \(url.pathComponents.last!): \(error)")
+        let coordinator = NSFileCoordinator()
+        
+        var error : NSError? = nil
+        coordinator.coordinate(writingItemAt: url, options: .forDeleting, error: &error) { (url) in
+            do {
+                try FileManager.default.removeItem(at: url)
             }
+            catch let error as NSError {
+                if error.domain != NSCocoaErrorDomain || error.code != NSFileNoSuchFileError {
+                    zmLog.error("Can't delete file \(url.pathComponents.last!): \(error)")
+                }
+            }
+        }
+        
+        if let error = error {
+            zmLog.error("Failed deleting asset data for key = \(key): \(error)")
         }
     }
     
@@ -163,61 +193,110 @@ open class FileAssetCache : NSObject {
         super.init()
     }
     
+    /// Returns the image asset data for a given message. This will probably cause I/O
+    open func assetData(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Data? {
+        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return nil }
+        return self.cache.assetData(key)
+    }
+    
     /// Returns the asset data for a given message. This will probably cause I/O
-    open func assetData(_ messageID: UUID, fileName: String, encrypted: Bool) -> Data? {
-        return self.cache.assetData(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
+    open func assetData(_ message : ZMConversationMessage, encrypted: Bool) -> Data? {
+        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return nil }
+        return self.cache.assetData(key)
     }
     
     /// Returns the asset URL for a given message
-    open func accessAssetURL(_ messageID: UUID, fileName: String) -> URL? {
-        return self.cache.assetURL(type(of: self).cacheKeyForAsset(messageID, suffix: fileName))
+    open func accessAssetURL(_ message : ZMConversationMessage) -> URL? {
+        guard let key = type(of: self).cacheKeyForAsset(message) else { return nil }
+        return self.cache.assetURL(key)
     }
     
     /// Returns the asset URL for a given message
-    open func accessRequestURL(_ messageID: UUID) -> URL? {
-        return cache.assetURL(type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true))
+    open func accessRequestURL(_ message : ZMConversationMessage) -> URL? {
+        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return nil }
+        return cache.assetURL(key)
     }
     
-    open func hasDataOnDisk(_ messageID: UUID, fileName: String, encrypted: Bool) -> Bool {
-        return cache.hasDataForKey(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
+    open func hasDataOnDisk(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Bool {
+        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return false }
+        return cache.hasDataForKey(key)
+    }
+    
+    open func hasDataOnDisk(_ message : ZMConversationMessage, encrypted: Bool) -> Bool {
+        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return false }
+        return cache.hasDataForKey(key)
+    }
+    
+    /// Sets the image asset data for a given message. This will cause I/O
+    open func storeAssetData(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool, data: Data) {
+        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return }
+        self.cache.storeAssetData(data, key: key)
     }
     
     /// Sets the asset data for a given message. This will cause I/O
-    open func storeAssetData(_ messageID: UUID, fileName: String, encrypted: Bool, data: Data) {
-        self.cache.storeAssetData(data, key: type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
+    open func storeAssetData(_ message : ZMConversationMessage, encrypted: Bool, data: Data) {
+        guard let key = type(of: self).cacheKeyForAsset(message, encrypted: encrypted) else { return }
+        self.cache.storeAssetData(data, key: key)
     }
     
     /// Sets the request data for a given message and returns the asset url. This will cause I/O
-    open func storeRequestData(_ messageID: UUID, data: Data) -> URL? {
-        let key = type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true)
+    open func storeRequestData(_ message : ZMConversationMessage, data: Data) -> URL? {
+        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return nil }
         cache.storeAssetData(data, key: key)
-        return accessRequestURL(messageID)
+        return accessRequestURL(message)
     }
     
     /// Deletes the request data for a given message. This will cause I/O
-    open func deleteRequestData(_ messageID: UUID) {
-        let key = type(of: self).cacheKeyForAsset(messageID, suffix: "", request: true)
+    open func deleteRequestData(_ message : ZMConversationMessage) {
+        guard let key = type(of: self).cacheKeyForAsset(message, identifier: "request") else { return }
+        cache.deleteAssetData(key)
+    }
+    
+    /// Deletes the image data for a given message. This will cause I/O
+    open func deleteAssetData(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) {
+        guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return }
         cache.deleteAssetData(key)
     }
     
     /// Deletes the data for a given message. This will cause I/O
-    open func deleteAssetData(_ messageID: UUID, fileName: String, encrypted: Bool) {
-        self.cache.deleteAssetData(type(of: self).cacheKeyForAsset(messageID, suffix: fileName, encrypted: encrypted))
+    open func deleteAssetData(_ message : ZMConversationMessage, identifier: String? = nil, encrypted: Bool) {
+        guard let key = type(of: self).cacheKeyForAsset(message, identifier: identifier, encrypted: encrypted) else { return }
+        self.cache.deleteAssetData(key)
     }
     
-    /// Returns the cache key for an asset
-    static func cacheKeyForAsset(_ messageID: UUID, suffix: String, encrypted: Bool = false, request: Bool = false) -> String {
-        precondition(!(request && encrypted))
+    /// Deletes all associated data for a given message. This will cause I/O
+    open func deleteAssetData(_ message : ZMConversationMessage) {
         
-        if (encrypted) {
-            return "\(messageID.transportString()).enc"
+        if message.imageMessageData != nil {
+            let imageFormats : [ZMImageFormat] = [.medium, .original, .preview]
+            
+            imageFormats.forEach({ format in
+                deleteAssetData(message, format: format, encrypted: false)
+                deleteAssetData(message, format: format, encrypted: true)
+            })
         }
-        else if (request) {
-            return "\(messageID.transportString())_request"
+        
+        if message.fileMessageData != nil {
+            deleteAssetData(message, encrypted: false)
+            deleteAssetData(message, encrypted: true)
         }
+    }
+    
+    public static func cacheKeyForAsset(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool = false) -> String? {
+        return cacheKeyForAsset(message, identifier: StringFromImageFormat(format), encrypted: encrypted)
+    }
+    
+    public static func cacheKeyForAsset(_ message : ZMConversationMessage, identifier: String? = nil, encrypted: Bool = false) -> String? {
+        guard let messageId = message.nonce?.transportString(),
+              let senderId = message.sender?.remoteIdentifier?.transportString(),
+              let conversationId = message.conversation?.remoteIdentifier?.transportString()
         else {
-            return "\(messageID.transportString())_\(suffix)"
+            return nil
         }
+        
+        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil].flatMap({ $0 }).joined(separator: "_")
+        
+        return key.data(using: .utf8)?.zmSHA256Digest().zmHexEncodedString()
     }
     
 }

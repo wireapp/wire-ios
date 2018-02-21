@@ -25,6 +25,45 @@ import Foundation
     /// In memory cache
     var cachedGenericAssetMessage: ZMGenericMessage? = nil
     
+    /// Creates a new `ZMAssetClientMessage` with an attached `imageAssetStorage`
+    convenience internal init(originalImage imageData: Data,
+                              nonce: UUID,
+                              managedObjectContext: NSManagedObjectContext,
+                              expiresAfter timeout: TimeInterval = 0)
+    {
+        self.init(nonce: nonce, managedObjectContext: managedObjectContext)
+        
+        // We update the size and mimeType once the preprocesing is done
+        let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero,
+                                                           mimeType: "",
+                                                           size: UInt64(imageData.count),
+                                                           nonce: nonce.transportString(),
+                                                           expiresAfter: timeout as NSNumber)
+        add(assetMessage)
+        preprocessedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
+        uploadState = .uploadingFullAsset
+        transferState = .uploading
+        version = 3
+    }
+    
+    
+    /// Inserts a new `ZMAssetClientMessage` in the `moc` and updates it with the given file metadata
+    convenience internal init?(with metadata: ZMFileMetadata,
+                              nonce: UUID,
+                              managedObjectContext: NSManagedObjectContext,
+                              expiresAfter timeout: TimeInterval = 0) {
+        guard metadata.fileURL.isFileURL else { return nil } // just in case it tries to load from network!
+        
+        self.init(nonce: nonce, managedObjectContext: managedObjectContext)
+        
+        transferState = .uploading
+        uploadState = .uploadingPlaceholder
+        delivered = false
+        version = 3
+        
+        add(ZMGenericMessage.genericMessage(fileMetadata: metadata, messageID: nonce.transportString(), expiresAfter: timeout as NSNumber))
+    }
+    
     /// Remote asset ID
     public var assetId: UUID? {
         get { return self.transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
@@ -142,69 +181,6 @@ import Foundation
         return Set(arrayLiteral: #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data))
     }
     
-    /// Creates a new `ZMAssetClientMessage` with an attached `imageAssetStorage`
-    public static func assetClientMessage(originalImage imageData: Data,
-                                   nonce: UUID,
-                                   managedObjectContext: NSManagedObjectContext,
-                                   expiresAfter timeout: TimeInterval) -> ZMAssetClientMessage
-    {
-
-        managedObjectContext.zm_imageAssetCache.storeAssetData(nonce,
-                                                               format: .original,
-                                                               encrypted: false,
-                                                               data: imageData)
-        let message = ZMAssetClientMessage.insertNewObject(in: managedObjectContext)
-        let originalSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
-        
-        // We update the size and mimeType once the preprocesing is done
-        let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero,
-                                                           mimeType: "",
-                                                           size: UInt64(imageData.count),
-                                                           nonce: nonce.transportString(),
-                                                           expiresAfter: timeout as NSNumber)
-        message.add(assetMessage)
-        message.preprocessedSize = originalSize
-        message.uploadState = .uploadingFullAsset
-        message.transferState = .uploading
-        message.version = 3
-        
-        return message
-    }
-    
-    
-    /// Inserts a new `ZMAssetClientMessage` in the `moc` and updates it with the given file metadata
-    public static func assetClientMessage(with metadata: ZMFileMetadata,
-                                   nonce: UUID,
-                                   managedObjectContext: NSManagedObjectContext,
-                                   expiresAfter timeout: TimeInterval
-        ) -> ZMAssetClientMessage?
-    {
-        guard metadata.fileURL.isFileURL else { return nil } // just in case it tries to load from network!
-        guard let data = try? Data(contentsOf: metadata.fileURL, options: .mappedIfSafe) else { return nil }
-        
-        managedObjectContext.zm_fileAssetCache.storeAssetData(nonce,
-                                                              fileName: metadata.fileURL.lastPathComponent,
-                                                              encrypted: false,
-                                                              data: data)
-        let message = ZMAssetClientMessage.insertNewObject(in: managedObjectContext)
-        message.transferState = .uploading
-        message.uploadState = .uploadingPlaceholder
-        message.add(ZMGenericMessage.genericMessage(fileMetadata: metadata,
-                                                    messageID: nonce.transportString(),
-                                                    expiresAfter: timeout as NSNumber
-        ))
-        message.delivered = false
-        message.version = 3
-        
-        if let thumbnail = metadata.thumbnail {
-            managedObjectContext.zm_imageAssetCache.storeAssetData(nonce, format: .original,
-                                                                   encrypted: false,
-                                                                   data: thumbnail)
-        }
-        
-        return message
-    }
-    
     /// Marks file to be downloaded
     override public func requestFileDownload() {
         self.asset?.requestFileDownload()
@@ -313,7 +289,6 @@ extension ZMAssetClientMessage {
     
     override public func awakeFromInsert() {
         super.awakeFromInsert()
-        self.nonce = nil
         self.cachedGenericAssetMessage = nil
     }
     

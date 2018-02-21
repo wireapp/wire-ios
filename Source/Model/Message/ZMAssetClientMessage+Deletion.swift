@@ -21,29 +21,7 @@ import Foundation
 extension ZMAssetClientMessage {
 
     func deleteContent() {
-        
-        if self.imageMessageData != nil || self.fileMessageData != nil,
-            let assetCache = self.managedObjectContext?.zm_imageAssetCache
-        {
-            [
-                ZMImageFormat.medium,
-                ZMImageFormat.original,
-                ZMImageFormat.preview,
-                ZMImageFormat.profile
-            ].forEach { format in
-                assetCache.deleteAssetData(self.nonce, format: format, encrypted: true)
-                assetCache.deleteAssetData(self.nonce, format: format, encrypted: false)
-            }
-        }
-        
-        if self.fileMessageData != nil,
-            let fileCache = self.managedObjectContext?.zm_fileAssetCache,
-            let filename = self.filename
-        {
-            fileCache.deleteAssetData(self.nonce, fileName: filename, encrypted: false)
-            fileCache.deleteAssetData(self.nonce, fileName: filename, encrypted: true)
-        }
-        
+        self.managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
         self.dataSet = NSOrderedSet()
         self.cachedGenericAssetMessage = nil
         self.assetId = nil

@@ -75,13 +75,12 @@ public final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
                              duration: TimeInterval? = nil
         ) -> ZMSystemMessage {
 
-        let systemMessage = ZMSystemMessage.insertNewObject(in: self.moc)
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
         systemMessage.users = users ?? Set()
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
-        systemMessage.nonce = UUID()
         systemMessage.serverTimestamp = timestamp
         if let duration = duration {
             systemMessage.duration = duration
@@ -175,7 +174,7 @@ extension DuplicatedEntityRemovalTests {
         let team = createTeam()
         let membership = createMembership(user: user1, team: team)
         let reaction = Reaction.insertNewObject(in: self.moc)
-        let systemMessage = ZMSystemMessage.insertNewObject(in: self.moc)
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
 
         let lastServerSyncedActiveConversations = NSOrderedSet(object: conversation)
         let conversationsCreated = Set<ZMConversation>([conversation])
@@ -676,8 +675,8 @@ extension DuplicatedEntityRemovalTests {
         let conversation2 = createConversation()
         conversation1.remoteIdentifier = conversation2.remoteIdentifier
         
-        let message1 = ZMClientMessage.insertNewObject(in: self.moc)
-        let message2 = ZMClientMessage.insertNewObject(in: self.moc)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: moc)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: moc)
         
         conversation1.mutableMessages.add(message1)
         conversation2.mutableMessages.add(message2)
@@ -697,8 +696,8 @@ extension DuplicatedEntityRemovalTests {
         let conversation2 = createConversation()
         conversation1.remoteIdentifier = conversation2.remoteIdentifier
         
-        let message1 = ZMClientMessage.insertNewObject(in: self.moc)
-        let message2 = ZMClientMessage.insertNewObject(in: self.moc)
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: moc)
+        let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: moc)
         
         message1.hiddenInConversation = conversation1
         message2.hiddenInConversation = conversation2

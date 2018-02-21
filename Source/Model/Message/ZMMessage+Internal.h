@@ -63,6 +63,8 @@ extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
 
 @interface ZMMessage : ZMManagedObject
 
++(instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
+- (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
 
 // Use these for sorting:
 + (NSArray * _Nonnull)defaultSortDescriptors;
@@ -167,7 +169,7 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @interface ZMMessage ()
 
 @property (nonatomic) NSString * _Nullable senderClientID;
-@property (nonatomic) NSUUID * _Null_unspecified nonce;
+@property (nonatomic) NSUUID * _Nullable nonce;
 @property (nonatomic, readonly) NSDate * _Nullable destructionDate;
 
 @property (nonatomic, readonly) BOOL isUnreadMessage;

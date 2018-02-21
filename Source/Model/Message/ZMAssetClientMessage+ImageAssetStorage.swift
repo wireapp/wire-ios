@@ -33,19 +33,19 @@ extension ZMAssetClientMessage: ImageAssetStorage {
     
     public func shouldReprocess(for format: ZMImageFormat) -> Bool {
         guard let moc = self.managedObjectContext else { return false }
-        let originalImageData = moc.zm_imageAssetCache.assetData(self.nonce,
+        let originalImageData = moc.zm_fileAssetCache.assetData(self,
+                                                                format: format,
+                                                                encrypted: false)
+        let encryptedImageData = moc.zm_fileAssetCache.assetData(self,
                                                                  format: format,
-                                                                 encrypted: false)
-        let encryptedImageData = moc.zm_imageAssetCache.assetData(self.nonce,
-                                                                  format: format,
-                                                                  encrypted: true)
+                                                                 encrypted: true)
         return encryptedImageData == nil && originalImageData != nil
     }
 
     public func originalImageData() -> Data? {
-        return self.managedObjectContext?.zm_imageAssetCache.assetData(self.nonce,
-                                                                       format: .original,
-                                                                       encrypted: false)
+        return self.managedObjectContext?.zm_fileAssetCache.assetData(self,
+                                                                      format: .original,
+                                                                      encrypted: false)
     }
 
     public func isPublic(for format: ZMImageFormat) -> Bool {
@@ -54,8 +54,8 @@ extension ZMAssetClientMessage: ImageAssetStorage {
 
     public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_imageAssetCache.storeAssetData(self.nonce, format: format, encrypted: false, data: imageData)
-        guard let keys = moc.zm_imageAssetCache.encryptFileAndComputeSHA256Digest(self.nonce, format: format) else { return }
+        moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
+        guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else { return }
         
         if self.imageMessageData != nil {
             self.processAddedImage(with: format, properties: properties, encryptionKeys: keys)
@@ -98,7 +98,7 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         let asset = builder.build()!
         
         let filePreviewMessage = ZMGenericMessage.genericMessage(asset: asset,
-                                                                 messageID: self.nonce.transportString(),
+                                                                 messageID: self.nonce!.transportString(),
                                                                  expiresAfter: self.deletionTimeout as NSNumber)
         self.add(filePreviewMessage)
     }
@@ -114,10 +114,10 @@ extension ZMAssetClientMessage: ImageAssetStorage {
     public func updateMessage(imageData: Data, for format: ZMImageFormat) -> AnyObject? {
         guard let moc = self.managedObjectContext else { return nil }
         
-        moc.zm_imageAssetCache.storeAssetData(self.nonce,
-                                              format: format,
-                                              encrypted: self.hasEncryptedAsset,
-                                              data: imageData)
+        moc.zm_fileAssetCache.storeAssetData(self,
+                                             format: format,
+                                             encrypted: self.hasEncryptedAsset,
+                                             data: imageData)
         if self.hasEncryptedAsset {
             let otrKey: Data?
             let sha256: Data?
@@ -137,7 +137,7 @@ extension ZMAssetClientMessage: ImageAssetStorage {
             
             var decrypted = false
             if let otrKey = otrKey, let sha256 = sha256 {
-                decrypted = moc.zm_imageAssetCache.decryptFileIfItMatchesDigest(self.nonce,
+                decrypted = moc.zm_fileAssetCache.decryptImageIfItMatchesDigest(self,
                                                                                 format: format,
                                                                                 encryptionKey: otrKey,
                                                                                 sha256Digest: sha256)
@@ -179,9 +179,9 @@ extension ZMAssetClientMessage: ImageAssetStorage {
 
     public func processingDidFinish() {
         guard let moc = self.managedObjectContext else { return }
-        moc.zm_imageAssetCache.deleteAssetData(self.nonce,
-                                               format: .original,
-                                               encrypted: false)
+        moc.zm_fileAssetCache.deleteAssetData(self,
+                                              format: .original,
+                                              encrypted: false)
         moc.enqueueDelayedSave()
     }
     

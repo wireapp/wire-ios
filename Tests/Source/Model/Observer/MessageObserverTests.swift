@@ -83,7 +83,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserverWhenTheFileTransferStateChanges() {
         // given
-        let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         message.transferState = .uploading
         uiMOC.saveOrRollback()
 
@@ -98,7 +98,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesObserverWhenTheMediumImageDataChanges() {
         // given
-        let message = ZMAssetClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         uiMOC.saveOrRollback()
 
         let imageData = verySmallJPEGData()
@@ -125,7 +125,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges() {
         // when
         checkThatItNotifiesTheObserverOfAChange(
-            ZMClientMessage.insertNewObject(in: uiMOC),
+            ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC),
             modifier: { $0.linkPreviewState = .downloaded },
             expectedChangedField: #keyPath(MessageChangeInfo.linkPreviewChanged)
         )
@@ -133,7 +133,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() {
         // given
-        let clientMessage = ZMClientMessage.insertNewObject(in: uiMOC)
+        let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
         clientMessage.add(ZMGenericMessage.message(text: name!, nonce: nonce.transportString()).data())
         let preview = ZMLinkPreview.linkPreview(
@@ -157,7 +157,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItDoesNotNotifiyObserversWhenTheSmallImageDataChanges() {
         // given
-        let message = ZMImageMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMImageMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         uiMOC.saveOrRollback()
 
         // when
@@ -251,7 +251,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         self.uiMOC.saveOrRollback()
         
         self.performIgnoringZMLogError{
@@ -269,7 +269,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let message = conversation.appendPerformedCallMessage(with: 42, caller: .selfUser(in: uiMOC))
-        let otherMessage = ZMSystemMessage.insertNewObject(in: uiMOC)
+        let otherMessage = ZMSystemMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
 
         checkThatItNotifiesTheObserverOfAChange(
             message,

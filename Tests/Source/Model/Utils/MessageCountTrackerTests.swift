@@ -185,10 +185,10 @@ class MessageCountTrackerTests: BaseZMMessageTests {
 
         syncMOC.performGroupedBlockAndWait {
             self.syncMOC.analytics = mockAnalytics
-            101.times { ZMClientMessage.insertNewObject(in: self.syncMOC) }
-            4.times { ZMImageMessage.insertNewObject(in: self.syncMOC) }
-            3.times { ZMAssetClientMessage.insertNewObject(in: self.syncMOC) }
-            2.times { ZMTextMessage.insertNewObject(in: self.syncMOC) }
+            101.times { ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC) }
+            4.times { ZMImageMessage(nonce: UUID(), managedObjectContext: self.syncMOC) }
+            3.times { ZMAssetClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC) }
+            2.times { ZMTextMessage(nonce: UUID(), managedObjectContext: self.syncMOC) }
         }
 
         // When

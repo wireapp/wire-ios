@@ -82,15 +82,11 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var imageDataIdentifier: String? {
-        if nil != assetClientMessage.fileMessageData, isImage, let image = assetClientMessage.genericAssetMessage?.assetData?.original.image {
-            return "\(assetClientMessage.nonce.transportString())-\(image.width)x\(image.height)"
-        }
-
-        return imageData.map { String(format: "orig-%p", $0 as NSData) }
+        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
     }
 
     public var imagePreviewDataIdentifier: String? {
-        return previewData != nil ? assetClientMessage.genericAssetMessage?.previewAssetId : nil
+        return FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .preview)
     }
 
     public var previewData: Data? {
@@ -124,23 +120,22 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 extension V3Asset: AssetProxyType {
 
     public var hasDownloadedImage: Bool {
-        return nil != imageData(for: .medium, encrypted: false)
-            || nil != imageData(for: .original, encrypted: false)
+        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
+               moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
     }
 
     public var hasDownloadedFile: Bool {
         guard !isImage else { return false }
-        return hasFile(for: assetClientMessage.genericAssetMessage?.v3_fileCacheKey)
+        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
     }
 
     public var fileURL: URL? {
-        guard let key = assetClientMessage.genericAssetMessage?.v3_fileCacheKey else { return nil }
-        return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage.nonce, fileName: key)
+        return moc.zm_fileAssetCache.accessAssetURL(assetClientMessage)
     }
 
     public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
         guard assetClientMessage.fileMessageData != nil else { return nil }
-        return moc.zm_imageAssetCache.assetData(assetClientMessage.nonce, format: format, encrypted: encrypted)
+        return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
     }
 
     public func requestFileDownload() {
@@ -170,7 +165,9 @@ extension V3Asset: AssetProxyType {
 
     public func processAddedImage(format: ZMImageFormat, properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
         guard format == .medium, let sha256 = keys.sha256 else { return zmLog.error("Tried to process non-medium v3 image for \(assetClientMessage)") }
-        let messageID = assetClientMessage.nonce.transportString()
+        guard let nonce = assetClientMessage.nonce else { return zmLog.error("Tried to process image message without nonce: \(assetClientMessage)") }
+        
+        let messageID = nonce.transportString()
 
         let original = ZMGenericMessage.genericMessage(
             withImageSize: properties.size,
@@ -189,11 +186,5 @@ extension V3Asset: AssetProxyType {
         assetClientMessage.add(original)
         assetClientMessage.add(uploaded)
     }
-
-    // MARK: - Helper
-
-    private func hasFile(for key: String?) -> Bool {
-        guard let cacheKey = key else { return false }
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage.nonce, fileName: cacheKey, encrypted: false)
-    }
+    
 }

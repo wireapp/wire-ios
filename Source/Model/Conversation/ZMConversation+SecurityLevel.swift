@@ -311,13 +311,12 @@ extension ZMConversation {
                                          timestamp: Date?,
                                          duration: TimeInterval? = nil
                                          ) -> (message: ZMSystemMessage, insertionIndex: UInt) {
-        let systemMessage = ZMSystemMessage.insertNewObject(in: self.managedObjectContext!)
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
         systemMessage.users = users ?? Set()
         systemMessage.addedUsers = addedUsers
         systemMessage.clients = clients ?? Set()
-        systemMessage.nonce = UUID()
         systemMessage.serverTimestamp = timestamp
         if let duration = duration {
             systemMessage.duration = duration

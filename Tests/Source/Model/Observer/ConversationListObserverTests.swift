@@ -512,7 +512,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         conversation.team = team
         conversation.lastReadServerTimeStamp = conversation.lastServerTimeStamp
 
-        let message = ZMMessage.insertNewObject(in: uiMOC)
+        let message = ZMMessage(nonce: UUID(), managedObjectContext: uiMOC)
         message.serverTimestamp = Date()
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
@@ -549,7 +549,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
-        conversation.mutableMessages.add(ZMTextMessage.insertNewObject(in: self.uiMOC))
+        conversation.mutableMessages.add(ZMTextMessage(nonce: UUID(), managedObjectContext: uiMOC))
         self.uiMOC.saveOrRollback()
         
         // then
@@ -593,7 +593,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItNotifiesObserversWhenAMessageBecomesUnreadUnsent()
     {
         // given
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group
@@ -643,7 +643,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
     func testThatItStopsNotifyingAfterUnregisteringTheToken() {
         
         // given
-        let message = ZMClientMessage.insertNewObject(in: self.uiMOC)
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
         let conversation =  ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = .group

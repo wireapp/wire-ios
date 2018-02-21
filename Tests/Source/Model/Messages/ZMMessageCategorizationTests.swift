@@ -36,9 +36,14 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
     
     override func setUp() {
         super.setUp()
-        self.conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        self.conversation = ZMConversation.insertNewObject(in: uiMOC)
         self.conversation.conversationType = .group
         self.conversation.remoteIdentifier = UUID.create()
+        
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        
+        uiMOC.saveOrRollback()
     }
     
     override func tearDown() {
@@ -91,7 +96,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         article.summary = "summary"
         let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
         let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create().transportString())
-        let message = self.conversation.appendClientMessage(with: genericMessage.data())
+        let message = self.conversation.appendClientMessage(with: genericMessage)
         message?.linkPreviewState = .processed
         
         // THEN
@@ -112,7 +117,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         // GIVEN
         let imageData = verySmallJPEGData()
         let messageNonce = UUID.create()
-        let message = ZMAssetClientMessage.insertNewObject(in: uiMOC)
+        let message = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size:imageSize, length:UInt(imageData.count), mimeType:"image/jpeg")
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
@@ -148,7 +153,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         
         // GIVEN
         let data = self.data(forResource: "animated", extension: "gif")!
-        let message = ZMAssetClientMessage.assetClientMessage(originalImage: data, nonce: .create(), managedObjectContext: uiMOC, expiresAfter: 0)
+        let message = conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
         let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
         message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
         
@@ -236,7 +241,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
     func testThatItCategorizesSystemMessage() {
         
         // GIVEN
-        let message = ZMSystemMessage.insertNewObject(in: self.conversation.managedObjectContext!)
+        let message = ZMSystemMessage(nonce: UUID(), managedObjectContext: conversation.managedObjectContext!)
         message.systemMessageType = .conversationNameChanged
         
         // THEN

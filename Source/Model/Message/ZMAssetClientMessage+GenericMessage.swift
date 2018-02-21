@@ -57,10 +57,7 @@ extension ZMAssetClientMessage {
     }
     
     public func add(_ genericMessage: ZMGenericMessage) {
-        let messageData = self.mergeWithExistingData(data: genericMessage.data())
-        if self.nonce == nil {
-            self.nonce = UUID(uuidString: messageData.genericMessage.messageId)
-        }
+        _ = self.mergeWithExistingData(data: genericMessage.data())
         
         if (self.mediumGenericMessage?.imageAssetData?.otrKey.count ?? 0) > 0
             && (self.previewGenericMessage?.imageAssetData?.width ?? 0) > 0
@@ -161,10 +158,6 @@ extension ZMAssetClientMessage {
     
     public override func update(with message: ZMGenericMessage!, updateEvent: ZMUpdateEvent!, initialUpdate: Bool) {
         self.add(message)
-        
-        if self.nonce == nil {
-            self.nonce = UUID(uuidString: message.messageId)
-        }
         
         let eventData = ((updateEvent.payload["data"]) as? [String: Any]) ?? [:]
         

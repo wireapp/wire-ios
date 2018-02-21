@@ -81,58 +81,41 @@ extension Cache {
     }
 }
 
-extension ImageAssetCache {
-    
+extension FileAssetCache {
+        
     /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
     /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
     /// Returns whether the decryption was successful and the digest matched
-    public func decryptAssetIfItMatchesDigest(_ nonce: UUID, format: ZMImageFormat, encryptionKey: Data, macKey: Data, macDigest: Data) -> Bool {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: true)
-        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, macKey: macKey, macDigest: macDigest)
-    }
-    
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
-    public func decryptFileIfItMatchesDigest(_ nonce: UUID, format: ZMImageFormat, encryptionKey: Data, sha256Digest: Data) -> Bool {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: true)
+    public func decryptImageIfItMatchesDigest(_ message: ZMConversationMessage, format: ZMImageFormat, encryptionKey: Data, sha256Digest: Data) -> Bool {
+        guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: false),
+              let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: true) else { return false }
+        
         return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, sha256Digest: sha256Digest)
     }
     
     /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
-    public func encryptFileAndComputeSHA256Digest(_ nonce: UUID, format: ZMImageFormat) -> ZMImageAssetEncryptionKeys? {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, format: format, encrypted: true)
+    public func encryptImageAndComputeSHA256Digest(_ message: ZMConversationMessage, format: ZMImageFormat) -> ZMImageAssetEncryptionKeys? {
+        guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: false),
+              let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: true) else { return nil }
+        
         return self.cache.encryptFileAndComputeSHA256Digest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey)
     }
-}
-
-extension FileAssetCache {
     
     /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
     /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
     /// Returns whether the decryption was successful and the digest matched
-    public func decryptAssetIfItMatchesDigest(_ nonce: UUID, fileName: String, encryptionKey: Data, macKey: Data, macDigest: Data) -> Bool {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: true)
-        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, macKey: macKey, macDigest: macDigest)
-    }
-    
-    /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
-    /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
-    /// Returns whether the decryption was successful and the digest matched
-    public func decryptFileIfItMatchesDigest(_ nonce: UUID, fileName: String, encryptionKey: Data, sha256Digest: Data) -> Bool {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: true)
+    public func decryptFileIfItMatchesDigest(_ message: ZMConversationMessage, encryptionKey: Data, sha256Digest: Data) -> Bool {
+        guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: false),
+              let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: true) else { return false }
+        
         return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, sha256Digest: sha256Digest)
     }
     
     /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
-    public func encryptFileAndComputeSHA256Digest(_ nonce: UUID, fileName: String) -> ZMImageAssetEncryptionKeys? {
-        let plaintextCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: false)
-        let encryptedCacheKey = type(of: self).cacheKeyForAsset(nonce, suffix: fileName, encrypted: true)
+    public func encryptFileAndComputeSHA256Digest(_ message: ZMConversationMessage) -> ZMImageAssetEncryptionKeys? {
+        guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: false),
+              let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: true) else { return nil }
+        
         return self.cache.encryptFileAndComputeSHA256Digest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey)
     }
 }

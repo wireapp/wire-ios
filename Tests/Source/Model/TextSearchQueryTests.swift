@@ -495,7 +495,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             let genericMessage = ZMGenericMessage.message(
                 text: message.textMessageData!.messageText,
                 linkPreview: preview,
-                nonce: message.nonce.transportString(),
+                nonce: message.nonce!.transportString(),
                 expiresAfter: NSNumber(value: message.deletionTimeout)
             )
 
