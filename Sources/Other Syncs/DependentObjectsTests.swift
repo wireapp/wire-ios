@@ -38,9 +38,9 @@ class DependentObjectsTests: ZMTBaseTest {
         self.testSession.prepare(forTestNamed: self.name)
         self.conversation1 = ZMConversation.insertNewObject(in: self.testSession.uiMOC)
         self.conversation2 = ZMConversation.insertNewObject(in: self.testSession.uiMOC)
-        self.messageA = ZMClientMessage.insertNewObject(in: self.testSession.uiMOC)
-        self.messageB = ZMClientMessage.insertNewObject(in: self.testSession.uiMOC)
-        self.messageC = ZMClientMessage.insertNewObject(in: self.testSession.uiMOC)
+        self.messageA = ZMClientMessage(nonce: UUID(), managedObjectContext: self.testSession.uiMOC)
+        self.messageB = ZMClientMessage(nonce: UUID(), managedObjectContext: self.testSession.uiMOC)
+        self.messageC = ZMClientMessage(nonce: UUID(), managedObjectContext: self.testSession.uiMOC)
     }
     
     override func tearDown() {

@@ -50,13 +50,12 @@
     self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
     [self.testSession prepareForTestNamed:self.name];
     
-    self.imageMessage1 = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage1.nonce = [NSUUID createUUID];
-    self.imageMessage2 = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage2.nonce = [NSUUID createUUID];
-    self.imageMessage3 = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
-    self.imageMessage3.nonce = [NSUUID createUUID];
-    self.imageMessageExcludedByPredicate = [ZMAssetClientMessage insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    
+    self.imageMessage1 = [[ZMAssetClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessage2 = [[ZMAssetClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessage3 = [[ZMAssetClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessageExcludedByPredicate = [[ZMAssetClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessageExcludedByPredicate.nonce = nil;
     
     self.fetchPredicate = [NSPredicate predicateWithValue:NO];
     self.needsProcessingPredicate = [NSPredicate predicateWithFormat:@"nonce_data != nil"];
