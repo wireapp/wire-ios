@@ -28,13 +28,24 @@ class ResultTests: XCTestCase {
         let transformed = sut.map(String.init)
         
         // Then
-        
         XCTAssertEqual(transformed.value, "42")
+    }
+    
+    func testThatItCanMapAResult_Throwing() {
+        // Given
+        let error = NSError(domain: "", code: 0, userInfo: nil)
+        let sut = Result<Int>.success(42)
+        
+        // When
+        let transformed = sut.map { _ in throw error }
+        
+        // Then
+        XCTAssertEqual(transformed.error as NSError?, error)
     }
     
     func testThatItCanMapAResult_Error() {
         // Given
-        let error = NSError()
+        let error = NSError(domain: "", code: 0, userInfo: nil)
         let sut = Result<Int>.failure(error)
         
         // When
