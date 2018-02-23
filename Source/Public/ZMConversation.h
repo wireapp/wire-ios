@@ -127,6 +127,13 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
                                                           name:(nullable NSString*)name
                                                         inTeam:(nullable Team *)team;
 
+/// Insert a new group conversation with name into the user session
++ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
+                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
+                                                          name:(nullable NSString*)name
+                                                        inTeam:(nullable Team *)team
+                                                   allowGuests:(BOOL)allowGuests;
+
 /// If that conversation exists, it is returned, @c nil otherwise.
 + (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMManagedObjectContextProvider> )session;
 
