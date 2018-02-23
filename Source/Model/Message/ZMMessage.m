@@ -484,12 +484,12 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     ZMUpdateEventType eventType = [ZMUpdateEvent updateEventTypeForEventTypeString:[payload optionalStringForKey:@"type"]];
     switch (eventType) {
             
-        case ZMUpdateEventConversationMessageAdd:
-        case ZMUpdateEventConversationKnock:
+        case ZMUpdateEventTypeConversationMessageAdd:
+        case ZMUpdateEventTypeConversationKnock:
             return [[payload dictionaryForKey:@"data"] uuidForKey:@"nonce"];
 
-        case ZMUpdateEventConversationClientMessageAdd:
-        case ZMUpdateEventConversationOtrMessageAdd:
+        case ZMUpdateEventTypeConversationClientMessageAdd:
+        case ZMUpdateEventTypeConversationOtrMessageAdd:
         {
             //if event is otr message then payload should be already decrypted and should contain generic message data
             NSString *base64Content = [payload stringForKey:@"data"];
@@ -624,12 +624,12 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 + (BOOL)doesEventTypeGenerateMessage:(ZMUpdateEventType)type;
 {
     return
-        (type == ZMUpdateEventConversationAssetAdd) ||
-        (type == ZMUpdateEventConversationMessageAdd) ||
-        (type == ZMUpdateEventConversationClientMessageAdd) ||
-        (type == ZMUpdateEventConversationOtrMessageAdd) ||
-        (type == ZMUpdateEventConversationOtrAssetAdd) ||
-        (type == ZMUpdateEventConversationKnock) ||
+        (type == ZMUpdateEventTypeConversationAssetAdd) ||
+        (type == ZMUpdateEventTypeConversationMessageAdd) ||
+        (type == ZMUpdateEventTypeConversationClientMessageAdd) ||
+        (type == ZMUpdateEventTypeConversationOtrMessageAdd) ||
+        (type == ZMUpdateEventTypeConversationOtrAssetAdd) ||
+        (type == ZMUpdateEventTypeConversationKnock) ||
         [ZMSystemMessage doesEventTypeGenerateSystemMessage:type];
 }
 
@@ -971,10 +971,10 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 + (NSDictionary *)eventTypeToSystemMessageTypeMap   
 {
     return @{
-             @(ZMUpdateEventConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
-             @(ZMUpdateEventConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
-             @(ZMUpdateEventConversationRename) : @(ZMSystemMessageTypeConversationNameChanged),
-             @(ZMUpdateEventConversationConnectRequest) : @(ZMSystemMessageTypeConnectionRequest)
+             @(ZMUpdateEventTypeConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
+             @(ZMUpdateEventTypeConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
+             @(ZMUpdateEventTypeConversationRename) : @(ZMSystemMessageTypeConversationNameChanged),
+             @(ZMUpdateEventTypeConversationConnectRequest) : @(ZMSystemMessageTypeConnectionRequest)
              };
 }
 

@@ -32,26 +32,26 @@
 - (NSDictionary *)typesMapping
 {
     return @{
-             @"conversation.asset-add" : @(ZMUpdateEventConversationAssetAdd),
-             @"conversation.connect-request" : @(ZMUpdateEventConversationConnectRequest),
-             @"conversation.create" : @(ZMUpdateEventConversationCreate),
-             @"conversation.knock" : @(ZMUpdateEventConversationKnock),
-             @"conversation.member-join" : @(ZMUpdateEventConversationMemberJoin),
-             @"conversation.member-leave" : @(ZMUpdateEventConversationMemberLeave),
-             @"conversation.member-update" : @(ZMUpdateEventConversationMemberUpdate),
-             @"conversation.message-add" : @(ZMUpdateEventConversationMessageAdd),
-             @"conversation.client-message-add" : @(ZMUpdateEventConversationClientMessageAdd),
-             @"conversation.otr-message-add" : @(ZMUpdateEventConversationOtrMessageAdd),
-             @"conversation.otr-asset-add" : @(ZMUpdateEventConversationOtrAssetAdd),
-             @"conversation.rename" : @(ZMUpdateEventConversationRename),
-             @"conversation.typing" : @(ZMUpdateEventConversationTyping),
-             @"user.connection" : @(ZMUpdateEventUserConnection),
-             @"user.new" : @(ZMUpdateEventUserNew),
-             @"user.push-remove" : @(ZMUpdateEventUserPushRemove),
-             @"user.update" : @(ZMUpdateEventUserUpdate),
-             @"user.contact-join" : @(ZMUpdateEventUserContactJoin),
-             @"user.client-add" : @(ZMUpdateEventUserClientAdd),
-             @"user.client-remove" : @(ZMUpdateEventUserClientRemove),
+             @"conversation.asset-add" : @(ZMUpdateEventTypeConversationAssetAdd),
+             @"conversation.connect-request" : @(ZMUpdateEventTypeConversationConnectRequest),
+             @"conversation.create" : @(ZMUpdateEventTypeConversationCreate),
+             @"conversation.knock" : @(ZMUpdateEventTypeConversationKnock),
+             @"conversation.member-join" : @(ZMUpdateEventTypeConversationMemberJoin),
+             @"conversation.member-leave" : @(ZMUpdateEventTypeConversationMemberLeave),
+             @"conversation.member-update" : @(ZMUpdateEventTypeConversationMemberUpdate),
+             @"conversation.message-add" : @(ZMUpdateEventTypeConversationMessageAdd),
+             @"conversation.client-message-add" : @(ZMUpdateEventTypeConversationClientMessageAdd),
+             @"conversation.otr-message-add" : @(ZMUpdateEventTypeConversationOtrMessageAdd),
+             @"conversation.otr-asset-add" : @(ZMUpdateEventTypeConversationOtrAssetAdd),
+             @"conversation.rename" : @(ZMUpdateEventTypeConversationRename),
+             @"conversation.typing" : @(ZMUpdateEventTypeConversationTyping),
+             @"user.connection" : @(ZMUpdateEventTypeUserConnection),
+             @"user.new" : @(ZMUpdateEventTypeUserNew),
+             @"user.push-remove" : @(ZMUpdateEventTypeUserPushRemove),
+             @"user.update" : @(ZMUpdateEventTypeUserUpdate),
+             @"user.contact-join" : @(ZMUpdateEventTypeUserContactJoin),
+             @"user.client-add" : @(ZMUpdateEventTypeUserClientAdd),
+             @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
              };
 }
 
@@ -92,14 +92,14 @@
     
     // then
     switch (event.type) {
-        case ZMUpdateEventConversationMemberLeave:
-        case ZMUpdateEventConversationAssetAdd:
-        case ZMUpdateEventConversationKnock:
-        case ZMUpdateEventConversationMemberJoin:
-        case ZMUpdateEventConversationMessageAdd:
-        case ZMUpdateEventConversationClientMessageAdd:
-        case ZMUpdateEventConversationOtrMessageAdd:
-        case ZMUpdateEventConversationOtrAssetAdd:
+        case ZMUpdateEventTypeConversationMemberLeave:
+        case ZMUpdateEventTypeConversationAssetAdd:
+        case ZMUpdateEventTypeConversationKnock:
+        case ZMUpdateEventTypeConversationMemberJoin:
+        case ZMUpdateEventTypeConversationMessageAdd:
+        case ZMUpdateEventTypeConversationClientMessageAdd:
+        case ZMUpdateEventTypeConversationOtrMessageAdd:
+        case ZMUpdateEventTypeConversationOtrAssetAdd:
             XCTAssertTrue(canUnarchive);
             break;
         default:

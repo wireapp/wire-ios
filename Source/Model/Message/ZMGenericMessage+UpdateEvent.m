@@ -30,20 +30,20 @@
     ZMGenericMessage *message;
     
     switch (updateEvent.type) {
-        case ZMUpdateEventConversationClientMessageAdd: {
+        case ZMUpdateEventTypeConversationClientMessageAdd: {
             NSString *base64Content = [updateEvent.payload stringForKey:@"data"];
             message = [self genericMessageWithBase64String:base64Content updateEvent:updateEvent];
             VerifyReturnNil(message != nil);
         }
             break;
-        case ZMUpdateEventConversationOtrMessageAdd: {
+        case ZMUpdateEventTypeConversationOtrMessageAdd: {
             NSString *base64Content = [[updateEvent.payload dictionaryForKey:@"data"] stringForKey:@"text"];
             message = [self genericMessageWithBase64String:base64Content updateEvent:updateEvent];
             VerifyReturnNil(message != nil);
         }
             break;
             
-        case ZMUpdateEventConversationOtrAssetAdd: {
+        case ZMUpdateEventTypeConversationOtrAssetAdd: {
             NSString *base64Content = [[updateEvent.payload dictionaryForKey:@"data"] stringForKey:@"info"];
             VerifyReturnNil(base64Content != nil);
             @try {
