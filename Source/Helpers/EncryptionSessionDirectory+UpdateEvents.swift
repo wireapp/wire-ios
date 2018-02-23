@@ -205,7 +205,7 @@ extension ZMUpdateEvent {
         eventData[self.plaintextPayloadKey] = decryptedData.base64String()
         payload["data"] = eventData
         let decryptedEvent = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: payload as NSDictionary, uuid: self.uuid, transient: false, source: self.source)
-        if let debugInformation = self.debugInformation {
+        if !self.debugInformation.isEmpty {
             decryptedEvent?.appendDebugInformation(debugInformation)
         }
         return decryptedEvent
