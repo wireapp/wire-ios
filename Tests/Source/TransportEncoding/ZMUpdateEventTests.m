@@ -34,34 +34,35 @@
 - (NSDictionary *)typesMapping
 {
     return @{
-             @"conversation.asset-add" : @(ZMUpdateEventConversationAssetAdd),
-             @"conversation.connect-request" : @(ZMUpdateEventConversationConnectRequest),
-             @"conversation.create" : @(ZMUpdateEventConversationCreate),
-             @"conversation.knock" : @(ZMUpdateEventConversationKnock),
-             @"conversation.member-join" : @(ZMUpdateEventConversationMemberJoin),
-             @"conversation.member-leave" : @(ZMUpdateEventConversationMemberLeave),
-             @"conversation.member-update" : @(ZMUpdateEventConversationMemberUpdate),
-             @"conversation.message-add" : @(ZMUpdateEventConversationMessageAdd),
-             @"conversation.client-message-add" : @(ZMUpdateEventConversationClientMessageAdd),
-             @"conversation.otr-message-add" : @(ZMUpdateEventConversationOtrMessageAdd),
-             @"conversation.otr-asset-add" : @(ZMUpdateEventConversationOtrAssetAdd),
-             @"conversation.rename" : @(ZMUpdateEventConversationRename),
-             @"conversation.typing" : @(ZMUpdateEventConversationTyping),
-             @"user.connection" : @(ZMUpdateEventUserConnection),
-             @"user.new" : @(ZMUpdateEventUserNew),
-             @"user.push-remove" : @(ZMUpdateEventUserPushRemove),
-             @"user.update" : @(ZMUpdateEventUserUpdate),
-             @"user.contact-join" : @(ZMUpdateEventUserContactJoin),
-             @"user.client-add" : @(ZMUpdateEventUserClientAdd),
-             @"user.client-remove" : @(ZMUpdateEventUserClientRemove),
-             @"team.create" : @(ZMUpdateEventTeamCreate),
-             @"team.delete" : @(ZMUpdateEventTeamDelete),
-             @"team.update" : @(ZMUpdateEventTeamUpdate),
-             @"team.member-join" : @(ZMUpdateEventTeamMemberJoin),
-             @"team.member-leave" : @(ZMUpdateEventTeamMemberLeave),
-             @"team.member-update" : @(ZMUpdateEventTeamMemberUpdate),
-             @"team.conversation-create" : @(ZMUpdateEventTeamConversationCreate),
-             @"team.conversation-delete" : @(ZMUpdateEventTeamConversationDelete)
+             @"conversation.asset-add" : @(ZMUpdateEventTypeConversationAssetAdd),
+             @"conversation.connect-request" : @(ZMUpdateEventTypeConversationConnectRequest),
+             @"conversation.create" : @(ZMUpdateEventTypeConversationCreate),
+             @"conversation.knock" : @(ZMUpdateEventTypeConversationKnock),
+             @"conversation.member-join" : @(ZMUpdateEventTypeConversationMemberJoin),
+             @"conversation.member-leave" : @(ZMUpdateEventTypeConversationMemberLeave),
+             @"conversation.member-update" : @(ZMUpdateEventTypeConversationMemberUpdate),
+             @"conversation.message-add" : @(ZMUpdateEventTypeConversationMessageAdd),
+             @"conversation.client-message-add" : @(ZMUpdateEventTypeConversationClientMessageAdd),
+             @"conversation.otr-message-add" : @(ZMUpdateEventTypeConversationOtrMessageAdd),
+             @"conversation.otr-asset-add" : @(ZMUpdateEventTypeConversationOtrAssetAdd),
+             @"conversation.rename" : @(ZMUpdateEventTypeConversationRename),
+             @"conversation.typing" : @(ZMUpdateEventTypeConversationTyping),
+             @"user.connection" : @(ZMUpdateEventTypeUserConnection),
+             @"user.new" : @(ZMUpdateEventTypeUserNew),
+             @"user.push-remove" : @(ZMUpdateEventTypeUserPushRemove),
+             @"user.update" : @(ZMUpdateEventTypeUserUpdate),
+             @"user.contact-join" : @(ZMUpdateEventTypeUserContactJoin),
+             @"user.client-add" : @(ZMUpdateEventTypeUserClientAdd),
+             @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
+             @"team.create" : @(ZMUpdateEventTypeTeamCreate),
+             @"team.delete" : @(ZMUpdateEventTypeTeamDelete),
+             @"team.update" : @(ZMUpdateEventTypeTeamUpdate),
+             @"team.member-join" : @(ZMUpdateEventTypeTeamMemberJoin),
+             @"team.member-leave" : @(ZMUpdateEventTypeTeamMemberLeave),
+             @"team.member-update" : @(ZMUpdateEventTypeTeamMemberUpdate),
+             @"team.conversation-create" : @(ZMUpdateEventTypeTeamConversationCreate),
+             @"team.conversation-delete" : @(ZMUpdateEventTypeTeamConversationDelete),
+             @"conversation.access-update" : @(ZMUpdateEventTypeConversationAccessModeUpdate)
              };
 }
 
@@ -343,7 +344,7 @@
 
     // then
     XCTAssertNotNil(event);
-    XCTAssertEqual(ZMUpdateEventConversationMessageAdd, event.type);
+    XCTAssertEqual(ZMUpdateEventTypeConversationMessageAdd, event.type);
 }
 
 
