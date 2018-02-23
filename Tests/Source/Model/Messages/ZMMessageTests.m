@@ -405,18 +405,18 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes
 {
     NSArray *validTypes = @[
-                            @(ZMUpdateEventConversationMemberJoin),
-                            @(ZMUpdateEventConversationMemberLeave),
-                            @(ZMUpdateEventConversationRename),
-                            @(ZMUpdateEventConversationConnectRequest),
-                            @(ZMUpdateEventConversationMessageAdd),
-                            @(ZMUpdateEventConversationClientMessageAdd),
-                            @(ZMUpdateEventConversationOtrMessageAdd),
-                            @(ZMUpdateEventConversationOtrAssetAdd),
-                            @(ZMUpdateEventConversationAssetAdd),
-                            @(ZMUpdateEventConversationKnock),
+                            @(ZMUpdateEventTypeConversationMemberJoin),
+                            @(ZMUpdateEventTypeConversationMemberLeave),
+                            @(ZMUpdateEventTypeConversationRename),
+                            @(ZMUpdateEventTypeConversationConnectRequest),
+                            @(ZMUpdateEventTypeConversationMessageAdd),
+                            @(ZMUpdateEventTypeConversationClientMessageAdd),
+                            @(ZMUpdateEventTypeConversationOtrMessageAdd),
+                            @(ZMUpdateEventTypeConversationOtrAssetAdd),
+                            @(ZMUpdateEventTypeConversationAssetAdd),
+                            @(ZMUpdateEventTypeConversationKnock),
                             ];
-    for(NSUInteger evt = 0; evt < ZMUpdateEvent_LAST; ++evt) {
+    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt) {
         XCTAssertEqual([ZMMessage doesEventTypeGenerateMessage:evt], [validTypes containsObject:@(evt)]);
     }
 }
@@ -800,13 +800,13 @@ NSString * const ReactionsKey = @"reactions";
 {
     // invalid types
     NSArray *validTypes = @[
-        @(ZMUpdateEventConversationMemberJoin),
-        @(ZMUpdateEventConversationMemberLeave),
-        @(ZMUpdateEventConversationRename),
-        @(ZMUpdateEventConversationConnectRequest)
+        @(ZMUpdateEventTypeConversationMemberJoin),
+        @(ZMUpdateEventTypeConversationMemberLeave),
+        @(ZMUpdateEventTypeConversationRename),
+        @(ZMUpdateEventTypeConversationConnectRequest)
     ];
     
-    for(NSUInteger evt = 0; evt < ZMUpdateEvent_LAST; ++evt) {
+    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt) {
         XCTAssertEqual([ZMSystemMessage doesEventTypeGenerateSystemMessage:evt], [validTypes containsObject:@(evt)]);
     }
 }
@@ -849,7 +849,7 @@ NSString * const ReactionsKey = @"reactions";
 - (ZMSystemMessage *)createConversationNameChangeSystemMessageInConversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc
 {
     NSDictionary *data = @{@"name" : conversation.displayName};
-    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventConversationRename forConversation:conversation sender:nil data:data];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationRename forConversation:conversation sender:nil data:data];
 
     ZMSystemMessage *systemMessage = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:nil];
     return systemMessage;
@@ -860,7 +860,7 @@ NSString * const ReactionsKey = @"reactions";
     NSDictionary *data = @{
                            @"message" : @"This is a very important message"
                            };
-    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventConversationConnectRequest forConversation:conversation sender:nil data:data];
+    ZMUpdateEvent *updateEvent = [self mockEventOfType:ZMUpdateEventTypeConversationConnectRequest forConversation:conversation sender:nil data:data];
     ZMSystemMessage *systemMessage = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:moc prefetchResult:nil];
     return systemMessage;
 }
@@ -870,7 +870,7 @@ NSString * const ReactionsKey = @"reactions";
     
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    if (updateEventType != ZMUpdateEventConversationConnectRequest) {
+    if (updateEventType != ZMUpdateEventTypeConversationConnectRequest) {
         conversation.conversationType = ZMConversationTypeGroup;
     }
     else {
@@ -922,18 +922,18 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEvents
 {
     // expect a message
-    [self checkThatUpdateEventType:ZMUpdateEventConversationMemberJoin generatesSystemMessageType:ZMSystemMessageTypeParticipantsAdded failureRecorder:NewFailureRecorder()];
+    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationMemberJoin generatesSystemMessageType:ZMSystemMessageTypeParticipantsAdded failureRecorder:NewFailureRecorder()];
 
-    [self checkThatUpdateEventType:ZMUpdateEventConversationMemberLeave generatesSystemMessageType:ZMSystemMessageTypeParticipantsRemoved failureRecorder:NewFailureRecorder()];
+    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationMemberLeave generatesSystemMessageType:ZMSystemMessageTypeParticipantsRemoved failureRecorder:NewFailureRecorder()];
 
-    [self checkThatUpdateEventType:ZMUpdateEventConversationRename generatesSystemMessageType:ZMSystemMessageTypeConversationNameChanged failureRecorder:NewFailureRecorder()];
+    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationRename generatesSystemMessageType:ZMSystemMessageTypeConversationNameChanged failureRecorder:NewFailureRecorder()];
     
-    [self checkThatUpdateEventType:ZMUpdateEventConversationConnectRequest generatesSystemMessageType:ZMSystemMessageTypeConnectionRequest failureRecorder:NewFailureRecorder()];
+    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationConnectRequest generatesSystemMessageType:ZMSystemMessageTypeConnectionRequest failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
 {
-    for(NSUInteger evt = 0; evt < ZMUpdateEvent_LAST; ++evt)
+    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt)
     {
         if( ! [ZMSystemMessage doesEventTypeGenerateSystemMessage:evt] ) {
             [self checkThatUpdateEventTypeDoesNotGenerateMessage:evt];
@@ -1060,7 +1060,7 @@ NSString * const ReactionsKey = @"reactions";
     
     __block ZMSystemMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier] senderID:sender.remoteIdentifier];
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier] senderID:sender.remoteIdentifier];
     }];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1099,7 +1099,7 @@ NSString * const ReactionsKey = @"reactions";
     
     __block ZMSystemMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, otherUser.remoteIdentifier] senderID:sender.remoteIdentifier];
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, otherUser.remoteIdentifier] senderID:sender.remoteIdentifier];
     }];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1138,7 +1138,7 @@ NSString * const ReactionsKey = @"reactions";
     // add selfUser to the conversation
     __block ZMSystemMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, selfUser.remoteIdentifier] senderID:sender.remoteIdentifier];
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, selfUser.remoteIdentifier] senderID:sender.remoteIdentifier];
     }];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1178,7 +1178,7 @@ NSString * const ReactionsKey = @"reactions";
     // add selfUser to the conversation
     __block ZMSystemMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, selfUser.remoteIdentifier] senderID:sender.remoteIdentifier];
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, selfUser.remoteIdentifier] senderID:sender.remoteIdentifier];
     }];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1203,7 +1203,7 @@ NSString * const ReactionsKey = @"reactions";
     // when
     __block ZMSystemMessage *message;
     [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventConversationConnectRequest inConversation:conversation withUsersIDs:@[] senderID:self.selfUser.remoteIdentifier];
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationConnectRequest inConversation:conversation withUsersIDs:@[] senderID:self.selfUser.remoteIdentifier];
     }];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);

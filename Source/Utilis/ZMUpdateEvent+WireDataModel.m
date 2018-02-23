@@ -40,7 +40,7 @@
     BOOL olderClearTimestamp = conversation.clearedTimeStamp != nil && [self.timeStamp compare:conversation.clearedTimeStamp] == NSOrderedAscending;
     
     switch (self.type) {
-        case ZMUpdateEventConversationMemberLeave:
+        case ZMUpdateEventTypeConversationMemberLeave:
         {
             ZMUser *selfUser = [ZMUser selfUserInContext:conversation.managedObjectContext];
             NSArray *usersIDs = [[self.payload dictionaryForKey:@"data"] optionalArrayForKey:@"user_ids"];
@@ -50,32 +50,32 @@
             
             // N.B.: Fall-through
         }
-        case ZMUpdateEventConversationAssetAdd:
-        case ZMUpdateEventConversationKnock:
-        case ZMUpdateEventConversationMemberJoin:
-        case ZMUpdateEventConversationMessageAdd:
+        case ZMUpdateEventTypeConversationAssetAdd:
+        case ZMUpdateEventTypeConversationKnock:
+        case ZMUpdateEventTypeConversationMemberJoin:
+        case ZMUpdateEventTypeConversationMessageAdd:
         {
             BOOL olderEvent = ((self.timeStamp != nil) &&
                                ([self.timeStamp compare:conversation.archivedChangedTimestamp] == NSOrderedAscending));
             return !olderEvent && !olderClearTimestamp;
         }
             
-        case ZMUpdateEventConversationClientMessageAdd:
-        case ZMUpdateEventConversationOtrMessageAdd:
-        case ZMUpdateEventConversationOtrAssetAdd:
+        case ZMUpdateEventTypeConversationClientMessageAdd:
+        case ZMUpdateEventTypeConversationOtrMessageAdd:
+        case ZMUpdateEventTypeConversationOtrAssetAdd:
             return !olderClearTimestamp;
             
-        case ZMUpdateEventConversationConnectRequest:
-        case ZMUpdateEventConversationCreate:
-        case ZMUpdateEventConversationMemberUpdate:
-        case ZMUpdateEventConversationRename:
-        case ZMUpdateEventConversationTyping:
-        case ZMUpdateEventUnknown:
-        case ZMUpdateEventUserConnection:
-        case ZMUpdateEventUserNew:
-        case ZMUpdateEventUserUpdate:
-        case ZMUpdateEventUserPushRemove:
-        case ZMUpdateEvent_LAST:
+        case ZMUpdateEventTypeConversationConnectRequest:
+        case ZMUpdateEventTypeConversationCreate:
+        case ZMUpdateEventTypeConversationMemberUpdate:
+        case ZMUpdateEventTypeConversationRename:
+        case ZMUpdateEventTypeConversationTyping:
+        case ZMUpdateEventTypeUnknown:
+        case ZMUpdateEventTypeUserConnection:
+        case ZMUpdateEventTypeUserNew:
+        case ZMUpdateEventTypeUserUpdate:
+        case ZMUpdateEventTypeUserPushRemove:
+        case ZMUpdateEventType_LAST:
         default:
             return NO;
     }
@@ -83,7 +83,7 @@
 
 - (NSDate *)timeStamp
 {
-    if (self.isTransient || self.type == ZMUpdateEventUserConnection) {
+    if (self.isTransient || self.type == ZMUpdateEventTypeUserConnection) {
         return nil;
     }
     return [self.payload dateForKey:@"time"];
@@ -91,11 +91,11 @@
 
 - (NSUUID *)senderUUID
 {
-    if (self.type == ZMUpdateEventUserConnection) {
+    if (self.type == ZMUpdateEventTypeUserConnection) {
         return [[self.payload optionalDictionaryForKey:@"connection"] optionalUuidForKey:@"to"];
     }
     
-    if (self.type == ZMUpdateEventUserContactJoin) {
+    if (self.type == ZMUpdateEventTypeUserContactJoin) {
         return [[self.payload optionalDictionaryForKey:@"user"] optionalUuidForKey:@"id"];
     }
 
@@ -104,7 +104,7 @@
 
 - (NSUUID *)conversationUUID;
 {
-    if (self.type == ZMUpdateEventUserConnection) {
+    if (self.type == ZMUpdateEventTypeUserConnection) {
         return  [[self.payload optionalDictionaryForKey:@"connection"] optionalUuidForKey:@"conversation"];
     }
     return [self.payload optionalUuidForKey:@"conversation"];
@@ -112,7 +112,7 @@
 
 - (NSString *)senderClientID
 {
-    if (self.type == ZMUpdateEventConversationOtrMessageAdd || self.type == ZMUpdateEventConversationOtrAssetAdd) {
+    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd) {
         return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"sender"];
     }
     return nil;
@@ -120,7 +120,7 @@
 
 - (NSString *)recipientClientID
 {
-    if (self.type == ZMUpdateEventConversationOtrMessageAdd || self.type == ZMUpdateEventConversationOtrAssetAdd) {
+    if (self.type == ZMUpdateEventTypeConversationOtrMessageAdd || self.type == ZMUpdateEventTypeConversationOtrAssetAdd) {
         return [[self.payload optionalDictionaryForKey:@"data"] optionalStringForKey:@"recipient"];
     }
     return nil;
@@ -129,14 +129,14 @@
 - (NSUUID *)messageNonce;
 {
     switch (self.type) {
-        case ZMUpdateEventConversationMessageAdd:
-        case ZMUpdateEventConversationAssetAdd:
-        case ZMUpdateEventConversationKnock:
+        case ZMUpdateEventTypeConversationMessageAdd:
+        case ZMUpdateEventTypeConversationAssetAdd:
+        case ZMUpdateEventTypeConversationKnock:
             return [[self.payload optionalDictionaryForKey:@"data"] optionalUuidForKey:@"nonce"];
             
-        case ZMUpdateEventConversationClientMessageAdd:
-        case ZMUpdateEventConversationOtrMessageAdd:
-        case ZMUpdateEventConversationOtrAssetAdd:
+        case ZMUpdateEventTypeConversationClientMessageAdd:
+        case ZMUpdateEventTypeConversationOtrMessageAdd:
+        case ZMUpdateEventTypeConversationOtrAssetAdd:
         {
             ZMGenericMessage *message = [ZMGenericMessage genericMessageFromUpdateEvent:self];
             return [NSUUID uuidWithTransportString:message.messageId];
