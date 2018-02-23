@@ -51,7 +51,6 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/ZMAccessToken.h>
 #import <WireTransport/ZMKeychain.h>
 #import <WireTransport/NSData+Multipart.h>
-#import <WireTransport/ZMUpdateEvent.h>
 #import <WireTransport/ZMTaskIdentifier.h>
 #import <WireTransport/ZMRequestCancellation.h>
 #import <WireTransport/ZMPushChannel.h>
