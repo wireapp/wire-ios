@@ -170,8 +170,7 @@ final class ConversationCreationController: UIViewController {
             )
         }
         
-        errorLabel.text = "error.localizedDescription.uppercased()"
-        self.errorViewContainer.setNeedsLayout()
+        bottomViewContainer.isHidden = nil == ZMUser.selfUser().team
     }
 
     private func setupNavigationBar() {
