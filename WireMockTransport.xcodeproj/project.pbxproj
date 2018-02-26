@@ -109,6 +109,8 @@
 		CE89FED31C19780D0093C3B6 /* MockPersonalInvitation.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */; };
 		CE89FED61C19865E0093C3B6 /* MockTransportSession+invitations.h in Headers */ = {isa = PBXBuildFile; fileRef = CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */; };
 		CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */ = {isa = PBXBuildFile; fileRef = CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */; };
+		F119FC1A20444F9C00969615 /* MockTransportSessionConversationsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */; };
+		F119FC1C2044551200969615 /* MockTransportSessionConversationAccessTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */; };
 		F14741531EC45F8900A3688C /* MockTeam.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14741521EC45F8900A3688C /* MockTeam.swift */; };
 		F14741551EC462EB00A3688C /* MockMember.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14741541EC462EB00A3688C /* MockMember.swift */; };
 		F149F80E1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */; };
@@ -118,6 +120,7 @@
 		F1519B5C1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */; };
 		F1519B5E1EC0A30100AD4E33 /* MockTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */; };
 		F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */; };
+		F16C8BED20443F4A00677D31 /* MockTransportSession+conversations.swift in Sources */ = {isa = PBXBuildFile; fileRef = F16C8BEC20443F4A00677D31 /* MockTransportSession+conversations.swift */; };
 		F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */; };
 		F1782D8F1ED304CF00486BE3 /* MockTransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */; };
 		F1782D911ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D901ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift */; };
@@ -280,6 +283,8 @@
 		CE89FECF1C19780D0093C3B6 /* MockPersonalInvitation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockPersonalInvitation.m; sourceTree = "<group>"; };
 		CE89FED41C19865E0093C3B6 /* MockTransportSession+invitations.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+invitations.h"; sourceTree = "<group>"; };
 		CE89FED51C19865E0093C3B6 /* MockTransportSession+invitations.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+invitations.m"; sourceTree = "<group>"; };
+		F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionConversationsTests.swift; sourceTree = "<group>"; };
+		F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionConversationAccessTests.swift; sourceTree = "<group>"; };
 		F14741521EC45F8900A3688C /* MockTeam.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTeam.swift; sourceTree = "<group>"; };
 		F14741541EC462EB00A3688C /* MockMember.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockMember.swift; sourceTree = "<group>"; };
 		F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTeamTests.swift; sourceTree = "<group>"; };
@@ -289,6 +294,7 @@
 		F1519B591EC09C0100AD4E33 /* MockTransportSession+assets.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+assets.swift"; sourceTree = "<group>"; };
 		F1519B5B1EC09D3100AD4E33 /* MockTransportSessionAssetsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionAssetsTests.swift; sourceTree = "<group>"; };
 		F1519B5D1EC0A30100AD4E33 /* MockTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTests.swift; sourceTree = "<group>"; };
+		F16C8BEC20443F4A00677D31 /* MockTransportSession+conversations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+conversations.swift"; sourceTree = "<group>"; };
 		F1782D6F1ED2E9E700486BE3 /* MockTeamEvent.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTeamEvent.swift; sourceTree = "<group>"; };
 		F1782D8E1ED304CF00486BE3 /* MockTransportSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSession.swift; sourceTree = "<group>"; };
 		F1782D901ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionTeamEventsTests.swift; sourceTree = "<group>"; };
@@ -354,6 +360,7 @@
 				54AE5A501B78FA43002757E9 /* MockTransportSession+connections.m */,
 				54AE5A511B78FA43002757E9 /* MockTransportSession+conversations.h */,
 				54AE5A521B78FA43002757E9 /* MockTransportSession+conversations.m */,
+				F16C8BEC20443F4A00677D31 /* MockTransportSession+conversations.swift */,
 				54AE5A531B78FA43002757E9 /* MockTransportSession+PushToken.h */,
 				54AE5A541B78FA43002757E9 /* MockTransportSession+PushToken.m */,
 				54AE5A551B78FA43002757E9 /* MockTransportSession+registration.h */,
@@ -477,6 +484,7 @@
 				54AE5A931B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m */,
 				54AE5A951B78FA62002757E9 /* MockTransportSessionConnectionsTests.m */,
 				54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */,
+				F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */,
 				54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */,
 				54AE5A991B78FA62002757E9 /* MockTransportSessionLoginTests.m */,
 				54AE5A9A1B78FA62002757E9 /* MockTransportSessionPushChannelTests.m */,
@@ -495,6 +503,7 @@
 				F149F80D1ECC75C100B05E16 /* MockTransportSessionTeamTests.swift */,
 				F1782D901ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift */,
 				163EB0D01FD1BDD4005B8D8D /* MockTransportSessionBroadcastTests.swift */,
+				F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */,
 				F190E0931E8C0218003E81F8 /* MockUserTests.swift */,
 				872A2EE31FFE85D000900B22 /* MockServicesTests.swift */,
 				54C902431B7532DD007162A8 /* Supporting Files */,
@@ -721,6 +730,7 @@
 				54AE5A7A1B78FA43002757E9 /* MockTransportSession+registration.m in Sources */,
 				F14741531EC45F8900A3688C /* MockTeam.swift in Sources */,
 				F1519B601EC0A6FC00AD4E33 /* MockTransportSession+assets.swift in Sources */,
+				F16C8BED20443F4A00677D31 /* MockTransportSession+conversations.swift in Sources */,
 				5425EF021E1E339B006D7A01 /* MockTransportSession+search.m in Sources */,
 				CE89FED71C19865E0093C3B6 /* MockTransportSession+invitations.m in Sources */,
 				09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */,
@@ -778,6 +788,7 @@
 				F1782D911ED30F9900486BE3 /* MockTransportSessionTeamEventsTests.swift in Sources */,
 				541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */,
 				54AE5AA41B78FA62002757E9 /* MockTransportSessionConnectionsTests.m in Sources */,
+				F119FC1C2044551200969615 /* MockTransportSessionConversationAccessTests.swift in Sources */,
 				54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */,
 				F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */,
 				CE471AF31C19AC670040802B /* MockTransportSessionInvitationTests.m in Sources */,
@@ -787,6 +798,7 @@
 				54AE5AA21B78FA62002757E9 /* MockTransportSessionAPNSTokenTests.m in Sources */,
 				872A2EE41FFE85D000900B22 /* MockServicesTests.swift in Sources */,
 				54AE5AA91B78FA62002757E9 /* MockTransportSessionPushChannelTests.m in Sources */,
+				F119FC1A20444F9C00969615 /* MockTransportSessionConversationsTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

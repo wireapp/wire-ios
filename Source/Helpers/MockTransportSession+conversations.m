@@ -100,6 +100,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     else if ([request matchesWithPath:@"/conversations/*/bots/*" method:ZMMethodDELETE]) {
         return [self processDeleteBotRequest:request];
+    } else if ([request matchesWithPath:@"/conversations/*/access" method:ZMMethodPUT]) {
+        return [self processAccessModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];

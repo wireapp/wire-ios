@@ -42,6 +42,8 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic) BOOL otrMuted;
 
 @property (nonatomic, nullable) MockUser *creator;
+@property (nonatomic, nonnull) NSArray<NSString *> *accessMode;
+@property (nonatomic, nonnull) NSString* accessRole;
 @property (nonatomic, nonnull) NSString *identifier;
 @property (nonatomic, nonnull) NSString *selfIdentifier;
 @property (nonatomic, readonly, nullable) NSString *name;
