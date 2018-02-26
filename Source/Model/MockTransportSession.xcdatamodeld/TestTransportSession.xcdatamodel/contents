@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="17C88" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="13241" systemVersion="17D102" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -17,6 +17,8 @@
         <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="connectionsTo" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Conversation" representedClassName="MockConversation" syncable="YES">
+        <attribute name="accessMode" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="accessRole" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="otrArchived" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
@@ -136,7 +138,7 @@
     <elements>
         <element name="Asset" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="240"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="270"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>

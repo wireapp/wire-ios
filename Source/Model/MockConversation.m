@@ -48,6 +48,8 @@
 @dynamic otrMuted;
 @dynamic otrMutedRef;
 @dynamic team;
+@dynamic accessRole;
+@dynamic accessMode;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
@@ -60,6 +62,8 @@
     [conversation addUsersByUser:creator addedUsers:addedUsers.array];
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
+    conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
+    conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     [conversation.mutableActiveUsers addObject:creator];
     return conversation;
 }
@@ -74,6 +78,8 @@
     conversation.identifier = [NSUUID createUUID].transportString;
     conversation.creator = creator;
     [conversation.mutableActiveUsers addObject:creator];
+    conversation.accessMode = [MockConversation defaultAccessModeWithConversationType:type team:nil];
+    conversation.accessRole = [MockConversation defaultAccessRoleWithConversationType:type team:nil];
     return conversation;
 }
 
@@ -160,7 +166,8 @@
     data[@"name"] = self.name ?: [NSNull null];
     data[@"id"] = self.identifier ?: [NSNull null];
     data[@"type"] = self.transportConversationType;
-    
+    data[@"access"] = self.accessMode;
+    data[@"access_role"] = self.accessRole;
     data[@"team"] = self.team.identifier ?: [NSNull null];
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];

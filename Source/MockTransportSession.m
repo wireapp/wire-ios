@@ -520,14 +520,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
-- (MockConversation *)fetchConversationWithIdentifier:(NSString *)conversationID;
-{
-    NSFetchRequest *request = [MockConversation sortedFetchRequest];
-    request.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", conversationID.lowercaseString];
-    NSArray *conversations = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    NSAssert(conversations.count == 1, @"Not found");
-    return conversations[0];
-}
+
 
 
 - (MockUser *)fetchUserWithIdentifier:(NSString *)userID;

@@ -55,7 +55,7 @@
     }
     NSString *message = [payload stringForKey:@"message"];
     if (message == nil) {
-        return [self errorResponseWithCode:400 reason:@"Missing \"invitee_name\" field"];
+        return [self errorResponseWithCode:400 reason:@"Missing \"message\" field"];
     }
     
     NSString *inviteeEmail = [payload optionalStringForKey:@"email"];

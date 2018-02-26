@@ -23,11 +23,35 @@ extension MockConversation {
     @objc public static func insertConversationInto(context: NSManagedObjectContext, withCreator creator: MockUser, forTeam team: MockTeam, users:[MockUser]) -> MockConversation {
         let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
         conversation.type = .group
+        (conversation.accessMode, conversation.accessRole) = defaultAccess(conversationType: .group, team: team)
         conversation.team = team
         conversation.identifier = UUID.create().transportString()
         conversation.creator = creator
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: users)
         return conversation
+    }
+
+    @objc public static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
+        let (accessMode, _) = defaultAccess(conversationType: conversationType, team: team)
+        return accessMode
+    }
+
+    @objc public static func defaultAccessRole(conversationType: ZMTConversationType, team: MockTeam?) -> String {
+        let (_, accessRole) = defaultAccess(conversationType: conversationType, team: team)
+        return accessRole
+    }
+
+    public static func defaultAccess(conversationType: ZMTConversationType, team: MockTeam?) -> ([String], String) {
+        switch (team, conversationType) {
+        case (.some, .group):
+            return (["invite"], "activated")
+        case (.some, _):
+            return (["private"], "private")
+        case (.none, .group):
+            return (["invite"], "activated")
+        case (.none, _):
+            return (["private"], "private")
+        }
     }
 }
 
