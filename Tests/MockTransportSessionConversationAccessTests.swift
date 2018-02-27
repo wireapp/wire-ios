@@ -92,6 +92,8 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         // then
         XCTAssertEqual(response?.httpStatus, 200)
         guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        XCTAssertEqual(receivedPayload["type"] as? String, "conversation.access-update")
+        XCTAssertEqual(receivedPayload["conversation"] as? String, conversation.identifier)
         guard let payloadData = receivedPayload["data"] as? [String: Any] else { XCTFail(); return }
         guard let responseRole = payloadData["access_role"] as? String else { XCTFail(); return }
         guard let responseAccess = payloadData["access"] as? [String] else { XCTFail(); return }
