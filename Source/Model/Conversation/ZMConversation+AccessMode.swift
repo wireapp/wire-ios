@@ -77,14 +77,14 @@ public enum ConversationAccessRole: String {
     /// Only the team member can join.
     case team = "team"
     /// Only users who have verified their phone number / email can join.
-    case verified = "verified"
+    case activated = "activated"
     /// Any user can join.
-    case nonVerified = "non_verified"
+    case nonActivated = "non_activated"
 }
 
 public extension ConversationAccessRole {
     public static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessRole {
-        return allowGuests ? ConversationAccessRole.nonVerified : ConversationAccessRole.team
+        return allowGuests ? ConversationAccessRole.nonActivated : ConversationAccessRole.team
     }
 }
 
@@ -96,7 +96,7 @@ public extension ZMConversation {
     /// Controls the values of `accessMode` and `accessRole`.
     public var allowGuests: Bool {
         get {
-            return accessMode != .teamOnly && accessRole == .nonVerified
+            return accessMode != .teamOnly && accessRole == .nonActivated
         }
         set {
             accessMode = ConversationAccessMode.value(forAllowGuests: newValue)
