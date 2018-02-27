@@ -66,7 +66,11 @@ final class ConversationCreationController: UIViewController {
     fileprivate let errorViewContainer = UIView()
     private let mainViewContainer = UIView()
     private let bottomViewContainer = UIView()
-    private let toggleView = ToggleView(title: "conversation.create.toggle.title".localized, isOn: true)
+    private let toggleView = ToggleView(
+        title: "conversation.create.toggle.title".localized,
+        isOn: true,
+        accessibilityIdentifier: "toggle.newgroup.allowguests"
+    )
     private let toggleSubtitleLabel = UILabel(
         key: "conversation.create.toggle.subtitle",
         size: .small,
