@@ -32,12 +32,13 @@ final class ToggleView: UIView {
         get { return toggle.isOn }
     }
     
-    init(title: String, isOn: Bool) {
+    init(title: String, isOn: Bool, accessibilityIdentifier: String) {
         self.title = title
         super.init(frame: .zero)
         setupViews()
         createConstraints()
         toggle.isOn = isOn
+        toggle.accessibilityIdentifier = accessibilityIdentifier
     }
     
     required init?(coder aDecoder: NSCoder) {
