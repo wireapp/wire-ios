@@ -83,7 +83,7 @@
                                                    queue:self.queue
                                                    group:self.fakeUIContext.dispatchGroup
                                            networkSocket:self.networkSocketMock
-                                      networkSocketQueue:self.queue
+                                      networkSocketQueue:nil
                                                      url:self.URL
                                   additionalHeaderFields:nil];
     self.receivedData = [NSMutableArray array];
@@ -242,7 +242,7 @@
                                                    queue:self.queue
                                                    group:self.fakeUIContext.dispatchGroup
                                            networkSocket:self.networkSocketMock
-                                      networkSocketQueue:self.queue
+                                      networkSocketQueue:nil
                                                      url:self.URL
                                   additionalHeaderFields:extraHeaders];
     __block NSData *sentData;

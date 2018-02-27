@@ -97,6 +97,8 @@ ZM_EMPTY_ASSERTING_INIT();
 }
 
 - (void)dealloc {
+    [self.pushChannel close];
+    self.pushChannel = nil;
     [self.scheduler tearDown];
 }
 
