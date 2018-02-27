@@ -35,9 +35,9 @@ final public class ConversationCreationValues {
 open class ConversationCreationTitleFactory {
     static func createTitleLabel(for title: String, variant: ColorSchemeVariant) -> UILabel {
         let titleLabel = UILabel()
-        titleLabel.font = FontSpec(.normal, .medium).font!.allCaps()
+        titleLabel.font = FontSpec(.small, .semibold).font
         titleLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorIconNormal, variant: variant)
-        titleLabel.text = title
+        titleLabel.text = title.uppercased()
         titleLabel.sizeToFit()
         return titleLabel
     }
@@ -84,7 +84,6 @@ final class ConversationCreationController: UIViewController {
     fileprivate let nextButton = ButtonWithLargerHitArea(type: .custom)
 
     private var textField = SimpleTextField()
-    private var textFieldValidator = SimpleTextFieldValidator()
     fileprivate var secondaryErrorView: UIView?
     
     fileprivate var values: ConversationCreationValues?
@@ -319,6 +318,7 @@ extension ConversationCreationController: AddParticipantsConversationCreationDel
 // MARK: - SimpleTextFieldDelegate
 
 extension ConversationCreationController: SimpleTextFieldDelegate {
+    
     func textField(_ textField: SimpleTextField, valueChanged value: SimpleTextField.Value) {
         clearError()
         switch value {
@@ -330,6 +330,10 @@ extension ConversationCreationController: SimpleTextFieldDelegate {
 
     func textFieldReturnPressed(_ textField: SimpleTextField) {
         tryToProceed()
+    }
+    
+    func textFieldDidEndEditing(_ textField: SimpleTextField) {
+        
     }
 }
 
