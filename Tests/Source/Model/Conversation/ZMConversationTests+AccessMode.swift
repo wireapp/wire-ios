@@ -107,7 +107,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     }
     
     func testThatChangingAllowGuestsSetsAccessModeStrings() {
-        [(true, ["code", "invite"], ConversationAccessRole.nonVerified.rawValue),
+        [(true, ["code", "invite"], ConversationAccessRole.nonActivated.rawValue),
          (false, [], ConversationAccessRole.team.rawValue)].forEach {
             // when
             sut.allowGuests = $0.0
@@ -118,9 +118,9 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     }
     
     func testThatAccessModeStringsChangingAllowGuestsSets() {
-        [(true, ["code", "invite"], ConversationAccessRole.nonVerified.rawValue),
+        [(true, ["code", "invite"], ConversationAccessRole.nonActivated.rawValue),
          (false, [], ConversationAccessRole.team.rawValue),
-         (true, ["invite"], ConversationAccessRole.nonVerified.rawValue)].forEach {
+         (true, ["invite"], ConversationAccessRole.nonActivated.rawValue)].forEach {
             // when
             sut.accessModeStrings = $0.1
             sut.accessRoleString = $0.2
@@ -137,7 +137,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
                                                                   in: team)!
         // then
         XCTAssertEqual(conversation.accessModeStrings!, ["code", "invite"])
-        XCTAssertEqual(conversation.accessRoleString!, ConversationAccessRole.nonVerified.rawValue)
+        XCTAssertEqual(conversation.accessRoleString!, ConversationAccessRole.nonActivated.rawValue)
     }
     
     func testThatTheConversationIsInsertedWithCorrectAccessModeAccessRole_Default_NoTeam() {
@@ -152,7 +152,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     }
     
     func testThatTheConversationIsInsertedWithCorrectAccessModeAccessRole() {
-        [(true, ["code", "invite"], ConversationAccessRole.nonVerified.rawValue),
+        [(true, ["code", "invite"], ConversationAccessRole.nonActivated.rawValue),
          (false, [], ConversationAccessRole.team.rawValue)].forEach {
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.uiMOC,
@@ -166,8 +166,8 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
         }
     }
     
-    let testSetAccessRole: [(ConversationAccessRole?, String?)] = [(ConversationAccessRole.verified, "verified"),
-                                                                   (ConversationAccessRole.nonVerified, "non_verified"),
+    let testSetAccessRole: [(ConversationAccessRole?, String?)] = [(ConversationAccessRole.activated, "activated"),
+                                                                   (ConversationAccessRole.nonActivated, "non_activated"),
                                                                    (ConversationAccessRole.team, "team"),
                                                                    (nil, nil)]
     

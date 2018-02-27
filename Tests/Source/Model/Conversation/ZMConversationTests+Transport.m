@@ -41,7 +41,7 @@
                                        silencedRef:silencedRef
                                             teamID:nil
                                         accessMode:@[]
-                                        accessRole:@"non_verified"];
+                                        accessRole:@"non_activated"];
 }
 
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation
@@ -56,7 +56,7 @@
                                        silencedRef:nil
                                             teamID:nil
                                         accessMode:@[]
-                                        accessRole:@"non_verified"];
+                                        accessRole:@"non_activated"];
 }
 
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation
@@ -225,7 +225,7 @@
                                                            silencedRef:nil
                                                                 teamID:teamID
                                                             accessMode:@[]
-                                                            accessRole:@"non_verified"];
+                                                            accessRole:@"non_activated"];
 
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
@@ -278,7 +278,7 @@
                                                            silencedRef:nil
                                                                 teamID:team.remoteIdentifier
                                                             accessMode:@[]
-                                                            accessRole:@"non_verified"];
+                                                            accessRole:@"non_activated"];
 
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
@@ -332,7 +332,7 @@
                                                            silencedRef:nil
                                                                 teamID:nil
                                                             accessMode:@[]
-                                                            accessRole:@"non_verified"];
+                                                            accessRole:@"non_activated"];
 
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
@@ -379,14 +379,14 @@
                                                            silencedRef:nil
                                                                 teamID:nil
                                                             accessMode:@[@"invite", @"code"]
-                                                            accessRole:@"non_verified"];
+                                                            accessRole:@"non_activated"];
         
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
         XCTAssertTrue(conversation.allowGuests);
-        XCTAssertEqual(conversation.accessRoleString, @"non_verified");
+        XCTAssertEqual(conversation.accessRoleString, @"non_activated");
         BOOL arraysEqual = [conversation.accessModeStrings isEqual:@[@"invite", @"code"]];
         XCTAssertTrue(arraysEqual);
     }];

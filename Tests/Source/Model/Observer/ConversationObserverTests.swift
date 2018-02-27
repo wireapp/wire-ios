@@ -466,7 +466,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.accessRole = .verified },
+                                                     modifier: { conversation, _ in conversation.accessRole = .activated },
                                                      expectedChangedField: "allowGuestsChanged",
                                                      expectedChangedKeys: [#keyPath(ZMConversation.accessRoleString)])
     }
