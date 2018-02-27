@@ -67,6 +67,63 @@ public extension MockTransportSession {
     }
 }
 
+// MARK: - Conversations
+extension MockTransportSession {
+
+    func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
+        return conversations
+            .flatMap { object -> MockConversation? in
+                object as? MockConversation
+            }.filter { conversation -> Bool in
+                conversation.type != .invalid && conversation.selfIdentifier == self.selfUser.identifier
+            }
+    }
+
+    @objc(pushEventsForInsertedConversations:updated:shouldSendEventsToSelfUser:)
+    public func pushEventsForConversations(inserted: Set<NSManagedObject>, updated: Set<NSManagedObject>, shouldSendEventsToSelfUser: Bool) -> [MockPushEvent] {
+        guard shouldSendEventsToSelfUser else { return [] }
+
+        let insertedPayloads: [ZMTransportData] = relevant(conversations: inserted)
+            .filter { conversation -> Bool in
+                if let team = conversation.team {
+                    return !team.contains(user: self.selfUser) // Team conversations where you are a member are handled separately
+                } else {
+                    return true
+                }
+            }
+            .map { conversation -> ZMTransportData in
+                let payload: [String: Any] = [
+                    "type" : "conversation.create",
+                    "data" : conversation.transportData(),
+                    "conversation" : conversation.identifier,
+                    "time" : Date().transportString()
+                ]
+                return payload as ZMTransportData
+            }
+
+        let updatedPayloads: [ZMTransportData] = relevant(conversations: updated)
+            .filter { conversation -> Bool in
+                conversation.changePushPayload != nil
+            }
+            .map { conversation -> ZMTransportData in
+                let payload: [String: Any] = [
+                    "type" : "conversation.access-update",
+                    "data" : conversation.changePushPayload!,
+                    "conversation" : conversation.identifier,
+                    "time" : Date().transportString()
+                ]
+                return payload as ZMTransportData
+            }
+
+        let insertedEvents = (insertedPayloads + updatedPayloads)
+            .map { payload -> MockPushEvent in
+                MockPushEvent(with: payload, uuid: NSUUID.timeBasedUUID() as UUID, isTransient: false, isSilent: false)
+            }
+
+        return insertedEvents
+    }
+}
+
 
 extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
 

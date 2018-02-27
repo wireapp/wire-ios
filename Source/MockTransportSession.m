@@ -944,7 +944,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                      shouldSendEventsToSelfUser:(BOOL)shouldSendEventsToSelfUser
 {
     NSMutableArray *pushEvents = [NSMutableArray array];
-    [pushEvents addObjectsFromArray:[self pushEventsForInsertedConversations:inserted includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
+    [pushEvents addObjectsFromArray:[self pushEventsForInsertedConversations:inserted updated:updated shouldSendEventsToSelfUser:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedEvents:inserted includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForUpdatedUsers:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
     [pushEvents addObjectsFromArray:[self pushEventsForInsertedConnections:inserted updated:updated includeEventsForUserThatInitiatedChanges:shouldSendEventsToSelfUser]];
@@ -985,36 +985,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                       @"client" : @{ @"id" : userClient.identifier },
                                       @"type" : @"user.client-remove"
                                       };
-            [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
-        }
-    }
-    return pushEvents;
-}
-
-- (NSArray *)pushEventsForInsertedConversations:(NSSet *)inserted includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
-{
-    if(!includeEventsForUserThatInitiatedChanges) {
-        return @[];
-    }
-    NSMutableArray *pushEvents = [NSMutableArray array];
-    for(NSManagedObject* mo in inserted) {
-        if([mo isKindOfClass:MockConversation.class] && includeEventsForUserThatInitiatedChanges) {
-            MockConversation *conversation = (MockConversation *)mo;
-            if (conversation.type == ZMTConversationTypeInvalid ||
-                conversation.selfIdentifier == nil ||
-                ![conversation.selfIdentifier isEqual:self.selfUser.identifier] ||
-                (conversation.team != nil && [conversation.team containsUser:self.selfUser])) // Team conversations where you are a member are handled separately
-            {
-                continue; // Conversation that's not visible to the user
-            }
-            
-            NSDictionary *payload = @{
-                                      @"type" : @"conversation.create",
-                                      @"data" : conversation.transportData,
-                                      @"conversation" : conversation.identifier,
-                                      @"time": NSDate.date.transportString
-                                      };
-            
             [pushEvents addObject:[MockPushEvent eventWithPayload:payload uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
         }
     }
