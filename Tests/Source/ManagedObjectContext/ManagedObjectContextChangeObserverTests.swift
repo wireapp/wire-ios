@@ -32,7 +32,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
 
         // when
         uiMOC.perform {
-            ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
+            _ = ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         }
 
         // then
@@ -91,7 +91,7 @@ class ManagedObjectContextChangeObserverTests : ZMBaseManagedObjectTest {
         _ = sut
         sut = nil
         uiMOC.perform {
-            ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
+            _ = ZMMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
         }
 
         // then

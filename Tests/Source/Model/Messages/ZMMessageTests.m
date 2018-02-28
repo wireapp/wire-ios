@@ -1241,6 +1241,57 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(imageData.length, jpegData.length);
 }
 
+- (void)testThatFlagIsSetWhenSenderIsTheOnlyUser
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.conversationType = ZMConversationTypeGroup;
+    XCTAssertNotNil(conversation);
+
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [NSUUID createUUID];
+
+    // add selfUser to the conversation
+    __block ZMSystemMessage *message;
+    [self performPretendingUiMocIsSyncMoc:^{
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier] senderID:sender.remoteIdentifier];
+    }];
+    [self.uiMOC saveOrRollback];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+
+    // then
+    XCTAssertTrue(message.userIsTheSender);
+}
+
+- (void)testThatFlagIsNotSetWhenSenderIsNotTheOnlyUser
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.conversationType = ZMConversationTypeGroup;
+    XCTAssertNotNil(conversation);
+
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [NSUUID createUUID];
+
+    // add selfUser to the conversation
+    __block ZMSystemMessage *message;
+    [self performPretendingUiMocIsSyncMoc:^{
+        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationMemberJoin inConversation:conversation withUsersIDs:@[sender.remoteIdentifier, user.remoteIdentifier] senderID:sender.remoteIdentifier];
+    }];
+    [self.uiMOC saveOrRollback];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+
+    // then
+    XCTAssertFalse(message.userIsTheSender);
+}
+
 @end
 
 
