@@ -42,6 +42,8 @@ class ProfileTitleView : UIView {
     }
     
     private func setupViews() {
+        verifiedImageView.accessibilityIdentifier = "VerifiedShield"
+        
         titleLabel.accessibilityIdentifier = "name"
         titleLabel.textAlignment = .center
         titleLabel.backgroundColor = .clear
