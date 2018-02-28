@@ -40,7 +40,7 @@ class GroupDetailsParticipantCell: UICollectionViewCell {
         didSet {
             backgroundColor = isHighlighted
                 ? .init(white: 0, alpha: 0.08)
-                : .wr_color(fromColorScheme: ColorSchemeColorTextBackground, variant: variant)
+                : .wr_color(fromColorScheme: ColorSchemeColorBarBackground, variant: variant)
         }
     }
     
@@ -144,12 +144,10 @@ class GroupDetailsParticipantCell: UICollectionViewCell {
     }
     
     private func configureColors() {
-        let separatorColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorSeparator, variant: variant)
-        
-        backgroundColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorTextBackground, variant: variant)
-        separator.backgroundColor = separatorColor
-        guestIconView.image = UIImage(for: .guest, iconSize: .tiny, color: separatorColor)
-        accessoryActionButton.setIconColor(separatorColor, for: .normal)
+        backgroundColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorBarBackground, variant: variant)
+        separator.backgroundColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorSeparator, variant: variant)
+        guestIconView.image = UIImage(for: .guest, iconSize: .tiny, color: UIColor.wr_color(fromColorScheme: ColorSchemeColorSectionText, variant: variant))
+        accessoryActionButton.setIconColor(UIColor.wr_color(fromColorScheme: ColorSchemeColorSectionText, variant: variant), for: .normal)
         titleLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground, variant: variant)
         subtitleLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorSectionText, variant: variant)
     }
