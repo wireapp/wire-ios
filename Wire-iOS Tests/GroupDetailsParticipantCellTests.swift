@@ -37,6 +37,17 @@ class GroupDetailsParticipantCellTests: ZMSnapshotTestCase {
         return cell
     }
     
+    func testServiceUser() {
+        MockUser.mockSelf().isTeamMember = true
+        let user = MockUser.mockUsers()[0]
+        let mockUser = MockUser(for: user)
+        mockUser?.isServiceUser = true
+        
+        verify(view: cell({ (cell) in
+            cell.configure(with: user)
+        }))
+    }
+    
     func testNonTeamUser() {
         let user = MockUser.mockUsers()[0]
         
