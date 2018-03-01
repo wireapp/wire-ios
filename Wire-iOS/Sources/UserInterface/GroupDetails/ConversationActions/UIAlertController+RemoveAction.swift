@@ -18,23 +18,16 @@
 
 import Foundation
 
-protocol CellConfigurationConfigurable: Reusable {
-    func configure(with configuration: CellConfiguration, variant: ColorSchemeVariant)
-}
 
-enum CellConfiguration {
-    typealias Action = () -> Void
-    case toggle(title: String, subtitle: String, accessibilityIdentifier: String, get: () -> Bool, set: (Bool) -> Void)
-    
-    var cellType: CellConfigurationConfigurable.Type {
-        switch self {
-        case .toggle: return ToggleSubtitleCell.self
-        }
-    }
-    
-    var action: Action? {
-        switch self {
-        case .toggle: return nil
-        }
+extension UIAlertController {
+    static func remove(_ user: ZMUser, completion: @escaping (Bool) -> Void) -> UIAlertController {
+        let controller = UIAlertController(
+            title: nil,
+            message: "profile.remove_dialog_message".localized(args: user.displayName),
+            preferredStyle: .actionSheet
+        )
+        controller.addAction(ZMConversation.Action.remove.alertAction { completion(true) })
+        controller.addAction(.cancel { completion(false) })
+        return controller
     }
 }
