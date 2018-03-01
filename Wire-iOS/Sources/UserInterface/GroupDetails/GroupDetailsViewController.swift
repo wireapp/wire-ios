@@ -189,7 +189,7 @@ extension GroupDetailsViewController: ConversationActionControllerRenameDelegate
 extension GroupDetailsViewController: ViewControllerDismissable, ProfileViewControllerDelegate {
     
     func viewControllerWants(toBeDismissed controller: UIViewController!, completion: (() -> Void)!) {
-        navigationController?.popViewController(animated: true)
+        navigationController?.popViewController(animated: true, completion: completion)
     }
     
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
