@@ -53,11 +53,6 @@ final class ConversationOptionsViewController: UIViewController, UITableViewDele
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationItem.rightBarButtonItem = navigationController?.closeItem()
-        navigationItem.leftBarButtonItem = backItem()
-        navigationController?.navigationBar.titleTextAttributes = [
-            NSFontAttributeName: FontSpec(.small, .semibold).font!,
-            NSForegroundColorAttributeName: UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground, variant: variant)
-        ]
     }
     
     required init?(coder aDecoder: NSCoder) {

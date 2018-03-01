@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2018 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,16 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 
-extension UIBarButtonItem {
-
-    convenience init(icon: ZetaIconType, style: UIBarButtonItemStyle = .plain, target: Any?, action: Selector?) {
-        self.init(
-            image: UIImage(for: icon, iconSize: .tiny, color: ColorScheme.default().color(withName: ColorSchemeColorTextForeground)),
-            style: style,
-            target: target,
-            action: action
-        )
+extension UIViewController {
+    
+    func hideDefaultButtonTitle() {
+        guard navigationItem.backBarButtonItem == nil else { return }
+        
+        hideBackButtonTitle()
+    }
+    
+    func hideBackButtonTitle() {
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
     
 }
