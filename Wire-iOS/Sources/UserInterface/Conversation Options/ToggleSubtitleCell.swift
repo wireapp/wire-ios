@@ -50,6 +50,7 @@ final class ToggleSubtitleCell: UITableViewCell, CellConfigurationConfigurable {
         subtitleLabel.font = FontSpec(.small, .regular).font
         titleLabel.font = FontSpec(.normal, .regular).font
         titleLabel.accessibilityIdentifier = "label.guestoptions.description"
+        accessibilityElements = [titleLabel, toggle]
     }
     
     private func createConstraints() {
