@@ -136,8 +136,6 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
 
 - (void)setupConstraints
 {
-    [self.stackView autoPinEdgeToSuperviewEdge:ALEdgeLeading];
-    [self.stackView autoPinEdgeToSuperviewEdge:ALEdgeTrailing];
     [self.stackView autoCenterInSuperview];
     
     [self.stackViewContainer autoPinEdgeToSuperviewEdge:ALEdgeTop];
