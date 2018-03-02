@@ -23,9 +23,14 @@ class RenameGroupSectionController: NSObject, _CollectionViewSectionController {
     fileprivate var validName : String? = nil
     fileprivate var conversation: ZMConversation
     fileprivate var renameCell : GroupDetailsRenameCell?
+    fileprivate var token : AnyObject?
     
     init(conversation: ZMConversation) {
         self.conversation = conversation
+        
+        super.init()
+        
+        self.token = ConversationChangeInfo.add(observer: self, for: conversation)
     }
     
     func focus() {
@@ -42,7 +47,7 @@ class RenameGroupSectionController: NSObject, _CollectionViewSectionController {
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: GroupDetailsRenameCell.zm_reuseIdentifier, for: indexPath) as! GroupDetailsRenameCell
-        cell.titleTextField.text = conversation.displayName
+        cell.configure(for: conversation)
         cell.titleTextField.textFieldDelegate = self
         renameCell = cell
         return cell
@@ -54,6 +59,16 @@ class RenameGroupSectionController: NSObject, _CollectionViewSectionController {
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         focus()
+    }
+    
+}
+
+extension RenameGroupSectionController : ZMConversationObserver {
+    
+    func conversationDidChange(_ changeInfo: ConversationChangeInfo) {
+        guard changeInfo.securityLevelChanged || changeInfo.nameChanged else { return }
+        
+        renameCell?.configure(for: conversation)
     }
     
 }
