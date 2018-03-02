@@ -154,10 +154,10 @@ class GroupDetailsParticipantCell: UICollectionViewCell, Themeable {
         subtitleLabel.textColor = UIColor.wr_color(fromColorScheme: ColorSchemeColorSectionText, variant: colorSchemeVariant)
     }
     
-    public func configure(with user: ZMBareUser) {
+    public func configure(with user: ZMBareUser, conversation: ZMConversation) {
         avatar.user = user
         titleLabel.attributedText = user.nameIncludingAvailability(color: UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground, variant: colorSchemeVariant))
-        guestIconView.isHidden = !ZMUser.selfUser().isTeamMember || user.isTeamMember || user.isServiceUser
+        guestIconView.isHidden = !user.isGuest(in: conversation)
         
         if let user = user as? ZMUser {
             verifiedIconView.isHidden = !user.trusted() || user.clients.isEmpty
