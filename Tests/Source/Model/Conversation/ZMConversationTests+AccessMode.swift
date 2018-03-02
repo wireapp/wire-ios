@@ -118,14 +118,19 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
     }
     
     func testThatAccessModeStringsChangingAllowGuestsSets() {
-        [(true, ["code", "invite"], ConversationAccessRole.nonActivated.rawValue),
-         (false, [], ConversationAccessRole.team.rawValue),
-         (true, ["invite"], ConversationAccessRole.nonActivated.rawValue)].forEach {
+        let values = [
+            (true, ["code", "invite"], ConversationAccessRole.nonActivated.rawValue),
+            (false, [], ConversationAccessRole.team.rawValue),
+            (true, ["invite"], ConversationAccessRole.nonActivated.rawValue),
+            (true, ["invite"], ConversationAccessRole.activated.rawValue)
+        ]
+
+        for (allowGuests, accessMode, accessRole) in values {
             // when
-            sut.accessModeStrings = $0.1
-            sut.accessRoleString = $0.2
+            sut.accessModeStrings = accessMode
+            sut.accessRoleString = accessRole
             // then
-            XCTAssertEqual(sut.allowGuests, $0.0)
+            XCTAssertEqual(sut.allowGuests, allowGuests)
         }
     }
     
