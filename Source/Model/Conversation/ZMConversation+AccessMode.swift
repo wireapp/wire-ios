@@ -92,11 +92,12 @@ public extension ZMConversation {
     @NSManaged @objc dynamic internal var accessModeStrings: [String]?
     @NSManaged @objc dynamic internal var accessRoleString: String?
     
-    /// If set to true, then any user can join the conversation.
+    /// If set to false, only team member can join the conversation.
+    /// True means that a regular guest OR wireless guests could join
     /// Controls the values of `accessMode` and `accessRole`.
     public var allowGuests: Bool {
         get {
-            return accessMode != .teamOnly && accessRole == .nonActivated
+            return accessMode != .teamOnly && accessRole != .team
         }
         set {
             accessMode = ConversationAccessMode.value(forAllowGuests: newValue)
