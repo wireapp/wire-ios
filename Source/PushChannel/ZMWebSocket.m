@@ -190,13 +190,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         ZMSDispatchGroup *group = self.consumerGroup;
         self.consumerQueue = nil;
         self.consumerGroup = nil;
-        
-        // `networkSocketQueue` is specially created to handle all the actions on the `networkSocket`.
-        // therefore it should be safe to dispatch sync on it: it must not be blocked with other
-        // activity.
-        dispatch_sync(self.networkSocketQueue, ^{
+        [group asyncOnQueue:self.networkSocketQueue block:^{
             [self.networkSocket close];
-        });
+        }];
         NSHTTPURLResponse *response = self.response;
         self.response = nil;
         id<ZMWebSocketConsumer> consumer = self.consumer;

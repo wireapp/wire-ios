@@ -207,6 +207,10 @@ ZM_EMPTY_ASSERTING_INIT();
             [scheduler processCompletedURLResponse:response URLError:nil];
         }];
     }
+    
+    if (channel == self.pushChannel) {
+        self.pushChannel = nil;
+    }
 }
 
 - (void)pushChannelDidOpen:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
