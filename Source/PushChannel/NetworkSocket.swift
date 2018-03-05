@@ -84,7 +84,17 @@ import Foundation
     
     deinit {
         if state != .stopped {
-            close(syncDelegate: true)
+            if isOnQueue() {
+                close(syncDelegate: true)
+            }
+            else {
+                // `queue` is specially created to handle all the actions on the `networkSocket`.
+                // therefore it should be safe to dispatch sync on it: it must not be blocked with other
+                // activity.
+                queue.sync {
+                    close(syncDelegate: true)
+                }
+            }
         }
     }
     
