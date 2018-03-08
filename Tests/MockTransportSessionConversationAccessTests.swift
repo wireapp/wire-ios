@@ -102,4 +102,81 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         XCTAssertEqual(responseRole, role)
         XCTAssertEqual(responseAccess, access)
     }
+    
+    func testThatItCanCreateTheLink() {
+        // given
+        self.conversation.accessMode = ["code", "invite"]
+        // when
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodPOST)
+        
+        // then
+        XCTAssertEqual(response?.httpStatus, 200)
+        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        
+        XCTAssertEqual(receivedPayload["type"] as? String, "conversation.code-update")
+        XCTAssertEqual(receivedPayload["conversation"] as? String, conversation.identifier)
+        guard let payloadData = receivedPayload["data"] as? [String: Any] else { XCTFail(); return }
+        XCTAssertNotNil(payloadData["uri"])
+        XCTAssertNotNil(payloadData["code"])
+        XCTAssertNotNil(payloadData["key"])
+        
+        XCTAssertNotNil(conversation.link)
+    }
+    
+    func testThatItCannotCreateLinkWhenNoAccessMode() {
+        // given
+        self.conversation.accessMode = ["invite"]
+        // when
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodPOST)
+        // then
+        XCTAssertEqual(response?.httpStatus, 403)
+    }
+    
+    func testThatItCanFetchLinkWhenCreateLink() {
+        // given
+        let existingLink = "https://wire-website.com/some-other-link"
+        self.conversation.accessMode = ["code", "invite"]
+        self.conversation.link = existingLink
+        // when
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodPOST)
+        
+        // then
+        XCTAssertEqual(response?.httpStatus, 204)
+        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        
+        XCTAssertEqual(receivedPayload["uri"] as! String, existingLink)
+        XCTAssertNotNil(receivedPayload["code"])
+        XCTAssertNotNil(receivedPayload["key"])
+    }
+    
+    func testThatItCanFetchTheLink() {
+        // given
+        let existingLink = "https://wire-website.com/some-other-link"
+        self.conversation.accessMode = ["code", "invite"]
+        self.conversation.link = existingLink
+        // when
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodGET)
+        
+        // then
+        XCTAssertEqual(response?.httpStatus, 200)
+        guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
+        
+        XCTAssertEqual(receivedPayload["uri"] as! String, existingLink)
+        XCTAssertNotNil(receivedPayload["code"])
+        XCTAssertNotNil(receivedPayload["key"])
+    }
+    
+    func testThatItCanDeleteLink() {
+        // given
+        let existingLink = "https://wire-website.com/some-other-link"
+        self.conversation.accessMode = ["code", "invite"]
+        self.conversation.link = existingLink
+        // when
+        let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodDELETE)
+        
+        // then
+        XCTAssertEqual(response?.httpStatus, 200)
+        
+        XCTAssertEqual(conversation.link, nil)
+    }
 }

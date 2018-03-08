@@ -50,6 +50,7 @@
 @dynamic team;
 @dynamic accessRole;
 @dynamic accessMode;
+@dynamic link;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {

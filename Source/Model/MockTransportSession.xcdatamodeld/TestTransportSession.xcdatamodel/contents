@@ -20,6 +20,7 @@
         <attribute name="accessMode" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="accessRole" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="link" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="otrArchived" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="otrArchivedRef" optional="YES" attributeType="String" syncable="YES"/>
@@ -138,7 +139,7 @@
     <elements>
         <element name="Asset" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="270"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="285"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
