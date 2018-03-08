@@ -30,31 +30,107 @@ extension MockTransportSession {
 
     @objc(processAccessModeUpdateForConversation:payload:)
     public func processAccessModeUpdate(for conversationId: String, payload: [String : AnyHashable]) -> ZMTransportResponse {
-        if let conversation = fetchConversation(with: conversationId) {
-
-            guard let accessRole = payload["access_role"] as? String else {
-                return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
-            }
-            guard let access = payload["access"] as? [String] else {
-                return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
-            }
-
-            conversation.accessRole = accessRole
-            conversation.accessMode = access
-
-            let responsePayload = [
-                "conversation" : conversation.identifier,
-                "type" : "conversation.access-update",
-                "time" : NSDate().transportString(),
-                "from" : selfUser.identifier,
-                "data" : [
-                    "access_role" : conversation.accessRole,
-                    "access" : conversation.accessMode
-                ]
-            ] as ZMTransportData
-            return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
-        } else {
+        guard let conversation = fetchConversation(with: conversationId) else {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        guard let accessRole = payload["access_role"] as? String else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+        guard let access = payload["access"] as? [String] else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+
+        conversation.accessRole = accessRole
+        conversation.accessMode = access
+
+        let responsePayload = [
+            "conversation" : conversation.identifier,
+            "type" : "conversation.access-update",
+            "time" : NSDate().transportString(),
+            "from" : selfUser.identifier,
+            "data" : [
+                "access_role" : conversation.accessRole,
+                "access" : conversation.accessMode
+            ]
+        ] as ZMTransportData
+        return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    @objc(processFetchLinkForConversation:payload:)
+    public func processFetchLink(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        guard Set(conversation.accessMode) == Set(["invite", "code"]) else {
+            return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
+        }
+        
+        guard let link = conversation.link else {
+            return ZMTransportResponse(payload: ["label": "no-conversation-code"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        return ZMTransportResponse(payload: ["uri": link,
+                                             "key": "test-key",
+                                             "code": "test-code"] as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    @objc(processCreateLinkForConversation:payload:)
+    public func processCreateLink(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        guard Set(conversation.accessMode) == Set(["invite", "code"]) else {
+            return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
+        }
+        
+        // link already exists
+        if let link = conversation.link {
+            return ZMTransportResponse(payload: ["uri": link,
+                                                 "key": "test-key",
+                                                 "code": "test-code"] as ZMTransportData, httpStatus: 204, transportSessionError: nil)
+        }
+        // new link must be created
+        else {
+            let link = "https://wire-website.com/test-link"
+            
+            conversation.link = link
+            
+            let payload = [
+                    "conversation" : conversationId,
+                    "data" : [
+                        "uri" : link,
+                        "key" : "test-key",
+                        "code" : "test-code"
+                    ],
+                    "type" : "conversation.code-update",
+                    "time" : NSDate().transportString(),
+                    "from" : selfUser.identifier
+            ] as ZMTransportData
+            return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil)
+        }
+        
+    }
+    
+    @objc(processDeleteLinkForConversation:payload:)
+    public func processDeleteLink(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        guard Set(conversation.accessMode) == Set(["invite", "code"]) else {
+            return ZMTransportResponse(payload: ["label": "invalid-op"] as ZMTransportData, httpStatus: 403, transportSessionError: nil)
+        }
+        
+        // link already exists
+        if let _ = conversation.link {
+            conversation.link = nil
+            return ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+        }
+        // new link must be created
+        else {
+            return ZMTransportResponse(payload: nil, httpStatus: 403, transportSessionError: nil)
         }
     }
 }

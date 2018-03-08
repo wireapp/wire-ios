@@ -100,8 +100,18 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     else if ([request matchesWithPath:@"/conversations/*/bots/*" method:ZMMethodDELETE]) {
         return [self processDeleteBotRequest:request];
-    } else if ([request matchesWithPath:@"/conversations/*/access" method:ZMMethodPUT]) {
+    }
+    else if ([request matchesWithPath:@"/conversations/*/access" method:ZMMethodPUT]) {
         return [self processAccessModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodGET]) {
+        return [self processFetchLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodPOST]) {
+        return [self processCreateLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
+    else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodDELETE]) {
+        return [self processDeleteLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
