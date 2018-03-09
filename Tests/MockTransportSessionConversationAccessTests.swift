@@ -110,7 +110,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodPOST)
         
         // then
-        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertEqual(response?.httpStatus, 201)
         guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
         
         XCTAssertEqual(receivedPayload["type"] as? String, "conversation.code-update")
