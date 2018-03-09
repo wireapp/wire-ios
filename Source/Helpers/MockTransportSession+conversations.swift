@@ -108,7 +108,7 @@ extension MockTransportSession {
                     "time" : NSDate().transportString(),
                     "from" : selfUser.identifier
             ] as ZMTransportData
-            return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil)
+            return ZMTransportResponse(payload: payload, httpStatus: 201, transportSessionError: nil)
         }
         
     }
