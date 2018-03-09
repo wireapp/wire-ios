@@ -67,4 +67,28 @@ public extension ZMUser {
         }
     }
 
+    public var isWirelessUser: Bool {
+        return self.expiresAt != nil
+    }
+    
+    public var isExpired: Bool {
+        guard let expiresAt = self.expiresAt else {
+            return false
+        }
+        
+        return expiresAt.compare(Date()) != .orderedDescending
+    }
+    
+    public var expiresAfter: TimeInterval {
+        guard let expiresAt = self.expiresAt else {
+            return 0
+        }
+        
+        if expiresAt.timeIntervalSinceNow < 0 {
+            return 0
+        }
+        else {
+            return expiresAt.timeIntervalSinceNow
+        }
+    }
 }

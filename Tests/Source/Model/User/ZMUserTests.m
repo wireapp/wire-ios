@@ -276,7 +276,25 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
+    XCTAssertNil(user.expiresAt);
     XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
+}
+
+- (void)testThatItUpdatesExpirationAnExistingUser
+{
+    // given
+    NSDate *expireDate = [NSDate dateWithTimeIntervalSinceNow:60 * 10];
+    NSUUID *uuid = [NSUUID createUUID];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    payload[@"expires_at"] = [expireDate transportString];
+    
+    // when
+    [user updateWithTransportData:payload authoritative:NO];
+    
+    // then
+    XCTAssertEqualObjects(user.expiresAt.transportString, expireDate.transportString);
 }
 
 - (void)testThatItUpdatesBasicDataOnAnExistingUserWithoutAccentID
@@ -777,7 +795,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(handle, user.handle);
 }
 
-- (void)testThatOnInvalidJSonDataTheUserIsMarkedAsComplete
+- (void)testThatOnInvalidJsonDataTheUserIsMarkedAsComplete
 {
     // given
     NSUUID *uuid = [NSUUID createUUID];
@@ -797,7 +815,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 }
 
 
-- (void)testThatOnInvalidJSonFormatItDoesNotCrash
+- (void)testThatOnInvalidJsonFormatItDoesNotCrash
 {
     // given
     NSUUID *uuid = [NSUUID createUUID];

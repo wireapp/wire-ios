@@ -82,6 +82,7 @@ static NSString *const CreatedTeamsKey = @"createdTeams";
 static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
+static NSString *const ExpiresAtKey = @"expiresAt";
 
 @interface ZMBoxedSelfUser : NSObject
 
@@ -422,7 +423,8 @@ NSString *const AvailabilityKey = @"availability";
                                            MembershipKey,
                                            CreatedTeamsKey,
                                            ServiceIdentifierKey,
-                                           ProviderIdentifierKey
+                                           ProviderIdentifierKey,
+                                           ExpiresAtKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -564,6 +566,11 @@ NSString *const AvailabilityKey = @"availability";
     NSNumber *accentId = [transportData optionalNumberForKey:@"accent_id"];
     if (accentId != nil || authoritative) {
         self.accentColorValue = [ZMUser accentColorFromPayloadValue:accentId];
+    }
+    
+    NSDate *expiryDate = [transportData optionalDateForKey:@"expires_at"];
+    if (nil != expiryDate) {
+        self.expiresAt = expiryDate;
     }
     
     BOOL hasLocalModificationsForLegacyImages = [self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]];

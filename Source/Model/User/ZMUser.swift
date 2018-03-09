@@ -195,6 +195,8 @@ extension ZMUser {
     /// System messages referencing this user
     @NSManaged var systemMessages: Set<ZMSystemMessage>
     
+    @NSManaged var expiresAt: Date?
+    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         let key = size.userKeyPath

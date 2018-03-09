@@ -583,3 +583,35 @@ extension ZMUserTests {
         XCTAssertNil(sut.serviceIdentifier)
     }
 }
+
+// MARK: - Expiration support
+extension ZMUserTests {
+    func testIsWirelessUserCalculation_false() {
+        // given
+        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        // when & then
+        XCTAssertFalse(sut.isWirelessUser)
+        XCTAssertFalse(sut.isExpired)
+        XCTAssertEqual(sut.expiresAfter, 0)
+    }
+    
+    func testIsWirelessUserCalculation_true_not_expired() {
+        // given
+        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        sut.expiresAt = Date(timeIntervalSinceNow: 1)
+        // when & then
+        XCTAssertTrue(sut.isWirelessUser)
+        XCTAssertFalse(sut.isExpired)
+        XCTAssertEqual(round(sut.expiresAfter), 1)
+    }
+    
+    func testIsWirelessUserCalculation_true_expired() {
+        // given
+        let sut = ZMUser.insertNewObject(in: self.uiMOC)
+        sut.expiresAt = Date(timeIntervalSinceNow: -1)
+        // when & then
+        XCTAssertTrue(sut.isWirelessUser)
+        XCTAssertTrue(sut.isExpired)
+        XCTAssertEqual(round(sut.expiresAfter), 0)
+    }
+}
