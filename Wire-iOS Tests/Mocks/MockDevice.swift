@@ -17,11 +17,9 @@
 //
 
 import Foundation
+@testable import Wire
 
-protocol UserInterfaceIdiomProtocol {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { get }
-}
-
-extension UIDevice: UserInterfaceIdiomProtocol {
-
+final class MockDevice: DeviceProtocol {
+    var orientation: UIDeviceOrientation = .unknown
+    var userInterfaceIdiom: UIUserInterfaceIdiom = .unspecified
 }
