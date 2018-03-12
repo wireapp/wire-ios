@@ -271,7 +271,7 @@ static NSString *const ExpiresAtKey = @"expiresAt";
 
 - (BOOL)canBeConnected;
 {
-    if (self.isServiceUser) {
+    if (self.isServiceUser || self.isWirelessUser) {
         return NO;
     }
     return ! self.isConnected && ! self.isPendingApprovalByOtherUser;
