@@ -352,6 +352,42 @@ class DatabaseMigrationTests: DatabaseBaseTest {
             self.clearStorageFolder()
         }
     }
+    
+    func testThatTheVersionIdentifiersMatchModelNameAndDoNotDuplicate() throws {
+        // given
+        guard let source = Bundle(for: ZMMessage.self).url(forResource: "zmessaging", withExtension: "momd") else {
+            fatalError("missing resource")
+        }
+        let fm = FileManager.default
+    
+        let excludedModels = Set(["zmessaging.mom", "zmessaging2.9.mom", "zmessaging2.10.mom", "zmessaging2.11.mom"])
+        
+        let regex = try NSRegularExpression(pattern: "[0-9\\.]+[0-9]+")
+        
+        var processedVersions = Set<String>()
+        
+        try fm.contentsOfDirectory(atPath: source.path).filter { URL(fileURLWithPath: $0).pathExtension == "mom" } .forEach { modelFileName in
+            
+            let nameMatches = regex.matches(in: modelFileName, range: NSRange(modelFileName.startIndex..., in: modelFileName)).map {
+                String(modelFileName[Range($0.range, in: modelFileName)!])
+            }
+            
+            if excludedModels.contains(modelFileName) { // first version
+                return
+            }
+            
+            guard let version = nameMatches.first! else {
+                fatal("Wrong name format: \(modelFileName)")
+            }
+            
+            XCTAssertFalse(processedVersions.contains(version))
+            
+            let store = NSManagedObjectModel(contentsOf: source.appendingPathComponent(modelFileName))!
+            // then
+            XCTAssertTrue(store.versionIdentifiers.contains(version))
+            processedVersions.insert(version)
+        }
+    }
 }
 
 // MARK: - Helpers
