@@ -1219,6 +1219,23 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertFalse(user.canBeConnected);
 }
 
+- (void)testThatAWirelessUserCanNotBeConnectedTo
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.expiresAt = [NSDate date];
+    
+    // then
+    XCTAssertFalse(user.isPendingApprovalBySelfUser);
+    XCTAssertFalse(user.isConnected);
+    XCTAssertFalse(user.isBlocked);
+    XCTAssertFalse(user.isIgnored);
+    XCTAssertFalse(user.isPendingApprovalByOtherUser);
+    
+    XCTAssertFalse(user.canBeConnected);
+    XCTAssertTrue(user.isWirelessUser);
+}
+
 - (void)testThatConnectionsValuesAreFalseWhenThereIsNotAConnectionToTheSelfUser
 {
     // given
