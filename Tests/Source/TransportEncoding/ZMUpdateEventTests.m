@@ -47,6 +47,8 @@
              @"conversation.otr-asset-add" : @(ZMUpdateEventTypeConversationOtrAssetAdd),
              @"conversation.rename" : @(ZMUpdateEventTypeConversationRename),
              @"conversation.typing" : @(ZMUpdateEventTypeConversationTyping),
+             @"conversation.access-update" : @(ZMUpdateEventTypeConversationAccessModeUpdate),
+             @"conversation.code-update" : @(ZMUpdateEventTypeConversationCodeUpdate),
              @"user.connection" : @(ZMUpdateEventTypeUserConnection),
              @"user.new" : @(ZMUpdateEventTypeUserNew),
              @"user.push-remove" : @(ZMUpdateEventTypeUserPushRemove),
@@ -61,8 +63,7 @@
              @"team.member-leave" : @(ZMUpdateEventTypeTeamMemberLeave),
              @"team.member-update" : @(ZMUpdateEventTypeTeamMemberUpdate),
              @"team.conversation-create" : @(ZMUpdateEventTypeTeamConversationCreate),
-             @"team.conversation-delete" : @(ZMUpdateEventTypeTeamConversationDelete),
-             @"conversation.access-update" : @(ZMUpdateEventTypeConversationAccessModeUpdate)
+             @"team.conversation-delete" : @(ZMUpdateEventTypeTeamConversationDelete)
              };
 }
 
