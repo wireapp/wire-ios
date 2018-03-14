@@ -146,18 +146,35 @@
 
 + (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
-                                       nonce:(NSString *)nonce;
+                                       nonce:(NSString *)nonce
 {
-    ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:nil];
+    return [ZMGenericMessage messageWithEditMessage:messageID newText:newText nonce:nonce mentions:@[]];
+}
+
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                 linkPreview:(ZMLinkPreview *)linkPreview
+                                       nonce:(NSString *)nonce
+{
+    return [ZMGenericMessage messageWithEditMessage:messageID newText:newText linkPreview:linkPreview nonce:nonce mentions:@[]];
+}
+
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                       nonce:(NSString *)nonce
+                                    mentions:(NSArray<ZMMention *> *)mentions;
+{
+    ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:nil mentions:mentions];
     return [ZMGenericMessage genericMessageWithPbMessage:edited messageID:nonce expiresAfter:nil];
 }
 
 + (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
-                                       nonce:(NSString *)nonce;
+                                       nonce:(NSString *)nonce
+                                    mentions:(NSArray<ZMMention *> *)mentions;
 {
-    ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview];
+    ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview mentions:mentions];
     return [ZMGenericMessage genericMessageWithPbMessage:edited messageID:nonce expiresAfter:nil];
 }
 

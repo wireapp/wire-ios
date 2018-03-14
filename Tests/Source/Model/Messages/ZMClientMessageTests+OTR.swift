@@ -26,6 +26,109 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
 // MARK: - Payload creation
 extension ClientMessageTests_OTR {
 
+    func testThatItExcludesServicesWhenNotMentioned() {
+        self.syncMOC.performGroupedBlockAndWait {
+            let regularUser1 = ZMUser.insertNewObject(in: self.syncMOC)
+            regularUser1.remoteIdentifier = UUID.create()
+
+            let regularUser2 = ZMUser.insertNewObject(in: self.syncMOC)
+            regularUser2.remoteIdentifier = UUID.create()
+
+            let serviceUser1 = ZMUser.insertNewObject(in: self.syncMOC)
+            serviceUser1.remoteIdentifier = UUID.create()
+            serviceUser1.serviceIdentifier = UUID.create().transportString()
+            serviceUser1.providerIdentifier = UUID.create().transportString()
+
+            let serviceUser2 = ZMUser.insertNewObject(in: self.syncMOC)
+            serviceUser2.name = "Wire News"
+            serviceUser2.remoteIdentifier = UUID.create()
+            serviceUser2.serviceIdentifier = UUID.create().transportString()
+            serviceUser2.providerIdentifier = UUID.create().transportString()
+
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let remoteUsers: Set<ZMUser> = [regularUser1, regularUser2, serviceUser1, serviceUser2]
+
+            let nonce = UUID.create()
+
+            let builder = ZMGenericMessage.builder()!
+            let text = ZMText(message: self.textMessageRequiringExternalMessage(2), linkPreview: nil,
+                              mentions: ZMMentionBuilder.build([serviceUser2]))
+            builder.setText(text)
+            builder.setMessageId(nonce.transportString())
+            let textMessage = builder.build()!
+
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = UUID.create()
+            conversation.addParticipants(remoteUsers)
+            XCTAssertTrue(self.syncMOC.saveOrRollback())
+
+            // when
+
+            guard let (_, strategy) = textMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+                else { return XCTFail() }
+
+            // then
+
+            switch strategy {
+            case .ignoreAllMissingClientsNotFromUsers(let users):
+                XCTAssertEqual(users, Set([regularUser1, regularUser2, serviceUser2, selfUser]))
+            default:
+                XCTFail()
+            }
+
+
+        }
+    }
+
+    func testThatItExcludesUnmentionedServicesForTextMessage() {
+        self.syncMOC.performGroupedBlockAndWait {
+            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
+            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients!
+            let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
+            let notSelfClients = selfClients.filter { $0 != selfClient }
+
+            let nonce = UUID.create()
+            let builder = ZMGenericMessage.builder()!
+            let textBuilder = ZMText.builder()!
+            textBuilder.setContent(self.textMessageRequiringExternalMessage(2))
+            builder.setText(textBuilder.build()!)
+            builder.setMessageId(nonce.transportString())
+            let textMessage = builder.build()!
+
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = UUID.create()
+            conversation.addParticipant(otherUser)
+            XCTAssertTrue(self.syncMOC.saveOrRollback())
+
+            // when
+            guard let dataAndStrategy = textMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+                else { return XCTFail() }
+
+            // then
+            guard let createdMessage = ZMNewOtrMessage.builder()!.merge(from: dataAndStrategy.data).build()! as? ZMNewOtrMessage
+                else { return XCTFail() }
+
+            XCTAssertEqual(createdMessage.hasBlob(), true)
+            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ZMClientId] in
+                return (userEntry.clients).map { clientEntry -> ZMClientId in
+                    return clientEntry.client
+                }
+            }
+            let clientSet = Set(clientIds)
+            XCTAssertEqual(clientSet.count, 2 + notSelfClients.count)
+            XCTAssertTrue(clientSet.contains(firstClient.clientId))
+            XCTAssertTrue(clientSet.contains(secondClient.clientId))
+            notSelfClients.forEach{
+                XCTAssertTrue(clientSet.contains($0.clientId))
+            }
+        }
+    }
+
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() {
         self.syncMOC.performGroupedBlockAndWait { 
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)

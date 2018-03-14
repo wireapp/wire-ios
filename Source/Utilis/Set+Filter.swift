@@ -18,13 +18,22 @@
 
 import Foundation
 
-let ServiceMentionKeyword = "@bots"
+extension Set {
 
-@objc public protocol ServiceUser: class, ZMBareUser {
-    var providerIdentifier: String? { get }
-    var serviceIdentifier: String? { get }
-}
+    func filtered(_ isIncluded: (Element) throws -> Bool) rethrows -> Set<Element> {
 
-@objc public protocol SearchServiceUser: ServiceUser {
-    var summary: String? { get }
+        var result: Set<Element> = []
+
+        for element in self {
+
+            if try isIncluded(element) {
+                result.insert(element)
+            }
+
+        }
+
+        return result
+
+    }
+
 }
