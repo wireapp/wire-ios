@@ -23,6 +23,11 @@
 
 @implementation ZMText (Utils)
 
++ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview
+{
+    return [self textWithMessage:message linkPreview:linkPreview mentions:@[]];
+}
+
 + (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview mentions:(NSArray<ZMMention *> *)mentions
 {
     ZMTextBuilder *textBuilder = [ZMText builder];
