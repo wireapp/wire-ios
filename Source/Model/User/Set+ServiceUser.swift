@@ -18,13 +18,16 @@
 
 import Foundation
 
-let ServiceMentionKeyword = "@bots"
+extension Set where Element == ZMUser {
 
-@objc public protocol ServiceUser: class, ZMBareUser {
-    var providerIdentifier: String? { get }
-    var serviceIdentifier: String? { get }
-}
+    var serviceUsers: Set<ZMUser> {
+        return self.filtered { $0.isServiceUser }
+    }
 
-@objc public protocol SearchServiceUser: ServiceUser {
-    var summary: String? { get }
+    func categorize() -> (services: Set<ZMUser>, users: Set<ZMUser>) {
+        let services = self.serviceUsers
+        let users = self.subtracting(services)
+        return (services, users)
+    }
+
 }

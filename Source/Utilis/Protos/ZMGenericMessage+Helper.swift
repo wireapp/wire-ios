@@ -162,10 +162,14 @@ public extension ZMGenericMessage {
     }
     
     public static func message(text: String, linkPreview: ZMLinkPreview?, nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {
-        let zmtext = ZMText(message:text, linkPreview:linkPreview)!
+        return message(text:text, linkPreview:linkPreview, nonce:nonce, expiresAfter: timeout, mentions: [])
+    }
+
+    public static func message(text: String, linkPreview: ZMLinkPreview?, nonce: String, expiresAfter timeout: NSNumber? = nil, mentions: [ZMMention]) -> ZMGenericMessage {
+        let zmtext = ZMText(message:text, linkPreview:linkPreview, mentions: mentions)!
         return genericMessage(pbMessage: zmtext, messageID: nonce, expiresAfter: timeout)
     }
-    
+
     // MARK: Knock
 
     public static func knock(nonce: String, expiresAfter timeout: NSNumber? = nil) -> ZMGenericMessage {

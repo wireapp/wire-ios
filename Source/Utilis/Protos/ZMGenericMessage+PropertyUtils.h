@@ -22,7 +22,7 @@
 
 @interface ZMText (Utils)
 
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview;
++ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
 
 @end
 
@@ -68,6 +68,8 @@
 @interface ZMMessageEdit (Utils)
 
 + (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
+
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
 
 @end
 

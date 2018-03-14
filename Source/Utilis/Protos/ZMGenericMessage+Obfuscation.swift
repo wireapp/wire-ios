@@ -59,7 +59,7 @@ public extension ZMGenericMessage {
                     let originalURL = obfuscatedContent.substring(from: offsetIndex)
                     obfuscatedLinkPreviews = linkPreviews.map{$0.obfuscated(originalURL: originalURL)}
                 }
-                return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageId)
+                return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageId, mentions: [])
             }
         }
         if let someAsset = assetData {

@@ -80,6 +80,17 @@ NS_ASSUME_NONNULL_BEGIN
                                  linkPreview:(ZMLinkPreview *)linkPreview
                                        nonce:(NSString *)nonce;
 
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                       nonce:(NSString *)nonce
+                                    mentions:(NSArray<ZMMention *> *)mentions;
+
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
+                                     newText:(NSString *)newText
+                                 linkPreview:(ZMLinkPreview *)linkPreview
+                                       nonce:(NSString *)nonce
+                                    mentions:(NSArray<ZMMention *> *)mentions;
+
 
 + (ZMGenericMessage *)messageWithEmojiString:(NSString *)emojiString
                                    messageID:(NSString *)messageID

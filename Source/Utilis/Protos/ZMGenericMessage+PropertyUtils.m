@@ -23,12 +23,15 @@
 
 @implementation ZMText (Utils)
 
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview;
++ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview mentions:(NSArray<ZMMention *> *)mentions
 {
     ZMTextBuilder *textBuilder = [ZMText builder];
     textBuilder.content = message;
     if (linkPreview != nil) {
         [textBuilder addLinkPreview:linkPreview];
+    }
+    if (mentions != nil) {
+        [textBuilder setMentionArray:mentions];
     }
     return [textBuilder build];
 }
@@ -90,11 +93,16 @@
 
 @implementation ZMMessageEdit (Utils)
 
-+ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview
+{
+    return [self messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview mentions:@[]];
+}
+
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions
 {
     ZMMessageEditBuilder *builder = [ZMMessageEdit builder];
     builder.replacingMessageId = messageID;
-    builder.text = [ZMText textWithMessage:newText linkPreview:linkPreview];
+    builder.text = [ZMText textWithMessage:newText linkPreview:linkPreview mentions: mentions];
     return [builder build];
 }
 

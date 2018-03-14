@@ -141,23 +141,23 @@ extension ZMGenericMessage {
         }
         return messageData
     }
-    
+
     func recipientUsersforMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
-    
+        let (services, otherUsers) = (conversation.otherActiveParticipants.set as! Set<ZMUser>).categorize()
+
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
             guard self.hasConfirmation(), self.confirmation.firstMessageId != nil else { return nil }
             guard let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.firstMessageId), for:conversation, in:conversation.managedObjectContext!) else { return nil }
             guard let sender = message.sender else { return nil }
             return Set(arrayLiteral: sender)
         }
-        
+
         func recipientForOtherUsers() -> Set<ZMUser>? {
-            guard conversation.connectedUser != nil || conversation.otherActiveParticipants.firstObject != nil else { return nil }
+            guard conversation.connectedUser != nil || (otherUsers.isEmpty == false) else { return nil }
             if let connectedUser = conversation.connectedUser { return Set(arrayLiteral:connectedUser) }
-            if let otherUsers = conversation.otherActiveParticipants.set as? Set<ZMUser> { return otherUsers }
-            return nil
+            return Set(otherUsers)
         }
-        
+
         func recipientsForDeletedEphemeral() -> Set<ZMUser>? {
             guard (self.hasDeleted() && conversation.conversationType == .group ) else { return nil }
             let nonce = UUID(uuidString: self.deleted.messageId)
@@ -169,9 +169,19 @@ extension ZMGenericMessage {
             }
             return Set(arrayLiteral: sender, selfUser)
         }
-        
+
+        func allAuthorizedRecipients() -> Set<ZMUser> {
+            if let connectedUser = conversation.connectedUser { return Set(arrayLiteral: connectedUser, selfUser) }
+
+            let authorizedServices = services.filtered { service in
+                self.textData?.mention?.contains { $0.userId == service.remoteIdentifier?.transportString() } ?? false
+            }
+
+            return otherUsers.union(authorizedServices).union([selfUser])
+        }
+
         var recipientUsers = Set<ZMUser>()
-        var specifiedUsersOnly = true
+
         if self.hasConfirmation() || self.hasEphemeral() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
                 let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.firstMessageId)" : ""
@@ -183,13 +193,17 @@ extension ZMGenericMessage {
             recipientUsers = deletedEphemeral
         }
         else {
-            specifiedUsersOnly = false
-            recipientUsers = conversation.activeParticipants.set as! Set<ZMUser>
+            recipientUsers = allAuthorizedRecipients()
         }
-        
-        let strategy : MissingClientsStrategy = specifiedUsersOnly ? .ignoreAllMissingClientsNotFromUsers(users: recipientUsers)
-                                                                   : .doNotIgnoreAnyMissingClient
-        
+
+        let hasRestrictions: Bool = {
+            if conversation.connectedUser != nil { return recipientUsers.count != 2 }
+            return recipientUsers.count != conversation.activeParticipants.count
+        }()
+
+        let strategy : MissingClientsStrategy = hasRestrictions ? .ignoreAllMissingClientsNotFromUsers(users: recipientUsers)
+                                                                : .doNotIgnoreAnyMissingClient
+
         return (recipientUsers, strategy)
     }
     

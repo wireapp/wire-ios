@@ -18,13 +18,23 @@
 
 import Foundation
 
-let ServiceMentionKeyword = "@bots"
+extension ZMMentionBuilder {
 
-@objc public protocol ServiceUser: class, ZMBareUser {
-    var providerIdentifier: String? { get }
-    var serviceIdentifier: String? { get }
-}
+    public static func build(_ users: [ZMUser]) -> [ZMMention] {
+        var mentions: [ZMMention] = []
 
-@objc public protocol SearchServiceUser: ServiceUser {
-    var summary: String? { get }
+        for user in users {
+            let builder = ZMMention.builder()!
+            builder.setUser(user)
+            mentions.append(builder.build()!)
+        }
+
+        return mentions
+    }
+
+    public func setUser(_ user: ZMUser) {
+        setUserId(user.remoteIdentifier!.transportString())
+        setUserName(user.name!)
+    }
+
 }
