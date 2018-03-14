@@ -981,6 +981,72 @@ class SessionManagerTests_Push: IntegrationTest {
     }
 }
 
+extension NSManagedObjectContext {
+    func createSelfUserAndSelfConversation() {
+        let selfUser = ZMUser.selfUser(in: self)
+        selfUser.remoteIdentifier = UUID()
+        
+        let selfConversation = ZMConversation.insertNewObject(in: self)
+        selfConversation.remoteIdentifier = ZMConversation.selfConversationIdentifier(in: self)
+    }
+}
+
+extension SessionManagerTests {
+    func testThatItMarksConversationsAsRead() {
+        // given
+        let account1 = Account(userName: "Account 1", userIdentifier: UUID.create())
+        let account2 = Account(userName: "Account 2", userIdentifier: UUID.create())
+        
+        sessionManager?.accountManager.addOrUpdate(account1)
+        sessionManager?.accountManager.addOrUpdate(account2)
+        
+        var conversations: [ZMConversation] = []
+
+        let conversation1CreatedExpectation = self.expectation(description: "Conversation 1 created")
+
+        self.sessionManager?.withSession(for: account1, perform: { createdSession in
+            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            
+            let conversation1 = createdSession.insertConversationWithUnreadMessage()
+            conversations.append(conversation1)
+            XCTAssertNil(conversation1.lastReadMessage)
+            createdSession.managedObjectContext.saveOrRollback()
+            conversation1CreatedExpectation.fulfill()
+        })
+        
+        let conversation2CreatedExpectation = self.expectation(description: "Conversation 2 created")
+        
+        self.sessionManager?.withSession(for: account2, perform: { createdSession in
+            createdSession.managedObjectContext.createSelfUserAndSelfConversation()
+            
+            let conversation2 = createdSession.insertConversationWithUnreadMessage()
+            XCTAssertNil(conversation2.lastReadMessage)
+            conversations.append(conversation2)
+            createdSession.managedObjectContext.saveOrRollback()
+            conversation2CreatedExpectation.fulfill()
+        })
+        
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertEqual(conversations.count, 2)
+        XCTAssertEqual(conversations.filter { $0.lastReadMessage == nil }.count, 2)
+        // when
+        
+        let doneExpectation = self.expectation(description: "Conversations are marked as read")
+
+        self.sessionManager?.markAllConversationsAsRead(completion: {
+            doneExpectation.fulfill()
+        })
+        
+        // then
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        
+        XCTAssertEqual(conversations.filter { $0.lastReadMessage == nil }.count, 0)
+        
+        // cleanup
+        self.sessionManager!.tearDownAllBackgroundSessions()
+    }
+}
+
 // MARK: - Mocks
 class SessionManagerTestDelegate: SessionManagerDelegate {
     
