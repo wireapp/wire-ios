@@ -47,7 +47,7 @@
 {
     XCTAssertEqual(channel, self.sut);
     XCTAssertNotNil(data);
-//    ZMAssertGroupQueue(self.uiMOC);
+    XCTAssertTrue(channel.isOpen);
     [self.receivedData addObject:data ?: @{}];
 }
 
@@ -55,7 +55,7 @@
 {
     NOT_USED(response);
     XCTAssertTrue((self.sut == nil) || (channel == self.sut));
-//    ZMAssertGroupQueue(self.uiMOC);
+    XCTAssertFalse(channel.isOpen);
     self.closeCounter++;
 }
 
@@ -63,7 +63,7 @@
 {
     NOT_USED(response);
     XCTAssertEqual(channel, self.sut);
-//    ZMAssertGroupQueue(self.uiMOC);
+    XCTAssertTrue(channel.isOpen);
     self.openCounter++;
 }
 
