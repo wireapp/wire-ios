@@ -25,6 +25,8 @@
 #import "ZMPushChannelConnection.h"
 #import "ZMTLogging.h"
 
+#include <stdatomic.h>
+
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 @interface ZMTransportPushChannel ()
@@ -36,6 +38,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic, weak) id<ZMPushChannelConsumer>  consumer;
 @property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
 @property (nonatomic) ZMPushChannelConnection *pushChannel;
+@property (nonatomic) dispatch_queue_t pushChannelSyncQ;
 @property (nonatomic, readonly) BOOL shouldBeOpen;
 
 @end
@@ -92,13 +95,21 @@ ZM_EMPTY_ASSERTING_INIT();
         self.url = [URL URLByAppendingPathComponent:@"/await"];
         self.userAgentString = userAgentString;
         self.pushChannelClass = pushChannelClass ?: ZMPushChannelConnection.class;
+        self.pushChannelSyncQ = dispatch_queue_create("Set push channel queue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 
+- (void)updatingPushChannel:(dispatch_block_t)block
+{
+    dispatch_sync(self.pushChannelSyncQ, block);
+}
+
 - (void)dealloc {
     [self.pushChannel close];
-    self.pushChannel = nil;
+    [self updatingPushChannel:^{
+        self.pushChannel = nil;
+    }];
     [self.scheduler tearDown];
 }
 
@@ -155,7 +166,9 @@ ZM_EMPTY_ASSERTING_INIT();
 - (void)establishConnection
 {
     if (!self.pushChannel.isOpen && self.shouldBeOpen) {
-        self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.groupQueue accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
+        [self updatingPushChannel:^{
+            self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.groupQueue accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
+        }];
         
         ZMLogInfo(@"Opening push channel");
     }
@@ -209,7 +222,9 @@ ZM_EMPTY_ASSERTING_INIT();
     }
     
     if (channel == self.pushChannel) {
-        self.pushChannel = nil;
+        [self updatingPushChannel:^{
+            self.pushChannel = nil;
+        }];
     }
 }
 
