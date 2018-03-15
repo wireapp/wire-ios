@@ -141,7 +141,7 @@ class MockTransportSessionConversationAccessTests: MockTransportSessionTests {
         let response = self.response(forPayload: [:] as ZMTransportData, path: "/conversations/\(self.conversation.identifier)/code", method: .methodPOST)
         
         // then
-        XCTAssertEqual(response?.httpStatus, 204)
+        XCTAssertEqual(response?.httpStatus, 200)
         guard let receivedPayload = response?.payload as? [String: Any] else { XCTFail(); return }
         
         XCTAssertEqual(receivedPayload["uri"] as! String, existingLink)
