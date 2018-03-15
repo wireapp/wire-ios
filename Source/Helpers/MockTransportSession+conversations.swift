@@ -89,7 +89,7 @@ extension MockTransportSession {
         if let link = conversation.link {
             return ZMTransportResponse(payload: ["uri": link,
                                                  "key": "test-key",
-                                                 "code": "test-code"] as ZMTransportData, httpStatus: 204, transportSessionError: nil)
+                                                 "code": "test-code"] as ZMTransportData, httpStatus: 200, transportSessionError: nil)
         }
         // new link must be created
         else {
