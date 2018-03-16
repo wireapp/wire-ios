@@ -41,7 +41,6 @@
 
 // helpers
 
-#import "WAZUIMagicIOS.h"
 #import "Analytics.h"
 #import "UIView+Borders.h"
 #import "NSAttributedString+Wire.h"
@@ -262,7 +261,7 @@
 
     NSDictionary *titleAttributes = @{
                                       NSForegroundColorAttributeName : [UIColor whiteColor],
-                                      NSFontAttributeName : [UIFont fontWithMagicIdentifier:@"style.text.small.font_spec_bold"],
+                                      NSFontAttributeName : UIFont.smallMediumFont,
                                       NSParagraphStyleAttributeName : paragraphStyle
                                       };
 
