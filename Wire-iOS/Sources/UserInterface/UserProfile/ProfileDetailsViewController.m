@@ -48,7 +48,6 @@
 #import "ProfileSendConnectionRequestFooterView.h"
 #import "ProfileIncomingConnectionRequestFooterView.h"
 #import "ProfileUnblockFooterView.h"
-#import "ActionSheetController+Conversation.h"
 
 
 typedef NS_ENUM(NSUInteger, ProfileViewContentMode) {
@@ -78,6 +77,7 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
 @property (nonatomic) ProfileViewControllerContext context;
 @property (nonatomic) id<ZMBareUser, ZMSearchableUser, AccentColorProvider> bareUser;
 @property (nonatomic) ZMConversation *conversation;
+@property (nonatomic) ConversationActionController *actionsController;
 
 @property (nonatomic) UserImageView *userImageView;
 @property (nonatomic) UIView *footerView;
@@ -420,8 +420,8 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
 
 - (void)presentMenuSheetController
 {
-    ActionSheetController *actionSheetController = [ActionSheetController dialogForConversationDetails:self.conversation style:ActionSheetController.defaultStyle];
-    [self presentViewController:actionSheetController animated:YES completion:nil];
+    self.actionsController = [[ConversationActionController alloc] initWithConversation:self.conversation target:self];
+    [self.actionsController presentMenu];
 }
 
 - (void)presentAddParticipantsViewController
@@ -465,26 +465,24 @@ typedef NS_ENUM(NSUInteger, ProfileUserAction) {
 
 - (void)bringUpConnectionRequestSheet
 {
-    [self presentViewController:[ActionSheetController dialogForAcceptingConnectionRequestWithUser:[self fullUser] style:[ActionSheetController defaultStyle] completion:^(BOOL ignored) {
-        [self dismissViewControllerAnimated:YES completion:^{
-            if (ignored) {
-                [self cancelConnectionRequest];
-            } else {
-                [self acceptConnectionRequest];
-            }
-        }];
-    }] animated:YES completion:nil];
+    UIAlertController *controller = [UIAlertController controllerForAcceptingConnectionRequestForUser:self.fullUser completion:^(BOOL accept){
+        if (accept) {
+            [self acceptConnectionRequest];
+        } else {
+            [self cancelConnectionRequest];
+        }
+    }];
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 - (void)bringUpCancelConnectionRequestSheet
 {
-    [self presentViewController:[ActionSheetController dialogForCancelingConnectionRequestWithUser:[self fullUser] style:[ActionSheetController defaultStyle] completion:^(BOOL canceled) {
-        [self dismissViewControllerAnimated:YES completion:^{
-            if (! canceled) {
-                [self cancelConnectionRequest];
-            }
-        }];
-    }] animated:YES completion:nil];
+    UIAlertController *controller = [UIAlertController cancelConnectionRequestControllerForUser:self.fullUser completion:^(BOOL canceled) {
+        if (!canceled) {
+            [self cancelConnectionRequest];
+        }
+    }];
+    [self presentViewController:controller animated:YES completion:nil];
 }
 
 - (void)unblockUser
