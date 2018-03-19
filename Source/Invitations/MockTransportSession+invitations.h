@@ -18,9 +18,11 @@
 
 
 #import "MockTransportSession.h"
-#import "MockTransportSession+internal.h"
 
 @interface MockTransportSession (invitations)
+
+@property (nonatomic, readonly) NSString *invitationCode;
+@property (nonatomic, readonly) NSString *invalidInvitationCode;
 
 - (ZMTransportResponse *)processInvitationsRequest:(ZMTransportRequest *)request;
 

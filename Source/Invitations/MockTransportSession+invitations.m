@@ -19,6 +19,7 @@
 
 #import "MockTransportSession+invitations.h"
 #import "MockPersonalInvitation.h"
+#import "MockTransportSession+internal.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
 
@@ -169,5 +170,16 @@
     return connection;
     
 }
+
+- (NSString *)invitationCode;
+{
+    return @"RUBY.RHODE";
+}
+
+- (NSString *)invalidInvitationCode
+{
+    return @"NOPE";
+}
+
 
 @end
