@@ -25,7 +25,6 @@
 #import "MockPicture.h"
 #import "MockEvent.h"
 #import "MockAsset.h"
-#import "MockPersonalInvitation.h"
 
 @class MockPushEvent;
 @class MockTeam;
@@ -130,10 +129,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockConversation *)insertGroupConversationWithSelfUser:(MockUser *)selfUser otherUsers:(NSArray *)otherUsers;
 - (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
-
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail;
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name phone:(NSString *)phone;
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(nullable NSString *)mail phone:(nullable NSString *)phone;
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 

@@ -21,7 +21,6 @@
 @import WireUtilities;
 @import WireSystem;
 #import "MockTransportSession+registration.h"
-#import "MockTransportSession+invitations.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockTransportSession (Registration)
@@ -77,12 +76,7 @@
             return [self errorResponseWithCode:409 reason:@"key-exists"];
         }
         
-        // valid code?
-        if (invitationCode) { //invitation code is used to confirm either mail or phone
-            if (![invitationCode isEqualToString:self.invitationCode]) {
-                return [self errorResponseWithCode:400 reason:@"invalid-invitation-code"];
-            }
-        } else if (phone != nil) {
+        if (phone != nil) {
             if (![self.phoneNumbersWaitingForVerificationForRegistration containsObject:phone])
             {
                 return [self errorResponseWithCode:404 reason:@"invalid-key"];
@@ -114,31 +108,6 @@
             user.isEmailValidated = NO;
             shouldReturnEmail = NO;
         }
-        
-        if (invitationCode) { // create connection and conversation between inviter and invitee
-            
-            NSPredicate *mailPredicate = user.email ? [NSPredicate predicateWithFormat:@"inviteeEmail == %@", user.email] : nil;
-            NSPredicate *phonePredicate = user.phone ? [NSPredicate predicateWithFormat:@"inviteePhone == %@", user.phone] : nil;
-            NSPredicate *finalPredicate;
-            if (mailPredicate && phonePredicate) {
-                finalPredicate = [NSCompoundPredicate orPredicateWithSubpredicates:@[mailPredicate, phonePredicate]];
-            } else if (user.email) {
-                finalPredicate = mailPredicate;
-            } else {
-                finalPredicate = phonePredicate;
-            }
-            
-            NSFetchRequest *fetchRequest = [MockPersonalInvitation sortedFetchRequestWithPredicate:finalPredicate];
-            MockPersonalInvitation *invitation = [[self.managedObjectContext executeFetchRequest:fetchRequest error:nil] firstObject];
-            if (!invitation) {
-                return [self errorResponseWithCode:404 reason:@"invalid"];
-            }
-            MockConnection *connection = [self insertConnectionWithSelfUser:user toUser:invitation.inviter];
-            connection.status = [MockConnection stringFromStatus:ZMTConnectionStatusAccepted];
-            connection.conversation = [self insertConversationWithCreator:invitation.inviter otherUsers:@[user] type:ZMTConversationTypeOneOnOne];
-            [self.managedObjectContext deleteObject:invitation];
-        }
-    
         
         NSMutableDictionary *payload = [@{@"email": (user.email != nil && shouldReturnEmail) ? user.email : [NSNull null],
                                   @"phone": user.phone != nil ? user.phone : [NSNull null],
