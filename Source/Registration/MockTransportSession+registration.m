@@ -21,6 +21,7 @@
 @import WireUtilities;
 @import WireSystem;
 #import "MockTransportSession+registration.h"
+#import "MockTransportSession+invitations.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>
 
 @implementation MockTransportSession (Registration)

@@ -1151,17 +1151,3 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 @end
 
-@implementation MockTransportSession (InvitationVerification)
-
-- (NSString *)invitationCode;
-{
-    return @"RUBY.RHODE";
-}
-
-- (NSString *)invalidInvitationCode
-{
-    return @"NOPE";
-}
-
-@end
-

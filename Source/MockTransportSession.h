@@ -199,12 +199,5 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @end
 
-@interface MockTransportSession (InvitationVerification)
-
-@property (nonatomic, readonly) NSString *invitationCode;
-@property (nonatomic, readonly) NSString *invalidInvitationCode;
-
-@end
-
 NS_ASSUME_NONNULL_END
 
