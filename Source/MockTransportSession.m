@@ -707,25 +707,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [MockConversation insertConversationIntoContext:self.managedObjectContext creator:creator otherUsers:otherUsers type:conversationType];
 }
 
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail;
-{
-    return [self insertInvitationForSelfUser:selfUser inviteeName:name mail:mail phone:nil];
-}
-
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name phone:(NSString *)phone;
-{
-    return [self insertInvitationForSelfUser:selfUser inviteeName:name mail:nil phone:phone];
-}
-
-- (MockPersonalInvitation *)insertInvitationForSelfUser:(MockUser *)selfUser inviteeName:(NSString *)name mail:(NSString *)mail phone:(NSString *)phone;
-{
-   Require((mail != nil && phone == nil) ||
-           (mail == nil && phone != nil));
-    
-    MockPersonalInvitation *invitation = [MockPersonalInvitation invitationInMOC:self.managedObjectContext fromUser:selfUser toInviteeWithName:name email:mail phoneNumber:phone];
-    return invitation;
-}
-
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
 {
     Require(assetID != nil);
