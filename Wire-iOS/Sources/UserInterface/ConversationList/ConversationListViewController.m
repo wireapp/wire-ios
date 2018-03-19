@@ -50,10 +50,6 @@
 #import "NotificationWindowRootViewController.h"
 #import "PassthroughTouchesView.h"
 
-
-#import "ActionSheetController.h"
-#import "ActionSheetController+Conversation.h"
-
 #import "Wire-Swift.h"
 
 @interface ConversationListViewController (Content) <ConversationListContentDelegate>
@@ -109,6 +105,7 @@
 @property (nonatomic) UIView *conversationListContainer;
 @property (nonatomic) UILabel *noConversationLabel;
 @property (nonatomic) ConversationListOnboardingHint *onboardingHint;
+@property (nonatomic) ConversationActionController *actionsController;
 
 @property (nonatomic) PermissionDeniedViewController *pushPermissionDeniedViewController;
 
@@ -491,8 +488,8 @@
 
 - (void)showActionMenuForConversation:(ZMConversation *)conversation
 {
-    ActionSheetController *controller = [ActionSheetController dialogForConversationDetails:conversation style:ActionSheetControllerStyleDark];
-    [self presentViewController:controller animated:YES completion:nil];
+    self.actionsController = [[ConversationActionController alloc] initWithConversation:conversation target:self];
+    [self.actionsController presentMenu];
 }
 
 #pragma mark - Push permissions
