@@ -118,6 +118,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// Marks the message as the last unread message in the conversation, moving the unread mark exactly before this
     /// message.
     func markAsUnread()
+    
+    /// Checks if the message can be marked unread
+    var canBeMarkedUnread: Bool { get }
 }
 
 // MARK:- Conversation managed properties
@@ -139,8 +142,21 @@ extension ZMMessage : ZMConversationMessage {
         return false
     }
     
+    public var canBeMarkedUnread: Bool {
+        guard self.isNormal,
+                let _ = self.serverTimestamp,
+                let _ = self.conversation,
+                let sender = self.sender,
+                !sender.isSelfUser else {
+                return false
+        }
+        
+        return true
+    }
+    
     public func markAsUnread() {
-        guard let serverTimestamp = self.serverTimestamp,
+        guard canBeMarkedUnread,
+              let serverTimestamp = self.serverTimestamp,
               let conversation = self.conversation,
               let managedObjectContext = self.managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
