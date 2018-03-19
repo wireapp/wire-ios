@@ -1931,7 +1931,8 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeConnection;
     conversation.remoteIdentifier = NSUUID.createUUID;
-    [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
+    ZMMessage *message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
+    message.sender = self.createUser;
     [conversation markAsRead];
     // WHEN & THEN
     XCTAssertTrue([conversation canMarkAsUnread]);
@@ -1947,7 +1948,7 @@
     [self.uiMOC saveOrRollback];
     
     ZMMessage* unreadMessage = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
-
+    unreadMessage.sender = self.createUser;
     [conversation markAsRead];
     XCTAssertEqual(conversation.lastReadMessage, unreadMessage);
     

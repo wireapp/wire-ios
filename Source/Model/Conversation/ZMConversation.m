@@ -1011,23 +1011,23 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         return NO;
     }
     
-    if (nil == [self lastMessageCanBeConsideredUnread]) {
+    if (nil == [self lastMessageCanBeMarkedUnread]) {
         return NO;
     }
     
     return YES;
 }
 
-- (ZMMessage *)lastMessageCanBeConsideredUnread
+- (ZMMessage *)lastMessageCanBeMarkedUnread
 {
-    NSUInteger lastMessageIndexCanBeConsideredUnread = [self.messages.reversedOrderedSet indexOfObjectPassingTest:^BOOL(id<ZMConversationMessage> message, NSUInteger idx, BOOL *stop) {
+    NSUInteger lastMessageIndexCanBeMarkedUnread = [self.messages.reversedOrderedSet indexOfObjectPassingTest:^BOOL(id<ZMConversationMessage> message, NSUInteger idx, BOOL *stop) {
         NOT_USED(idx);
         NOT_USED(stop);
-        return [Message isNormalMessage:message];
+        return message.canBeMarkedUnread;
     }];
     
-    if (lastMessageIndexCanBeConsideredUnread != NSNotFound) {
-        return self.messages[self.messages.count - lastMessageIndexCanBeConsideredUnread - 1];
+    if (lastMessageIndexCanBeMarkedUnread != NSNotFound) {
+        return self.messages[self.messages.count - lastMessageIndexCanBeMarkedUnread - 1];
     }
     else {
         return nil;
@@ -1036,14 +1036,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (void)markAsUnread
 {
-    ZMMessage *lastMessageCanBeConsideredUnread = [self lastMessageCanBeConsideredUnread];
+    ZMMessage *lastMessageCanBeMarkedUnread = [self lastMessageCanBeMarkedUnread];
     
-    if (lastMessageCanBeConsideredUnread == nil) {
+    if (lastMessageCanBeMarkedUnread == nil) {
         ZMLogError(@"Cannot mark as read: no message to mark in %@", self);
         return;
     }
     
-    [lastMessageCanBeConsideredUnread markAsUnread];
+    [lastMessageCanBeMarkedUnread markAsUnread];
 }
 
 @end

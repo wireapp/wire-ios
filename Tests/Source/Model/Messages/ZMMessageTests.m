@@ -1816,6 +1816,18 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertTrue([message.ignoredKeys containsObject:@"reactions"]);
 }
 
+- (void)testThatItKnowsThatItCannotUnreadTheMessage_selfMessage {
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    // when
+    ZMMessage *message = (id)[conversation appendMessageWithText:self.name];
+    
+    // then
+    XCTAssertFalse([message canBeMarkedUnread]);
+}
+
 @end
 
 
