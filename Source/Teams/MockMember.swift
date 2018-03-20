@@ -27,10 +27,24 @@ public struct MockPermissions: OptionSet {
         self.rawValue = rawValue
     }
 
-    public static let getMemberPermissions = MockPermissions(rawValue: 0x0200)
-    public static let member = MockPermissions(rawValue: 1587)
-    public static let addTeamMember = MockPermissions(rawValue: 0x0004)
-    public static let getTeamConversations = MockPermissions(rawValue: 0x0400)
+    public static let createConversation       = MockPermissions(rawValue: 0x0001)
+    public static let deleteConversation       = MockPermissions(rawValue: 0x0002)
+    public static let addTeamMember            = MockPermissions(rawValue: 0x0004)
+    public static let removeTeamMember         = MockPermissions(rawValue: 0x0008)
+    public static let addConversationMember    = MockPermissions(rawValue: 0x0010)
+    public static let removeConversationMember = MockPermissions(rawValue: 0x0020)
+    public static let getBilling               = MockPermissions(rawValue: 0x0040)
+    public static let setBilling               = MockPermissions(rawValue: 0x0080)
+    public static let setTeamData              = MockPermissions(rawValue: 0x0100)
+    public static let getMemberPermissions     = MockPermissions(rawValue: 0x0200)
+    public static let getTeamConversations     = MockPermissions(rawValue: 0x0400)
+    public static let deleteTeam               = MockPermissions(rawValue: 0x0800)
+    public static let setMemberPermissions     = MockPermissions(rawValue: 0x1000)
+
+    // MARK: - Common Combined Values
+    public static let member: MockPermissions = [.createConversation, .deleteConversation, .addConversationMember, .removeConversationMember, .getTeamConversations, .getMemberPermissions]
+    public static let admin: MockPermissions  = [.member, .addTeamMember, .removeTeamMember, .setTeamData, .setMemberPermissions]
+    public static let owner: MockPermissions  = [.admin, .getBilling, .setBilling, .deleteTeam]
 }
 
 
