@@ -20,7 +20,38 @@ import Foundation
 import XCTest
 @testable import Wire
 
-class NetworkStatusViewTests: ZMSnapshotTestCase {
+class NetworkStatusViewTests: XCTestCase {
+    var sut: NetworkStatusView!
+    var mockApplication: MockApplication!
+
+    override func setUp() {
+        super.setUp()
+        mockApplication = MockApplication()
+        sut = NetworkStatusView(application: mockApplication)
+    }
+
+    override func tearDown() {
+        sut = nil
+        mockApplication = nil
+        super.tearDown()
+    }
+
+    func testThatSyncBarChangesToHiddenWhenTheAppGoesToBackground() {
+        // GIVEN
+        mockApplication.applicationState = .active
+        sut.state = .onlineSynchronizing
+        XCTAssertEqual(sut.connectingViewHeight?.constant, CGFloat.OfflineBar.collapsedHeight)
+
+        // WHEN
+        mockApplication.applicationState = .background
+        sut.state = .onlineSynchronizing
+
+        // THEN
+        XCTAssertEqual(sut.connectingViewHeight?.constant, 0)
+    }
+}
+
+class NetworkStatusViewSnapShotTests: ZMSnapshotTestCase {
 
     var sut: NetworkStatusView!
 
@@ -38,13 +69,6 @@ class NetworkStatusViewTests: ZMSnapshotTestCase {
     func testOfflineExpandedState() {
         // GIVEN
         sut.state = .offlineExpanded
-        // WHEN && THEN
-        verifyInAllPhoneWidths(view: sut)
-    }
-
-    func testOfflineCollapsedState() {
-        // GIVEN
-        sut.state = .offlineCollapsed
         // WHEN && THEN
         verifyInAllPhoneWidths(view: sut)
     }
