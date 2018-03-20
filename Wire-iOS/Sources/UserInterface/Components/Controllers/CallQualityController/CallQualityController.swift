@@ -122,6 +122,7 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
         titleLabel.font = UIFont.systemFont(ofSize: 30, weight: UIFontWeightMedium)
         titleLabel.text = NSLocalizedString("calling.quality_survey.title", comment: "")
         titleLabel.adjustsFontSizeToFitWidth = true
+        titleLabel.textAlignment = .center
 
         questionLabel.text = questionLabelText
         questionLabel.font = FontSpec(.normal, .regular).font
@@ -130,7 +131,8 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
         questionLabel.numberOfLines = 0
 
         callQualityStackView = UICustomSpacingStackView(customSpacedArrangedSubviews: [titleLabel, questionLabel, scoreSelectorView])
-        callQualityStackView.alignment = .center
+        callQualityStackView.alignment = .fill
+        callQualityStackView.distribution = .fill
         callQualityStackView.axis = .vertical
         callQualityStackView.spacing = 10
         callQualityStackView.wr_addCustomSpacing(24, after: titleLabel)
@@ -268,6 +270,7 @@ class CallQualityView : UIStackView {
         
         scoreButton.accessibilityLabel = labelText
         constrain(scoreButton){scoreButton in
+            scoreButton.width <= 48
             scoreButton.height == scoreButton.width
         }
         
@@ -297,7 +300,7 @@ class QualityScoreSelectorView : UIView {
         
         scoreStackView.axis = .horizontal
         scoreStackView.distribution = .fillEqually
-        scoreStackView.spacing = 8
+        scoreStackView.spacing = 12
         
         (1 ... 5)
             .map { (localizedNameForScore($0), $0) }
@@ -308,6 +311,18 @@ class QualityScoreSelectorView : UIView {
         constrain(self, scoreStackView) { selfView, scoreStackView in
             scoreStackView.edges == selfView.edges
         }
+    }
+
+    override func layoutSubviews() {
+
+        if traitCollection.horizontalSizeClass == .regular {
+            scoreStackView.spacing = 24
+        } else if let superviewWidth = superview?.frame.size.width {
+            scoreStackView.spacing = superviewWidth >= CGFloat(350) ? 24 : 12
+        } else {
+            scoreStackView.spacing = 12
+        }
+
     }
     
     func localizedNameForScore(_ score: Int) -> String {
