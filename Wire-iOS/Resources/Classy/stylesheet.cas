@@ -743,11 +743,11 @@ InputBar: {
     writingSeparatorColor: $color-separator;
     ephemeralColor: $color-accent-current;
     placeholderColor: $color-text-placeholder;
+    textColor: $color-text-foreground;
 
     textView: @{
         font: $font-normal-light;
         placeholderFont: $font-small-semibold;
-        textColor: $color-text-foreground;
         backgroundColor: clear;
     }
 }

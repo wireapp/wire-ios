@@ -207,6 +207,24 @@ final class MarkdownTextViewTests: XCTestCase {
         // THEN: it renders correct attributes
         checkAttributes(for: Markdown(md), inRange: NSMakeRange(0, text.length))
     }
+
+    func testThatItUpdatesTextColor() {
+        // GIVEN: we're currently using the default color
+        sut.updateTextColor(base: nil)
+        insertText("Hieeee")
+
+        // WHEN: we update the colors
+        sut.updateTextColor(base: .red)
+
+        // THEN: the color of the text changes in the attributes
+        var attributedRange: NSRange = NSMakeRange(0, 0)
+        let attributedColor = sut.attributedText.attribute(NSForegroundColorAttributeName, at: 0, effectiveRange: &attributedRange) as? UIColor
+        XCTAssertEqual(attributedColor, .red)
+        XCTAssertEqual(attributedRange, NSMakeRange(0, 6))
+
+        XCTAssertEqual(style.baseFontColor, .red)
+        XCTAssertEqual(sut.textColor, .red)
+    }
     
     // MARK: Atomic ☺️
     
