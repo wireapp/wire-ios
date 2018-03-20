@@ -252,7 +252,7 @@ import Foundation
         if !Analytics.shared().isOptedOut &&
             !TrackingManager.shared.disableCrashAndAnalyticsSharing {
 
-            let resetSurveyMuteButton = SettingsButtonCellDescriptor(title: "Show call quality survey", isDestructive: false, selectAction: SettingsCellDescriptorFactory.resetCallQualitySurveyMuteFilter)
+            let resetSurveyMuteButton = SettingsButtonCellDescriptor(title: "Reset call quality survey", isDestructive: false, selectAction: SettingsCellDescriptorFactory.resetCallQualitySurveyMuteFilter)
             developerCellDescriptors.append(resetSurveyMuteButton)
 
         }
@@ -402,7 +402,7 @@ import Foundation
 
         CallQualityScoreProvider.resetSurveyMuteFilter()
 
-        let alert = UIAlertController(title: "Mute Filter Removed",
+        let alert = UIAlertController(title: "Success",
                                       message: "The call quality survey will be displayed after the next call.",
                                       cancelButtonTitle: "OK")
 

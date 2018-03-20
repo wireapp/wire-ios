@@ -78,7 +78,12 @@ class UICustomSpacingStackView: UIView {
         get { return stackView.alignment }
         set { stackView.alignment = newValue }
     }
-    
+
+    var distribution: UIStackViewDistribution {
+        get { return stackView.distribution }
+        set { stackView.distribution = newValue }
+    }
+
     var axis: UILayoutConstraintAxis {
         get { return stackView.axis }
         set { stackView.axis = newValue }
