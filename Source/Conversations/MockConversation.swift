@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDataModel
 
 extension MockConversation {
     @objc public static func insertConversationInto(context: NSManagedObjectContext, withCreator creator: MockUser, forTeam team: MockTeam, users:[MockUser]) -> MockConversation {
@@ -58,8 +57,8 @@ extension MockConversation {
         guard type == .group, team != nil else {
              return
         }
-        accessRole = ConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
-        accessMode = ConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
+        accessRole = MockConversationAccessRole.value(forAllowGuests: allowGuests).rawValue
+        accessMode = MockConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
     }
 
     var changePushPayload: [String: Any]? {

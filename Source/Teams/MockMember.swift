@@ -18,7 +18,20 @@
 
 
 import Foundation
-import WireDataModel
+
+public struct MockPermissions: OptionSet {
+
+    public let rawValue: Int64
+
+    public init(rawValue: Int64) {
+        self.rawValue = rawValue
+    }
+
+    public static let getMemberPermissions = MockPermissions(rawValue: 0x0200)
+    public static let member = MockPermissions(rawValue: 1587)
+    public static let addTeamMember = MockPermissions(rawValue: 0x0004)
+    public static let getTeamConversations = MockPermissions(rawValue: 0x0400)
+}
 
 
 @objc public final class MockMember: NSManagedObject, EntityNamedProtocol {
@@ -27,8 +40,8 @@ import WireDataModel
     
     @NSManaged private var permissionsRawValue: Int64
     
-    public var permissions: Permissions {
-        get { return Permissions(rawValue: permissionsRawValue) }
+    public var permissions: MockPermissions {
+        get { return MockPermissions(rawValue: permissionsRawValue) }
         set { permissionsRawValue = newValue.rawValue }
     }
     

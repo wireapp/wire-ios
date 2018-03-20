@@ -18,7 +18,6 @@
 
 import Foundation
 import XCTest
-import WireDataModel
 @testable import WireMockTransport
 
 class MockTransportSessionTeamEventsTests : MockTransportSessionTests {

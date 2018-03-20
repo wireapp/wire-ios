@@ -21,7 +21,6 @@
 @import WireUtilities;
 @import CoreData;
 @import WireProtos;
-@import WireDataModel;
 
 #import "MockTransportSession+conversations.h"
 #import <WireMockTransport/WireMockTransport-Swift.h>

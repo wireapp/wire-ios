@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDataModel
 
 extension MockTransportSession {
     @objc(processServicesSearchRequest:)
@@ -181,7 +180,7 @@ extension MockTransportSession {
         mockService.providerEmail = ""
         mockService.providerDescription = ""
         mockService.providerURL = ""
-        managedObjectContext.saveOrRollback()
+        try? managedObjectContext.save()
         return mockService
     }
 }

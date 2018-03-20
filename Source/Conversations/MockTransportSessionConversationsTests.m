@@ -20,7 +20,6 @@
 #import "MockTransportSessionTests.h"
 @import WireMockTransport;
 @import WireProtos;
-@import WireDataModel;
 
 @interface MockTransportSessionConversationsTests : MockTransportSessionTests
 
@@ -256,10 +255,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
-    
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
     NSString *redundantClientId = [NSString createAlphanumericalString];
     NSDictionary *payload = @{
@@ -328,9 +326,8 @@
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
     
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
     NSDictionary *payload = @{
                               @"sender": selfClient.identifier,
@@ -390,10 +387,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
-    
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
     NSDictionary *payload = @{
                               @"sender": selfClient.identifier,
@@ -448,10 +444,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
-    
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSData *messageData = [[selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient, redundantClient] plainText:message.data] build].data;
+
+    NSData *data = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSData *messageData = [[selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient, redundantClient] plainText:data] build].data;
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
         redundantClient.user = nil;
@@ -509,8 +504,14 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    
+    ZMText *text = [[[ZMText builder] setContent:messageText] build];
+
+    NSString *messageID = [NSUUID createUUID].transportString;
+    ZMGenericMessageBuilder *messageBuilder = [[ZMGenericMessageBuilder alloc] init];
+    [messageBuilder setText:text];
+    [messageBuilder setMessageId:messageID];
+    ZMGenericMessage *message = [messageBuilder build];
+
     ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[otherUserClient] plainText:message.data];
     NSData *messageData = [[builder build] data];
     
@@ -525,7 +526,7 @@
     XCTAssertEqual(lastEvent.eventType, ZMTUpdateEventConversationOTRMessageAdd);
     XCTAssertNotNil(lastEvent.decryptedOTRData);
     ZMGenericMessage *decryptedMessage = (ZMGenericMessage *)[[[[ZMGenericMessageBuilder alloc] init] mergeFromData:lastEvent.decryptedOTRData] build];
-    XCTAssertEqualObjects(decryptedMessage.textData.content, messageText);
+    XCTAssertEqualObjects(decryptedMessage.text.content, messageText);
 }
 
 - (void)testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients
@@ -556,10 +557,9 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
-    
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
     NSString *redundantClientId = [NSString createAlphanumericalString];
     NSDictionary *payload = @{
@@ -636,11 +636,10 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
-    
-    NSString *messageText = @"Fofooof";
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:messageText nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[secondSelfClient, otherUserClient, secondOtherUserClient] plainText:message.data];
-    
+
+    NSData *data = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    ZMNewOtrMessageBuilder *builder = [selfClient OTRMessageBuilderWithRecipientsForClients:@[secondSelfClient, otherUserClient, secondOtherUserClient] plainText:data];
+
     NSData *messageData = [[builder build] data];
 
     // WHEN
@@ -696,13 +695,12 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:@"Je suis kaput" nonce:nonce.transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     
     // WHEN
     [self.sut performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
-        NSData *encryptedData = [MockUserClient encryptedWithData:message.data from:otherUserClient to:selfClient];
+        NSData *encryptedData = [MockUserClient encryptedWithData:messageData from:otherUserClient to:selfClient];
         [conversation insertOTRMessageFromClient:otherUserClient toClient:selfClient data:encryptedData];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -738,17 +736,16 @@
         
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSUUID *nonce = [NSUUID createUUID];
+
     NSUUID *assetID = [NSUUID createUUID];
     NSData *imageData = [self verySmallJPEGData];
     
-    ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:imageData format:ZMImageFormatMedium nonce:nonce.transportString expiresAfter:nil];
-    NSString *base64Content = [message.data base64EncodedStringWithOptions:0];
+    NSData *messageData = [@"Fofooof" dataUsingEncoding:NSUTF8StringEncoding];
+    NSString *base64Content = [messageData base64EncodedStringWithOptions:0];
     // WHEN
     [self.sut performRemoteChanges:^(__unused id<MockTransportSessionObjectCreation> session) {
-        NSData *encryptedData = [MockUserClient encryptedWithData:message.data from:otherUserClient to:selfClient];
-        [conversation  insertOTRAssetFromClient:otherUserClient toClient:selfClient metaData:encryptedData imageData:imageData assetId:assetID isInline:YES];
+        NSData *encryptedData = [MockUserClient encryptedWithData:messageData from:otherUserClient to:selfClient];
+        [conversation insertOTRAssetFromClient:otherUserClient toClient:selfClient metaData:encryptedData imageData:imageData assetId:assetID isInline:YES];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -808,20 +805,18 @@
 - (void)testThatInsertClientMessageInConversationSetsProperValues
 {
     NSString *text = [self.name stringByAppendingString:@" message 12534"];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:text nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSData *data = message.data;
-    id<ZMTransportData> expectedPayloadData = [data base64EncodedStringWithOptions:0];
+    NSData *messageData = [text dataUsingEncoding:NSUTF8StringEncoding];
+    id<ZMTransportData> expectedPayloadData = [messageData base64EncodedStringWithOptions:0];
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> __unused session, MockConversation *conversation) {
-        return [conversation insertClientMessageFromUser:self.sut.selfUser data:data];
+        return [conversation insertClientMessageFromUser:self.sut.selfUser data:messageData];
     } expectedPayloadData:expectedPayloadData];
 }
 
 - (void)testThatInsertOTRMessageInConversationSetsProperValues
 {
     NSString *text = [self.name stringByAppendingString:@" message 12534"];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithText:text nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    NSData *data = message.data;
+    NSData *data = [text dataUsingEncoding:NSUTF8StringEncoding];
     __block NSMutableDictionary *expectedPayloadData = [@{@"text": [data base64EncodedStringWithOptions:0]} mutableCopy];
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
@@ -835,10 +830,7 @@
 
 - (void)testThatInsertNotInlineOTRAssetInConversationSetsProperValues
 {
-    NSData *mediumData = [self verySmallJPEGData];
-    ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:mediumData format:ZMImageFormatMedium nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    
-    NSData *info = message.data;
+    NSData *info = [@"some data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *imageData = [@"image" dataUsingEncoding:NSUTF8StringEncoding];
     
     NSUUID *assetId = [NSUUID createUUID];
@@ -858,10 +850,7 @@
 
 - (void)testThatInsertInlineOTRAssetInConversationSetsProperValues
 {
-    NSData *mediumData = [self verySmallJPEGData];
-    ZMGenericMessage *message = [ZMGenericMessage genericMessageWithImageData:mediumData format:ZMImageFormatPreview nonce:[NSUUID createUUID].transportString expiresAfter:nil];
-    
-    NSData *info = message.data;
+    NSData *info = [@"some data" dataUsingEncoding:NSUTF8StringEncoding];
     NSData *imageData = [@"image" dataUsingEncoding:NSUTF8StringEncoding];
     
     NSUUID *assetId = [NSUUID createUUID];
