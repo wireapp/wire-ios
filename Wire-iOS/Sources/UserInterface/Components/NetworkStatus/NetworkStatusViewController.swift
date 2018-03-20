@@ -53,7 +53,7 @@ class NetworkStatusViewController : UIViewController {
     fileprivate var device: DeviceProtocol = UIDevice.current
     fileprivate var application: ApplicationProtocol = UIApplication.shared
 
-    /// default init method with a parameter for injecting mock device
+    /// default init method with a parameter for injecting mock device and mock application
     ///
     /// - Parameter device: Provide this param for testing only
     /// - Parameter application: Provide this param for testing only
@@ -178,6 +178,7 @@ class NetworkStatusViewController : UIViewController {
     fileprivate func enqueue(state: NetworkStatusViewState) {
         pendingState = state
         NSObject.cancelPreviousPerformRequests(withTarget: self, selector: #selector(applyPendingState), object: nil)
+
         perform(#selector(applyPendingState), with: nil, afterDelay: 1)
     }
 

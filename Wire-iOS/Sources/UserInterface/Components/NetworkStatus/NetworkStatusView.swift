@@ -80,12 +80,12 @@ class OfflineBar: UIView {
             offlineLabel.left >= containerView.leftMargin
             offlineLabel.right <= containerView.rightMargin
 
-            heightConstraint = containerView.height == CGFloat.OfflineBar.collapsedHeight
+            heightConstraint = containerView.height == 0
         }
     }
 
     private func updateViews(animated: Bool = true) {
-        heightConstraint?.constant = state == .expanded ? CGFloat.OfflineBar.expandedHeight : CGFloat.OfflineBar.collapsedHeight
+        heightConstraint?.constant = state == .expanded ? CGFloat.OfflineBar.expandedHeight : 0
         offlineLabel.alpha = state == .expanded ? 1 : 0
         layer.cornerRadius = state == .expanded ? CGFloat.OfflineBar.expandedCornerRadius : CGFloat.OfflineBar.collapsedHeight
     }
@@ -131,10 +131,6 @@ extension NetworkStatusViewDelegate where Self: UIViewController {
 }
 
 class NetworkStatusView: UIView {
-
-    static public let horizontal: CGFloat = 16
-    static public let verticalMargin: CGFloat = 8
-
     private let connectingView: BreathLoadingBar
     private let offlineView: OfflineBar
     private var _state: NetworkStatusViewState = .online
@@ -144,6 +140,7 @@ class NetworkStatusView: UIView {
     var offlineViewBottomMargin: NSLayoutConstraint?
     var connectingViewHeight: NSLayoutConstraint?
     var connectingViewBottomMargin: NSLayoutConstraint?
+    fileprivate var application: ApplicationProtocol = UIApplication.shared
 
     var state: NetworkStatusViewState {
         set {
@@ -159,6 +156,15 @@ class NetworkStatusView: UIView {
         // if this is called before the frame is set then the offline
         // bar zooms into view (which we don't want).
         updateViewState(animated: (frame == .zero) ? false : animated)
+    }
+
+    /// init method with a parameter for injecting mock application
+    ///
+    /// - Parameter application: Provide this param for testing only
+    convenience init(application: ApplicationProtocol = UIApplication.shared) {
+        self.init(frame: .zero)
+
+        self.application = application
     }
 
     override init(frame: CGRect) {
@@ -183,21 +189,21 @@ class NetworkStatusView: UIView {
 
     func createConstraints() {
         constrain(self, offlineView, connectingView) { containerView, offlineView, connectingView in
-            offlineView.left == containerView.left + NetworkStatusView.horizontal
-            offlineView.right == containerView.right - NetworkStatusView.horizontal
-            offlineViewTopMargin = offlineView.top == containerView.top + NetworkStatusView.verticalMargin
-            offlineViewBottomMargin = offlineView.bottom == containerView.bottom - NetworkStatusView.verticalMargin
+            offlineView.left == containerView.left + CGFloat.NetworkStatusBar.horizontalMargin
+            offlineView.right == containerView.right - CGFloat.NetworkStatusBar.horizontalMargin
+            offlineViewTopMargin = offlineView.top == containerView.top + CGFloat.NetworkStatusBar.verticalMargin
+            offlineViewBottomMargin = offlineView.bottom == containerView.bottom - CGFloat.NetworkStatusBar.verticalMargin
 
             connectingView.left == offlineView.left
             connectingView.right == offlineView.right
             connectingView.top == offlineView.top
             connectingViewHeight = connectingView.height == CGFloat.OfflineBar.collapsedHeight
-            connectingViewBottomMargin = connectingView.bottom == containerView.bottom - NetworkStatusView.verticalMargin
+            connectingViewBottomMargin = connectingView.bottom == containerView.bottom - CGFloat.NetworkStatusBar.verticalMargin
         }
     }
 
     private func updateViewState(animated: Bool) {
-        let connectingViewHidden = state != .onlineSynchronizing
+        var connectingViewHidden = state != .onlineSynchronizing
         connectingView.animating = state == .onlineSynchronizing
         let offlineViewHidden = state != .offlineExpanded && state != .offlineCollapsed
 
@@ -209,6 +215,11 @@ class NetworkStatusView: UIView {
             offlineBarState = .minimized
         case .online, .onlineSynchronizing:
             offlineBarState = .minimized
+        }
+
+        // When the app is in background, hide the sync bar. It prevents the sync bar is "disappear in a blink" visual artifact.
+        if application.applicationState == .background {
+            connectingViewHidden = true
         }
 
         if let offlineBarState = offlineBarState {
@@ -254,10 +265,10 @@ class NetworkStatusView: UIView {
                   animated: Bool,
                   connectingViewHidden: Bool,
                   offlineViewHidden: Bool) {
-        offlineViewBottomMargin?.constant = offlineBarState == .expanded ? -NetworkStatusView.verticalMargin : 0
+        offlineViewBottomMargin?.constant = offlineBarState == .expanded ? -CGFloat.NetworkStatusBar.verticalMargin : 0
 
         connectingViewHeight?.constant = connectingViewHidden ? 0 : CGFloat.OfflineBar.collapsedHeight
-        connectingViewBottomMargin?.constant = connectingViewHidden ? 0 : -NetworkStatusView.verticalMargin
+        connectingViewBottomMargin?.constant = connectingViewHidden ? 0 : -CGFloat.NetworkStatusBar.verticalMargin
 
         /// offlineViewBottomMargin is active iff connectingViewHidden is visible
         if offlineViewHidden && !connectingViewHidden {
