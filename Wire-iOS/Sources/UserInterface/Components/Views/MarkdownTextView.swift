@@ -115,8 +115,15 @@ class MarkdownTextView: NextResponderTextView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     // MARK: - Public Interface
+
+    /// Updates the color of the text.
+    func updateTextColor(base: UIColor?) {
+        let baseColor = base ?? ColorScheme.default().color(withName: ColorSchemeColorTextForeground)
+        self.textColor = baseColor
+        self.style.baseFontColor = baseColor
+    }
     
     /// Clears active markdown & updates typing attributes.
     func resetMarkdown() { activeMarkdown = .none }
