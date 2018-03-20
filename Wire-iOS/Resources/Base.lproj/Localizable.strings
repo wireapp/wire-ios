@@ -1165,7 +1165,7 @@
 // +++++++++++++++++++++++++++++++++++++++++++++++++++++
 // Call Quality Survey
 
-"calling.quality_survey.title" = "Call Quality Survey";
+"calling.quality_survey.title" = "Call Quality Feedback";
 "calling.quality_survey.question" = "How do you rate the overall quality of the call?";
 "calling.quality_survey.answer.1" = "Bad";
 "calling.quality_survey.answer.2" = "Poor";
