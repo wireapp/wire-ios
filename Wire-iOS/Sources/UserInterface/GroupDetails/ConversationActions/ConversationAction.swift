@@ -67,14 +67,14 @@ extension ZMConversation {
     
     private func availableStandardActions() -> [Action] {
         var actions = [Action]()
-        if !isReadOnly {
-            actions.append(.silence(isSilenced: isSilenced))
-        }
-        
         if unreadMessages.count > 0 {
             actions.append(.markRead)
         } else if unreadMessages.count == 0 && canMarkAsUnread() {
             actions.append(.markUnread)
+        }
+        
+        if !isReadOnly {
+            actions.append(.silence(isSilenced: isSilenced))
         }
 
         actions.append(.archive(isArchived: isArchived))
