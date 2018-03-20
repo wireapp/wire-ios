@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDataModel
 
 extension ZMTransportResponse {
     static let teamNotFound = ZMTransportResponse(payload: ["label" : "no-team"] as ZMTransportData, httpStatus: 404, transportSessionError: nil)
@@ -141,7 +140,7 @@ extension MockTransportSession {
         return ZMTransportResponse(payload: member.payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     
-    private func ensurePermission(_ permissions: Permissions, in team: MockTeam) -> ZMTransportResponse? {
+    private func ensurePermission(_ permissions: MockPermissions, in team: MockTeam) -> ZMTransportResponse? {
         guard let selfTeams = selfUser.memberships,
             let member = selfTeams.union(team.members).first
             else { return .notTeamMember }

@@ -18,7 +18,6 @@
 
 import Foundation
 import XCTest
-import WireDataModel
 @testable import WireMockTransport
 
 // MARK: - Teams
@@ -284,8 +283,8 @@ extension MockTransportSessionTeamTests {
         // Given
         var member: MockMember!
         var user: MockUser!
-        let permission1 = Permissions.addTeamMember
-        let permission2 = Permissions.getTeamConversations
+        let permission1 = MockPermissions.addTeamMember
+        let permission2 = MockPermissions.getTeamConversations
 
         sut.performRemoteChanges { session in
             let team = session.insertTeam(withName: "name", isBound: true)
@@ -305,7 +304,7 @@ extension MockTransportSessionTeamTests {
         
         guard let permissionsPayload = payload?["permissions"] as? [String: Any] else { return XCTFail("No permissions payload") }
         guard let permissionsValue = permissionsPayload["self"] as? NSNumber else { return XCTFail("No permissions value") }
-        let permissions = Permissions(rawValue: permissionsValue.int64Value)
+        let permissions = MockPermissions(rawValue: permissionsValue.int64Value)
         XCTAssertEqual(permissions, [permission1, permission2])
     }
     

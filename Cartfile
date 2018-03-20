@@ -1,1 +1,3 @@
-github "wireapp/wire-ios-data-model" ~> 95.0
+github "wireapp/wire-ios-protos" ~> 13.0
+github "wireapp/wire-ios-transport" ~> 35.0
+github "wireapp/wire-ios-cryptobox" ~> 11.0
