@@ -48,7 +48,11 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
     private var iphone_leadingConstraint: NSLayoutConstraint!
     private var iphone_trailingConstraint: NSLayoutConstraint!
     private var iphone_bottomConstraint: NSLayoutConstraint!
-    
+    private var iphone_paddingLeftConstraint: NSLayoutConstraint!
+    private var iphone_paddingRightConstraint: NSLayoutConstraint!
+    private var ipad_paddingLeftConstraint: NSLayoutConstraint!
+    private var ipad_paddingRightConstraint: NSLayoutConstraint!
+
     // MARK: Initialization
     
     static func requestSurveyController(callDuration: TimeInterval) -> CallQualityViewController? {
@@ -166,7 +170,6 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
 
         constrain(callQualityStackView) { callQualityView in
             callQualityView.centerX == callQualityView.superview!.centerX
-            callQualityView.width == (callQualityView.superview!.width - 32)
             callQualityView.bottom == (callQualityView.superview!.bottom - 24)
         }
 
@@ -189,6 +192,11 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
         iphone_bottomConstraint = contentView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -8)
         ipad_centerYConstraint = contentView.centerYAnchor.constraint(equalTo: view.centerYAnchor)
         ipad_centerXConstraint = contentView.centerXAnchor.constraint(equalTo: view.centerXAnchor)
+
+        iphone_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16)
+        iphone_paddingRightConstraint = callQualityStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16)
+        ipad_paddingLeftConstraint = callQualityStackView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 44)
+        ipad_paddingRightConstraint = callQualityStackView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -44)
 
     }
     
@@ -224,6 +232,10 @@ class CallQualityViewController : UIViewController, UIGestureRecognizerDelegate 
         iphone_leadingConstraint.isActive = !isRegular
         iphone_trailingConstraint.isActive = !isRegular
         iphone_bottomConstraint.isActive = !isRegular
+        iphone_paddingLeftConstraint.isActive = !isRegular
+        iphone_paddingRightConstraint.isActive = !isRegular
+        ipad_paddingLeftConstraint.isActive = isRegular
+        ipad_paddingRightConstraint.isActive = isRegular
     }
 
     func updateLayout(for traitCollection: UITraitCollection) {
