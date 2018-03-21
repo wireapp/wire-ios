@@ -62,6 +62,7 @@ extension ZMAssetClientMessage {
 
 }
 
+
 public final class AssetV3FileUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
     
     fileprivate let zmLog = ZMSLog(tag: "Asset V3")
@@ -184,9 +185,7 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
     
     private func requestToUploadFullAsset(for message: ZMAssetClientMessage) -> ZMUpstreamRequest? {
         guard let data = managedObjectContext.zm_fileAssetCache.assetData(message, encrypted: true) else { fatal("Could not find file in cache") }
-        guard let conversation = message.conversation else { fatal("No conversation found") }
-        let retention = AssetRequestFactory.defaultAssetRetention(for: ZMUser.selfUser(in: self.managedObjectContext), in: conversation)
-        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention) else { fatal("Could not create asset request") }
+        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
 
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
