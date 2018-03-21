@@ -147,7 +147,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
         let success = cache.decryptImageIfItMatchesDigest(message, format: .medium, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
         if !success {
-            zmLog.error("Failed to decrypt v3 asset (image) message: \(asset), nonce:\(message.nonce!)")
+            zmLog.error("Failed to decrypt v3 asset (image) message: \(asset), nonce:\(message.nonce)")
         }
         return success
     }
@@ -159,7 +159,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         cache.storeAssetData(message, encrypted: true, data: data)
         let success = cache.decryptFileIfItMatchesDigest(message, encryptionKey: keys.otrKey, sha256Digest: keys.sha256)
         if !success {
-            zmLog.error("Failed to decrypt v3 asset (file) message: \(asset), nonce:\(message.nonce!)")
+            zmLog.error("Failed to decrypt v3 asset (file) message: \(asset), nonce:\(message.nonce)")
         }
         return success
     }
