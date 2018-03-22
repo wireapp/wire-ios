@@ -52,7 +52,7 @@ class BreathLoadingBar: UIView {
         animating = false
 
         super.init(frame: .zero)
-        layer.cornerRadius = CGFloat.NetworkStatusBar.collapsedCornerRadius
+        layer.cornerRadius = CGFloat.SyncBar.cornerRadius
 
         animationDuration = duration
         NotificationCenter.default.addObserver(self, selector: #selector(self.applicationDidBecomeActive), name: .UIApplicationDidBecomeActive, object: nil)
@@ -93,13 +93,13 @@ class BreathLoadingBar: UIView {
         delegate?.animationDidStarted()
 
         let anim = CAKeyframeAnimation(keyPath: "opacity")
-        anim.values = [0.4, 1, 0.4]
+        anim.values = [0.64, 1, 0.64]
         anim.isRemovedOnCompletion = false
         anim.autoreverses = false
         anim.fillMode = kCAFillModeForwards
         anim.repeatCount = .infinity
         anim.duration = animationDuration
-        anim.timingFunction = CAMediaTimingFunction.easeInOutCirc()
+        anim.timingFunction = CAMediaTimingFunction.easeInOutQuart()
         self.layer.add(anim, forKey: BreathLoadingAnimationKey)
     }
 
