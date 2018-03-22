@@ -288,7 +288,7 @@ static FakePushChannel *currentFakePushChannel;
     self.closeCount++;
 }
 
-- (void)attemptToOpen
+- (void)attemptToOpenPushChannelConnection
 {
     self.scheduleOpenPushChannelCount++;
 }
@@ -300,25 +300,6 @@ static FakePushChannel *currentFakePushChannel;
 }
 @end
 
-#pragma mark - ZMSGroupQueue
-
-@interface FakeGroupQueue : NSObject <ZMSGroupQueue>
-
-@end
-
-@implementation FakeGroupQueue
-
-- (void)performGroupedBlock:(dispatch_block_t)block
-{
-    block();
-}
-
-- (ZMSDispatchGroup *)dispatchGroup
-{
-    return nil;
-}
-
-@end
 //////////////////////////////////////////////////
 //
 #pragma mark - Reachability

@@ -19,11 +19,9 @@
 
 @import WireTransport;
 
-//////////////////////////////////////////////////
-//
 #pragma mark - FakeURLResponse
-//
-//////////////////////////////////////////////////
+
+
 @class FakeURLResponse;
 @interface FakeDataTask : NSObject
 
@@ -40,11 +38,8 @@
 @end
 
 
-//////////////////////////////////////////////////
-//
 #pragma mark - FakeURLResponse
-//
-//////////////////////////////////////////////////
+
 
 @interface FakeURLResponse : NSObject
 
@@ -59,14 +54,8 @@
 @end
 
 
-
-
-
-//////////////////////////////////////////////////
-//
 #pragma mark - FakeTransportResponse
-//
-//////////////////////////////////////////////////
+
 
 @interface FakeTransportResponse : NSObject
 + (instancetype)testResponse;
@@ -76,13 +65,8 @@
 @end
 
 
-
-
-//////////////////////////////////////////////////
-//
 #pragma mark - FakeExponentialBackoff
-//
-//////////////////////////////////////////////////
+
 
 @interface FakeExponentialBackoff : NSObject
 @property (nonatomic) NSMutableArray *blocks;
@@ -91,18 +75,18 @@
 @end
 
 
-
-
-//////////////////////////////////////////////////
-//
 #pragma mark - FakeDelegate
-//
-//////////////////////////////////////////////////
 
 
 @interface FakeDelegate : NSObject <ZMAccessTokenHandlerDelegate>
 @property (nonatomic) NSUInteger delegateCallCount;
 @property (nonatomic, copy) dispatch_block_t didReceiveAccessTokenBlock;
+@end
+
+#pragma mark - ZMSGroupQueue
+
+@interface FakeGroupQueue : NSObject <ZMSGroupQueue>
+
 @end
 
 

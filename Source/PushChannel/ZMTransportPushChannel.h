@@ -39,12 +39,15 @@
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 - (void)closeAndRemoveConsumer;
+
+/// Open push channel connection.
+///
+/// NOTE: Must be called from transport session queue.
 - (void)establishConnection;
 
-/// Will open the push channel if all required conditions are met
-- (void)attemptToOpen;
-
-/// Will close the push channel until @c attemptToOpen is called
-- (void)close;
+/// Will open the push channel if all required conditions are met.
+///
+/// NOTE: Must be called from transport session queue.
+- (void)attemptToOpenPushChannelConnection;
 
 @end

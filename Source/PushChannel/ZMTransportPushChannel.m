@@ -35,10 +35,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic) Class pushChannelClass;
 @property (nonatomic) NSURL *url;
 @property (nonatomic) NSString *userAgentString;
-@property (nonatomic, weak) id<ZMPushChannelConsumer>  consumer;
-@property (nonatomic, weak) id<ZMSGroupQueue> groupQueue;
+@property (nonatomic, weak) id<ZMPushChannelConsumer> consumer;
+@property (nonatomic, weak) id<ZMSGroupQueue> consumerQueue;
 @property (nonatomic) ZMPushChannelConnection *pushChannel;
-@property (nonatomic) dispatch_queue_t pushChannelSyncQ;
 @property (nonatomic, readonly) BOOL shouldBeOpen;
 
 @end
@@ -57,26 +56,32 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)setClientID:(NSString *)clientID
 {
-    _clientID = [clientID copy];
-    
-    [self.pushChannel close];
-    [self attemptToOpen];
+    [self.scheduler performGroupedBlock:^{
+        self->_clientID = [clientID copy];
+        
+        [self.pushChannel close];
+        [self attemptToOpenPushChannelConnection];
+    }];
 }
 
 - (void)setAccessToken:(ZMAccessToken *)accessToken
 {
-    _accessToken = accessToken;
-    
-    [self.pushChannel close];
-    [self attemptToOpen];
+    [self.scheduler performGroupedBlock:^{
+        self->_accessToken = accessToken;
+        
+        [self.pushChannel close];
+        [self attemptToOpenPushChannelConnection];
+    }];
 }
 
 - (void)setKeepOpen:(BOOL)keepOpen
 {
-    _keepOpen = keepOpen;
-    
-    [self closeIfNotAllowedToBeOpen];
-    [self attemptToOpen];
+    [self.scheduler performGroupedBlock:^{
+        self->_keepOpen = keepOpen;
+        
+        [self closeIfNotAllowedToBeOpen];
+        [self attemptToOpenPushChannelConnection];
+    }];
 }
 
 
@@ -95,59 +100,48 @@ ZM_EMPTY_ASSERTING_INIT();
         self.url = [URL URLByAppendingPathComponent:@"/await"];
         self.userAgentString = userAgentString;
         self.pushChannelClass = pushChannelClass ?: ZMPushChannelConnection.class;
-        self.pushChannelSyncQ = dispatch_queue_create("Set push channel queue", DISPATCH_QUEUE_SERIAL);
     }
     return self;
 }
 
-- (void)updatingPushChannel:(dispatch_block_t)block
-{
-    dispatch_sync(self.pushChannelSyncQ, block);
-}
-
 - (void)dealloc {
-    [self.pushChannel close];
-    [self updatingPushChannel:^{
-        self.pushChannel = nil;
-    }];
     [self.scheduler tearDown];
 }
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 {
     ZMLogInfo(@"Setting push channel consumer");
+    
     if (consumer != nil) {
         Require(groupQueue != nil);
-        self.groupQueue = groupQueue;
-        self.consumer = consumer;
-        [self attemptToOpen];
+        [self.scheduler performGroupedBlock:^{
+            self.consumerQueue = groupQueue;
+            self.consumer = consumer;
+            [self attemptToOpenPushChannelConnection];
+        }];
     } else {
         [self closeAndRemoveConsumer];
     }
 }
 
-- (void)closeAndRemoveConsumer;
+- (void)closeAndRemoveConsumer
 {
     ZMLogInfo(@"Remove push channel consumer");
-    self.consumer = nil;
-    self.groupQueue = nil;
-    [self.pushChannel close];
+    
+    [self.scheduler performGroupedBlock:^{
+        self.consumer = nil;
+        self.consumerQueue = nil;
+        [self.pushChannel close];
+    }];
 }
 
-- (void)close;
+- (void)attemptToOpenPushChannelConnection
 {
-    ZMLogInfo(@"close");
-    [self.pushChannel close];
-}
-
-- (void)attemptToOpen
-{
+    ZMLogInfo(@"Attempt to open push channel");
+    
     if (self.shouldBeOpen) {
         ZMOpenPushChannelRequest *openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
-        ZMTransportRequestScheduler *scheduler = self.scheduler;
-        [scheduler performGroupedBlock:^{
-            [scheduler addItem:openPushChannelItem];
-        }];
+        [self.scheduler addItem:openPushChannelItem];
     }
 }
 
@@ -166,11 +160,8 @@ ZM_EMPTY_ASSERTING_INIT();
 - (void)establishConnection
 {
     if (!self.pushChannel.isOpen && self.shouldBeOpen) {
-        [self updatingPushChannel:^{
-            self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.groupQueue accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
-        }];
-        
         ZMLogInfo(@"Opening push channel");
+        self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.scheduler accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
     }
 }
 
@@ -200,44 +191,46 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)pushChannel:(ZMPushChannelConnection *)channel didReceiveTransportData:(id<ZMTransportData>)data;
 {
-    ZMLogInfo(@"[PushChannel] Received payload on push channel.");
+    ZMLogInfo(@"Received payload on push channel.");
 
     [self.networkStateDelegate didReceiveData];
-    [self.consumer pushChannel:channel didReceiveTransportData:data];
+    
+    [self.consumerQueue performGroupedBlock:^{
+        [self.consumer pushChannel:channel didReceiveTransportData:data];
+    }];
+    
 }
 
 - (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
 {
-    ZMLogInfo(@"[PushChannel] Push channel did close.");
+    ZMLogInfo(@"Push channel did close.");
 
     // Immediately try to re-open the push channel
-    [self attemptToOpen];
-    [self.consumer pushChannelDidClose:channel withResponse:response];
+    [self attemptToOpenPushChannelConnection];
+    
+    [self.consumerQueue performGroupedBlock:^{
+        [self.consumer pushChannelDidClose:channel withResponse:response];
+    }];
     
     if (response != nil) {
-        ZMTransportRequestScheduler *scheduler = self.scheduler;
-        [scheduler performGroupedBlock:^{
-            [scheduler processCompletedURLResponse:response URLError:nil];
-        }];
+        [self.scheduler processCompletedURLResponse:response URLError:nil];
     }
     
     if (channel == self.pushChannel) {
-        [self updatingPushChannel:^{
-            self.pushChannel = nil;
-        }];
+        self.pushChannel = nil;
     }
 }
 
 - (void)pushChannelDidOpen:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
 {
-    ZMLogInfo(@"[PushChannel] Push channel did open.");
+    ZMLogInfo(@"Push channel did open.");
 
-    [self.consumer pushChannelDidOpen:channel withResponse:response];
+    [self.consumerQueue performGroupedBlock:^{
+        [self.consumer pushChannelDidOpen:channel withResponse:response];
+    }];
+    
     if (response != nil) {
-        ZMTransportRequestScheduler *scheduler = self.scheduler;
-        [scheduler performGroupedBlock:^{
-            [scheduler processCompletedURLResponse:response URLError:nil];
-        }];
+        [self.scheduler processCompletedURLResponse:response URLError:nil];
     }
 }
 
