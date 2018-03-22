@@ -97,12 +97,16 @@
     [super viewDidLoad];
     
     [self createNavigationController];
-    
+
+    self.phoneNumberStepViewController.phoneNumberViewController.phoneNumberField.confirmButton.accessibilityLabel = NSLocalizedString(@"registration.confirm", @"");
     self.view.opaque = NO;
 }
 
 - (void)takeFirstResponder
 {
+    if (UIAccessibilityIsVoiceOverRunning()) {
+        return;
+    }
     [self.phoneNumberStepViewController takeFirstResponder];
 }
 

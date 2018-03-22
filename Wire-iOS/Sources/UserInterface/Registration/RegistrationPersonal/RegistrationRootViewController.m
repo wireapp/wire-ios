@@ -107,10 +107,11 @@
     self.cancelButton = [[IconButton alloc] init];
     [self.cancelButton setIcon:ZetaIconTypeCancel withSize:ZetaIconSizeTiny forState:UIControlStateNormal];
     [self.cancelButton setIconColor:UIColor.whiteColor forState:UIControlStateNormal];
-    self.cancelButton.accessibilityLabel = @"cancelAddAccount";
+    self.cancelButton.accessibilityIdentifier = @"cancelAddAccount";
     [self.cancelButton addTarget:self action:@selector(cancelAddAccount) forControlEvents:UIControlEventTouchUpInside];
     self.cancelButton.hidden = self.shouldHideCancelButton || self.firstAuthenticatedAccount == nil;
-    
+    self.cancelButton.accessibilityLabel = NSLocalizedString(@"registration.launch_back_button.label", @"");
+
     [self addChildViewController:self.registrationTabBarController];
     [self.view addSubview:self.registrationTabBarController.view];
     [self.view addSubview:self.cancelButton];
@@ -128,6 +129,7 @@
 
     [self.backButton setIcon:iconType withSize:ZetaIconSizeSmall forState:UIControlStateNormal];
     self.backButton.accessibilityIdentifier = @"BackToLaunchScreenButton";
+    self.backButton.accessibilityLabel = NSLocalizedString(@"registration.launch_back_button.label", @"");
     [self.view addSubview:self.backButton];
 
     [self.backButton addTarget:self action:@selector(backButtonTapped) forControlEvents:UIControlEventTouchUpInside];

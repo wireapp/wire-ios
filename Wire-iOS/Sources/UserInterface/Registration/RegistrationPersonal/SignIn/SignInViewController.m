@@ -103,6 +103,7 @@
     self.view.opaque = NO;
     
     [self setupConstraints];
+    [self setupAccessibilityElements];
 }
 
 - (void)setupConstraints
@@ -122,8 +123,23 @@
     [self.viewControllerContainer autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero excludingEdge:ALEdgeTop];
 }
 
+- (void)setupAccessibilityElements
+{
+    self.buttonContainer.accessibilityTraits = UIAccessibilityTraitHeader;
+
+    if (@available(iOS 10, *)) {
+        self.buttonContainer.accessibilityTraits |= UIAccessibilityTraitTabBar;
+    }
+
+    self.emailSignInButton.accessibilityLabel = NSLocalizedString(@"signin.use_email.label", @"");
+    self.phoneSignInButton.accessibilityLabel = NSLocalizedString(@"signin.use_phone.label", @"");
+}
+
 - (void)takeFirstResponder
 {
+    if (UIAccessibilityIsVoiceOverRunning()) {
+        return;
+    }
     if (self.presentedSignInViewController == self.emailSignInViewControllerContainer) {
         [self.emailSignInViewController takeFirstResponder];
     } else {
@@ -238,9 +254,11 @@
     
     deselectedButton.layer.borderWidth = 0;
     deselectedButton.alpha = 0.5;
+    deselectedButton.accessibilityTraits &= ~UIAccessibilityTraitSelected;
     
     selectedButton.layer.borderWidth = 1;
     selectedButton.alpha = 1;
+    selectedButton.accessibilityTraits |= UIAccessibilityTraitSelected;
 }
 
 - (void)presentSignInViewControllerWithCredentials:(LoginCredentials*)credentials

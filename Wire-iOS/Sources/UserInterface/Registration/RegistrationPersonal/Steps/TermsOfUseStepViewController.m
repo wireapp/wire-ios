@@ -72,7 +72,8 @@
     self.titleLabel.font = UIFont.largeSemiboldFont;
     self.titleLabel.textColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorTextForeground variant:ColorSchemeVariantDark];
     self.titleLabel.text = NSLocalizedString(@"registration.terms_of_use.title", nil);
-    
+    self.titleLabel.accessibilityTraits |= UIAccessibilityTraitHeader;
+
     [self.view addSubview:self.titleLabel];
 }
 
