@@ -117,6 +117,7 @@
         self.emailField.textContentType = UITextContentTypeUsername;
     }
     self.emailField.placeholder = NSLocalizedString(@"email.placeholder", nil);
+    self.emailField.accessibilityLabel = NSLocalizedString(@"email.placeholder", nil);
     self.emailField.keyboardType = UIKeyboardTypeEmailAddress;
     self.emailField.returnKeyType = UIReturnKeyNext;
     self.emailField.keyboardAppearance = UIKeyboardAppearanceDark;
@@ -144,6 +145,7 @@
         self.passwordField.textContentType = UITextContentTypePassword;
     }
     self.passwordField.placeholder = NSLocalizedString(@"password.placeholder", nil);
+    self.passwordField.accessibilityLabel = NSLocalizedString(@"password.placeholder", nil);
     self.passwordField.secureTextEntry = YES;
     self.passwordField.keyboardAppearance = UIKeyboardAppearanceDark;
     self.passwordField.accessibilityIdentifier = @"PasswordField";
@@ -152,6 +154,7 @@
     
     [self.passwordField addTarget:self action:@selector(textFieldDidChange:) forControlEvents:UIControlEventEditingChanged];
     [self.passwordField.confirmButton addTarget:self action:@selector(signIn:) forControlEvents:UIControlEventTouchUpInside];
+    self.passwordField.confirmButton.accessibilityLabel = NSLocalizedString(@"signin.confirm", @"");
     
     if (self.loginCredentials.password != nil) {
         // User was previously signed in so we prefill the credentials
@@ -167,6 +170,9 @@
         onePasswordButton.contentEdgeInsets = UIEdgeInsetsMake(0, 7, 0, 7);
         [onePasswordButton setImage:onePasswordImage forState:UIControlStateNormal];
         [onePasswordButton addTarget:self action:@selector(open1PasswordExtension:) forControlEvents:UIControlEventTouchUpInside];
+        onePasswordButton.accessibilityLabel = NSLocalizedString(@"signin.use_one_password.label", @"");
+        onePasswordButton.accessibilityHint = NSLocalizedString(@"signin.use_one_password.hint", @"");
+
         self.passwordField.customRightView = onePasswordButton;
         self.passwordField.rightAccessoryView = RegistrationTextFieldRightAccessoryViewCustom;
     }
@@ -183,7 +189,8 @@
     [self.forgotPasswordButton setTitle:[NSLocalizedString(@"signin.forgot_password", nil) uppercasedWithCurrentLocale] forState:UIControlStateNormal];
     self.forgotPasswordButton.titleLabel.font = UIFont.smallLightFont;
     [self.forgotPasswordButton addTarget:self action:@selector(resetPassword:) forControlEvents:UIControlEventTouchUpInside];
-    
+
+    self.forgotPasswordButton.accessibilityTraits |= UIAccessibilityTraitLink;
     [self.view addSubview:self.forgotPasswordButton];
 }
 
@@ -212,6 +219,9 @@
 
 - (void)takeFirstResponder
 {
+    if (UIAccessibilityIsVoiceOverRunning()) {
+        return;
+    }
     if (@available(iOS 11, *)) {
         // A workaround for iOS11 not autofilling the password textfield (https://wearezeta.atlassian.net/browse/ZIOS-9080).
         // We need to put focus on the textfield as it seems to force iOS to "see" this texfield

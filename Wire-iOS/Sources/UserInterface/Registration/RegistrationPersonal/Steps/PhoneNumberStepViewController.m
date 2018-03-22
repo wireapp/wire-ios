@@ -25,7 +25,6 @@
 #import "UIView+Borders.h"
 #import "UIImage+ZetaIconsNeue.h"
 #import "Constants.h"
-#import "PhoneNumberViewController.h"
 #import "GuidanceLabel.h"
 #import "Country.h"
 #import "WireSyncEngine+iOS.h"
@@ -38,7 +37,6 @@
 
 @property (nonatomic, copy, readwrite) NSString *phoneNumber;
 @property (nonatomic) UILabel *heroLabel;
-@property (nonatomic) PhoneNumberViewController *phoneNumberViewController;
 @property (nonatomic) BOOL initialConstraintsCreated;
 @property (nonatomic) ZMIncompleteRegistrationUser *unregisteredUser;
 @property (nonatomic, readonly) BOOL phoneNumberIsEditable;
@@ -147,6 +145,9 @@
 
 - (void)takeFirstResponder
 {
+    if (UIAccessibilityIsVoiceOverRunning()) {
+        return;
+    }
     [self.phoneNumberViewController.phoneNumberField becomeFirstResponder];
 }
 

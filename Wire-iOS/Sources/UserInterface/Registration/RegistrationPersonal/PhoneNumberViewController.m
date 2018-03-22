@@ -93,7 +93,9 @@ static CGFloat PhoneNumberFieldTopMargin = 16;
     self.selectCountryButton.accessibilityIdentifier = @"CountryPickerButton";
     
     [self.selectCountryButton addTarget:self action:@selector(selectCountry:) forControlEvents:UIControlEventTouchUpInside];
-    
+
+    self.selectCountryButton.accessibilityLabel = NSLocalizedString(@"registration.phone_country", @"");
+    self.selectCountryButton.accessibilityHint = NSLocalizedString(@"registration.phone_country.hint", @"");
     [self.view addSubview:self.selectCountryButton];
 }
 
@@ -103,6 +105,7 @@ static CGFloat PhoneNumberFieldTopMargin = 16;
     self.phoneNumberField.leftAccessoryView = RegistrationTextFieldLeftAccessoryViewCountryCode;
     self.phoneNumberField.keyboardType = UIKeyboardTypeNumberPad;
     self.phoneNumberField.placeholder = NSLocalizedString(@"registration.enter_phone_number.placeholder", nil);
+    self.phoneNumberField.accessibilityLabel = NSLocalizedString(@"registration.enter_phone_number.placeholder", nil);
     self.phoneNumberField.delegate = self;
     
     [self.phoneNumberField.countryCodeButton addTarget:self action:@selector(selectCountry:) forControlEvents:UIControlEventTouchUpInside];
@@ -170,7 +173,7 @@ static CGFloat PhoneNumberFieldTopMargin = 16;
 - (void)setCountry:(Country *)country
 {
     _country = country;
-    
+    self.selectCountryButton.accessibilityValue = country.displayName;
     self.phoneNumberField.countryCode = country.e164.unsignedIntegerValue;
     [self.selectCountryButton setTitle:country.displayName forState:UIControlStateNormal];
 }
