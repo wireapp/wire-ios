@@ -18,6 +18,7 @@
 
 
 #import "SignInViewController.h"
+#import "SignInViewController+internal.h"
 
 @import PureLayout;
 
@@ -34,11 +35,7 @@
 
 @interface SignInViewController () <PhoneSignInViewControllerDelegate>
 
-@property (nonatomic) PhoneSignInViewController *phoneSignInViewController;
 @property (nonatomic) EmailSignInViewController *emailSignInViewController;
-@property (nonatomic) UIViewController *presentedSignInViewController;
-@property (nonatomic) UIViewController *emailSignInViewControllerContainer;
-@property (nonatomic) UIViewController *phoneSignInViewControllerContainer;
 @property (nonatomic) UIView *viewControllerContainer;
 @property (nonatomic) UIView *buttonContainer;
 @property (nonatomic) Button *emailSignInButton;
@@ -100,7 +97,7 @@
     if (hasAddedEmailAddress || ! hasAddedPhoneNumber) {
         [self presentSignInViewController:self.emailSignInViewControllerContainer];
     } else {
-        [self presentSignInViewController:self.phoneSignInViewController];
+        [self presentSignInViewController:self.phoneSignInViewControllerContainer];
     }
     
     self.view.opaque = NO;
@@ -187,11 +184,11 @@
     
     [fromViewController willMoveToParentViewController:nil];
     [self addChildViewController:toViewController];
-    
+
     toViewController.view.translatesAutoresizingMaskIntoConstraints = YES;
     toViewController.view.frame = fromViewController.view.frame;
     [toViewController.view layoutIfNeeded];
-    
+
     [self transitionFromViewController:fromViewController
                       toViewController:toViewController
                               duration:0.35 options:UIViewAnimationOptionTransitionCrossDissolve
