@@ -375,8 +375,11 @@ extension ZMConversation {
             if $0.isConnected {
                 return false
             }
+            else if $0.isWirelessUser {
+                return false
+            }
             else {
-                return $0.team != selfUser.team
+                return selfUser.team == nil || $0.team != selfUser.team
             }
         } != nil
     }

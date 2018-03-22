@@ -118,6 +118,33 @@
     }];
 }
 
+- (void)testThatItIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection_Wireless
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSArray<ZMUser *> *users = [self createUsersWithClientsOnSyncMOCWithCount:2];
+        
+        ZMUser *unconnectedUser = users.firstObject, *connectedUser = users.lastObject;
+        unconnectedUser.expiresAt = [NSDate dateWithTimeIntervalSinceNow:60];
+        unconnectedUser.connection = nil;
+        
+        XCTAssertTrue(unconnectedUser.isWirelessUser);
+        XCTAssertFalse(unconnectedUser.isConnected);
+        XCTAssertNil(unconnectedUser.team);
+        
+        ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.syncMOC withParticipants:users];
+        UserClient *selfClient = [self createSelfClientOnMOC:self.syncMOC];
+        
+        // when
+        [selfClient trustClients:connectedUser.clients];
+        [selfClient trustClients:unconnectedUser.clients];
+
+        // then
+        XCTAssertTrue(conversation.allUsersTrusted);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
+    }];
+}
+
 - (void)testThatItDoesDecreaseTheSecurityLevelWhenAskedToMakeNotSecure
 {
     // given
