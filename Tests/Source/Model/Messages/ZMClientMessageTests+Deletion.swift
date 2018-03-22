@@ -74,6 +74,12 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         cache.storeAssetData(sut, format: .preview, encrypted: true, data: verySmallJPEGData())
         cache.storeAssetData(sut, format: .medium, encrypted: true, data: mediumJPEGData())
         
+        // expect
+        let assetId = UUID.create().transportString()
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!.transportString()).updatedUploaded(withAssetId: assetId, token: nil)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        let observer = AssetDeletionNotificationObserver()
+        
         // when
         performPretendingUiMocIsSyncMoc {
             let delete = sut.deleteForEveryone()
@@ -85,6 +91,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // then
         assertDeletedContent(ofMessage: sut, inConversation: conversation)
+        XCTAssertEqual(observer.deletedIdentifiers, [assetId])
         wipeCaches()
     }
     
@@ -108,6 +115,21 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNotNil(cache.assetData(sut, format: .original, encrypted: false))
         XCTAssertNotNil(cache.assetData(sut, encrypted: false))
         
+        // expect
+        let assetId = UUID.create().transportString()
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!.transportString()).updatedUploaded(withAssetId: assetId, token: nil)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        
+        let previewAssetId = UUID.create().transportString()
+        let remote = ZMAssetRemoteData.remoteData(withOTRKey: .init(), sha256: .init(), assetId: previewAssetId, assetToken: nil)
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 1024, height: 1024)
+        let preview = ZMAssetPreview.preview(withSize: 256, mimeType: "image/png", remoteData: remote, imageMetaData: image)
+        let asset = ZMAsset.asset(withOriginal: nil, preview: preview)
+        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!.transportString())
+        sut.update(with: genericMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        
+        let observer = AssetDeletionNotificationObserver()
+        
         // when
         performPretendingUiMocIsSyncMoc {
             let delete = sut.deleteForEveryone()
@@ -119,6 +141,9 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // then
         assertDeletedContent(ofMessage: sut, inConversation: conversation, fileName: "file.dat")
+        XCTAssertEqual(observer.deletedIdentifiers.count, 2)
+        XCTAssert(observer.deletedIdentifiers.contains(assetId))
+        XCTAssert(observer.deletedIdentifiers.contains(previewAssetId))
         wipeCaches()
     }
     
@@ -514,4 +539,20 @@ extension ZMClientMessageTests_Deletion {
         }
     }
 
+}
+
+final fileprivate class AssetDeletionNotificationObserver: NSObject {
+    
+    private(set) var deletedIdentifiers = [String]()
+    
+    override init() {
+        super.init()
+        NotificationCenter.default.addObserver(self, selector: #selector(handle), name: Notification.Name.deleteAssetNotification, object: nil)
+    }
+    
+    @objc private func handle(note: Notification) {
+        guard let identifier = note.object as? String else { return }
+        deletedIdentifiers.append(identifier)
+    }
+    
 }
