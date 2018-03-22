@@ -20,7 +20,6 @@
 #import "Fakes.h"
 
 
-
 @implementation FakeDataTask
 
 - (instancetype)initWithError:(NSError *)error taskIdentifier:(NSUInteger)taskIdentifier response:(FakeURLResponse *)response
@@ -59,9 +58,6 @@
 }
 
 @end
-
-
-
 
 
 @implementation FakeURLResponse
@@ -122,8 +118,6 @@
 @end
 
 
-
-
 @implementation FakeExponentialBackoff
 
 - (instancetype)init;
@@ -157,9 +151,6 @@
 @end
 
 
-
-
-
 @implementation FakeDelegate
 
 - (void)handlerDidReceiveAccessToken:(id)sender
@@ -175,6 +166,21 @@
 - (void)handlerDidClearAccessToken:(ZMAccessTokenHandler * __unused)handler
 {
     // TODO
+}
+
+@end
+
+
+@implementation FakeGroupQueue
+
+- (void)performGroupedBlock:(dispatch_block_t)block
+{
+    block();
+}
+
+- (ZMSDispatchGroup *)dispatchGroup
+{
+    return nil;
 }
 
 @end

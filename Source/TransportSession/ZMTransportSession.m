@@ -676,7 +676,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)schedulerIncreasedMaximumNumberOfConcurrentRequests:(ZMTransportRequestScheduler *)scheduler;
 {
     ZMLogDebug(@"%@ Notify new request" , NSStringFromSelector(_cmd));
-    [self.transportPushChannel attemptToOpen];
+    [self.transportPushChannel attemptToOpenPushChannelConnection];
     [ZMTransportSession notifyNewRequestsAvailable:scheduler];
 }
 
