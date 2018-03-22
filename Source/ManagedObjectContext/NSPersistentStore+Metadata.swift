@@ -20,8 +20,7 @@ import Foundation
 
 // MARK: - Public accessors
 
-@objc(ZMPersistableMetadata) public protocol PersistableInMetadata : NSObjectProtocol {
-}
+@objc(ZMPersistableMetadata) public protocol PersistableInMetadata : NSObjectProtocol {}
 
 extension NSString : PersistableInMetadata {}
 extension NSNumber : PersistableInMetadata {}
@@ -32,6 +31,10 @@ public protocol SwiftPersistableInMetadata {}
 extension String : SwiftPersistableInMetadata {}
 extension Date : SwiftPersistableInMetadata {}
 extension Data : SwiftPersistableInMetadata {}
+extension Array : SwiftPersistableInMetadata {}
+
+// TODO: Swift 4
+// extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
 
 extension NSManagedObjectContext {
     

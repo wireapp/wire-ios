@@ -73,7 +73,7 @@ public extension ZMGenericMessage {
         return assetData?.original.hasRasterImage ?? false
     }
 
-    private var v3_uploadedAssetId: String? {
+    var v3_uploadedAssetId: String? {
         guard assetData?.uploaded.hasAssetId() == true else { return nil }
         return assetData?.uploaded.assetId
     }
