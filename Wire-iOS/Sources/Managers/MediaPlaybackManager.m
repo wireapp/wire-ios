@@ -22,6 +22,7 @@
 #import "MediaPlaybackManager.h"
 #import "MediaPlayer.h"
 #import "AudioTrackPlayer.h"
+#import "KeyValueObserver.h"
 
 NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlaybackManagerPlayerStateChangedNotification";
 
@@ -30,6 +31,8 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
 
 @property (nonatomic) id<MediaPlayer> activeMediaPlayer;
 @property (nonatomic) AudioTrackPlayer *audioTrackPlayer;
+
+@property (nonatomic, retain) NSObject *titleObserver;
 
 @end
 
@@ -43,6 +46,7 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
         self.name = name;
         self.audioTrackPlayer = [[AudioTrackPlayer alloc] init];
         self.audioTrackPlayer.mediaPlayerDelegate = self;
+        self.titleObserver = nil;
     }
     
     return self;
@@ -114,7 +118,8 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
 - (void)mediaPlayer:(id<MediaPlayer>)mediaPlayer didChangeToState:(MediaPlayerState)state
 {
     DDLogDebug(@"mediaPlayer changed state: %@", @(state));
-    
+    [self.changeObserver activeMediaPlayerStateDidChange];
+
     switch (state) {
         case MediaPlayerStatePlaying:
             if (self.activeMediaPlayer != mediaPlayer) {
@@ -126,6 +131,7 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
             }
             
             self.activeMediaPlayer = mediaPlayer;
+            [self startObservingMediaPlayerChanges];
             break;
             
         case MediaPlayerStatePaused:
@@ -138,7 +144,9 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
             if (self.activeMediaPlayer == mediaPlayer) {
                 self.activeMediaPlayer = nil;
             }
-            
+
+            [self stopObservingMediaPlayerChanges:mediaPlayer];
+
             if ([self.delegate respondsToSelector:@selector(didFinishPlayingMedia:)]) {
                 [self.delegate didFinishPlayingMedia:self]; // this interfers with the audio session
             }
@@ -154,6 +162,29 @@ NSString *const MediaPlaybackManagerPlayerStateChangedNotification = @"MediaPlay
     
     [[NSNotificationCenter defaultCenter] postNotificationName:MediaPlaybackManagerPlayerStateChangedNotification
                                                         object:mediaPlayer];
+}
+
+#pragma mark - Active Media Player State
+
+- (void)startObservingMediaPlayerChanges
+{
+    self.titleObserver = [KeyValueObserver observeObject:self.activeMediaPlayer
+                                                 keyPath:@"title"
+                                                  target:self
+                                                selector:@selector(activeMediaPlayerTitleChanged:)
+                                                 options:NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew];
+}
+
+- (void)stopObservingMediaPlayerChanges:(id<MediaPlayer>)mediaPlayer
+{
+    // We need to remove the observer manually, because deallocating it does not remove it
+    [((NSObject *)mediaPlayer) removeObserver:self.titleObserver forKeyPath:@"title"];
+    self.titleObserver = nil;
+}
+
+- (void)activeMediaPlayerTitleChanged:(NSDictionary *)change
+{
+    [self.changeObserver activeMediaPlayerTitleDidChange];
 }
 
 @end
