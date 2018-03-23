@@ -86,8 +86,8 @@ class BackupMetadataTests: XCTestCase {
         )
         
         // When & Then
-        let provider = MockProvider(version: "4.1.23", remoteIdentifier: userIdentifier)
-        XCTAssertNil(sut.verify(using: provider, appVersionProvider: provider))
+        let provider = MockProvider(version: "4.1.23")
+        XCTAssertNil(sut.verify(using: userIdentifier, appVersionProvider: provider))
     }
     
     func testThatItReturnsAnErrorForNewerAppVersionBackupVerification() {
@@ -102,8 +102,8 @@ class BackupMetadataTests: XCTestCase {
         )
         
         // When
-        let provider = MockProvider(version: "2.9.12", remoteIdentifier: userIdentifier)
-        let error = sut.verify(using: provider, appVersionProvider: provider)
+        let provider = MockProvider(version: "2.9.12")
+        let error = sut.verify(using: userIdentifier, appVersionProvider: provider)
         
         // Then
         XCTAssertEqual(error, BackupMetadata.VerificationError.backupFromNewerAppVersion)
@@ -121,8 +121,8 @@ class BackupMetadataTests: XCTestCase {
         )
         
         // When
-        let provider = MockProvider(version: "3.1.0", remoteIdentifier: .create())
-        let error = sut.verify(using: provider, appVersionProvider: provider)
+        let provider = MockProvider(version: "3.1.0")
+        let error = sut.verify(using: .create(), appVersionProvider: provider)
         
         // Then
         XCTAssertEqual(error, BackupMetadata.VerificationError.userMismatch)
@@ -132,13 +132,11 @@ class BackupMetadataTests: XCTestCase {
 
 // MARK: - Helper
 
-fileprivate class MockProvider: VersionProvider, RemoteIdentifierProvider {
+fileprivate class MockProvider: VersionProvider {
     
-    var remoteIdentifier: UUID?
     var version: String
     
-    init(version: String, remoteIdentifier: UUID) {
+    init(version: String) {
         self.version = version
-        self.remoteIdentifier = remoteIdentifier
     }
 }
