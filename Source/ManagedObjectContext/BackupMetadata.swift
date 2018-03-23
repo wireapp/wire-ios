@@ -42,13 +42,12 @@ public struct BackupMetadata: Codable {
         self.clientIdentifier = clientIdentifier
     }
     
-    public init?(
-        client: UserClient,
+    public init(
+        userIdentifier: UUID,
+        clientIdentifier: String,
         appVersionProvider: VersionProvider = Bundle.main,
         modelVersionProvider: VersionProvider = NSManagedObjectModel.loadModel()
         ) {
-        guard let clientIdentifier = client.remoteIdentifier,
-            let userIdentifier = client.user?.remoteIdentifier else { return nil }
         self.init(
             appVersion: appVersionProvider.version,
             modelVersion: modelVersionProvider.version,
@@ -97,10 +96,10 @@ public extension BackupMetadata {
     }
     
     func verify(
-        using remoteIdentifierProvider: RemoteIdentifierProvider,
+        using userIdentifier: UUID,
         appVersionProvider: VersionProvider = Bundle.main
         ) -> VerificationError? {
-        guard userIdentifier == remoteIdentifierProvider.remoteIdentifier else { return .userMismatch }
+        guard self.userIdentifier == userIdentifier else { return .userMismatch }
         let current = Version(string: appVersionProvider.version)
         let backup = Version(string: appVersion)
 
@@ -110,12 +109,6 @@ public extension BackupMetadata {
     }
     
 }
-
-public protocol RemoteIdentifierProvider {
-    var remoteIdentifier: UUID? { get }
-}
-
-extension ZMUser: RemoteIdentifierProvider {}
 
 // MARK: - Version Helper
 
