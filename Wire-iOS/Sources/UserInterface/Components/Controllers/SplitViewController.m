@@ -21,6 +21,7 @@
 
 
 #import "SplitViewController.h"
+#import "SplitViewController+internal.h"
 #import "CrossfadeTransition.h"
 #import "SwizzleTransition.h"
 #import "VerticalTransition.h"
@@ -153,9 +154,6 @@ NSString *SplitLayoutObservableDidChangeToLayoutSizeNotification = @"SplitLayout
 
 @interface SplitViewController () <UIGestureRecognizerDelegate>
 
-@property (nonatomic) UIView *leftView;
-@property (nonatomic) UIView *rightView;
-
 @property (nonatomic) NSLayoutConstraint *leftViewOffsetConstraint;
 @property (nonatomic) NSLayoutConstraint *rightViewOffsetConstraint;
 
@@ -263,7 +261,7 @@ NSString *SplitLayoutObservableDidChangeToLayoutSizeNotification = @"SplitLayout
     self.futureTraitCollection = nil;
 
     // update right view constraits after size changes
-    [self resetOpenPercentage];
+    [self updateRightAndLeftEdgoConstants: self.openPercentage];
 }
 
 - (void)updateLayoutSizeForTraitCollection:(UITraitCollection *)traitCollection size:(CGSize)size
@@ -565,6 +563,11 @@ NSString *SplitLayoutObservableDidChangeToLayoutSizeNotification = @"SplitLayout
 - (void)setOpenPercentage:(CGFloat)percentage
 {
     _openPercentage = percentage;
+    [self updateRightAndLeftEdgoConstants: percentage];
+}
+
+- (void)updateRightAndLeftEdgoConstants:(CGFloat)percentage
+{
     self.rightViewOffsetConstraint.constant = self.leftViewWidthConstraint.constant * percentage;
     self.leftViewOffsetConstraint.constant = 64.0f * (1.0f - percentage);
 }
