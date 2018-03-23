@@ -178,7 +178,7 @@ extension NSPersistentStoreCoordinator {
     }
  
     /// Returns the set of options that need to be passed to the persistent sotre
-    fileprivate static func persistentStoreOptions(supportsMigration: Bool) -> [String: Any] {
+    static func persistentStoreOptions(supportsMigration: Bool) -> [String: Any] {
         return [
             // https://www.sqlite.org/pragma.html
             NSSQLitePragmasOption: [
