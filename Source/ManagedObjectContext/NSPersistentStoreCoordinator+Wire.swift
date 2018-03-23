@@ -206,7 +206,7 @@ extension Dictionary where Key == String {
 
 extension NSManagedObjectModel {
     
-    fileprivate var firstVersionIdentifier: String {
+    var firstVersionIdentifier: String {
         return self.versionIdentifiers.first! as! String
     }
 }
