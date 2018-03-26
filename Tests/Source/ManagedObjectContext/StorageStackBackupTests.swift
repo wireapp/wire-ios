@@ -31,7 +31,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         try? FileManager.default.removeItem(at: StorageStack.backupsDirectory)
         super.tearDown()
     }
-
+    
     func createBackup(accountIdentifier: UUID, file: StaticString =
         #file, line: UInt = #line) -> Result<URL>? {
 
@@ -42,6 +42,35 @@ class StorageStackBackupTests: DatabaseBaseTest {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return result
     }
+    
+    func importBackup(accountIdentifier: UUID, backup: URL, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
+        
+        var result: Result<URL>?
+        StorageStack.importLocalStorage(accountIdentifier: accountIdentifier, from: backup, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup) {
+             result = $0
+        }
+        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        return result
+    }
+    
+    func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) -> URL? {
+        // create populated account database
+        let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
+        _ = ZMConversation.insertGroupConversation(into: directory.uiContext, withParticipants: [])
+        directory.uiContext.saveOrRollback()
+        
+        guard let result = createBackup(accountIdentifier: accountIdentifier) else { return nil }
+        guard case .success(let url) = result else { return nil }
+        
+        // Delete account
+        StorageStack.reset()
+        clearStorageFolder()
+        
+        return url
+    }
+    
+    // MARK: - Export
 
     func testThatItFailsWithWrongAccountIdentifier() throws {
         // given
@@ -131,5 +160,55 @@ class StorageStackBackupTests: DatabaseBaseTest {
         let anotherDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()!
         XCTAssertEqual(try anotherDirectory.uiContext.count(for: fetchConversations), 1)
+    }
+    
+    // MARK: - Import
+    
+    func testThatItCanOpenAnImportedBackup() {
+        // given
+        let uuid = UUID()
+        guard let backup = createBackupAndDeleteOriginalAccount(accountIdentifier: uuid) else { return XCTFail() }
+        
+        // when
+        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        
+        // then
+        guard case .success = result else { return XCTFail() }
+        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        let fetchConversations = ZMConversation.sortedFetchRequest()!
+        XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
+    }
+    
+    func testThatItFailsWhenImportingBackupIntoWrongAccount() {
+        // given
+        let uuid = UUID()
+        guard let backup = createBackupAndDeleteOriginalAccount(accountIdentifier: uuid) else { return XCTFail() }
+        
+        // when
+        let differentUUID = UUID()
+        guard let result = importBackup(accountIdentifier: differentUUID, backup: backup) else { return XCTFail() }
+    
+        // then
+        guard case let .failure(error) = result else { return XCTFail() }
+        switch error as? StorageStack.BackupImportError {
+        case .incompatibleBackup?: break
+        default: XCTFail()
+        }
+    }
+    
+    func testThatItFailsWhenImportingNonExistantBackup() {
+        // given
+        let uuid = UUID()
+        let backup = applicationContainer.appendingPathComponent("non-existing-backup")
+        
+        // when
+        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        
+        // then
+        guard case let .failure(error) = result else { return XCTFail() }
+        switch error as? StorageStack.BackupImportError {
+        case .failedToCopy?: break
+        default: XCTFail()
+        }
     }
 }
