@@ -37,7 +37,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
 
         var result: Result<URL>?
         StorageStack.backupLocalStorage(accountIdentifier: accountIdentifier, clientIdentifier: name!, applicationContainer: applicationContainer, dispatchGroup: self.dispatchGroup) {
-            result = $0
+            result = $0.map { $0.url }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         return result
@@ -70,7 +70,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         let fm = FileManager.default
         XCTAssertTrue(fm.fileExists(atPath: url.path))
         let databaseDirectory = url.appendingPathComponent("data")
-        let metadataURL = url.appendingPathComponent("metadata.json")
+        let metadataURL = url.appendingPathComponent("export.json")
         
         XCTAssertTrue(fm.fileExists(atPath: databaseDirectory.path))
         XCTAssertTrue(fm.fileExists(atPath: metadataURL.path))
