@@ -21,7 +21,7 @@ import WireUtilities
 
 extension StorageStack {
 
-    private static let metadataFilename = "metadata.json"
+    private static let metadataFilename = "export.json"
     private static let databaseDirectoryName = "data"
     
     // Each backup for any account will be created in a unique subdirectory inside.
@@ -35,6 +35,11 @@ extension StorageStack {
         case failedToRead
         case failedToWrite
     }
+    
+    public struct BackupInfo {
+        public let url: URL
+        public let metadata: BackupMetadata
+    }
 
     /// Will make a copy of account storage and place in a unique directory
     ///
@@ -43,7 +48,7 @@ extension StorageStack {
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func backupLocalStorage(accountIdentifier: UUID, clientIdentifier: String, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping ((Result<URL>) -> Void)) {
+    public static func backupLocalStorage(accountIdentifier: UUID, clientIdentifier: String, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping ((Result<BackupInfo>) -> Void)) {
         func fail(_ error: BackupError) {
             DispatchQueue.main.async {
                 completion(.failure(error))
@@ -81,7 +86,7 @@ extension StorageStack {
                 try metadata.write(to: metadataURL)
                 
                 DispatchQueue.main.async {
-                    completion(.success(backupDirectory))
+                    completion(.success(.init(url: backupDirectory, metadata: metadata)))
                     dispatchGroup?.leave()
                 }
             } catch {
