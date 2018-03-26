@@ -33,7 +33,7 @@ extension StorageStack {
 
     public enum BackupError: Error {
         case failedToRead
-        case failedToWrite
+        case failedToWrite(Error)
     }
     
     public struct BackupInfo {
@@ -48,7 +48,7 @@ extension StorageStack {
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func backupLocalStorage(accountIdentifier: UUID, clientIdentifier: String, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping ((Result<BackupInfo>) -> Void)) {
+    public static func backupLocalStorage(accountIdentifier: UUID, clientIdentifier: String, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping (Result<BackupInfo>) -> Void) {
         func fail(_ error: BackupError) {
             DispatchQueue.main.async {
                 completion(.failure(error))
@@ -90,8 +90,9 @@ extension StorageStack {
                     dispatchGroup?.leave()
                 }
             } catch {
-                fail(.failedToWrite)
+                fail(.failedToWrite(error))
             }
         }
     }
+
 }
