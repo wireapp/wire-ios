@@ -68,8 +68,6 @@ class SessionManagerTests_Backup: IntegrationTest {
     func testThatItCreatesABackupIncludingMetadataAndZipsIt() throws {
         // Given
         XCTAssert(login())
-        prefetchClientByInsertingMessage(in: selfToUser1Conversation)
-        
         mockTransportSession.performRemoteChanges {
             $0.registerClient(for: self.selfUser, label: self.name!, type: "permanent")
         }
@@ -93,10 +91,73 @@ class SessionManagerTests_Backup: IntegrationTest {
         XCTAssert(FileManager.default.fileExists(atPath: dataURL.path))
     }
     
+    func testThatItImportsAZippedBackup() throws {
+        // Given
+        XCTAssert(login())
+        guard let sharedContainer = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else { return XCTFail() }
+        
+        mockTransportSession.performRemoteChanges {
+            $0.registerClient(for: self.selfUser, label: self.name!, type: "permanent")
+        }
+        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        let backupResult = backupActiveAcount()
+        guard let url = backupResult.value else { return XCTFail("\(backupResult.error!)") }
+        
+        let moc = sessionManager!.activeUserSession!.managedObjectContext!
+        let userId = ZMUser.selfUser(in: moc).remoteIdentifier!
+        let accountFolder = StorageStack.accountFolder(accountIdentifier: userId, applicationContainer: sharedContainer)
+        let fm = FileManager.default
+        try fm.removeItem(at: accountFolder)
+        let storePath = accountFolder.appendingPathComponent("store").path
+        XCTAssertFalse(fm.fileExists(atPath: storePath))
+        
+        // When
+        let result = restoreAcount(withIdentifier: userId, from: url)
+        
+        // Then
+        XCTAssertNil(result.error, "\(result.error!)")
+        XCTAssert(fm.fileExists(atPath: storePath))
+    }
+    
+    func testThatItReturnsAnErrorWhenImportingFileWithWrongPathExtension() throws {
+        // Given
+        XCTAssert(login())
+        mockTransportSession.performRemoteChanges {
+            $0.registerClient(for: self.selfUser, label: self.name!, type: "permanent")
+        }
+        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        try FileManager.default.createDirectory(atPath: backupURL.path, withIntermediateDirectories: true, attributes: nil)
+        let dataURL = backupURL.appendingPathComponent("invalid_backup.zip")
+        let randomData = Data.secureRandomData(length: 1024)
+        try randomData.write(to: dataURL)
+        
+        let moc = sessionManager!.activeUserSession!.managedObjectContext!
+        let userId = ZMUser.selfUser(in: moc).remoteIdentifier!
+        
+        // When
+        let result = restoreAcount(withIdentifier: userId, from: dataURL)
+        
+        // Then
+        XCTAssertEqual(result.error as? SessionManager.BackupError, .invalidFileExtension)
+    }
+    
+    // MARK: - Helper
+    
     private func backupActiveAcount(file: StaticString = #file, line: UInt = #line) -> Result<URL> {
         var result: Result<URL> = .failure(TestError.uninitialized)
         sessionManager?.backupActiveAccount { result = $0 }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
+        return result
+    }
+    
+    private func restoreAcount(withIdentifier userId: UUID, from url: URL, file: StaticString = #file, line: UInt = #line) -> VoidResult {
+        var result: VoidResult = .failure(TestError.uninitialized)
+        sessionManager?.restoreFromBackup(at: url, with: userId) { result = $0 }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         return result
     }
     
