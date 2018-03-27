@@ -168,6 +168,13 @@ import UIKit
                 accountDirectory: accountDirectory,
                 applicationContainer: applicationContainer)
             MemoryReferenceDebugger.register(directory)
+
+            directory.uiContext.performAndWait {
+                if let imported = directory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.importedFromBackup.rawValue) as? NSNumber, imported.boolValue {
+                    directory.uiContext.prepareToImportBackup()
+                }
+            }
+
             completionHandler(directory)
         }
     }
