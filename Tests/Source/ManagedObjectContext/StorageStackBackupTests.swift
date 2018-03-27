@@ -28,7 +28,10 @@ class StorageStackBackupTests: DatabaseBaseTest {
     }
 
     override func tearDown() {
-        try? FileManager.default.removeItem(at: StorageStack.backupsDirectory)
+        StorageStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.backupsDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.importsDirectory.path))
         super.tearDown()
     }
     
