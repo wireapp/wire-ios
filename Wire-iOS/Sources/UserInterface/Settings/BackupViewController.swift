@@ -18,6 +18,7 @@
 
 import UIKit
 import Foundation
+import WireSyncEngine
 
 final class BackupStatusCell: UITableViewCell {
     let descriptionLabel = UILabel()
@@ -72,7 +73,7 @@ final class BackupActionCell: UITableViewCell {
 }
 
 protocol BackupSource {
-    func backupActiveAccount(completion: @escaping (Result<URL>) -> ())
+    func backupActiveAccount(completion: @escaping WireSyncEngine.SessionManager.BackupResultClosure)
 }
 
 extension SessionManager: BackupSource {}
