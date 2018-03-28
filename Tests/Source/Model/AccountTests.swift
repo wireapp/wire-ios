@@ -71,4 +71,25 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account.unreadConversationCount, count)
     }
 
+    func testThatAccountsAreEqualWhenNotImportantPropertiesAreDifferent() {
+        // given
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+
+        let account = Account(userName: userName,
+                              userIdentifier: id,
+                              teamName: team,
+                              imageData: image,
+                              teamImageData: image,
+                              unreadConversationCount: count)
+
+        let sameAccount = Account(userName: "",
+                                  userIdentifier: id,
+                                  teamName: "",
+                                  imageData: nil,
+                                  teamImageData: nil,
+                                  unreadConversationCount: 0)
+
+        XCTAssertEqual(account, sameAccount)
+    }
+
 }
