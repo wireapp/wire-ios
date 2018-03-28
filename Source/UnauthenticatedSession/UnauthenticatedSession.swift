@@ -38,7 +38,7 @@ private let log = ZMSLog(tag: "UnauthenticatedSession")
 public class UnauthenticatedSession: NSObject {
     
     public let groupQueue: DispatchGroupQueue
-    public let authenticationStatus: ZMAuthenticationStatus
+    private(set) public var authenticationStatus: ZMAuthenticationStatus!
     public let registrationStatus: RegistrationStatus 
     let reachability: ReachabilityProvider
     private(set) var operationLoop: UnauthenticatedOperationLoop!
@@ -50,19 +50,19 @@ public class UnauthenticatedSession: NSObject {
     init(transportSession: UnauthenticatedTransportSessionProtocol, reachability: ReachabilityProvider, delegate: UnauthenticatedSessionDelegate?) {
         self.delegate = delegate
         self.groupQueue = DispatchGroupQueue(queue: .main)
-        self.authenticationStatus = ZMAuthenticationStatus(groupQueue: groupQueue)
         self.registrationStatus = RegistrationStatus()
         self.transportSession = transportSession
         self.reachability = reachability
         super.init()
 
+        self.authenticationStatus = ZMAuthenticationStatus(groupQueue: groupQueue, userInfoParser: self)
         self.operationLoop = UnauthenticatedOperationLoop(
             transportSession: transportSession,
             operationQueue: groupQueue,
             requestStrategies: [
-                ZMLoginTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus, userInfoParser: self),
+                ZMLoginTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus),
                 ZMLoginCodeRequestTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
-                ZMRegistrationTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus, userInfoParser: self)!,
+                ZMRegistrationTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
                 ZMPhoneNumberVerificationTranscoder(groupQueue: groupQueue, authenticationStatus: authenticationStatus)!,
                 EmailVerificationStrategy(groupQueue: groupQueue, status: registrationStatus),
                 TeamRegistrationStrategy(groupQueue: groupQueue, status: registrationStatus, userInfoParser: self)
