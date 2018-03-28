@@ -73,11 +73,7 @@ public final class Account: NSObject {
 
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? Account else { return false }
-        return userName == other.userName
-            && teamName == other.teamName
-            && userIdentifier == other.userIdentifier
-            && imageData == other.imageData
-            && teamImageData == other.teamImageData
+        return userIdentifier == other.userIdentifier
     }
 
     public override var hash: Int {
