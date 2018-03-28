@@ -80,14 +80,14 @@ class BackupMetadataTests: XCTestCase {
         
         let sut = BackupMetadata(
             appVersion: "3",
-            modelVersion: "24.2.8",
+            modelVersion: "3.212",
             userIdentifier: userIdentifier,
             clientIdentifier: UUID.create().transportString()
         )
         
         // When & Then
         let provider = MockProvider(version: "4.1.23")
-        XCTAssertNil(sut.verify(using: userIdentifier, appVersionProvider: provider))
+        XCTAssertNil(sut.verify(using: userIdentifier, modelVersionProvider: provider))
     }
     
     func testThatItReturnsAnErrorForNewerAppVersionBackupVerification() {
@@ -103,7 +103,7 @@ class BackupMetadataTests: XCTestCase {
         
         // When
         let provider = MockProvider(version: "2.9.12")
-        let error = sut.verify(using: userIdentifier, appVersionProvider: provider)
+        let error = sut.verify(using: userIdentifier, modelVersionProvider: provider)
         
         // Then
         XCTAssertEqual(error, BackupMetadata.VerificationError.backupFromNewerAppVersion)
@@ -122,7 +122,7 @@ class BackupMetadataTests: XCTestCase {
         
         // When
         let provider = MockProvider(version: "3.1.0")
-        let error = sut.verify(using: .create(), appVersionProvider: provider)
+        let error = sut.verify(using: .create(), modelVersionProvider: provider)
         
         // Then
         XCTAssertEqual(error, BackupMetadata.VerificationError.userMismatch)

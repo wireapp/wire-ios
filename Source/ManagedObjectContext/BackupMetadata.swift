@@ -97,11 +97,11 @@ public extension BackupMetadata {
     
     func verify(
         using userIdentifier: UUID,
-        appVersionProvider: VersionProvider = Bundle.main
+        modelVersionProvider: VersionProvider = NSManagedObjectModel.loadModel()
         ) -> VerificationError? {
         guard self.userIdentifier == userIdentifier else { return .userMismatch }
-        let current = Version(string: appVersionProvider.version)
-        let backup = Version(string: appVersion)
+        let current = Version(string: modelVersionProvider.version)
+        let backup = Version(string: modelVersion)
 
         // Backup has been created on a newer app version.
         guard current >= backup else { return .backupFromNewerAppVersion }
