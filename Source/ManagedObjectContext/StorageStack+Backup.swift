@@ -171,11 +171,11 @@ extension StorageStack {
             do {
                 let metadata = try BackupMetadata(url: metadataURL)
                 
-                if let verificationError = metadata.verify(using: accountIdentifier) {
+                let model = NSManagedObjectModel.loadModel()
+                if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: model) {
                     return fail(.incompatibleBackup(verificationError))
                 }
                 
-                let model = NSManagedObjectModel.loadModel()
                 let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
                 
                 // Create target directory
