@@ -65,7 +65,7 @@ public func ==(lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
     return lhs.platform == rhs.platform
         && lhs.appVersion == rhs.appVersion
         && lhs.modelVersion == rhs.modelVersion
-        && lhs.creationTime == rhs.creationTime
+        && (lhs.creationTime.timeIntervalSince1970 - rhs.creationTime.timeIntervalSince1970) < 0.001 // We only store 3 floating points
         && lhs.userIdentifier == rhs.userIdentifier
         && lhs.clientIdentifier == rhs.clientIdentifier
 }
@@ -75,15 +75,34 @@ public func ==(lhs: BackupMetadata, rhs: BackupMetadata) -> Bool {
 public extension BackupMetadata {
     
     func write(to url: URL) throws {
-        let data = try JSONEncoder().encode(self)
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .formatted(.iso8601)
+        let data = try encoder.encode(self)
         try data.write(to: url)
     }
     
     init(url: URL) throws {
         let data = try Data(contentsOf: url)
-        self = try JSONDecoder().decode(type(of: self), from: data)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .formatted(.iso8601)
+        self = try decoder.decode(type(of: self), from: data)
     }
     
+}
+
+private extension DateFormatter {
+    static let iso8601: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.locale = .usPOSIX
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        formatter.calendar = Calendar(identifier: .iso8601)
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXXXX"
+        return formatter
+    }()
+}
+
+private extension Locale {
+    static let usPOSIX = Locale(identifier: "en_US_POSIX")
 }
 
 // MARK: - Verification
