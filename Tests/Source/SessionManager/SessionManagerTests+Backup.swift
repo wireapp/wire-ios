@@ -183,7 +183,6 @@ class SessionManagerTests_Backup: IntegrationTest {
         }
         
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
-        let userId = currentUserIdentifier!
         let nonce = UUID.create()
         
         do {
@@ -208,7 +207,7 @@ class SessionManagerTests_Backup: IntegrationTest {
         deleteAuthenticationCookie()
         recreateSessionManagerAndDeleteLocalData()
         
-        XCTAssertNil(restoreAcount(withIdentifier: userId, from: url).error)
+        XCTAssertNil(restoreAcount(from: url).error)
         XCTAssert(login())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         spinMainQueue(withTimeout: 2)
