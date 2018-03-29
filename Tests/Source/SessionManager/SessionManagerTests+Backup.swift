@@ -206,9 +206,11 @@ class SessionManagerTests_Backup: IntegrationTest {
         guard let url = backupActiveAcount().value else { return XCTFail("backup failed") }
         deleteAuthenticationCookie()
         recreateSessionManagerAndDeleteLocalData()
-        
-        XCTAssertNil(restoreAcount(from: url).error)
         XCTAssert(login())
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let result = restoreAcount(from: url)
+        XCTAssertNil(result.error, "\(result.error!)")
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         spinMainQueue(withTimeout: 2)
         
