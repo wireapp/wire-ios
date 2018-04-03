@@ -400,6 +400,11 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     // We need to cascade delete the pending delivery confirmation messages for the message being deleted
     [message removePendingDeliveryReceipts];
     
+    if (message.hasBeenDeleted) {
+        ZMLogError(@"Attempt to delete the deleted message: %@, existing: %@", deletedMessage, message);
+        return;
+    }
+    
     // Only the sender of the original message can delete it
     if (![senderID isEqual:message.sender.remoteIdentifier] && !message.isEphemeral) {
         return;

@@ -1659,6 +1659,122 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertEqual(conversation.messages.count, 0lu);
 }
 
+- (void)testThatItDeletesTheMessageWithDelete
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [[NSUUID alloc] init];
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [[ZMTextMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
+    textMessage.sender = sender;
+    textMessage.visibleInConversation = conversation;
+    
+    ZMMessageDeleteBuilder *builder = [ZMMessageDelete builder];
+    builder.messageId = nonce.transportString;
+    ZMMessageDelete *deleted = [builder build];
+    
+    //sanity check
+    XCTAssertNotNil(conversation);
+    XCTAssertNotNil(textMessage);
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [ZMMessage removeMessageWithRemotelyDeletedMessage:deleted
+                                            inConversation:conversation
+                                                  senderID:textMessage.sender.remoteIdentifier
+                                    inManagedObjectContext:self.uiMOC];
+    }];
+    [self.uiMOC saveOrRollback];
+    
+    //then
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    XCTAssertTrue([textMessage hasBeenDeleted]);
+}
+
+- (void)testThatItIgnoresDeleteWhenFromOtherUser
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [[NSUUID alloc] init];
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [[ZMTextMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
+    textMessage.sender = sender;
+    textMessage.visibleInConversation = conversation;
+    
+    ZMMessageDeleteBuilder *builder = [ZMMessageDelete builder];
+    builder.messageId = nonce.transportString;
+    ZMMessageDelete *deleted = [builder build];
+    
+    //sanity check
+    XCTAssertNotNil(conversation);
+    XCTAssertNotNil(textMessage);
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [ZMMessage removeMessageWithRemotelyDeletedMessage:deleted
+                                            inConversation:conversation
+                                                  senderID:[[NSUUID alloc] init]
+                                    inManagedObjectContext:self.uiMOC];
+    }];
+    [self.uiMOC saveOrRollback];
+    
+    //then
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    XCTAssertFalse([textMessage hasBeenDeleted]);
+}
+
+- (void)testThatItDoesNotDeleteTheDeletedMessageWithDelete
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [[NSUUID alloc] init];
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMTextMessage *textMessage = [[ZMTextMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
+    textMessage.sender = sender;
+    textMessage.hiddenInConversation = conversation;
+    
+    XCTAssertTrue([textMessage hasBeenDeleted]);
+    
+    ZMMessageDeleteBuilder *builder = [ZMMessageDelete builder];
+    builder.messageId = nonce.transportString;
+    ZMMessageDelete *deleted = [builder build];
+    
+    //sanity check
+    XCTAssertNotNil(conversation);
+    XCTAssertNotNil(textMessage);
+    [self.uiMOC saveOrRollback];
+    
+    //when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [self performIgnoringZMLogError:^{
+            [ZMMessage removeMessageWithRemotelyDeletedMessage:deleted
+                                                inConversation:conversation
+                                                      senderID:textMessage.sender.remoteIdentifier
+                                        inManagedObjectContext:self.uiMOC];
+            
+        }];
+    }];
+    [self.uiMOC saveOrRollback];
+    
+    //then
+    textMessage = (ZMTextMessage *)[ZMMessage fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:self.uiMOC];
+    XCTAssertTrue([textMessage hasBeenDeleted]);
+}
+
 @end
 
 @implementation ZMMessageTests (Reaction)
