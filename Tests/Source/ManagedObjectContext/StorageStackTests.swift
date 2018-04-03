@@ -575,6 +575,7 @@ extension StorageStackTests {
         contextDirectory.uiContext.setPersistentStoreMetadata(metadata, key: PersistentMetadataKey.lastUpdateEventID.rawValue)
         contextDirectory.uiContext.forceSaveOrRollback()
         contextDirectory = nil
+        StorageStack.reset()
 
         // WHEN
         let importExpectation = self.expectation(description: "Callback invoked")
@@ -620,7 +621,8 @@ extension StorageStackTests {
         contextDirectory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
         contextDirectory.uiContext.forceSaveOrRollback()
         contextDirectory = nil
-        
+        StorageStack.reset()
+
         // WHEN
         let importExpectation = self.expectation(description: "Callback invoked")
         

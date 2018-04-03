@@ -164,6 +164,44 @@ class StorageStackBackupTests: DatabaseBaseTest {
         let fetchConversations = ZMConversation.sortedFetchRequest()!
         XCTAssertEqual(try anotherDirectory.uiContext.count(for: fetchConversations), 1)
     }
+
+    func testThatItMarksStoreAsBackupWhenExporting() throws {
+        // given
+        let uuid = UUID()
+        var directory: ManagedObjectContextDirectory? = createStorageStackAndWaitForCompletion(userID: uuid)
+        _ = ZMConversation.insertGroupConversation(into: directory!.uiContext, withParticipants: [])
+        directory!.uiContext.saveOrRollback()
+
+        // when
+        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
+        StorageStack.reset()
+        directory = nil
+
+        // then
+        switch result {
+        case let .success(backup):
+            let model = NSManagedObjectModel.loadModel()
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+            let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+            let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
+            XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
+            let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeFile, options: options)
+            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            context.persistentStoreCoordinator = coordinator
+            context.performAndWait {
+                let request = ZMConversation.sortedFetchRequest()!
+                let convs = try? context.fetch(request)
+                XCTAssertEqual(convs?.count, 1)
+            }
+
+            guard let metadata = store.metadata else { return XCTFail() }
+            guard let imported = metadata[PersistentMetadataKey.importedFromBackup.rawValue] else { return XCTFail() }
+            guard let flag = imported as? NSNumber else { return XCTFail() }
+            XCTAssertTrue(flag.boolValue)
+        case .failure:
+            XCTFail()
+        }
+    }
     
     // MARK: - Import
     

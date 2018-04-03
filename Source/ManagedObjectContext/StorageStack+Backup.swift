@@ -110,13 +110,17 @@ extension StorageStack {
                 try coordinator.replacePersistentStore(at: backupLocation, destinationOptions: options, withPersistentStoreFrom: storeFile, sourceOptions: options, ofType: NSSQLiteStoreType)
 
                 // Add persistent store at the new location to allow creation of NSManagedObjectContext
-                _ = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: backupLocation, options: options)
+                let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: backupLocation, options: options)
+
                 let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
                 context.persistentStoreCoordinator = coordinator
+                var storeMetadata = store.metadata
+                // Mark the db as backed up
+                storeMetadata?[PersistentMetadataKey.importedFromBackup.rawValue] = NSNumber(booleanLiteral: true)
+                store.metadata = storeMetadata
+
                 var saveError: Error? = nil
                 context.performAndWait {
-                    context.setPersistentStoreMetadata(NSNumber(booleanLiteral: true), key: PersistentMetadataKey.importedFromBackup.rawValue)
-                    // Mark the db as backed up
                     do {
                         try context.save()
                     } catch {
