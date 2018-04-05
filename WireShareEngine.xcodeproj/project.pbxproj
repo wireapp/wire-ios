@@ -42,7 +42,6 @@
 		CE3EB5931DFEBDCE001FE3AE /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4521D77169900FDE440 /* WireProtos.framework */; };
 		CE3EB5941DFEBDCE001FE3AE /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* WireTransport.framework */; };
 		CE3EB5951DFEBDCE001FE3AE /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* WireUtilities.framework */; };
-		CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */; };
 		CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */; };
 		CE7FBFAB1DFEE95F00E1C4C9 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7FBFAA1DFEE95F00E1C4C9 /* WireTesting.framework */; };
 		CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */; };
@@ -138,7 +137,6 @@
 		54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
 		BF64A2111D796DC300725918 /* WireShareEngine-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireShareEngine-Bridging-Header.h"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
-		CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireMessageStrategy.framework; path = Carthage/Build/iOS/WireMessageStrategy.framework; sourceTree = "<group>"; };
 		CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = Carthage/Build/iOS/WireRequestStrategy.framework; sourceTree = "<group>"; };
 		CE7FBFAA1DFEE95F00E1C4C9 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
@@ -193,7 +191,6 @@
 				F125E9AC1E28D4F6006583A2 /* WireMockTransport.framework in Frameworks */,
 				CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */,
 				CE7FBFAB1DFEE95F00E1C4C9 /* WireTesting.framework in Frameworks */,
-				CE3EB5981DFEBDCF001FE3AE /* WireMessageStrategy.framework in Frameworks */,
 				CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */,
 				CE3EB58B1DFEBDCE001FE3AE /* WireCryptobox.framework in Frameworks */,
 				CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */,
@@ -309,7 +306,6 @@
 				F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */,
 				CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */,
 				CE7FBFAA1DFEE95F00E1C4C9 /* WireTesting.framework */,
-				CE3EB5961DFEBDCF001FE3AE /* WireMessageStrategy.framework */,
 				CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */,
 				5470D44A1D77169900FDE440 /* WireCryptobox.framework */,
 				5470D44C1D77169900FDE440 /* Ono.framework */,
@@ -499,7 +495,6 @@
 			files = (
 			);
 			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/WireMessageStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
@@ -810,6 +805,7 @@
 				F154EE181F44826400CB8184 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
