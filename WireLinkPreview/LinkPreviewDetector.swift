@@ -21,9 +21,10 @@ import Foundation
 
 @objc public protocol LinkPreviewDetectorType {
     @objc optional func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void)
+    weak var delegate: LinkPreviewDetectorDelegate? { get set }
 }
 
-public protocol LinkPreviewDetectorDelegate: class {
+@objc public protocol LinkPreviewDetectorDelegate: class {
     func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool
 }
 
