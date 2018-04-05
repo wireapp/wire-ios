@@ -60,7 +60,7 @@ class ResultTests: XCTestCase {
         let sut = Result<Int>.success(42)
         
         // When
-        let transformed = sut.voidResult
+        let transformed = VoidResult(result: sut)
         
         // Then
         XCTAssertNil(transformed.error)
@@ -72,7 +72,7 @@ class ResultTests: XCTestCase {
         let sut = Result<Int>.failure(error)
         
         // When
-        let transformed = sut.voidResult
+        let transformed = VoidResult(result: sut)
         
         // Then
         XCTAssertEqual(transformed.error as NSError?, error)
