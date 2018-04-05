@@ -23,7 +23,13 @@ import Foundation
     @objc optional func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void)
 }
 
+public protocol LinkPreviewDetectorDelegate: class {
+    func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool
+}
+
 public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
+    
+    public weak var delegate: LinkPreviewDetectorDelegate?
     
     private let blacklist = PreviewBlacklist()
     private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -61,7 +67,9 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
         let range = NSRange(location: 0, length: text.characters.count)
         guard let matches = linkDetector?.matches(in: text, options: [], range: range) else { return [] }
         return matches.flatMap {
-            guard let url = $0.url else { return nil }
+            guard let url = $0.url,
+                delegate?.shouldDetectURL(url, range: $0.range, text: text) ?? true
+                else { return nil }
             return (url, $0.range)
         }
     }
