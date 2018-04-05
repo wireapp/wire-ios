@@ -96,6 +96,7 @@
 		877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */; };
 		877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */; };
 		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
+		87B6489C2076078A002FC9E7 /* Composition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B6489B2076078A002FC9E7 /* Composition.swift */; };
 		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
 		BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */; };
 		BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */; };
@@ -295,6 +296,7 @@
 		877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharacters.swift"; sourceTree = "<group>"; };
 		877F501E1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+ExtremeCombiningCharactersTests.swift"; sourceTree = "<group>"; };
 		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
+		87B6489B2076078A002FC9E7 /* Composition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composition.swift; sourceTree = "<group>"; };
 		87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtremeCombiningCharactersValidator.swift; sourceTree = "<group>"; };
 		BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+Containment.swift"; sourceTree = "<group>"; };
 		BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+ContainmentTests.swift"; sourceTree = "<group>"; };
@@ -458,6 +460,7 @@
 				54CA31521B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m */,
 				163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */,
 				D53DB99E203ED59C00655CB4 /* Result.swift */,
+				87B6489B2076078A002FC9E7 /* Composition.swift */,
 				F9C9A7931CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m */,
 				3E88BF661B1F693F00232589 /* NSData+ZMAdditions.m */,
 				543B04A01BC6B693008C2912 /* NSData+ZMSCrypto.m */,
@@ -913,6 +916,7 @@
 				F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */,
 				163FB9061F2229DF00802AF4 /* DispatchGroupContext.swift in Sources */,
 				3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */,
+				87B6489C2076078A002FC9E7 /* Composition.swift in Sources */,
 				091799651B7E04FE00E60DD9 /* ZMDeploymentEnvironment.m in Sources */,
 				F9C9A7AE1CAEACB10039E10C /* ZMPhoneNumberValidator.m in Sources */,
 				3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */,
