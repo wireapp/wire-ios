@@ -29,6 +29,8 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     var nextResult = [LinkPreview]()
     var downloadLinkPreviewsCallCount: Int = 0
     
+    weak var delegate: LinkPreviewDetectorDelegate?
+    
     @objc func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void) {
         downloadLinkPreviewsCallCount += 1
         completion(nextResult)
@@ -181,6 +183,29 @@ extension LinkPreviewPreprocessorTests {
         }
     }
     
+    func testThatItShouldNotDetectLinkPreviewsForMarkdownLinks() {
+        // GIVEN
+        let text = "[click me!](www.example.com)"
+        let url = URL(string: "wwww.example.com")!
+        
+        // WHEN
+        let result = self.sut.shouldDetectURL(url, range: NSMakeRange(12, 15), text: text)
+        
+        // THEN
+        XCTAssertFalse(result)
+    }
+    
+    func testThatItShouldDetectLinkPreviewsForNonMarkdownLinks() {
+        // GIVEN
+        let text = "click this: www.example.com"
+        let url = URL(string: "wwww.example.com")!
+        
+        // WHEN
+        let result = self.sut.shouldDetectURL(url, range: NSMakeRange(12, 15), text: text)
+        
+        // THEN
+        XCTAssertTrue(result)
+    }
 }
 
 

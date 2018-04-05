@@ -36,6 +36,7 @@ private let zmLog = ZMSLog(tag: "link previews")
         self.linkPreviewDetector = linkPreviewDetector
         self.managedObjectContext = managedObjectContext
         super.init()
+        self.linkPreviewDetector.delegate = self
     }
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
@@ -100,5 +101,19 @@ private let zmLog = ZMSLog(tag: "link previews")
         // The change processor is called as a response to a context save, 
         // which is why we need to enque a save maually here
         managedObjectContext.enqueueDelayedSave()
+    }
+}
+
+extension LinkPreviewPreprocessor: LinkPreviewDetectorDelegate {
+    public func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool {
+        // We DONT want to generate link previews for markdown links such as
+        // [click me!](www.example.com). So, we get all ranges of markdown links
+        // and return false if the url range is equal to one of these
+        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return true }
+        let wholeRange = NSMakeRange(0, (text as NSString).length)
+        return  !regex
+            .matches(in: text, options: [], range: wholeRange)
+            .map { $0.rangeAt(1) }
+            .contains { NSEqualRanges($0, range) }
     }
 }
