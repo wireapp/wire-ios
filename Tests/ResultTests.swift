@@ -54,4 +54,28 @@ class ResultTests: XCTestCase {
         // Then
         XCTAssertEqual(transformed.error as NSError?, error)
     }
+    
+    func testThatItReturnsAVoidResultForAGenericResult() {
+        // Given
+        let sut = Result<Int>.success(42)
+        
+        // When
+        let transformed = sut.voidResult
+        
+        // Then
+        XCTAssertNil(transformed.error)
+    }
+
+    func testThatItReturnsAVoidResultForAGenericResult_Error() {
+        // Given
+        let error = NSError(domain: "", code: 0, userInfo: nil)
+        let sut = Result<Int>.failure(error)
+        
+        // When
+        let transformed = sut.voidResult
+        
+        // Then
+        XCTAssertEqual(transformed.error as NSError?, error)
+    }
+
 }
