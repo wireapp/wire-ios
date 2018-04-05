@@ -43,7 +43,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
         }
     }
 
-    class MockRequestStrategy: RequestStrategy {
+    class MockRequestStrategy: NSObject, RequestStrategy {
 
         let request: ZMTransportRequest
 

@@ -19,7 +19,7 @@
 
 import Foundation
 import WireDataModel
-import WireMessageStrategy
+import WireRequestStrategy
 
 
 extension ZMConversation: Conversation {
