@@ -44,15 +44,6 @@ public extension Result {
 }
 
 public extension Result {
-    var voidResult: VoidResult {
-        switch self {
-        case .success: return .success
-        case .failure(let error): return .failure(error)
-        }
-    }
-}
-
-public extension Result {
     var value: T? {
         guard case let .success(value) = self else { return nil }
         return value
@@ -65,6 +56,13 @@ public extension Result {
 }
 
 public extension VoidResult {
+    init<T>(result: Result<T>) {
+        switch result {
+        case .success: self = .success
+        case .failure(let error): self = .failure(error)
+        }
+    }
+    
     var error: Error? {
         guard case let .failure(error) = self else { return nil }
         return error
