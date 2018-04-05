@@ -18,7 +18,7 @@
 
 import Foundation
 import WireDataModel
-import WireMessageStrategy
+import WireRequestStrategy
 
 /// A conversation
 public protocol Conversation : SharingTarget {
