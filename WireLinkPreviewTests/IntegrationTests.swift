@@ -52,7 +52,7 @@ class IntegrationTests: XCTestCase {
     }
     
     func testThatItParsesSampleDataYouTube() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video.other", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.youtubeData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
