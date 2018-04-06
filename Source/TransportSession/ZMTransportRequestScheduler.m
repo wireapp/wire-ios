@@ -316,7 +316,7 @@ ZM_EMPTY_ASSERTING_INIT();
             ZMLogDebug(@"Scheduler is Normal");
             self.schedulerState = ZMTransportRequestSchedulerStateNormal;
         }
-    } else if (errorCode != 0) {
+    } else if (errorCode != 0 && !self.reachability.mayBeReachable) {
         ZMLogDebug(@"Scheduler is Offline");
         self.schedulerState = ZMTransportRequestSchedulerStateOffline;
     }

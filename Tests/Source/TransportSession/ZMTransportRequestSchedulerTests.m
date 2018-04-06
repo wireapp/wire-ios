@@ -461,10 +461,24 @@
     self.sut.schedulerState = ZMTransportRequestSchedulerStateNormal;
     
     // when
+    self.reachability.mayBeReachable = NO;
     [self.sut processCompletedURLTask:[self fakeTaskWithHTTPStatusCode:0 URLErrorCode:NSURLErrorCannotFindHost]];
     
     // then
     XCTAssertEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateOffline);
+}
+
+- (void)testThatItDoesNotChangeTheStateToOfflineWhenARequestFailsButWeAreReachable;
+{
+    // given
+    self.sut.schedulerState = ZMTransportRequestSchedulerStateNormal;
+    
+    // when
+    self.reachability.mayBeReachable = YES;
+    [self.sut processCompletedURLTask:[self fakeTaskWithHTTPStatusCode:0 URLErrorCode:NSURLErrorCannotFindHost]];
+    
+    // then
+    XCTAssertEqual(self.sut.schedulerState, ZMTransportRequestSchedulerStateNormal);
 }
 
 - (void)testThatItDoesNotNotifyTheDelegateWhenARequestFails;
