@@ -409,6 +409,10 @@
 "content.message.open" = "Apri";
 "content.message.copy" = "Copia";
 
+"content.message.open_link_alert.title" = "Visit Link";
+"content.message.open_link_alert.message" = "This will take you to\n%@";
+"content.message.open_link_alert.open" = "Open";
+
 "content.reactions_list.likers" = "Piace a";
 
 "content.file.too_big" = "Puoi inviare file fino a %@";
