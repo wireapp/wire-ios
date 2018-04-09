@@ -258,6 +258,38 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.providerIdentifier, payload[@"service"][@"provider"]);
 }
 
+- (void)testThatItUpdatesTeamIdentifierOnExistingUser
+{
+    // given
+    NSUUID *uuid = NSUUID.createUUID;
+    NSUUID *teamId = NSUUID.createUUID;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    payload[@"team"] = teamId.transportString;
+    
+    // when
+    [user updateWithTransportData:payload authoritative:NO];
+    
+    // then
+    XCTAssertEqualObjects(user.teamIdentifier.transportString, teamId.transportString);
+    XCTAssert(user.hasTeam);
+}
+
+- (void)testThatItUpdatesTeamIdentifierOnExistingUser_NilValue
+{
+    // given
+    NSUUID *uuid = NSUUID.createUUID;
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
+    
+    // when
+    [user updateWithTransportData:payload authoritative:NO];
+    
+    // then
+    XCTAssertNil(user.teamIdentifier);
+    XCTAssertFalse(user.hasTeam);
+}
 
 - (void)testThatItUpdatesBasicDataOnAnExistingUser
 {
