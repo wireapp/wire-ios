@@ -192,7 +192,7 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
         tableView.deselectRow(at: indexPath, animated: true)
         guard indexPath.row == 1 else { return }
 
-        backupActiveAccount()
+        backupActiveAccount(indexPath: indexPath)
     }
 }
 
@@ -200,7 +200,7 @@ extension BackupViewController: UITableViewDataSource, UITableViewDelegate {
 
 fileprivate extension BackupViewController {
 
-    fileprivate func backupActiveAccount() {
+    fileprivate func backupActiveAccount(indexPath: IndexPath) {
         requestPassword(over: self) { result in
             
             guard let password = result else {
@@ -217,7 +217,7 @@ fileprivate extension BackupViewController {
                     self.presentAlert(for: error)
                     BackupEvent.exportFailed.track()
                 case .success(let url):
-                    self.presentShareSheet(with: url)
+                    self.presentShareSheet(with: url, from: indexPath)
                 }
             }
         }
@@ -232,7 +232,7 @@ fileprivate extension BackupViewController {
         present(alert, animated: true)
     }
     
-    private func presentShareSheet(with url: URL) {
+    private func presentShareSheet(with url: URL, from indexPath: IndexPath) {
         #if arch(i386) || arch(x86_64)
             let tmpURL = URL(fileURLWithPath: "/var/tmp/").appendingPathComponent(url.lastPathComponent)
             try! FileManager.default.moveItem(at: url, to: tmpURL)
