@@ -67,7 +67,7 @@
 - (void)testThat_VerifyReturnNil_ReturnsOnFailure {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyReturnNil(false);
         return @"Foo";
     };
@@ -82,7 +82,7 @@
 - (void)testThat_VerifyReturnNil_ReturnsOnSuccess {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyReturnNil(true);
         return @"Foo";
     };
@@ -97,7 +97,7 @@
 - (void)testThat_VerifyReturnValue_ReturnsOnFailure {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyReturnValue(false, @"Fail");
         return @"Success";
     };
@@ -112,7 +112,7 @@
 - (void)testThat_VerifyReturnValue_ReturnsOnSuccess {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyReturnValue(true, @"Fail");
         return @"Success";
     };
@@ -127,7 +127,7 @@
 - (void)testThat_VerifyReturnAction_Failure {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyAction(false, return @"Fail");
         return @"Success";
     };
@@ -142,7 +142,7 @@
 - (void)testThat_VerifyReturnAction_Success {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyAction(true, return @"Fail");
         return @"Success";
     };
@@ -163,7 +163,7 @@
 - (void)testThat_VerifyStringReturnNil_ReturnsOnFailure {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyStringReturnNil(false, "Foo %d", 12);
         return @"Foo";
     };
@@ -178,7 +178,7 @@
 - (void)testThat_VerifyStringReturnNil_ReturnsOnSuccess {
     
     // given
-    NSString*(^testBlock)() = ^NSString *(){
+    NSString*(^testBlock)(void) = ^NSString *(){
         VerifyStringReturnNil(true, "Foo %d", 12);
         return @"Foo";
     };
