@@ -25,6 +25,9 @@
 //
 DEFINES_MODULE = YES
 
+// Packaging
+//
+INFOPLIST_PREPROCESS = YES
 
 // Linking
 //
