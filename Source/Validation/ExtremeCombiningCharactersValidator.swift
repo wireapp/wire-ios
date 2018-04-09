@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSystem
 
 public enum ExtremeCombiningCharactersValidationError: Error {
     case containsExtremeCombiningCharacters

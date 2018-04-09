@@ -52,7 +52,7 @@ import Foundation
             trimmedString.replaceSubrange(range, with: " ")
         }
         
-        if trimmedString.characters.count < minimumStringLength {
+        if trimmedString.count < minimumStringLength {
             throw StringLengthError.tooShort
         }
         
