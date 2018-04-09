@@ -84,6 +84,9 @@ static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
 static NSString *const ExpiresAtKey = @"expiresAt";
 
+static NSString *const TeamIdentifierDataKey = @"teamIdentifier_data";
+static NSString *const TeamIdentifierKey = @"teamIdentifier";
+
 @interface ZMBoxedSelfUser : NSObject
 
 @property (nonatomic, weak) ZMUser *selfUser;
@@ -424,7 +427,8 @@ static NSString *const ExpiresAtKey = @"expiresAt";
                                            CreatedTeamsKey,
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
-                                           ExpiresAtKey
+                                           ExpiresAtKey,
+                                           TeamIdentifierDataKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -510,6 +514,16 @@ static NSString *const ExpiresAtKey = @"expiresAt";
     [self setTransientUUID:remoteIdentifier forKey:@"remoteIdentifier"];
 }
 
+- (NSUUID *)teamIdentifier;
+{
+    return [self transientUUIDForKey:@"teamIdentifier"];
+}
+
+- (void)setTeamIdentifier:(NSUUID *)teamIdentifier;
+{
+    [self setTransientUUID:teamIdentifier forKey:@"teamIdentifier"];
+}
+
 + (ZMAccentColor)accentColorFromPayloadValue:(NSNumber *)payloadValue
 {
     ZMAccentColor color = (ZMAccentColor) payloadValue.intValue;
@@ -552,6 +566,8 @@ static NSString *const ExpiresAtKey = @"expiresAt";
     if (handle != nil || authoritative) {
         self.handle = handle;
     }
+    
+    self.teamIdentifier = [transportData optionalUuidForKey:@"team"];
     
     NSString *email = [transportData optionalStringForKey:@"email"];
     if ([transportData objectForKey:@"email"] || authoritative) {

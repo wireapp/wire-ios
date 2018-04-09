@@ -20,7 +20,8 @@
 public extension ZMUser {
 
     public var hasTeam: Bool {
-        return nil != team
+        /// Other users won't have a team object, but a teamIdentifier.
+        return nil != team || nil != teamIdentifier
     }
 
     public var team: Team? {

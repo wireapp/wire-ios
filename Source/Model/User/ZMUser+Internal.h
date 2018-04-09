@@ -37,6 +37,8 @@ extern NSString * __nonnull const AvailabilityKey;
 @property (nullable, nonatomic) NSUUID *remoteIdentifier;
 @property (nullable, nonatomic) ZMConnection *connection;
 
+@property (nullable, nonatomic) NSUUID *teamIdentifier;
+
 @property (nonnull, nonatomic) NSOrderedSet *activeConversations;
 
 @property (nonnull, nonatomic) NSSet *showingUserAdded;

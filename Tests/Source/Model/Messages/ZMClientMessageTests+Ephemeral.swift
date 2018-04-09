@@ -180,7 +180,7 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
     
-    func testThatItClearsTheMessageContentWhenTheTimerFiresAndSetsIsObfuscatedToTrue(){
+    func testThatItClearsTheMessageContentWhenTheTimerFiresAndSetsIsObfuscatedToTrue() {
         var message : ZMClientMessage!
         
         self.syncMOC.performGroupedBlockAndWait {
@@ -210,7 +210,7 @@ extension ZMClientMessageTests_Ephemeral {
     }
     
     
-    func testThatItDoesNotStartTheTimerWhenTheMessageExpires(){
+    func testThatItDoesNotStartTheTimerWhenTheMessageExpires() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 0.1
@@ -226,7 +226,7 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
     
-    func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteForItFromOtherUser(){
+    func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteForItFromOtherUser() {
         var message : ZMClientMessage!
 
         self.syncMOC.performGroupedBlockAndWait {
@@ -254,7 +254,7 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
     
-    func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteFromSelfUser(){
+    func testThatItDeletesTheEphemeralMessageWhenItReceivesADeleteFromSelfUser() {
         var message : ZMClientMessage!
         
         self.syncMOC.performGroupedBlockAndWait {
