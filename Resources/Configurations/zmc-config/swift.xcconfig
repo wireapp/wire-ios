@@ -17,36 +17,10 @@
 // 
 
 
-#import <Foundation/Foundation.h>
+// Swift
+//
 
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface NSOrderedSet (Zeta)
-
-- (nullable NSObject *)firstObjectNotInSet:(NSSet *)set;
-
-@end
-
-
-
-
-@interface NSMutableOrderedSet (ZMSortedInsert)
-
-/// Inserts the object into a sorted ordered set.
-/// Uses bibary search.
-- (void)zm_insertObject:(id)object sortedByDescriptors:(NSArray *)descriptors;
-- (void)zm_sortUsingComparator:(NSComparator)cmp valueGetter:(id(^)(id))getter;
-
-@end
-
-
-
-@interface NSOrderedSet (ZMSorted)
-
-- (nullable id)firstObjectSortedByDescriptors:(NSArray *)descriptors;
-- (nullable id)firstObjectSortedByDescriptors:(NSArray *)descriptors notInSet:(nullable NSSet *)forbidden;
-
-@end
-
-NS_ASSUME_NONNULL_END
+SWIFT_VERSION = 3.0
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
+SWIFT_COMPILATION_MODE = wholemodule
+LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks

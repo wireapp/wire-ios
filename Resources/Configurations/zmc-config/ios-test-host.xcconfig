@@ -16,4 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+
+#include "ios.xcconfig"
+#include "swift.xcconfig"

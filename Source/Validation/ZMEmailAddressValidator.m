@@ -58,7 +58,7 @@ ZM_EMPTY_ASSERTING_INIT()
     return NO;
 }
 
-+ (BOOL)validateValue:(inout id *)ioEmailAddress error:(out NSError **)outError
++ (BOOL)validateValue:(inout id *)ioEmailAddress error:(out NSError * __autoreleasing *)outError
 {
     if (*ioEmailAddress == nil) {
         return YES;
