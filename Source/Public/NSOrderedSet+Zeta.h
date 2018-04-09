@@ -44,8 +44,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface NSOrderedSet (ZMSorted)
 
-- (id)firstObjectSortedByDescriptors:(NSArray *)descriptors;
-- (id)firstObjectSortedByDescriptors:(NSArray *)descriptors notInSet:(nullable NSSet *)forbidden;
+- (nullable id)firstObjectSortedByDescriptors:(NSArray *)descriptors;
+- (nullable id)firstObjectSortedByDescriptors:(NSArray *)descriptors notInSet:(nullable NSSet *)forbidden;
 
 @end
 
