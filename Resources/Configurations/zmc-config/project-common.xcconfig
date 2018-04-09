@@ -22,8 +22,8 @@
 // Architectures
 //
 
-ARCHS = arm64 armv7 x86_64
-VALID_ARCHS = arm64 armv7 x86_64
+ARCHS[sdk=iphoneos*] = arm64 armv7
+ARCHS[sdk=iphonesimulator*] = x86_64
 VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
 VALID_ARCHS[sdk=macosx*] = x86_64
 SUPPORTED_PLATFORMS = macosx iphoneos iphonesimulator
@@ -55,7 +55,8 @@ FRAMEWORK_SEARCH_PATHS = $(CARTHAGE_FOLDER) $(PLATFORM_DIR)/Developer/Library/Fr
 // Swift
 //
 SWIFT_VERSION = 3.0
-EMBEDDED_CONTENT_CONTAINS_SWIFT = YES
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
+SWIFT_COMPILATION_MODE = wholemodule
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks
 
 
