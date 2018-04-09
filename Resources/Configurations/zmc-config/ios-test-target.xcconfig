@@ -18,15 +18,11 @@
 
 
 
+#include "ios.xcconfig"
+#include "tests.xcconfig"
+#include "swift.xcconfig"
 
+
+// Linking
 //
-// This file is used to build a version for the iOS simulator
-// from the command line.
-//
-
-
-
-// Architectures
-//
-SDKROOT = iphonesimulator
-ARCHS[sdk=iphonesimulator*] = x86_64
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS
