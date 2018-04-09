@@ -36,9 +36,3 @@ SDKROOT = macosx
 MACOSX_DEPLOYMENT_TARGET = 10.9
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_VERSION = A
-
-
-
-//Linking
-//
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/Mac $(PLATFORM_DIR)/Developer/Library/Frameworks
