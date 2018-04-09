@@ -183,8 +183,9 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
     
     private func requestToUploadFullAsset(for message: ZMAssetClientMessage) -> ZMUpstreamRequest? {
         guard let data = managedObjectContext.zm_fileAssetCache.assetData(message, encrypted: true) else { fatal("Could not find file in cache") }
-        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: .persistent) else { fatal("Could not create asset request") }
-
+        guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
+        guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention) else { fatal("Could not create asset request") }
+        
         request.add(ZMTaskCreatedHandler(on: managedObjectContext) { identifier in
             message.associatedTaskIdentifier = identifier
         })
