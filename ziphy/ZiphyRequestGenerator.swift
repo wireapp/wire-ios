@@ -95,7 +95,7 @@ struct ZiphyRequestGenerator {
         let funkyChars = "!*'\"();:@&=+$,/?%#[]% "
         
         let legalURLCharactersToBeEscaped: CFString = funkyChars as CFString
-        return CFURLCreateStringByAddingPercentEscapes(nil, string as CFString!, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
+        return CFURLCreateStringByAddingPercentEscapes(nil, string as CFString, nil, legalURLCharactersToBeEscaped, CFStringBuiltInEncodings.UTF8.rawValue) as String
     }
     
 }

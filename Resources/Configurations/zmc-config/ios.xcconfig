@@ -30,7 +30,8 @@
 // Architectures
 //
 SDKROOT = iphoneos
-ARCHS = armv7 arm64
+ARCHS[sdk=iphoneos*] = arm64 armv7
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
 
 
 // Code Signing
@@ -49,4 +50,3 @@ FRAMEWORK_VERSION = A
 // Linking
 //
 OTHER_LDFLAGS = -ObjC
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
