@@ -16,7 +16,6 @@
 		091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0917996E1B7E2E4600E60DD9 /* ZMAPNSEnvironmentTests.m */; };
 		091799751B7E2E4D00E60DD9 /* ZMDeploymentEnvironmentTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */; };
 		091799761B7E2E4D00E60DD9 /* ZMMobileProvisionParserTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */; };
-		097E36C11B7B620F0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */; };
 		097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */ = {isa = PBXBuildFile; fileRef = 097E36C21B7B62150039CC4C /* NSLocale+Internal.m */; };
 		097E36C51B7B631C0039CC4C /* NSLocale+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */ = {isa = PBXBuildFile; fileRef = 09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */; };
@@ -120,6 +119,8 @@
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
+		F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
+		F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
 		F991CE1D1CB64205004D8465 /* ZMPropertyValidator.h in Headers */ = {isa = PBXBuildFile; fileRef = F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7891CAE9F900039E10C /* NSString+Normalization.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7881CAE9F900039E10C /* NSString+Normalization.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -170,9 +171,27 @@
 			remoteGlobalIDString = 09F028CD1B78BE2700BADDB6;
 			remoteInfo = "WireUtilities-tests-host";
 		};
+		F1D567B2207BA4CF00CCDD77 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3E88BD2A1B1F3E8400232589 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3E88BD371B1F3EA300232589;
+			remoteInfo = WireUtilities;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		F1D567B4207BA4E800CCDD77 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F9D381E61B70E56100E6E4EB /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -197,7 +216,6 @@
 		0917996E1B7E2E4600E60DD9 /* ZMAPNSEnvironmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMAPNSEnvironmentTests.m; path = Source/ZMAPNSEnvironmentTests.m; sourceTree = "<group>"; };
 		0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMDeploymentEnvironmentTests.m; path = Source/ZMDeploymentEnvironmentTests.m; sourceTree = "<group>"; };
 		091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ZMMobileProvisionParserTests.m; path = Source/ZMMobileProvisionParserTests.m; sourceTree = "<group>"; };
-		097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
 		097E36C21B7B62150039CC4C /* NSLocale+Internal.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSLocale+Internal.m"; sourceTree = "<group>"; };
 		097E36C41B7B631C0039CC4C /* NSLocale+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSLocale+Internal.h"; sourceTree = "<group>"; };
 		09F027C81B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSUserDefaults+SharedUserDefaults.m"; sourceTree = "<group>"; };
@@ -251,14 +269,6 @@
 		546E8A581B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSManagedObjectContext+WireUtilitiesTests.m"; path = "Source/NSManagedObjectContext+WireUtilitiesTests.m"; sourceTree = "<group>"; };
 		546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = FunctionalTests.swift; path = Source/FunctionalTests.swift; sourceTree = "<group>"; };
 		546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedObjectTests.swift; path = Source/UnownedObjectTests.swift; sourceTree = "<group>"; };
-		54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
-		54B863EF1EF40B12008FDDCE /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		54B863F01EF40B12008FDDCE /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
-		54B863F11EF40B12008FDDCE /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		54B863F21EF40B12008FDDCE /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
-		54B863F31EF40B12008FDDCE /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
-		54B863F41EF40B12008FDDCE /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
-		54B863F51EF40B12008FDDCE /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		54BD49EB1D41FA16006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		54BD49EC1D41FA16006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		54BD49ED1D41FA16006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -320,6 +330,17 @@
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
 		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
+		F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		F1E148C1207BAED000F81833 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
+		F1E148C2207BAED000F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		F1E148C4207BAED000F81833 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		F1E148C5207BAED000F81833 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		F1E148C7207BAED000F81833 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		F1E148C8207BAED000F81833 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
+		F1E148CA207BAED000F81833 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		F1E148CB207BAED000F81833 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		F1E148CC207BAED000F81833 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSOrderedSet.swift; sourceTree = "<group>"; };
 		F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = NSOrderedSetTests.swift; path = Source/NSOrderedSetTests.swift; sourceTree = "<group>"; };
 		F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPropertyValidator.h; sourceTree = "<group>"; };
@@ -362,6 +383,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -440,7 +462,6 @@
 				09F028CF1B78BE2700BADDB6 /* WireUtilities-tests-host */,
 				3E88BE5E1B1F496600232589 /* Frameworks */,
 				3E88BD391B1F3EA300232589 /* Products */,
-				EF18C7C01F9E28620085A832 /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -530,14 +551,17 @@
 		546E84FA1B73DCA300532F17 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */,
-				54B863EF1EF40B12008FDDCE /* project-common.xcconfig */,
-				54B863F01EF40B12008FDDCE /* project-debug.xcconfig */,
-				54B863F11EF40B12008FDDCE /* project.xcconfig */,
-				54B863F21EF40B12008FDDCE /* simulator.xcconfig */,
-				54B863F31EF40B12008FDDCE /* test-target.xcconfig */,
-				54B863F41EF40B12008FDDCE /* warnings-debug.xcconfig */,
-				54B863F51EF40B12008FDDCE /* warnings.xcconfig */,
+				F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */,
+				F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */,
+				F1E148CA207BAED000F81833 /* ios.xcconfig */,
+				F1E148C7207BAED000F81833 /* project-common.xcconfig */,
+				F1E148C4207BAED000F81833 /* project-debug.xcconfig */,
+				F1E148CC207BAED000F81833 /* project.xcconfig */,
+				F1E148C8207BAED000F81833 /* simulator.xcconfig */,
+				F1E148C1207BAED000F81833 /* swift.xcconfig */,
+				F1E148C2207BAED000F81833 /* tests.xcconfig */,
+				F1E148C5207BAED000F81833 /* warnings-debug.xcconfig */,
+				F1E148CB207BAED000F81833 /* warnings.xcconfig */,
 			);
 			path = "zmc-config";
 			sourceTree = "<group>";
@@ -603,14 +627,6 @@
 				8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */,
 			);
 			path = Public;
-			sourceTree = "<group>";
-		};
-		EF18C7C01F9E28620085A832 /* Recovered References */ = {
-			isa = PBXGroup;
-			children = (
-				097E36C01B7B620F0039CC4C /* NSLocale+Internal.h */,
-			);
-			name = "Recovered References";
 			sourceTree = "<group>";
 		};
 		F9C9A79F1CAEACB10039E10C /* Validation */ = {
@@ -707,7 +723,6 @@
 				54CA314B1B74F36B00B820C0 /* ZMOSVersions.h in Headers */,
 				F9FCE0A21C7DBBD00092BA68 /* ZMSwiftExceptionHandler.h in Headers */,
 				54CA31531B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.h in Headers */,
-				097E36C11B7B620F0039CC4C /* NSLocale+Internal.h in Headers */,
 				F9C9A7B81CAEAE570039E10C /* ZMAccentColorValidator.h in Headers */,
 				F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */,
 				54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */,
@@ -731,11 +746,14 @@
 			buildPhases = (
 				09F028CA1B78BE2700BADDB6 /* Sources */,
 				09F028CB1B78BE2700BADDB6 /* Frameworks */,
+				F1D567B0207BA3EF00CCDD77 /* Install Frameworks */,
 				09F028CC1B78BE2700BADDB6 /* Resources */,
+				F1D567B4207BA4E800CCDD77 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				F1D567B3207BA4CF00CCDD77 /* PBXTargetDependency */,
 			);
 			name = "WireUtilities-tests-host";
 			productName = "WireUtilities-tests-host";
@@ -787,7 +805,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0830;
+				LastUpgradeCheck = 0930;
 				TargetAttributes = {
 					09F028CD1B78BE2700BADDB6 = {
 						CreatedOnToolsVersion = 6.4;
@@ -863,6 +881,25 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		F1D567B0207BA3EF00CCDD77 /* Install Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
+				"$(BUILT_PRODUCTS_DIR)/WireUtilities.framework",
+			);
+			name = "Install Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09F028CA1B78BE2700BADDB6 /* Sources */ = {
@@ -996,6 +1033,11 @@
 			target = 09F028CD1B78BE2700BADDB6 /* WireUtilities-tests-host */;
 			targetProxy = 540EF2831EFD14AA00C6C6B5 /* PBXContainerItemProxy */;
 		};
+		F1D567B3207BA4CF00CCDD77 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3E88BD371B1F3EA300232589 /* WireUtilities */;
+			targetProxy = F1D567B2207BA4CF00CCDD77 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -1020,9 +1062,8 @@
 /* Begin XCBuildConfiguration section */
 		09F028EE1B78BE2800BADDB6 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */;
+			baseConfigurationReference = F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
@@ -1034,9 +1075,8 @@
 		};
 		09F028EF1B78BE2800BADDB6 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B515921EF7F9AC000D3777 /* test-host-ios.xcconfig */;
+			baseConfigurationReference = F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO;
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = "WireUtilities-tests-host/WireUtilities-tests-host.entitlements";
 				INFOPLIST_FILE = "WireUtilities-tests-host/Info.plist";
@@ -1048,14 +1088,14 @@
 		};
 		3E88BD2E1B1F3E8400232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F01EF40B12008FDDCE /* project-debug.xcconfig */;
+			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
 			buildSettings = {
 			};
 			name = Debug;
 		};
 		3E88BD2F1B1F3E8400232589 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F11EF40B12008FDDCE /* project.xcconfig */;
+			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
 			buildSettings = {
 			};
 			name = Release;
@@ -1065,7 +1105,6 @@
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Debug;
@@ -1075,14 +1114,13 @@
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
-				ONLY_ACTIVE_ARCH = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
 			name = Release;
 		};
 		3E88BD501B1F3EA300232589 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
+			baseConfigurationReference = F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
@@ -1094,7 +1132,7 @@
 		};
 		3E88BD511B1F3EA300232589 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54B863F31EF40B12008FDDCE /* test-target.xcconfig */;
+			baseConfigurationReference = F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "Resources/WireUtilities-Test-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
