@@ -32,7 +32,7 @@ xcuserdata
 *.hmap
 *.ipa
 
-Carthage/Build
+Carthage
 build
 Cryptobox.framework.zip
 
