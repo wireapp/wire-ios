@@ -48,7 +48,7 @@ extension String {
     
     /// Splits a string in array of strings each with a length not exceding the given size
     func split(bySize size: Int) -> [String] {
-        var charsLeft = self.characters.count
+        var charsLeft = self.count
         let chunks = Int(ceil(Double(charsLeft) / Double(size)))
         var stringIndex = self.startIndex
         return (0..<chunks).map { _ in

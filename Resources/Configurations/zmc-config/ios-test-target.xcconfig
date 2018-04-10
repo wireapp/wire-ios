@@ -16,4 +16,17 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+#include "ios.xcconfig"
+#include "tests.xcconfig"
+#include "swift.xcconfig"
+
+ARCHS[sdk=iphonesimulator*] = x86_64
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+
+
+// Linking
+//
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS
+LIBRARY_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/build/lib
+SWIFT_INCLUDE_PATHS = $(inherited) $(SRCROOT)/WireCryptobox
