@@ -18,8 +18,9 @@
 
 
 #include "warnings.xcconfig"
-#include "../../../Resources/Configurations/version.xcconfig"
+#include "../version.xcconfig"
 
+SDKROOT = iphoneos
 
 // Swift
 //
