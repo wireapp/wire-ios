@@ -16,31 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+#include "ios.xcconfig"
+#include "tests.xcconfig"
+#include "swift.xcconfig"
 
-#include "warnings.xcconfig"
-#include "project-common.xcconfig"
+ARCHS[sdk=iphonesimulator*] = x86_64
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64
 
-// Build Options
+
+// Linking
 //
-DEBUG_INFORMATION_FORMAT = dwarf-with-dsym
-VALIDATE_PRODUCT = YES
-
-// Packaging
-//
-INFOPLIST_PREPROCESS = YES
-
-// Deployment
-//
-COPY_PHASE_STRIP = YES
-
-
-// LLVM - Preprocessing
-//
-GCC_PREPROCESSOR_DEFINITIONS = DEBUG=0 ZM_MAJOR_VERSION=$(MAJOR_VERSION) $(inherited) $(GCC_PREPROCESSOR_DEFINITIONS_shared)
-
-
-// Swift Compiler - Code Generation
-//
-// this causes a crash - must leave it commented for now
-// SWIFT_WHOLE_MODULE_OPTIMIZATION = YES
-
+FRAMEWORK_SEARCH_PATHS = $(DEVELOPER_FRAMEWORKS_DIR) $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS

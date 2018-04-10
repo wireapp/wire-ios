@@ -14,31 +14,31 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
-
-
-
-
-//
-// This is the main file used by Framework targets on OS X.
-// It gets included by {target}-osx.xcconfig
 //
 
+//
+// This is the main file used by Framework targets on iOS.
+// It gets included by {target}-ios.xcconfig
+//
 
+#include "swift.xcconfig"
 
 
 // Architectures
 //
-SDKROOT = macosx
+VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+
 
 // Deployment
 //
-MACOSX_DEPLOYMENT_TARGET = 10.9
+IPHONEOS_DEPLOYMENT_TARGET = 9.0
+TARGETED_DEVICE_FAMILY = 1,2
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_VERSION = A
 
 
-
-//Linking
+// Linking
 //
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/Mac $(PLATFORM_DIR)/Developer/Library/Frameworks
+OTHER_LDFLAGS = -ObjC
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
