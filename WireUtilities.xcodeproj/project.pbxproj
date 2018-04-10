@@ -337,7 +337,6 @@
 		F1E148C5207BAED000F81833 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		F1E148C6207BAED000F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148C7207BAED000F81833 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
-		F1E148C8207BAED000F81833 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		F1E148CA207BAED000F81833 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F1E148CB207BAED000F81833 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
 		F1E148CC207BAED000F81833 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
@@ -557,7 +556,6 @@
 				F1E148C7207BAED000F81833 /* project-common.xcconfig */,
 				F1E148C4207BAED000F81833 /* project-debug.xcconfig */,
 				F1E148CC207BAED000F81833 /* project.xcconfig */,
-				F1E148C8207BAED000F81833 /* simulator.xcconfig */,
 				F1E148C1207BAED000F81833 /* swift.xcconfig */,
 				F1E148C2207BAED000F81833 /* tests.xcconfig */,
 				F1E148C5207BAED000F81833 /* warnings-debug.xcconfig */,
