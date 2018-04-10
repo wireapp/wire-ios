@@ -37,7 +37,7 @@ import UIKit
     }
 
     public var length: Int {
-        return value.characters.count
+        return value.count
     }
 
     public static var current: CookieLabel {

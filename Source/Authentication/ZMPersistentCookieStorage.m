@@ -161,7 +161,7 @@ static dispatch_queue_t isolationQueue()
 
 @implementation ZMPersistentCookieStorage (Keychain)
 
-- (BOOL)findItemWithPassword:(NSData **)passwordP
+- (BOOL)findItemWithPassword:(NSData * __autoreleasing *)passwordP
 {
     __block BOOL success = NO;
     dispatch_sync(isolationQueue(), ^{

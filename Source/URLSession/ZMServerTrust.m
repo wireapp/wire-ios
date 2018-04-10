@@ -120,7 +120,7 @@ static SecKeyRef publicKeyAssociatedWithServerTrust(SecTrustRef const serverTrus
     CFArrayRef certificates = CFArrayCreate(NULL, (const void **)certificatesCArray, 1, NULL);
     __block SecTrustRef trust = NULL;
     
-    void(^finally)() = ^{
+    void(^finally)(void) = ^{
         if (certificates) {
             CFRelease(certificates);
         }

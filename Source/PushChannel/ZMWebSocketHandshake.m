@@ -51,7 +51,7 @@ static NSString * const ZMWebSocketHandshakeErrorDomain = @"ZMWebSocketHandshake
 }
 
 
-- (ZMWebSocketHandshakeResult)parseAndClearBufferIfComplete:(BOOL)clear error:(NSError **)error;
+- (ZMWebSocketHandshakeResult)parseAndClearBufferIfComplete:(BOOL)clear error:(NSError * __autoreleasing *)error;
 {
     if (error) {
         *error = nil;

@@ -275,9 +275,9 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     if (response.result == ZMTransportResponseStatusSuccess) {
         NSUInteger expiresIn = 0;
         if (response.payload != nil) {
-            NSString *token = response.payload[@"access_token"];
-            NSString *type = response.payload[@"token_type"];
-            expiresIn = [response.payload[@"expires_in"] unsignedIntegerValue];
+            NSString *token = [response.payload asDictionary][@"access_token"];
+            NSString *type = [response.payload asDictionary][@"token_type"];
+            expiresIn = [[response.payload asDictionary][@"expires_in"] unsignedIntegerValue];
             newToken = [[ZMAccessToken alloc] initWithToken:token type:type expiresInSeconds:expiresIn];
         }
         didFail = (newToken == nil);
