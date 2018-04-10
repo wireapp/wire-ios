@@ -65,7 +65,7 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     }
     
     func containedLinks(inText text: String) -> [URLWithRange] {
-        let range = NSRange(location: 0, length: text.characters.count)
+        let range = NSRange(location: 0, length: text.count)
         guard let matches = linkDetector?.matches(in: text, options: [], range: range) else { return [] }
         return matches.flatMap {
             guard let url = $0.url,
