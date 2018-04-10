@@ -246,7 +246,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format, rotated
 
     // given
-    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"ceiling_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self mediumImageDataForInputFileName:@"ceiling_rotated_1" extension:@"jpg"];
 
     // then
     XCTAssertNotNil(outputData);
@@ -489,7 +489,7 @@ static NSString const * TypeJPEG = @"image/jpeg";
     // -> recompressed in original format, rotated
     
     // given
-    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"ceiling_rotated" extension:@"jpg"];
+    ZMImageDownsampleOperation *outputData = [self previewImageDataForInputFileName:@"ceiling_rotated_1" extension:@"jpg"];
     
     // then
     XCTAssertNotNil(outputData);
