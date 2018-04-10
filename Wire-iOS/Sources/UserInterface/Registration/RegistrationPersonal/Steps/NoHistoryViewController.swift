@@ -19,7 +19,6 @@
 import Foundation
 import WireDataModel
 
-
 extension NoHistoryViewController {
     static let WireBackupUTI = "com.wire.backup-ios"
     
@@ -99,69 +98,86 @@ extension NoHistoryViewController {
             }
         #endif
         
-        let picker = UIDocumentPickerViewController(documentTypes: [NoHistoryViewController.WireBackupUTI],
-                                                  in: .`import`)
+        let picker = UIDocumentPickerViewController(documentTypes: [NoHistoryViewController.WireBackupUTI], in: .`import`)
         picker.delegate = self
         self.present(picker, animated: true)
     }
     
     private func errorMessage(for error: Error) -> String {
         switch error {
-        case StorageStack.BackupImportError.incompatibleBackup(let underlyingError):
-            switch underlyingError {
-            case BackupMetadata.VerificationError.backupFromNewerAppVersion:
-                return "registration.no_history.restore_backup_failed.wrong_version.message".localized
-            case BackupMetadata.VerificationError.userMismatch:
-                return "registration.no_history.restore_backup_failed.wrong_account.message".localized
-            default:
-                return "registration.no_history.restore_backup_failed.message".localized
-            }
-            
+        case StorageStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.backupFromNewerAppVersion):
+            return "registration.no_history.restore_backup_failed.wrong_version.message".localized
+        case StorageStack.BackupImportError.incompatibleBackup(BackupMetadata.VerificationError.userMismatch):
+            return "registration.no_history.restore_backup_failed.wrong_account.message".localized
         default:
             return "registration.no_history.restore_backup_failed.message".localized
         }
     }
 
     fileprivate func showRestoreError(_ error: Error) {
+        let alert = UIAlertController(
+            title: "registration.no_history.restore_backup_failed.title".localized,
+            message: errorMessage(for: error),
+            preferredStyle: .alert
+        )
         
-        let alert = UIAlertController(title: "registration.no_history.restore_backup_failed.title".localized,
-                                      message: errorMessage(for: error),
-                                      preferredStyle: .alert)
-        
-        let tryAgainAction = UIAlertAction(title: "registration.no_history.restore_backup_failed.try_again".localized,
-                                          style: .default) { [unowned self] _ in
-                                            self.showFilePicker()
-        }
+        let tryAgainAction = UIAlertAction(
+            title: "registration.no_history.restore_backup_failed.try_again".localized,
+            style: .default,
+            handler: { [showFilePicker] _ in showFilePicker() }
+        )
+
         alert.addAction(tryAgainAction)
-        
-        let cancelAction = UIAlertAction(title: "general.cancel".localized,
-                                           style: .cancel) { [unowned self] _ in
-            self.formStepDelegate.didCompleteFormStep(self)
-        }
-        alert.addAction(cancelAction)
+        alert.addAction(.cancel { [formStepDelegate] _ in
+            formStepDelegate?.didCompleteFormStep(self)
+        })
         
         self.present(alert, animated: true)
     }
     
     fileprivate func restore(with url: URL) {
-        guard let sessionManager = SessionManager.shared else {
-            return
+        requestPassword { [performRestore] password in
+            performRestore(password, url)
         }
+    }
+    
+    fileprivate func performRestore(using password: String, from url: URL) {
+        guard let sessionManager = SessionManager.shared else { return }
+        spinnerView.subtitle = "registration.no_history.restore_backup.restoring".localized
+        showLoadingView = true
         
-        self.showLoadingView = true
-        sessionManager.restoreFromBackup(at: url) { result in
+        sessionManager.restoreFromBackup(at: url, password: password) { [weak self] result in
+            guard let `self` = self else { return }
             switch result {
+            case .failure(SessionManager.BackupError.decryptionError):
+                self.showLoadingView = false
+                self.showWrongPasswordAlert {
+                    self.restore(with: url)
+                }
             case .failure(let error):
                 BackupEvent.importFailed.track()
                 self.showRestoreError(error)
                 self.showLoadingView = false
             case .success:
                 BackupEvent.importSucceeded.track()
+                self.spinnerView.subtitle = "registration.no_history.restore_backup.completed".localized
                 self.indicateLoadingSuccessRemovingCheckmark(false) {
                     self.formStepDelegate.didCompleteFormStep(self)
                 }
             }
         }
+    }
+    
+    fileprivate func requestPassword(completion: @escaping (String) -> Void) {
+        let controller = UIAlertController.requestRestorePassword { password in
+            password.apply(completion)
+        }
+        present(controller, animated: true, completion: nil)
+    }
+    
+    fileprivate func showWrongPasswordAlert(completion: @escaping () -> Void) {
+        let controller = UIAlertController.importWrongPasswordError(completion: completion)
+        present(controller, animated: true, completion: nil)
     }
 }
 
