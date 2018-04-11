@@ -63,7 +63,6 @@
 		54AE5AA61B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A971B78FA62002757E9 /* MockTransportSessionEmailPhoneVerificationTests.m */; };
 		54AE5AAB1B78FA62002757E9 /* MockTransportSessionRequestsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54AE5A9C1B78FA62002757E9 /* MockTransportSessionRequestsTests.m */; };
 		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
-		54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CE5E691B7534C4007F3065 /* ocmock.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
 		7C52BFF72033225500297DDA /* MockReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C52BFF52033225500297DDA /* MockReachability.h */; };
 		7C52BFF82033225500297DDA /* MockReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C52BFF62033225500297DDA /* MockReachability.m */; };
@@ -74,7 +73,6 @@
 		BF0F77851E93AC550060494E /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777D1E93AC550060494E /* WireTransport.framework */; };
 		BF0F77861E93AC550060494E /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777E1E93AC550060494E /* WireUtilities.framework */; };
 		BF0F77871E93AC550060494E /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F777F1E93AC550060494E /* WireSystem.framework */; };
-		BF0F77881E93AC550060494E /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F77801E93AC550060494E /* OCMock.framework */; };
 		BF0F778B1E93AC860060494E /* WireCryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0F777B1E93AC550060494E /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF0F778C1E93AC860060494E /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0F777C1E93AC550060494E /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF0F778D1E93AC860060494E /* WireTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF0F777D1E93AC550060494E /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -113,6 +111,7 @@
 		F1782D941ED3242700486BE3 /* MockTeamMemberEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782D931ED3242700486BE3 /* MockTeamMemberEvent.swift */; };
 		F1782DA51ED430EE00486BE3 /* MockTeamConversationEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1782DA41ED430EE00486BE3 /* MockTeamConversationEvent.swift */; };
 		F190E0951E8C0286003E81F8 /* MockUserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F190E0931E8C0218003E81F8 /* MockUserTests.swift */; };
+		F1E47FEF207E150F008D4299 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF0F77801E93AC550060494E /* OCMock.framework */; };
 		F1E9BC951E8519FC00D96342 /* MockUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1E9BC941E8519FC00D96342 /* MockUser.swift */; };
 		F1F7B6FC1ED4789E0042A26D /* MockConversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F7B6FB1ED4789E0042A26D /* MockConversation.swift */; };
 		F97E28D11D8FE31700A77567 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = F97E28D01D8FE31700A77567 /* Cartfile.resolved */; };
@@ -226,20 +225,14 @@
 		54C902541B7532F6007162A8 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		54C902551B7532F6007162A8 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		54C902561B7532F6007162A8 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
-		54C902571B7532F6007162A8 /* osx-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "osx-test-target.xcconfig"; sourceTree = "<group>"; };
-		54C902581B7532F6007162A8 /* osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = osx.xcconfig; sourceTree = "<group>"; };
 		54C902591B7532F6007162A8 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54C9025A1B7532F6007162A8 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54C9025B1B7532F6007162A8 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		54C9025D1B7532F6007162A8 /* simulator.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54C9025E1B7532F6007162A8 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		54C9025F1B7532F6007162A8 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		54C902601B7532F6007162A8 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54C902611B7532F6007162A8 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		54C902621B7532F6007162A8 /* WireMockTransport-ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireMockTransport-ios.xcconfig"; sourceTree = "<group>"; };
-		54C902631B7532F6007162A8 /* WireMockTransport-osx.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "WireMockTransport-osx.xcconfig"; sourceTree = "<group>"; };
 		54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireMockTransport.xcconfig; sourceTree = "<group>"; };
-		54CE5E691B7534C4007F3065 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
 		54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionObjectCreationTests.swift; sourceTree = "<group>"; };
 		7C52BFF52033225500297DDA /* MockReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockReachability.h; sourceTree = "<group>"; };
 		7C52BFF62033225500297DDA /* MockReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockReachability.m; sourceTree = "<group>"; };
@@ -288,7 +281,6 @@
 				BF0F77851E93AC550060494E /* WireTransport.framework in Frameworks */,
 				BF0F77861E93AC550060494E /* WireUtilities.framework in Frameworks */,
 				BF0F77871E93AC550060494E /* WireSystem.framework in Frameworks */,
-				BF0F77881E93AC550060494E /* OCMock.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,7 +288,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54CE5E711B7534C8007F3065 /* ocmock.framework in Frameworks */,
+				F1E47FEF207E150F008D4299 /* OCMock.framework in Frameworks */,
 				54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -410,8 +402,6 @@
 			children = (
 				54C902511B7532F6007162A8 /* version.xcconfig */,
 				54C902521B7532F6007162A8 /* zmc-config */,
-				54C902621B7532F6007162A8 /* WireMockTransport-ios.xcconfig */,
-				54C902631B7532F6007162A8 /* WireMockTransport-osx.xcconfig */,
 				54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */,
 			);
 			path = Configurations;
@@ -423,12 +413,9 @@
 				54C902541B7532F6007162A8 /* ios-test-host.xcconfig */,
 				54C902551B7532F6007162A8 /* ios-test-target.xcconfig */,
 				54C902561B7532F6007162A8 /* ios.xcconfig */,
-				54C902571B7532F6007162A8 /* osx-test-target.xcconfig */,
-				54C902581B7532F6007162A8 /* osx.xcconfig */,
 				54C902591B7532F6007162A8 /* project-common.xcconfig */,
 				54C9025A1B7532F6007162A8 /* project-debug.xcconfig */,
 				54C9025B1B7532F6007162A8 /* project.xcconfig */,
-				54C9025D1B7532F6007162A8 /* simulator.xcconfig */,
 				54C9025E1B7532F6007162A8 /* swift.xcconfig */,
 				54C9025F1B7532F6007162A8 /* tests.xcconfig */,
 				54C902601B7532F6007162A8 /* warnings-debug.xcconfig */,
@@ -448,7 +435,6 @@
 				BF0F777F1E93AC550060494E /* WireSystem.framework */,
 				BF0F77801E93AC550060494E /* OCMock.framework */,
 				09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */,
-				54CE5E691B7534C4007F3065 /* ocmock.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -851,53 +837,6 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C9025A1B7532F6007162A8 /* project-debug.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_TESTABILITY = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = YES;
-				ONLY_ACTIVE_ARCH = YES;
-				SDKROOT = iphoneos;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Debug;
 		};
@@ -905,83 +844,26 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C9025B1B7532F6007162A8 /* project.xcconfig */;
 			buildSettings = {
-				ALWAYS_SEARCH_USER_PATHS = NO;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
-				CLANG_CXX_LIBRARY = "libc++";
-				CLANG_ENABLE_MODULES = YES;
-				CLANG_ENABLE_OBJC_ARC = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
-				CODE_SIGN_IDENTITY = "";
-				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				ENABLE_NS_ASSERTIONS = NO;
-				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				GCC_C_LANGUAGE_STANDARD = gnu99;
-				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
-				MTL_ENABLE_DEBUG_INFO = NO;
-				SDKROOT = iphoneos;
-				SWIFT_OPTIMIZATION_LEVEL = "-Owholemodule";
-				TARGETED_DEVICE_FAMILY = "1,2";
-				VALIDATE_PRODUCT = YES;
-				VERSIONING_SYSTEM = "apple-generic";
-				VERSION_INFO_PREFIX = "";
 			};
 			name = Release;
 		};
 		54C9024A1B7532DD007162A8 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54C902621B7532F6007162A8 /* WireMockTransport-ios.xcconfig */;
+			baseConfigurationReference = 54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		54C9024B1B7532DD007162A8 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 54C902621B7532F6007162A8 /* WireMockTransport-ios.xcconfig */;
+			baseConfigurationReference = 54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				DEFINES_MODULE = YES;
-				DYLIB_COMPATIBILITY_VERSION = 1;
-				DYLIB_CURRENT_VERSION = 1;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
-				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
+				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};
@@ -989,21 +871,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = W5KEQBF9B5;
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = Tests/Resources/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
@@ -1011,16 +882,10 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C902551B7532F6007162A8 /* ios-test-target.xcconfig */;
 			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_IDENTITY = "";
-				DEVELOPMENT_TEAM = W5KEQBF9B5;
 				INFOPLIST_FILE = Tests/Resources/Info.plist;
-				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireMockTransportTests;
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
 		};

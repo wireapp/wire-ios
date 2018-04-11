@@ -62,8 +62,8 @@
     
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
-    XCTAssertTrue([response.payload[@"connections"] isKindOfClass:[NSArray class]]);
-    NSArray *data = (NSArray *) response.payload[@"connections"];
+    XCTAssertTrue([response.payload.asDictionary[@"connections"] isKindOfClass:[NSArray class]]);
+    NSArray *data = (NSArray *) response.payload.asDictionary[@"connections"];
     XCTAssertEqual(data.count, (NSUInteger) 2);
     
     [self checkThatTransportData:data[0] matchesConnection:connection2];

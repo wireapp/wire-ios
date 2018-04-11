@@ -159,7 +159,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *nameEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(nameEvent.type, ZMTUpdateEventUserUpdate);
-    XCTAssertEqualObjects(nameEvent.payload[@"user"], expectedUserPayload);
+    XCTAssertEqualObjects(nameEvent.payload.asDictionary[@"user"], expectedUserPayload);
 }
 
 - (void)testThatWeReceiveAPushEventWhenChangingSelfProfile
@@ -196,7 +196,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *nameEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(nameEvent.type, ZMTUpdateEventUserUpdate);
-    XCTAssertEqualObjects(nameEvent.payload[@"user"], expectedUserPayload);
+    XCTAssertEqualObjects(nameEvent.payload.asDictionary[@"user"], expectedUserPayload);
 }
 
 - (void)testThatWeReceiveAPushEventWhenChangingSelfProfilePictureAssetsV3
@@ -231,7 +231,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *nameEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(nameEvent.type, ZMTUpdateEventUserUpdate);
-    XCTAssertEqualObjects(nameEvent.payload[@"user"], expectedUserPayload);
+    XCTAssertEqualObjects(nameEvent.payload.asDictionary[@"user"], expectedUserPayload);
 }
 
 - (void)testThatWeReceiveAPushEventWhenCreatingAConnection
@@ -263,7 +263,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *connectEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(connectEvent.type, ZMTUpdateEventUserConnection);
-    XCTAssertEqualObjects(connectEvent.payload[@"connection"], expectedConnectionPayload);
+    XCTAssertEqualObjects(connectEvent.payload.asDictionary[@"connection"], expectedConnectionPayload);
 }
 
 - (void)testThatWeReceiveAPushEventWhenChangingAConnection
@@ -294,7 +294,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 1u);
     TestPushChannelEvent *connectEvent = self.pushChannelReceivedEvents.firstObject;
     XCTAssertEqual(connectEvent.type, ZMTUpdateEventUserConnection);
-    XCTAssertEqualObjects(connectEvent.payload[@"connection"], expectedConnectionPayload);
+    XCTAssertEqualObjects(connectEvent.payload.asDictionary[@"connection"], expectedConnectionPayload);
 }
 
 - (void)testThatWeReceivePushEventsWhenCreatingAConversationAndInsertingMessages
@@ -334,14 +334,14 @@
     }];
     TestPushChannelEvent *textEvent1 = [self popEventMatchingWithBlock:^BOOL(TestPushChannelEvent *event) {
         return ((event.type == ZMTUpdateEventConversationOTRMessageAdd) &&
-                [event.payload[@"data"] isEqual:event1Payload]);
+                [event.payload.asDictionary[@"data"] isEqual:event1Payload]);
     }];
     TestPushChannelEvent *textEvent2 = [self popEventMatchingWithBlock:^BOOL(TestPushChannelEvent *event) {
         return ((event.type == ZMTUpdateEventConversationOTRMessageAdd) &&
-                [event.payload[@"data"] isEqual:event2Payload]);
+                [event.payload.asDictionary[@"data"] isEqual:event2Payload]);
     }];
     XCTAssertNotNil(createConversationEvent);
-    XCTAssertEqualObjects(createConversationEvent.payload[@"data"], conversationPayload);
+    XCTAssertEqualObjects(createConversationEvent.payload.asDictionary[@"data"], conversationPayload);
     XCTAssertNotNil(memberJoinEvent);
     XCTAssertNotNil(textEvent1);
     XCTAssertNotNil(textEvent2);
@@ -406,7 +406,7 @@
     XCTAssertTrue(index != NSNotFound);
     if(index != NSNotFound) {
         TestPushChannelEvent *event = self.pushChannelReceivedEvents[index];
-        XCTAssertEqualObjects(expectedData, event.payload[@"data"]);
+        XCTAssertEqualObjects(expectedData, event.payload.asDictionary[@"data"]);
     }
 }
 
