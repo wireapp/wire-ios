@@ -97,7 +97,7 @@ static NSString *foo = @"foo";
     XCTAssertNil([self.sut nextRequest]); // Make sure we've -fetchObjectsFromStore did run
     self.testMOC.userInfo[@"ZMIsUserInterfaceContext"] = @YES;   
     
-    [[[(id)self.mockTranscoder stub] andReturnValue:@(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder stub] andReturnValue:@(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 }
 
 - (NSObject *)transcoderDependentObjectForUpdate:(NSManagedObject *)obj
@@ -180,7 +180,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expectation
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -198,7 +198,7 @@ static NSString *foo = @"foo";
     XCTAssertFalse([[MockEntity predicateForObjectsThatNeedToBeInsertedUpstream] evaluateWithObject:entity]);
     
     // reject
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -214,7 +214,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expectation
-    [[[(id)self.mockTranscoder expect] andReturn:nil] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:nil] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -234,7 +234,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expectation
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -253,7 +253,7 @@ static NSString *foo = @"foo";
     [ZMChangeTrackerBootstrap bootStrapChangeTrackers:@[self.sut] onContext:self.testMOC];
     
     // expectation
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -269,8 +269,8 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expectation
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     XCTAssertNotNil([self.sut nextRequest]);
@@ -288,9 +288,9 @@ static NSString *foo = @"foo";
     
     // expectation
     [(OCMockObject *)self.mockTranscoder setExpectationOrderMatters:NO];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity2.keysThatHaveLocalModifications]] requestForInsertingObject:entity2 forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity3.keysThatHaveLocalModifications]] requestForInsertingObject:entity3 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity2.keysThatHaveLocalModifications]] requestForInsertingObject:entity2 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity3.keysThatHaveLocalModifications]] requestForInsertingObject:entity3 forKeys:OCMOCK_ANY];
     
     // when
     [self.sut nextRequest];
@@ -316,9 +316,9 @@ static NSString *foo = @"foo";
     
     // expectation
     [(OCMockObject *)self.mockTranscoder setExpectationOrderMatters:NO];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity2.keysThatHaveLocalModifications]] requestForInsertingObject:entity2 forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity3.keysThatHaveLocalModifications]] requestForInsertingObject:entity3 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity2.keysThatHaveLocalModifications]] requestForInsertingObject:entity2 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity3.keysThatHaveLocalModifications]] requestForInsertingObject:entity3 forKeys:OCMOCK_ANY];
     
     // when
     [self.sut nextRequest];
@@ -331,8 +331,8 @@ static NSString *foo = @"foo";
 - (void)testThatItDoesNotAskForAnyRequestIfNoObjectIsPendingSynchronization
 {
     // given
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
-    [[(id)self.mockTranscoder reject] requestForUpdatingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForUpdatingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
     
     // when
     [self.sut nextRequest];
@@ -345,8 +345,8 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expect
-    [[(id)self.mockTranscoder reject] requestForUpdatingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForUpdatingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
     
     // when
     XCTAssertNil([self.sut nextRequest]);
@@ -361,7 +361,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity1]];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity1.keysThatHaveLocalModifications]] requestForInsertingObject:entity1 forKeys:OCMOCK_ANY];
     
     // when / then
     XCTAssertEqualObjects(self.dummyTransportRequest, [self.sut nextRequest]);
@@ -377,7 +377,7 @@ static NSString *foo = @"foo";
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:networkError];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
     
     // when
@@ -401,7 +401,7 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder expect] updateInsertedObject:entity request:expectedRequest response:response];
     
     // when
@@ -425,8 +425,8 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andDo:^(NSInvocation * ZM_UNUSED inv) {
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andDo:^(NSInvocation * ZM_UNUSED inv) {
         XCTAssertEqual(expectedRequest.transportResponse, response);
     }] updateInsertedObject:entity request:expectedRequest response:response];
     
@@ -450,7 +450,7 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *upstreamRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:upstreamRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:upstreamRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder expect] requestExpiredForObject:entity forKeys:upstreamRequest.keys];
     [[(id)self.mockTranscoder reject] updateInsertedObject:OCMOCK_ANY request:OCMOCK_ANY response:OCMOCK_ANY];
     
@@ -476,7 +476,7 @@ static NSString *foo = @"foo";
     ZMTransportResponse *response = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:500 transportSessionError:nil];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder reject] updateInsertedObject:OCMOCK_ANY request:OCMOCK_ANY response:OCMOCK_ANY];
     
     // when
@@ -529,8 +529,8 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@(YES)] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturnValue:@(YES)] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -557,8 +557,8 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -585,8 +585,8 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@YES] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturnValue:@YES] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -594,7 +594,7 @@ static NSString *foo = @"foo";
     WaitForAllGroupsToBeEmpty(0.2);
     
     // and expect
-    [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
  
     // when
     request = [self.sut nextRequest];
@@ -615,8 +615,8 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *dummyRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:dummyRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturnValue:@NO] shouldRetryToSyncAfterFailedToUpdateObject:entity request:dummyRequest response:response keysToParse:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -624,7 +624,7 @@ static NSString *foo = @"foo";
     WaitForAllGroupsToBeEmpty(0.2);
     
     // and expect
-    [[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[(id)self.mockTranscoder reject] requestForInsertingObject:OCMOCK_ANY forKeys:OCMOCK_ANY];
     
     // when
     [self.sut nextRequest];
@@ -677,7 +677,7 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *expectedRequest = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:expectedRequest] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder reject] updateInsertedObject:entity request:expectedRequest response:response];
     
     // when
@@ -714,7 +714,7 @@ static NSString *foo = @"foo";
     ZMUpstreamRequest *expectedRequest1 = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
     ZMUpstreamRequest *expectedRequest2 = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
 
-    [[[(id)self.mockTranscoder expect] andReturn:expectedRequest1] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:expectedRequest1] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     // (1) start the request
@@ -732,7 +732,7 @@ static NSString *foo = @"foo";
     XCTAssertEqualObjects(request, expectedRequest1.transportRequest);
     
     // and expect
-    [[[(id)self.mockTranscoder expect] andReturn:expectedRequest2] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:expectedRequest2] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder expect] updateInsertedObject:entity request:expectedRequest2 response:response];
     
     
@@ -769,8 +769,8 @@ static NSString *foo = @"foo";
     
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
     
     // when
@@ -792,7 +792,7 @@ static NSString *foo = @"foo";
     ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithTransportSessionError:error];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder reject] objectToRefetchForFailedUpdateOfObject:entity];
     
     // when
@@ -813,7 +813,7 @@ static NSString *foo = @"foo";
     ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:error];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -837,7 +837,7 @@ static NSString *foo = @"foo";
     ZMTransportResponse *tryAgainResponse = [ZMTransportResponse responseWithPayload:nil HTTPStatus:0 transportSessionError:error];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     [[(id)self.mockTranscoder expect] requestExpiredForObject:entity forKeys:OCMOCK_ANY];
     
     // when
@@ -933,7 +933,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     
     // expect
-    [[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNil([self.sut nextRequest]);
@@ -950,7 +950,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     [self.sut objectsDidChange:[NSSet setWithObject:dependency]];
     // expect
-    [[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNil([self.sut nextRequest]);
@@ -969,7 +969,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:dependency]];
     
     // expect
-    [[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNotNil([self.sut nextRequest]);
@@ -990,7 +990,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:dependency]];
     
     // expect
-    [[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNil([self.sut nextRequest]);
@@ -1006,7 +1006,7 @@ static NSString *foo = @"foo";
     // when
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     // expect
-    [[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForUpdatingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForUpdatingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNil([self.sut nextRequest]);
@@ -1023,7 +1023,7 @@ static NSString *foo = @"foo";
     [self.sut objectsDidChange:[NSSet setWithObject:entity]];
     [self.sut objectsDidChange:[NSSet setWithObject:dependency]];
     // expect
-    [[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForUpdatingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder reject] andReturn:[self dummyRequestWithKeys:entity.keysThatHaveLocalModifications]] requestForUpdatingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     XCTAssertNil([self.sut nextRequest]);
@@ -1059,7 +1059,7 @@ static NSString *foo = @"foo";
     
     // expect
     ZMUpstreamRequest *request = [self dummyRequestWithKeys:entity.keysThatHaveLocalModifications];
-    [[[(id)self.mockTranscoder expect] andReturn:request] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
+    [(id<ZMUpstreamTranscoder>)[[(id)self.mockTranscoder expect] andReturn:request] requestForInsertingObject:entity forKeys:OCMOCK_ANY];
     
     // then
     ZMTransportRequest *transportRequest = [self.sut nextRequest];

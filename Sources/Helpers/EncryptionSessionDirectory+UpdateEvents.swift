@@ -174,7 +174,7 @@ extension ZMUpdateEvent {
 
         // We need to check the size of the encrypted data payload for regular OTR and external messages
         let maxReceivingSize = Int(12_000 * 1.5)
-        guard string.characters.count <= maxReceivingSize, externalStringCount <= maxReceivingSize else { throw CBOX_DECODE_ERROR }
+        guard string.count <= maxReceivingSize, externalStringCount <= maxReceivingSize else { throw CBOX_DECODE_ERROR }
         return data
     }
 
@@ -187,7 +187,7 @@ extension ZMUpdateEvent {
     }
 
     fileprivate var externalStringCount: Int {
-        return (eventData?["data"] as? String)?.characters.count ?? 0
+        return (eventData?["data"] as? String)?.count ?? 0
     }
     
     /// Returns a decrypted version of self, injecting the decrypted data

@@ -16,17 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-
-
-//
-// This file is used to build a version for the iOS simulator
-// from the command line.
-//
-
-
-
-// Architectures
-//
-SDKROOT = iphonesimulator
-ARCHS = i386 x86_64
+#include "ios.xcconfig"
+#include "swift.xcconfig"

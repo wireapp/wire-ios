@@ -575,7 +575,7 @@ extension AssetV3DownloadRequestStrategyTests {
         XCTAssertNotNil(identifier)
 
         // WHEN the transfer is cancelled
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedBlock {
             message.fileMessageData?.cancelTransfer()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout:0.5))

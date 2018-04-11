@@ -370,7 +370,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(YES)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
 
     // expect
-    [[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
     
     // when
     [self.sut nextRequest];
@@ -382,7 +382,7 @@ static NSString *foo = @"foo";
     [[[(id)self.mockTranscoder stub] andReturnValue:OCMOCK_VALUE(NO)] shouldCreateRequestToSyncObject:OCMOCK_ANY forKeys:OCMOCK_ANY withSync:OCMOCK_ANY];
     
     // expect
-    [[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:nil] anyObjectToSynchronize];
     
     // when
     [self.sut nextRequest];
@@ -400,9 +400,9 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
-    [[self.mockLocallyModifiedSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
+    [(ZMLocallyModifiedObjectSet *)[self.mockLocallyModifiedSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
 
     
     // when
@@ -427,8 +427,8 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[self.mockLocallyModifiedSet expect] didStartSynchronizingKeys:transcoderKeys forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[self.mockLocallyModifiedSet expect] didStartSynchronizingKeys:transcoderKeys forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     
     // when
@@ -453,12 +453,12 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[(id)self.mockTranscoder stub] updateUpdatedObject:OCMOCK_ANY requestUserInfo:OCMOCK_ANY response:OCMOCK_ANY keysToParse:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:[NSSet set]] keysToParseAfterSyncingToken:OCMOCK_ANY];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:[NSSet set]] keysToParseAfterSyncingToken:OCMOCK_ANY];
 
     
     // when
@@ -483,8 +483,8 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
@@ -511,8 +511,8 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didNotFinishToSynchronizeToken:token];
@@ -541,12 +541,12 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[self.mockLocallyModifiedSet stub] didSynchronizeToken:token];
     [[(id)self.mockTranscoder expect] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
-    [[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -573,12 +573,12 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@NO] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
-    [[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -605,12 +605,12 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[self.mockLocallyModifiedSet expect] didNotFinishToSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@YES] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
-    [[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -636,12 +636,12 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[self.mockLocallyModifiedSet expect] didSynchronizeToken:token];
     [[[(id)self.mockTranscoder expect] andReturnValue:@NO] updateUpdatedObject:entity requestUserInfo:fakeRequest.userInfo response:response keysToParse:keysThatDidNotChange];
-    [[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:keysThatDidNotChange] keysToParseAfterSyncingToken:token];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -722,8 +722,8 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     
     // when
@@ -756,8 +756,8 @@ static NSString *foo = @"foo";
     
     // expect
     [[self.mockLocallyModifiedSet stub] addPossibleObjectToSynchronize:OCMOCK_ANY];
-    [[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
-    [[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:fakeObjectWithKeys] anyObjectToSynchronize];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet expect] andReturn:token] didStartSynchronizingKeys:keysToSync forObject:fakeObjectWithKeys];
     [[[(id)self.mockTranscoder expect] andReturn:fakeRequest] requestForUpdatingObject:entity forKeys:keysToSync];
     [[(id)self.mockLocallyModifiedSet expect] keysToParseAfterSyncingToken:OCMOCK_ANY];
     [[self.mockLocallyModifiedSet expect] didFailToSynchronizeToken:token];
@@ -773,7 +773,7 @@ static NSString *foo = @"foo";
 - (void)testThatItHasNoOutstandingItemsWhenTheModifiedSetHasNone;
 {
     // given
-    [[[self.mockLocallyModifiedSet stub] andReturnValue:@(NO)] hasOutstandingItems];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet stub] andReturnValue:@(NO)] hasOutstandingItems];
     
     // then
     XCTAssertFalse(self.sut.hasOutstandingItems);
@@ -782,7 +782,7 @@ static NSString *foo = @"foo";
 - (void)testThatItHasOutstandingItemsWhenTheModifiedSetHasSome;
 {
     // given
-    [[[self.mockLocallyModifiedSet stub] andReturnValue:@(YES)] hasOutstandingItems];
+    [(ZMLocallyModifiedObjectSet *)[[self.mockLocallyModifiedSet stub] andReturnValue:@(YES)] hasOutstandingItems];
     
     // then
     XCTAssertTrue(self.sut.hasOutstandingItems);
