@@ -33,7 +33,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
         })
         
         // WHEN
-        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -51,7 +51,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
 
         request.add(ZMCompletionHandler(on: self.fakeSyncContext) { response in
             XCTAssertEqual(response.httpStatus, 0)
-            XCTAssertTrue((response.transportSessionError as NSError!).isTryAgainLaterError)
+            XCTAssertTrue((response.transportSessionError! as NSError).isTryAgainLaterError)
             requestCompleted = true
             })
         request.add(ZMTaskCreatedHandler(on: self.fakeSyncContext) {
@@ -63,7 +63,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
         }
         
         // WHEN
-        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -97,7 +97,7 @@ class MockTransportSessionCancellationTests : MockTransportSessionTests {
             })
         
         // WHEN
-        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest! in
+        sut.mockedTransportSession().attemptToEnqueueSyncRequest { () -> ZMTransportRequest? in
             return request
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

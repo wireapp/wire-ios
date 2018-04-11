@@ -291,8 +291,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
 - (ZMTransportResponse *)processConversationsPostConversationsRequest:(ZMTransportRequest *)request;
 {
-    NSArray *participantIDs = request.payload[@"users"];
-    NSString *name = request.payload[@"name"];
+    NSArray *participantIDs = request.payload.asDictionary[@"users"];
+    NSString *name = request.payload.asDictionary[@"name"];
     
     NSMutableArray *otherUsers = [NSMutableArray array];
     

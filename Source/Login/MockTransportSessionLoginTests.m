@@ -282,7 +282,7 @@
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
-    XCTAssertEqualObjects(response.payload[@"label"], @"invalid-credentials");
+    XCTAssertEqualObjects(response.payload.asDictionary[@"label"], @"invalid-credentials");
     [self verifyMockLater:self.cookieStorage];
 }
 
@@ -315,7 +315,7 @@
     // THEN
     XCTAssertNotNil(response);
     XCTAssertEqual(response.HTTPStatus, 403);
-    XCTAssertEqualObjects(response.payload[@"label"], @"invalid-credentials");
+    XCTAssertEqualObjects(response.payload.asDictionary[@"label"], @"invalid-credentials");
     [self verifyMockLater:self.cookieStorage];
     
     

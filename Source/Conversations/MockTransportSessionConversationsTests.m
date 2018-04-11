@@ -1111,7 +1111,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     
-    NSArray *receivedTransportIDs = response.payload[@"conversations"];
+    NSArray *receivedTransportIDs = response.payload.asDictionary[@"conversations"];
     XCTAssertEqualObjects([NSSet setWithArray:receivedTransportIDs], [NSSet setWithArray:conversationIDs]);
     
 }
@@ -1156,7 +1156,7 @@
     XCTAssertEqual(response.HTTPStatus, 200);
     XCTAssertNil(response.transportSessionError);
     
-    NSArray *receivedConversations = response.payload[@"conversations"];
+    NSArray *receivedConversations = response.payload.asDictionary[@"conversations"];
     NSMutableSet *receivedConversationIDs = [NSMutableSet set];
     
     for (NSDictionary *rawConversation in receivedConversations) {
