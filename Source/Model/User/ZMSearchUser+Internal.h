@@ -53,7 +53,7 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 + (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray userSession:(id<ZMManagedObjectContextProvider> )userSession;
 
-- (instancetype)initWithContact:(ZMAddressBookContact *)contact user:(nullable ZMUser *)user userSession:(id<ZMManagedObjectContextProvider> )userSession;
+- (instancetype)initWithContact:(nullable ZMAddressBookContact *)contact user:(nullable ZMUser *)user userSession:(id<ZMManagedObjectContextProvider> )userSession;
 
 @property (nullable, nonatomic) NSUUID *remoteIdentifier;
 /// Returns @c YES if the receiver has a local user or cached profile image data.

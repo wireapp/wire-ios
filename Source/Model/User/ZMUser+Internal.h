@@ -34,7 +34,7 @@ extern NSString * __nonnull const AvailabilityKey;
 
 @interface ZMUser (Internal)
 
-@property (nullable, nonatomic) NSUUID *remoteIdentifier;
+@property (null_unspecified, nonatomic) NSUUID *remoteIdentifier;
 @property (nullable, nonatomic) ZMConnection *connection;
 
 @property (nullable, nonatomic) NSUUID *teamIdentifier;
