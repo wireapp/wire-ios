@@ -1528,7 +1528,7 @@ NSString * const ReactionsKey = @"reactions";
 @implementation ZMMessageTests (Deletion)
 
 /// Returns whether the message was deleted
-- (BOOL)checkThatAMessageIsRemoved:(ZMMessage *(^)())messageCreationBlock {
+- (BOOL)checkThatAMessageIsRemoved:(ZMMessage *(^)(void))messageCreationBlock {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.remoteIdentifier = [NSUUID createUUID];

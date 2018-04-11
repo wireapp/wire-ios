@@ -53,7 +53,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
                                       remoteID: remoteID,
                                       user: nil,
                                       syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)!
+                                      uiManagedObjectContext:self.uiMOC)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, forBareUser: searchUser, managedObjectContext: self.uiMOC)
@@ -80,7 +80,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
                                       remoteID: user.remoteIdentifier,
                                       user: user,
                                       syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)!
+                                      uiManagedObjectContext:self.uiMOC)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, forBareUser:searchUser, managedObjectContext: self.uiMOC)
@@ -107,7 +107,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
                                       remoteID: remoteID,
                                       user: nil,
                                       syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)!
+                                      uiManagedObjectContext:self.uiMOC)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, forBareUser: searchUser, managedObjectContext: self.uiMOC)
@@ -130,7 +130,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
                                       remoteID: remoteID,
                                       user: nil,
                                       syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)!
+                                      uiManagedObjectContext:self.uiMOC)
         
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
@@ -165,7 +165,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
                                       remoteID: nil,
                                       user: user,
                                       syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)!
+                                      uiManagedObjectContext:self.uiMOC)
         
         let testObserver2 = TestSearchUserObserver()
         var tokens: [AnyObject] = []

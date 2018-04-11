@@ -89,7 +89,7 @@ public extension ZMAssetOriginal {
         let loudnessArray = normalizedLoudness.map { UInt8(roundf($0*255)) }
         let audioBuilder = ZMAssetAudioMetaData.builder()!
         audioBuilder.setDurationInMillis(UInt64(audioDurationInMillis))
-        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count) as Data!)
+        audioBuilder.setNormalizedLoudness(NSData(bytes: loudnessArray, length: loudnessArray.count) as Data)
         builder.setAudio(audioBuilder)
         
         return builder.build()

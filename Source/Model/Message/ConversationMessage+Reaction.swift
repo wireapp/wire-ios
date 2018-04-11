@@ -64,7 +64,7 @@ extension ZMMessage {
     
     @objc public func addReaction(_ unicodeValue: String?, forUser user:ZMUser) {
         removeReaction(forUser:user)
-        if let unicodeValue = unicodeValue , unicodeValue.characters.count > 0 {
+        if let unicodeValue = unicodeValue , unicodeValue.count > 0 {
             for reaction in self.reactions {
                 if reaction.unicodeValue! == unicodeValue {
                     reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)

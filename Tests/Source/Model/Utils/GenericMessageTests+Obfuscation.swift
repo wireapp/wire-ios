@@ -126,11 +126,11 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         XCTAssertEqual(obfuscatedLinkPreview.urlOffset, offset)
         XCTAssertTrue(obfuscatedLinkPreview.hasArticle())
         XCTAssertNotEqual(obfuscatedLinkPreview.article?.permanentUrl, permURL)
-        XCTAssertNotEqual(obfuscatedLinkPreview.article?.permanentUrl.characters.count, 0)
+        XCTAssertNotEqual(obfuscatedLinkPreview.article?.permanentUrl.count, 0)
         XCTAssertNotEqual(obfuscatedLinkPreview.article?.title, title)
-        XCTAssertNotEqual(obfuscatedLinkPreview.article?.title.characters.count, 0)
+        XCTAssertNotEqual(obfuscatedLinkPreview.article?.title.count, 0)
         XCTAssertNotEqual(obfuscatedLinkPreview.article?.summary, summary)
-        XCTAssertNotEqual(obfuscatedLinkPreview.article?.summary.characters.count, 0)
+        XCTAssertNotEqual(obfuscatedLinkPreview.article?.summary.count, 0)
     }
     
     func testThatItObfuscatesLinkPreviews_Images(){
@@ -185,10 +185,10 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         // then
         guard let obfuscatedTweet = obfuscatedLinkPreview.tweet else {return XCTFail()}
         XCTAssertNotEqual(obfuscatedTweet.author, "author")
-        XCTAssertEqual(obfuscatedTweet.author.characters.count, "author".characters.count)
+        XCTAssertEqual(obfuscatedTweet.author.count, "author".count)
 
         XCTAssertNotEqual(obfuscatedTweet.username, "username")
-        XCTAssertEqual(obfuscatedTweet.username.characters.count, "username".characters.count)
+        XCTAssertEqual(obfuscatedTweet.username.count, "username".count)
     }
 
     func testThatItObfuscatesImageAssetContent(){

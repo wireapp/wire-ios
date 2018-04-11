@@ -36,8 +36,8 @@ class TeamTests: BaseTeamTests {
                 // then
                 XCTAssertNotNil(sut)
                 XCTAssertEqual(sut?.remoteIdentifier, uuid)
-                XCTAssertTrue(created)
             }
+            XCTAssertTrue(created)
         }
     }
 
@@ -54,12 +54,12 @@ class TeamTests: BaseTeamTests {
         var created = false
         withUnsafeMutablePointer(to: &created) {
             let existing = Team.fetchOrCreate(with: uuid, create: false, in: uiMOC, created: $0)
-            XCTAssertFalse(created)
 
             // then
             XCTAssertNotNil(existing)
             XCTAssertEqual(existing, sut)
         }
+        XCTAssertFalse(created)
     }
 
     func testThatItReturnsGuestsOfATeam() throws {

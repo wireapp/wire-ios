@@ -26,45 +26,47 @@
 @class ManagedObjectContextObserver;
 @class SearchUserObserverCenter;
 
+NS_ASSUME_NONNULL_BEGIN
+
 FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 
 @interface ZMSearchUser ()
 
-- (instancetype)initWithName:(NSString *)name
-                      handle:(NSString *)handle
+- (instancetype)initWithName:(nullable NSString *)name
+                      handle:(nullable NSString *)handle
                  accentColor:(ZMAccentColor)color
-                    remoteID:(NSUUID *)remoteID
-                        user:(ZMUser *)user
+                    remoteID:(nullable NSUUID *)remoteID
+                        user:(nullable ZMUser *)user
     syncManagedObjectContext:(NSManagedObjectContext *)syncMOC
       uiManagedObjectContext:(NSManagedObjectContext *)uiMOC;
 
-- (instancetype)initWithName:(NSString *)name
-                      handle:(NSString *)handle
+- (instancetype)initWithName:(nullable NSString *)name
+                      handle:(nullable NSString *)handle
                  accentColor:(ZMAccentColor)color
-                    remoteID:(NSUUID *)remoteID
-                        user:(ZMUser *)user
+                    remoteID:(nullable NSUUID *)remoteID
+                        user:(nullable ZMUser *)user
                  userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
 + (NSArray <ZMSearchUser *> *)usersWithUsers:(NSArray <ZMUser *> *)users userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
-- (instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession;
+- (nullable instancetype)initWithPayload:(NSDictionary *)payload userSession:(id<ZMManagedObjectContextProvider>)userSession;
 
 + (NSArray <ZMSearchUser *> *)usersWithPayloadArray:(NSArray <NSDictionary *> *)payloadArray userSession:(id<ZMManagedObjectContextProvider> )userSession;
 
-- (instancetype)initWithContact:(ZMAddressBookContact *)contact user:(ZMUser *)user userSession:(id<ZMManagedObjectContextProvider> )userSession;
+- (instancetype)initWithContact:(ZMAddressBookContact *)contact user:(nullable ZMUser *)user userSession:(id<ZMManagedObjectContextProvider> )userSession;
 
-@property (nonatomic) NSUUID *remoteIdentifier;
+@property (nullable, nonatomic) NSUUID *remoteIdentifier;
 /// Returns @c YES if the receiver has a local user or cached profile image data.
 /// C.f. +searchUserToProfileImageCache
 @property (nonatomic, readonly) BOOL isLocalOrHasCachedProfileImageData;
 
-@property (nonatomic) NSUUID *mediumLegacyId;
-@property (nonatomic) NSString *completeAssetKey;
+@property (nullable, nonatomic) NSUUID *mediumLegacyId;
+@property (nullable, nonatomic) NSString *completeAssetKey;
 
 @property (nonatomic, readwrite) NSUInteger totalCommonConnections;
-@property (nonatomic, readwrite, copy) NSString *providerIdentifier;
+@property (nullable, nonatomic, readwrite, copy) NSString *providerIdentifier;
 
-@property (nonatomic, readwrite, copy) NSString *summary;
+@property (nullable, nonatomic, readwrite, copy) NSString *summary;
 
 + (NSCache *)searchUserToSmallProfileImageCache;
 + (NSCache *)searchUserToMediumImageCache;
@@ -74,3 +76,5 @@ FOUNDATION_EXPORT NSString *const ZMSearchUserTotalMutualFriendsKey;
 - (void)notifyNewSmallImageData:(NSData *)data searchUserObserverCenter:(SearchUserObserverCenter *)searchUserObserverCenter;
 
 @end
+
+NS_ASSUME_NONNULL_END

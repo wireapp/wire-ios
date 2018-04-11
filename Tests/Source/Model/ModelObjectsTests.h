@@ -35,6 +35,6 @@
 
 - (void)checkAttributeForClass:(Class)aClass key:(NSString *)key value:(id)value;
 
-- (void)withAssertionsDisabled:(void (^)())block;
+- (void)withAssertionsDisabled:(void (^)(void))block;
 
 @end

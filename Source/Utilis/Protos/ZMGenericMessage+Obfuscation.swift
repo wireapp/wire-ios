@@ -55,9 +55,9 @@ public extension ZMGenericMessage {
                 var obfuscatedLinkPreviews : [ZMLinkPreview] = []
                 if linkPreviews.count > 0 {
                     let offset = linkPreviews.first!.urlOffset
-                    let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: String.IndexDistance(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
-                    let originalURL = obfuscatedContent.substring(from: offsetIndex)
-                    obfuscatedLinkPreviews = linkPreviews.map{$0.obfuscated(originalURL: originalURL)}
+                    let offsetIndex = obfuscatedContent.index(obfuscatedContent.startIndex, offsetBy: Int(offset), limitedBy: obfuscatedContent.endIndex) ?? obfuscatedContent.startIndex
+                    let originalURL = obfuscatedContent[offsetIndex...]
+                    obfuscatedLinkPreviews = linkPreviews.map{$0.obfuscated(originalURL: String(originalURL))}
                 }
                 return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageId, mentions: [])
             }

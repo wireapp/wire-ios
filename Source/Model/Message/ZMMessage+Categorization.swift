@@ -170,7 +170,7 @@ extension ZMMessage {
         }
         else {
             // does the text itself includes a link?
-            let matches = linkParser.matches(in: text, range: NSRange(location: 0, length: text.characters.count))
+            let matches = linkParser.matches(in: text, range: NSRange(location: 0, length: text.count))
             if matches.count > 0 {
                 category.update(with: .link)
             }

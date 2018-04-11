@@ -43,7 +43,7 @@ public final class KeyPath : Hashable {
     
     private init(_ s: String) {
         rawValue = s
-        count = rawValue.characters.filter {
+        count = rawValue.filter {
             $0 == "."
         }.count + 1
         hashValue = rawValue.hashValue
@@ -55,10 +55,10 @@ public final class KeyPath : Hashable {
 
     public lazy var decompose : (head: KeyPath, tail: KeyPath?)? = {
         if 1 <= self.count {
-            if let i = self.rawValue.characters.index(of: ".") {
+            if let i = self.rawValue.index(of: ".") {
                 let head = self.rawValue.substring(to: i)
                 var tail : KeyPath?
-                if i != self.rawValue.characters.endIndex {
+                if i != self.rawValue.endIndex {
                     let nextIndex = self.rawValue.index(after: i)
                     tail = KeyPath.keyPathForString(self.rawValue.substring(from:nextIndex))
                 }
