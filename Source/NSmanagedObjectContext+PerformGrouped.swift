@@ -18,18 +18,18 @@
 
 public extension NSManagedObjectContext {
 
-    @discardableResult func performGroupedBlockAndWait<T>(_ execute: @escaping () -> T) -> T {
+    @discardableResult func performGroupedBlockAndWait<T>(_ execute: @escaping () throws -> T) rethrows -> T {
         var result: T!
-        performGroupedBlockAndWait {
-            result = execute()
+        try performGroupedBlockAndWait {
+            result = try execute()
         }
         return result
     }
     
-    @discardableResult func performGroupedBlockAndWait<T>(_ execute: @escaping () -> T?) -> T? {
+    @discardableResult func performGroupedBlockAndWait<T>(_ execute: @escaping () throws -> T?) rethrows -> T? {
         var result: T?
-        performGroupedBlockAndWait {
-            result = execute()
+        try performGroupedBlockAndWait {
+            result = try execute()
         }
         return result
     }
