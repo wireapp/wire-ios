@@ -1,2 +1,4 @@
-#include "wire-ios-xcconfig/swift.xcconfig"
+#include "zmc-config/ios.xcconfig"
+
+APPLICATION_EXTENSION_API_ONLY = NO
 PRODUCT_NAME = WireRequestStrategy

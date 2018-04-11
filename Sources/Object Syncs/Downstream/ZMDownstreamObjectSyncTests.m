@@ -196,7 +196,7 @@
     // expect
     [[[(id)self.transcoder expect] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
-    [[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
     
     // when
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -216,7 +216,7 @@
     [[[(id)self.transcoder expect] andReturn:nil] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
     [[[(id)self.operationSet expect] andReturn:nil] nextObjectToSynchronize];
-    [[(id)self.operationSet reject] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
+    [(ZMSyncOperationSet *)[(id)self.operationSet reject] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
     [(ZMSyncOperationSet *)[(id)self.operationSet stub] removeObject:OCMOCK_ANY];
     
     // when
@@ -239,7 +239,7 @@
     // expect
     [[[(id)self.operationSet expect] andReturn:entity1] nextObjectToSynchronize];
     [[[(id)self.operationSet expect] andReturn:entity2] nextObjectToSynchronize];
-    [[(id)self.operationSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
+    [(ZMSyncOperationSet *)[(id)self.operationSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
     [(ZMSyncOperationSet *)[(id)self.operationSet stub] removeObject:OCMOCK_ANY];
     
     [[[(id)self.transcoder expect] andReturn:nil] requestForFetchingObject:entity1 downstreamSync:self.sut];
@@ -263,7 +263,7 @@
     // expect
     [[[(id)self.operationSet expect] andReturn:entity1] nextObjectToSynchronize];
     [[[(id)self.operationSet expect] andReturn:nil] nextObjectToSynchronize];
-    [[(id)self.operationSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
+    [(ZMSyncOperationSet *)[(id)self.operationSet stub] didStartSynchronizingKeys:OCMOCK_ANY forObject:OCMOCK_ANY];
     [[[(id)self.transcoder expect] andReturn:nil] requestForFetchingObject:entity1 downstreamSync:self.sut];
     
     [(ZMSyncOperationSet *)[(id)self.operationSet expect] removeObject:entity1];
@@ -304,7 +304,7 @@
     // expect
     [[[(id)self.transcoder expect] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
-    [[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
     [[[(id)self.operationSet expect] andReturn:keys]keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusSuccess];
     [[(id)self.operationSet expect] removeUpdatedObject:entity syncToken:OCMOCK_ANY synchronizedKeys:keys];
     [[(id)self.transcoder expect] updateObject:entity withResponse:response downstreamSync:self.sut];
@@ -330,7 +330,7 @@
     // expect
     [[[(id)self.transcoder expect] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
-    [[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet expect] didStartSynchronizingKeys:nil forObject:entity];
     [[(id)self.operationSet expect] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusPermanentError];
     [(id<ZMDownstreamTranscoder>)[(id)self.transcoder expect] deleteObject:entity withResponse:response downstreamSync:self.sut];
     [(ZMSyncOperationSet *)[(id)self.operationSet stub] removeObject:entity];
@@ -357,7 +357,7 @@
     
     [[[(id)self.transcoder stub] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet stub] andReturn:entity] nextObjectToSynchronize];
-    [[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
     [[(id)self.operationSet stub] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusPermanentError];
     [(id<ZMDownstreamTranscoder>)[(id)self.transcoder stub] deleteObject:entity withResponse:response downstreamSync:self.sut];
     ZMTransportRequest *request = [self.sut nextRequest];
@@ -380,7 +380,7 @@
     
     [[[(id)self.transcoder stub] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet stub] andReturn:entity] nextObjectToSynchronize];
-    [[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
     [[(id)self.operationSet stub] keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusPermanentError];
     ZMTransportRequest *request = [self.sut nextRequest];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -431,7 +431,7 @@
     [[[(id)self.transcoder expect] andReturn:self.dummyRequest] requestForFetchingObject:entity downstreamSync:self.sut];
     [[[(id)self.operationSet expect] andReturn:entity] nextObjectToSynchronize];
     
-    [[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
+    [(ZMSyncOperationSet *)[(id)self.operationSet stub] didStartSynchronizingKeys:nil forObject:entity];
     [[[(id)self.operationSet stub] andReturn:keys]keysForWhichToApplyResultsAfterFinishedSynchronizingSyncWithToken:OCMOCK_ANY forObject:entity result:ZMTransportResponseStatusSuccess];
     [[(id)self.operationSet stub] removeUpdatedObject:entity syncToken:OCMOCK_ANY synchronizedKeys:OCMOCK_ANY];
     

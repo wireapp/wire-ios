@@ -87,7 +87,7 @@ class AssetRequestFactoryTests: ZMTBaseTest {
         moc.performGroupedBlock {
             // given
             let user = ZMUser.insertNewObject(in: moc)
-            user.remoteIdentifier = .init()
+            user.remoteIdentifier = UUID()
             user.teamIdentifier = .init()
             
             // when

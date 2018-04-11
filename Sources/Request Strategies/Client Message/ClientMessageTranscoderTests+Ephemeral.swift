@@ -105,10 +105,11 @@ extension ClientMessageTranscoderTests {
         }
         self.recreateSut()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.syncMOC.performGroupedBlockAndWait {
+        self.syncMOC.performGroupedBlock {
             self.syncMOC.saveOrRollback()
         }
-        
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
         // THEN
         self.uiMOC.refreshAllObjects()
         XCTAssertNotEqual(message.textMessageData?.messageText, text) // or at least, it should not be one with that message

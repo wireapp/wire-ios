@@ -110,8 +110,8 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-            let text = "https://wir\("".padding(toLength: crlf.characters.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-            XCTAssertGreaterThan(text.characters.count, 18_000)
+            let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
+            XCTAssertGreaterThan(text.count, 18_000)
             let message = ZMGenericMessage.message(text: text, nonce: UUID.create().transportString())
 
             let wrapper = NSDictionary(dictionary: [
@@ -150,8 +150,8 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             // Given
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
-            let text = "https://wir\("".padding(toLength: crlf.characters.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
-            XCTAssertGreaterThan(text.characters.count, 18_000)
+            let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
+            XCTAssertGreaterThan(text.count, 18_000)
 
             let wrapper = NSDictionary(dictionary: [
                 "id": UUID.create().transportString(),

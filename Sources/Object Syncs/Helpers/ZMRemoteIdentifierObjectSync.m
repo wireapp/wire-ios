@@ -54,8 +54,9 @@
     if (self.remoteIdentifiersThatNeedToBeDownloaded.count == 0) {
         return nil;
     }
-    
-    NSUInteger count = [self.transcoder maximumRemoteIdentifiersPerRequestForObjectSync:self];
+
+    id <ZMRemoteIdentifierObjectTranscoder> transcoder = self.transcoder;
+    NSUInteger count = [transcoder maximumRemoteIdentifiersPerRequestForObjectSync:self];
     count = MIN(count, self.remoteIdentifiersThatNeedToBeDownloaded.count);
     
     NSSet *IDs = [[NSOrderedSet orderedSetWithOrderedSet:self.remoteIdentifiersThatNeedToBeDownloaded range:NSMakeRange(0, count) copyItems:NO] set];
@@ -63,8 +64,8 @@
     [self.remoteIdentifiersInProgress unionSet:IDs];
     [self.remoteIdentifiersThatNeedToBeDownloaded minusSet:IDs];
     
-    ZMTransportRequest *request = [self.transcoder requestForObjectSync:self remoteIdentifiers:IDs];
-    [request setDebugInformationTranscoder:self.transcoder];
+    ZMTransportRequest *request = [transcoder requestForObjectSync:self remoteIdentifiers:IDs];
+    [request setDebugInformationTranscoder:transcoder];
 
     Require(request != nil);
     ZM_WEAK(self);
