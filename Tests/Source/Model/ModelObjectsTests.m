@@ -119,7 +119,7 @@
 }
 
 
-- (void)withAssertionsDisabled:(void(^)())block
+- (void)withAssertionsDisabled:(void(^)(void))block
 {
     NSAssertionHandler *oldHandler =  [[[NSThread currentThread] threadDictionary] valueForKey:NSAssertionHandlerKey];
     [[[NSThread currentThread] threadDictionary] setValue:[[PassiveAssertionHandler alloc] init] forKey:NSAssertionHandlerKey];

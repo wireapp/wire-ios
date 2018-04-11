@@ -105,10 +105,10 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesTheObserverOfFingerprintChange() {
         // given
         let client = UserClient.insertNewObject(in: self.uiMOC)
-        client.fingerprint = String.createAlphanumerical().data(using: String.Encoding.utf8)
+        client.fingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
         self.uiMOC.saveOrRollback()
         
-        let newFingerprint = String.createAlphanumerical().data(using: String.Encoding.utf8)
+        let newFingerprint = NSString.createAlphanumerical().data(using: String.Encoding.utf8)
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(client,

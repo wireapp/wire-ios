@@ -56,7 +56,7 @@ public extension ZMConversation {
         precondition(conversationType == .connection)
 
         let name: String?
-        if let connectedName = connectedUser?.name, connectedName.characters.count > 0 {
+        if let connectedName = connectedUser?.name, connectedName.count > 0 {
             name = connectedName
         } else {
             name = userDefinedName
@@ -68,14 +68,14 @@ public extension ZMConversation {
     private func groupDisplayName() -> String? {
         precondition(conversationType == .group)
 
-        if let userDefined = userDefinedName, userDefined.characters.count > 0 {
+        if let userDefined = userDefinedName, userDefined.count > 0 {
             return userDefined
         }
 
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
 
         let activeNames: [String] = otherActiveParticipants.flatMap { (user) -> String? in
-            guard let user = user as? ZMUser, user != selfUser && user.displayName?.characters.count > 0 else { return nil }
+            guard let user = user as? ZMUser, user != selfUser && user.displayName?.count > 0 else { return nil }
             return user.displayName
         }
         
@@ -86,7 +86,7 @@ public extension ZMConversation {
         precondition(conversationType == .oneOnOne)
 
         let other = otherActiveParticipants.firstObject as? ZMUser ?? connectedUser
-        if let name = other?.name, name.characters.count > 0 {
+        if let name = other?.name, name.count > 0 {
             return name
         } else {
             return nil

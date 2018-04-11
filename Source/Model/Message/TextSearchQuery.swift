@@ -161,7 +161,7 @@ public class TextSearchQuery: NSObject {
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
         ) {
 
-        guard query.characters.count > 1 else { return nil }
+        guard query.count > 1 else { return nil }
         guard let uiMOC = conversation.managedObjectContext, let syncMOC = uiMOC.zm_sync else {
             fatal("NSManagedObjectContexts not accessible.")
         }
@@ -175,7 +175,7 @@ public class TextSearchQuery: NSObject {
         self.conversation = conversation
         self.conversationRemoteIdentifier = conversation.remoteIdentifier!
         self.originalQuery = query
-        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter { $0.characters.count > 1 }
+        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter { $0.count > 1 }
         self.delegate = delegate
         self.fetchConfiguration = configuration
     }
