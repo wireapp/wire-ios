@@ -1,6 +1,5 @@
+#include "zmc-config/ios.xcconfig"
 
-#include "zmc-config/swift.xcconfig"
-#include "libs.xcconfig"
-
+APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireShareEngine
 
