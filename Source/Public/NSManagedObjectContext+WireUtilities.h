@@ -21,7 +21,11 @@
 #import <CoreData/CoreData.h>
 #import <WireSystem/WireSystem.h>
 
+@class DispatchGroupContext;
+
 @interface NSManagedObjectContext (ZMSGroupQueue) <ZMSGroupQueue>
+
+@property (nonatomic, readonly) DispatchGroupContext *dispatchGroupContext;
 
 - (void)createDispatchGroups;
 
