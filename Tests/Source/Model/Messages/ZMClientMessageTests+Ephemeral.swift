@@ -291,7 +291,7 @@ extension ZMClientMessageTests_Ephemeral {
             connection.to = self.syncUser1
             connection.status = .accepted
             conversation.connection = connection
-            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             self.syncMOC.saveOrRollback()
             
             let textMessage = conversation.appendOTRMessage(withText: "foo", nonce: UUID.create(), fetchLinkPreview: true)

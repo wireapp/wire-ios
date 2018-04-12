@@ -79,8 +79,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                            "remoteIdentifier": nil]
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
-                                           "messages": 0,
-                                           "otherActiveParticipants": 0]
+                                           "messages": 0]
         
         expectedAttributes.forEach{
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
@@ -135,8 +134,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "remoteIdentifier": nil]
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
-                                           "messages": 1,
-                                           "otherActiveParticipants": 0]
+                                           "messages": 1]
         
         let expectedToOneRelationships = ["team": false,
                                           "connection": false,
@@ -189,8 +187,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         // then
         XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union(["hiddenMessages",
                                                                                   "lastServerSyncedActiveParticipants",
-                                                                                  "messages",
-                                                                                  "otherActiveParticipants"]))
+                                                                                  "messages"]))
     }
 
 }

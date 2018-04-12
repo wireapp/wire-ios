@@ -60,7 +60,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            conversation.addParticipants(remoteUsers)
+            conversation.internalAddParticipants(remoteUsers)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
             // when
@@ -102,7 +102,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            conversation.addParticipant(otherUser)
+            conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
             XCTAssertTrue(self.syncMOC.saveOrRollback())
 
             // when
@@ -150,7 +150,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            conversation.addParticipant(otherUser)
+            conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
             XCTAssertTrue(self.syncMOC.saveOrRollback())
             
             // when
@@ -214,7 +214,7 @@ extension ClientMessageTests_OTR {
             //then
             switch payloadAndStrategy.strategy {
             case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>)
+                XCTAssertEqual(users, self.syncConversation.lastServerSyncedActiveParticipants.set as! Set<ZMUser>)
             default:
                 XCTFail()
             }
@@ -388,7 +388,7 @@ extension ClientMessageTests_OTR {
             connection.to = self.syncUser1
             connection.status = .accepted
             conversation.connection = connection
-            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             
             self.syncMOC.saveOrRollback()
                         
@@ -437,7 +437,7 @@ extension ClientMessageTests_OTR {
             connection.to = self.syncUser1
             connection.status = .accepted
             conversation.connection = connection
-            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             
             self.syncMOC.saveOrRollback()
             
@@ -486,7 +486,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
             conversation.remoteIdentifier = UUID.create()
-            conversation.mutableOtherActiveParticipants.add(self.syncUser1)
+            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             
             let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID().transportString())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)

@@ -80,9 +80,9 @@ static NSString * const PendingKey = @"Pending";
 - (NSArray *)fetchAllConversations:(NSManagedObjectContext *)context
 {
     NSFetchRequest *allConversationsRequest = [ZMConversation sortedFetchRequest];
-    // Since this is extremely likely to trigger the "otherActiveParticipants" and "connection" relationships, we make sure these gets prefetched:
+    // Since this is extremely likely to trigger the "lastServerSyncedActiveParticipants" and "connection" relationships, we make sure these gets prefetched:
     NSMutableArray *keyPaths = [NSMutableArray arrayWithArray:allConversationsRequest.relationshipKeyPathsForPrefetching];
-    [keyPaths addObject:ZMConversationOtherActiveParticipantsKey];
+    [keyPaths addObject:ZMConversationLastServerSyncedActiveParticipantsKey];
     [keyPaths addObject:ZMConversationConnectionKey];
     allConversationsRequest.relationshipKeyPathsForPrefetching = keyPaths;
     

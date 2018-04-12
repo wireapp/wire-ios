@@ -360,7 +360,7 @@ extension ZMConversation {
     
     /// Returns true if all participants are connected to the self user and all participants are trusted
     public var allUsersTrusted : Bool {
-        guard self.otherActiveParticipants.count > 0, self.isSelfAnActiveMember else { return false }
+        guard self.lastServerSyncedActiveParticipants.count > 0, self.isSelfAnActiveMember else { return false }
         let hasOnlyTrustedUsers = (self.activeParticipants.array as! [ZMUser]).first { !$0.trusted() } == nil
         return hasOnlyTrustedUsers && !self.containsUnconnectedOrExternalParticipant
     }
@@ -371,7 +371,7 @@ extension ZMConversation {
         }
         
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        return (self.otherActiveParticipants.array as! [ZMUser]).first {
+        return (self.lastServerSyncedActiveParticipants.array as! [ZMUser]).first {
             if $0.isConnected {
                 return false
             }

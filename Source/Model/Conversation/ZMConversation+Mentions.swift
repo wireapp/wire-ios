@@ -29,7 +29,7 @@ extension ZMConversation {
             return text
         }
 
-        guard let firstMentionedUser = (self.otherActiveParticipants.set as! Set<ZMUser>)
+        guard let firstMentionedUser = (self.lastServerSyncedActiveParticipants.set as! Set<ZMUser>)
             .first(where: { $0.remoteIdentifier!.transportString() == firstMention.userId }) else {
                 return text
         }
@@ -50,7 +50,7 @@ extension ZMConversation {
 
     @objc(mentionsInText:)
     func mentions(in text: String) -> [ZMMention] {
-        let serviceUsers = (self.otherActiveParticipants.set as! Set<ZMUser>).serviceUsers
+        let serviceUsers = (self.lastServerSyncedActiveParticipants.set as! Set<ZMUser>).serviceUsers
         var mentionedUsers: [ZMUser] = []
 
         if text.starts(with: ServiceMentionKeyword + " ") {

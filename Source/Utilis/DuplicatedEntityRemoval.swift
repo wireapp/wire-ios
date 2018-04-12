@@ -111,7 +111,7 @@ extension ZMUser {
             context.delete($0)
         }
         firstUser.needsToBeUpdatedFromBackend = true
-        firstUser.activeConversations.forEach { ($0 as? ZMConversation)?.needsToBeUpdatedFromBackend = true }
+        firstUser.lastServerSyncedActiveConversations.forEach { ($0 as? ZMConversation)?.needsToBeUpdatedFromBackend = true }
         return firstUser
     }
 
@@ -129,7 +129,6 @@ extension ZMUser {
         self.addressBookEntry = ZMManagedObject.firstNonNullAndDeleteSecond(self.addressBookEntry, user.addressBookEntry)
         self.lastServerSyncedActiveConversations = self.lastServerSyncedActiveConversations.adding(orderedSet: user.lastServerSyncedActiveConversations)
         self.conversationsCreated = self.conversationsCreated.union(user.conversationsCreated)
-        self.activeConversations = self.lastServerSyncedActiveConversations // discard local changes, will refetch from server
         self.createdTeams = self.createdTeams.union(user.createdTeams)
         self.membership = ZMManagedObject.firstNonNullAndDeleteSecond(self.membership, user.membership)
         self.reactions = self.reactions.union(user.reactions)
@@ -171,13 +170,10 @@ extension ZMConversation {
         self.mutableMessages.union(conversation.messages)
         self.team = self.team ?? conversation.team // I don't want to delete a team just in case it's needed
         self.connection = ZMManagedObject.firstNonNullAndDeleteSecond(self.connection, conversation.connection)
-        self.mutableLastServerSyncedActiveParticipants?.union(conversation.mutableLastServerSyncedActiveParticipants ?? NSOrderedSet())
-        self.mutableOtherActiveParticipants.removeAllObjects()
-        self.mutableOtherActiveParticipants.union(self.mutableLastServerSyncedActiveParticipants ?? NSOrderedSet())
+        self.mutableLastServerSyncedActiveParticipants.union(conversation.mutableLastServerSyncedActiveParticipants)
         
         zmLog.debug("Merged duplicate conversation \(self.remoteIdentifier?.transportString() ?? "N/A")")
-        zmLog.debug("mutableLastServerSyncedActiveParticipants = \(self.mutableLastServerSyncedActiveParticipants?.count ?? -1)")
-        zmLog.debug("mutableOtherActiveParticipants.count = \(self.mutableOtherActiveParticipants.count)")
+        zmLog.debug("mutableLastServerSyncedActiveParticipants = \(self.mutableLastServerSyncedActiveParticipants.count)")
     }
 }
 

@@ -206,7 +206,7 @@ extension DisplayNameGeneratorTests {
         
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2, user3])
+        conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user1, user2, user3])
 
         // when
         let displayName1 = user1.displayName(in: conversation)
@@ -232,7 +232,7 @@ extension DisplayNameGeneratorTests {
         
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2])
+        conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user1, user2])
         
         // when
         let displayName1 = user1.displayName(in: conversation)
@@ -295,7 +295,7 @@ extension DisplayNameGeneratorTests {
         
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.mutableOtherActiveParticipants.addObjects(from: [user1])
+        conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user1])
         
         // when
         let displayName1 = user1.displayName(in: conversation)
@@ -336,7 +336,7 @@ extension DisplayNameGeneratorTests {
         
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.mutableOtherActiveParticipants.addObjects(from: [user1, user2])
+        conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user1, user2])
         
         XCTAssertEqual(user1.displayName(in: conversation), "Hans")
         XCTAssertEqual(user2.displayName(in: conversation), "Uschi")
@@ -387,7 +387,7 @@ extension DisplayNameGeneratorTests {
         
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.conversationType = .group
-        conversation.mutableOtherActiveParticipants.addObjects(from: [user2])
+        conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user2])
         
         // then
         performIgnoringZMLogError{

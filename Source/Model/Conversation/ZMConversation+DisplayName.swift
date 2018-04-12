@@ -74,7 +74,7 @@ public extension ZMConversation {
 
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
 
-        let activeNames: [String] = otherActiveParticipants.flatMap { (user) -> String? in
+        let activeNames: [String] = lastServerSyncedActiveParticipants.flatMap { (user) -> String? in
             guard let user = user as? ZMUser, user != selfUser && user.displayName?.count > 0 else { return nil }
             return user.displayName
         }
@@ -85,7 +85,7 @@ public extension ZMConversation {
     private func oneOnOneDisplayName() -> String? {
         precondition(conversationType == .oneOnOne)
 
-        let other = otherActiveParticipants.firstObject as? ZMUser ?? connectedUser
+        let other = lastServerSyncedActiveParticipants.firstObject as? ZMUser ?? connectedUser
         if let name = other?.name, name.count > 0 {
             return name
         } else {

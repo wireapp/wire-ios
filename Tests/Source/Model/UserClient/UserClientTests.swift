@@ -215,7 +215,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
-            conversation.mutableOtherActiveParticipants.add(otherUser)
+            conversation.mutableLastServerSyncedActiveParticipants.add(otherUser)
             
             selfClient.trustClient(otherClient1)
             

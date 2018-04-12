@@ -138,8 +138,8 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     
     ZMLogDebug(@"updateMembersWithPayload (%@) added = %li removed = %li", self.remoteIdentifier.transportString, addedUsers.count, removedUsers.count);
     
-    [self internalAddParticipants:addedUsers.set isAuthoritative:YES];
-    [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext] isAuthoritative:YES];
+    [self internalAddParticipants:addedUsers.set];
+    [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext]];
 }
 
 - (void)updateTeamWithIdentifier:(NSUUID *)teamId
