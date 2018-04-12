@@ -78,7 +78,13 @@ extension StorageStack {
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func backupLocalStorage(accountIdentifier: UUID, clientIdentifier: String, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping (Result<BackupInfo>) -> Void) {
+    public static func backupLocalStorage(
+        accountIdentifier: UUID,
+        clientIdentifier: String,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        completion: @escaping (Result<BackupInfo>) -> Void
+        ) {
 
         func fail(_ error: BackupError) {
             log.debug("error backing up local store: \(error)")
@@ -98,8 +104,7 @@ extension StorageStack {
 
         workQueue.async(group: dispatchGroup) {
             do {
-                let model = NSManagedObjectModel.loadModel()
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: .loadModel())
 
                 // Create target directory
                 try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -107,31 +112,19 @@ extension StorageStack {
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
 
                 // Recreate the persistent store inside a new location
-                try coordinator.replacePersistentStore(at: backupLocation, destinationOptions: options, withPersistentStoreFrom: storeFile, sourceOptions: options, ofType: NSSQLiteStoreType)
+                try coordinator.replacePersistentStore(
+                    at: backupLocation,
+                    destinationOptions: options,
+                    withPersistentStoreFrom: storeFile,
+                    sourceOptions: options,
+                    ofType: NSSQLiteStoreType
+                )
 
-                // Add persistent store at the new location to allow creation of NSManagedObjectContext
-                let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: backupLocation, options: options)
+                // Mark the database as imported from a history backup
+                try markAsImported(coordinator: coordinator, location: backupLocation, options: options)
 
-                let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-                context.persistentStoreCoordinator = coordinator
-                var storeMetadata = store.metadata
-                // Mark the db as backed up
-                storeMetadata?[PersistentMetadataKey.importedFromBackup.rawValue] = NSNumber(booleanLiteral: true)
-                store.metadata = storeMetadata
-
-                var saveError: Error? = nil
-                context.performAndWait {
-                    do {
-                        try context.save()
-                    } catch {
-                        saveError = error
-                    }
-                }
-                if let error = saveError {
-                    return fail(.failedToWrite(error))
-                }
-
-                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier, appVersionProvider: Bundle.main, modelVersionProvider: model)
+                // Create & write metadata
+                let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
                 try metadata.write(to: metadataURL)
                 log.info("successfully created backup at: \(backupDirectory.path), metadata: \(metadata)")
                 
@@ -141,6 +134,23 @@ extension StorageStack {
             } catch {
                 fail(.failedToWrite(error))
             }
+        }
+    }
+    
+    private static func markAsImported(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
+        // Add persistent store at the new location to allow creation of NSManagedObjectContext
+        let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.persistentStoreCoordinator = coordinator
+        var storeMetadata = store.metadata
+        
+        // Mark the db as backed up
+        storeMetadata?[PersistentMetadataKey.importedFromBackup.rawValue] = NSNumber(booleanLiteral: true)
+        store.metadata = storeMetadata
+
+        // Save context & forward error
+        try context.performGroupedAndWait { context in
+            try context.save()
         }
     }
     
@@ -157,7 +167,13 @@ extension StorageStack {
     ///   - applicationContainer: shared application container
     ///   - dispatchGroup: group for testing
     ///   - completion: called on main thread when done. Result will contain the folder where all data was written to.
-    public static func importLocalStorage(accountIdentifier: UUID, from backupDirectory: URL, applicationContainer: URL, dispatchGroup: ZMSDispatchGroup? = nil, completion: @escaping ((Result<URL>) -> Void)) {
+    public static func importLocalStorage(
+        accountIdentifier: UUID,
+        from backupDirectory: URL,
+        applicationContainer: URL,
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        completion: @escaping ((Result<URL>) -> Void)
+        ) {
         
         func fail(_ error: BackupImportError) {
             log.debug("error backing up local store: \(error)")
@@ -187,7 +203,14 @@ extension StorageStack {
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
                 
                 // Import the persistent store to the account data directory
-                try coordinator.replacePersistentStore(at: accountStoreFile, destinationOptions: options, withPersistentStoreFrom: backupStoreFile, sourceOptions: options, ofType: NSSQLiteStoreType)
+                try coordinator.replacePersistentStore(
+                    at: accountStoreFile,
+                    destinationOptions: options,
+                    withPersistentStoreFrom: backupStoreFile,
+                    sourceOptions: options,
+                    ofType: NSSQLiteStoreType
+                )
+
                 log.info("succesfully imported backup with metadata: \(metadata)")
 
                 DispatchQueue.main.async(group: dispatchGroup) {
