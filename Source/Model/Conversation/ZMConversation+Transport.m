@@ -136,7 +136,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     NSMutableOrderedSet<ZMUser *> *removedUsers = [lastSyncedUsers mutableCopy];
     [removedUsers minusOrderedSet:users];
     
-    ZMLogDebug(@"updateMembersWithPayload (%@) added = %li removed = %li", self.remoteIdentifier.transportString, addedUsers.count, removedUsers.count);
+    ZMLogDebug(@"updateMembersWithPayload (%@) added = %lu removed = %lu", self.remoteIdentifier.transportString, (unsigned long)addedUsers.count, (unsigned long)removedUsers.count);
     
     [self internalAddParticipants:addedUsers.set];
     [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext]];
