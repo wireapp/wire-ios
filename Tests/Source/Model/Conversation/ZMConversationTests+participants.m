@@ -82,7 +82,6 @@
     ZMUser *user2 = [self createUser];
     
     // when
-    [conversation internalAddParticipants:[NSSet setWithObjects:user1, user2, nil]];
     [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     [conversation internalAddParticipants:[NSSet setWithObject:user2]];
     
