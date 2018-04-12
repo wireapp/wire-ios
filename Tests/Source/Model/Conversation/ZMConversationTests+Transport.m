@@ -134,8 +134,6 @@
         XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
 
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
-        XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
-        XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
     }];
 }
 
@@ -170,10 +168,7 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
         
-        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
-                        
-        XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
-        XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
+        XCTAssertEqualObjects(conversation.lastServerSyncedActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isSilenced);
@@ -244,13 +239,10 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.lastServerSyncedActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNil(conversation.team);
         XCTAssertEqualObjects(conversation.teamRemoteIdentifier, teamID);
-
-        XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
-        XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
-
+        
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isSilenced);
     }];
@@ -297,15 +289,12 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.lastServerSyncedActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNotNil(conversation.team);
         XCTAssertFalse(conversation.team.needsToBeUpdatedFromBackend);
         XCTAssertFalse(conversation.team.needsToRedownloadMembers);
         XCTAssertEqualObjects(conversation.team.remoteIdentifier, team.remoteIdentifier);
-
-        XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
-        XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
-
+        
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isSilenced);
     }];
@@ -350,10 +339,8 @@
         ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
         XCTAssertNotNil(user2);
 
-        XCTAssertEqualObjects(conversation.otherActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
+        XCTAssertEqualObjects(conversation.lastServerSyncedActiveParticipants.set, ([NSSet setWithObjects:user1, user2, nil]) );
         XCTAssertNil(conversation.team);
-        XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
-        XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isSilenced);
     }];

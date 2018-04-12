@@ -243,8 +243,6 @@
     // given
     NSSet *expected = [NSSet setWithArray:@[
                           ZMConversationUserDefinedNameKey,
-                          ZMConversationUnsyncedInactiveParticipantsKey,
-                          ZMConversationUnsyncedActiveParticipantsKey,
                           ZMConversationIsSelfAnActiveMemberKey,
                           ZMConversationLastReadServerTimeStampKey,
                           ZMConversationClearedTimeStampKey,
@@ -902,7 +900,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
@@ -917,7 +915,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -931,7 +929,7 @@
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.userDefinedName = @"Some conversation";
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -945,8 +943,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
+    [conversation internalAddParticipants:[NSSet setWithObjects:user1, user2, nil]];
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -958,7 +955,7 @@
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -971,7 +968,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertEqual(conversation.connectedUser, user1);
@@ -983,7 +980,7 @@
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
-    [conversation addParticipant:user1];
+    [conversation internalAddParticipants:[NSSet setWithObject:user1]];
     
     // then
     XCTAssertNil(conversation.connectedUser);
@@ -1341,8 +1338,8 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user = [self createUser];
     user.name = @"Foo 1";
-    [conversation.mutableOtherActiveParticipants addObject:user];
-    [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:user];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     conversation.conversationType = ZMConversationTypeGroup;
     [self.uiMOC saveOrRollback];
     NSString *name = @"My Conversation";
@@ -1382,9 +1379,9 @@
     user1.name = @"Foo 1";
     user2.name = @"Bar 2";
     selfUser.name = @"Me Myself";
-    [conversation.mutableOtherActiveParticipants addObject:user1];
-    [conversation.mutableOtherActiveParticipants addObject:user2];
-    [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:user1];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:user2];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
     
     NSString *expected = @"Foo, Bar";
@@ -1411,8 +1408,8 @@
     user3.name = nil;
     user4.name = @"Baz 4";
     selfUser.name = @"Me Myself";
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2, user3, user4]];
-    [conversation.mutableOtherActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObjectsFromArray:@[user1, user2, user3, user4]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:[ZMUser selfUserInContext:self.uiMOC]];
     [self.uiMOC saveOrRollback];
     
     NSString *expected = @"Bar, Baz";
@@ -1514,8 +1511,8 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     user.name = @"Hans Maisenkaiser";
     selfUser.name = @"Jan Schneidezahn";
-    [conversation.mutableOtherActiveParticipants addObject:user];
-    [conversation.mutableOtherActiveParticipants addObject:selfUser];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:user];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:selfUser];
     conversation.conversationType = ZMConversationTypeOneOnOne;
     [self.uiMOC saveOrRollback];
     
@@ -2140,103 +2137,6 @@
 
 @implementation ZMConversationTests (Participants)
 
-- (void)testThatAddingParticipantsSetsTheModifiedKeys
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    // when
-    [conversation addParticipant:user1];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqualObjects(conversation.keysThatHaveLocalModifications, [NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]);
-}
-
-- (void)testThatAddingMultipleParticipantsSetsTheModifiedKeys
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user3 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    // when
-    [conversation addParticipants:[NSSet setWithObjects:user1, user2, user3, nil]];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqualObjects(conversation.keysThatHaveLocalModifications, [NSSet setWithObject:ZMConversationUnsyncedActiveParticipantsKey]);
-}
-
-- (void)testThatRemovingParticipantsSetsTheModifiedKeys
-{
-    // given
-    NSUUID *convID = [NSUUID createUUID];
-    NSUUID *userID = [NSUUID createUUID];
-    [self.syncMOC performGroupedBlockAndWait:^{
-    
-        
-        
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:convID createIfNeeded:YES inContext:self.syncMOC];
-        XCTAssertNotNil(conversation);
-        NSDictionary *payload = @{
-                                  @"creator" : userID.transportString,
-                                  @"id" : convID.transportString,
-                                  @"type" : @0,
-                                  @"name" : @"Boo",
-                                  @"members" :
-                                      @{
-                                          @"others" : @[
-                                                  @{
-                                                      @"id" : userID.transportString
-                                                      }
-                                                  ],
-                                          @"self" : @{
-                                                  @"id" : @"90c74fe0-cef7-446a-affb-6cba0e75d5da",
-                                                  }
-                                          },
-                                  };
-        
-        [conversation updateWithTransportData:payload serverTimeStamp:nil];
-        [self.syncMOC saveOrRollback];
-    }];
-    
-    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:convID createIfNeeded:NO inContext:self.uiMOC];
-    XCTAssertNotNil(conversation);
-    [conversation resetLocallyModifiedKeys:[NSSet setWithArray:@[ZMConversationArchivedChangedTimeStampKey, ZMConversationSilencedChangedTimeStampKey]]];
-    
-    ZMUser *user = conversation.otherActiveParticipants.firstObject;
-    XCTAssertNotNil(user);
-    
-    // when
-    [conversation removeParticipant:user];
-    XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    // then
-    XCTAssertEqualObjects(conversation.keysThatHaveLocalModifications, [NSSet setWithObject:ZMConversationUnsyncedInactiveParticipantsKey]);
-}
-
-- (void)testThatItDoesNotAddTheSelfUserToServerSyncedActiveParticipants
-{
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // when
-    [conversation synchronizeAddedUser:selfUser];
-    
-    // then
-    XCTAssertFalse([conversation.unsyncedActiveParticipants containsObject:selfUser]);
-    XCTAssertFalse([conversation.unsyncedInactiveParticipants containsObject:selfUser]);
-}
-
-
 - (void)testThatItRecalculatesActiveParticipantsWhenOtherActiveParticipantsKeyChanges
 {
     // given
@@ -2247,11 +2147,10 @@
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
+    [conversation internalAddParticipants:[NSSet setWithObjects:user1, user2, nil]];
     
     XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherActiveParticipants.count, 2u);
+    XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 2u);
     XCTAssertEqual(conversation.activeParticipants.count, 3u);
     
     // expect
@@ -2259,11 +2158,11 @@
     
     // when
 
-    [conversation removeParticipant:user2];
+    [conversation internalRemoveParticipants:[NSSet setWithObject:user2] sender:user1];
     
     // then
     XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherActiveParticipants.count, 1u);
+    XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 1u);
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
@@ -2278,11 +2177,10 @@
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
+    [conversation internalAddParticipants:[NSSet setWithObjects:user1, user2, nil]];
     
     XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherActiveParticipants.count, 2u);
+    XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 2u);
     XCTAssertEqual(conversation.activeParticipants.count, 3u);
     
     // expect
@@ -2293,88 +2191,10 @@
     
     // then
     XCTAssertFalse(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.otherActiveParticipants.count, 2u);
+    XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 2u);
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
-
-- (void)testThatItResetsModificationsToActiveParticipants
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *newUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
-    
-    [conversation synchronizeAddedUser:user1];
-    [conversation synchronizeAddedUser:user2];
-    
-    
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.activeParticipants.count, 3u);
-    [conversation setLocallyModifiedKeys:[NSSet setWithObject:@"unsyncedActiveParticipants"]];
-    
-    // when
-    [conversation addParticipant:newUser];
-    XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 1u);
-    [conversation resetParticipantsBackToLastServerSync];
-    
-    // then
-    XCTAssertEqual(conversation.activeParticipants.count, 3u);
-    XCTAssertTrue([conversation.activeParticipants containsObject:user1]);
-    XCTAssertTrue([conversation.activeParticipants containsObject:user2]);
-    XCTAssertFalse([conversation.activeParticipants containsObject:newUser]);
-    
-    XCTAssertEqual(conversation.unsyncedActiveParticipants.count, 0u);
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:@"unsyncedActiveParticipants"]);
-}
-
-
-
-- (void)testThatItResetsModificationsToInactiveParticipants
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.conversationType = ZMConversationTypeGroup;
-    
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *newUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    [conversation addParticipant:user1];
-    [conversation addParticipant:user2];
-    [conversation addParticipant:newUser];
-    
-    [conversation synchronizeAddedUser:user1];
-    [conversation synchronizeAddedUser:user2];
-    [conversation synchronizeAddedUser:newUser];
-    
-    
-    XCTAssertTrue(conversation.isSelfAnActiveMember);
-    XCTAssertEqual(conversation.activeParticipants.count, 4u);
-    
-    // when
-    [conversation removeParticipant:newUser];
-    [conversation setLocallyModifiedKeys:[NSSet setWithObject:@"unsyncedInactiveParticipants"]];
-    XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 1u);
-    
-    [conversation resetParticipantsBackToLastServerSync];
-    
-    // then
-    XCTAssertEqual(conversation.activeParticipants.count, 4u);
-    XCTAssertTrue([conversation.activeParticipants containsObject:user1]);
-    XCTAssertTrue([conversation.activeParticipants containsObject:user2]);
-    XCTAssertTrue([conversation.activeParticipants containsObject:newUser]);
-    
-    XCTAssertEqual(conversation.unsyncedInactiveParticipants.count, 0u);
-    XCTAssertFalse([conversation.keysThatHaveLocalModifications containsObject:@"unsyncedInactiveParticipants"]);
-}
-
 
 @end
 
@@ -2639,7 +2459,7 @@
 }
 
 
-- (void)testThatRemovingOthersInConversationDoesntClearsMessages
+- (void)testThatRemovingOthersInConversationDoesntClearMessages
 {
     // given
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -2656,7 +2476,7 @@
     message2.serverTimestamp = [NSDate date];
     
     // when
-    [conversation removeParticipant:user1];
+    [conversation internalRemoveParticipants:[NSSet setWithObject:user1] sender:self.selfUser];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -2696,11 +2516,11 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = NSUUID.createUUID;
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation.mutableOtherActiveParticipants addObject:otherUser];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:otherUser];
     XCTAssertFalse(conversation.isArchived);
     
     // when
-    [conversation removeParticipant:selfUser];
+    [conversation internalRemoveParticipants:[NSSet setWithObject:selfUser] sender:selfUser];
     WaitForAllGroupsToBeEmpty(0.5f);
     
     // then
@@ -2737,7 +2557,7 @@
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = NSUUID.createUUID;
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation.mutableOtherActiveParticipants addObject:otherUser];
+    [conversation.mutableLastServerSyncedActiveParticipants addObject:otherUser];
     conversation.isArchived = YES;
     XCTAssertTrue(conversation.isArchived);
 
@@ -3214,7 +3034,7 @@
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user2.name = @"User2";
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObjectsFromArray:@[user1, user2]];
     conversation.userDefinedName = @"Conversation";
     conversation.conversationType = ZMConversationTypeGroup;
     [self.uiMOC saveOrRollback];
@@ -3239,7 +3059,7 @@
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     user2.name = @"Bar 2";
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1, user2]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObjectsFromArray:@[user1, user2]];
     conversation.userDefinedName = @"Conversation";
     conversation.conversationType = ZMConversationTypeGroup;
     [self.uiMOC saveOrRollback];
@@ -3313,7 +3133,7 @@
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation2.userDefinedName = @"The Club";
     conversation2.conversationType = ZMConversationTypeGroup;
-    [conversation2.mutableOtherActiveParticipants addObject:user1];
+    [conversation2.mutableLastServerSyncedActiveParticipants addObject:user1];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -3335,7 +3155,7 @@
     user1.name = @"Foo";
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
 
-    [conversation.mutableOtherActiveParticipants addObjectsFromArray:@[user1]];
+    [conversation.mutableLastServerSyncedActiveParticipants addObjectsFromArray:@[user1]];
     conversation.userDefinedName = @"Conversation";
     conversation.conversationType = ZMConversationTypeOneOnOne;
     [self.uiMOC saveOrRollback];
@@ -3632,16 +3452,16 @@
     ZMConversation *conversationWithOtherUser = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversationWithOtherUser.conversationType = ZMConversationTypeOneOnOne;
     conversationWithOtherUser.remoteIdentifier = [NSUUID createUUID];
-    [conversationWithOtherUser.mutableOtherActiveParticipants addObject:otherUser];
+    [conversationWithOtherUser.mutableLastServerSyncedActiveParticipants addObject:otherUser];
 
     ZMConversation *notSyncedConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     notSyncedConversation.conversationType = ZMConversationTypeOneOnOne;
-    [notSyncedConversation.mutableOtherActiveParticipants addObject:otherUser];
+    [notSyncedConversation.mutableLastServerSyncedActiveParticipants addObject:otherUser];
 
     ZMConversation *conversationWithSecondUser = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversationWithSecondUser.conversationType = ZMConversationTypeOneOnOne;
     conversationWithSecondUser.remoteIdentifier = [NSUUID createUUID];
-    [conversationWithSecondUser.mutableOtherActiveParticipants addObject:secondUser];
+    [conversationWithSecondUser.mutableLastServerSyncedActiveParticipants addObject:secondUser];
     
     ZMConversation *emptyConversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     emptyConversation.conversationType = ZMConversationTypeOneOnOne;
@@ -3663,12 +3483,11 @@
     groupConversationWithSelf.remoteIdentifier = [NSUUID createUUID];
     
     ZMConversation *groupConversationWithNoOtherParticipants = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.uiMOC withParticipants:@[otherUser, secondUser]];
-    [groupConversationWithNoOtherParticipants removeParticipant:otherUser];
-    [groupConversationWithNoOtherParticipants removeParticipant:secondUser];
+    [groupConversationWithNoOtherParticipants internalRemoveParticipants:[NSSet setWithObjects:otherUser, secondUser, nil] sender:self.selfUser];
     groupConversationWithNoOtherParticipants.isSelfAnActiveMember = YES;
     
     ZMConversation *archived = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    [archived.mutableOtherActiveParticipants addObject:otherUser];
+    [archived.mutableLastServerSyncedActiveParticipants addObject:otherUser];
     archived.conversationType = ZMConversationTypeOneOnOne;
     archived.isArchived = YES;
     archived.remoteIdentifier = [NSUUID createUUID];

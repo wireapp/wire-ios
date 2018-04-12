@@ -65,7 +65,7 @@ class ConversationTests_Teams: BaseTeamTests {
         // then
         XCTAssertNotNil(conversation)
         XCTAssertEqual(conversation?.conversationType, .group)
-        XCTAssertEqual(conversation?.otherActiveParticipants, [otherUser])
+        XCTAssertEqual(conversation?.lastServerSyncedActiveParticipants, [otherUser])
         XCTAssertEqual(conversation?.team, team)
     }
 
@@ -175,7 +175,7 @@ class ConversationTests_Teams: BaseTeamTests {
         // then
         XCTAssertNotNil(conversation)
         XCTAssertEqual(conversation?.conversationType, .group)
-        XCTAssertEqual(conversation?.otherActiveParticipants, [user1, user2])
+        XCTAssertEqual(conversation?.lastServerSyncedActiveParticipants, [user1, user2])
         XCTAssertEqual(conversation?.team, team)
     }
 
@@ -201,7 +201,7 @@ class ConversationTests_Teams: BaseTeamTests {
         // when
         let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team)
         XCTAssertNotNil(conversation)
-        XCTAssertEqual(conversation?.otherActiveParticipants, [otherUser])
+        XCTAssertEqual(conversation?.lastServerSyncedActiveParticipants, [otherUser])
         XCTAssertTrue(otherUser.isTeamMember)
         XCTAssertEqual(conversation?.team, team)
     }

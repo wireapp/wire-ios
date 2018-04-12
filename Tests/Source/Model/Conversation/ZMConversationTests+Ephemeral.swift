@@ -92,7 +92,7 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         conversation.conversationType = .group
 
         // when
-        conversation.internalAddParticipants(Set(arrayLiteral: selfUser), isAuthoritative: true)
+        conversation.internalAddParticipants(Set(arrayLiteral: selfUser))
                 
         // then
         XCTAssertEqual(conversation.canSendEphemeral, false)
@@ -106,9 +106,7 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         // when
         let user = ZMUser.insert(in: uiMOC, name: "Test")
         user.remoteIdentifier = UUID()
-        
-        conversation.internalAddParticipants(Set(arrayLiteral: selfUser), isAuthoritative: true)
-        conversation.addParticipant(user)
+        conversation.internalAddParticipants(Set(arrayLiteral: selfUser, user))
         
         // then
         XCTAssertEqual(conversation.canSendEphemeral, true)

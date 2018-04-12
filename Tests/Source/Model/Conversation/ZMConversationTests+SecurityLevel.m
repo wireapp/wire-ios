@@ -103,14 +103,14 @@
         unconnectedUserClient.user = newUnconnectedUser;
         
         // when adding a new participant
-        [conversation addParticipant:newUnconnectedUser];
+        [conversation internalAddParticipants:[NSSet setWithObject:newUnconnectedUser]];
         
         // then the conversation should degrade
         XCTAssertFalse(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
         
         // when
-        [conversation removeParticipant:newUnconnectedUser];
+        [conversation internalRemoveParticipants:[NSSet setWithObjects:newUnconnectedUser, nil] sender:self.selfUser];
         
         // then
         XCTAssertTrue(conversation.allUsersTrusted);
@@ -178,7 +178,7 @@
         
         // when adding a new participant
         ZMUser *user3 = [self createUsersWithClientsOnSyncMOCWithCount:1].lastObject;
-        [conversation addParticipant:user3];
+        [conversation internalAddParticipants:[NSSet setWithObjects:user3, nil]];
         
         // then the conversation should degrade
         XCTAssertFalse(conversation.allUsersTrusted);
@@ -189,8 +189,9 @@
         XCTAssertEqual(conversationDegradedMessage.systemMessageType, ZMSystemMessageTypeNewClient);
         XCTAssertEqualObjects(conversationDegradedMessage.addedUsers, [NSSet setWithObject:user3]);
         XCTAssertEqualObjects(conversationDegradedMessage.users, [NSSet setWithObject:user3]);
+        
         // when
-        [conversation removeParticipant:user3];
+        [conversation internalRemoveParticipants:[NSSet setWithObject:user3] sender:self.selfUser];
         
         // then
         XCTAssertTrue(conversation.allUsersTrusted);
@@ -394,7 +395,7 @@
     
     UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:moc];
-    [[conversation mutableOtherActiveParticipants] addObject:user];
+    [[conversation mutableLastServerSyncedActiveParticipants] addObject:user];
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
     client.user  = user;
     if (trusted) {
@@ -440,7 +441,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    [[conversation mutableOtherActiveParticipants] addObject:user];
+    [[conversation mutableLastServerSyncedActiveParticipants] addObject:user];
     
     // when
     BOOL hasUntrustedClients = conversation.hasUntrustedClients;
@@ -597,14 +598,14 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation addParticipant:otherUser];
+    [conversation internalAddParticipants:[NSSet setWithObject:otherUser]];
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
     client.user = otherUser;
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [[selfUser selfClient] trustClient:client];
     
     // WHEN
-    [conversation removeParticipant:selfUser];
+    [conversation internalRemoveParticipants:[NSSet setWithObject:selfUser] sender:otherUser];
     
     // THEN
     XCTAssertFalse(conversation.allUsersTrusted);
@@ -842,7 +843,7 @@
     __block ZMSystemMessage *result = nil;
     [self performPretendingUiMocIsSyncMoc:^{
         [usersToAdd enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
-            [conv.mutableOtherActiveParticipants addObject:obj];
+            [conv.mutableLastServerSyncedActiveParticipants addObject:obj];
         }];
         result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
                                                 inManagedObjectContext:conv.managedObjectContext
@@ -864,7 +865,7 @@
     __block ZMSystemMessage *result = nil;
     [self performPretendingUiMocIsSyncMoc:^{
         [usersToRemove enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
-            [conv.mutableOtherActiveParticipants removeObject:obj];
+            [conv.mutableLastServerSyncedActiveParticipants removeObject:obj];
         }];
         result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
                                                 inManagedObjectContext:conv.managedObjectContext
@@ -892,7 +893,7 @@
     UserClient *verifiedUserClient = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
     verifiedUserClient.user = verifiedUser;
     
-    [conversation addParticipant:verifiedUser];
+    [conversation internalAddParticipants:[NSSet setWithObject:verifiedUser]];
     
     [selfClient trustClients:[NSSet setWithObject:verifiedUserClient]];
     [conversation increaseSecurityLevelIfNeededAfterTrustingClients:[NSSet setWithObject:verifiedUserClient]];
@@ -923,7 +924,7 @@
 
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
 
     // THEN
     XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
@@ -953,7 +954,7 @@
     
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:5];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
     
     // THEN
     XCTAssertEqual(conversation.messages.count, (NSUInteger)2);
@@ -1050,7 +1051,7 @@
     verifiedUserClient.user = verifiedUser;
     [selfUser.selfClient trustClients:[NSSet setWithObject:verifiedUserClient]];
 
-    [conversation addParticipant:verifiedUser];
+    [conversation internalAddParticipants:[NSSet setWithObject:verifiedUser]];
     
     // THEN
     XCTAssertEqual(conversation.messages.count, (NSUInteger)1);
@@ -1074,7 +1075,7 @@
     
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
     
     NSSet<ZMUser *> *otherUnverifiedUsers = [self setupUnverifiedUsers:1];
 
@@ -1104,10 +1105,10 @@
     
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
     [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
 
-    [conversation removeParticipants:unverifiedUsers];
+    [conversation internalRemoveParticipants:unverifiedUsers sender:self.selfUser];
     
     // THEN
     XCTAssertEqual(conversation.messages.count, (NSUInteger)4);
@@ -1138,7 +1139,7 @@
     
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
     [self simulateAdding:unverifiedUsers to:conversation by:selfUser];
     
     // THEN
@@ -1169,7 +1170,7 @@
     
     // WHEN
     NSSet<ZMUser *> *unverifiedUsers = [self setupUnverifiedUsers:1];
-    [conversation addParticipants:unverifiedUsers];
+    [conversation internalAddParticipants:unverifiedUsers];
     [self simulateAdding:unverifiedUsers to:conversation by:verifiedUser];
     
     // THEN
@@ -1196,13 +1197,13 @@
     
     // given
     ZMConversation *conversation = [self setupVerifiedConversation];
-    ZMUser *participant = [conversation.otherActiveParticipants firstObject];
+    ZMUser *participant = [conversation.lastServerSyncedActiveParticipants firstObject];
     XCTAssertNotNil(participant);
     XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     [participant block];
     
     // when
-    [conversation addParticipant:participant];
+    [conversation internalAddParticipants:[NSSet setWithObject:participant]];
     
     // then
     XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);

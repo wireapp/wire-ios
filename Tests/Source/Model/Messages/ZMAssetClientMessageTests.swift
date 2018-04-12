@@ -629,7 +629,7 @@ extension ZMAssetClientMessageTests {
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
-            conversation.addParticipant(user2)
+            conversation.internalAddParticipants(Set([user2]))
             
             let sut = appendFileMessage(to: syncConversation)!
             
@@ -1077,7 +1077,7 @@ extension ZMAssetClientMessageTests {
         let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
         let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
         conversation.conversationType = .group
-        conversation.addParticipant(otherUser)
+        conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
         XCTAssertTrue(self.syncMOC.saveOrRollback())
         
         return (otherClient, conversation)

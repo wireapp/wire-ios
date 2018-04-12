@@ -71,7 +71,7 @@ static NSString * const LastUpdateDateInGMTKey = @"lastUpdateDateInGMT";
     connection.status = ZMConnectionStatusSent;
     if (conversation == nil) {
         connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
-        [connection.conversation.mutableOtherActiveParticipants addObject:user];
+        [connection.conversation.mutableLastServerSyncedActiveParticipants addObject:user];
         connection.conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
     }
     else {

@@ -39,8 +39,6 @@
 
 
 NSString *const SessionObjectIDKey = @"ZMSessionManagedObjectID";
-NSString *const ZMUserActiveConversationsKey = @"activeConversations";
-
 NSString *const ZMPersistedClientIdKey = @"PersistedClientId";
 
 static NSString *const AccentKey = @"accentColorValue";
@@ -382,7 +380,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 
 @implementation ZMUser (Internal)
 
-@dynamic activeConversations;
 @dynamic normalizedName;
 @dynamic connection;
 @dynamic showingUserAdded;
@@ -408,7 +405,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         [ignoredKeys addObjectsFromArray:@[
                                            NormalizedNameKey,
                                            ConversationsCreatedKey,
-                                           ZMUserActiveConversationsKey,
                                            ActiveCallConversationsKey,
                                            ConnectionKey,
                                            ConversationsCreatedKey,

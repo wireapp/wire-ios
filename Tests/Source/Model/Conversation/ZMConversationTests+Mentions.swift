@@ -112,7 +112,7 @@ class ZMConversationMentionsTests: ZMConversationTestsBase {
         serviceUser2.name = "Wire"
 
         conversation.conversationType = .group
-        conversation.addParticipants([regularUser1, regularUser2, serviceUser1, serviceUser2])
+        conversation.internalAddParticipants([regularUser1, regularUser2, serviceUser1, serviceUser2])
 
         let botMentions = Set(conversation.mentions(in: "@bots Hello"))
         let expectedMentions = Set(ZMMentionBuilder.build([serviceUser1, serviceUser2]))
@@ -136,7 +136,7 @@ class ZMConversationMentionsTests: ZMConversationTestsBase {
         serviceUser.name = "Wire"
 
         conversation.conversationType = .group
-        conversation.addParticipants([regularUser, serviceUser])
+        conversation.internalAddParticipants([regularUser, serviceUser])
 
         let regularMention = ZMMentionBuilder.build([regularUser])
         let serviceMention = ZMMentionBuilder.build([serviceUser, regularUser])

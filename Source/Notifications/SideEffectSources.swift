@@ -78,7 +78,7 @@ extension ZMManagedObject {
 extension ZMUser : SideEffectSource {
     
     var allConversations : [ZMConversation] {
-        var conversations = activeConversations.array as? [ZMConversation] ?? []
+        var conversations = lastServerSyncedActiveConversations.array as? [ZMConversation] ?? []
         if let connectedConversation = connection?.conversation {
             conversations.append(connectedConversation)
         }
@@ -101,7 +101,7 @@ extension ZMUser : SideEffectSource {
     func conversationChanges(changedKeys: Set<String>, conversations: [ZMConversation], keyStore: DependencyKeyStore) ->  ObjectAndChanges {
         var affectedObjects = [ZMManagedObject : Changes]()
         let classIdentifier = ZMConversation.entityName()
-        let otherPartKeys = changedKeys.map{"\(#keyPath(ZMConversation.otherActiveParticipants)).\($0)"}
+        let otherPartKeys = changedKeys.map{"\(#keyPath(ZMConversation.lastServerSyncedActiveParticipants)).\($0)"}
         let selfUserKeys = changedKeys.map{"\(#keyPath(ZMConversation.connection)).\(#keyPath(ZMConnection.to)).\($0)"}
         let mappedKeys = otherPartKeys + selfUserKeys
         var keys = mappedKeys.map{keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)}.reduce(Set()){$0.union($1)}
@@ -122,7 +122,7 @@ extension ZMUser : SideEffectSource {
         guard conversations.count > 0 else { return  [:] }
         
         let classIdentifier = ZMConversation.entityName()
-        let affectedKeys = keyStore.observableKeysAffectedByValue(classIdentifier, key: #keyPath(ZMConversation.otherActiveParticipants))
+        let affectedKeys = keyStore.observableKeysAffectedByValue(classIdentifier, key: #keyPath(ZMConversation.lastServerSyncedActiveParticipants))
         return Dictionary(keys: conversations,
                                             repeatedValue: Changes(changedKeys: affectedKeys))
     }

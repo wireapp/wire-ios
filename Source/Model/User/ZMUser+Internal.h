@@ -28,7 +28,6 @@
 @class Team;
 
 extern NSString * __nonnull const SessionObjectIDKey;
-extern NSString * __nonnull const ZMUserActiveConversationsKey;
 extern NSString * __nonnull const UserClientsKey;
 extern NSString * __nonnull const AvailabilityKey;
 
@@ -38,8 +37,6 @@ extern NSString * __nonnull const AvailabilityKey;
 @property (nullable, nonatomic) ZMConnection *connection;
 
 @property (nullable, nonatomic) NSUUID *teamIdentifier;
-
-@property (nonnull, nonatomic) NSOrderedSet *activeConversations;
 
 @property (nonnull, nonatomic) NSSet *showingUserAdded;
 @property (nonnull, nonatomic) NSSet *showingUserRemoved;

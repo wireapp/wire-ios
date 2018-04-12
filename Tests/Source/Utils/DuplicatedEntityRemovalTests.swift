@@ -199,7 +199,7 @@ extension DuplicatedEntityRemovalTests {
         self.moc.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(user1.activeConversations, lastServerSyncedActiveConversations)
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations, lastServerSyncedActiveConversations)
         XCTAssertEqual(user1.conversationsCreated, conversationsCreated)
         XCTAssertEqual(user1.createdTeams, createdTeams)
         XCTAssertEqual(user1.membership, membership)
@@ -220,7 +220,7 @@ extension DuplicatedEntityRemovalTests {
         conversation.conversationType = .oneOnOne
         let connection = createConnection(to: user1, conversation: conversation)
         user1.connection = connection
-        conversation.internalAddParticipants(Set([user1]), isAuthoritative: true)
+        conversation.mutableLastServerSyncedActiveParticipants.add(user1)
         self.moc.saveOrRollback()
         
         // WHEN
@@ -243,7 +243,7 @@ extension DuplicatedEntityRemovalTests {
         conversation.conversationType = .oneOnOne
         let connection = createConnection(to: user2, conversation: conversation)
         user2.connection = connection
-        conversation.internalAddParticipants(Set([user2]), isAuthoritative: true)
+        conversation.mutableLastServerSyncedActiveParticipants.add(user2)
         self.moc.saveOrRollback()
         
         // WHEN
@@ -264,10 +264,10 @@ extension DuplicatedEntityRemovalTests {
         user2.remoteIdentifier = user1.remoteIdentifier
         let conversation1 = createConversation()
         conversation1.conversationType = .oneOnOne
-        conversation1.internalAddParticipants(Set([user1]), isAuthoritative: true)
+        conversation1.mutableLastServerSyncedActiveParticipants.add(user1)
         let conversation2 = createConversation()
         conversation2.conversationType = .oneOnOne
-        conversation2.internalAddParticipants(Set([user2]), isAuthoritative: true)
+        conversation2.mutableLastServerSyncedActiveParticipants.add(user2)
         let connection1 = createConnection(to: user1, conversation: conversation1)
         user1.connection = connection1
         let connection2 = createConnection(to: user2, conversation: conversation2)
@@ -356,9 +356,9 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants(Set([user1, user2]), isAuthoritative: true)
-        conversation2.internalAddParticipants(Set([user1]), isAuthoritative: true)
-        conversation3.internalAddParticipants(Set([user2]), isAuthoritative: true)
+        conversation1.internalAddParticipants(Set([user1, user2]))
+        conversation2.internalAddParticipants(Set([user1]))
+        conversation3.internalAddParticipants(Set([user2]))
         self.moc.saveOrRollback()
         
         // sanity check
@@ -382,50 +382,21 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants(Set([user1, user2]), isAuthoritative: true)
-        conversation2.internalAddParticipants(Set([user1]), isAuthoritative: true)
-        conversation3.internalAddParticipants(Set([user2]), isAuthoritative: true)
+        conversation1.internalAddParticipants(Set([user1, user2]))
+        conversation2.internalAddParticipants(Set([user1]))
+        conversation3.internalAddParticipants(Set([user2]))
         self.moc.saveOrRollback()
         
         // sanity check
-        XCTAssertEqual(user1.activeConversations.set, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.activeConversations.set, Set([conversation1, conversation3]))
-        
-        // WHEN
-        user1.merge(with: user2)
-        self.moc.saveOrRollback()
-        
-        // THEN
-        XCTAssertEqual(user1.activeConversations.set, Set([conversation1, conversation2, conversation3]))
-    }
-    
-    public func testThatItMergesUsers_ActiveConversations_whenLocalPendingChanges() {
-        
-        // GIVEN
-        let user1 = createUser()
-        let user2 = createUser()
-        user2.remoteIdentifier = user1.remoteIdentifier
-        let conversation1 = createConversation()
-        let conversation2 = createConversation()
-        let conversation3 = createConversation()
-        conversation1.internalAddParticipants(Set([user1, user2]), isAuthoritative: true)
-        conversation2.internalAddParticipants(Set([user1]), isAuthoritative: true)
-        conversation3.internalAddParticipants(Set([user2]), isAuthoritative: true)
-        conversation1.mutableOtherActiveParticipants.remove(user1) // local pending change: remove user1
-        self.moc.saveOrRollback()
-        
-        // sanity check
-        XCTAssertFalse(conversation1.otherActiveParticipants.contains(user1))
-        XCTAssertEqual(user1.activeConversations.set, Set([conversation2]))
         XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.activeConversations.set, Set([conversation1, conversation3]))
+        XCTAssertEqual(user2.lastServerSyncedActiveConversations.set, Set([conversation1, conversation3]))
         
         // WHEN
         user1.merge(with: user2)
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(user1.activeConversations.set, Set([conversation1, conversation2, conversation3]))
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2, conversation3]))
     }
     
     public func testThatItMergesUsers_ConversationCreated() {
@@ -922,45 +893,42 @@ extension DuplicatedEntityRemovalTests {
         let convoA1 = ZMConversation.insertNewObject(in: self.moc)
         convoA1.remoteIdentifier = UUID()
         convoA1.conversationType = .oneOnOne
-        convoA1.mutableLastServerSyncedActiveParticipants?.add(userA1)
-        convoA1.mutableOtherActiveParticipants.add(userA1)
+        convoA1.mutableLastServerSyncedActiveParticipants.add(userA1)
         convoA1.creator = userA1
         convoA1.userDefinedName = "convoA1"
         convoA1.needsToBeUpdatedFromBackend = false
         let convoA2 = ZMConversation.insertNewObject(in: self.moc)
         convoA2.remoteIdentifier = convoA1.remoteIdentifier
         convoA2.conversationType = .oneOnOne
-        convoA2.mutableLastServerSyncedActiveParticipants?.add(userA2)
+        convoA2.mutableLastServerSyncedActiveParticipants.add(userA2)
         convoA2.creator = userA2
-        convoA2.mutableOtherActiveParticipants.add(userA2)
-        convoA2.mutableOtherActiveParticipants.add(userB) // should not be there after merge
         convoA2.userDefinedName = "convoA2"
         convoA2.needsToBeUpdatedFromBackend = false
         let convoB1 = ZMConversation.insertNewObject(in: self.moc)
         convoB1.remoteIdentifier = UUID()
         convoB1.conversationType = .group
-        convoB1.mutableLastServerSyncedActiveParticipants?.add(userA1)
-        convoB1.mutableLastServerSyncedActiveParticipants?.add(userB)
+        convoB1.mutableLastServerSyncedActiveParticipants.add(userA1)
+        convoB1.mutableLastServerSyncedActiveParticipants.add(userB)
         convoB1.creator = userB
-        convoB1.mutableOtherActiveParticipants.add(userA1) // missing userB
+        convoB1.mutableLastServerSyncedActiveParticipants.add(userA1) // missing userB
         convoB1.userDefinedName = "convoB1"
         convoB1.needsToBeUpdatedFromBackend = false
         let convoB2 = ZMConversation.insertNewObject(in: self.moc)
         convoB2.remoteIdentifier = convoB1.remoteIdentifier
         convoB2.conversationType = .group
-        convoB2.mutableLastServerSyncedActiveParticipants?.add(userC)
-        convoB2.mutableLastServerSyncedActiveParticipants?.add(userB)
+        convoB2.mutableLastServerSyncedActiveParticipants.add(userC)
+        convoB2.mutableLastServerSyncedActiveParticipants.add(userB)
         convoB2.creator = userB
-        convoB2.mutableOtherActiveParticipants.add(userC)
+        convoB2.mutableLastServerSyncedActiveParticipants.add(userC)
         convoB2.userDefinedName = "convoB2"
         convoB2.needsToBeUpdatedFromBackend = false
         let convoC = ZMConversation.insertNewObject(in: self.moc)
         convoC.remoteIdentifier = UUID()
         convoC.conversationType = .group
-        convoC.mutableLastServerSyncedActiveParticipants?.add(userA2)
-        convoC.mutableLastServerSyncedActiveParticipants?.add(userC)
+        convoC.mutableLastServerSyncedActiveParticipants.add(userA2)
+        convoC.mutableLastServerSyncedActiveParticipants.add(userC)
         convoC.creator = userC
-        convoC.mutableOtherActiveParticipants.add(userA2) // missing user C
+        convoC.mutableLastServerSyncedActiveParticipants.add(userA2) // missing user C
         convoC.userDefinedName = "convoC"
         convoC.needsToBeUpdatedFromBackend = false
 
@@ -1001,11 +969,9 @@ extension DuplicatedEntityRemovalTests {
             return XCTFail("Both deleted!")
         }
         
-        XCTAssertEqual(convoA.otherActiveParticipants.set, Set([userA]))
-        XCTAssertEqual(convoA.mutableLastServerSyncedActiveParticipants!.set, Set([userA]))
-        XCTAssertEqual(convoB.otherActiveParticipants.set, Set([userA, userB, userC]))
-        XCTAssertEqual(convoC.mutableLastServerSyncedActiveParticipants!.set, Set([userA, userC]))
-        XCTAssertEqual(convoC.otherActiveParticipants.set, Set([userA]))
+        XCTAssertEqual(convoA.lastServerSyncedActiveParticipants.set, Set([userA]))
+        XCTAssertEqual(convoB.lastServerSyncedActiveParticipants.set, Set([userA, userB, userC]))
+        XCTAssertEqual(convoC.lastServerSyncedActiveParticipants.set, Set([userA, userC]))
         
         XCTAssertTrue(convoA.needsToBeUpdatedFromBackend)
         XCTAssertTrue(convoB.needsToBeUpdatedFromBackend)

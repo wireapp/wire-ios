@@ -72,7 +72,7 @@ extension ZMConversation {
     @objc(predicateForSharableConversations)
     class func predicateForSharableConversations() -> NSPredicate {
         let basePredicate = predicateForConversationsIncludingArchived()
-        let hasOtherActiveParticipants = NSPredicate(format: "\(ZMConversationOtherActiveParticipantsKey).@count > 0")
+        let hasOtherActiveParticipants = NSPredicate(format: "\(ZMConversationLastServerSyncedActiveParticipantsKey).@count > 0")
         let oneOnOneOrGroupConversation = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue) OR \(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
         let selfIsActiveMember = NSPredicate(format: "isSelfAnActiveMember == YES")
         let synced = NSPredicate(format: "\(remoteIdentifierDataKey()!) != NULL")

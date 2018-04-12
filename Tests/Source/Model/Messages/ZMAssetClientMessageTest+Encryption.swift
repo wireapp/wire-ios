@@ -231,7 +231,7 @@ extension ZMAssetClientMessageTests_Encryption {
             guard let (_, strategy) = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
             
             //then
-            let otherUsers = self.syncConversation.otherActiveParticipants.set as! Set<ZMUser>
+            let otherUsers = self.syncConversation.lastServerSyncedActiveParticipants.set as! Set<ZMUser>
             XCTAssertEqual(strategy, MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: otherUsers))
         }
     }
