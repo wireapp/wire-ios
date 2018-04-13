@@ -66,7 +66,7 @@ extension ClientMessageRequestFactoryTests {
             message.sender = self.otherUser
             let confirmationMessage = message.confirmReception()!
             
-            print("CLIENT ID", (message.conversation?.otherActiveParticipants.firstObject! as! ZMUser).remoteIdentifier!)
+            print("CLIENT ID", (message.conversation?.lastServerSyncedActiveParticipants.firstObject! as! ZMUser).remoteIdentifier!)
             print("OTHER USER", self.otherUser.remoteIdentifier!)
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: self.oneToOneConversation.remoteIdentifier!) else {

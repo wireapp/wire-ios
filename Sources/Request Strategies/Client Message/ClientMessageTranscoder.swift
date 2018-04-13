@@ -207,7 +207,7 @@ extension ClientMessageTranscoder {
             let sentMessage = ZMMessage.fetch(withNonce: messageNonce, for: message.conversation!, in: message.managedObjectContext!)
             return (sentMessage?.sender != nil)
                 || (message.conversation?.connectedUser != nil)
-                || (message.conversation?.otherActiveParticipants.count > 0)
+                || (message.conversation?.lastServerSyncedActiveParticipants.count > 0)
         }
         return true
     }

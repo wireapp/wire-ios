@@ -230,7 +230,7 @@ extension MessagingTestBase {
         conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
         conversation.connection?.to = user
         conversation.connection?.status = .accepted
-        conversation.mutableOtherActiveParticipants.add(user)
+        conversation.mutableLastServerSyncedActiveParticipants.add(user)
         self.syncMOC.saveOrRollback()
         return conversation
     }
@@ -259,7 +259,7 @@ extension MessagingTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID.create()
-        conversation.mutableOtherActiveParticipants.add(user)
+        conversation.mutableLastServerSyncedActiveParticipants.add(user)
         return conversation
     }
     
