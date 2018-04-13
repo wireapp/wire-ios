@@ -93,7 +93,7 @@ public extension AssetRequestFactory.Retention {
 
 extension ZMConversation {
     var containsTeamUser: Bool {
-        return otherActiveParticipants.any { ($0 as? ZMUser)?.hasTeam == true }
+        return lastServerSyncedActiveParticipants.any { ($0 as? ZMUser)?.hasTeam == true }
     }
     
     var hasTeam: Bool {

@@ -190,7 +190,7 @@ extension ClientMessageTranscoderTests {
             // remove sender and connection
             self.oneToOneConversation.connection = nil
             originalMessage.sender = nil
-            self.oneToOneConversation.mutableOtherActiveParticipants.removeAllObjects()
+            self.oneToOneConversation.mutableLastServerSyncedActiveParticipants.removeAllObjects()
             self.syncMOC.saveOrRollback()
             
             // THEN

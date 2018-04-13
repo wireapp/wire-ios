@@ -40,7 +40,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             self.conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             self.conversation.conversationType = .group
             self.conversation.remoteIdentifier = UUID.create()
-            self.conversation.addParticipant(user)
+            self.conversation.internalAddParticipants(Set(arrayLiteral: user))
         }
     }
     
