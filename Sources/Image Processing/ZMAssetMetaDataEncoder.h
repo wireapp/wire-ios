@@ -35,6 +35,7 @@
                                              format:(ZMImageFormat)format
                                       correlationID:(NSUUID * __nonnull)correlationID;
 
++ (NSString * __nullable )contentTypeForImageData:(NSData * __nonnull)imageData;
 
 @end
 
