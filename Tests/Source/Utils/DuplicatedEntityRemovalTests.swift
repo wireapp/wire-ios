@@ -23,47 +23,6 @@ import WireTesting
 
 public final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     
-    func createClient(user: ZMUser) -> UserClient {
-        let client = UserClient.insertNewObject(in: self.moc)
-        client.user = user
-        client.remoteIdentifier = UUID().transportString()
-        return client
-    }
-
-    func createUser() -> ZMUser {
-        let user = ZMUser.insertNewObject(in: self.moc)
-        user.remoteIdentifier = UUID()
-        return user
-    }
-
-    func createConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: self.moc)
-        conversation.remoteIdentifier = UUID()
-        conversation.conversationType = .group
-        return conversation
-    }
-
-    func createTeam() -> Team {
-        let team = Team.insertNewObject(in: self.moc)
-        team.remoteIdentifier = UUID()
-        return team
-    }
-
-    func createMembership(user: ZMUser, team: Team) -> Member {
-        let member = Member.insertNewObject(in: self.moc)
-        member.user = user
-        member.team = team
-        return member
-    }
-    
-    func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
-        let connection = ZMConnection.insertNewObject(in: self.moc)
-        connection.to = to
-        connection.conversation = conversation
-        connection.status = .accepted
-        return connection
-    }
-
 
     func appendSystemMessage(conversation: ZMConversation,
                              type: ZMSystemMessageType,

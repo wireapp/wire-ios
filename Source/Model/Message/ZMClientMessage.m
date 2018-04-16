@@ -89,6 +89,14 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return self.updatedTimestamp;
 }
 
+- (void)prepareForDeletion
+{
+    [super prepareForDeletion];
+    for (ZMGenericMessageData *messageData in self.dataSet) {
+        [messageData.managedObjectContext deleteObject:messageData];
+    }
+}
+
 - (void)addData:(NSData *)data
 {
     if (data == nil) {
@@ -197,6 +205,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)deleteContent
 {
     _genericMessage = nil;
+    for (ZMGenericMessageData *messageData in self.dataSet) {
+        [messageData.managedObjectContext deleteObject:messageData];
+    }
     self.dataSet = [NSOrderedSet orderedSet];
     self.normalizedText = nil;
     self.genericMessage = nil;

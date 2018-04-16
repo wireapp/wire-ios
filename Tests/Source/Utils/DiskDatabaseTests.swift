@@ -44,7 +44,7 @@ public class DiskDatabaseTest: ZMTBaseTest {
         sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!.appendingPathComponent("\(UUID().uuidString)")
         cleanUp()
         createDatabase()
-        
+        setupCaches()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 1))
         XCTAssert(FileManager.default.fileExists(atPath: storeURL.path))
     }
@@ -55,6 +55,16 @@ public class DiskDatabaseTest: ZMTBaseTest {
         sharedContainerURL = nil
         accountId = nil
         super.tearDown()
+    }
+    
+    private func setupCaches() {
+        contextDirectory.uiContext.zm_userImageCache = UserImageLocalCache(location: nil)
+        contextDirectory.uiContext.zm_fileAssetCache = FileAssetCache(location: nil)
+        
+        contextDirectory.syncContext.performGroupedBlockAndWait {
+            self.contextDirectory.syncContext.zm_fileAssetCache = self.contextDirectory.uiContext.zm_fileAssetCache
+            self.contextDirectory.syncContext.zm_userImageCache = self.contextDirectory.uiContext.zm_userImageCache
+        }
     }
     
     private func createDatabase() {
@@ -82,4 +92,46 @@ public class DiskDatabaseTest: ZMTBaseTest {
     }
 }
 
-
+extension DiskDatabaseTest {
+    
+    func createClient(user: ZMUser) -> UserClient {
+        let client = UserClient.insertNewObject(in: self.moc)
+        client.user = user
+        client.remoteIdentifier = UUID().transportString()
+        return client
+    }
+    
+    func createUser() -> ZMUser {
+        let user = ZMUser.insertNewObject(in: self.moc)
+        user.remoteIdentifier = UUID()
+        return user
+    }
+    
+    func createConversation() -> ZMConversation {
+        let conversation = ZMConversation.insertNewObject(in: self.moc)
+        conversation.remoteIdentifier = UUID()
+        conversation.conversationType = .group
+        return conversation
+    }
+    
+    func createTeam() -> Team {
+        let team = Team.insertNewObject(in: self.moc)
+        team.remoteIdentifier = UUID()
+        return team
+    }
+    
+    func createMembership(user: ZMUser, team: Team) -> Member {
+        let member = Member.insertNewObject(in: self.moc)
+        member.user = user
+        member.team = team
+        return member
+    }
+    
+    func createConnection(to: ZMUser, conversation: ZMConversation) -> ZMConnection {
+        let connection = ZMConnection.insertNewObject(in: self.moc)
+        connection.to = to
+        connection.conversation = conversation
+        connection.status = .accepted
+        return connection
+    }
+}

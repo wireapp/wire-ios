@@ -24,17 +24,8 @@ enum InvalidClientsRemoval {
     /// and this lead to UserClient -> User relationship to be nil. This
     static func removeInvalid(in moc: NSManagedObjectContext) {
         // will skip this during test unless on disk
-        guard moc.persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
         do {
-            let fetch = NSFetchRequest<NSFetchRequestResult>(entityName: UserClient.entityName())
-            fetch.predicate = NSPredicate(format: "\(ZMUserClientUserKey) == nil")
-            let request = NSBatchDeleteRequest(fetchRequest: fetch)
-            request.resultType = .resultTypeObjectIDs
-            let result = try moc.execute(request) as? NSBatchDeleteResult
-            let objectIDArray = result?.result ?? []
-            let changes = [NSDeletedObjectsKey : objectIDArray]
-            // Deletion happens on persistance layer, we need to notify contexts of the changes manually
-            NSManagedObjectContext.mergeChanges(fromRemoteContextSave: changes, into: [moc])
+            try moc.batchDeleteEntities(named: UserClient.entityName(), matching: NSPredicate(format: "\(ZMUserClientUserKey) == nil"))
         } catch {
             fatalError("Failed to perform batch update: \(error)")
         }
