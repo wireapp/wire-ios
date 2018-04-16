@@ -67,6 +67,13 @@ import Foundation
         add(ZMGenericMessage.genericMessage(fileMetadata: metadata, messageID: nonce.transportString(), expiresAfter: timeout as NSNumber))
     }
     
+    public override func prepareForDeletion() {
+        super.prepareForDeletion()
+        self.dataSet.map { $0 as! ZMGenericMessageData } .forEach {
+            $0.managedObjectContext?.delete($0)
+        }
+    }
+    
     /// Remote asset ID
     public var assetId: UUID? {
         get { return self.transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }

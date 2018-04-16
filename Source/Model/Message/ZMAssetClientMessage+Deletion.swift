@@ -29,6 +29,9 @@ extension ZMAssetClientMessage {
 
     func deleteContent() {
         self.managedObjectContext?.zm_fileAssetCache.deleteAssetData(self)
+        self.dataSet.map { $0 as! ZMGenericMessageData }.forEach {
+            $0.managedObjectContext?.delete($0)
+        }
         self.dataSet = NSOrderedSet()
         self.cachedGenericAssetMessage = nil
         self.assetId = nil

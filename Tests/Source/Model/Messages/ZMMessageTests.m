@@ -1696,6 +1696,56 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertTrue([textMessage hasBeenDeleted]);
 }
 
+- (void)testThatATextMessageGenericDataIsRemoved
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    // when
+    ZMOTRMessage *message = (ZMOTRMessage *)[conversation appendMessageWithText:@"Test"];
+    
+    NSOrderedSet *dataSet = message.dataSet;
+
+    XCTAssertNotNil(message.managedObjectContext);
+
+    [message hideForSelfUser];
+    
+    [self.uiMOC saveOrRollback];
+    
+    // then
+    XCTAssertEqual(dataSet.count, (unsigned long)1);
+    for(ZMGenericMessageData *messageData in dataSet) {
+        XCTAssertNil(messageData.managedObjectContext);
+    }
+    XCTAssertNil(message.managedObjectContext);
+}
+
+- (void)testThatATextMessageGenericDataIsRemoved_Asset
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    // when
+    ZMOTRMessage *message = (ZMOTRMessage *)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
+    
+    NSOrderedSet *dataSet = message.dataSet;
+    
+    XCTAssertNotNil(message.managedObjectContext);
+    
+    [message hideForSelfUser];
+    
+    [self.uiMOC saveOrRollback];
+    
+    // then
+    XCTAssertEqual(dataSet.count, (unsigned long)1);
+    for(ZMGenericMessageData *messageData in dataSet) {
+        XCTAssertNil(messageData.managedObjectContext);
+    }
+    XCTAssertNil(message.managedObjectContext);
+}
+
 - (void)testThatItIgnoresDeleteWhenFromOtherUser
 {
     // given
