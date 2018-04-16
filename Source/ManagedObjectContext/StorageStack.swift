@@ -118,6 +118,7 @@ import UIKit
                     storeFile: storeFile,
                     applicationContainer: applicationContainer,
                     migrateIfNeeded: true,
+                    dispatchGroup: dispatchGroup,
                     startedMigrationCallback: {
                         DispatchQueue.main.async {
                             startedMigrationCallback?()
@@ -152,6 +153,7 @@ import UIKit
         storeFile: URL,
         applicationContainer: URL,
         migrateIfNeeded: Bool,
+        dispatchGroup: ZMSDispatchGroup? = nil,
         startedMigrationCallback: (() -> Void)? = nil,
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
@@ -166,7 +168,8 @@ import UIKit
             let directory = ManagedObjectContextDirectory(
                 persistentStoreCoordinator: psc,
                 accountDirectory: accountDirectory,
-                applicationContainer: applicationContainer)
+                applicationContainer: applicationContainer,
+                dispatchGroup: dispatchGroup)
             MemoryReferenceDebugger.register(directory)
 
             directory.uiContext.performAndWait {
