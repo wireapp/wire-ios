@@ -50,6 +50,10 @@ public class DiskDatabaseTest: ZMTBaseTest {
     }
     
     public override func tearDown() {
+        moc.persistentStoreCoordinator?.persistentStores.forEach {
+            try! self.moc.persistentStoreCoordinator!.remove($0)
+        }
+        
         cleanUp()
         contextDirectory = nil
         sharedContainerURL = nil
