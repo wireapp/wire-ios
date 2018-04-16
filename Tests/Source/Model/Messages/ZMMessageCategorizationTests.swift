@@ -139,7 +139,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
             let message = conversation.messages.lastObject as! ZMAssetClientMessage
             let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
 
-            XCTAssertEqual(message.cachedCategory, [MessageCategory.image])
+            XCTAssertEqual(message.cachedCategory, [MessageCategory.GIF, MessageCategory.image])
 
             // WHEN
             message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
