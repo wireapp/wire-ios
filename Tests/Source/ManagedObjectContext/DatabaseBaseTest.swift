@@ -55,7 +55,8 @@ import WireTesting
         
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: userID,
-            applicationContainer: self.applicationContainer
+            applicationContainer: self.applicationContainer,
+            dispatchGroup: dispatchGroup
         ) { directory in
             contextDirectory = directory
         }
