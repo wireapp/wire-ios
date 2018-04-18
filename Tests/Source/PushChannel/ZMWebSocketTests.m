@@ -36,6 +36,7 @@
 @property (nonatomic) NSInteger openCounter;
 @property (nonatomic) NSHTTPURLResponse *openResponse;
 @property (nonatomic) NSHTTPURLResponse *closeResponse;
+@property (nonatomic) NSError *closeError;
 @property (nonatomic) dispatch_queue_t queue;
 
 @end
@@ -59,11 +60,12 @@
     [self.receivedText addObject:text];
 }
 
-- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
+- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response error:(NSError *)error;
 {
     XCTAssertEqual(webSocket, self.sut);
     ++self.closeCounter;
     self.closeResponse = response;
+    self.closeError = error;
 }
 
 - (void)webSocketDidCompleteHandshake:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response
@@ -454,6 +456,7 @@
     
     // then
     XCTAssertEqual(self.closeCounter, 1);
+    XCTAssertEqual(self.closeError.code, ZMWebSocketErrorCodeLostConnection);
 }
 
 - (void)testThatItClosesTheNetworkSocketWhenItItselfCloses

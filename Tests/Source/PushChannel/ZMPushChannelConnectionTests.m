@@ -51,9 +51,10 @@
     [self.receivedData addObject:data ?: @{}];
 }
 
-- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
+- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response error:(nullable NSError *)error;
 {
     NOT_USED(response);
+    NOT_USED(error);
     XCTAssertTrue((self.sut == nil) || (channel == self.sut));
     XCTAssertFalse(channel.isOpen);
     self.closeCounter++;
@@ -272,7 +273,7 @@
 - (void)testThatItCallsDidCloseWhenTheWebSocketCloses;
 {
     // when
-    [self.sut webSocketDidClose:self.webSocketMock HTTPResponse:nil];
+    [self.sut webSocketDidClose:self.webSocketMock HTTPResponse:nil error:nil];
     WaitForAllGroupsToBeEmpty(0.01);
     
     // then
@@ -294,7 +295,7 @@
 {
     // expect
     [[[self.webSocketMock stub] andDo:^(NSInvocation *inv ZM_UNUSED) {
-        [self.sut webSocketDidClose:self.webSocketMock HTTPResponse:nil];
+        [self.sut webSocketDidClose:self.webSocketMock HTTPResponse:nil error:nil];
     }] close];
     
     // when

@@ -63,7 +63,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ZMPushChannelConsumer <NSObject>
 
 - (void)pushChannel:(ZMPushChannelConnection *)channel didReceiveTransportData:(id<ZMTransportData>)data;
-- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(nullable NSHTTPURLResponse *)response;
+- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(nullable NSHTTPURLResponse *)response error:(nullable NSError *)error;
 - (void)pushChannelDidOpen:(ZMPushChannelConnection *)channel withResponse:(nullable NSHTTPURLResponse *)response;
 
 @end

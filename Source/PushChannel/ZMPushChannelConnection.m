@@ -114,7 +114,12 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     }];
 }
 
-- (void)close;
+- (void)close
+{
+    [self closeWithHTTPResponse:nil error:nil];
+}
+
+- (void)closeWithHTTPResponse:(NSHTTPURLResponse *)response error:(NSError *)error
 {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
@@ -131,14 +136,11 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         id<ZMPushChannelConsumer> consumer = self.consumer;
         self.consumer = nil;
         
-        NSHTTPURLResponse *response = self.closeResponse;
-        self.closeResponse = nil;
-        
         ZMPushChannelConnection *channel = self;
         
         [self stopPingTimer];
         [queue performGroupedBlock:^{
-            [consumer pushChannelDidClose:channel withResponse:response];
+            [consumer pushChannelDidClose:channel withResponse:response error:error];
         }];
     }
 }
@@ -242,10 +244,9 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     }
 }
 
-- (void)webSocketDidClose:(ZMWebSocket * __unused)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
+- (void)webSocketDidClose:(ZMWebSocket * __unused)webSocket HTTPResponse:(NSHTTPURLResponse *)response error:(NSError *)error;
 {
-    self.closeResponse = response;
-    [self close];
+    [self closeWithHTTPResponse:response error:error];
 }
 
 @end

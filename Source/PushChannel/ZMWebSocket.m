@@ -28,6 +28,7 @@
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
+NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 
 @interface ZMWebSocket (NetworkSocket) <NetworkSocketDelegate>
 
@@ -48,8 +49,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic) BOOL handshakeCompleted;
 @property (nonatomic) DataBuffer *inputBuffer;
 @property (nonatomic) ZMWebSocketHandshake *handshake;
+@property (nonatomic) NSError *handshakeError;
 @property (nonatomic, copy) NSDictionary* additionalHeaderFields;
-@property (nonatomic) NSHTTPURLResponse *response;
 
 @end
 
@@ -165,9 +166,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (ZMWebSocketHandshakeResult)didParseHandshakeInBuffer
 {
-    NSError *error;
+    NSError *error = nil;
     ZMWebSocketHandshakeResult handshakeCompleted = [self.handshake parseAndClearBufferIfComplete:YES error:&error];
-    self.response = self.handshake.response;
+    self.handshakeError = error;
     if (handshakeCompleted == ZMWebSocketHandshakeCompleted) {
         for (NSData *data in self.dataPendingTransmission) {
             [self safelyDispatchOnQueue:^{
@@ -181,7 +182,12 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
     return handshakeCompleted;
 }
 
-- (void)close;
+- (void)close
+{
+    [self closeWithResponse:nil error:nil];
+}
+
+- (void)closeWithResponse:(NSHTTPURLResponse *)response error:(NSError *)error
 {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
@@ -193,14 +199,12 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         [group asyncOnQueue:self.networkSocketQueue block:^{
             [self.networkSocket close];
         }];
-        NSHTTPURLResponse *response = self.response;
-        self.response = nil;
         id<ZMWebSocketConsumer> consumer = self.consumer;
         self.consumer = nil;
         ZMWebSocket *socket = self;
         
         [group asyncOnQueue:queue block:^{
-            [consumer webSocketDidClose:socket HTTPResponse:response];
+            [consumer webSocketDidClose:socket HTTPResponse:response error:error];
         }];
     }
 }
@@ -304,21 +308,19 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         switch (parseResult) {
             case ZMWebSocketHandshakeCompleted:
                 {
-                    NSHTTPURLResponse *response = self.response;
-                    self.response = nil;
+                    NSHTTPURLResponse *response = self.handshake.response;
                     self.handshakeCompleted = YES;
                     ZM_WEAK(self);
                     [self safelyDispatchOnQueue:^{
                         ZM_STRONG(self);
                         [self.consumer webSocketDidCompleteHandshake:self HTTPResponse:response];
-                        self.response = nil;
                     }];
                 }
                 break;
             case ZMWebSocketHandshakeNeedsMoreData:
                 break;
             case ZMWebSocketHandshakeError:
-                [self close];
+                [self closeWithResponse:self.handshake.response error:self.handshakeError];
                 break;
                 
         }
@@ -343,7 +345,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
         if (![frameError.domain isEqualToString:ZMWebSocketFrameErrorDomain] ||
             (frameError.code != ZMWebSocketFrameErrorCodeDataTooShort))
         {
-            [self close];
+            [self closeWithResponse:nil error:frameError];
         }
         return NO;
     } else {
@@ -388,7 +390,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 - (void)networkSocketDidClose:(NetworkSocket *)socket
 {
     VerifyReturn(socket == self.networkSocket);
-    [self close];
+    
+    [self closeWithResponse:nil error:[NSError errorWithDomain:ZMWebSocketErrorDomain code:ZMWebSocketErrorCodeLostConnection userInfo:nil]];
 }
 
 @end
