@@ -124,7 +124,7 @@
     [[(id) self.syncStrategy expect] didInterruptUpdateEventsStream];
     
     // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose:self.mockPushChannel withResponse:nil];
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose:self.mockPushChannel withResponse:nil error:nil];
     
     // then
     [self.syncStrategy verify];
@@ -711,7 +711,7 @@
     [[self.syncStrategy stub] didInterruptUpdateEventsStream];
     
     // when
-    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose:self.mockPushChannel withResponse:fakeResponse];
+    [(id<ZMPushChannelConsumer>)self.sut pushChannelDidClose:self.mockPushChannel withResponse:fakeResponse error:nil];
     
     // then
     XCTAssertEqual(self.pushChannelNotifications.count, 1u);

@@ -328,9 +328,10 @@ static char* const ZMLogTag ZM_UNUSED = "OperationLoop";
     }
 }
 
-- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
+- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response error:(nullable NSError *)error;
 {
     NOT_USED(response);
+    NOT_USED(error);
     [[[NotificationInContext alloc] initWithName:ZMOperationLoop.pushChannelStateChangeNotificationName
                                          context:self.syncMOC.notificationContext
                                           object:self userInfo:@{
