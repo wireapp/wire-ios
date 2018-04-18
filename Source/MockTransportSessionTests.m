@@ -111,7 +111,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     ++self.pushChannelDidOpenCount;
 }
 
--(void)pushChannelDidClose:(ZMPushChannelConnection *__unused)channel withResponse:(NSHTTPURLResponse *__unused)response;
+-(void)pushChannelDidClose:(ZMPushChannelConnection *__unused)channel withResponse:(NSHTTPURLResponse *__unused)response error:(NSError * __unused)error;
 {
     ++self.pushChannelDidCloseCount;
 }
