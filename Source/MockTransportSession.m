@@ -737,7 +737,8 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.pushChannelGroupQueue performGroupedBlock:^{
         self.shouldSendPushChannelEvents = NO;
         [self.pushChannelConsumer pushChannelDidClose:(ZMPushChannelConnection * _Nonnull) nil
-                                         withResponse:(NSHTTPURLResponse * _Nonnull) nil];
+                                         withResponse:nil
+                                                error:nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
                                                             object:self
                                                           userInfo:@{ZMPushChannelIsOpenKey: @(NO)}];
