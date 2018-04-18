@@ -82,9 +82,10 @@
     [self.receivedText addObject:text];
 }
 
-- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
+- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response error:(NSError *)error;
 {
     NOT_USED(response);
+    NOT_USED(error);
     XCTAssertEqual(webSocket, self.sut);
 //    ZMAssertGroupQueue(self.uiMOC);
     ++self.closeCounter;

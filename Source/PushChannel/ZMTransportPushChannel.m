@@ -154,7 +154,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (BOOL)shouldBeOpen
 {
-    return self.clientID != nil && self.accessToken != nil && self.consumer != nil && self.keepOpen && self.scheduler.reachability.mayBeReachable;
+    return self.clientID != nil && self.accessToken != nil && self.consumer != nil && self.keepOpen;
 }
 
 - (void)establishConnection
@@ -201,19 +201,21 @@ ZM_EMPTY_ASSERTING_INIT();
     
 }
 
-- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
+- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response error:(nullable NSError *)error
 {
     ZMLogInfo(@"Push channel did close.");
-
+    
     // Immediately try to re-open the push channel
     [self attemptToOpenPushChannelConnection];
     
     [self.consumerQueue performGroupedBlock:^{
-        [self.consumer pushChannelDidClose:channel withResponse:response];
+        [self.consumer pushChannelDidClose:channel withResponse:response error:error];
     }];
     
     if (response != nil) {
         [self.scheduler processCompletedURLResponse:response URLError:nil];
+    } else if (error != nil) {
+        [self.scheduler processWebSocketError:error];
     }
     
     if (channel == self.pushChannel) {

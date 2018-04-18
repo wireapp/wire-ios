@@ -27,6 +27,7 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMAccessToken.h"
 #import "Fakes.h"
+#import "ZMWebSocket.h"
 #import "WireTransport_ios_tests-Swift.h"
 
 
@@ -147,7 +148,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // expect
     id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
     
     // when
     [self.sut setPushChannelConsumer:self.consumer groupQueue:self.fakeUIContext];
@@ -344,13 +344,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 {
     // expect
     id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
     
     // given
     [self setupConsumerAndScheduler];
     [self setupClientIDAndAccessToken];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     [self.sut establishConnection];
     
@@ -358,11 +356,10 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // expect
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
     [[self.scheduler stub] processCompletedURLResponse:OCMOCK_ANY URLError:nil];
 
     // when
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class]];
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class] error:nil];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -377,7 +374,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // when
     [self.sut setPushChannelConsumer:nil groupQueue:nil];
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class]];
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:[OCMockObject niceMockForClass:NSHTTPURLResponse.class] error:nil];
     WaitForAllGroupsToBeEmpty(0.5);
 }
 
@@ -404,11 +401,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // expect
     NSHTTPURLResponse *response = [OCMockObject niceMockForClass:NSHTTPURLResponse.class];
-    [[self.consumer expect] pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
+    [[self.consumer expect] pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response error:nil];
     [[self.scheduler stub] processCompletedURLResponse:OCMOCK_ANY URLError:nil];
 
     // when
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response error:nil];
     [self.consumer verify];
 }
 
@@ -441,7 +438,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     [self.sut pushChannelDidOpen:(id)currentFakePushChannelConnection withResponse:response];
 }
 
-- (void)testItForwardsDidCloseResponseToTheScheduler
+- (void)testItForwardsDidCloseResponseToTheSchedulerWithResponse
 {
     // given
     [self openPushChannel];
@@ -451,7 +448,20 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     [[self.scheduler expect] processCompletedURLResponse:response URLError:nil];
     
     // when
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response error:nil];
+}
+
+- (void)testItForwardsDidCloseResponseToTheSchedulerWithError
+{
+    // given
+    [self openPushChannel];
+    
+    // expect
+    NSError *error = [NSError errorWithDomain:ZMWebSocketErrorDomain code:ZMWebSocketErrorCodeLostConnection userInfo:nil];
+    [[self.scheduler expect] processWebSocketError:error];
+    
+    // when
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:nil error:error];
 }
 
 - (void)testItDoesNotForwardANilDidOpenResponseToTheScheduler
@@ -477,10 +487,10 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // when
     id response = nil;
-    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response];
+    [self.sut pushChannelDidClose:(id)currentFakePushChannelConnection withResponse:response error:nil];
 }
 
-- (void)testThatItNotifiesTheNotworkStateDelegateWhenItReceivesData;
+- (void)testThatItNotifiesTheNetworkStateDelegateWhenItReceivesData;
 {
     // given
     id networkStateDelegate = [OCMockObject mockForProtocol:@protocol(ZMNetworkStateDelegate)];
@@ -501,7 +511,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // expect
     id openPushChannelItem = [[ZMOpenPushChannelRequest alloc] init];
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     // given
     [self setupConsumerAndScheduler];
@@ -510,7 +519,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // expect
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:openPushChannelItem];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     // when
     [self.sut attemptToOpenPushChannelConnection];
@@ -572,7 +580,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     
     // expect
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     // when
     self.sut.keepOpen = YES;
@@ -587,7 +594,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // expect
     
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     // when
     [self.sut setAccessToken:self.accessToken];
@@ -602,7 +608,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // expect
     
     [(ZMTransportRequestScheduler *)[self.scheduler expect] addItem:OCMOCK_ANY];
-    [(ZMTransportRequestScheduler *)[[self.scheduler expect] andReturn:self.reachability] reachability];
 
     // when
     [self.sut setClientID:self.clientID];

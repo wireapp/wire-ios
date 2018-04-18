@@ -23,6 +23,11 @@
 @protocol ZMSGroupQueue;
 @class NetworkSocket;
 
+extern NSString * const ZMWebSocketErrorDomain;
+typedef NS_ENUM(NSInteger, ZMWebSocketErrorCode) {
+    ZMWebSocketErrorCodeInvalid = 0,
+    ZMWebSocketErrorCodeLostConnection
+};
 
 
 @interface ZMWebSocket : NSObject
@@ -57,6 +62,6 @@
 - (void)webSocketDidCompleteHandshake:(ZMWebSocket *)websocket HTTPResponse:(NSHTTPURLResponse *)response;
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithData:(NSData *)data;
 - (void)webSocket:(ZMWebSocket *)webSocket didReceiveFrameWithText:(NSString *)text;
-- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response;
+- (void)webSocketDidClose:(ZMWebSocket *)webSocket HTTPResponse:(NSHTTPURLResponse *)response error:(NSError *)error;
 
 @end
