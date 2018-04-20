@@ -19,6 +19,7 @@
 
 #import <Foundation/Foundation.h>
 #import <WireSystem/WireSystem.h>
+@import WireUtilities;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -31,7 +32,7 @@ extern NSString * const ZMURLSessionBackgroundIdentifier;
 extern NSString * const ZMURLSessionForegroundIdentifier;
 extern NSString * const ZMURLSessionVoipIdentifier;
 
-@interface ZMURLSession : NSObject
+@interface ZMURLSession : NSObject <TearDownCapable>
 
 @property (nonatomic, readonly) NSString *identifier;
 

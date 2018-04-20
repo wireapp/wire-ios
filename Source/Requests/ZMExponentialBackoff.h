@@ -19,11 +19,11 @@
 
 #import <Foundation/Foundation.h>
 @import WireSystem;
+@import WireUtilities;
 
 
 
-
-@interface ZMExponentialBackoff : NSObject
+@interface ZMExponentialBackoff : NSObject <TearDownCapable>
 
 - (instancetype)initWithGroup:(ZMSDispatchGroup *)group workQueue:(NSOperationQueue *)workQueue;
 
