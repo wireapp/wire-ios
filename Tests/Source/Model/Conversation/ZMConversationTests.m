@@ -1797,6 +1797,29 @@
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, ((ZMMessage *) conversation.messages[4]).serverTimestamp);
 }
 
+- (void)testThatItSetsTheLastReadServerTimeStampToTheLastReadMessageInTheVisibleRangeEvenIfSystemMessage;
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.lastReadTimestampSaveDelay = 0.1;
+    ZMMessage *message = [self insertDownloadedMessageIntoConversation:conversation];
+    for (int i = 0; i < 10; ++i) {
+        message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
+    }
+    
+    message = [self insertNonUnreadDotGeneratingMessageIntoConversation:conversation];
+    conversation.lastServerTimeStamp = message.serverTimestamp;
+    
+    // when
+    [conversation setVisibleWindowFromMessage:conversation.messages[2] toMessage:conversation.messages[11]];
+    
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, ((ZMMessage *) conversation.messages[11]).serverTimestamp);
+}
+
+
 - (void)testThatItSavesTheLastReadServerTimeStampBeforeDelayedDispatchEnds;
 {
     // given
