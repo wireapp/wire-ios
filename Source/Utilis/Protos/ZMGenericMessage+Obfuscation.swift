@@ -47,7 +47,6 @@ public extension String {
 public extension ZMGenericMessage {
 
     public func obfuscatedMessage() -> ZMGenericMessage? {
-        guard let messageID = (messageId as String?).flatMap(UUID.init) else { return nil }
         guard hasEphemeral() else { return nil }
         
         if let someText = textData {
@@ -60,20 +59,20 @@ public extension ZMGenericMessage {
                     let originalURL = obfuscatedContent[offsetIndex...]
                     obfuscatedLinkPreviews = linkPreviews.map{$0.obfuscated(originalURL: String(originalURL))}
                 }
-                return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageID, mentions: [])
+                return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageId, mentions: [])
             }
         }
         if let someAsset = assetData {
             let obfuscatedAsset = someAsset.obfuscated()
-            return ZMGenericMessage.genericMessage(asset: obfuscatedAsset, messageID: messageID)
+            return ZMGenericMessage.genericMessage(asset: obfuscatedAsset, messageID: messageId)
         }
         if locationData != nil {
             let obfuscatedLocation = ZMLocation.location(withLatitude: 0.0, longitude: 0.0)
-            return ZMGenericMessage.genericMessage(location: obfuscatedLocation, messageID: messageID)
+            return ZMGenericMessage.genericMessage(location: obfuscatedLocation, messageID: messageId)
         }
         if let imageAsset = imageAssetData {
             let obfuscatedImage = imageAsset.obfuscated()
-            return ZMGenericMessage.genericMessage(pbMessage: obfuscatedImage, messageID: messageID)
+            return ZMGenericMessage.genericMessage(pbMessage: obfuscatedImage, messageID: messageId)
         }
         return nil
     }

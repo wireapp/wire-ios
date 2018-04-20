@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-@import WireTransport;
 
 #import "ZMGenericMessage+PropertyUtils.h"
 
@@ -47,10 +46,10 @@
 
 @implementation ZMLastRead (Utils)
 
-+ (instancetype)lastReadWithTimestamp:(NSDate *)timeStamp conversationRemoteID:(NSUUID *)conversationID;
++ (instancetype)lastReadWithTimestamp:(NSDate *)timeStamp conversationRemoteIDString:(NSString *)conversationIDString;
 {
     ZMLastReadBuilder *builder = [ZMLastRead builder];
-    builder.conversationId = conversationID.transportString;
+    builder.conversationId = conversationIDString;
     builder.lastReadTimestamp = (long long) ([timeStamp timeIntervalSince1970] * 1000); // timestamps are stored in milliseconds
     return [builder build];
 }
@@ -62,10 +61,10 @@
 
 @implementation ZMCleared (Utils)
 
-+ (instancetype)clearedWithTimestamp:(NSDate *)timeStamp conversationRemoteID:(NSUUID *)conversationID;
++ (instancetype)clearedWithTimestamp:(NSDate *)timeStamp conversationRemoteIDString:(NSString *)conversationIDString;
 {
     ZMClearedBuilder *builder = [ZMCleared builder];
-    builder.conversationId = conversationID.transportString;
+    builder.conversationId = conversationIDString;
     builder.clearedTimestamp = (long long) ([timeStamp timeIntervalSince1970] * 1000); // timestamps are stored in milliseconds
     return [builder build];
 }
@@ -74,12 +73,12 @@
 
 @implementation ZMMessageHide (Utils)
 
-+ (instancetype)messageHideWithMessageID:(NSUUID *)messageID
-                          conversationID:(NSUUID *)conversationID;
++ (instancetype)messageHideWithMessageID:(NSString *)messageID
+                          conversationID:(NSString *)conversationID;
 {
     ZMMessageHideBuilder *builder = [ZMMessageHide builder];
-    builder.conversationId = conversationID.transportString;
-    builder.messageId = messageID.transportString;
+    builder.conversationId = conversationID;
+    builder.messageId = messageID;
     return [builder build];
 }
 
@@ -87,10 +86,10 @@
 
 @implementation ZMMessageDelete (Utils)
 
-+ (instancetype)messageDeleteWithMessageID:(NSUUID *)messageID;
++ (instancetype)messageDeleteWithMessageID:(NSString *)messageID;
 {
     ZMMessageDeleteBuilder *builder = [ZMMessageDelete builder];
-    builder.messageId = messageID.transportString;
+    builder.messageId = messageID;
     return [builder build];
 }
 
@@ -99,15 +98,15 @@
 
 @implementation ZMMessageEdit (Utils)
 
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview
 {
     return [self messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview mentions:@[]];
 }
 
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions
 {
     ZMMessageEditBuilder *builder = [ZMMessageEdit builder];
-    builder.replacingMessageId = messageID.transportString;
+    builder.replacingMessageId = messageID;
     builder.text = [ZMText textWithMessage:newText linkPreview:linkPreview mentions: mentions];
     return [builder build];
 }
@@ -116,11 +115,11 @@
 
 @implementation ZMReaction (Utils)
 
-+ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSUUID *)messageID;
++ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSString *)messageID;
 {
     ZMReactionBuilder *builder = [ZMReaction builder];
     builder.emoji = emoji;
-    builder.messageId = messageID.transportString;
+    builder.messageId = messageID;
     return [builder build];
 }
 
@@ -129,10 +128,10 @@
 
 @implementation ZMConfirmation (Utils)
 
-+ (instancetype)messageWithMessageID:(NSUUID *)messageID confirmationType:(ZMConfirmationType)confirmationType;
++ (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
 {
     ZMConfirmationBuilder *builder = [ZMConfirmation builder];
-    builder.firstMessageId = messageID.transportString;
+    builder.firstMessageId = messageID;
     builder.type = confirmationType;
     return [builder build];
 }

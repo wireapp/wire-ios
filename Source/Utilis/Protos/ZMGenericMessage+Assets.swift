@@ -136,15 +136,15 @@ public extension ZMAssetImageMetaData {
 
 public extension ZMAssetRemoteData {
     
-    public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: UUID? = nil, assetToken: UUID? = nil) -> ZMAssetRemoteData {
+    public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
         let builder = ZMAssetRemoteData.builder()!
         builder.setOtrKey(otrKey)
         builder.setSha256(sha256)
         if let identifier = assetId {
-            builder.setAssetId(identifier.transportString())
+            builder.setAssetId(identifier)
         }
         if let token = assetToken {
-            builder.setAssetToken(token.transportString())
+            builder.setAssetToken(token)
         }
         return builder.build()
     }
@@ -152,11 +152,11 @@ public extension ZMAssetRemoteData {
 
 
 extension ZMAssetRemoteData {
-    func builder(withAssetID assetID: UUID, token: UUID?) -> ZMAssetRemoteDataBuilder {
+    func builder(withAssetID assetID: String, token: String?) -> ZMAssetRemoteDataBuilder {
         let builder = toBuilder()!
-        builder.setAssetId(assetID.transportString())
+        builder.setAssetId(assetID)
         if let token = token {
-            builder.setAssetToken(token.transportString())
+            builder.setAssetToken(token)
         }
         return builder
     }

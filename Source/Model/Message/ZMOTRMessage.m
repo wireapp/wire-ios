@@ -131,32 +131,22 @@ NSString * const DeliveredKey = @"delivered";
     }
     @catch(NSException *e) {
         ZMLogError(@"Cannot create message from protobuffer: %@", e);
-        message = nil;
+        return nil;
     }
-
-    ZMConversation *conversation = [self.class conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
-    VerifyReturnNil(conversation != nil);
-    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-
-    if (conversation.conversationType == ZMConversationTypeSelf && ![updateEvent.senderUUID isEqual:selfUser.remoteIdentifier]) {
-        return nil; // don't process messages in the self conversation not sent from the self user
-    }
-
+    VerifyReturnNil(message != nil);
+    
     if (!message.knownMessage) {
         [UnknownMessageAnalyticsTracker tagUnknownMessageWithAnalytics:moc.analytics];
     }
-
-    // Check if the message is valid
-
-    if (message == nil) {
-        ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:NO inContext:moc];
-        VerifyReturnNil(sender);
-        ZMSystemMessage *systemMessage = [conversation appendInvalidSystemMessageAt:updateEvent.timeStamp sender:sender];
-        return [[MessageUpdateResult alloc] initWithMessage:systemMessage needsConfirmation:NO wasInserted:YES];
+    
+    ZMConversation *conversation = [self.class conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
+    VerifyReturnNil(conversation != nil);
+    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
+    
+    if (conversation.conversationType == ZMConversationTypeSelf && ![updateEvent.senderUUID isEqual:selfUser.remoteIdentifier]) {
+        return nil; // don't process messages in the self conversation not sent from the self user
     }
-
-    // Insert the message
-
+    
     if (message.hasLastRead && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMConversation updateConversationWithZMLastReadFromSelfConversation:message.lastRead inContext:moc];
     }

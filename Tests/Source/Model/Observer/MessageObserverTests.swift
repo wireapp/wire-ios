@@ -111,7 +111,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties,
                                                            processedImageProperties: properties,
                                                            encryptionKeys: keys,
-                                                           nonce: UUID.create(),
+                                                           nonce: UUID.create().transportString(),
                                                            format: .preview)
 
         // when
@@ -135,7 +135,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         // given
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
-        clientMessage.add(ZMGenericMessage.message(text: name!, nonce: nonce).data())
+        clientMessage.add(ZMGenericMessage.message(text: name!, nonce: nonce.transportString()).data())
         let preview = ZMLinkPreview.linkPreview(
             withOriginalURL: "www.example.com",
             permanentURL: "www.example.com/permanent",
@@ -144,7 +144,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             summary: "summary",
             imageAsset: nil
         )
-        let updateGenericMessage = ZMGenericMessage.message(text: name!, linkPreview: preview, nonce: nonce)
+        let updateGenericMessage = ZMGenericMessage.message(text: name!, linkPreview: preview, nonce: nonce.transportString())
         uiMOC.saveOrRollback()
         
         // when

@@ -41,7 +41,7 @@ import Foundation
     var fileURL: URL? { get }
     
     /// The asset ID of the thumbnail, if any
-    var thumbnailAssetID: UUID? { get set }
+    var thumbnailAssetID: String? { get set }
     
     /// Duration of the media in milliseconds
     var durationMilliseconds: UInt64 { get }
@@ -144,7 +144,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         return self.genericAssetMessage?.assetData?.original.name.removingExtremeCombiningCharacters
     }
     
-    public var thumbnailAssetID: UUID? {
+    public var thumbnailAssetID: String? {
         
         get {
             guard self.fileMessageData != nil else { return nil }
@@ -153,11 +153,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 let assetId = assetData.preview.remote.assetId,
                 !assetId.isEmpty
             else { return nil }
-            return UUID(uuidString:assetId)
+            return assetId
         }
         
         set {
-
+                
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
             guard self.fileMessageData != nil else { return }
@@ -180,9 +180,9 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 assetBuilder.merge(from: assetData)
             }
             messageBuilder.merge(from: thumbnailMessage)
-            remoteBuilder.setAssetId(newValue?.transportString())
-
-            previewBuilder.setRemote(remoteBuilder.buildAndValidate())
+            
+            remoteBuilder.setAssetId(newValue)
+            previewBuilder.setRemote(remoteBuilder.build())
             assetBuilder.setPreview(previewBuilder.build())
             let asset = assetBuilder.build()!
             
@@ -260,7 +260,7 @@ extension ZMAssetClientMessage {
     
     private func setAndSyncNotUploaded(_ notUploaded: ZMAssetNotUploaded) {
         guard genericAssetMessage?.assetData?.hasNotUploaded() == false,
-              let messageID = nonce
+              let messageID = nonce?.transportString()
         else {
             return // already canceled or not yet sent
         }

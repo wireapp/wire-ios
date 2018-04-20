@@ -31,7 +31,7 @@
 @interface ZMLastRead (Utils)
 
 + (ZMLastRead *)lastReadWithTimestamp:(NSDate *)timeStamp
-                  conversationRemoteID:(NSUUID *)conversationID;
+                  conversationRemoteIDString:(NSString *)conversationIDString;
 
 @end
 
@@ -40,7 +40,7 @@
 @interface ZMCleared (Utils)
 
 + (instancetype)clearedWithTimestamp:(NSDate *)timeStamp
-          conversationRemoteID:(NSUUID *)conversationID;
+          conversationRemoteIDString:(NSString *)conversationIDString;
 
 @end
 
@@ -49,8 +49,8 @@
 
 @interface ZMMessageHide (Utils)
 
-+ (instancetype)messageHideWithMessageID:(NSUUID *)messageID
-                          conversationID:(NSUUID *)conversationID;
++ (instancetype)messageHideWithMessageID:(NSString *)messageID
+                          conversationID:(NSString *)conversationID;
 
 @end
 
@@ -59,7 +59,7 @@
 
 @interface ZMMessageDelete (Utils)
 
-+ (instancetype)messageDeleteWithMessageID:(NSUUID *)messageID;
++ (instancetype)messageDeleteWithMessageID:(NSString *)messageID;
 
 @end
 
@@ -68,22 +68,22 @@
 
 @interface ZMMessageEdit (Utils)
 
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
 
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
++ (instancetype)messageEditWithMessageID:(NSString *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
 
 @end
 
 
 @interface ZMReaction (Utils)
 
-+ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSUUID *)messageID;
++ (instancetype)reactionWithEmoji:(NSString *)emoji messageID:(NSString *)messageID;
 
 @end
 
 @interface ZMConfirmation (Utils)
 
-+ (instancetype)messageWithMessageID:(NSUUID *)messageID confirmationType:(ZMConfirmationType)confirmationType;
++ (instancetype)messageWithMessageID:(NSString *)messageID confirmationType:(ZMConfirmationType)confirmationType;
 
 @end
 
