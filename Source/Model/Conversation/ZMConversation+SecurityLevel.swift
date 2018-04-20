@@ -309,8 +309,7 @@ extension ZMConversation {
                                          addedUsers: Set<ZMUser> = Set(),
                                          clients: Set<UserClient>?,
                                          timestamp: Date?,
-                                         duration: TimeInterval? = nil
-                                         ) -> (message: ZMSystemMessage, insertionIndex: UInt) {
+                                         duration: TimeInterval? = nil) -> (message: ZMSystemMessage, insertionIndex: UInt) {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender

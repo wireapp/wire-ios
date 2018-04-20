@@ -43,9 +43,9 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         var genericMessage : ZMGenericMessage!
         switch contentType{
         case .textMessage:
-            genericMessage = ZMGenericMessage.message(text: text, linkPreview: article.protocolBuffer, nonce: nonce.transportString())
+            genericMessage = ZMGenericMessage.message(text: text, linkPreview: article.protocolBuffer, nonce: nonce)
         case .editMessage:
-            genericMessage = ZMGenericMessage(editMessage: UUID.create().transportString(), newText: text, linkPreview: article.protocolBuffer, nonce: nonce.transportString())
+            genericMessage = ZMGenericMessage(editMessage: UUID.create(), newText: text, linkPreview: article.protocolBuffer, nonce: nonce)
         }
         clientMessage.add(genericMessage.data())
         clientMessage.visibleInConversation = conversation

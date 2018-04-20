@@ -28,7 +28,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let clearedDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
-            let message = ZMGenericMessage(clearedTimestamp: clearedDate, ofConversationWithID: self.syncConversation.remoteIdentifier!.transportString(), nonce: nonce.transportString())
+            let message = ZMGenericMessage(clearedTimestamp: clearedDate, ofConversationWith: self.syncConversation.remoteIdentifier!, nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             
             // when
@@ -47,7 +47,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let lastReadDate = Date()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
-            let message = ZMGenericMessage(lastRead: lastReadDate, ofConversationWithID: self.syncConversation.remoteIdentifier!.transportString(), nonce: nonce.transportString())
+            let message = ZMGenericMessage(lastRead: lastReadDate, ofConversationWith: self.syncConversation.remoteIdentifier!, nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             
             // when
@@ -66,7 +66,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let nonce = UUID()
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
             let toBehiddenMessage = self.syncConversation.appendMessage(withText: "hello") as! ZMClientMessage
-            let message = ZMGenericMessage(hideMessage: toBehiddenMessage.nonce!.transportString(), inConversation: self.syncConversation.remoteIdentifier!.transportString(), nonce: nonce.transportString())
+            let message = ZMGenericMessage(hideMessage: toBehiddenMessage.nonce!, inConversation: self.syncConversation.remoteIdentifier!, nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             
             // when

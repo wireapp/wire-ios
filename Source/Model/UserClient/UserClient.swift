@@ -235,7 +235,7 @@ public class UserClient: ZMManagedObject, UserClientType {
                 guard
                     let user = (try? uiMOC.existingObject(with: userID)) as? ZMUser,
                     let conversation = self.conversation(for: user) else { return }
-                let message = ZMGenericMessage.sessionReset(withNonce: UUID().transportString())
+                let message = ZMGenericMessage.sessionReset(withNonce: UUID())
                 GenericMessageScheduleNotification.post(message: message, conversation: conversation)
             }
         }

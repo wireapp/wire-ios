@@ -198,7 +198,7 @@ NSString * const ReactionsKey = @"reactions";
         
         
         NSUUID *nonce = [NSUUID createUUID];
-        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
+        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce expiresAfter:nil];
         ZMClientMessage *msg = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.syncMOC];
         [msg addData:textMessage.data];
         
@@ -229,7 +229,7 @@ NSString * const ReactionsKey = @"reactions";
         
         
         NSUUID *nonce = [NSUUID createUUID];
-        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce.transportString expiresAfter:nil];
+        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce expiresAfter:nil];
         ZMClientMessage *msg = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.syncMOC];
         [msg addData:textMessage.data];
         
@@ -1475,7 +1475,7 @@ NSString * const ReactionsKey = @"reactions";
     
     NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *knockMessage = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:nil];
+    ZMGenericMessage *knockMessage = [ZMGenericMessage knockWithNonce:nonce expiresAfter:nil];
 
     NSDictionary *data = @{ @"sender" : senderClientID, @"text" : knockMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate dateWithTimeIntervalSinceReferenceDate:450000000]];
@@ -1512,7 +1512,7 @@ NSString * const ReactionsKey = @"reactions";
 - (void)testThatAClientMessageHasKnockMessageData
 {
     // given
-    ZMGenericMessage *knock = [ZMGenericMessage knockWithNonce:[NSUUID createUUID].transportString expiresAfter:nil];
+    ZMGenericMessage *knock = [ZMGenericMessage knockWithNonce:[NSUUID createUUID] expiresAfter:nil];
     ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
     [message addData:knock.data];
     

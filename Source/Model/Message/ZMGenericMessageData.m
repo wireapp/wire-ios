@@ -21,6 +21,7 @@
 @import WireUtilities;
 
 #import "ZMGenericMessageData.h"
+#import <WireDataModel/WireDataModel-Swift.h>
 
 static NSString * const ZMGenericMessageDataDataKey = @"data";
 
@@ -40,7 +41,8 @@ NSString * const ZMGenericMessageDataAssetKey = @"asset";
 
 - (ZMGenericMessage *)genericMessage
 {
-    return (ZMGenericMessage *)[[[ZMGenericMessage builder] mergeFromData:self.data] build];
+    ZMGenericMessageBuilder *builder = (ZMGenericMessageBuilder *)[[ZMGenericMessage builder] mergeFromData:self.data];
+    return [builder build];
 }
 
 - (NSSet *)modifiedKeys

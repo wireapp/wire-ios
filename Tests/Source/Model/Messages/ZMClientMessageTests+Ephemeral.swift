@@ -155,7 +155,7 @@ extension ZMClientMessageTests_Ephemeral {
             article.title = "title"
             article.summary = "summary"
             let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
-            let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create().transportString(), expiresAfter: NSNumber(value: timeout))
+            let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create(), expiresAfter: NSNumber(value: timeout))
             let message = self.syncConversation.appendClientMessage(with: genericMessage)!
             message.linkPreviewState = .processed
             XCTAssertEqual(message.linkPreviewState, .processed)
@@ -244,7 +244,7 @@ extension ZMClientMessageTests_Ephemeral {
             XCTAssertNil(message.destructionDate)
 
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce!.transportString(), nonce: UUID.create().transportString())
+            let delete = ZMGenericMessage(deleteMessage: message.nonce!, nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.syncUser1.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             
@@ -269,7 +269,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         self.syncMOC.performGroupedBlockAndWait {
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce!.transportString(), nonce: UUID.create().transportString())
+            let delete = ZMGenericMessage(deleteMessage: message.nonce!, nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             

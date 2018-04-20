@@ -2019,7 +2019,7 @@
     message.sender = sender;
     [message markAsSent];
 
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithEditMessage:message.nonce.transportString newText:@"Edited Test Message" nonce:NSUUID.createUUID.transportString];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithEditMessage:message.nonce newText:@"Edited Test Message" nonce:[NSUUID createUUID]];
     NSDictionary *payload = @{
                               @"conversation": conversation.remoteIdentifier.transportString,
                               @"from": message.sender.remoteIdentifier.transportString,
@@ -3561,7 +3561,7 @@
         updatedConversation.remoteIdentifier = [NSUUID createUUID];
         updatedConversation.lastReadServerTimeStamp = oldLastRead;
         
-        ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:newLastRead ofConversationWithID:updatedConversation.remoteIdentifier.transportString nonce:[NSUUID UUID].transportString];
+        ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:newLastRead ofConversationWithID:updatedConversation.remoteIdentifier nonce:[NSUUID UUID]];
         NSData *contentData = message.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3597,7 +3597,7 @@
         conversation.remoteIdentifier = [NSUUID createUUID];
         [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = message.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3642,7 +3642,7 @@
         [self.syncMOC.zm_fileAssetCache storeAssetData:message format:ZMImageFormatMedium encrypted:YES data:imageData];
         
         // delete
-        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = deleteMessage.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3694,7 +3694,7 @@
         [self.syncMOC.zm_fileAssetCache storeAssetData:message encrypted:YES data:fileData];
         
         // delete
-        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *deleteMessage = [ZMGenericMessage messageWithHideMessage:messageID inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = deleteMessage.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3733,7 +3733,7 @@
         [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:[NSUUID createUUID] fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:[NSUUID createUUID].transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:[NSUUID createUUID] inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = message.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3769,7 +3769,7 @@
         [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = message.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         
@@ -3805,7 +3805,7 @@
         [conversation appendOTRMessageWithText:@"Le fromage c'est delicieux" nonce:messageID fetchLinkPreview:YES];
         NSUInteger previusMessagesCount = conversation.messages.count;
         
-        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID.transportString inConversation:conversation.remoteIdentifier.transportString nonce:[NSUUID createUUID].transportString];
+        ZMGenericMessage *message = [ZMGenericMessage messageWithHideMessage:messageID inConversation:conversation.remoteIdentifier nonce:[NSUUID createUUID]];
         NSData *contentData = message.data;
         NSString *data = [contentData base64EncodedStringWithOptions:0];
         

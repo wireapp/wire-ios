@@ -204,7 +204,7 @@
     NSUUID *nonce = [NSUUID createUUID];
     ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
     
-    ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:text nonce:nonce.transportString expiresAfter:nil];
+    ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:text nonce:nonce expiresAfter:nil];
     [message addData:textMessage.data];
     return message;
 }

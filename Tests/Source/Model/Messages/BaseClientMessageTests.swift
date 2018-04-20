@@ -201,7 +201,7 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             return ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: nonce)!
         default:
             let streamPayload = ["payload" : [payload],
-                                 "id" : UUID.create().transportString()] as [String : Any]
+                                 "id" : UUID.create()] as [String : Any]
             let event = ZMUpdateEvent.eventsArray(from: streamPayload as ZMTransportData,
                                                                    source: eventSource)!.first!
             XCTAssertNotNil(event)

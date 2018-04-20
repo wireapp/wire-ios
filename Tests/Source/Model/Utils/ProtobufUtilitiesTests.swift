@@ -107,7 +107,7 @@ class ProtobufUtilitiesTests: XCTestCase {
         XCTAssertFalse(preview.article.image.uploaded.hasAssetId())
         
         // when
-        let (assetKey, token) = ("Key", "Token")
+        let (assetKey, token) = (UUID.create(), UUID.create())
         let updated = preview.update(withAssetKey: assetKey, assetToken: token)
         
         // then
@@ -117,23 +117,23 @@ class ProtobufUtilitiesTests: XCTestCase {
                 return
             }
             XCTAssertTrue(asset.uploaded.hasAssetId())
-            XCTAssertEqual(asset.uploaded.assetId, assetKey)
-            XCTAssertEqual(asset.uploaded.assetToken, token)
+            XCTAssertEqual(asset.uploaded.assetId, assetKey.transportString())
+            XCTAssertEqual(asset.uploaded.assetToken, token.transportString())
         }
     }
 
     func testThatItUpdatesRemoteAssetDataWIthAssetIdAndAssetToken() {
         // given 
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = (UUID.create(), UUID.create())
         let sut = ZMAssetRemoteData.remoteData(withOTRKey: otrKey, sha256: sha)
 
         // when
         let updated = sut.updated(withId: assetId, token: token)
 
         // then
-        XCTAssertEqual(updated.assetId, assetId)
-        XCTAssertEqual(updated.assetToken, token)
+        XCTAssertEqual(updated.assetId, assetId.transportString())
+        XCTAssertEqual(updated.assetToken, token.transportString())
         XCTAssertEqual(updated.otrKey, otrKey)
         XCTAssertEqual(updated.sha256, sha)
     }
@@ -141,9 +141,9 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken() {
         // given
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = (UUID.create(), UUID.create())
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create().transportString())
+        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create())
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -151,8 +151,8 @@ class ProtobufUtilitiesTests: XCTestCase {
         // then
         XCTAssertFalse(updated.hasEphemeral())
         XCTAssert(updated.hasAsset())
-        XCTAssertEqual(updated.asset.uploaded.assetId, assetId)
-        XCTAssertEqual(updated.asset.uploaded.assetToken, token)
+        XCTAssertEqual(updated.asset.uploaded.assetId, assetId.transportString())
+        XCTAssertEqual(updated.asset.uploaded.assetToken, token.transportString())
         XCTAssertEqual(updated.asset.uploaded.otrKey, otrKey)
         XCTAssertEqual(updated.asset.uploaded.sha256, sha)
     }
@@ -160,9 +160,9 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_Ephemeral() {
         // given
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = (UUID.create(), UUID.create())
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create().transportString(), expiresAfter: NSNumber(value: 15))
+        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value: 15))
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -170,8 +170,8 @@ class ProtobufUtilitiesTests: XCTestCase {
         // then
         XCTAssert(updated.hasEphemeral())
         XCTAssertFalse(updated.hasAsset())
-        XCTAssertEqual(updated.ephemeral.asset.uploaded.assetId, assetId)
-        XCTAssertEqual(updated.ephemeral.asset.uploaded.assetToken, token)
+        XCTAssertEqual(updated.ephemeral.asset.uploaded.assetId, assetId.transportString())
+        XCTAssertEqual(updated.ephemeral.asset.uploaded.assetToken, token.transportString())
         XCTAssertEqual(updated.ephemeral.asset.uploaded.otrKey, otrKey)
         XCTAssertEqual(updated.ephemeral.asset.uploaded.sha256, sha)
     }
@@ -179,7 +179,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken() {
         // given
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = (UUID.create(), UUID.create())
         let previewAsset = ZMAssetPreview.preview(
             withSize: 128,
             mimeType: "image/jpg",
@@ -189,7 +189,7 @@ class ProtobufUtilitiesTests: XCTestCase {
 
         let sut = ZMGenericMessage.genericMessage(
             asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create().transportString(),
+            messageID: UUID.create(),
             expiresAfter: NSNumber(value: 0)
         )
 
@@ -199,8 +199,8 @@ class ProtobufUtilitiesTests: XCTestCase {
         // then
         XCTAssertFalse(updated.hasEphemeral())
         XCTAssert(updated.hasAsset())
-        XCTAssertEqual(updated.asset.preview.remote.assetId, assetId)
-        XCTAssertEqual(updated.asset.preview.remote.assetToken, token)
+        XCTAssertEqual(updated.asset.preview.remote.assetId, assetId.transportString())
+        XCTAssertEqual(updated.asset.preview.remote.assetToken, token.transportString())
         XCTAssertEqual(updated.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(updated.asset.preview.remote.sha256, sha)
     }
@@ -208,7 +208,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral() {
         // given
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = (UUID.create(), UUID.create())
         let previewAsset = ZMAssetPreview.preview(
             withSize: 128,
             mimeType: "image/jpg",
@@ -218,7 +218,7 @@ class ProtobufUtilitiesTests: XCTestCase {
 
         let sut = ZMGenericMessage.genericMessage(
             asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create().transportString(),
+            messageID: UUID.create(),
             expiresAfter: NSNumber(value: 15)
         )
 
@@ -228,8 +228,8 @@ class ProtobufUtilitiesTests: XCTestCase {
         // then
         XCTAssertTrue(updated.hasEphemeral())
         XCTAssert(updated.ephemeral.hasAsset())
-        XCTAssertEqual(updated.ephemeral.asset.preview.remote.assetId, assetId)
-        XCTAssertEqual(updated.ephemeral.asset.preview.remote.assetToken, token)
+        XCTAssertEqual(updated.ephemeral.asset.preview.remote.assetId, assetId.transportString())
+        XCTAssertEqual(updated.ephemeral.asset.preview.remote.assetToken, token.transportString())
         XCTAssertEqual(updated.ephemeral.asset.preview.remote.otrKey, otr)
         XCTAssertEqual(updated.ephemeral.asset.preview.remote.sha256, sha)
     }

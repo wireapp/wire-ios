@@ -40,7 +40,7 @@ import Foundation
         let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero,
                                                            mimeType: mimeType,
                                                            size: UInt64(imageData.count),
-                                                           nonce: nonce.transportString(),
+                                                           nonce: nonce,
                                                            expiresAfter: timeout as NSNumber)
         add(assetMessage)
         preprocessedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
@@ -64,7 +64,7 @@ import Foundation
         delivered = false
         version = 3
         
-        add(ZMGenericMessage.genericMessage(fileMetadata: metadata, messageID: nonce.transportString(), expiresAfter: timeout as NSNumber))
+        add(ZMGenericMessage.genericMessage(fileMetadata: metadata, messageID: nonce, expiresAfter: timeout as NSNumber))
     }
     
     public override func prepareForDeletion() {
@@ -246,7 +246,7 @@ import Foundation
     
     private func removeNotUploaded() {
         for data in self.dataSet.array.map({ $0 as! ZMGenericMessageData }) {
-            if let assetData = data.genericMessage.assetData,
+            if let assetData = data.genericMessage?.assetData,
                 assetData.hasNotUploaded() {
                 data.asset = nil
                 self.managedObjectContext?.delete(data)
