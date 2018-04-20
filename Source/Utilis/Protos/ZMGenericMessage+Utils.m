@@ -101,77 +101,77 @@
     NSData *data = [[NSData alloc] initWithBase64EncodedString:string options:0];
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     [builder mergeFromData:data];
-    ZMGenericMessage *message = [builder buildAndValidate];
+    ZMGenericMessage *message = [builder build];
     return message;
 }
 
-+ (ZMGenericMessage *)sessionResetWithNonce:(NSUUID *)nonce
++ (ZMGenericMessage *)sessionResetWithNonce:(NSString *)nonce
 {
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     builder.clientAction = ZMClientActionRESETSESSION;
-    builder.messageId = nonce.transportString;
-    return [builder buildAndValidate];
+    builder.messageId = nonce;
+    return [builder build];
 }
 
 + (ZMGenericMessage *)messageWithLastRead:(NSDate *)timestamp
-                     ofConversationWithID:(NSUUID *)conversationID
-                                    nonce:(NSUUID *)nonce;
+                     ofConversationWithID:(NSString *)conversationIDString
+                                    nonce:(NSString *)nonce;
 {
-    ZMLastRead *lastRead = [ZMLastRead lastReadWithTimestamp:timestamp conversationRemoteID:conversationID];
+    ZMLastRead *lastRead = [ZMLastRead lastReadWithTimestamp:timestamp conversationRemoteIDString:conversationIDString];
     return [ZMGenericMessage genericMessageWithPbMessage:lastRead messageID:nonce expiresAfter:nil];
 }
 
 + (ZMGenericMessage *)messageWithClearedTimestamp:(NSDate *)timestamp
-                             ofConversationWithID:(NSUUID *)conversationID
-                                            nonce:(NSUUID *)nonce;
+                             ofConversationWithID:(NSString *)conversationIDString
+                                            nonce:(NSString *)nonce;
 {
-    ZMCleared *cleared = [ZMCleared clearedWithTimestamp:timestamp conversationRemoteID:conversationID];
+    ZMCleared *cleared = [ZMCleared clearedWithTimestamp:timestamp conversationRemoteIDString:conversationIDString];
     return [ZMGenericMessage genericMessageWithPbMessage:cleared messageID:nonce expiresAfter:nil];
 }
 
-+ (ZMGenericMessage *)messageWithHideMessage:(NSUUID *)messageID
-                              inConversation:(NSUUID *)conversationID
-                                       nonce:(NSUUID *)nonce;
++ (ZMGenericMessage *)messageWithHideMessage:(NSString *)messageID
+                              inConversation:(NSString *)conversationID
+                                       nonce:(NSString *)nonce;
 {
     ZMMessageHide *hide = [ZMMessageHide messageHideWithMessageID:messageID conversationID:conversationID];
     return [ZMGenericMessage genericMessageWithPbMessage:hide messageID:nonce expiresAfter:nil];
 }
 
-+ (ZMGenericMessage *)messageWithDeleteMessage:(NSUUID *)messageID
-                                         nonce:(NSUUID *)nonce;
++ (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
+                                         nonce:(NSString *)nonce;
 {
     ZMMessageDelete *deleted = [ZMMessageDelete messageDeleteWithMessageID:messageID];
     return [ZMGenericMessage genericMessageWithPbMessage:deleted messageID:nonce expiresAfter:nil];
 }
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
-                                       nonce:(NSUUID *)nonce
+                                       nonce:(NSString *)nonce
 {
     return [ZMGenericMessage messageWithEditMessage:messageID newText:newText nonce:nonce mentions:@[]];
 }
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
-                                       nonce:(NSUUID *)nonce
+                                       nonce:(NSString *)nonce
 {
     return [ZMGenericMessage messageWithEditMessage:messageID newText:newText linkPreview:linkPreview nonce:nonce mentions:@[]];
 }
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
-                                       nonce:(NSUUID *)nonce
+                                       nonce:(NSString *)nonce
                                     mentions:(NSArray<ZMMention *> *)mentions;
 {
     ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:nil mentions:mentions];
     return [ZMGenericMessage genericMessageWithPbMessage:edited messageID:nonce expiresAfter:nil];
 }
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
-                                       nonce:(NSUUID *)nonce
+                                       nonce:(NSString *)nonce
                                     mentions:(NSArray<ZMMention *> *)mentions;
 {
     ZMMessageEdit *edited = [ZMMessageEdit messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview mentions:mentions];
@@ -179,28 +179,28 @@
 }
 
 + (ZMGenericMessage *)messageWithEmojiString:(NSString *)emojiString
-                                   messageID:(NSUUID *)messageID
-                                       nonce:(NSUUID *)nonce;
+                                   messageID:(NSString *)messageID
+                                       nonce:(NSString *)nonce;
 {
     ZMReaction *reaction = [ZMReaction reactionWithEmoji:emojiString messageID:messageID];
     return [ZMGenericMessage genericMessageWithPbMessage:reaction messageID:nonce expiresAfter:nil];
 }
 
-+ (ZMGenericMessage *)messageWithConfirmation:(NSUUID *)messageID type:(ZMConfirmationType)type nonce:(NSUUID *)nonce;
++ (ZMGenericMessage *)messageWithConfirmation:(NSString *)messageID type:(ZMConfirmationType)type nonce:(NSString *)nonce;
 {
     ZMConfirmation *confirmation = [ZMConfirmation messageWithMessageID:messageID confirmationType:type];
     return [ZMGenericMessage genericMessageWithPbMessage:confirmation messageID:nonce expiresAfter:nil];
 }
 
 + (ZMGenericMessage *)messageWithCallingContent:(NSString *)content
-                                          nonce:(NSUUID *)nonce;
+                                          nonce:(NSString *)nonce;
 {
     ZMCallingBuilder *callingBuilder = [ZMCalling builder];
     callingBuilder.content = content;
     
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builder];
     builder.calling = [callingBuilder build];
-    builder.messageId = [nonce transportString];
+    builder.messageId = nonce;
     return [builder build];
 }
 

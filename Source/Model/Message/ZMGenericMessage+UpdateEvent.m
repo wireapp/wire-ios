@@ -33,11 +33,13 @@
         case ZMUpdateEventTypeConversationClientMessageAdd: {
             NSString *base64Content = [updateEvent.payload stringForKey:@"data"];
             message = [self genericMessageWithBase64String:base64Content updateEvent:updateEvent];
+            VerifyReturnNil(message != nil);
         }
             break;
         case ZMUpdateEventTypeConversationOtrMessageAdd: {
             NSString *base64Content = [[updateEvent.payload dictionaryForKey:@"data"] stringForKey:@"text"];
             message = [self genericMessageWithBase64String:base64Content updateEvent:updateEvent];
+            VerifyReturnNil(message != nil);
         }
             break;
             
@@ -48,15 +50,17 @@
                 message = [ZMGenericMessage messageWithBase64String:base64Content];
             }
             @catch(NSException *e) {
-                message = nil;
+                ZMLogError(@"Cannot create message from protobuffer: %@ event: %@", e, updateEvent);
+                return nil;
             }
+            VerifyReturnNil(message != nil);
         }
             break;
             
         default:
             break;
     }
-
+    
     if (message.hasExternal) {
         return [self genericMessageFromUpdateEventWithExternal:updateEvent external:message.external];
     }

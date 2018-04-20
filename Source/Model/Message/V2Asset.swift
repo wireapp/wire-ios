@@ -171,7 +171,7 @@ extension V2Asset: AssetProxyType {
     }
 
     func processAddedMediumImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
-        let messageID = assetClientMessage.nonce!
+        let messageID = assetClientMessage.nonce!.transportString()
 
         let mediumMessage = ZMGenericMessage.genericMessage(
             mediumImageProperties: properties,
@@ -203,7 +203,7 @@ extension V2Asset: AssetProxyType {
             mediumImageProperties: medium.map(imageProperties),
             processedImageProperties: properties,
             encryptionKeys: keys,
-            nonce: assetClientMessage.nonce!,
+            nonce: assetClientMessage.nonce!.transportString(),
             format: .preview,
             expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
         )

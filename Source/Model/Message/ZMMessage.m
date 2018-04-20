@@ -242,7 +242,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
 
 - (ZMClientMessage *)confirmReception
 {
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID]];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithConfirmation:self.nonce.transportString type:ZMConfirmationTypeDELIVERED nonce:[NSUUID UUID].transportString];
     return [self.conversation appendClientMessageWithGenericMessage:genericMessage expires:NO hidden:YES];
 }
 

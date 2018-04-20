@@ -33,7 +33,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
                 longitude: longitude,
                 name: name,
                 zoomLevel: zoom),
-            messageID: UUID.create()
+            messageID: UUID.create().transportString()
         )
         
         // when

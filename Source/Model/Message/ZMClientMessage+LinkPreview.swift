@@ -171,22 +171,17 @@ extension ZMClientMessage: ZMImageOwner {
 
                 let newMessage = ZMGenericMessage.message(text: self.textMessageData?.messageText ?? "",
                                                           linkPreview: updatedPreview,
-                                                          nonce: self.nonce!,
+                                                          nonce: self.nonce!.transportString(),
                                                           expiresAfter: self.deletionTimeout as NSNumber,
                                                           mentions: mentions)
                 self.add(newMessage.data())
             } else if genericMessage.hasEdited() {
 
-                guard let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageId) else {
-                    return
-                }
-
-                let newMessage = ZMGenericMessage(editMessage: replacingMessageID,
+                let newMessage = ZMGenericMessage(editMessage: genericMessage.edited.replacingMessageId,
                                                   newText: self.textMessageData?.messageText ?? "",
                                                   linkPreview: updatedPreview,
-                                                  nonce: self.nonce!,
+                                                  nonce: self.nonce!.transportString(),
                                                   mentions: mentions)
-
                 self.add(newMessage.data())
             }
         }

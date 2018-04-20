@@ -24,15 +24,15 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
 
     func testThatItSetsNativePushToFalseWhenSendingAConfirmationMessage() {
         let message = ZMGenericMessage(
-            confirmation: UUID.create(),
+            confirmation: UUID.create().transportString(),
             type: .DELIVERED,
-            nonce: UUID.create()
+            nonce: UUID.create().transportString()
         )
         assertThatItSetsNativePush(to: false, for: message)
     }
 
     func testThatItSetsNativePushToTrueWhenSendingATextMessage() {
-        let message = ZMGenericMessage.message(text: "Text", nonce: UUID.create())
+        let message = ZMGenericMessage.message(text: "Text", nonce: UUID.create().transportString())
         assertThatItSetsNativePush(to: true, for: message)
     }
 

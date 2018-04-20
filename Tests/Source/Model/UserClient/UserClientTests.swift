@@ -248,7 +248,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
     
     func testThatItRefetchesMissingFingerprintForUserWithSession() {
         // given
-        let otherClientId = UUID.create()
+        let otherClientId = UUID.create().transportString()
         
         self.syncMOC.performGroupedBlockAndWait {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
@@ -259,7 +259,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             })
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
-            otherClient.remoteIdentifier = otherClientId.transportString()
+            otherClient.remoteIdentifier = otherClientId
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             otherClient.user = otherUser
@@ -280,7 +280,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
         
         self.syncMOC.performGroupedBlockAndWait {
             let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
-            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId.transportString())
+            fetchRequest.predicate = NSPredicate(format: "%K == %@", "remoteIdentifier", otherClientId)
             fetchRequest.fetchLimit = 1
             // when
             do {

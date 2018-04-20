@@ -167,17 +167,19 @@ extension V3Asset: AssetProxyType {
         guard format == .medium, let sha256 = keys.sha256 else { return zmLog.error("Tried to process non-medium v3 image for \(assetClientMessage)") }
         guard let nonce = assetClientMessage.nonce else { return zmLog.error("Tried to process image message without nonce: \(assetClientMessage)") }
         
+        let messageID = nonce.transportString()
+
         let original = ZMGenericMessage.genericMessage(
             withImageSize: properties.size,
             mimeType: properties.mimeType,
             size: UInt64(properties.length),
-            nonce: nonce,
+            nonce: messageID,
             expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
         )
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: keys.otrKey,
             sha256: sha256,
-            messageID: nonce,
+            messageID: messageID,
             expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
         )
 
