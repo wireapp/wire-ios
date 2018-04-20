@@ -139,12 +139,6 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         snapshotsToRemove.forEach{listSnapshots.removeValue(forKey: $0)}
     }
 
-    func tearDown() {
-        if isTornDown { return }
-        isTornDown = true
-        listSnapshots = [:]
-    }
-    
     public func applicationDidEnterBackground() {
         // We should always recreate the snapshots when reenerting the foreground
         // Therefore it would be safe to clear the snapshots here
@@ -158,6 +152,13 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     }
 }
 
+extension ConversationListObserverCenter: TearDownCapable {
+    public func tearDown() {
+        if isTornDown { return }
+        isTornDown = true
+        listSnapshots = [:]
+    }
+}
 
 class ConversationListSnapshot: NSObject {
     

@@ -38,17 +38,23 @@ import WireUtilities
     }
     
     /// User interface context. It can be used only from the main queue
-    private(set) public var uiContext: NSManagedObjectContext!
+    fileprivate(set) public var uiContext: NSManagedObjectContext!
     
     /// Local storage and network synchronization context. It can be used only from its private queue.
     /// This context track changes to its objects and synchronizes them from/to the backend.
-    private(set) public var syncContext: NSManagedObjectContext!
+    fileprivate(set) public var syncContext: NSManagedObjectContext!
     
     /// Search context. It can be used only from its private queue.
     /// This context is used to perform searches, not to slow down or insert temporary results in the
     /// sync context.
-    private(set) public var searchContext: NSManagedObjectContext!
-    
+    fileprivate(set) public var searchContext: NSManagedObjectContext!
+
+    deinit {
+        self.tearDown()
+    }
+}
+
+extension ManagedObjectContextDirectory {
     func tearDown() {
         // this will set all contextes to nil
         // making it crash if used after tearDown
@@ -61,10 +67,6 @@ import WireUtilities
         self.uiContext = nil
         self.syncContext = nil
         self.searchContext = nil
-    }
-    
-    deinit {
-        self.tearDown()
     }
 }
 
