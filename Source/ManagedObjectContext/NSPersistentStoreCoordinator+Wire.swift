@@ -183,7 +183,8 @@ extension NSPersistentStoreCoordinator {
             // https://www.sqlite.org/pragma.html
             NSSQLitePragmasOption: [
                 "journal_mode" : "WAL",
-                "synchronous": "FULL"
+                "synchronous": "FULL",
+                "secure_delete" : "TRUE"
             ],
             NSMigratePersistentStoresAutomaticallyOption: supportsMigration,
             NSInferMappingModelAutomaticallyOption: supportsMigration
