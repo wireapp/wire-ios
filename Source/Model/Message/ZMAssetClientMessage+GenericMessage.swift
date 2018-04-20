@@ -23,7 +23,7 @@ extension ZMAssetClientMessage {
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.array
             .flatMap { $0 as? ZMGenericMessageData }
-            .filter { $0.genericMessage.imageAssetData?.imageFormat() == format }
+            .filter { $0.genericMessage?.imageAssetData?.imageFormat() == format }
             .first
     }
     
@@ -67,11 +67,13 @@ extension ZMAssetClientMessage {
         }
     }
     
-    func mergeWithExistingData(data: Data) -> ZMGenericMessageData {
+    func mergeWithExistingData(data: Data) -> ZMGenericMessageData? {
         self.cachedGenericAssetMessage = nil
         
-        let genericMessage = ZMGenericMessageBuilder().merge(from: data).build()! as! ZMGenericMessage
-        
+        guard let genericMessage = ZMGenericMessageBuilder().merge(from: data).build() as? ZMGenericMessage else {
+            return nil
+        }
+
         if let imageFormat = genericMessage.imageAssetData?.imageFormat(),
             let existingMessageData = self.genericMessageDataFromDataSet(for: imageFormat)
         {
@@ -203,7 +205,7 @@ extension ZMAssetClientMessage {
             
             if !assetData.preview.remote.hasAssetId() {
                 if let thumbnailId = eventData["id"] as? String {
-                    self.fileMessageData?.thumbnailAssetID = thumbnailId
+                    self.fileMessageData?.thumbnailAssetID = UUID(uuidString: thumbnailId)
                 }
             } else {
                 self.version = 3

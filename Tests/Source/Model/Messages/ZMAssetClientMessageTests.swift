@@ -56,10 +56,10 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
         
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
         
-        let mediumMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: .medium)
+        let mediumMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce, format: .medium)
         message.add(mediumMessage)
         
-        let previewMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: .preview)
+        let previewMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce, format: .preview)
         message.add(previewMessage)
     }
     
@@ -71,7 +71,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: .randomEncryptionKey(),
             sha256: .zmRandomSHA256Key(),
-            messageID: nonce.transportString()
+            messageID: nonce
         )
 
         message.add(uploaded)
@@ -162,7 +162,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: ZMImageFormat.medium, encrypted: false)
         
         let imageProperties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
-        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!.transportString(), format: ZMImageFormat.medium))
+        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!, format: ZMImageFormat.medium))
         
         // when
         XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: encryptedImageData, for: ZMImageFormat.medium))
@@ -190,7 +190,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
 
         
         let imageProperties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
-        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!.transportString(), format: ZMImageFormat.medium))
+        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!, format: ZMImageFormat.medium))
         
         // when
         //pass in some wrong data (i.e. plain data instead of encrypted)
@@ -216,7 +216,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: ZMImageFormat.medium, encrypted: false)
         
         let imageProperties = ZMIImageProperties(size: ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData), length: UInt(imageData.count), mimeType: "image/jpeg")
-        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!.transportString(), format: ZMImageFormat.medium))
+        message.add(ZMGenericMessage.genericMessage(mediumImageProperties: imageProperties, processedImageProperties: imageProperties, encryptionKeys: keys, nonce: message.nonce!, format: ZMImageFormat.medium))
         
         // when
         XCTAssertNotNil(message.imageAssetStorage.updateMessage(imageData: encryptedImageData, for: ZMImageFormat.medium))
@@ -420,7 +420,7 @@ extension ZMAssetClientMessageTests {
             remoteData: ZMAssetRemoteData.remoteData(withOTRKey: otrKey, sha256: sha256),
             imageMetaData: builder.build()!)
         let previewAsset = ZMAsset.asset(preview: preview)
-        let previewMessage = ZMGenericMessage.genericMessage(asset: previewAsset, messageID: nonce.transportString())
+        let previewMessage = ZMGenericMessage.genericMessage(asset: previewAsset, messageID: nonce)
 
         
         // when
@@ -453,7 +453,7 @@ extension ZMAssetClientMessageTests {
         // when
         let originalMessage = ZMGenericMessage.genericMessage(
             asset: .asset(withOriginal: .original(withSize: 256, mimeType: mimeType, name: name)),
-            messageID: nonce.transportString()
+            messageID: nonce
         )
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
@@ -474,8 +474,8 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
-        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce)
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: UUID.create(), token: UUID.create())
         sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -492,7 +492,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce)
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -509,7 +509,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce.transportString())
+        let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce)
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -527,10 +527,10 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
-        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "123456789", token: "token")
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce)
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: UUID.create(), token: UUID.create())
         sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
-        let canceledMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce.transportString())
+        let canceledMessage = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: nonce)
         sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -547,7 +547,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertNotNil(sut)
         
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .FAILED, messageID: nonce.transportString())
+        let originalMessage = ZMGenericMessage.genericMessage(notUploaded: .FAILED, messageID: nonce)
         sut.update(with: originalMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -573,7 +573,7 @@ extension ZMAssetClientMessageTests {
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
         let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())
         // when
-        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce.transportString())
+        let originalMessage = ZMGenericMessage.genericMessage(withUploadedOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key(), messageID: nonce)
         sut.update(with: originalMessage, updateEvent: updateEvent, initialUpdate: true)
         
         // then
@@ -600,7 +600,7 @@ extension ZMAssetClientMessageTests {
             // when
             let otrKey = Data.randomEncryptionKey()
             let sha256 = Data.zmRandomSHA256Key()
-            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce!.transportString()))
+            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce!))
             
             // then
             XCTAssertNotNil(sut)
@@ -637,7 +637,7 @@ extension ZMAssetClientMessageTests {
             sut.add(ZMGenericMessage.genericMessage(
                 withUploadedOTRKey: .randomEncryptionKey(),
                 sha256: .zmRandomSHA256Key(),
-                messageID: sut.nonce!.transportString()
+                messageID: sut.nonce!
                 )
             )
             
@@ -654,7 +654,7 @@ extension ZMAssetClientMessageTests {
         // given
         let sut = ZMAssetClientMessage(nonce: .create(), managedObjectContext: uiMOC)
         sut.sender = selfUser
-        let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: name)), messageID: sut.nonce!.transportString())
+        let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: name)), messageID: sut.nonce!)
         sut.add(original)
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertNotNil(sut.fileMessageData)
@@ -789,7 +789,7 @@ extension ZMAssetClientMessageTests {
             let sut = ZMAssetClientMessage(nonce: .create(), managedObjectContext: syncMOC)
             sut.sender = ZMUser.selfUser(in: syncMOC)
             sut.visibleInConversation = syncConversation
-            let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: self.name)), messageID: sut.nonce!.transportString())
+            let original = ZMGenericMessage.genericMessage(asset: .asset(withOriginal: .original(withSize: 256, mimeType: "text/plain", name: self.name)), messageID: sut.nonce!)
             sut.add(original)
             XCTAssertNotNil(sut.fileMessageData)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
@@ -881,11 +881,11 @@ extension ZMAssetClientMessageTests {
             let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key())
             let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
             
-            let uuid = UUID.create().transportString()
+            let uuid = UUID.create()
             let sut = appendFileMessage(to: syncConversation)!
             
             let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
-            sut.add(ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce!)"))
+            sut.add(ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!))
             
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
             
@@ -911,15 +911,15 @@ extension ZMAssetClientMessageTests {
             let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key())
             let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
             
-            let uuid = UUID.create().transportString()
+            let uuid = UUID.create()
             let sut = appendFileMessage(to: syncConversation)!
             
             let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce!)")
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!)
             let payload : [String : AnyObject] = [
                 "type" : "conversation.otr-asset-add" as AnyObject,
                 "data" : [
-                    "id" : uuid
+                    "id" : uuid.transportString()
                 ] as AnyObject
             ]
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
@@ -955,11 +955,11 @@ extension ZMAssetClientMessageTests {
             builder.mergePreview(assetWithPreview.preview)
             let asset = builder.build()!
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce!)")
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!)
             let payload : [String : AnyObject] = [
                 "type" : "conversation.otr-asset-add" as AnyObject,
                 "data" : [
-                    "id" : UUID.create().transportString()
+                    "id" : UUID.create().uuidString
                 ] as AnyObject
             ]
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
@@ -986,7 +986,7 @@ extension ZMAssetClientMessageTests {
         let remoteData = ZMAssetRemoteData.remoteData(withOTRKey: Data.zmRandomSHA256Key(), sha256: Data.zmRandomSHA256Key())
         let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
         
-        let uuid = UUID.create().transportString()
+        let uuid = UUID.create()
         let sut = appendFileMessage(to: conversation)!
         
         XCTAssertFalse(sut.genericAssetMessage!.asset.hasPreview())
@@ -999,7 +999,7 @@ extension ZMAssetClientMessageTests {
         self.syncMOC.performAndWait {
             let sutInSyncContext = self.syncMOC.object(with: sut.objectID) as! ZMAssetClientMessage
             let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: previewSize, mimeType: previewMimeType, remoteData: remoteData, imageMetaData: imageMetaData))
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: "\(sut.nonce!)")
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!)
             let payload : [String : AnyObject] = [
                 "type" : "conversation.otr-asset-add" as AnyObject,
                 "data" : [
@@ -1188,7 +1188,7 @@ extension ZMAssetClientMessageTests {
                 mediumImageProperties: storeProcessed ? self.sampleImageProperties(.medium) : nil,
                 processedImageProperties: storeProcessed ? self.sampleImageProperties(format) : nil,
                 encryptionKeys: storeEncrypted ? encryptionKeys : nil,
-                nonce: nonce.transportString(),
+                nonce: nonce,
                 format: format)
             
             if (storeProcessed) {
@@ -1599,7 +1599,7 @@ extension ZMAssetClientMessageTests {
             let nonce = UUID.create()
             let imageData = self.verySmallJPEGData()
             let assetId = format == .medium ? mediumAssetId : previewAssetId
-            let genericMessage = ZMGenericMessage.genericMessage(imageData: imageData, format: format, nonce: nonce.transportString())
+            let genericMessage = ZMGenericMessage.genericMessage(imageData: imageData, format: format, nonce: nonce)
             let dataPayload = [
                 "info" : genericMessage.data().base64String(),
                 "id" : assetId.transportString()
@@ -1636,7 +1636,7 @@ extension ZMAssetClientMessageTests {
         let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: 4235, height: 324)
         let asset = ZMAsset.asset(withOriginal: nil, preview: ZMAssetPreview.preview(withSize: 256, mimeType: "video/mp4", remoteData: remoteData, imageMetaData: imageMetaData))
         
-        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce.transportString())
+        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce)
         
         let dataPayload = [
             "info" : genericMessage.data().base64String(),
@@ -1658,7 +1658,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.conversation?.remoteIdentifier, conversation.remoteIdentifier)
         XCTAssertEqual(sut.sender?.remoteIdentifier!.transportString(), payload["from"] as? String)
         XCTAssertEqual(sut.serverTimestamp?.transportString(), payload["time"] as? String)
-        XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, thumbnailId.transportString())
+        XCTAssertEqual(sut.fileMessageData?.thumbnailAssetID, thumbnailId)
         XCTAssertEqual(sut.nonce, nonce)
         XCTAssertNotNil(sut.fileMessageData)
     }
@@ -1676,7 +1676,7 @@ extension ZMAssetClientMessageTests {
             let firstDate = Date(timeIntervalSince1970: 12334)
             let secondDate = firstDate.addingTimeInterval(234444)
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce.transportString())
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce)
             
             let dataPayload = [
                 "info" : genericMessage.data().base64String(),
@@ -1712,7 +1712,7 @@ extension ZMAssetClientMessageTests {
             let firstDate = Date(timeIntervalSince1970: 12334)
             let secondDate = firstDate.addingTimeInterval(234444)
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce.transportString())
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: nonce)
             
             let dataPayload = [
                 "info" : genericMessage.data().base64String(),
@@ -1854,7 +1854,7 @@ extension ZMAssetClientMessageTests {
             message.expire()
         }
         if state == .delivered {
-            let genericMessage = ZMGenericMessage(confirmation: message.nonce!.transportString(), type: .DELIVERED, nonce: UUID.create().transportString())
+            let genericMessage = ZMGenericMessage(confirmation: message.nonce!, type: .DELIVERED, nonce: UUID.create())
             _ = ZMMessageConfirmation.createOrUpdateMessageConfirmation(genericMessage, conversation: message.conversation!, sender: message.sender!)
             message.managedObjectContext?.saveOrRollback()
         }
@@ -1870,14 +1870,14 @@ extension ZMAssetClientMessageTests {
 
 extension ZMAssetClientMessageTests {
 
-    typealias PreviewMeta = (otr: Data, sha: Data, assetId: String?, token: String?)
+    typealias PreviewMeta = (otr: Data, sha: Data, assetId: UUID?, token: UUID?)
 
-    private func originalGenericMessage(nonce: String, image: ZMAssetImageMetaData? = nil, preview: ZMAssetPreview? = nil, mimeType: String = "image/jpg", name: String? = nil) -> ZMGenericMessage {
+    private func originalGenericMessage(nonce: UUID, image: ZMAssetImageMetaData? = nil, preview: ZMAssetPreview? = nil, mimeType: String = "image/jpg", name: String? = nil) -> ZMGenericMessage {
         let asset = ZMAsset.asset(withOriginal: .original(withSize: 128, mimeType: mimeType, name: name, imageMetaData: image), preview: preview)
         return ZMGenericMessage.genericMessage(asset: asset, messageID: nonce)
     }
 
-    private func uploadedGenericMessage(nonce: String, otr: Data = .randomEncryptionKey(), sha: Data = .zmRandomSHA256Key(), assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString()) -> ZMGenericMessage {
+    private func uploadedGenericMessage(nonce: UUID, otr: Data = .randomEncryptionKey(), sha: Data = .zmRandomSHA256Key(), assetId: UUID? = UUID.create(), token: UUID? = UUID.create()) -> ZMGenericMessage {
 
         let assetBuilder = ZMAsset.builder()!
         let remoteBuilder = ZMAssetRemoteData.builder()!
@@ -1885,17 +1885,17 @@ extension ZMAssetClientMessageTests {
         _ = remoteBuilder.setOtrKey(otr)
         _ = remoteBuilder.setSha256(sha)
         if let assetId = assetId {
-            _ = remoteBuilder.setAssetId(assetId)
+            _ = remoteBuilder.setAssetId(assetId.transportString())
         }
         if let token = token {
-            _ = remoteBuilder.setAssetToken(token)
+            _ = remoteBuilder.setAssetToken(token.transportString())
         }
 
         assetBuilder.setUploaded(remoteBuilder)
         return ZMGenericMessage.genericMessage(asset: assetBuilder.build(), messageID: nonce)
     }
 
-    func previewGenericMessage(with nonce: String, assetId: String? = UUID.create().transportString(), token: String? = UUID.create().transportString(), otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (ZMGenericMessage, PreviewMeta) {
+    func previewGenericMessage(with nonce: UUID, assetId: UUID? = UUID.create(), token: UUID? = UUID.create(), otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (ZMGenericMessage, PreviewMeta) {
         let assetBuilder = ZMAsset.builder()
         let previewBuilder = ZMAssetPreview.builder()
         let remoteBuilder = ZMAssetRemoteData.builder()
@@ -1903,10 +1903,10 @@ extension ZMAssetClientMessageTests {
         _ = remoteBuilder?.setOtrKey(otr)
         _ = remoteBuilder?.setSha256(sha)
         if let assetId = assetId {
-            _ = remoteBuilder?.setAssetId(assetId)
+            _ = remoteBuilder?.setAssetId(assetId.transportString())
         }
         if let token = token {
-            _ = remoteBuilder?.setAssetToken(token)
+            _ = remoteBuilder?.setAssetToken(token.transportString())
         }
         _ = previewBuilder?.setSize(512)
         _ = previewBuilder?.setMimeType("image/jpg")
@@ -1932,7 +1932,7 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+        let uploaded = uploadedGenericMessage(nonce: nonce)
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
@@ -1944,7 +1944,7 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let (preview, _) = previewGenericMessage(with: nonce.transportString())
+        let (preview, _) = previewGenericMessage(with: nonce)
         sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
@@ -1956,7 +1956,7 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: nil, token: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce, assetId: nil, token: nil)
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
@@ -1968,7 +1968,7 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let (preview, _) = previewGenericMessage(with: nonce.transportString(), assetId: nil, token: nil)
+        let (preview, _) = previewGenericMessage(with: nonce, assetId: nil, token: nil)
         sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: true)
 
         // then
@@ -1980,11 +1980,11 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let assetId = UUID.create().transportString()
+        let assetId = UUID.create()
         let assetData = Data.secureRandomData(length: 512)
 
-        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), name: "document.pdf"), updateEvent: ZMUpdateEvent(), initialUpdate: true)
-        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: originalGenericMessage(nonce: nonce, name: "document.pdf"), updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        sut.update(with: uploadedGenericMessage(nonce: nonce, assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_fileAssetCache.storeAssetData(sut, encrypted: false, data: assetData)
 
 
@@ -1999,11 +1999,11 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let assetId = UUID.create().transportString()
+        let assetId = UUID.create()
         let assetData = Data.secureRandomData(length: 512)
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        sut.update(with: originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil), updateEvent: ZMUpdateEvent(), initialUpdate: false)
-        sut.update(with: uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: originalGenericMessage(nonce: nonce, image: image, preview: nil), updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploadedGenericMessage(nonce: nonce, assetId: assetId), updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: assetData)
 
         // then
@@ -2017,8 +2017,8 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+        let original = originalGenericMessage(nonce: nonce, image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce)
 
         // when
         sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
@@ -2035,11 +2035,11 @@ extension ZMAssetClientMessageTests {
     func testThatItReturnsAValidImageDataIdentifierEqualToTheCacheKeyOfTheAsset() {
         // given
         let (sut, nonce) = createMessageWithNonce()
-        let assetId = UUID.create().transportString()
+        let assetId = UUID.create()
 
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString(), assetId: assetId)
+        let original = originalGenericMessage(nonce: nonce, image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce, assetId: assetId)
 
         // when
         sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
@@ -2054,7 +2054,7 @@ extension ZMAssetClientMessageTests {
         let (sut, nonce) = createMessageWithNonce()
 
         // when
-        let (preview, previewMeta) = previewGenericMessage(with: nonce.transportString())
+        let (preview, previewMeta) = previewGenericMessage(with: nonce)
         sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: false)
 
         // then
@@ -2067,7 +2067,7 @@ extension ZMAssetClientMessageTests {
 
         // when
         let previewData = Data.secureRandomData(length: 512)
-        let (preview, _) = previewGenericMessage(with: nonce.transportString())
+        let (preview, _) = previewGenericMessage(with: nonce)
         sut.update(with: preview, updateEvent: ZMUpdateEvent(), initialUpdate: false)
         uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: previewData)
 
@@ -2084,8 +2084,8 @@ extension ZMAssetClientMessageTests {
 
         let data = verySmallJPEGData()
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+        let original = originalGenericMessage(nonce: nonce, image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce)
 
         // when
         sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
@@ -2105,8 +2105,8 @@ extension ZMAssetClientMessageTests {
         // given
         let (sut, nonce) = createMessageWithNonce()
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
-        let original = originalGenericMessage(nonce: nonce.transportString(), image: image, preview: nil)
-        let uploaded = uploadedGenericMessage(nonce: nonce.transportString())
+        let original = originalGenericMessage(nonce: nonce, image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce)
 
         // when
         sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)

@@ -1360,7 +1360,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
-    ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
 }
@@ -1369,7 +1369,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
-    ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce.transportString expiresAfter:@(self.messageDestructionTimeout)];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
 }
@@ -1383,7 +1383,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
     ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:normalizedText.stringByRemovingExtremeCombiningCharacters
                                                              linkPreview:nil
-                                                                   nonce:nonce.transportString
+                                                                   nonce:nonce
                                                             expiresAfter:@(self.messageDestructionTimeout)
                                                                 mentions: mentions];
     ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
@@ -1531,7 +1531,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 
     NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:lastRead ofConversationWithID:convID.transportString nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:lastRead ofConversationWithID:convID nonce:nonce];
     VerifyReturnNil(message != nil);
     
     return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
@@ -1560,7 +1560,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithClearedTimestamp:cleared ofConversationWithID:convID.transportString nonce:nonce.transportString];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithClearedTimestamp:cleared ofConversationWithID:convID nonce:nonce];
     VerifyReturnNil(message != nil);
     
     return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];

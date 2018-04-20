@@ -52,52 +52,52 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMGenericMessage (Utils)
 
 + (ZMGenericMessage *)messageWithBase64String:(NSString *)string;
-+ (ZMGenericMessage *)sessionResetWithNonce:(NSString *)nonce;
-+ (ZMGenericMessage *)messageWithConfirmation:(NSString *)messageID type:(ZMConfirmationType)type nonce:(NSString *)nonce;
++ (ZMGenericMessage *)sessionResetWithNonce:(NSUUID *)nonce;
++ (ZMGenericMessage *)messageWithConfirmation:(NSUUID *)messageID type:(ZMConfirmationType)type nonce:(NSUUID *)nonce;
 
 
 + (ZMGenericMessage *)messageWithLastRead:(NSDate *)timestamp
-                     ofConversationWithID:(NSString *)conversationIDString
-                                    nonce:(NSString *)nonce;
+                     ofConversationWithID:(NSUUID *)conversationID
+                                    nonce:(NSUUID *)nonce;
 
 + (ZMGenericMessage *)messageWithClearedTimestamp:(NSDate *)timestamp
-                     ofConversationWithID:(NSString *)conversationIDString
-                                    nonce:(NSString *)nonce;
+                     ofConversationWithID:(NSUUID *)conversationID
+                                    nonce:(NSUUID *)nonce;
 
-+ (ZMGenericMessage *)messageWithHideMessage:(NSString *)messageID
-                              inConversation:(NSString *)conversationID
-                                       nonce:(NSString *)nonce;
++ (ZMGenericMessage *)messageWithHideMessage:(NSUUID *)messageID
+                              inConversation:(NSUUID *)conversationID
+                                       nonce:(NSUUID *)nonce;
 
-+ (ZMGenericMessage *)messageWithDeleteMessage:(NSString *)messageID
-                                         nonce:(NSString *)nonce;
++ (ZMGenericMessage *)messageWithDeleteMessage:(NSUUID *)messageID
+                                         nonce:(NSUUID *)nonce;
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
                                      newText:(NSString *)newText
-                                       nonce:(NSString *)nonce;
+                                       nonce:(NSUUID *)nonce;
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
-                                       nonce:(NSString *)nonce;
+                                       nonce:(NSUUID *)nonce;
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
                                      newText:(NSString *)newText
-                                       nonce:(NSString *)nonce
+                                       nonce:(NSUUID *)nonce
                                     mentions:(NSArray<ZMMention *> *)mentions;
 
-+ (ZMGenericMessage *)messageWithEditMessage:(NSString *)messageID
++ (ZMGenericMessage *)messageWithEditMessage:(NSUUID *)messageID
                                      newText:(NSString *)newText
                                  linkPreview:(ZMLinkPreview *)linkPreview
-                                       nonce:(NSString *)nonce
+                                       nonce:(NSUUID *)nonce
                                     mentions:(NSArray<ZMMention *> *)mentions;
 
 
 + (ZMGenericMessage *)messageWithEmojiString:(NSString *)emojiString
-                                   messageID:(NSString *)messageID
-                                       nonce:(NSString *)nonce;
+                                   messageID:(NSUUID *)messageID
+                                       nonce:(NSUUID *)nonce;
 
 + (ZMGenericMessage *)messageWithCallingContent:(NSString *)content
-                                          nonce:(NSString *)nonce;
+                                          nonce:(NSUUID *)nonce;
 
 - (BOOL)knownMessage;
 

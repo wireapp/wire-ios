@@ -38,8 +38,8 @@ extension ZMMessage {
         
         let genericMessage = ZMGenericMessage(
             emojiString: emoji,
-            messageID: messageID.transportString(),
-            nonce: NSUUID().transportString()
+            messageID: messageID,
+            nonce: UUID()
         )
     
         let clientMessage = message.conversation?.appendClientMessage(with: genericMessage, expires: false, hidden: true)

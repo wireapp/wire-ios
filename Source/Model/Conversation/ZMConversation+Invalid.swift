@@ -18,25 +18,15 @@
 
 import Foundation
 
-extension ZMMentionBuilder {
+extension ZMConversation {
 
-    public static func build(_ users: [ZMUser]) -> [ZMMention] {
-        var mentions: [ZMMention] = []
+    /// Appends a "message invalid" system message
+    public func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
+        return self.appendSystemMessage(type: .invalid,
+                                 sender: sender,
+                                 users: nil,
+                                 clients: nil,
+                                 timestamp: date).message
 
-        for user in users {
-            let builder = ZMMention.builder()!
-            builder.setUser(user)
-            if let user = builder.buildAndValidate() {
-                mentions.append(user)
-            }
-        }
-
-        return mentions
     }
-
-    public func setUser(_ user: ZMUser) {
-        setUserId(user.remoteIdentifier!.transportString())
-        setUserName(user.name!)
-    }
-
 }

@@ -293,7 +293,7 @@ extension ZMGenericMessage {
         guard let encryptedDataWithKeys = ZMGenericMessage.encryptedDataWithKeys(from: self)
         else {return nil}
         
-        let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: NSUUID().transportString())
+        let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: UUID())
         return externalGenericMessage.encryptedMessagePayloadData(conversation, externalData: encryptedDataWithKeys.data)
     }
     
@@ -302,7 +302,7 @@ extension ZMGenericMessage {
         guard let encryptedDataWithKeys = ZMGenericMessage.encryptedDataWithKeys(from: self)
             else {return nil}
         
-        let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: NSUUID().transportString())
+        let externalGenericMessage = ZMGenericMessage.genericMessage(withKeyWithChecksum: encryptedDataWithKeys.keys, messageID: UUID())
         return externalGenericMessage.encryptedMessagePayloadData(for: recipients, externalData: encryptedDataWithKeys.data, context: context)
     }
 }

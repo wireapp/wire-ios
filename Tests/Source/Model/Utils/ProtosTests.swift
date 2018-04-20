@@ -53,14 +53,14 @@ class ProtosTests: XCTestCase {
     
     func testThatItCreatesGenericMessageForUnencryptedImage() {
         //given
-        let nonce = NSUUID();
+        let nonce = UUID()
         let format = ZMImageFormat.preview
         
         let mediumProperties = ZMIImageProperties(size: CGSize(width: 10000, height: 20000), length: 200000, mimeType: "fancy image")!
         let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         
         // when
-        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce.description, format: format, expiresAfter:0.0)
+        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce, format: format, expiresAfter:0.0)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -78,7 +78,7 @@ class ProtosTests: XCTestCase {
 
     func testThatItCreatesGenericMessageForEncryptedImage() {
         //given
-        let nonce = NSUUID();
+        let nonce = UUID();
         let otrKey = "OTR KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let macKey = "MAC KEY".data(using: String.Encoding.utf8, allowLossyConversion: true)!
         let mac = "MAC".data(using: String.Encoding.utf8, allowLossyConversion: true)!
@@ -90,7 +90,7 @@ class ProtosTests: XCTestCase {
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         
         // when
-        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce.description, format: format, expiresAfter:0.0)
+        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce, format: format, expiresAfter:0.0)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -112,7 +112,7 @@ class ProtosTests: XCTestCase {
         let bundle = Bundle(for: type(of: self))
         let url = bundle.url(forResource: "medium", withExtension: "jpg")!
         let data = NSData(contentsOf: url)!
-        let nonce = "nonceeeee";
+        let nonce = UUID.create()
         
         // when
         let message = ZMGenericMessage.genericMessage(imageData: data as Data, format: .medium, nonce: nonce, expiresAfter:0)
@@ -131,8 +131,8 @@ class ProtosTests: XCTestCase {
     }
     
     func testThatItCanCreateKnock() {
-        let nonce = NSUUID()
-        let message = ZMGenericMessage.knock(nonce: nonce.uuidString.lowercased(), expiresAfter:0.0)
+        let nonce = UUID()
+        let message = ZMGenericMessage.knock(nonce: nonce, expiresAfter:0.0)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasKnock())
@@ -142,15 +142,15 @@ class ProtosTests: XCTestCase {
     
     
     func testThatItCanCreateLastRead() {
-        let conversationID = "someID"
+        let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
-        let nonce = "nonce"
-        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)
+        let nonce = UUID.create()
+        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWith: conversationID, nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead())
-        XCTAssertEqual(message.messageId, nonce)
-        XCTAssertEqual(message.lastRead.conversationId, conversationID)
+        XCTAssertEqual(message.messageId, nonce.transportString())
+        XCTAssertEqual(message.lastRead.conversationId, conversationID.transportString())
         XCTAssertEqual(message.lastRead.lastReadTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
         let storedDate = NSDate(timeIntervalSince1970: Double(message.lastRead.lastReadTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)
@@ -158,37 +158,37 @@ class ProtosTests: XCTestCase {
     
     
     func testThatItCanCreateCleared() {
-        let conversationID = "someID"
+        let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
-        let nonce = "nonce"
-        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWithID: conversationID, nonce: nonce)
+        let nonce = UUID.create()
+        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWith: conversationID, nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasCleared())
-        XCTAssertEqual(message.messageId, nonce)
-        XCTAssertEqual(message.cleared.conversationId, conversationID)
+        XCTAssertEqual(message.messageId, nonce.transportString())
+        XCTAssertEqual(message.cleared.conversationId, conversationID.transportString())
         XCTAssertEqual(message.cleared.clearedTimestamp, Int64(timeStamp.timeIntervalSince1970 * 1000))
         let storedDate = NSDate(timeIntervalSince1970: Double(message.cleared.clearedTimestamp/1000))
         XCTAssertEqual(storedDate, timeStamp)
     }
     
     func testThatItCanCreateSessionReset() {
-        let nonce = NSUUID()
-        let message = ZMGenericMessage.sessionReset(withNonce: nonce.uuidString.lowercased())
+        let nonce = UUID.create()
+        let message = ZMGenericMessage.sessionReset(withNonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasClientAction())
         XCTAssertEqual(message.clientAction, ZMClientAction.RESETSESSION)
-        XCTAssertEqual(message.messageId, nonce.uuidString.lowercased())
+        XCTAssertEqual(message.messageId, nonce.transportString())
     
     }
     
     func testThatItCanBuildAnEphemeralMessage() {
-        let nonce = NSUUID()
-        let message = ZMGenericMessage.knock(nonce: nonce.uuidString.lowercased(), expiresAfter:1)
+        let nonce = UUID.create()
+        let message = ZMGenericMessage.knock(nonce: nonce, expiresAfter:1)
         
         XCTAssertNotNil(message)
-        XCTAssertEqual(message.messageId, nonce.uuidString.lowercased())
+        XCTAssertEqual(message.messageId, nonce.transportString())
         XCTAssertTrue(message.hasEphemeral())
         guard let ephemeral = message.ephemeral else {
             return XCTFail()

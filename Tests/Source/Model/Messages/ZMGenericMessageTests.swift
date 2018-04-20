@@ -24,19 +24,19 @@ class GenericMessageTests: ZMTBaseTest {
     func testThatItChecksTheCommonMessageTypesAsKnownMessage() {
         let generators: [()->(ZMGenericMessage)] = [
             {
-                return ZMGenericMessage.message(text: "hello", nonce: NSUUID().transportString())
+                return ZMGenericMessage.message(text: "hello", nonce: UUID())
             },
             {
-                return ZMGenericMessage.genericMessage(imageData: self.verySmallJPEGData(), format: .medium, nonce: NSUUID().transportString())
+                return ZMGenericMessage.genericMessage(imageData: self.verySmallJPEGData(), format: .medium, nonce: UUID.create())
             },
             {
-                return ZMGenericMessage.knock(nonce: NSUUID().transportString())
+                return ZMGenericMessage.knock(nonce: UUID.create())
             },
             {
-                return ZMGenericMessage(lastRead: Date(), ofConversationWithID: NSUUID().transportString(), nonce: NSUUID().transportString())
+                return ZMGenericMessage(lastRead: Date(), ofConversationWith: UUID.create(), nonce: UUID.create())
             },
             {
-                return ZMGenericMessage(clearedTimestamp: Date(), ofConversationWithID: NSUUID().transportString(), nonce: NSUUID().transportString())
+                return ZMGenericMessage(clearedTimestamp: Date(), ofConversationWith: UUID.create(), nonce: UUID.create())
             },
             {
                 var externalBuilder = ZMExternal.builder()!
@@ -47,35 +47,35 @@ class GenericMessageTests: ZMTBaseTest {
                 
                 let messageBuilder = ZMGenericMessageBuilder()
                 messageBuilder.setExternal(externalBuilder.build()!)
-                messageBuilder.setMessageId("MESSAGE ID")
+                messageBuilder.setMessageId(UUID.create().transportString())
                 return messageBuilder.build()!
             },
             {
-                return ZMGenericMessage.sessionReset(withNonce: NSUUID().transportString())
+                return ZMGenericMessage.sessionReset(withNonce: UUID.create())
             },
             {
-                return ZMGenericMessage(callingContent: "Calling", nonce: NSUUID().transportString())
+                return ZMGenericMessage(callingContent: "Calling", nonce: UUID.create())
             },
             {
-                return ZMGenericMessage.genericMessage(withAssetSize: 0, mimeType: "image/jpeg", name: "test", messageID: NSUUID().transportString())
+                return ZMGenericMessage.genericMessage(withAssetSize: 0, mimeType: "image/jpeg", name: "test", messageID: UUID.create())
             },
             {
-                return ZMGenericMessage(hideMessage: "test", inConversation: NSUUID().transportString(), nonce: NSUUID().transportString())
+                return ZMGenericMessage(hideMessage: UUID.create(), inConversation: UUID.create(), nonce: UUID.create())
             },
             {
-                return ZMGenericMessage.genericMessage(location: ZMLocation.location(withLatitude: 0, longitude: 0, name: "name", zoomLevel: 1), messageID: NSUUID().transportString())
+                return ZMGenericMessage.genericMessage(location: ZMLocation.location(withLatitude: 0, longitude: 0, name: "name", zoomLevel: 1), messageID: UUID.create())
             },
             {
-                return ZMGenericMessage(deleteMessage: "Delete", nonce: NSUUID().transportString())
+                return ZMGenericMessage(deleteMessage: UUID.create(), nonce: UUID.create())
             },
             {
-                return ZMGenericMessage(editMessage: "Test", newText: "Test", nonce: NSUUID().transportString())
+                return ZMGenericMessage(editMessage: UUID.create(), newText: "Test", nonce: UUID.create())
             },
             {
-                return ZMGenericMessage(emojiString: "test", messageID: NSUUID().transportString(), nonce: NSUUID().transportString())
+                return ZMGenericMessage(emojiString: "test", messageID: UUID.create(), nonce: UUID.create())
             },
             {
-                return ZMGenericMessage.knock(nonce: NSUUID().transportString(), expiresAfter: 10)
+                return ZMGenericMessage.knock(nonce: UUID.create(), expiresAfter: 10)
             },
             {
                 return ZMGenericMessage.genericMessage(withAvailability: .away)
@@ -93,7 +93,7 @@ class GenericMessageTests: ZMTBaseTest {
     func testThatGenericMessageHasImage_WhenHandlingImages() {
         // given
         let image = ZMImageAsset(data: verySmallJPEGData(), format: .medium)!
-        let imageMessage = ZMGenericMessage.genericMessage(pbMessage: image, messageID: "foo")
+        let imageMessage = ZMGenericMessage.genericMessage(pbMessage: image, messageID: UUID.create())
         
         // when & then
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -104,7 +104,7 @@ class GenericMessageTests: ZMTBaseTest {
         // given
         let image = ZMImageAsset(data: verySmallJPEGData(), format: .medium)!
         let genericMessage = ZMGenericMessage.genericMessage(pbMessage: image,
-                                                             messageID: "foo",
+                                                             messageID: UUID.create(),
                                                              expiresAfter: NSNumber(value: 3.0))
         
         // when & then
@@ -117,7 +117,7 @@ class GenericMessageTests: ZMTBaseTest {
         let svgMessage = ZMGenericMessage.genericMessage(withAssetSize: 100,
                                                          mimeType: "image/svg+xml",
                                                          name: "test",
-                                                         messageID: NSUUID().transportString())
+                                                         messageID: UUID.create())
         
         //when & then
         XCTAssertTrue(!svgMessage.hasImage())
@@ -128,7 +128,7 @@ class GenericMessageTests: ZMTBaseTest {
         let svgMessage = ZMGenericMessage.genericMessage(withAssetSize: 100,
                                                          mimeType: "image/svg+xml",
                                                          name: "test",
-                                                         messageID: NSUUID().transportString(),
+                                                         messageID: UUID.create(),
                                                          expiresAfter: NSNumber(value: 3.0))
         
         // when & then

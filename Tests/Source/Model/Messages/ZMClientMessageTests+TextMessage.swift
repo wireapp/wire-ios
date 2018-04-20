@@ -42,7 +42,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer.update(withOtrKey: Data(), sha256: Data()), nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer.update(withOtrKey: Data(), sha256: Data()), nonce: nonce).data())
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.hasImageData
@@ -65,7 +65,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce).data())
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.hasImageData
@@ -90,7 +90,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.message = name
 
         let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
-        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: updated, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: updated, nonce: nonce).data())
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.hasImageData
@@ -114,7 +114,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce).data())
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.hasImageData
@@ -137,16 +137,16 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
 
         article.title = "title"
         article.summary = "summary"
-        let assetKey = "123"
+        let assetKey = UUID.create()
 
         let linkPreview = article.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()).update(withAssetKey: assetKey, assetToken: nil)
-        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: linkPreview, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: linkPreview, nonce: nonce).data())
         
         // when
         let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
         
         // then
-        XCTAssertEqual(imageDataIdentifier, assetKey)
+        XCTAssertEqual(imageDataIdentifier, assetKey.transportString())
     }
     
     func testThatItDoesntReturnsImageDataIdentifier_whenArticleHasNoImage() {
@@ -162,7 +162,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce).data())
         
         // when
         let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
@@ -176,7 +176,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
 
-        let assetKey = "123"
+        let assetKey = UUID.create()
         let twitterStatus = TwitterStatus(
             originalURLString: "example.com/tweet",
             permanentURLString: "http://www.example.com/tweet/1",
@@ -188,14 +188,14 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         twitterStatus.message = name
         
         let linkPreview = twitterStatus.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()).update(withAssetKey: assetKey, assetToken: nil)
-        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: linkPreview, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: linkPreview, nonce: nonce).data())
         clientMessage.nonce = nonce
         
         // when
         let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
         
         // then
-        XCTAssertEqual(imageDataIdentifier, assetKey)
+        XCTAssertEqual(imageDataIdentifier, assetKey.transportString())
     }
     
     func testThatItDoesntReturnsImageDataIdentifier_whenTwitterStatusHasNoImage() {
@@ -212,7 +212,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce.transportString()).data())
+        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce).data())
         
         // when
         let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
@@ -262,8 +262,8 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         
         let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
-        let withID = updated.update(withAssetKey: "ID", assetToken: nil)
-        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: withID, nonce: nonce.transportString()).data())
+        let withID = updated.update(withAssetKey: UUID.create(), assetToken: nil)
+        clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: withID, nonce: nonce).data())
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 
         
