@@ -568,6 +568,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         timeStamp = [(ZMSystemMessage *)message.systemMessageData lastChildMessageDate];
     }
     BOOL senderIsSelfUser = message.sender.isSelfUser;
+    BOOL isSystemMessage = [message isKindOfClass:[ZMSystemMessage class]];
 
     if( ! self.managedObjectContext.zm_isUserInterfaceContext ) {
         return;
@@ -610,19 +611,21 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             }
             timeStamp = lastDeliveredMessage.serverTimestamp;
             senderIsSelfUser = lastDeliveredMessage.sender.isSelfUser;
+            isSystemMessage = [lastDeliveredMessage isKindOfClass:[ZMSystemMessage class]];
         }
     }
-    [self updateLastReadServerTimeStamp:timeStamp senderIsSelfUser:senderIsSelfUser];
+    [self updateLastReadServerTimeStamp:timeStamp senderIsSelfUser:senderIsSelfUser messageIsSystemMessage:isSystemMessage];
 }
 
-- (void)updateLastReadServerTimeStamp:(NSDate *)serverTimeStamp senderIsSelfUser:(BOOL)senderIsSelfUser
+
+- (void)updateLastReadServerTimeStamp:(NSDate *)serverTimeStamp senderIsSelfUser:(BOOL)senderIsSelfUser messageIsSystemMessage:(BOOL)messageIsSystemMessage
 {
-    if ((self.lastReadServerTimeStamp != nil) &&([serverTimeStamp compare:self.lastReadServerTimeStamp] == NSOrderedAscending)) {
+    if ((self.lastReadServerTimeStamp != nil) && ([serverTimeStamp compare:self.lastReadServerTimeStamp] == NSOrderedAscending)) {
         return;
     }
     
-    if (self.tempMaxLastReadServerTimeStamp == nil ||  [self.tempMaxLastReadServerTimeStamp compare:serverTimeStamp] == NSOrderedAscending) {
-        if (!senderIsSelfUser) {
+    if (self.tempMaxLastReadServerTimeStamp == nil || [self.tempMaxLastReadServerTimeStamp compare:serverTimeStamp] == NSOrderedAscending) {
+        if (!senderIsSelfUser || messageIsSystemMessage) {
             self.tempMaxLastReadServerTimeStamp = serverTimeStamp;
         }
         else {
