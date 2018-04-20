@@ -66,7 +66,7 @@ NS_ASSUME_NONNULL_BEGIN
 @end
 
 
-@interface ZMObjectSyncStrategy : NSObject
+@interface ZMObjectSyncStrategy : NSObject <TearDownCapable>
 
 - (instancetype)init NS_UNAVAILABLE;
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc NS_DESIGNATED_INITIALIZER;

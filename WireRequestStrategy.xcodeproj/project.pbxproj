@@ -123,7 +123,6 @@
 		F18401C92073BE0800E9F4CC /* AssetAnalytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401872073BE0800E9F4CC /* AssetAnalytics.swift */; };
 		F18401CA2073BE0800E9F4CC /* FilePreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401882073BE0800E9F4CC /* FilePreprocessor.swift */; };
 		F18401CD2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184018B2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift */; };
-		F18401CF2073BE0800E9F4CC /* TearDownCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184018E2073BE0800E9F4CC /* TearDownCapable.swift */; };
 		F18401D02073BE0800E9F4CC /* PushMessageHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */; };
 		F18401D12073BE0800E9F4CC /* ApplicationStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401902073BE0800E9F4CC /* ApplicationStatus.swift */; };
 		F18401D22073BE0800E9F4CC /* OTREntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401912073BE0800E9F4CC /* OTREntity.swift */; };
@@ -379,7 +378,6 @@
 		F18401892073BE0800E9F4CC /* LinkPreviewPreprocessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPreviewPreprocessorTests.swift; sourceTree = "<group>"; };
 		F184018A2073BE0800E9F4CC /* FilePreprocessorTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilePreprocessorTests.swift; sourceTree = "<group>"; };
 		F184018B2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LinkPreviewPreprocessor.swift; sourceTree = "<group>"; };
-		F184018E2073BE0800E9F4CC /* TearDownCapable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TearDownCapable.swift; sourceTree = "<group>"; };
 		F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushMessageHandler.swift; sourceTree = "<group>"; };
 		F18401902073BE0800E9F4CC /* ApplicationStatus.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ApplicationStatus.swift; sourceTree = "<group>"; };
 		F18401912073BE0800E9F4CC /* OTREntity.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OTREntity.swift; sourceTree = "<group>"; };
@@ -785,7 +783,6 @@
 		F1CD5D842024C259008C574E /* Protocols */ = {
 			isa = PBXGroup;
 			children = (
-				F184018E2073BE0800E9F4CC /* TearDownCapable.swift */,
 				F184018F2073BE0800E9F4CC /* PushMessageHandler.swift */,
 				F18401902073BE0800E9F4CC /* ApplicationStatus.swift */,
 				F18401912073BE0800E9F4CC /* OTREntity.swift */,
@@ -1134,7 +1131,6 @@
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
 				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,
 				F18401C02073BE0800E9F4CC /* AssetV3FileUploadRequestStrategy.swift in Sources */,
-				F18401CF2073BE0800E9F4CC /* TearDownCapable.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
 				F18401BF2073BE0800E9F4CC /* AssetClientMessageRequestStrategy.swift in Sources */,
 				547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */,

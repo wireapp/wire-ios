@@ -27,7 +27,7 @@
 @class ZMImageMessage;
 
 
-@interface ZMImagePreprocessingTracker : NSObject <ZMContextChangeTracker, ZMOutstandingItems, ZMAssetsPreprocessorDelegate>
+@interface ZMImagePreprocessingTracker : NSObject <ZMContextChangeTracker, ZMOutstandingItems, ZMAssetsPreprocessorDelegate, TearDownCapable>
 
 /// The @c preprocessor will only be called on the @c groupQueue
 - (instancetype)initWithManagedObjectContext:(NSManagedObjectContext *)moc
