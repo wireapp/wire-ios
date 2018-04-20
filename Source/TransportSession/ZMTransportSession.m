@@ -90,7 +90,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) NSMutableDictionary <NSString *, dispatch_block_t> *completionHandlerBySessionID;
 
 @property (nonatomic) id<RequestRecorder> requestLoopDetection;
-@property (nonatomic, readwrite) id<ReachabilityProvider,ReachabilityTearDown> reachability;
+@property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
 
 @end
@@ -173,7 +173,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)initWithBaseURL:(NSURL *)baseURL
                    websocketURL:(NSURL *)websocketURL
                   cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                   reachability:(id<ReachabilityProvider,ReachabilityTearDown>)reachability
+                   reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
              initialAccessToken:(ZMAccessToken *)initialAccessToken
      applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
 {
@@ -211,7 +211,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                            reachability:(id<ReachabilityProvider,ReachabilityTearDown>)reachability
+                            reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL
@@ -234,7 +234,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                            reachability:(id<ReachabilityProvider,ReachabilityTearDown>)reachability
+                            reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
                                  baseURL:(NSURL *)baseURL
@@ -751,7 +751,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 @implementation ZMTransportSession (ReachabilityObserver)
 
-- (void)reachabilityDidChange:(id<ReachabilityProvider,ReachabilityTearDown>)reachability;
+- (void)reachabilityDidChange:(id<ReachabilityProvider, TearDownCapable>)reachability;
 {
     ZMLogInfo(@"reachabilityDidChange -> mayBeReachable = %@", reachability.mayBeReachable ? @"YES" : @"NO");
     [self.requestScheduler reachabilityDidChange:reachability];

@@ -21,6 +21,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 @import WireSystem;
+@import WireUtilities;
 
 @protocol ZMReachabilityObserver;
 @protocol ReachabilityProvider;
@@ -44,14 +45,7 @@ typedef void (^ReachabilityObserverBlock)(id<ReachabilityProvider> provider);
 
 @end
 
-@protocol ReachabilityTearDown
-
-- (void)tearDown;
-
-@end
-
-
-@interface ZMReachability : NSObject <ReachabilityProvider, ReachabilityTearDown>
+@interface ZMReachability : NSObject <ReachabilityProvider, TearDownCapable>
 
 /// Calls to the observer will always happen on the specified @c observerQueue . All work will be added to the @c group
 - (instancetype)initWithServerNames:(NSArray *)names group:(ZMSDispatchGroup *)group;

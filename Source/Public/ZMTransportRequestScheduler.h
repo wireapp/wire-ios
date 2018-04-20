@@ -51,7 +51,7 @@ extern NSInteger const ZMTransportRequestSchedulerRequestCountUnlimited;
 
 
 
-@interface ZMTransportRequestScheduler : NSObject <ZMReachabilityObserver, ZMSGroupQueue>
+@interface ZMTransportRequestScheduler : NSObject <ZMReachabilityObserver, ZMSGroupQueue, TearDownCapable>
 
 - (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability;
 - (instancetype)initWithSession:(id<ZMTransportRequestSchedulerSession>)session operationQueue:(NSOperationQueue *)queue group:(ZMSDispatchGroup *)group reachability:(id<ReachabilityProvider>)reachability backoff:(nullable ZMExponentialBackoff *)backoff NS_DESIGNATED_INITIALIZER;

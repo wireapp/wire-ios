@@ -21,7 +21,7 @@ public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
 }
 
-public protocol UnauthenticatedTransportSessionProtocol: class {
+public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 
     func enqueueRequest(withGenerator generator: ZMTransportRequestGenerator) -> EnqueueResult
     func tearDown()

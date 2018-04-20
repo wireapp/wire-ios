@@ -30,7 +30,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 
 NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChangedNotification";
 
-@interface ZMReachability() <ReachabilityProvider,ReachabilityTearDown>
+@interface ZMReachability() <ReachabilityProvider, TearDownCapable>
 {
     int32_t _tornDown;
 }
