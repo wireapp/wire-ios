@@ -19,6 +19,7 @@
 
 @import CoreData;
 @import WireTransport;
+@import WireUtilities;
 
 #import "MockConnection.h"
 #import "MockConversation.h"
@@ -67,7 +68,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 
 @property (nonatomic, readonly) NSArray *updateEvents;
 
-@property (nonatomic, readwrite) id<ReachabilityProvider,ReachabilityTearDown> reachability;
+@property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
 

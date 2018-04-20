@@ -18,8 +18,9 @@
 
 #import <Foundation/Foundation.h>
 @import WireTransport;
+@import WireUtilities;
 
-@interface MockReachability : NSObject<ReachabilityProvider, ReachabilityTearDown>  
+@interface MockReachability : NSObject<ReachabilityProvider, TearDownCapable>
 
 @end
 
