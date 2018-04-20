@@ -53,7 +53,7 @@ final class GiphySnapshotTests: ZMSnapshotTestCase {
         verify(view: mockNavigationController.view)
     }
 
-    func testConfirmationScreenWithDisabledSendButton(){
+    func DISABLED_testConfirmationScreenWithDisabledSendButton(){
         let data = self.data(forResource: "animated", extension: "gif")!
         let image = FLAnimatedImage(animatedGIFData: data)
 
