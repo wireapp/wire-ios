@@ -118,12 +118,12 @@ public class NotificationDispatcher : NSObject {
 
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     
-    private var tornDown = false
+    fileprivate var tornDown = false
     private let affectingKeysStore : DependencyKeyStore
     private var messageWindowObserverCenter : MessageWindowObserverCenter {
         return managedObjectContext.messageWindowObserverCenter
     }
-    private var conversationListObserverCenter : ConversationListObserverCenter {
+    fileprivate var conversationListObserverCenter : ConversationListObserverCenter {
         return managedObjectContext.conversationListObserverCenter
     }
     private var searchUserObserverCenter: SearchUserObserverCenter {
@@ -140,7 +140,7 @@ public class NotificationDispatcher : NSObject {
     }
     
     /// NotificationCenter tokens
-    private var notificationTokens: [Any] = []
+    fileprivate var notificationTokens: [Any] = []
     
     private var allChanges : [ZMManagedObject : Changes] = [:]
     private var userChanges : [ZMManagedObject : Set<String>] = [:]
@@ -183,17 +183,7 @@ public class NotificationDispatcher : NSObject {
             self?.nonCoreDataChange(note)
         })
     }
-    
-    public func tearDown() {
-        NotificationCenter.default.removeObserver(self)
-        self.notificationTokens.forEach {
-            NotificationCenter.default.removeObserver($0)
-        }
-        self.notificationTokens = []
-        self.conversationListObserverCenter.tearDown()
-        self.tornDown = true
-    }
-    
+
     deinit {
         assert(self.tornDown)
     }
@@ -468,6 +458,18 @@ public class NotificationDispatcher : NSObject {
         self.allChangeInfoConsumers.forEach{
             $0.objectsDidChange(changes: changeInfos)
         }
+    }
+}
+
+extension NotificationDispatcher: TearDownCapable {
+    public func tearDown() {
+        NotificationCenter.default.removeObserver(self)
+        self.notificationTokens.forEach {
+            NotificationCenter.default.removeObserver($0)
+        }
+        self.notificationTokens = []
+        self.conversationListObserverCenter.tearDown()
+        self.tornDown = true
     }
 }
 

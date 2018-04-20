@@ -17,12 +17,13 @@
 //
 
 import Foundation
+import WireUtilities;
 
 public enum AssetFetchResult : Int {
     case success, failed, noAssetsToFetch
 }
 
-public protocol ZMCollection : NSObjectProtocol {
+public protocol ZMCollection : TearDownCapable {
     func tearDown()
     func assets(for category: CategoryMatch) -> [ZMConversationMessage]
     var fetchingDone : Bool { get }

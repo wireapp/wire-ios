@@ -21,7 +21,7 @@
 @class ZMMessage;
 
 
-@interface ZMMessageTimer : NSObject
+@interface ZMMessageTimer : NSObject <TearDownCapable>
 
 @property (nonatomic, readonly) BOOL hasMessageTimersRunning;
 @property (nonatomic, readonly) NSUInteger runningTimersCount;
