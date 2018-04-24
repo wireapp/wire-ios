@@ -90,10 +90,7 @@ class LocationPreviewController: UIViewController {
 
     private func createConstraints() {
         constrain(view, containerView, mapView) { contentView, container, mapView in
-            container.left == contentView.leftMargin
-            container.right == contentView.rightMargin
-            container.top == contentView.top
-            container.bottom == contentView.bottom
+            container.edges == contentView.edges
             mapView.edges == container.edges
         }
 
