@@ -40,6 +40,9 @@ import Foundation
     /// Tag to use for this logging facility
     fileprivate let tag: String
     
+    /// FileHandle instance used for updating the log
+    fileprivate static var updatingHandle: FileHandle?
+    
     /// Log observers
     fileprivate static var logHooks : [UUID : LogHook] = [:]
     
@@ -179,6 +182,96 @@ extension ZMSLog {
                 sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
                 self.notifyHooks(level: level, tag: tag, message: concreteMessage)
             }
+        }
+    }
+}
+
+// MARK: - Save on disk & file management
+extension ZMSLog {
+    
+    static public var previousLog: Data? {
+        guard let previousLogPath = previousLogPath?.path else { return nil }
+        return readFile(at: previousLogPath)
+    }
+    
+    static public var currentLog: Data? {
+        guard let currentLogPath = currentLogPath?.path else { return nil }
+        return readFile(at: currentLogPath)
+    }
+    
+    static private func readFile(at path: String) -> Data? {
+        let handle = FileHandle(forReadingAtPath: path)
+        return handle?.readDataToEndOfFile()
+    }
+    
+    static public var previousLogPath: URL? {
+        return cachesDirectory?.appendingPathComponent("previous.log")
+    }
+    
+    static public var currentLogPath: URL? {
+        return cachesDirectory?.appendingPathComponent("current.log")
+    }
+    
+    public static func clearLogs() {
+        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        logQueue.async {
+            closeHandle()
+            let manager = FileManager.default
+            try? manager.removeItem(at: previousLogPath)
+            try? manager.removeItem(at: currentLogPath)
+        }
+    }
+    
+    public static func switchCurrentLogToPrevious() {
+        guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
+        logQueue.async {
+            closeHandle()
+            let manager = FileManager.default
+            try? manager.removeItem(at: previousLogPath)
+            try? manager.moveItem(at: currentLogPath, to: previousLogPath)
+        }
+    }
+    
+    static var cachesDirectory: URL? {
+        let manager = FileManager.default
+        return manager.urls(for: .cachesDirectory, in: .userDomainMask).first
+    }
+    
+    static public var pathsForExistingLogs: [URL] {
+        var paths: [URL] =  []
+        if let currentPath = currentLogPath, currentLog != nil {
+            paths.append(currentPath)
+        }
+        if let previousPath = previousLogPath, previousLog != nil  {
+            paths.append(previousPath)
+        }
+        return paths
+    }
+    
+    static private func closeHandle() {
+        updatingHandle?.closeFile()
+        updatingHandle = nil
+    }
+    
+    static public func appendToCurrentLog(_ string: String) {
+        guard let currentLogPath = currentLogPath?.path,
+            let data = string.data(using: .utf8) else { return }
+        
+        logQueue.async {
+            
+            let manager = FileManager.default
+            
+            if !manager.fileExists(atPath: currentLogPath) {
+                manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+            }
+            
+            if updatingHandle == nil {
+                updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
+                updatingHandle?.seekToEndOfFile()
+            }
+            
+            updatingHandle?.write(data)
+            updatingHandle?.synchronizeFile()
         }
     }
 }
