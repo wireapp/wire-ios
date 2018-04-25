@@ -112,6 +112,12 @@
 		BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */; };
 		BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */; };
 		BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */; };
+		D504CD332090C2F200A78DAA /* Curry.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD322090C2F200A78DAA /* Curry.swift */; };
+		D504CD352090C2F800A78DAA /* Papply.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD342090C2F800A78DAA /* Papply.swift */; };
+		D504CD372090CB2900A78DAA /* Flip.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD362090CB2900A78DAA /* Flip.swift */; };
+		D504CD392090CCE400A78DAA /* CurryingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD382090CCE400A78DAA /* CurryingTests.swift */; };
+		D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3A2090D00500A78DAA /* FlipTests.swift */; };
+		D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D504CD3C2090D12900A78DAA /* PapplyTests.swift */; };
 		D53DB99F203ED59C00655CB4 /* Result.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB99E203ED59C00655CB4 /* Result.swift */; };
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
@@ -325,6 +331,12 @@
 		BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Optional+Apply.swift"; sourceTree = "<group>"; };
 		BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "String+EmojiTests.swift"; sourceTree = "<group>"; };
+		D504CD322090C2F200A78DAA /* Curry.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Curry.swift; sourceTree = "<group>"; };
+		D504CD342090C2F800A78DAA /* Papply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Papply.swift; sourceTree = "<group>"; };
+		D504CD362090CB2900A78DAA /* Flip.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Flip.swift; sourceTree = "<group>"; };
+		D504CD382090CCE400A78DAA /* CurryingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurryingTests.swift; sourceTree = "<group>"; };
+		D504CD3A2090D00500A78DAA /* FlipTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FlipTests.swift; sourceTree = "<group>"; };
+		D504CD3C2090D12900A78DAA /* PapplyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PapplyTests.swift; sourceTree = "<group>"; };
 		D53DB99E203ED59C00655CB4 /* Result.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Result.swift; sourceTree = "<group>"; };
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
@@ -621,6 +633,9 @@
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
 				16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */,
 				BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */,
+				D504CD322090C2F200A78DAA /* Curry.swift */,
+				D504CD362090CB2900A78DAA /* Flip.swift */,
+				D504CD342090C2F800A78DAA /* Papply.swift */,
 				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
@@ -687,6 +702,9 @@
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
 				BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */,
 				54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */,
+				D504CD382090CCE400A78DAA /* CurryingTests.swift */,
+				D504CD3C2090D12900A78DAA /* PapplyTests.swift */,
+				D504CD3A2090D00500A78DAA /* FlipTests.swift */,
 				BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
 				16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */,
@@ -920,6 +938,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D504CD332090C2F200A78DAA /* Curry.swift in Sources */,
 				877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */,
 				3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */,
 				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */,
@@ -948,6 +967,7 @@
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
+				D504CD352090C2F800A78DAA /* Papply.swift in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
 				54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */,
@@ -955,6 +975,7 @@
 				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
 				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
+				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				F9C9A7AA1CAEACB10039E10C /* ZMAccentColorValidator.m in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
 				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
@@ -988,6 +1009,7 @@
 				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */,
+				D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */,
 				F9C9A7C71CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
 				168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */,
@@ -997,6 +1019,7 @@
 				EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */,
 				091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */,
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
+				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
 				F9D381AA1B70B91F00E6E4EB /* NSURL+QueryComponentsTest.m in Sources */,
@@ -1019,6 +1042,7 @@
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
 				546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */,
 				D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */,
+				D504CD392090CCE400A78DAA /* CurryingTests.swift in Sources */,
 				163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */,
 				EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */,
 				546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */,
