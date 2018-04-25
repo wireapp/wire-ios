@@ -978,8 +978,7 @@ NSString * const ZMMessageParentMessageKey = @"parentMessage";
     return @{
              @(ZMUpdateEventTypeConversationMemberJoin) : @(ZMSystemMessageTypeParticipantsAdded),
              @(ZMUpdateEventTypeConversationMemberLeave) : @(ZMSystemMessageTypeParticipantsRemoved),
-             @(ZMUpdateEventTypeConversationRename) : @(ZMSystemMessageTypeConversationNameChanged),
-             @(ZMUpdateEventTypeConversationConnectRequest) : @(ZMSystemMessageTypeConnectionRequest)
+             @(ZMUpdateEventTypeConversationRename) : @(ZMSystemMessageTypeConversationNameChanged)
              };
 }
 

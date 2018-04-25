@@ -408,7 +408,6 @@ NSString * const ReactionsKey = @"reactions";
                             @(ZMUpdateEventTypeConversationMemberJoin),
                             @(ZMUpdateEventTypeConversationMemberLeave),
                             @(ZMUpdateEventTypeConversationRename),
-                            @(ZMUpdateEventTypeConversationConnectRequest),
                             @(ZMUpdateEventTypeConversationMessageAdd),
                             @(ZMUpdateEventTypeConversationClientMessageAdd),
                             @(ZMUpdateEventTypeConversationOtrMessageAdd),
@@ -798,12 +797,11 @@ NSString * const ReactionsKey = @"reactions";
 
 - (void)testThat_isEventTypeGeneratingSystemMessage_returnsNo
 {
-    // invalid types
+    // valid types
     NSArray *validTypes = @[
         @(ZMUpdateEventTypeConversationMemberJoin),
         @(ZMUpdateEventTypeConversationMemberLeave),
-        @(ZMUpdateEventTypeConversationRename),
-        @(ZMUpdateEventTypeConversationConnectRequest)
+        @(ZMUpdateEventTypeConversationRename)
     ];
     
     for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt) {
@@ -927,8 +925,6 @@ NSString * const ReactionsKey = @"reactions";
     [self checkThatUpdateEventType:ZMUpdateEventTypeConversationMemberLeave generatesSystemMessageType:ZMSystemMessageTypeParticipantsRemoved failureRecorder:NewFailureRecorder()];
 
     [self checkThatUpdateEventType:ZMUpdateEventTypeConversationRename generatesSystemMessageType:ZMSystemMessageTypeConversationNameChanged failureRecorder:NewFailureRecorder()];
-    
-    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationConnectRequest generatesSystemMessageType:ZMSystemMessageTypeConnectionRequest failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
@@ -1015,35 +1011,6 @@ NSString * const ReactionsKey = @"reactions";
     NSString *text2 = [(ZMTextMessage *)messages[1] text];
     XCTAssertNotNil(text2);
     XCTAssertEqualObjects(text2, @"Conversation Name2");
-}
-
-- (void)testThatItSavesMessageTextFromConnectionRequestsInSystemMessage
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.remoteIdentifier = [NSUUID createUUID];
-        XCTAssertNotNil(conversation);
-        
-        // load a message from the second context and check that the objectIDs for users are as expected
-        ZMSystemMessage *message = [self createConversationConnectRequestSystemMessageInConversation:conversation inManagedObjectContext:self.syncMOC];
-        XCTAssertNotNil(message);
-        [self.syncMOC saveOrRollback];
-    }];
-    
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    NSFetchRequest *request = [ZMSystemMessage sortedFetchRequest];
-    NSArray *messages = [self.uiMOC executeFetchRequestOrAssert:request];
-    
-    // then
-    XCTAssertNotNil(messages);
-    XCTAssertEqual(messages.count, 1u);
-    
-    XCTAssertNotNil(messages[0]);
-    NSString *text = [(ZMTextMessage *)messages[0] text];
-    XCTAssertNotNil(text);
-    XCTAssertEqualObjects(text, @"This is a very important message");
-
 }
 
 - (void)testThatItReturnsSenderIFItsTheOnlyUserContainedInUserIDs
@@ -1188,29 +1155,6 @@ NSString * const ReactionsKey = @"reactions";
     
     // then
     XCTAssertEqual(messages.count, 0u);
-}
-
-- (void)testThatItMarksSentConnectionRequestMessageAsReadOnUpdateEvent
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMMessage *oldMessage = (id)[conversation appendMessageWithText:@"Hi!"];
-    oldMessage.serverTimestamp = [NSDate dateWithTimeIntervalSince1970:1234567];
-    conversation.lastServerTimeStamp = oldMessage.serverTimestamp;
-    conversation.lastReadServerTimeStamp = oldMessage.serverTimestamp;
-    
-    // when
-    __block ZMSystemMessage *message;
-    [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:ZMUpdateEventTypeConversationConnectRequest inConversation:conversation withUsersIDs:@[] senderID:self.selfUser.remoteIdentifier];
-    }];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    XCTAssertEqual(conversation.lastReadServerTimeStamp, message.serverTimestamp);
-    XCTAssertTrue([[conversation keysThatHaveLocalModifications] containsObject:ZMConversationLastReadServerTimeStampKey]);
 }
 
 - (void)testThatASystemMessageHasSystemMessageData
