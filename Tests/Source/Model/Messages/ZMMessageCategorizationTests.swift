@@ -95,7 +95,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         article.title = "title"
         article.summary = "summary"
         let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
-        let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create().transportString())
+        let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create())
         let message = self.conversation.appendClientMessage(with: genericMessage)
         message?.linkPreviewState = .processed
         
@@ -121,7 +121,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size:imageSize, length:UInt(imageData.count), mimeType:"image/jpeg")
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
-        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce.transportString(), format: .preview, expiresAfter: NSNumber(value: message.deletionTimeout))
+        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties, processedImageProperties: properties, encryptionKeys: keys, nonce: messageNonce, format: .preview, expiresAfter: NSNumber(value: message.deletionTimeout))
         message.add(imageMessage)
         message.updateCategoryCache()
         

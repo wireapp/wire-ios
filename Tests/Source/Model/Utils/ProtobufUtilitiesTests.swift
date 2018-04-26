@@ -107,7 +107,7 @@ class ProtobufUtilitiesTests: XCTestCase {
         XCTAssertFalse(preview.article.image.uploaded.hasAssetId())
         
         // when
-        let (assetKey, token) = ("Key", "Token")
+        let (assetKey, token) = ("key", "token")
         let updated = preview.update(withAssetKey: assetKey, assetToken: token)
         
         // then
@@ -125,7 +125,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesRemoteAssetDataWIthAssetIdAndAssetToken() {
         // given 
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = ("id", "token")
         let sut = ZMAssetRemoteData.remoteData(withOTRKey: otrKey, sha256: sha)
 
         // when
@@ -141,9 +141,9 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken() {
         // given
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = ("id", "token")
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create().transportString())
+        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create())
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -160,9 +160,9 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_Ephemeral() {
         // given
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = ("id", "token")
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create().transportString(), expiresAfter: NSNumber(value: 15))
+        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value: 15))
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -179,7 +179,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken() {
         // given
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = ("id", "token")
         let previewAsset = ZMAssetPreview.preview(
             withSize: 128,
             mimeType: "image/jpg",
@@ -189,7 +189,7 @@ class ProtobufUtilitiesTests: XCTestCase {
 
         let sut = ZMGenericMessage.genericMessage(
             asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create().transportString(),
+            messageID: UUID.create(),
             expiresAfter: NSNumber(value: 0)
         )
 
@@ -208,7 +208,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral() {
         // given
         let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        let (assetId, token) = ("id", "token")
         let previewAsset = ZMAssetPreview.preview(
             withSize: 128,
             mimeType: "image/jpg",
@@ -218,7 +218,7 @@ class ProtobufUtilitiesTests: XCTestCase {
 
         let sut = ZMGenericMessage.genericMessage(
             asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create().transportString(),
+            messageID: UUID.create(),
             expiresAfter: NSNumber(value: 15)
         )
 
