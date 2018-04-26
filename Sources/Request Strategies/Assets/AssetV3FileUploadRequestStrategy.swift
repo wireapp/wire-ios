@@ -214,7 +214,7 @@ extension AssetV3FileUploadRequestStrategy: ZMUpstreamTranscoder {
             // this will remove deleted clients that are returned in the payload
             _ = message.parseUploadResponse(response, clientRegistrationDelegate: delegate)
         }
-        
+
         if let updated = message.genericAssetMessage?.updatedUploaded(withAssetId: assetId, token: payload["token"] as? String) {
             message.add(updated)
         }

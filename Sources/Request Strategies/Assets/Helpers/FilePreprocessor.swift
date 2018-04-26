@@ -118,7 +118,7 @@ extension ZMAssetClientMessage {
         let msg = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: keys.otrKey,
             sha256: keys.sha256!,
-            messageID: self.nonce!.transportString(),
+            messageID: self.nonce!,
             expiresAfter: NSNumber(value: self.deletionTimeout)
         )
 

@@ -99,7 +99,7 @@ extension MessagingTestBase {
                                              source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
         
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create().transportString())
+        let message = ZMGenericMessage.message(text: text, nonce: UUID.create())
         return self.decryptedUpdateEventFromOtherClient(message: message, conversation: conversation, source: source)
     }
     

@@ -117,7 +117,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
             let previewMessage = ZMGenericMessage.genericMessage(
                 asset: .asset(withOriginal: nil, preview: previewAsset),
-                messageID: message.nonce!.transportString(),
+                messageID: message.nonce!,
                 expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
 
@@ -132,7 +132,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             var uploaded = ZMGenericMessage.genericMessage(
                 withUploadedOTRKey: otr,
                 sha256: sha,
-                messageID: message.nonce!.transportString(),
+                messageID: message.nonce!,
                 expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
             )
             if assetId {
@@ -334,7 +334,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce!.transportString())
+            let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce!)
             message.add(notUploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
         }

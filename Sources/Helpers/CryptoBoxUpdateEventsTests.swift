@@ -28,7 +28,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
-            let generic = ZMGenericMessage.message(text: text, nonce: UUID.create().transportString())
+            let generic = ZMGenericMessage.message(text: text, nonce: UUID.create())
             
             // WHEN
             let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
@@ -54,7 +54,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let generic = ZMGenericMessage.genericMessage(mediumImageProperties: properties,
                                                           processedImageProperties: properties,
                                                           encryptionKeys: keys,
-                                                          nonce: UUID.create().transportString(),
+                                                          nonce: UUID.create(),
                                                           format: .medium)
             
             // WHEN
@@ -112,7 +112,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
-            let message = ZMGenericMessage.message(text: text, nonce: UUID.create().transportString())
+            let message = ZMGenericMessage.message(text: text, nonce: UUID.create())
 
             let wrapper = NSDictionary(dictionary: [
                 "id": UUID.create().transportString(),
