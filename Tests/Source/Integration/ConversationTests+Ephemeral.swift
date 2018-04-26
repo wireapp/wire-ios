@@ -110,7 +110,7 @@ extension ConversationTests_Ephemeral {
         // other client deletes ephemeral message
         let fromClient = user1?.clients.anyObject() as! MockUserClient
         let toClient = selfUser?.clients.anyObject() as! MockUserClient
-        let deleteMessage = ZMGenericMessage(deleteMessage: ephemeral.nonce!.transportString(), nonce:UUID.create().transportString())
+        let deleteMessage = ZMGenericMessage(deleteMessage: ephemeral.nonce!, nonce:UUID.create())
         
         mockTransportSession?.performRemoteChanges { session in
             self.selfToUser1Conversation?.encryptAndInsertData(from: fromClient, to: toClient, data: deleteMessage.data())
@@ -128,7 +128,7 @@ extension ConversationTests_Ephemeral {
         let fromClient = user1?.clients.anyObject() as! MockUserClient
         let toClient = selfUser?.clients.anyObject() as! MockUserClient
         let text = ZMText(message: "foo", linkPreview: nil)!
-        let genericMessage = ZMGenericMessage.genericMessage(pbMessage: text, messageID:UUID.create().transportString(), expiresAfter: NSNumber(value:0.1))
+        let genericMessage = ZMGenericMessage.genericMessage(pbMessage: text, messageID:UUID.create(), expiresAfter: NSNumber(value:0.1))
         XCTAssertEqual(genericMessage.ephemeral.expireAfterMillis, 100)
         XCTAssertTrue(genericMessage.hasEphemeral())
         

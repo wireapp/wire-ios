@@ -358,7 +358,7 @@
         // given
         XCTAssertTrue([self login]);
 
-        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:@"Hello" nonce:[NSUUID createUUID].transportString expiresAfter:nil];
+        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:@"Hello" nonce:[NSUUID createUUID] expiresAfter:nil];
         
         [self closePushChannelAndWaitUntilClosed]; // do not use websocket
         
