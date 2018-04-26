@@ -26,9 +26,8 @@ extension ZMConversation {
               let conversation = message.conversation,
               let convID = conversation.remoteIdentifier
         else { return }
-        
-        let nonce = NSUUID()
-        let genericMessage = ZMGenericMessage(hideMessage: messageNonce.transportString(), inConversation: convID.transportString(), nonce: nonce.transportString())
+
+        let genericMessage = ZMGenericMessage(hideMessage: messageNonce, inConversation: convID, nonce: UUID())
         ZMConversation.appendSelfConversation(with: genericMessage, managedObjectContext: message.managedObjectContext!)
     }
 }
@@ -60,7 +59,7 @@ extension ZMMessage {
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
         
         // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
-        let deletedMessage = ZMGenericMessage(deleteMessage: messageNonce.transportString(), nonce: NSUUID().transportString())
+        let deletedMessage = ZMGenericMessage(deleteMessage: messageNonce, nonce: UUID())
         let delete = conversation.appendClientMessage(with: deletedMessage, expires: false, hidden: true)
         removeClearingSender(false)
         updateCategoryCache()
@@ -88,7 +87,7 @@ extension ZMMessage {
         let mentions = conversation.mentions(in: newText)
         let normalizedNewText = conversation.normalize(text: newText, for: mentions)
 
-        let edited = ZMGenericMessage(editMessage: messageNonce.transportString(), newText: normalizedNewText, nonce: NSUUID().transportString(), mentions: mentions)
+        let edited = ZMGenericMessage(editMessage: messageNonce, newText: normalizedNewText, nonce: UUID(), mentions: mentions)
         
         guard let newMessage = conversation.appendClientMessage(with: edited, expires: true, hidden: false) else { return nil }
         newMessage.updatedTimestamp = newMessage.serverTimestamp

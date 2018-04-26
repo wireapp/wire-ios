@@ -24,17 +24,20 @@
 @class ZMClientMessage;
 @class ZMAssetClientMessage;
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const ZMGenericMessageDataMessageKey;
 extern NSString * const ZMGenericMessageDataAssetKey;
 
+NS_ASSUME_NONNULL_END
+
 @interface ZMGenericMessageData: ZMManagedObject
 
-@property (nonatomic) NSData *data;
-@property (nonatomic, readonly) ZMGenericMessage *genericMessage;
-@property (nonatomic) ZMClientMessage *message;
-@property (nonatomic) ZMAssetClientMessage *asset;
+@property (nonatomic, nonnull) NSData *data;
+@property (nonatomic, readonly, nullable) ZMGenericMessage *genericMessage;
+@property (nonatomic, nullable) ZMClientMessage *message;
+@property (nonatomic, nullable) ZMAssetClientMessage *asset;
 
-+ (NSString *)entityName;
++ (NSString * _Nonnull)entityName;
 
 @end
-

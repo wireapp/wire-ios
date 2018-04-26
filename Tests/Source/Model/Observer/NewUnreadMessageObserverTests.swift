@@ -159,7 +159,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let genMsg = ZMGenericMessage.knock(nonce: "nonce")
+        let genMsg = ZMGenericMessage.knock(nonce: UUID.create())
         let msg1 = conversation.appendClientMessage(with: genMsg)!
         msg1.serverTimestamp = Date()
         conversation.resortMessages(withUpdatedMessage: msg1)

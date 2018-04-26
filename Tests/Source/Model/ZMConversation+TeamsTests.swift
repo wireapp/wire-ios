@@ -181,7 +181,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
             "name": NSNull(),
             "type": NSNumber(value: ZMBackendConversationType.convTypeGroup.rawValue),
             "id": conversation.remoteIdentifier!.transportString(),
-            "creator": UUID.create().transportString(),
+            "creator": UUID.create(),
             "members": [
                 "others": activeUsers.map { ["id": $0.remoteIdentifier!.transportString()] },
                 "self": [

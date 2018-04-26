@@ -157,7 +157,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
         
         set {
-                
+
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
             guard self.fileMessageData != nil else { return }
@@ -180,8 +180,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 assetBuilder.merge(from: assetData)
             }
             messageBuilder.merge(from: thumbnailMessage)
-            
             remoteBuilder.setAssetId(newValue)
+
             previewBuilder.setRemote(remoteBuilder.build())
             assetBuilder.setPreview(previewBuilder.build())
             let asset = assetBuilder.build()!
@@ -260,7 +260,7 @@ extension ZMAssetClientMessage {
     
     private func setAndSyncNotUploaded(_ notUploaded: ZMAssetNotUploaded) {
         guard genericAssetMessage?.assetData?.hasNotUploaded() == false,
-              let messageID = nonce?.transportString()
+              let messageID = nonce
         else {
             return // already canceled or not yet sent
         }

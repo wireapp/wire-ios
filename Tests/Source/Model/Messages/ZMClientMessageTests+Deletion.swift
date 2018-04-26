@@ -75,8 +75,8 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         cache.storeAssetData(sut, format: .medium, encrypted: true, data: mediumJPEGData())
         
         // expect
-        let assetId = UUID.create().transportString()
-        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!.transportString()).updatedUploaded(withAssetId: assetId, token: nil)
+        let assetId = "asset-id"
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         let observer = AssetDeletionNotificationObserver()
         
@@ -116,16 +116,16 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNotNil(cache.assetData(sut, encrypted: false))
         
         // expect
-        let assetId = UUID.create().transportString()
-        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!.transportString()).updatedUploaded(withAssetId: assetId, token: nil)
+        let assetId = "asset-id"
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .init(), sha256: .init(), messageID: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
-        let previewAssetId = UUID.create().transportString()
+        let previewAssetId = "preview_assetId"
         let remote = ZMAssetRemoteData.remoteData(withOTRKey: .init(), sha256: .init(), assetId: previewAssetId, assetToken: nil)
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 1024, height: 1024)
         let preview = ZMAssetPreview.preview(withSize: 256, mimeType: "image/png", remoteData: remote, imageMetaData: image)
         let asset = ZMAsset.asset(withOriginal: nil, preview: preview)
-        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!.transportString())
+        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: sut.nonce!)
         sut.update(with: genericMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         let observer = AssetDeletionNotificationObserver()
@@ -260,7 +260,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         // given
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let nonce = UUID.create()
-        let deletedMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: UUID().transportString())
+        let deletedMessage = ZMGenericMessage(deleteMessage: nonce, nonce: UUID())
         
         // when
         let sut = conversation.appendClientMessage(with: deletedMessage, expires: false, hidden: true)!
@@ -446,7 +446,7 @@ extension ZMClientMessageTests_Deletion {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
 
         //when
-        let genericMessage = ZMGenericMessage.message(text: name!, nonce: nonce.transportString())
+        let genericMessage = ZMGenericMessage.message(text: name!, nonce: nonce)
         let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.messageUpdateResult(from: nextEvent, in: self.uiMOC, prefetchResult: nil)
@@ -501,7 +501,7 @@ extension ZMClientMessageTests_Deletion {
 extension ZMClientMessageTests_Deletion {
 
     func createMessageDeletedUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage(deleteMessage: nonce.transportString(), nonce: UUID.create().transportString())
+        let genericMessage = ZMGenericMessage(deleteMessage: nonce, nonce: UUID.create())
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
     }
     
