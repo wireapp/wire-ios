@@ -25,6 +25,8 @@ final class AccessibilityWrapperController: UIViewController {
         self.wrappedController = wrappedController
         super.init(nibName: nil, bundle: nil)
         
+        view.shouldGroupAccessibilityChildren = false
+        view.accessibilityElementsHidden = false
         view.isAccessibilityElement = true
         view.accessibilityIdentifier = "accessibilityWrapper"
         
