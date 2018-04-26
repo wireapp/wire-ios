@@ -169,7 +169,7 @@ extension CallingRequestStrategy : WireCallCenterTransport {
             
             self.zmLog.debug("sending calling message")
             
-            let genericMessage = ZMGenericMessage(callingContent: dataString, nonce: NSUUID().transportString())
+            let genericMessage = ZMGenericMessage(callingContent: dataString, nonce: UUID())
             
             self.genericMessageStrategy.schedule(message: genericMessage, inConversation: conversation) { (response) in
                 

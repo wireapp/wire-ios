@@ -332,8 +332,8 @@ extension LocalNotificationDispatcherTests {
         sender.remoteIdentifier = UUID.create()
         
         let message = conversation.appendMessage(withText: "text") as! ZMClientMessage
-        let reaction1 = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce!.transportString(), nonce: UUID.create().transportString())
-        let reaction2 = ZMGenericMessage(emojiString: "", messageID: message.nonce!.transportString(), nonce: UUID.create().transportString())
+        let reaction1 = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce!, nonce: UUID.create())
+        let reaction2 = ZMGenericMessage(emojiString: "", messageID: message.nonce!, nonce: UUID.create())
         
         let event1 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction1, senderID: sender.remoteIdentifier!)
         let event2 = createUpdateEvent(UUID.create(), conversationID: conversation.remoteIdentifier!, genericMessage: reaction2, senderID: sender.remoteIdentifier!)
@@ -356,7 +356,7 @@ extension LocalNotificationDispatcherTests {
 extension LocalNotificationDispatcherTests {
         
     func payloadForEncryptedOTRMessage(text: String, nonce: UUID) -> [String: Any] {
-        let message = ZMGenericMessage.message(text: text, nonce: nonce.transportString())
+        let message = ZMGenericMessage.message(text: text, nonce: nonce)
         return self.payloadForOTRAsset(with: message)
     }
     
