@@ -82,7 +82,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: otrKey,
             sha256: sha,
-            messageID: message.nonce!.transportString(),
+            messageID: message.nonce!,
             expiresAfter: timer
         )
 
@@ -404,7 +404,7 @@ extension AssetV3DownloadRequestStrategyTests {
                     .setAssetToken("someToken"))
                 .build()
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId)
             
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
@@ -474,7 +474,7 @@ extension AssetV3DownloadRequestStrategyTests {
                     .setAssetToken("someToken"))
                 .build()
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId.transportString())
+            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId)
             
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,

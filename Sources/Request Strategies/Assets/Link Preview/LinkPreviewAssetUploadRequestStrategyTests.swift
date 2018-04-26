@@ -55,9 +55,9 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value:10)).data())
+            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!, expiresAfter: NSNumber(value:10)).data())
         } else {
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!.transportString()).data())
+            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!).data())
         }
         self.syncMOC.saveOrRollback()
         
@@ -97,13 +97,13 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         var linkPreview = message.genericMessage!.linkPreviews.first!
         linkPreview = linkPreview.update(withOtrKey: otrKey, sha256: sha256)
         
-        message.add(ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: linkPreview, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value:message.deletionTimeout)).data())
+        message.add(ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: linkPreview, nonce: message.nonce!, expiresAfter: NSNumber(value:message.deletionTimeout)).data())
         
         return (otrKey, sha256)
     }
     
-    func completeRequest(_ message: ZMClientMessage, request: ZMTransportRequest?, assetKey: String, token: String) {
-        let response = ZMTransportResponse(payload: ["key" : assetKey, "token": token] as ZMTransportData, httpStatus: 201, transportSessionError: nil)
+    func completeRequest(_ message: ZMClientMessage, request: ZMTransportRequest?, assetId: String, token: String) {
+        let response = ZMTransportResponse(payload: ["key" : assetId, "token": token] as ZMTransportData, httpStatus: 201, transportSessionError: nil)
         _ = sut.updateUpdatedObject(message, requestUserInfo: nil, response: response, keysToParse: [ZMClientMessageLinkPreviewStateKey])
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
@@ -197,18 +197,18 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         process(sut, message: message)
         let request = sut.nextRequest()
         
-        let assetKey = "key123"
+        let assetId = "id123"
         let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
         
         // WHEN
-        completeRequest(message, request: request, assetKey: assetKey, token: token)
+        completeRequest(message, request: request, assetId: assetId, token: token)
         
         // THEN
         let linkPreviews = message.genericMessage!.linkPreviews
         let articleProtocol: ZMArticle = linkPreviews.first!.article
         XCTAssertEqual(articleProtocol.image.uploaded.otrKey, otrKey)
         XCTAssertEqual(articleProtocol.image.uploaded.sha256, sha256)
-        XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetKey)
+        XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetId)
         XCTAssertEqual(articleProtocol.image.uploaded.assetToken, token)
     }
     
@@ -224,11 +224,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         process(sut, message: message)
         let request = sut.nextRequest()
         
-        let assetKey = "key123"
+        let assetId = "id123"
         let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
-        
+
         // WHEN
-        completeRequest(message, request: request, assetKey: assetKey, token: token)
+        completeRequest(message, request: request, assetId: assetId, token: token)
         
         // THEN
         XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
@@ -254,13 +254,13 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         process(sut, message: message)
         let request = sut.nextRequest()
         
-        let assetKey = "key123"
+        let assetId = "id123"
         let token = "qJ8JPFLsiYGx7fnrlL+7Yk9="
         
         XCTAssertTrue(message.isEphemeral)
 
         // WHEN
-        completeRequest(message, request: request, assetKey: assetKey, token: token)
+        completeRequest(message, request: request, assetId: assetId, token: token)
         
         // THEN
         XCTAssertTrue(message.isEphemeral)
@@ -271,7 +271,7 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         let articleProtocol: ZMArticle = linkPreviews.first!.article
         XCTAssertEqual(articleProtocol.image.uploaded.otrKey, otrKey)
         XCTAssertEqual(articleProtocol.image.uploaded.sha256, sha256)
-        XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetKey)
+        XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetId)
         XCTAssertEqual(articleProtocol.image.uploaded.assetToken, token)
     }
 

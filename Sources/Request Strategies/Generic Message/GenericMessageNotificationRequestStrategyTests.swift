@@ -47,7 +47,7 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
 
     func testThatItCreatesARequestWhenPostingAGenericMessageScheduleNotification() {
         // GIVEN
-        let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create().transportString())
+        let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create())
 
         // WHEN
         GenericMessageScheduleNotification.post(message: genericMessage, conversation: self.groupConversation)

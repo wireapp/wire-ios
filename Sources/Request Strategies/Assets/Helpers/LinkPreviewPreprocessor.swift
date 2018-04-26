@@ -83,7 +83,7 @@ private let zmLog = ZMSLog(tag: "link previews")
         objectsBeingProcessed.remove(message)
         
         if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, !message.isObfuscated {
-            let updatedMessage = ZMGenericMessage.message(text: messageText, linkPreview: preview.protocolBuffer, nonce: message.nonce!.transportString(), expiresAfter: NSNumber(value: message.deletionTimeout))
+            let updatedMessage = ZMGenericMessage.message(text: messageText, linkPreview: preview.protocolBuffer, nonce: message.nonce!, expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(updatedMessage.data())
             
             if let imageData = preview.imageData.first {
