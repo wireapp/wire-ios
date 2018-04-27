@@ -184,7 +184,6 @@ public protocol LocalNotificationResponder : class {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        launchOptions: LaunchOptions,
         blacklistDownloadInterval : TimeInterval,
         completion: @escaping (SessionManager) -> Void
         ) {
@@ -196,7 +195,6 @@ public protocol LocalNotificationResponder : class {
                 analytics: analytics,
                 delegate: delegate,
                 application: application,
-                launchOptions: launchOptions,
                 blacklistDownloadInterval: blacklistDownloadInterval
             ))
             
@@ -214,7 +212,6 @@ public protocol LocalNotificationResponder : class {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        launchOptions: LaunchOptions,
         blacklistDownloadInterval : TimeInterval
         ) {
         
@@ -244,8 +241,7 @@ public protocol LocalNotificationResponder : class {
             analytics: analytics,
             reachability: reachability,
             delegate: delegate,
-            application: application,
-            launchOptions: launchOptions
+            application: application
         )
         
         self.blacklistVerificator = ZMBlacklistVerificator(checkInterval: blacklistDownloadInterval,
@@ -285,7 +281,6 @@ public protocol LocalNotificationResponder : class {
         reachability: ReachabilityProvider & TearDownCapable,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        launchOptions: LaunchOptions,
         dispatchGroup: ZMSDispatchGroup? = nil
         ) {
 
@@ -340,7 +335,9 @@ public protocol LocalNotificationResponder : class {
         
         postLoginAuthenticationToken = PostLoginAuthenticationNotification.addObserver(self, queue: self.groupQueue)
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
-        
+    }
+    
+    public func start(launchOptions: LaunchOptions) {
         if let account = accountManager.selectedAccount {
             selectInitialAccount(account, launchOptions: launchOptions)
         } else {
