@@ -56,12 +56,12 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         
         let expectation = self.expectation(description: "That a page is fetched")
 
-        let completionBlock:SuccessOrErrorCallback = { [weak paginationController](success, error) in
+        let completionBlock:SuccessOrErrorCallback = { [weak paginationController](success, ziphs, error) in
             
             expectation.fulfill()
             
             if (success) {
-                XCTAssertTrue(paginationController!.ziphs.count > 0 , "Paged fetched but no ziphs")
+                XCTAssertTrue(ziphs.count > 0 , "Paged fetched but no ziphs")
             }
             else {
                 
@@ -82,14 +82,14 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         let expectation = self.expectation(description: "That several pages are fetched")
         
         self.paginationController.fetchBlock = self.fetchBlockForSearch(self.paginationController, searchTerm: "cat", resultsLimit: 25)
-        self.paginationController.completionBlock = { [weak self](success, error) in
+        self.paginationController.completionBlock = { [weak self](success, ziphs, error) in
             
             if (success && (self?.paginationController.totalPagesFetched)! < 3) {
                 _ = self?.paginationController.fetchNewPage()
             }
             else if (success && self?.paginationController.totalPagesFetched == 3) {
                 expectation.fulfill()
-                XCTAssertTrue(self?.paginationController.ziphs.count == 25*3, "Did not fetch enough gifs")
+                XCTAssertTrue(ziphs.count == 25*3, "Did not fetch enough gifs")
             }
             else {
                 expectation.fulfill()
@@ -107,7 +107,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         let expectation = self.expectation(description: "That several pages are fetched")
         
         self.paginationController.fetchBlock = self.fetchBlockForSearch(self.paginationController, searchTerm: "awg", resultsLimit: 10)
-        self.paginationController.completionBlock = { [weak self](success, error) in
+        self.paginationController.completionBlock = { [weak self](success, ziphs, error) in
             
             if (success) {
                 _ = self?.paginationController.fetchNewPage()
