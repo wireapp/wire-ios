@@ -20,12 +20,12 @@
 import Foundation
 
 
-public typealias SuccessOrErrorCallback = (_ success:Bool, _ error:Error?)->()
+public typealias SuccessOrErrorCallback = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?)->()
 public typealias FetchBlock = (_ offset:Int)-> CancelableTask?
 
 public class ZiphyPaginationController {
     
-    fileprivate(set) open var ziphs:[Ziph] = []
+    fileprivate(set) var ziphs:[Ziph] = []
     
     fileprivate (set) var ziphsThisFetch = 0
     fileprivate (set) open var totalPagesFetched = 0
@@ -33,12 +33,8 @@ public class ZiphyPaginationController {
     
     open var fetchBlock:FetchBlock?
     open var completionBlock:SuccessOrErrorCallback?
-    open var callBackQueue:DispatchQueue
-    
-    public init(callBackQueue:DispatchQueue = DispatchQueue.main){
-        
-        self.callBackQueue = callBackQueue;
-    }
+
+    public init() {}
     
     open func fetchNewPage() -> CancelableTask? {
         
@@ -72,8 +68,6 @@ public class ZiphyPaginationController {
             self.offset = self.ziphs.count
         }
         
-        performOnQueue(self.callBackQueue){
-            self.completionBlock?(success, error)
-        }
+        self.completionBlock?(success, self.ziphs, error)
     }
 }
