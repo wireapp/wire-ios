@@ -56,7 +56,7 @@ class ZiphyPaginationControllerTests: ZiphyTestCase {
         
         let expectation = self.expectation(description: "That a page is fetched")
 
-        let completionBlock:SuccessOrErrorCallback = { [weak paginationController](success, ziphs, error) in
+        let completionBlock:SuccessOrErrorCallback = { (success, ziphs, error) in
             
             expectation.fulfill()
             
