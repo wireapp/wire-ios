@@ -1,0 +1,1 @@
+import_from_git(url: 'git@github.com:wireapp/wire-ios-shared-resources.git', branch: "feature/fastlane", path: "Fastlane/Frameworks")
