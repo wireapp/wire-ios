@@ -637,7 +637,13 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     [description appendFormat:@" %lu completionHandler(s)", (unsigned long)self.completionHandlers.count];
     
     if (self.payload) {
-        [description appendFormat:@" payload: %@", self.payload];
+        NSDictionary *payload = (NSDictionary*)self.payload;
+        if([payload isKindOfClass:[NSDictionary class]] && [payload objectForKey:@"password"] != nil) {
+            NSMutableDictionary *mutablePayload = payload.mutableCopy;
+            mutablePayload[@"password"] = @"<redacted>";
+            payload = mutablePayload;
+        }
+        [description appendFormat:@" payload: %@", payload];
     }
     if (self.binaryData) {
         [description appendFormat:@" binary data: %llu", (unsigned long long) self.binaryData.length];
