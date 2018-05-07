@@ -23,10 +23,11 @@ private var recordingToken : ZMSLog.LogHookToken? = nil
 extension ZMSLog {
     
     /// Start recording
-    public static func startRecording(size: Int = 10000) {
+    public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {
             if recordingToken == nil {
                 recordingToken = self.nonLockingAddHook(logHook: { (level, tag, message) -> (Void) in
+                    guard isInternal || level != .error else { return }
                     let tagString = tag.flatMap { "[\($0)] "} ?? ""
                     ZMSLog.appendToCurrentLog("\(currentDate): [\(level.rawValue)] \(tagString)\(message)\n")
                 })
