@@ -160,7 +160,25 @@ class OpenGraphMockDataProvider: NSObject {
             urlString: expected.url
         )
     }
-
+    
+    static func crashingDataEmoji() -> OpenGraphMockData {
+        let expected = OpenGraphData(
+            title: "Wall posts ",
+            type: "website",
+            url: "https://vk.com/wall-36047336_69534",
+            resolvedURL: "",
+            imageUrls: ["https://pp.userapi.com/c824202/v824202790/122846/GMTO8Rcm-wI.jpg"],
+            siteName: nil,
+            description: "📍 xxxxx"
+        )
+        
+        return OpenGraphMockData(
+            head: fixtureWithName("crash_emoji"),
+            expected: expected,
+            urlString: expected.url
+        )
+    }
+    
     static func instagramData() -> OpenGraphMockData {
         let expected = OpenGraphData(
             title: "Instagram photo by Silvan Dähn • Aug 5, 2015 at 4:27pm UTC",

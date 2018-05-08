@@ -18,6 +18,7 @@
 
 
 import Ono
+import HTMLString
 
 final class OpenGraphScanner: NSObject {
     
@@ -54,7 +55,7 @@ final class OpenGraphScanner: NSObject {
     }
     
     private func addProperty(_ property: OpenGraphPropertyType, value: String) {
-        guard let content = value.resolvedXMLEntityReferences() else { return }
+        let content = value.removingHTMLEntities
         if property == .image {
             images.append(content)
         } else {

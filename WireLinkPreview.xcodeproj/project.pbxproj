@@ -7,6 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
+		87B48ECD20A09E4A00DBAD9D /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; };
+		87B48ECE20A09E9B00DBAD9D /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; };
+		87B48ECF20A09EBD00DBAD9D /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
 		BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */; };
 		BF21CC8F1E925AA300A874F5 /* instagram_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */; };
@@ -32,7 +36,6 @@
 		BF4F2B401E925AC9000B22D1 /* OpenGraphScanner.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B331E925AC9000B22D1 /* OpenGraphScanner.swift */; };
 		BF4F2B411E925AC9000B22D1 /* PreviewBlacklist.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B341E925AC9000B22D1 /* PreviewBlacklist.swift */; };
 		BF4F2B421E925AC9000B22D1 /* PreviewDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B351E925AC9000B22D1 /* PreviewDownloader.swift */; };
-		BF4F2B431E925AC9000B22D1 /* String+HTML.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B361E925AC9000B22D1 /* String+HTML.swift */; };
 		BF4F2B441E925AC9000B22D1 /* URLSessionProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B371E925AC9000B22D1 /* URLSessionProtocols.swift */; };
 		BF4F2B451E925AC9000B22D1 /* WireLinkPreview.h in Headers */ = {isa = PBXBuildFile; fileRef = BF4F2B381E925AC9000B22D1 /* WireLinkPreview.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF4F2B491E925AE8000B22D1 /* DownloaderMocks.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B461E925AE8000B22D1 /* DownloaderMocks.swift */; };
@@ -71,6 +74,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				87B48ECF20A09EBD00DBAD9D /* HTMLString.framework in CopyFiles */,
 				BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -82,6 +86,8 @@
 		54BD49F71D41FDE5006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		54BD49F91D41FDE5006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
+		87B48ECC20A09E4900DBAD9D /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = guardian_head.txt; path = WireLinkPreviewTests/guardian_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = instagram_head.txt; path = WireLinkPreviewTests/instagram_head.txt; sourceTree = SOURCE_ROOT; };
@@ -120,7 +126,6 @@
 		BF4F2B331E925AC9000B22D1 /* OpenGraphScanner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = OpenGraphScanner.swift; path = WireLinkPreview/OpenGraphScanner.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B341E925AC9000B22D1 /* PreviewBlacklist.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreviewBlacklist.swift; path = WireLinkPreview/PreviewBlacklist.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B351E925AC9000B22D1 /* PreviewDownloader.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = PreviewDownloader.swift; path = WireLinkPreview/PreviewDownloader.swift; sourceTree = SOURCE_ROOT; };
-		BF4F2B361E925AC9000B22D1 /* String+HTML.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "String+HTML.swift"; path = "WireLinkPreview/String+HTML.swift"; sourceTree = SOURCE_ROOT; };
 		BF4F2B371E925AC9000B22D1 /* URLSessionProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = URLSessionProtocols.swift; path = WireLinkPreview/URLSessionProtocols.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B381E925AC9000B22D1 /* WireLinkPreview.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WireLinkPreview.h; path = WireLinkPreview/WireLinkPreview.h; sourceTree = SOURCE_ROOT; };
 		BF4F2B461E925AE8000B22D1 /* DownloaderMocks.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = DownloaderMocks.swift; path = WireLinkPreviewTests/DownloaderMocks.swift; sourceTree = SOURCE_ROOT; };
@@ -148,6 +153,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87B48ECD20A09E4A00DBAD9D /* HTMLString.framework in Frameworks */,
 				BF7699881D34F881009C378B /* Ono.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -156,6 +162,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				87B48ECE20A09E9B00DBAD9D /* HTMLString.framework in Frameworks */,
 				BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */,
 				BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */,
 			);
@@ -220,6 +227,7 @@
 				BF21CC7B1E925A9E00A874F5 /* yahoo_sports_head.txt */,
 				BF21CC7C1E925A9E00A874F5 /* youtube_head.txt */,
 				F1202A751FA0830000296B4B /* crash.txt */,
+				87B48ECA20A088F700DBAD9D /* crash_emoji.txt */,
 			);
 			name = Fixtures;
 			sourceTree = "<group>";
@@ -241,6 +249,7 @@
 				54BD49F71D41FDE5006E29D1 /* Cartfile.private */,
 				54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
+				87B48ECC20A09E4900DBAD9D /* HTMLString.framework */,
 				BF7699871D34F881009C378B /* Ono.framework */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
 				BFF057981D25434E004A2C29 /* WireLinkPreviewTests */,
@@ -271,7 +280,6 @@
 				BF4F2B331E925AC9000B22D1 /* OpenGraphScanner.swift */,
 				BF4F2B341E925AC9000B22D1 /* PreviewBlacklist.swift */,
 				BF4F2B351E925AC9000B22D1 /* PreviewDownloader.swift */,
-				BF4F2B361E925AC9000B22D1 /* String+HTML.swift */,
 				BF4F2B371E925AC9000B22D1 /* URLSessionProtocols.swift */,
 				BF4F2B381E925AC9000B22D1 /* WireLinkPreview.h */,
 			);
@@ -405,6 +413,7 @@
 				BF21CC951E925AA300A874F5 /* twitter_head.txt in Resources */,
 				BF21CC961E925AA300A874F5 /* twitter_images_head.txt in Resources */,
 				BF21CC981E925AA300A874F5 /* vimeo_head.txt in Resources */,
+				87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */,
 				BF21CC991E925AA300A874F5 /* washington_post_head.txt in Resources */,
 				BF21CC901E925AA300A874F5 /* itunes_head.txt in Resources */,
 				BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */,
@@ -426,7 +435,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				BF4F2B3F1E925AC9000B22D1 /* OpenGraphDataTypes.swift in Sources */,
-				BF4F2B431E925AC9000B22D1 /* String+HTML.swift in Sources */,
 				BF4F2B401E925AC9000B22D1 /* OpenGraphScanner.swift in Sources */,
 				BF4F2B3C1E925AC9000B22D1 /* LinkPreviewTypes.swift in Sources */,
 				BF4F2B3B1E925AC9000B22D1 /* LinkPreviewDetector.swift in Sources */,
