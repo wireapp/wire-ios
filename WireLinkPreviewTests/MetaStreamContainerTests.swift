@@ -78,7 +78,7 @@ class MetaStreamContainerTests: XCTestCase {
     }
 
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Capitalized_ASCII() {
-    assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>", encoding: .ascii)
+        assertThatItUpdatesReachedEndOfHeadWhenItReceivedHead("</Head>", encoding: .ascii)
     }
 
     func testThatItSets_reachedEndOfHead_WhenDataContainsHead_Uppercase_ASCII() {

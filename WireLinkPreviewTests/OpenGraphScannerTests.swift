@@ -82,6 +82,10 @@ class OpenGraphScannerTests: XCTestCase {
         assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.yahooSports())
     }
 
+    func testThatItCanParseCorrectlyStrippedSampleData_VK_Emoji_crash() {
+        assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.crashingDataEmoji())
+    }
+    
     func assertThatItParsesSampleDataCorrectly(_ mockData: OpenGraphMockData, line: UInt = #line) {
         // given
         var receivedData: OpenGraphData?
