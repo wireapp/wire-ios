@@ -31,6 +31,9 @@
 		54B04A6C1D77359A00CED57C /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6D1D77359A00CED57C /* WireDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */; };
+		878B823C20A1E192007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; };
+		878B823D20A1E19D007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; };
+		878B823E20A1E2AF007455CA /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE3EB58B1DFEBDCE001FE3AE /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* WireCryptobox.framework */; };
 		CE3EB58D1DFEBDCE001FE3AE /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44C1D77169900FDE440 /* Ono.framework */; };
@@ -88,6 +91,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				878B823E20A1E2AF007455CA /* HTMLString.framework in CopyFiles */,
 				F125E9AD1E28D603006583A2 /* WireMockTransport.framework in CopyFiles */,
 				54B04A621D77359900CED57C /* WireCryptobox.framework in CopyFiles */,
 				54B04A641D77359900CED57C /* Ono.framework in CopyFiles */,
@@ -135,6 +139,7 @@
 		5470D4531D77169900FDE440 /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
 		5470D4541D77169900FDE440 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
 		54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
+		878B823B20A1E192007455CA /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		BF64A2111D796DC300725918 /* WireShareEngine-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireShareEngine-Bridging-Header.h"; sourceTree = "<group>"; };
 		BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseSharingSessionTests.swift; sourceTree = "<group>"; };
 		CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = Carthage/Build/iOS/WireRequestStrategy.framework; sourceTree = "<group>"; };
@@ -169,6 +174,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				878B823C20A1E192007455CA /* HTMLString.framework in Frameworks */,
 				54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */,
 				5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */,
 				5470D4571D77169900FDE440 /* Ono.framework in Frameworks */,
@@ -188,6 +194,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				878B823D20A1E19D007455CA /* HTMLString.framework in Frameworks */,
 				F125E9AC1E28D4F6006583A2 /* WireMockTransport.framework in Frameworks */,
 				CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */,
 				CE7FBFAB1DFEE95F00E1C4C9 /* WireTesting.framework in Frameworks */,
@@ -295,6 +302,7 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				878B823B20A1E192007455CA /* HTMLString.framework */,
 				54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */,
 				F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */,
 				CE7FBFAC1DFEF18D00E1C4C9 /* OCMock.framework */,
