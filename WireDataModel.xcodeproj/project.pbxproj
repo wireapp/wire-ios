@@ -110,6 +110,9 @@
 		873B88FE2040470900FBE254 /* ConversationCreationOptionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 873B88FD2040470900FBE254 /* ConversationCreationOptionsTests.swift */; };
 		87630A061F8FAB6700EEAE11 /* ZMGenericMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87630A051F8FAB6700EEAE11 /* ZMGenericMessageTests.swift */; };
 		876344472052B1E400458C7F /* store2-43-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 8702B0EB20529C78006B60B9 /* store2-43-0.wiredatabase */; };
+		878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
+		878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
+		878B823220A1C7D1007455CA /* HTMLString.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		87A7FA25203DD1CC00AA066C /* ZMConversationTests+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A7FA23203DD11100AA066C /* ZMConversationTests+AccessMode.swift */; };
 		87C125F71EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */; };
 		87C125F91EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C125F81EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift */; };
@@ -481,6 +484,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				878B823220A1C7D1007455CA /* HTMLString.framework in Embed Frameworks */,
 				F9A707361CAEE3FA00C2F5FE /* ocmock.framework in Embed Frameworks */,
 				BF76998C1D3500F0009C378B /* Ono.framework in Embed Frameworks */,
 				F9C9A8111CAED9A00039E10C /* WireTesting.framework in Embed Frameworks */,
@@ -602,6 +606,7 @@
 		874B5DA91CEDB9E40010474C /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		874B5DAA1CEDB9E40010474C /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		87630A051F8FAB6700EEAE11 /* ZMGenericMessageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMGenericMessageTests.swift; sourceTree = "<group>"; };
+		878B822F20A1C7AF007455CA /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		87A7FA23203DD11100AA066C /* ZMConversationTests+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+AccessMode.swift"; sourceTree = "<group>"; };
 		87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMManagedObject+Grouping.swift"; sourceTree = "<group>"; };
 		87C125F81EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMManagedObjectGroupingTests.swift; sourceTree = "<group>"; };
@@ -1045,6 +1050,7 @@
 				F93265271D895A910076AAD6 /* WireTransport.framework in Frameworks */,
 				F9C9A6B81CAD80BC0039E10C /* ProtocolBuffers.framework in Frameworks */,
 				F9C9A6741CAD78160039E10C /* PINCache.framework in Frameworks */,
+				878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */,
 				54CF1D9E1E939F84003D18E8 /* WireCryptobox.framework in Frameworks */,
 				F9C9A6751CAD78160039E10C /* WireImages.framework in Frameworks */,
 				F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */,
@@ -1075,6 +1081,7 @@
 				BF76998B1D3500F0009C378B /* Ono.framework in Frameworks */,
 				F9A7070A1CAEE38500C2F5FE /* ProtocolBuffers.framework in Frameworks */,
 				F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */,
+				878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1863,6 +1870,7 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				878B822F20A1C7AF007455CA /* HTMLString.framework */,
 				54CF1D9C1E939F84003D18E8 /* WireCryptobox.framework */,
 				54CF1D9D1E939F84003D18E8 /* WireLinkPreview.framework */,
 				16F5F16D1E4215DC0062F0AE /* libPhoneNumberiOS.framework */,
