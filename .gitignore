@@ -26,14 +26,14 @@ DerivedData
 #Pods/
 .DS_Store
 Carthage
-WireMockTransport.framework.zip
+ZMCSystem.framework.zip
 
-## Test Output
-#
-xcode-analyze.log
-xcode-build.log
-xcode-summary.log
-xcode-test.log
+
+# Test artefacts
+xcode-*.log
 tests.xml
-cobertura.xml
 code-coverage/*
+cobertura.xml
+WireSystem.framework.zip
+/fastlane/README.md
+/fastlane/report.xml
