@@ -26,9 +26,14 @@ DerivedData
 #Pods/
 .DS_Store
 Carthage
-ZMUtilities.framework.zip
+ZMCSystem.framework.zip
+
+
+# Test artefacts
+xcode-*.log
 tests.xml
-xcode-summary.log
 code-coverage/*
 cobertura.xml
-
+WireSystem.framework.zip
+/fastlane/README.md
+/fastlane/report.xml
