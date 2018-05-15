@@ -66,3 +66,4 @@ xcode-*.log
 tests.xml
 cobertura.xml
 code-coverage/*
+fastlane/README.md
