@@ -23,23 +23,17 @@ DerivedData
 # you should judge for yourself, the pros and cons are mentioned at:
 # http://guides.cocoapods.org/using/using-cocoapods.html#should-i-ignore-the-pods-directory-in-source-control
 #
-Pods/
-
-# Carthage
-#
-# Add this line if you want to avoid checking in source code from Carthage dependencies.
-Carthage/Checkouts
-
-Carthage/Build
+#Pods/
 .DS_Store
-ZMProtos.framework.zip
-xcode-test.log
-xcode-build.log
-xcode-analyze.log
-tests.xml
+Carthage
+ZMCSystem.framework.zip
 
-## Test Output
-xcode-summary.log
+
+# Test artefacts
+xcode-*.log
 tests.xml
 code-coverage/*
 cobertura.xml
+WireSystem.framework.zip
+/fastlane/README.md
+/fastlane/report.xml
