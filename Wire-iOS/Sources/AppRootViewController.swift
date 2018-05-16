@@ -257,6 +257,12 @@ class AppRootViewController: UIViewController {
             let clientViewController = ZClientViewController()
             clientViewController.isComingFromRegistration = completedRegistration
 
+            /// show the dialog only when lastAppState is .unauthenticated, i.e. the user login to a new device
+            clientViewController.needToShowDataUsagePermissionDialog = false
+            if case .unauthenticated(_) = appStateController.lastAppState {
+                clientViewController.needToShowDataUsagePermissionDialog = true
+            }
+
             Analytics.shared().team = ZMUser.selfUser().team
 
             viewController = clientViewController
