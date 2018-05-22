@@ -69,7 +69,7 @@ public struct KeySet : Sequence {
             if let ss = s as? String {
                 a.append(KeyPath.keyPathForString(ss))
             } else {
-                fatal("\(s) is not a string")
+                fatal("\(type(of: s)) is not a string")
             }
         }
         backing = Set(a)

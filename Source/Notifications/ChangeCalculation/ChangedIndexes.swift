@@ -23,7 +23,7 @@ extension NSOrderedSet {
     
     public func toOrderedSetState<T: Hashable>() -> OrderedSetState<T> {
         guard let objects = array as? [T] else {
-            fatal("Could not cast contents of NSOrderedSet \(self) to expected type \(T.self)")
+            fatal("Could not cast contents of NSOrderedSet \(type(of: self)) to expected type \(T.self)")
         }
         return OrderedSetState(array: objects)
     }
