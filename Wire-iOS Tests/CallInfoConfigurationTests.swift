@@ -471,7 +471,7 @@ class CallInfoConfigurationTests: XCTestCase {
     func testVideoPermissionsPlaceholderRespectsPreferenceInIncomingVideoCall() {
         // given
         let mockConversation = ((MockConversation.groupConversation() as Any) as! ZMConversation)
-        let mockVoiceChannel = TestableVoiceChannel(conversation: mockConversation)
+        let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let mockUsers: [ZMUser] = MockUser.mockUsers()!
         let fixture = CallInfoTestFixture(otherUser: otherUser)
 
@@ -492,7 +492,7 @@ class CallInfoConfigurationTests: XCTestCase {
     func testVideoPermissionsPlaceholderHiddenInIncomingAudioCall() {
         // given
         let mockConversation = ((MockConversation.groupConversation() as Any) as! ZMConversation)
-        let mockVoiceChannel = TestableVoiceChannel(conversation: mockConversation)
+        let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let mockUsers: [ZMUser] = MockUser.mockUsers()!
         let fixture = CallInfoTestFixture(otherUser: otherUser)
 
@@ -513,7 +513,7 @@ class CallInfoConfigurationTests: XCTestCase {
     func testVideoPermissionsPlaceholderHiddenInEstablishedVideoCall() {
         // given
         let mockConversation = ((MockConversation.groupConversation() as Any) as! ZMConversation)
-        let mockVoiceChannel = TestableVoiceChannel(conversation: mockConversation)
+        let mockVoiceChannel = MockVoiceChannel(conversation: mockConversation)
         let mockUsers: [ZMUser] = MockUser.mockUsers()!
         let fixture = CallInfoTestFixture(otherUser: otherUser)
 
