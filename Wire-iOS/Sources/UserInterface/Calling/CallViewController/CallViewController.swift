@@ -56,6 +56,7 @@ final class CallViewController: UIViewController {
         AVSMediaManagerClientChangeNotification.add(self)
         observerTokens += [voiceChannel.addCallStateObserver(self), voiceChannel.addParticipantObserver(self), voiceChannel.addConstantBitRateObserver(self)]
         proximityMonitorManager?.stateChanged = proximityStateDidChange
+        videoConfiguration.overlayVisibilityProvider = self
     }
     
     deinit {
@@ -230,7 +231,6 @@ extension CallViewController: AVSMediaManagerClientObserver {
 extension CallViewController {
 
     fileprivate func acceptCallIfPossible() {
-
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
 
             guard audioGranted else {
@@ -317,9 +317,9 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
 
 // MARK: - Hide + Show Overlay
 
-extension CallViewController {
+extension CallViewController: OverlayVisibilityProvider {
     
-    private var isOverlayVisible: Bool {
+    var isOverlayVisible: Bool {
         return callInfoRootViewController.view.alpha > 0
     }
     
@@ -344,7 +344,7 @@ extension CallViewController {
             delay: 0,
             options: .curveEaseInOut,
             animations: { [callInfoRootViewController] in callInfoRootViewController.view.alpha = show ? 1 : 0 },
-            completion: nil
+            completion: { [updateConfiguration] _ in updateConfiguration() }
         )
     }
     
