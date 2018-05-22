@@ -185,7 +185,7 @@ extension ZMGenericMessage {
         if self.hasConfirmation() || self.hasEphemeral() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
                 let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.firstMessageId)" : ""
-                fatal("confirmation need a recipient\n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue), connection: \(String(describing: conversation.connection))\(confirmationInfo)")
+                fatal("confirmation need a recipient\n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)")
             }
             recipientUsers = recipients
         }
