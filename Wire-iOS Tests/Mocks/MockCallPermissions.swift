@@ -19,19 +19,24 @@
 import Foundation
 @testable import Wire
 
-struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
-    var videoPlaceholderState: CallVideoPlaceholderState
-    var permissions: CallPermissionsConfiguration
-    var degradationState: CallDegradationState
-    var accessoryType: CallInfoViewControllerAccessoryType
-    var canToggleMediaType: Bool
-    var isMuted: Bool
-    var isTerminating: Bool
-    var canAccept: Bool
-    var mediaState: MediaState
-    var state: CallStatusViewState
-    var isConstantBitRate: Bool
-    var title: String
-    var isVideoCall: Bool
-    var variant: ColorSchemeVariant
+class MockCallPermissions: CallPermissionsConfiguration {
+
+    var isPendingAudioPermissionRequest: Bool = true
+    var isPendingVideoPermissionRequest: Bool = true
+
+    var canAcceptVideoCalls: Bool = false
+    var canAcceptAudioCalls: Bool = false
+
+    func requestOrWarnAboutVideoPermission(resultHandler: @escaping (Bool) -> Void) {
+        resultHandler(canAcceptVideoCalls)
+    }
+
+    func requestVideoPermissionWithoutWarning(resultHandler: @escaping (Bool) -> Void) {
+        resultHandler(canAcceptVideoCalls)
+    }
+
+    func requestOrWarnAboutAudioPermission(resultHandler: @escaping (Bool) -> Void) {
+        resultHandler(canAcceptAudioCalls)
+    }
+
 }

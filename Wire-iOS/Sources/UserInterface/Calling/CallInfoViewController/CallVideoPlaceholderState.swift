@@ -17,21 +17,12 @@
 //
 
 import Foundation
-@testable import Wire
+import AVFoundation
 
-struct MockCallInfoViewControllerInput: CallInfoViewControllerInput {
-    var videoPlaceholderState: CallVideoPlaceholderState
-    var permissions: CallPermissionsConfiguration
-    var degradationState: CallDegradationState
-    var accessoryType: CallInfoViewControllerAccessoryType
-    var canToggleMediaType: Bool
-    var isMuted: Bool
-    var isTerminating: Bool
-    var canAccept: Bool
-    var mediaState: MediaState
-    var state: CallStatusViewState
-    var isConstantBitRate: Bool
-    var title: String
-    var isVideoCall: Bool
-    var variant: ColorSchemeVariant
+enum CallVideoPlaceholderState {
+
+    case hidden
+    case statusTextHidden
+    case statusTextDisplayed
+
 }
