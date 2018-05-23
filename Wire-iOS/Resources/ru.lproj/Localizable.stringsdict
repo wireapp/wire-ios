@@ -138,9 +138,9 @@
         <key>few</key>
         <string>%d еще</string>
         <key>many</key>
-        <string>%d остальных</string>
+        <string>%d еще</string>
         <key>other</key>
-        <string>%d остальных</string>
+        <string>%d еще</string>
       </dict>
     </dict>
     <key>content.system.people_started_using</key>
