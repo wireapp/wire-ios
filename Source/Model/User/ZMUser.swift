@@ -306,12 +306,12 @@ extension ZMUser {
     }
 }
 
-protocol PrivateStringConvertible {
+public protocol PrivateStringConvertible {
     var privateDescription: String { get }
 }
 
 extension NSManagedObject: PrivateStringConvertible {
-    var privateDescription: String {
+    public var privateDescription: String {
         let moc: String = self.managedObjectContext?.description ?? "nil"
         
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
