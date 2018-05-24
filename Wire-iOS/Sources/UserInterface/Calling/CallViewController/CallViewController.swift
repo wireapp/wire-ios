@@ -82,6 +82,7 @@ final class CallViewController: UIViewController {
         proximityMonitorManager?.startListening()
         resumeVideoIfNeeded()
         setupApplicationStateObservers()
+        updateIdleTimer()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,6 +90,11 @@ final class CallViewController: UIViewController {
         proximityMonitorManager?.stopListening()
         pauseVideoIfNeeded()
         NotificationCenter.default.removeObserver(self)
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        UIApplication.shared.isIdleTimerDisabled = false
     }
 
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -139,7 +145,14 @@ final class CallViewController: UIViewController {
         videoGridViewController.configuration = videoConfiguration
         updateOverlayAfterStateChanged()
         updateAppearance()
+        updateIdleTimer()
         UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
+    }
+    
+    private func updateIdleTimer() {
+        let disabled = callInfoConfiguration.disableIdleTimer
+        UIApplication.shared.isIdleTimerDisabled = disabled
+        Calling.log.debug("Updated idle timer: \(disabled ? "disabled" : "enabled")")
     }
 
     private func updateAppearance() {
@@ -162,15 +175,13 @@ final class CallViewController: UIViewController {
     fileprivate func alertVideoUnavailable() {
         if voiceChannel.videoState == .stopped, voiceChannel.conversation?.activeParticipants.count > 4 {
             showAlert(forMessage: "call.video.too_many.alert.message".localized, title: "call.video.too_many.alert.title".localized) { _ in }
-            return
         }
     }
     
     fileprivate func toggleVideoState() {
-
         if permissions.canAcceptVideoCalls == false {
-            permissions.requestOrWarnAboutVideoPermission { _ in
-                self.updateConfiguration()
+            permissions.requestOrWarnAboutVideoPermission { [updateConfiguration] _ in
+                updateConfiguration()
             }
             return
         }
@@ -178,10 +189,8 @@ final class CallViewController: UIViewController {
         let newState = voiceChannel.videoState.toggledState
 
         switch newState {
-        case .stopped:
-            callInfoConfiguration.preferedVideoPlaceholderState = .statusTextHidden
-        default:
-            callInfoConfiguration.preferedVideoPlaceholderState = .hidden
+        case .stopped: callInfoConfiguration.preferedVideoPlaceholderState = .statusTextHidden
+        default: callInfoConfiguration.preferedVideoPlaceholderState = .hidden
         }
 
         voiceChannel.videoState = newState
@@ -233,26 +242,18 @@ extension CallViewController {
 
     fileprivate func acceptCallIfPossible() {
         permissions.requestOrWarnAboutAudioPermission { audioGranted in
-
             guard audioGranted else {
-                self.voiceChannel.leave(userSession: ZMUserSession.shared()!)
-                return
+                return self.voiceChannel.leave(userSession: ZMUserSession.shared()!)
             }
 
             self.checkVideoPermissions { videoGranted in
                 self.conversation?.joinVoiceChannel(video: videoGranted)
             }
-
         }
-
     }
 
     private func checkVideoPermissions(resultHandler: @escaping (Bool) -> Void) {
-
-        guard voiceChannel.isVideoCall else {
-            resultHandler(false)
-            return
-        }
+        guard voiceChannel.isVideoCall else { return resultHandler(false) }
 
         if !permissions.isPendingVideoPermissionRequest {
             resultHandler(permissions.canAcceptVideoCalls)
@@ -264,7 +265,6 @@ extension CallViewController {
             resultHandler(granted)
             self.updateVideoStatusPlaceholder()
         }
-
     }
 
     fileprivate func updateVideoStatusPlaceholder() {
