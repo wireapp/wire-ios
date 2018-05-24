@@ -375,7 +375,8 @@ struct CallInfoTestFixture {
             isConstantBitRate: false,
             title: otherUser.displayName,
             isVideoCall: true,
-            variant: .light
+            variant: .light,
+            disableIdleTimer: true
         )
     }
     
