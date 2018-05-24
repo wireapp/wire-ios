@@ -71,6 +71,11 @@ public protocol LocalNotificationResponder : class {
     func processLocal(_ notification: ZMLocalNotification, forSession session: ZMUserSession)
 }
 
+@objc
+public protocol SessionManagerSwitchingDelegate: class {
+    func confirmSwitchingAccount(completion: @escaping (Bool)->Void)
+}
+
 /// The `SessionManager` class handles the creation of `ZMUserSession` and `UnauthenticatedSession`
 /// objects, the handover between them as well as account switching.
 ///
@@ -150,6 +155,7 @@ public protocol LocalNotificationResponder : class {
     public fileprivate(set) var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     public fileprivate(set) var unauthenticatedSession: UnauthenticatedSession?
     public weak var requestToOpenViewDelegate: ZMRequestsToOpenViewsDelegate?
+    public weak var switchingDelegate: SessionManagerSwitchingDelegate?
     public let groupQueue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
     
     let application: ZMApplication
@@ -389,24 +395,28 @@ public protocol LocalNotificationResponder : class {
     public func select(_ account: Account, completion: ((ZMUserSession)->())? = nil, tearDownCompletion: (() -> Void)? = nil) {
         guard !isSelectingAccount else { return }
         
-        isSelectingAccount = true
-        
-        delegate?.sessionManagerWillOpenAccount(account, userSessionCanBeTornDown: { [weak self] in
-            self?.activeUserSession = nil
-            tearDownCompletion?()
-            self?.loadSession(for: account) { [weak self] session in
-                self?.isSelectingAccount = false
-                
-                if let session = session {
-                    self?.accountManager.select(account)
-                    completion?(session)
+        confirmSwitchingAccount { [weak self] in
+            self?.isSelectingAccount = true
+            
+            self?.delegate?.sessionManagerWillOpenAccount(account, userSessionCanBeTornDown: { [weak self] in
+                self?.activeUserSession = nil
+                tearDownCompletion?()
+                self?.loadSession(for: account) { [weak self] session in
+                    self?.isSelectingAccount = false
+                    
+                    if let session = session {
+                        self?.accountManager.select(account)
+                        completion?(session)
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     
     public func addAccount() {
-        logoutCurrentSession(deleteCookie: false, error: NSError(code: .addAccountRequested, userInfo: nil))
+        confirmSwitchingAccount { [weak self] in
+            self?.logoutCurrentSession(deleteCookie: false, error: NSError(code: .addAccountRequested, userInfo: nil))
+        }
     }
     
     public func delete(account: Account) {
@@ -865,7 +875,7 @@ extension SessionManager : WireCallCenterCallStateObserver {
     
     public func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?) {
         guard let moc = conversation.managedObjectContext else { return }
-        
+    
         switch callState {
         case .answered, .outgoing:
             for (_, session) in backgroundUserSessions where session.managedObjectContext == moc && activeUserSession != session {
@@ -957,4 +967,19 @@ extension SessionManager {
             completion?()
         }
     }
+}
+
+
+extension SessionManager {
+    
+    public func confirmSwitchingAccount(completion: @escaping ()->Void) {
+        guard let switchingDelegate = switchingDelegate else { return completion() }
+        
+        switchingDelegate.confirmSwitchingAccount(completion: { (confirmed) in
+            if confirmed {
+                completion()
+            }
+        })
+    }
+    
 }
