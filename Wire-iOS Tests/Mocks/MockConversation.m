@@ -42,7 +42,7 @@
     self = [super init];
     
     if (self) {
-        self.canStartVideoCall = YES;
+        self.isConversationEligibleForVideoCalls = YES;
     }
     
     return self;

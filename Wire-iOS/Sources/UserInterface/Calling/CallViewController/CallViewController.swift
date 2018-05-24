@@ -57,6 +57,7 @@ final class CallViewController: UIViewController {
         observerTokens += [voiceChannel.addCallStateObserver(self), voiceChannel.addParticipantObserver(self), voiceChannel.addConstantBitRateObserver(self)]
         proximityMonitorManager?.stateChanged = proximityStateDidChange
         videoConfiguration.overlayVisibilityProvider = self
+        disableVideoIfNeeded()
     }
     
     deinit {
@@ -139,7 +140,7 @@ final class CallViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     fileprivate func updateConfiguration() {
         callInfoRootViewController.configuration = callInfoConfiguration
         videoGridViewController.configuration = videoConfiguration
@@ -180,8 +181,10 @@ final class CallViewController: UIViewController {
     
     fileprivate func toggleVideoState() {
         if permissions.canAcceptVideoCalls == false {
-            permissions.requestOrWarnAboutVideoPermission { [updateConfiguration] _ in
-                updateConfiguration()
+            permissions.requestOrWarnAboutVideoPermission { _ in
+                self.disableVideoIfNeeded()
+                self.updateVideoStatusPlaceholder()
+                self.updateConfiguration()
             }
             return
         }
@@ -263,6 +266,7 @@ extension CallViewController {
 
         permissions.requestVideoPermissionWithoutWarning { granted in
             resultHandler(granted)
+            self.disableVideoIfNeeded()
             self.updateVideoStatusPlaceholder()
         }
     }
@@ -270,6 +274,12 @@ extension CallViewController {
     fileprivate func updateVideoStatusPlaceholder() {
         callInfoConfiguration.preferedVideoPlaceholderState = permissions.preferredVideoPlaceholderState
         updateConfiguration()
+    }
+
+    fileprivate func disableVideoIfNeeded() {
+        if permissions.isVideoDisabledForever {
+            voiceChannel.videoState = .stopped
+        }
     }
 
 }

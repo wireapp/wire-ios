@@ -74,11 +74,17 @@ extension CallInfoConfiguration: CallInfoViewControllerInput {
         case .outgoing, .incoming(video: false, shouldRing: _, degraded: _):
             return false
         default:
+            guard !permissions.isVideoDisabledForever && !permissions.isAudioDisabledForever else {
+                return false
+            }
+
+            // The user can only re-enable their video if the conversation allows GVC
             if voiceChannel.videoState == .stopped {
                 return voiceChannel.canUpgradeToVideo
-            } else {
-                return true
             }
+
+            // If the user already enabled video, they should be able to disable it
+            return true
         }
     }
     
@@ -101,8 +107,16 @@ extension CallInfoConfiguration: CallInfoViewControllerInput {
     }
     
     var mediaState: MediaState {
+
+        let isSpeakerEnabled = AVSMediaManager.sharedInstance().isSpeakerEnabled
+
+        guard permissions.canAcceptVideoCalls else {
+            return .notSendingVideo(speakerEnabled: isSpeakerEnabled)
+        }
+
         guard !voiceChannel.videoState.isSending else { return .sendingVideo }
-        return .notSendingVideo(speakerEnabled: AVSMediaManager.sharedInstance().isSpeakerEnabled)
+        return .notSendingVideo(speakerEnabled: isSpeakerEnabled)
+
     }
     
     var state: CallStatusViewState {
