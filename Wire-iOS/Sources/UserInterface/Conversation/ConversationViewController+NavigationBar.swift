@@ -262,24 +262,28 @@ extension ZMConversation {
         }
     }
     
-    static let maxVideoCallParticipants: Int = 4
-    
+    @objc static let maxVideoCallParticipants: Int = 4
+
     var canStartVideoCall: Bool {
         guard !isCallOngoing else { return false }
 
         if self.conversationType == .oneOnOne {
             return true
         }
-        
+
         if self.conversationType == .group &&
-           ZMUser.selfUser().isTeamMember &&
-           self.activeParticipants.count <= ZMConversation.maxVideoCallParticipants {
+            ZMUser.selfUser().isTeamMember &&
+            isConversationEligibleForVideoCalls {
             return true
         }
-        
+
         return false
     }
-    
+
+    var isConversationEligibleForVideoCalls: Bool {
+        return self.activeParticipants.count <= ZMConversation.maxVideoCallParticipants
+    }
+
     var isCallOngoing: Bool {
         switch voiceChannel?.state {
         case .none?: return false
