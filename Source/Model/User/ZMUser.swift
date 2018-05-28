@@ -18,6 +18,7 @@
 
 import Foundation
 import WireUtilities
+import WireSystem
 
 public struct AssetKey {
     
@@ -304,10 +305,6 @@ extension ZMUser {
         guard let conversation = conversation, let nameGenerator = self.managedObjectContext?.zm_displayNameGenerator else { return self.displayName }
         return nameGenerator.displayName(for: self, in: conversation)
     }
-}
-
-public protocol PrivateStringConvertible {
-    var privateDescription: String { get }
 }
 
 extension NSManagedObject: PrivateStringConvertible {
