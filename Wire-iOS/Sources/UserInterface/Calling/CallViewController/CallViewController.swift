@@ -28,13 +28,13 @@ final class CallViewController: UIViewController {
     fileprivate var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
     fileprivate let callInfoRootViewController: CallInfoRootViewController
     fileprivate weak var overlayTimer: Timer?
+    fileprivate var hapticsController = CallHapticsController()
 
     private var observerTokens: [Any] = []
     private let videoConfiguration: VideoConfiguration
     private let videoGridViewController: VideoGridViewController
     private var cameraType: CaptureDevice = .front
-    
-    
+
     var conversation: ZMConversation? {
         return voiceChannel.conversation
     }
@@ -219,6 +219,7 @@ extension CallViewController: WireCallCenterCallStateObserver {
     func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?) {
         updateConfiguration()
         hideOverlayAfterCallEstablishedIfNeeded()
+        hapticsController.updateCallState(callState)
     }
     
 }
@@ -227,6 +228,7 @@ extension CallViewController: WireCallCenterCallParticipantObserver {
     
     func callParticipantsDidChange(conversation: ZMConversation, participants: [(UUID, CallParticipantState)]) {
         updateConfiguration()
+        hapticsController.updateParticipants(participants)
     }
     
 }
