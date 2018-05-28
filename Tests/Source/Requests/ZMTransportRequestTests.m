@@ -990,4 +990,33 @@
 
 }
 
+- (void)testPrivateDescription
+{
+    // given
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:@"foo" method:ZMMethodHEAD payload:nil];
+    
+    // when
+    NSString *privateDescription = [request privateDescription];
+    
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"HEAD"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"foo"].location != NSNotFound);
+}
+
+- (void)testPrivateDescriptionWithUUID
+{
+    // given
+    NSUUID *uuid = [[NSUUID alloc] init];
+    NSString *path = [NSString stringWithFormat:@"do/something/%@/useful", uuid.transportString];
+    ZMTransportRequest *request = [ZMTransportRequest requestWithPath:path method:ZMMethodHEAD payload:nil];
+    
+    // when
+    NSString *privateDescription = [request privateDescription];
+    
+    // then
+    XCTAssertTrue([privateDescription rangeOfString:@"useful"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:@"do/something"].location != NSNotFound);
+    XCTAssertTrue([privateDescription rangeOfString:uuid.transportString].location == NSNotFound);
+}
+
 @end
