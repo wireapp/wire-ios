@@ -106,7 +106,7 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMContextChangeTrackerSource 
 extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
     
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
-        guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object)") }
+        guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object.privateDescription)") }
         guard let linkPreview = message.genericMessage?.linkPreviews.first else { return nil }
         guard let remoteData = linkPreview.remote else { return nil }
 

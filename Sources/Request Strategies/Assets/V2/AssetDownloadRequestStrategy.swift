@@ -168,7 +168,7 @@ public struct AssetDownloadRequestStrategyNotification {
             }
         }
         
-        fatalError("Cannot generate request for \(object)")
+        fatalError("Cannot generate request for \(object.privateDescription)")
     }
     
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
