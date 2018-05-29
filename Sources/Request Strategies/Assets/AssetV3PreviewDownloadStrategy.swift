@@ -125,7 +125,7 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
             }
         }
 
-        fatal("Cannot generate request to download v3 file preview for \(object)")
+        fatal("Cannot generate request to download v3 file preview for \(object.privateDescription)")
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
