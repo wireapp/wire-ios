@@ -57,10 +57,7 @@ final class CallHapticsController {
         let updated = Set(newParticipants)
         let removed = !participants.subtracting(updated).isEmpty
         let added = !updated.subtracting(participants).isEmpty
-        
         Log.haptics.debug("updating participants list: \(newParticipants), old: \(participants)")
-        Log.haptics.debug("removed: \(removed)")
-        Log.haptics.debug("removed: \(added)")
         
         if removed {
             Log.haptics.debug("triggering leave event")

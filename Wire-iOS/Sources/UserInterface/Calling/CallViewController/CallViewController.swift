@@ -29,7 +29,7 @@ final class CallViewController: UIViewController {
     fileprivate var preferedVideoPlaceholderState: CallVideoPlaceholderState = .statusTextHidden
     fileprivate let callInfoRootViewController: CallInfoRootViewController
     fileprivate weak var overlayTimer: Timer?
-    fileprivate var hapticsController = CallHapticsController()
+    fileprivate let hapticsController = CallHapticsController()
 
     private var observerTokens: [Any] = []
     private var videoConfiguration: VideoConfiguration
