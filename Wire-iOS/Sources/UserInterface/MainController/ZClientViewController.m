@@ -451,12 +451,11 @@
             profileViewController.delegate = (id <ProfileViewControllerDelegate>)[(ConversationRootViewController *)self.conversationRootViewController conversationViewController];
             profileViewController.viewControllerDismisser = (id <ViewControllerDismisser>)[(ConversationRootViewController *)self.conversationRootViewController conversationViewController];
         }
-        UINavigationController *navWrapperController = [[UINavigationController alloc] initWithRootViewController:profileViewController];
+
+        UINavigationController *navWrapperController = [profileViewController wrapInNavigationController];
         navWrapperController.modalPresentationStyle = UIModalPresentationFormSheet;
-        navWrapperController.navigationBarHidden = YES;
         [self presentViewController:navWrapperController animated:YES completion:nil];
     }
-
 }
 
 - (void)dismissClientListController:(id)sender
