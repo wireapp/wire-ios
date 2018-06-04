@@ -110,7 +110,7 @@ extension ZClientViewController {
             splitViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor),
             splitViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             splitViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-        ])
+            ])
 
         let heightConstraint = topOverlayContainer.heightAnchor.constraint(equalToConstant: 0)
         heightConstraint.priority = UILayoutPriorityDefaultLow
@@ -131,4 +131,28 @@ extension ZClientViewController {
 
     }
 
+    func openClientListScreen(for user: ZMUser) {
+        var viewController: UIViewController?
+
+        if user.isSelfUser {
+            let clientListViewController = ClientListViewController(clientsList: Array(user.clients), credentials: nil, detailedView: true, showTemporary: true, variant: ColorScheme.default().variant)
+            clientListViewController.navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismissClientListController(_:)))
+            viewController = clientListViewController
+        } else {
+            let profileViewController = ProfileViewController(user: user, context: .deviceList)
+
+            if let conversationViewController = (conversationRootViewController as? ConversationRootViewController)?.conversationViewController {
+                profileViewController.delegate = conversationViewController as? ProfileViewControllerDelegate
+
+                profileViewController.viewControllerDismisser = conversationViewController as? ViewControllerDismisser
+            }
+            viewController = profileViewController
+        }
+
+        let navWrapperController: UINavigationController? = viewController?.wrapInNavigationController()
+        navWrapperController?.modalPresentationStyle = .formSheet
+        if let aController = navWrapperController {
+            present(aController, animated: true)
+        }
+    }
 }

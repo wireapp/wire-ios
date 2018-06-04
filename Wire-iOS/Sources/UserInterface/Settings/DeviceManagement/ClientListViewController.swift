@@ -28,7 +28,7 @@ protocol ClientListViewControllerDelegate: class {
     func finishedDeleting(_ clientListViewController: ClientListViewController)
 }
 
-@objc class ClientListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ZMClientUpdateObserver {
+class ClientListViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, ZMClientUpdateObserver {
     var clientsTableView: UITableView?
     let topSeparator = OverflowSeparatorView()
     weak var delegate: ClientListViewControllerDelegate?
@@ -90,7 +90,40 @@ protocol ClientListViewControllerDelegate: class {
     var credentials: ZMEmailCredentials?
     var clientsObserverToken: Any?
     var userObserverToken : NSObjectProtocol?
+    var variant: ColorSchemeVariant? {
+        didSet {
+            switch variant {
+            case .none:
+                view.backgroundColor = .clear
+            case .dark?:
+                view.backgroundColor = .black
+            case .light?:
+                view.backgroundColor = .white
+            }
+        }
+    }
 
+    var headerFooterViewTextColor: UIColor {
+        get {
+            switch variant {
+            case .none, .dark?:
+                return UIColor(white: 1, alpha: 0.4)
+            case .light?:
+                return UIColor.wr_color(fromColorScheme: ColorSchemeColorTextForeground, variant: .light)
+            }
+        }
+    }
+
+    var separatorColor: UIColor {
+        get {
+            switch variant {
+            case .none, .dark?:
+                return UIColor(white: 1, alpha: 0.1)
+            case .light?:
+                return UIColor.wr_color(fromColorScheme: ColorSchemeColorSeparator, variant: .light)
+            }
+        }
+    }
 
     var leftBarButtonItem: UIBarButtonItem? {
         if self.traitCollection.userInterfaceIdiom == .pad && UIApplication.shared.keyWindow?.traitCollection.horizontalSizeClass == .regular {
@@ -104,12 +137,19 @@ protocol ClientListViewControllerDelegate: class {
 
         return nil
     }
-        
-    required init(clientsList: [UserClient]?, credentials: ZMEmailCredentials? = .none, detailedView: Bool = false, showTemporary: Bool = true) {
-        let selfClient = ZMUserSession.shared()!.selfUserClient()
+
+    required init(clientsList: [UserClient]?,
+                  selfClient: UserClient? = ZMUserSession.shared()?.selfUserClient(),
+                  credentials: ZMEmailCredentials? = .none,
+                  detailedView: Bool = false,
+                  showTemporary: Bool = true,
+                  variant: ColorSchemeVariant? = .none) {
         self.selfClient = selfClient
         self.detailedView = detailedView
         self.credentials = credentials
+        defer {
+            self.variant = variant
+        }
 
         clientFilter = { $0 != selfClient && (showTemporary || !$0.isTemporary) }
         clientSorter = {
@@ -122,9 +162,10 @@ protocol ClientListViewControllerDelegate: class {
         self.edgesForExtendedLayout = []
 
         self.initalizeProperties(clientsList ?? Array(ZMUser.selfUser().clients.filter { !$0.isSelfClient() } ))
-
         self.clientsObserverToken = ZMUserSession.shared()?.add(self)
-        self.userObserverToken = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), userSession: ZMUserSession.shared()!)
+        if let user = ZMUser.selfUser(), let session = ZMUserSession.shared() {
+            self.userObserverToken = UserChangeInfo.add(observer: self, for: user, userSession: session)
+        }
         
         if clientsList == nil {
             if clients.isEmpty {
@@ -154,8 +195,6 @@ protocol ClientListViewControllerDelegate: class {
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        self.view.backgroundColor = UIColor.clear
-        
         self.createTableView()
         self.view.addSubview(self.topSeparator)
         self.createConstraints()
@@ -191,7 +230,7 @@ protocol ClientListViewControllerDelegate: class {
         tableView.register(ClientTableViewCell.self, forCellReuseIdentifier: ClientTableViewCell.zm_reuseIdentifier)
         tableView.isEditing = self.editingList
         tableView.backgroundColor = UIColor.clear
-        tableView.separatorColor = UIColor(white: 1, alpha: 0.1)
+        tableView.separatorColor = separatorColor
         self.view.addSubview(tableView)
         self.clientsTableView = tableView
     }
@@ -336,13 +375,13 @@ protocol ClientListViewControllerDelegate: class {
     
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
-            headerFooterView.textLabel?.textColor = UIColor(white: 1, alpha: 0.4)
+            headerFooterView.textLabel?.textColor = headerFooterViewTextColor
         }
     }
     
     func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
         if let headerFooterView = view as? UITableViewHeaderFooterView {
-            headerFooterView.textLabel?.textColor = UIColor(white: 1, alpha: 0.4)
+            headerFooterView.textLabel?.textColor = headerFooterViewTextColor
         }
     }
     
@@ -351,6 +390,7 @@ protocol ClientListViewControllerDelegate: class {
             cell.selectionStyle = .none
             cell.accessoryType = self.detailedView ? .disclosureIndicator : .none
             cell.showVerified = self.detailedView
+            cell.variant = variant
             
             switch self.convertSection((indexPath as NSIndexPath).section) {
             case 0:

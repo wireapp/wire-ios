@@ -118,9 +118,10 @@ class ClientUnregisterFlowViewController: FormFlowViewController, FormStepDelega
     // MARK: - FormStepDelegate
     
     func didCompleteFormStep(_ viewController: UIViewController!) {
-        let clientsListController = ClientListViewController(clientsList: self.clients, credentials: self.credentials, showTemporary: false)
+        let clientsListController = ClientListViewController(clientsList: self.clients,
+                                                             credentials: self.credentials,
+                                                             showTemporary: false)
         clientsListController.delegate = self
-        clientsListController.view.backgroundColor = UIColor.black
 
         if isIPadRegular() {
             let navigationController = UINavigationController(rootViewController: clientsListController)
