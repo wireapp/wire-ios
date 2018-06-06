@@ -19,45 +19,32 @@
 import XCTest
 @testable import Wire
 
-final class ClientListViewControllerTests: ZMSnapshotTestCase {
+final class SettingsClientViewControllerTests: ZMSnapshotTestCase {
     
-    var sut: ClientListViewController!
-    var mockUser: MockUser!
+    var sut: SettingsClientViewController!
     var client: UserClient!
-    var selfClient: UserClient!
 
     override func setUp() {
         super.setUp()
 
-        let user = MockUser.mockUsers()[0]
-        mockUser = MockUser(for: user)
+        let otherYearFormatter =  WRDateFormatter.otherYearFormatter
 
-        selfClient = mockUserClient()
+        XCTAssertEqual(otherYearFormatter.locale.identifier, "en_US", "otherYearFormatter.locale.identifier is \(otherYearFormatter.locale.identifier)")
+
         client = mockUserClient()
     }
     
     override func tearDown() {
         sut = nil
-        mockUser = nil
-        client = nil
-        selfClient = nil
-
-        ColorScheme.default().variant = .light
-
         super.tearDown()
     }
 
     func prepareSut(variant: ColorSchemeVariant?) {
-        // display 3 cells, show footer in same screen
-        sut = ClientListViewController(clientsList: [client, client, client],
-                                       selfClient: selfClient,
-                                       credentials: nil,
-                                       detailedView: true,
-                                       showTemporary: true,
-                                       variant: variant)
+        sut = SettingsClientViewController(userClient: client, variant: variant)
 
         sut.showLoadingView = false
     }
+
 
     func testForTransparentBackground(){
         prepareSut(variant: nil)
