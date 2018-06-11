@@ -48,7 +48,7 @@ import Foundation
     }
     
     @objc static public var aliveObjects: [AnyObject] {
-        return shared.references.flatMap{ $0.object }
+        return shared.references.compactMap { $0.object }
     }
     
     @objc static public var aliveObjectsDescription: String {

@@ -23,7 +23,7 @@ class DispatchQueueHelperTests: XCTestCase {
     func testThatItEntersAndLeavesADispatchGroup() {
         // Given
         let group = ZMSDispatchGroup(label: name)
-        let queue = DispatchQueue(label: name!)
+        let queue = DispatchQueue(label: name)
         let groupExpectation = expectation(description: "It should leave the group")
         var result = 0
         
