@@ -92,7 +92,7 @@ class OpenGraphDataTests: XCTestCase {
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Foursqaure() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.foursqaureData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.foursquareData(), expectedClass: Article.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Nytimes() {
@@ -141,7 +141,7 @@ class OpenGraphDataTests: XCTestCase {
     
     func testThatItUsesTheGivenOriginalURLAndCharacterOffsetWhenCreatingALinkPreview() {
         // given
-        let data = OpenGraphMockDataProvider.foursqaureData().expected
+        let data = OpenGraphMockDataProvider.foursquareData().expected
         let originalURLString = "www.example.com"
         
         // when
