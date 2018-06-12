@@ -48,7 +48,7 @@ public struct OpenGraphData {
 
 extension OpenGraphData: CustomStringConvertible {
     public var description: String {
-        var description = "<\(type(of: self))> \(String(describing: siteNameString)): \(url):\n\t\(title)"
+        var description = "<\(Swift.type(of: self))> \(String(describing: siteNameString)): \(url):\n\t\(title)"
         if let content = content { description += "\n\(content)" }
         return description
     }
@@ -114,7 +114,7 @@ extension Article {
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         summary = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
@@ -128,7 +128,7 @@ extension FoursquareLocation {
         subtitle = openGraphData.content
         longitude = openGraphData.foursquareMetaData?.longitude
         latitude = openGraphData.foursquareMetaData?.latitude
-        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
@@ -139,7 +139,7 @@ extension InstagramPicture {
         self.init(originalURLString: originalURLString, permanentURLString: openGraphData.url, resolvedURLString: openGraphData.resolvedURL, offset: offset)
         title = openGraphData.title
         subtitle = openGraphData.content
-        guard let imageURL = openGraphData.imageUrls.flatMap(URL.init).first else { return }
+        guard let imageURL = openGraphData.imageUrls.compactMap(URL.init).first else { return }
         imageURLs.append(imageURL)
     }
 }
@@ -152,7 +152,7 @@ extension TwitterStatus {
         
         message = tweetContentFromOpenGraphData(openGraphData)
         author = tweetAuthorFromOpenGraphData(openGraphData)
-        imageURLs = openGraphData.userGeneratedImage ? openGraphData.imageUrls.flatMap(URL.init) : []
+        imageURLs = openGraphData.userGeneratedImage ? openGraphData.imageUrls.compactMap(URL.init) : []
     }
     
     private func tweetContentFromOpenGraphData(_ data: OpenGraphData) -> String? {

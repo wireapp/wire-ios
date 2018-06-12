@@ -498,6 +498,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -508,6 +510,8 @@
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -517,6 +521,8 @@
 			buildSettings = {
 				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -526,6 +532,8 @@
 			buildSettings = {
 				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};

@@ -27,7 +27,7 @@ class OpenGraphDataTests: XCTestCase {
         let title = "title"
         let url = "www.example.com/url"
         let type = "article"
-        let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .description: name!, .url: url]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .type: type, .description: name, .url: url]
         let images = ["www.example.com/image"]
         
         // when
@@ -48,7 +48,7 @@ class OpenGraphDataTests: XCTestCase {
         // given
         let title = "title"
         let url = "www.example.com/url"
-        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name!, .url: url]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name, .url: url]
         let images = ["www.example.com/image"]
 
         // when
@@ -62,7 +62,7 @@ class OpenGraphDataTests: XCTestCase {
     func testThatItReturnsNilWhenRequiredPropertiesAreMissing() {
         // given
         let title = "title"
-        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name!]
+        let mapping: [OpenGraphPropertyType: String] = [.title: title, .description: name]
         let images = ["www.example.com/image"]
         
         // when
