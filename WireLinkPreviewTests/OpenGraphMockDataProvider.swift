@@ -24,11 +24,11 @@ struct OpenGraphMockData {
     let head: String
     let expected: OpenGraphData?
     let urlString: String
-    let urlVersion: String?
 }
 
 class OpenGraphMockDataProvider: NSObject {
 
+    
     static func twitterData() -> OpenGraphMockData {
         
         let expected = OpenGraphData(
@@ -44,8 +44,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("twitter_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
@@ -65,12 +64,11 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("twitter_images_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
-    static func foursquareData() -> OpenGraphMockData {
+    static func foursqaureData() -> OpenGraphMockData {
         
         var expected = OpenGraphData(
             title: "NETA Mexican Street Food",
@@ -87,8 +85,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("foursquare_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -106,8 +103,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("verge_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: "20171116072016"
+            urlString: expected.url
         )
     }
 
@@ -125,8 +121,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("youtube_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -144,8 +139,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("guardian_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: "20170918063647"
+            urlString: expected.url
         )
     }
 
@@ -163,8 +157,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("crash"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
@@ -182,8 +175,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("crash_emoji"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
@@ -201,8 +193,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("instagram_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -220,8 +211,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("vimeo_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -238,8 +228,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("nytimes_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: "20180523034751"
+            urlString: expected.url
         )
     }
     
@@ -257,8 +246,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("washington_post_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: "20180519102639"
+            urlString: expected.url
         )
     }
     
@@ -276,8 +264,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("medium_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
@@ -294,8 +281,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("wire_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -313,8 +299,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("polygon_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: "20171126020245"
+            urlString: expected.url
         )
     }
 
@@ -332,8 +317,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("itunes_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 
@@ -351,8 +335,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("itunes_without_title_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
     
@@ -370,8 +353,7 @@ class OpenGraphMockDataProvider: NSObject {
         return OpenGraphMockData(
             head: fixtureWithName("yahoo_sports_head"),
             expected: expected,
-            urlString: expected.url,
-            urlVersion: nil
+            urlString: expected.url
         )
     }
 

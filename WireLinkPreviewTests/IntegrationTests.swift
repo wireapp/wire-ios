@@ -77,7 +77,7 @@ class IntegrationTests: XCTestCase {
     
     func testThatItParsesSampleDataFoursquare() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "playfoursquare:venue", siteNameString: "Foursquare", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: true)
-        let mockData = OpenGraphMockDataProvider.foursquareData()
+        let mockData = OpenGraphMockDataProvider.foursqaureData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
@@ -133,23 +133,14 @@ class IntegrationTests: XCTestCase {
         let sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main)
 
         // when
-
-        var resolvedURL: URL
-
-        if let version = mockData.urlVersion {
-            resolvedURL = URL(string: "http://web.archive.org/web/\(version)/\(mockData.urlString)")!
-        } else {
-            resolvedURL = URL(string: mockData.urlString)!
-        }
-
         var result: OpenGraphData?
-        sut.requestOpenGraphData(fromURL: resolvedURL) { data in
+        sut.requestOpenGraphData(fromURL: URL(string: mockData.urlString)!) { data in
             result = data
             XCTAssertNotNil(data, line: line)
             completionExpectation.fulfill()
         }
 
-        waitForExpectations(timeout: 60, handler: nil)
+        waitForExpectations(timeout: 10, handler: nil)
         guard let data = result else {
             return XCTFail("Could not extract open graph data from \(mockData.urlString)", line: line)
         }
