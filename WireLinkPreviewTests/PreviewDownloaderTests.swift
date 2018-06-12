@@ -129,7 +129,7 @@ class PreviewDownloaderTests: XCTestCase {
         
         // when
         sut.requestOpenGraphData(fromURL: url, completion: completion)
-        let error = NSError(domain: name!, code: 0, userInfo: nil)
+        let error = NSError(domain: name, code: 0, userInfo: nil)
         sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
         sut.urlSession(mockSession, task: mockDataTask, didCompleteWithError: error)
         

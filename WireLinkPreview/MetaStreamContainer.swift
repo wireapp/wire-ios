@@ -42,8 +42,8 @@ final class MetaStreamContainer {
             startBound = content.startIndex
         }
 
-        let result = content.substring(with: startBound..<upperBound)
-        return result
+        let result = content[startBound..<upperBound]
+        return String(result)
     }
     
     var reachedEndOfHead = false
