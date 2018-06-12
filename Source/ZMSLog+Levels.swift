@@ -23,7 +23,7 @@ import Foundation
 /// Map of the level set for each log tag
 private var logTagToLevel : [String : ZMLogLevel_t] = [:]
 
-extension ZMSLog {
+@objc extension ZMSLog {
     
     /// Sets the minimum logging level for the tag
     /// - note: switches to the log queue
