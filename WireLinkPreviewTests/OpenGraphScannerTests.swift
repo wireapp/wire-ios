@@ -35,7 +35,7 @@ class OpenGraphScannerTests: XCTestCase {
     }
     
     func testThatItCanParseCorrectlyStrippedSampleData_Foursquare() {
-        assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.foursqaureData())
+        assertThatItParsesSampleDataCorrectly(OpenGraphMockDataProvider.foursquareData())
     }
 
     func testThatItCanParseCorrectlyStrippedSampleData_YouTube() {
