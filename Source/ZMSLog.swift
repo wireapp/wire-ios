@@ -46,7 +46,7 @@ import Foundation
     /// Log observers
     fileprivate static var logHooks : [UUID : LogHook] = [:]
     
-    public init(tag: String) {
+    @objc public init(tag: String) {
         self.tag = tag
         logQueue.sync {
             ZMSLog.register(tag: tag)
@@ -54,7 +54,7 @@ import Foundation
     }
     
     /// Wait for all log operations to be completed
-    public static func sync() {
+    @objc public static func sync() {
         logQueue.sync {
             // no op
         }
@@ -136,7 +136,7 @@ extension ZMSLog {
     }
     
     /// Adds a log hook
-    static public func addHook(logHook: @escaping LogHook) -> LogHookToken {
+    @objc static public func addHook(logHook: @escaping LogHook) -> LogHookToken {
         var token : LogHookToken! = nil
         logQueue.sync {
             token = self.nonLockingAddHook(logHook: logHook)
@@ -145,7 +145,7 @@ extension ZMSLog {
     }
     
     /// Adds a log hook without locking
-    static public func nonLockingAddHook(logHook: @escaping LogHook) -> LogHookToken {
+    @objc static public func nonLockingAddHook(logHook: @escaping LogHook) -> LogHookToken {
         let token = LogHookToken()
         self.logHooks[token.token] = logHook
         return token
@@ -153,14 +153,14 @@ extension ZMSLog {
     
     
     /// Remove a log hook
-    static public func removeLogHook(token: LogHookToken) {
+    @objc static public func removeLogHook(token: LogHookToken) {
         logQueue.sync {
             _ = self.logHooks.removeValue(forKey: token.token)
         }
     }
     
     /// Remove all log hooks
-    static public func removeAllLogHooks() {
+    @objc static public func removeAllLogHooks() {
         logQueue.sync {
             self.logHooks = [:]
         }
@@ -189,12 +189,12 @@ extension ZMSLog {
 // MARK: - Save on disk & file management
 extension ZMSLog {
     
-    static public var previousLog: Data? {
+    @objc static public var previousLog: Data? {
         guard let previousLogPath = previousLogPath?.path else { return nil }
         return readFile(at: previousLogPath)
     }
     
-    static public var currentLog: Data? {
+    @objc static public var currentLog: Data? {
         guard let currentLogPath = currentLogPath?.path else { return nil }
         return readFile(at: currentLogPath)
     }
@@ -204,15 +204,15 @@ extension ZMSLog {
         return handle?.readDataToEndOfFile()
     }
     
-    static public var previousLogPath: URL? {
+    @objc static public var previousLogPath: URL? {
         return cachesDirectory?.appendingPathComponent("previous.log")
     }
     
-    static public var currentLogPath: URL? {
+    @objc static public var currentLogPath: URL? {
         return cachesDirectory?.appendingPathComponent("current.log")
     }
     
-    public static func clearLogs() {
+    @objc public static func clearLogs() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
             closeHandle()
@@ -222,7 +222,7 @@ extension ZMSLog {
         }
     }
     
-    public static func switchCurrentLogToPrevious() {
+    @objc public static func switchCurrentLogToPrevious() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
         logQueue.async {
             closeHandle()
