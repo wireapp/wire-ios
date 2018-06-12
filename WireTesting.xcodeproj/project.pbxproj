@@ -392,7 +392,7 @@
 					};
 					096AD7C51B68D41D00E007A8 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0930;
 					};
 				};
 			};
@@ -485,6 +485,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */;
 			buildSettings = {
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -492,6 +494,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */;
 			buildSettings = {
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
