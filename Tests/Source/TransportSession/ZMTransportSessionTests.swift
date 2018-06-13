@@ -20,7 +20,7 @@ import Foundation
 import WireTransport
 import WireTesting
 
-@objc public class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
+@objcMembers public class FakeReachability: NSObject, ReachabilityProvider, TearDownCapable {
     
     public var observerCount = 0
     public func add(_ observer: ZMReachabilityObserver, queue: OperationQueue?) -> Any {

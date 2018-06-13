@@ -20,7 +20,7 @@ import Foundation
 
 extension URLSessionConfiguration {
     
-    public var configurationDump: String {
+    @objc public var configurationDump: String {
         var dump = [
             "identifier: \(self.identifier ?? "nil")",
             "allowsCellularAccess: \(self.allowsCellularAccess)",

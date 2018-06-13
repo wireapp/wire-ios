@@ -943,16 +943,16 @@
 					09A218651B790D330076547A = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = W5KEQBF9B5;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0930;
 					};
 					3E88BCA61B1F35DF00232589 = {
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = W5KEQBF9B5;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0930;
 					};
 					3E88BCB11B1F35DF00232589 = {
 						CreatedOnToolsVersion = 6.3.2;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 0930;
 						TestTargetID = 09A218651B790D330076547A;
 					};
 				};
@@ -1179,7 +1179,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1192,7 +1192,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 3.0;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1217,6 +1217,7 @@
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1227,6 +1228,7 @@
 				INFOPLIST_FILE = "Resources/WireTransport-Info.plist";
 				MODULEMAP_PRIVATE_FILE = "$(SRCROOT)/testing.modulemap";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1238,6 +1240,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
 			};
 			name = Debug;
@@ -1250,6 +1253,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
 			};
 			name = Release;

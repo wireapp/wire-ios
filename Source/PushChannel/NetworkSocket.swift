@@ -31,7 +31,7 @@ import Foundation
     func didClose(socket: NetworkSocket)
 }
 
-@objc public class DataBuffer: NSObject {
+@objcMembers public class DataBuffer: NSObject {
     fileprivate var data: DispatchData = DispatchData.empty
     
     public var objcData: __DispatchData {
@@ -58,7 +58,7 @@ import Foundation
     }
 }
 
-@objc public final class NetworkSocket: NSObject {
+@objcMembers public final class NetworkSocket: NSObject {
     
     // MARK: - Public API
     public let url: URL
@@ -181,7 +181,7 @@ import Foundation
     @objc(writeData:)
     public func write(data dataToWrite: Data) {
         dataToWrite.withUnsafeBytes { (unsafePointer: UnsafePointer<UInt8>) -> Void in
-            let unsafeBufferPointer = UnsafeBufferPointer(start: unsafePointer, count: dataToWrite.count)
+            let unsafeBufferPointer = UnsafeRawBufferPointer(start: unsafePointer, count: dataToWrite.count)
             self.write(dispatchData: DispatchData(bytes: unsafeBufferPointer))
         }
     }

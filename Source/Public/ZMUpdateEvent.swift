@@ -143,10 +143,10 @@ extension ZMUpdateEventType {
     init(string: String) {
         let result = (ZMUpdateEventType.unknown.rawValue...ZMUpdateEventType._LAST.rawValue)
             .lazy
-            .flatMap { number -> ZMUpdateEventType? in
+            .compactMap { number -> ZMUpdateEventType? in
                 return ZMUpdateEventType(rawValue: number)
             }
-            .flatMap { eventType -> (ZMUpdateEventType, String)? in
+            .compactMap { eventType -> (ZMUpdateEventType, String)? in
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
             }
@@ -175,7 +175,7 @@ extension ZMUpdateEvent {
 
 private let zmLog = ZMSLog(tag: "UpdateEvents")
 
-@objc open class ZMUpdateEvent: NSObject {
+@objcMembers open class ZMUpdateEvent: NSObject {
 
     open var payload: [AnyHashable : Any]
     open var type: ZMUpdateEventType
@@ -262,7 +262,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
             return []
         }
 
-        let events = payloads.flatMap { payload -> ZMUpdateEvent? in
+        let events = payloads.compactMap { payload -> ZMUpdateEvent? in
             var actualSource = source
             if let thresholdUUID = sourceThreshold, thresholdUUID.isType1UUID, uuid.isType1UUID, (thresholdUUID as NSUUID).compare(withType1UUID: uuid as NSUUID) != .orderedDescending {
                 actualSource = .pushNotification
@@ -318,7 +318,7 @@ private let zmLog = ZMSLog(tag: "UpdateEvents")
 extension ZMUpdateEvent {
     open override var description: String {
         let uuidDescription = uuid?.transportString() ?? "<no uuid>"
-        return "<\(type(of:self))> \(uuidDescription) \(payload) \n \(debugInformation)"
+        return "<\(Swift.type(of:self))> \(uuidDescription) \(payload) \n \(debugInformation)"
     }
 }
 
