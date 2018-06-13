@@ -28,7 +28,7 @@ import Foundation
 
 /// Monitors the REST requests that are sent over the network
 /// to detect suspicious request loops
-@objc public class RequestLoopDetection : NSObject {
+@objcMembers public class RequestLoopDetection : NSObject {
     
     /// List of requests
     fileprivate var recordedRequests : [IdentifierDate] = []

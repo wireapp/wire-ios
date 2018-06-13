@@ -33,7 +33,7 @@ extension String {
 }
 
 extension ZMTransportRequest: PrivateStringConvertible {
-    public var privateDescription: String {
+    @objc public var privateDescription: String {
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): method=\(ZMTransportRequest.string(for: self.method)) \(self.path.removingUUIDs)"
     }
 }

@@ -19,7 +19,7 @@
 import Foundation
 import WireTransport
 
-@objc public class TestTrustVerificator: NSObject, URLSessionDelegate {
+@objcMembers public class TestTrustVerificator: NSObject, URLSessionDelegate {
 
     private var session: URLSession!
     private let callback: (Bool) -> Void

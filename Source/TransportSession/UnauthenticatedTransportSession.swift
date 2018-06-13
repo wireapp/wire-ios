@@ -196,7 +196,7 @@ public extension ZMTransportResponse {
         guard let response = rawResponse else { return nil }
         let cookies = HTTPCookie.cookies(withResponseHeaderFields: response.allHeaderFields as! [String : String], for: response.url!)
         guard !cookies.isEmpty else { return nil }
-        let properties = cookies.flatMap { $0.properties }
+        let properties = cookies.compactMap { $0.properties }
         guard (properties.first?[.name] as? String) == CookieKey.zetaId.rawValue else { return nil }
         let data = NSMutableData()
         let archiver = NSKeyedArchiver(forWritingWith: data)

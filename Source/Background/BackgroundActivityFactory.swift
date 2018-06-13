@@ -19,7 +19,7 @@
 import UIKit
 import WireUtilities
 
-@objc open class BackgroundActivityFactory: NSObject {
+@objcMembers open class BackgroundActivityFactory: NSObject {
     
     private static let _instance : BackgroundActivityFactory = BackgroundActivityFactory()
     
