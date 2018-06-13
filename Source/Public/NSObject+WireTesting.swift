@@ -19,7 +19,7 @@
 
 import Foundation
 
-extension NSObject {
+@objc extension NSObject {
     
     public static func isEqualOrBothNil(_ object1: NSObject?, toObject object2: NSObject?) -> Bool {
         return object1 == object2
