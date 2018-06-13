@@ -23,7 +23,7 @@ private var recordingToken : ZMSLog.LogHookToken? = nil
 extension ZMSLog {
     
     /// Start recording
-    public static func startRecording(isInternal: Bool = true) {
+    @objc public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {
             if recordingToken == nil {
                 recordingToken = self.nonLockingAddHook(logHook: { (level, tag, message) -> (Void) in
@@ -36,7 +36,7 @@ extension ZMSLog {
     }
     
     /// Stop recording logs and discard cache
-    public static func stopRecording() {
+    @objc public static func stopRecording() {
         var tokenToRemove : ZMSLog.LogHookToken?
         logQueue.sync {
             guard let token = recordingToken else { return }
