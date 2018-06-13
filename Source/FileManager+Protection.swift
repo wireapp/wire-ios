@@ -28,9 +28,7 @@ extension FileManager {
         
         if !fileExists(atPath: url.path) {
             do {
-                let permission = 0o700
-                let attributes = [FileAttributeKey.posixPermissions.rawValue: permission] as [String: Any]
-                try createDirectory(at: url, withIntermediateDirectories: true, attributes: attributes)
+                try createDirectory(at: url, withIntermediateDirectories: true, attributes: [.posixPermissions: 0o700])
             }
             catch let error as NSError {
                 // Only when building on simulator

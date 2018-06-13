@@ -57,8 +57,6 @@ public extension String {
         
         let end = normalizedFilename.index(normalizedFilename.endIndex, offsetBy: offset)
         let result = normalizedFilename[start..<end]
-        let trimmedFilename = String(result)
-        
-        return trimmedFilename ?? ""
+        return String(result)
     }
 }

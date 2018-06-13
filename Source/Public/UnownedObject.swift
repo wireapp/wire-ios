@@ -29,7 +29,7 @@ public final class UnownedObject<T: AnyObject> {
     public var isValid: Bool { return self.unbox != nil }
 }
 
-@objc public class UnownedNSObject: NSObject {
+@objcMembers public class UnownedNSObject: NSObject {
     public weak var unbox: NSObject?
     
     public init(_ unbox: NSObject) {

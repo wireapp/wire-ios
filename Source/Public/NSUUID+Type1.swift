@@ -22,7 +22,7 @@ import Foundation
 public extension NSUUID {
 
     /// Returns whether this UUID is of Type 1
-    public var isType1UUID : Bool {
+    @objc public var isType1UUID : Bool {
         // looking at most significant bits of #7, as defined in: https://tools.ietf.org/html/rfc4122
         let type = ((self as UUID).uuid.6 & 0xf0) >> 4
         return type == 1
@@ -45,7 +45,7 @@ public extension NSUUID {
     
     /// Returns the type 1 timestamp
     /// - returns: NSDate, or `nil` if the NSUUID is not of Type 1
-    public var type1Timestamp : Date? {
+    @objc public var type1Timestamp : Date? {
         /*
         see https://tools.ietf.org/html/rfc4122
         UUID schema
@@ -78,17 +78,17 @@ public extension NSUUID {
 
     /// Returns the comparison result for this NSUUID of type 1 and another NSUUID of type 1
     /// - Requires: will assert if any UUID is not of type 1
-    public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
+    @objc public func compare(withType1UUID type1UUID: NSUUID) -> ComparisonResult {
         assert(self.isType1UUID && type1UUID.isType1UUID)
         return self.type1Timestamp!.compare(type1UUID.type1Timestamp!)
     }
 
-    public static func timeBasedUUID() -> NSUUID {
+    @objc public static func timeBasedUUID() -> NSUUID {
         let uuidSize = MemoryLayout<uuid_t>.size
         let uuidPointer = UnsafeMutablePointer<UInt8>.allocate(capacity: uuidSize)
         uuid_generate_time(uuidPointer)
         let uuid = NSUUID(uuidBytes: uuidPointer) as NSUUID
-        uuidPointer.deallocate(capacity: uuidSize)
+        uuidPointer.deallocate()
         return uuid
     }
 }
