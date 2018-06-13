@@ -19,7 +19,7 @@
 import Foundation
 
 
-@objc public final class MockService: NSManagedObject, EntityNamedProtocol {
+@objcMembers public final class MockService: NSManagedObject, EntityNamedProtocol {
 
     @NSManaged public var identifier: String
     @NSManaged public var name: String

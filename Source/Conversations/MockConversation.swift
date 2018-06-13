@@ -53,7 +53,7 @@ extension MockConversation {
         }
     }
 
-    public func set(allowGuests: Bool) {
+    @objc public func set(allowGuests: Bool) {
         guard type == .group, team != nil else {
              return
         }
@@ -61,7 +61,7 @@ extension MockConversation {
         accessMode = MockConversationAccessMode.value(forAllowGuests: allowGuests).stringValue
     }
 
-    var changePushPayload: [String: Any]? {
+    @objc var changePushPayload: [String: Any]? {
         let accessModeKeyPath = #keyPath(MockConversation.accessMode)
         let accessRoleKeyPath = #keyPath(MockConversation.accessRole)
 
@@ -79,7 +79,7 @@ extension MockConversation: EntityNamedProtocol {
     }
 }
 
-public extension MockConversation {
+@objc public extension MockConversation {
     public static func existingConversation(with identifier: String, managedObjectContext: NSManagedObjectContext) -> MockConversation? {
         let conversationPredicate = NSPredicate(format: "%K == %@", #keyPath(MockConversation.identifier), identifier)
         return MockConversation.fetch(in: managedObjectContext, withPredicate: conversationPredicate)

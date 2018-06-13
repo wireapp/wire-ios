@@ -34,12 +34,12 @@ public extension MockTransportSession {
         guard shouldSendEventsToSelfUser else { return [] }
         
         let updatedEvents =  updated
-            .flatMap { $0 as? MockTeam }
+            .compactMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
             .flatMap{ self.pushEventForUpdatedTeam(team: $0, insertedObjects: inserted) }
         
         let deletedEvents = deleted
-            .flatMap { $0 as? MockTeam }
+            .compactMap { $0 as? MockTeam }
             .sorted(by: ascendingCreationDate)
             .filter(selfUserPartOfTeam)
             .map(MockTeamEvent.deleted)
@@ -56,11 +56,11 @@ public extension MockTransportSession {
         }
         
         let membersEvents = MockTeamMemberEvent.createIfNeeded(team: team, changedValues: team.changedValues(), selfUser: selfUser)
-        let membersPushEvents = membersEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let membersPushEvents = membersEvents.compactMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         allEvents.append(contentsOf: membersPushEvents)
 
         let conversationsEvents = MockTeamConversationEvent.createIfNeeded(team: team, changedValues: team.changedValues())
-        let conversationsPushEvents = conversationsEvents.flatMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
+        let conversationsPushEvents = conversationsEvents.compactMap{ $0 }.map { MockPushEvent(with: $0.payload, uuid: UUID.create(), isTransient: false) }
         allEvents.append(contentsOf: conversationsPushEvents)
         
         return allEvents
@@ -72,7 +72,7 @@ extension MockTransportSession {
 
     func relevant(conversations: Set<NSManagedObject>) -> [MockConversation] {
         return conversations
-            .flatMap { object -> MockConversation? in
+            .compactMap { object -> MockConversation? in
                 object as? MockConversation
             }.filter { conversation -> Bool in
                 conversation.type != .invalid && conversation.selfIdentifier == self.selfUser.identifier

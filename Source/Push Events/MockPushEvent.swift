@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public class MockPushEvent: NSObject {
+@objcMembers public class MockPushEvent: NSObject {
     
     public let payload: ZMTransportData
     public let uuid: UUID
@@ -38,7 +38,7 @@ import Foundation
         self.isSilent = isSilent
     }
     
-    @objc public var transportData: ZMTransportData {
+    public var transportData: ZMTransportData {
         return [
                 "id" : uuid.transportString(),
                 "payload" : [ payload ],

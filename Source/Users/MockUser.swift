@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public class MockUser: NSManagedObject {
+@objcMembers public class MockUser: NSManagedObject {
     
     public static let mutualFriendsKey = "mutual_friends"
     public static let totalMutualFriendsKey = "total_mutual_friends"
@@ -82,9 +82,9 @@ extension MockUser {
             return connection.to == self ? connection.from : connection.to
         }
         
-        let connectedToUsers : [MockUser] = self.connectionsTo.flatMap(acceptedUsers)
-        let connectedFromUsers : [MockUser] = self.connectionsFrom.flatMap(acceptedUsers)
-        
+        let connectedToUsers : [MockUser] = self.connectionsTo.compactMap(acceptedUsers)
+        let connectedFromUsers : [MockUser] = self.connectionsFrom.compactMap(acceptedUsers)
+
         let teamMembers = self.memberships?.first?.team.members.map({ $0.user }) ?? []
         
         var users = Set<MockUser>()
@@ -127,7 +127,7 @@ extension MockUser {
     }
 
     @objc public func removeLegacyPictures() {
-        [smallProfileImage, mediumImage].flatMap { $0 }.forEach(managedObjectContext!.delete)
+        [smallProfileImage, mediumImage].compactMap { $0 }.forEach(managedObjectContext!.delete)
     }
     
 }
@@ -184,7 +184,7 @@ extension MockUser {
         ]
     }
     
-    public var changePushPayload: [String : Any]? {
+    @objc public var changePushPayload: [String : Any]? {
         var payload = [String : Any]()
         let regularProperties = Set(arrayLiteral: #keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone))
         let assetIds = Set(arrayLiteral: #keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier))
