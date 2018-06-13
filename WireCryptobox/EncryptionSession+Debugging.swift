@@ -56,7 +56,7 @@ extension String {
             let range = stringIndex..<endIndex
             charsLeft -= size
             stringIndex = endIndex
-            return self.substring(with: range)
+            return String(self[range])
         }
     }
 }
