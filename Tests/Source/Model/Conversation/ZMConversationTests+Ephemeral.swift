@@ -19,25 +19,23 @@
 import Foundation
 @testable import WireDataModel
 
-
 class ZMConversationMessageDestructionTimeoutTests : XCTestCase {
 
     func testThatItReturnsTheCorrectTimeouts(){
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.none.rawValue, 0)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.fiveSeconds.rawValue, 5)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.fifteenSeconds.rawValue, 15)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.thirtySeconds.rawValue, 30)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneMinute.rawValue, 60)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.tenSeconds.rawValue, 10)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.fiveMinutes.rawValue, 300)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneDay.rawValue, 86400)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneWeek.rawValue, 604800)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.fourWeeks.rawValue, 2419200)
     }
-    
+
     func testThatItReturnsTheClosestTimeOut() {
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: -2), 5)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 0), 5)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 2), 5)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 5), 5)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 6), 6)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: -2), 10)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 0), 10)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 2), 10)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 5), 10)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 6), 10)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 14), 14)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 15), 15)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 16), 16)
@@ -52,8 +50,8 @@ class ZMConversationMessageDestructionTimeoutTests : XCTestCase {
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 301), 301)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86399), 86399)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86400), 86400)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86401), 86400)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 1234567890), 86400)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86401), 86401)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 1234567890), 2419200)
     }
 
 }
@@ -67,10 +65,10 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         
         // when
-        conversation.updateMessageDestructionTimeout(timeout: .fiveSeconds)
+        conversation.updateMessageDestructionTimeout(timeout: .tenSeconds)
         
         // then
-        XCTAssertEqual(conversation.messageDestructionTimeout, 5)
+        XCTAssertEqual(conversation.messageDestructionTimeout, 10)
     }
 
     
@@ -80,10 +78,10 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         conversation.conversationType = .oneOnOne
         
         // when
-        conversation.updateMessageDestructionTimeout(timeout: .fiveSeconds)
+        conversation.updateMessageDestructionTimeout(timeout: .tenSeconds)
         
         // then
-        XCTAssertEqual(conversation.messageDestructionTimeout, 5)
+        XCTAssertEqual(conversation.messageDestructionTimeout, 10)
     }
  
     func testThatSendingEphemeralToEmptyConversationIsNotPossible() {
