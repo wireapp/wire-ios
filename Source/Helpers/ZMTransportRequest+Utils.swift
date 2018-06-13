@@ -18,7 +18,7 @@
 
 import Foundation
 
-public extension ZMTransportRequest {
+@objc public extension ZMTransportRequest {
     
     var URL : URL {
         return Foundation.URL(string: self.path)!
@@ -62,7 +62,7 @@ public extension ZMTransportRequest {
 
 }
 
-public extension ZMTransportRequest {
+@objc public extension ZMTransportRequest {
     
     /// Returns whether the path of the request matches the given string.
     /// Wildcards are allowed using the special symbol "*"

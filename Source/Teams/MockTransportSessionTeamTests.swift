@@ -44,7 +44,7 @@ class MockTransportSessionTeamTests : MockTransportSessionTests {
 
         XCTAssertEqual(payloadTeams.count, teams.count, "Response should have \(teams.count) teams", file: file, line: line)
         
-        let receivedTeamIdentifiers = payloadTeams.flatMap { $0["id"] as? String }
+        let receivedTeamIdentifiers = payloadTeams.compactMap { $0["id"] as? String }
         let expectedTeamIdentifiers = teams.map { $0.identifier }
         
         for expectedId in expectedTeamIdentifiers {
@@ -339,7 +339,7 @@ extension MockTransportSessionTeamTests {
         }
         XCTAssertEqual(teams.count, 2)
         
-        let identifiers = Set(teams.flatMap { $0["user"] as? String })
+        let identifiers = Set(teams.compactMap { $0["user"] as? String })
         XCTAssertEqual(identifiers, [user1.identifier, user2.identifier])
     }
 

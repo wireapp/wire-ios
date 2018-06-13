@@ -77,7 +77,7 @@ extension MockUserClient {
     }
   
     /// Returns a fetch request to fetch MockUserClients with the given predicate
-    public static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
+    @objc public static func fetchRequest(predicate: NSPredicate) -> NSFetchRequest<MockUserClient> {
         let request = NSFetchRequest<MockUserClient>(entityName: "UserClient")
         request.predicate = predicate
         return request
@@ -85,7 +85,7 @@ extension MockUserClient {
 }
 
 // MARK: - JSON de/serialization
-extension MockUserClient {
+@objc extension MockUserClient {
     
     /// Creates a new client from JSON payload
     public static func insertClient(payload: [String:Any], context: NSManagedObjectContext) -> MockUserClient? {
@@ -196,7 +196,7 @@ extension MockUserClient {
 }
 
 // MARK: - Encryption and sessions
-extension MockUserClient {
+@objc extension MockUserClient {
     
     fileprivate var encryptionContext: EncryptionContext {
         let documentURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!

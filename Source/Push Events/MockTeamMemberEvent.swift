@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objc public class MockTeamMemberEvent: NSObject {
+@objcMembers public class MockTeamMemberEvent: NSObject {
     
     public enum Kind: String {
         case join = "team.member-join"
