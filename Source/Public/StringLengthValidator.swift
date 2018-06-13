@@ -19,7 +19,7 @@
 
 import Foundation
 
-@objc open class StringLengthValidator: NSObject {
+@objcMembers open class StringLengthValidator: NSObject {
     
     private static let controlSet: CharacterSet = {
         var controlSet = CharacterSet.controlCharacters

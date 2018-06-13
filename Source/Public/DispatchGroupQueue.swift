@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class DispatchGroupQueue : NSObject, ZMSGroupQueue {
+@objcMembers public class DispatchGroupQueue : NSObject, ZMSGroupQueue {
     
     let queue : DispatchQueue
     let dispatchGroupContext : DispatchGroupContext

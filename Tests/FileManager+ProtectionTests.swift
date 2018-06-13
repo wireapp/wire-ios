@@ -127,7 +127,7 @@ extension FileManagerProtectionTests {
     }
     
     var testFolder: URL {
-        return URL(fileURLWithPath: NSTemporaryDirectory() + self.name!)
+        return URL(fileURLWithPath: NSTemporaryDirectory() + name)
     }
     
     func wipeTestFolder() {

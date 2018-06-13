@@ -18,7 +18,7 @@
 
 import Foundation
 
-public class DispatchGroupContext : NSObject {
+@objcMembers public class DispatchGroupContext : NSObject {
     
     private var isolationQueue = DispatchQueue(label: "context.isolation", attributes: [.concurrent])
     private var _groups : [ZMSDispatchGroup] = []

@@ -62,7 +62,7 @@ public extension FixedWidthInteger {
 
 /// Extension for NSNumber so we can support ObjC
 public extension NSNumber {
-    public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
+    @objc public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
         return UInt32.secureRandomNumber(upperBound: upperBound)
     }
 }
