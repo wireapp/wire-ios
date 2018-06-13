@@ -19,7 +19,7 @@
 
 import Foundation
 
-extension Array where Element:Ziph {
+extension Array where Element: Ziph {
     fileprivate func filteredResults(maxImageSize: Int) -> [Ziph] {
         return self.filter({
             guard let size = $0.ziphyImages[ZiphyClient.fromZiphyImageTypeToString(.downsized)]?.size else { return false }
@@ -28,7 +28,7 @@ extension Array where Element:Ziph {
     }
 }
 
-final public class ZiphySearchResultsController {
+@objcMembers final public class ZiphySearchResultsController {
     
     public var ziphyClient : ZiphyClient?
 

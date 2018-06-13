@@ -30,17 +30,15 @@ public typealias ZiphsCallBack = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?
 public typealias ZiphByIdCallBack = (_ success:Bool, _ ziphId:String, _ error:Error?)->()
 public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _ ziph:Ziph, _ data:Data?, _ error:Error?) -> ()
 
-@objc public final class ZiphyClient : NSObject {
+@objcMembers public final class ZiphyClient: NSObject {
     
-    
-    open static var logLevel:ZiphyLogLevel = ZiphyLogLevel.error
+    open static var logLevel: ZiphyLogLevel = .error
     let host:String
     let requester:ZiphyURLRequester
     let downloadSession:URLSession
     let requestGenerator:ZiphyRequestGenerator
     
     public required init(host:String, requester: ZiphyURLRequester) {
-        
         self.requester = requester
         self.host = host
         self.downloadSession = URLSession(configuration: URLSessionConfiguration.default)
@@ -241,8 +239,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
     fileprivate func checkDataForPagination(_ data:Data!)->Either<Error, AnyObject> {
         
         if data == nil {
-            
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
@@ -259,35 +256,32 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                     let offset = paginationInfo["offset"] as? Int {
                         
                         if offset >= total_count {
-                            
-                            return  Either.Left(NSError(domain: ZiphyErrorDomain,
-                                code:ZiphyError.noMorePages.rawValue,
-                                userInfo:[NSLocalizedDescriptionKey:"No more pages in JSON"]))
+                            return  .left(NSError(domain: ZiphyErrorDomain,
+                                code: ZiphyError.noMorePages.rawValue,
+                                userInfo: [NSLocalizedDescriptionKey:"No more pages in JSON"]))
                         }
                 }
             }
-            else{
-                
-                return Either.Left(NSError(domain: ZiphyErrorDomain,
+            else {
+                return .left((NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.badResponse.rawValue,
-                    userInfo:[NSLocalizedDescriptionKey:"Pagination error in JSON"]))
+                    userInfo:[NSLocalizedDescriptionKey:"Pagination error in JSON"])))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
         
         
-        return Either.Right([] as AnyObject)
+        return .right([] as AnyObject)
     }
     
     fileprivate func checkDataForImageArray(_ data:Data!) -> Either<Error,[Ziph]> {
         
         if data == nil {
-            
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
@@ -305,19 +299,19 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
                 let arrayOfPossibleZiphs = gifsArray.filter { return fromSearchResultToZiph($0) != nil }
                 let ziphs = arrayOfPossibleZiphs.map { return Ziph(dictionary:$0)! }
                 
-                return Either.Right(ziphs)
+                return .right(ziphs)
             }
             else {
                 
                 LogError("Response Error: \(String(describing: maybeResponse))")
                 
-                return Either.Left(NSError(domain: ZiphyErrorDomain,
+                return .left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.badResponse.rawValue,
                     userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
@@ -327,7 +321,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
         
         if data == nil {
             
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"No data in network response"]))
         }
@@ -336,19 +330,19 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
             if let randomGifDesc = maybeResponse?["data"] as? [String:AnyObject] {
                 
                 let gifId:String? = randomGifDesc["id"] as? String
-                return Either.Right(gifId ?? "")
+                return .right(gifId ?? "")
             }
             else {
                 
                 LogError("Response Error: \(String(describing: maybeResponse))")
                 
-                return Either.Left(NSError(domain: ZiphyErrorDomain,
+                return .left(NSError(domain: ZiphyErrorDomain,
                     code:ZiphyError.badResponse.rawValue,
                     userInfo:[NSLocalizedDescriptionKey:"Data field missing in JSON"]))
             }
         } catch (let error as NSError) {
             LogError(error.localizedDescription)
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(domain: ZiphyErrorDomain,
                 code:ZiphyError.badResponse.rawValue,
                 userInfo:[NSLocalizedDescriptionKey:"JSON Serialization error", NSUnderlyingErrorKey: error]))
         }
@@ -356,7 +350,7 @@ public typealias ZiphyImageCallBack = (_ success:Bool, _ image:ZiphyImageRep?, _
     }
 }
 
-extension ZiphyClient {
+@objc extension ZiphyClient {
     
     public class func fromZiphyImageTypeToString(_ type:ZiphyImageType) -> String
     {

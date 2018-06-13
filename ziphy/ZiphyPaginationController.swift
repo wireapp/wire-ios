@@ -23,10 +23,9 @@ import Foundation
 public typealias SuccessOrErrorCallback = (_ success:Bool, _ ziphs:[Ziph], _ error:Error?)->()
 public typealias FetchBlock = (_ offset:Int)-> CancelableTask?
 
-public class ZiphyPaginationController {
+@objcMembers public class ZiphyPaginationController {
     
-    fileprivate(set) var ziphs:[Ziph] = []
-    
+    fileprivate(set) var ziphs: [Ziph] = []
     fileprivate (set) var ziphsThisFetch = 0
     fileprivate (set) open var totalPagesFetched = 0
     fileprivate var offset = 0

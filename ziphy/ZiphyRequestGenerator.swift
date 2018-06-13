@@ -43,16 +43,16 @@ struct ZiphyRequestGenerator {
         components.query = query ?? ""
         
         if let requestURL = components.url {
-            
-            return Either.Right(URLRequest(url: requestURL))
+            return .right(URLRequest(url: requestURL))
         }
         else {
-            
             let invalidURL = requestScheme + "://" + ((self.host as NSString).appendingPathComponent(path) as NSString).appendingPathComponent(query ?? "")
-            
-            return Either.Left(NSError(domain: ZiphyErrorDomain,
+            return .left(NSError(
+                domain: ZiphyErrorDomain,
                 code: ZiphyError.malformedURL.rawValue,
-                userInfo:[NSLocalizedDescriptionKey:invalidURL + " is not a valid URL"]))
+                userInfo: [NSLocalizedDescriptionKey: invalidURL + " is not a valid URL"]
+                )
+            )
         }
     }
     

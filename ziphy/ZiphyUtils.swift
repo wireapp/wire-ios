@@ -28,67 +28,50 @@ func performOnQueue(_ callBackQueue:DispatchQueue, a:@escaping ()->() ){
 
 enum Either<L, R> {
     
-    case Left(L)
-    case Right(R)
+    case left(L)
+    case right(R)
     
     var isLeft: Bool {
-        
         switch self {
-        case .Left:
-            return true
-        case .Right:
-            return false
+        case .left: return true
+        case .right: return false
         }
     }
     
     var isRight: Bool {
-        
         switch self {
-        case .Right:
-            return true
-        case .Left:
-            return false
+        case .right: return true
+        case .left: return false
         }
     }
     
     var right: R? {
-    
         switch self {
-        case let .Right(r):
-            return r
-        case .Left:
-            return nil
+        case let .right(r): return r
+        case .left: return nil
         }
-        
     }
     
     var left: L? {
-        
         switch self {
-        case let .Left(l):
-            return l
-        case .Right:
-            return nil
+        case let .left(l): return l
+        case .right: return nil
         }
     }
     
     func bimap<B, D>(_ f : (L) -> B, _ g : ((R) -> D)) -> Either<B, D> {
-        
         switch self {
-        case let .Left(bx):
-            return Either<B, D>.Left(f(bx))
-        case let .Right(bx):
-            return Either<B, D>.Right(g(bx))
+        case let .left(bx): return .left(f(bx))
+        case let .right(bx): return .right(g(bx))
         }
     }
     
-    
     @discardableResult func leftMap<B>(_ f : (L) -> B) -> Either<B, R> {
-        return self.bimap(f, identity)
+        return bimap(f, identity)
     }
     
     @discardableResult func rightMap<D>(_ g : (R) -> D) -> Either<L, D> {
-        return self.bimap(identity, g)
+        return bimap(identity, g)
     }
     
     func identity<A>(_ a: A) -> A {
@@ -99,11 +82,8 @@ enum Either<L, R> {
 
 typealias URLRequestCallBack = (_ data:Data?, _ response:URLResponse?, _ error:Error?)->Error?
 
-
 public protocol CancelableTask {
-    
     func cancel()
-    
 }
 
 class URLRequestPromise : CancelableTask {
@@ -194,7 +174,6 @@ extension URLSession : ZiphyURLRequester {
 }
 
 @objc public enum ZiphyImageType:Int {
-    
     case fixedHeight
     case fixedHeightStill
     case fixedHeightDownsampled
