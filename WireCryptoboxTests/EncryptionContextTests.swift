@@ -30,8 +30,8 @@ class EncryptionContextTests: XCTestCase {
         let tempDir = createTempFolder()
         
         // have to do work on other queues because the main thread can't be blocked
-        let queue1 = DispatchQueue(label: self.name!)
-        let queue2 = DispatchQueue(label: self.name!)
+        let queue1 = DispatchQueue(label: self.name)
+        let queue2 = DispatchQueue(label: self.name)
         
         // coordinate between the two threads to make sure that they are executed in the right order
         let context2CanEnterSemaphore = DispatchSemaphore(value: 0)
