@@ -726,6 +726,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -735,6 +736,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -745,6 +747,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
 			};
 			name = Debug;
@@ -756,6 +759,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.0;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
 			};
 			name = Release;
@@ -764,6 +768,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5471F8201B73E6E000460C35 /* project-debug.xcconfig */;
 			buildSettings = {
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -771,6 +777,8 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 5471F8211B73E6E000460C35 /* project.xcconfig */;
 			buildSettings = {
+				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
+				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -781,6 +789,7 @@
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.1;
 			};
 			name = Debug;
 		};
@@ -791,6 +800,7 @@
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.1;
 			};
 			name = Release;
 		};
