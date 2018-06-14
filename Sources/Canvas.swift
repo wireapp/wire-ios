@@ -197,7 +197,7 @@ public class Canvas: UIView {
         return stroke
     }
     
-    public func undo() {
+    @objc public func undo() {
         guard !sceneExcludingReferenceObject.isEmpty else { return }
         
         if flattenIndex == scene.count {
@@ -232,7 +232,7 @@ public class Canvas: UIView {
     }
     
     private func pickObject(at position: CGPoint) -> Editable? {
-        let editables = scene.flatMap({ $0 as? Editable })
+        let editables = scene.compactMap({ $0 as? Editable })
         return editables.reversed().first(where: { editable in
             guard editable.selectable else { return false }
             let bounds = CGRect(origin: CGPoint.zero, size: editable.size)
@@ -403,7 +403,7 @@ extension Canvas : UIGestureRecognizerDelegate {
         return true
     }
     
-    func handleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
+    @objc func handleTapGesture(gestureRecognizer: UITapGestureRecognizer) {
         if gestureRecognizer.state == .began && selection == nil {
             selectObject(at: gestureRecognizer.location(in: self))
         } else if gestureRecognizer.state == .recognized {
@@ -411,7 +411,7 @@ extension Canvas : UIGestureRecognizerDelegate {
         }
     }
     
-    func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
+    @objc func handlePanGesture(gestureRecognizer: UIPanGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
@@ -425,7 +425,7 @@ extension Canvas : UIGestureRecognizerDelegate {
         }
     }
     
-    func handlePinchGesture(gestureRecognizer: UIPinchGestureRecognizer) {
+    @objc func handlePinchGesture(gestureRecognizer: UIPinchGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
@@ -438,7 +438,7 @@ extension Canvas : UIGestureRecognizerDelegate {
         }
     }
     
-    func handleRotateGesture(gestureRecognizer: UIRotationGestureRecognizer) {
+    @objc func handleRotateGesture(gestureRecognizer: UIRotationGestureRecognizer) {
         switch gestureRecognizer.state {
         case .began:
             guard let selection = selectObject(at: gestureRecognizer.location(in: self)) else { break }
