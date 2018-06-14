@@ -19,12 +19,12 @@
 
 public enum ZMConversationMessageDestructionTimeout : TimeInterval {
     case none = 0
-    case fiveSeconds = 5
-    case fifteenSeconds = 15
-    case thirtySeconds = 30
-    case oneMinute = 60
+    case tenSeconds = 10
     case fiveMinutes = 300
+    case oneHour = 3600
     case oneDay = 86400
+    case oneWeek = 604800
+    case fourWeeks = 2419200
 }
 
 public extension ZMConversationMessageDestructionTimeout {
@@ -32,12 +32,12 @@ public extension ZMConversationMessageDestructionTimeout {
     static var all: [ZMConversationMessageDestructionTimeout] {
         return [
             .none,
-            .fiveSeconds,
-            .fifteenSeconds,
-            .thirtySeconds,
-            .oneMinute,
+            .tenSeconds,
             .fiveMinutes,
-            .oneDay
+            .oneHour,
+            .oneDay,
+            .oneWeek,
+            .fourWeeks
         ]
     }
 }
@@ -46,8 +46,8 @@ public extension ZMConversationMessageDestructionTimeout {
 
     public static func validTimeout(for timeout: TimeInterval) -> TimeInterval {
         return timeout.clamp(
-            between: ZMConversationMessageDestructionTimeout.fiveSeconds.rawValue,
-            and: ZMConversationMessageDestructionTimeout.oneDay.rawValue
+            between: ZMConversationMessageDestructionTimeout.tenSeconds.rawValue,
+            and: ZMConversationMessageDestructionTimeout.fourWeeks.rawValue
         )
     }
 }
