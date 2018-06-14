@@ -231,7 +231,7 @@ class AssetColletionTests : ModelObjectsTests {
         insertAssetMessages(count: 1000)
         uiMOC.registeredObjects.forEach{uiMOC.refresh($0, mergeChanges: false)}
         
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             
             // when
             self.startMeasuring()

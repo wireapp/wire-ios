@@ -425,7 +425,7 @@ extension MessageWindowObserverTests {
         // windowSize 1000: average: 0.753, relative standard deviation: 0.928%, values: [0.749879, 0.744184, 0.753860, 0.759445, 0.767395, 0.757016, 0.746533, 0.743892, 0.755466, 0.750862],
 
         let count = 500
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
             let message2 = ZMClientMessage(nonce: UUID(), managedObjectContext: self.uiMOC)
             let window = self.createConversationWindowWithMessages([message1, message2], uiMoc: self.uiMOC, windowSize: 10)

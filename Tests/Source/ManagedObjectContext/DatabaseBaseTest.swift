@@ -20,7 +20,7 @@ import Foundation
 import WireTesting
 @testable import WireDataModel
 
-@objc public class DatabaseBaseTest: ZMTBaseTest {
+@objcMembers public class DatabaseBaseTest: ZMTBaseTest {
     
     var accountID : UUID = UUID.create()
     

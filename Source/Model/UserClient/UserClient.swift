@@ -39,7 +39,7 @@ public let ZMUserClientRemoteIdentifierKey = "remoteIdentifier"
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
-public class UserClient: ZMManagedObject, UserClientType {
+@objcMembers public class UserClient: ZMManagedObject, UserClientType {
     public var activationLatitude: Double {
         get {
             return activationLocationLatitude?.doubleValue ?? 0.0
@@ -256,7 +256,7 @@ public class UserClient: ZMManagedObject, UserClientType {
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 public extension UserClient {
 
-    public static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
+    @objc public static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
         fetchRequest.fetchLimit = 1
@@ -265,7 +265,7 @@ public extension UserClient {
     }
     
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    public static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
+    @objc public static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
         
         guard let id = payloadData["id"] as? String,
               let type = payloadData["type"] as? String
@@ -327,7 +327,7 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    public func markForDeletion() {
+    @objc public func markForDeletion() {
         guard let context = self.managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
@@ -348,7 +348,7 @@ public extension UserClient {
         self.fetchFingerprintOrPrekeys()
     }
     
-    public func fetchFingerprintOrPrekeys() {
+    @objc public func fetchFingerprintOrPrekeys() {
         guard self.fingerprint == .none,
             let syncMOC = self.managedObjectContext?.zm_sync
             else { return }
@@ -393,7 +393,7 @@ public extension UserClient {
 
 public extension UserClient {
     
-    public var failedToEstablishSession: Bool {
+    @objc public var failedToEstablishSession: Bool {
         set {
             if newValue {
                 managedObjectContext?.zm_failedToEstablishSessionStore?.add(self)
@@ -412,18 +412,18 @@ public extension UserClient {
 // MARK: - SelfClient methods
 public extension UserClient {
     
-    public func isSelfClient() -> Bool {
+    @objc public func isSelfClient() -> Bool {
         guard let managedObjectContext = managedObjectContext,
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             else { return false }
         return self == selfClient
     }
     
-    public func missesClient(_ client: UserClient) {
+    @objc public func missesClient(_ client: UserClient) {
         missesClients(Set(arrayLiteral: client))
     }
     
-    public func missesClients(_ clients: Set<UserClient>) {
+    @objc public func missesClients(_ clients: Set<UserClient>) {
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {
@@ -432,7 +432,7 @@ public extension UserClient {
     }
     
     /// Use this method only for the selfClient
-    public func removeMissingClient(_ client: UserClient) {
+    @objc public func removeMissingClient(_ client: UserClient) {
         self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
     }
     
@@ -492,7 +492,7 @@ public extension UserClient {
     }
     
     /// Use this method only for the selfClient
-    public func decrementNumberOfRemainingKeys() {
+    @objc public func decrementNumberOfRemainingKeys() {
         guard isSelfClient() else { fatal("`decrementNumberOfRemainingKeys` should only be called on the self client") }
         
         if numberOfKeysRemaining > 0 {
@@ -530,12 +530,12 @@ enum SecurityChangeType {
 // MARK: - Trusting
 extension UserClient {
     
-    public func trustClient(_ client: UserClient) {
+    @objc public func trustClient(_ client: UserClient) {
         trustClients(Set(arrayLiteral: client))
     }
     
     /// Will change conversations security level as side effect
-    public func trustClients(_ clients: Set<UserClient>) {
+    @objc public func trustClients(_ clients: Set<UserClient>) {
         guard clients.count > 0 else { return }
         self.mutableSetValue(forKey: ZMUserClientIgnoredKey).minus(clients)
         self.mutableSetValue(forKey: ZMUserClientTrustedKey).union(clients)
@@ -546,12 +546,12 @@ extension UserClient {
     }
 
     /// Adds a new client that was just discovered to the ignored ones
-    public func addNewClientToIgnored(_ client: UserClient, causedBy: ZMOTRMessage? = .none) {
+    @objc public func addNewClientToIgnored(_ client: UserClient, causedBy: ZMOTRMessage? = .none) {
         addNewClientsToIgnored(Set(arrayLiteral: client), causedBy: causedBy)
     }
     
     /// Ignore a know client
-    public func ignoreClient(_ client: UserClient) {
+    @objc public func ignoreClient(_ client: UserClient) {
         ignoreClients(Set(arrayLiteral: client))
     }
     
@@ -568,14 +568,14 @@ extension UserClient {
     }
 
     /// Ignore known clients
-    public func ignoreClients(_ clients: Set<UserClient>) {
+    @objc public func ignoreClients(_ clients: Set<UserClient>) {
         let notSelfClients = self.addIgnoredClients(clients)
         guard notSelfClients.count > 0 else { return}
         self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
 
     /// Add new clients that were jsut discovered to the ignored ones
-    public func addNewClientsToIgnored(_ clients: Set<UserClient>, causedBy: ZMOTRMessage? = .none) {
+    @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>, causedBy: ZMOTRMessage? = .none) {
         let notSelfClients = self.addIgnoredClients(clients)
         guard notSelfClients.count > 0 else { return}
         self.changeSecurityLevel(.clientDiscovered, clients: notSelfClients, causedBy: causedBy)

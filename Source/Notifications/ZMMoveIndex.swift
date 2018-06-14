@@ -16,7 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@objc public class ZMMovedIndex: NSObject {
+@objcMembers public class ZMMovedIndex: NSObject {
     
     public let from: UInt
     public let to: UInt

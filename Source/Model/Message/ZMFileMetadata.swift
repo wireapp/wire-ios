@@ -25,7 +25,7 @@ import WireUtilities
 private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 
-@objc open class ZMFileMetadata : NSObject {
+@objcMembers open class ZMFileMetadata : NSObject {
     
     open let fileURL : URL
     open let thumbnail : Data?

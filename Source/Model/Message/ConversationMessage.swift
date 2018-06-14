@@ -192,31 +192,31 @@ extension ZMMessage {
     @NSManaged public var sender : ZMUser?
     @NSManaged public var serverTimestamp : Date?
 
-    public var textMessageData : ZMTextMessageData? {
+    @objc public var textMessageData : ZMTextMessageData? {
         return nil
     }
     
-    public var imageMessageData : ZMImageMessageData? {
+    @objc public var imageMessageData : ZMImageMessageData? {
         return nil
     }
     
-    public var knockMessageData : ZMKnockMessageData? {
+    @objc public var knockMessageData : ZMKnockMessageData? {
         return nil
     }
     
-    public var systemMessageData : ZMSystemMessageData? {
+    @objc public var systemMessageData : ZMSystemMessageData? {
         return nil
     }
     
-    public var fileMessageData : ZMFileMessageData? {
+    @objc public var fileMessageData : ZMFileMessageData? {
         return nil
     }
     
-    public var locationMessageData: ZMLocationMessageData? {
+    @objc public var locationMessageData: ZMLocationMessageData? {
         return nil
     }
     
-    public var deliveryState : ZMDeliveryState {
+    @objc public var deliveryState : ZMDeliveryState {
         if self.confirmations.count > 0 {
             return .delivered
         }
@@ -226,11 +226,11 @@ extension ZMMessage {
         return .pending
     }
     
-    public func requestFileDownload() {}
+    @objc public func requestFileDownload() {}
     
-    public func requestImageDownload() {}
+    @objc public func requestImageDownload() {}
     
-    public var usersReaction : Dictionary<String, [ZMUser]> {
+    @objc public var usersReaction : Dictionary<String, [ZMUser]> {
         var result = Dictionary<String, [ZMUser]>()
         for reaction in self.reactions {
             if reaction.users.count > 0 {
@@ -241,30 +241,30 @@ extension ZMMessage {
     }
     
     
-    public var canBeDeleted : Bool {
+    @objc public var canBeDeleted : Bool {
         return deliveryState == .delivered || deliveryState == .sent || deliveryState == .failedToSend
     }
     
-    public var hasBeenDeleted: Bool {
+    @objc public var hasBeenDeleted: Bool {
         return isZombieObject || (visibleInConversation == nil && hiddenInConversation != nil)
     }
     
-    public var updatedAt : Date? {
+    @objc public var updatedAt : Date? {
         return nil
     }
  
-    public func startSelfDestructionIfNeeded() -> Bool {
+    @objc public func startSelfDestructionIfNeeded() -> Bool {
         if !isZombieObject && isEphemeral, let sender = sender, !sender.isSelfUser {
             return startDestructionIfNeeded()
         }
         return false
     }
     
-    public var isEphemeral : Bool {
+    @objc public var isEphemeral : Bool {
         return false
     }
     
-    public var deletionTimeout : TimeInterval {
+    @objc public var deletionTimeout : TimeInterval {
         return -1
     }
 }

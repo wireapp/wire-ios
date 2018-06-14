@@ -120,7 +120,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         
         // then
         let obfText = obfuscated!.text.content!
-        let obfOrgURL = obfText.substring(from: obfText.index(obfText.startIndex, offsetBy:4))
+        let obfOrgURL = String(obfText[obfText.index(obfText.startIndex, offsetBy:4)...])
         XCTAssertNotEqual(obfuscatedLinkPreview.url, origURL)
         XCTAssertEqual(obfuscatedLinkPreview.url, obfOrgURL)
         XCTAssertEqual(obfuscatedLinkPreview.urlOffset, offset)

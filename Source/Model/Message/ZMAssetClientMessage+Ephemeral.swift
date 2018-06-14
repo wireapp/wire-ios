@@ -20,26 +20,26 @@ import Foundation
 
 extension ZMAssetClientMessage {
  
-    override public var isEphemeral: Bool {
+    @objc override public var isEphemeral: Bool {
         return self.destructionDate != nil || self.ephemeral != nil || self.isObfuscated
     }
     
     var ephemeral: ZMEphemeral? {
         let first = self.dataSet.array
-            .flatMap { ($0 as? ZMGenericMessageData)?.genericMessage }
+            .compactMap { ($0 as? ZMGenericMessageData)?.genericMessage }
             .filter { $0.hasEphemeral() }
             .first
         return first?.ephemeral
     }
     
-    override public var deletionTimeout: TimeInterval {
+    @objc override public var deletionTimeout: TimeInterval {
         if let ephemeral = self.ephemeral {
             return TimeInterval(ephemeral.expireAfterMillis / 1000)
         }
         return -1
     }
     
-    override public func obfuscate() {
+    @objc override public func obfuscate() {
         super.obfuscate()
         
         var obfuscatedMessage: ZMGenericMessage? = nil
@@ -56,7 +56,7 @@ extension ZMAssetClientMessage {
         }
     }
     
-    public override func startDestructionIfNeeded() -> Bool {
+    @objc public override func startDestructionIfNeeded() -> Bool {
         let isSelfUser = self.sender?.isSelfUser ?? false
         
         if !isSelfUser {

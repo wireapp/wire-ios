@@ -25,7 +25,7 @@ class BackupMetadataTests: XCTestCase {
     override func setUp() {
         super.setUp()
         let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        url = URL(fileURLWithPath: documentsURL).appendingPathComponent(name!)
+        url = URL(fileURLWithPath: documentsURL).appendingPathComponent(name)
     }
     
     override func tearDown() {

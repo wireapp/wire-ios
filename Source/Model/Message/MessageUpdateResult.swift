@@ -19,7 +19,7 @@
 import Foundation
 
 
-@objc public class MessageUpdateResult : NSObject {
+@objcMembers public class MessageUpdateResult : NSObject {
 
     public let message : ZMMessage?
     public let needsConfirmation : Bool

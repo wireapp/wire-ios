@@ -70,7 +70,7 @@ extension ZMConversation {
     }
 
     /// Creates system message that says that you started using this device, if you were not registered on this device
-    public func appendStartedUsingThisDeviceMessage() {
+    @objc public func appendStartedUsingThisDeviceMessage() {
         guard ZMSystemMessage.fetchStartedUsingOnThisDeviceMessage(conversation: self) == nil else { return }
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
@@ -82,7 +82,7 @@ extension ZMConversation {
     }
 
     /// Creates a system message when a device has previously been used before, but was logged out due to invalid cookie and/ or invalidated client
-    public func appendContinuedUsingThisDeviceMessage() {
+    @objc public func appendContinuedUsingThisDeviceMessage() {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
         self.appendSystemMessage(type: .reactivatedDevice,
@@ -93,7 +93,7 @@ extension ZMConversation {
     }
 
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
-    public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
+    @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         
         let (systemMessage, index) = self.appendSystemMessage(type: .potentialGap,
                                                               sender: ZMUser.selfUser(in: self.managedObjectContext!),
@@ -148,14 +148,14 @@ extension ZMConversation {
 extension ZMConversation {
     
     /// Mark conversation as not secure. This method is expected to be called from the UI context
-    public func makeNotSecure() {
+    @objc public func makeNotSecure() {
         precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
         self.securityLevel = .notSecure
         self.managedObjectContext?.saveOrRollback()
     }
     
     /// Resend last non sent messages. This method is expected to be called from the UI context
-    public func resendMessagesThatCausedConversationSecurityDegradation() {
+    @objc public func resendMessagesThatCausedConversationSecurityDegradation() {
         precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
         self.securityLevel = .notSecure // The conversation needs to be marked as not secure for new messages to be sent
         self.managedObjectContext?.saveOrRollback()
@@ -166,7 +166,7 @@ extension ZMConversation {
     }
     
     /// Reset those that caused degradation. This method is expected to be called from the UI context
-    public func doNotResendMessagesThatCausedDegradation() {
+    @objc public func doNotResendMessagesThatCausedDegradation() {
         guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
@@ -214,7 +214,7 @@ extension ZMConversation {
 extension ZMConversation {
 
     /// Replaces the first NewClient systemMessage for the selfClient with a UsingNewDevice system message
-    public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
+    @objc public func replaceNewClientMessageIfNeededWithNewDeviceMesssage() {
 
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
@@ -243,7 +243,7 @@ extension ZMConversation {
 extension ZMConversation {
     
     fileprivate func appendNewIsSecureSystemMessage(verified clients: Set<UserClient>) {
-        let users = Set(clients.flatMap { $0.user })
+        let users = Set(clients.compactMap { $0.user })
         self.appendNewIsSecureSystemMessage(verified: clients, for: users)
     }
     
@@ -265,7 +265,7 @@ extension ZMConversation {
     }
     
     fileprivate func appendNewAddedClientSystemMessage(added clients: Set<UserClient>, causedBy cause: DiscoveryCause) {
-        let users = Set(clients.flatMap { $0.user })
+        let users = Set(clients.compactMap { $0.user })
         var timestamp : Date?
         var addedUsers: Set<ZMUser> = Set<ZMUser>([])
         
@@ -294,7 +294,7 @@ extension ZMConversation {
     
     fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
         guard !clients.isEmpty else { return }
-        let users = Set(clients.flatMap { $0.user })
+        let users = Set(clients.compactMap { $0.user })
         self.appendSystemMessage(type: .ignoredClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
@@ -358,7 +358,7 @@ extension ZMConversation {
 extension ZMConversation {
     
     /// Returns true if all participants are connected to the self user and all participants are trusted
-    public var allUsersTrusted : Bool {
+    @objc public var allUsersTrusted : Bool {
         guard self.lastServerSyncedActiveParticipants.count > 0, self.isSelfAnActiveMember else { return false }
         let hasOnlyTrustedUsers = (self.activeParticipants.array as! [ZMUser]).first { !$0.trusted() } == nil
         return hasOnlyTrustedUsers && !self.containsUnconnectedOrExternalParticipant
@@ -388,7 +388,7 @@ extension ZMConversation {
     }
     
     /// If true the conversation might still be trusted / ignored
-    public var hasUntrustedClients : Bool {
+    @objc public var hasUntrustedClients : Bool {
         return (self.activeParticipants.array as! [ZMUser]).first { $0.untrusted() } != nil
     }
 }

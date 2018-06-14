@@ -25,7 +25,7 @@ private var zmLog = ZMSLog(tag: "assets")
 
 extension NSManagedObjectContext
 {
-    public var zm_fileAssetCache : FileAssetCache {
+    @objc public var zm_fileAssetCache : FileAssetCache {
         get {
             return self.userInfo[NSManagedObjectContextFileAssetCacheKey] as! FileAssetCache
         }
@@ -95,7 +95,7 @@ private struct FileCache : Cache {
         
         var error : NSError? = nil
         coordinator.coordinate(writingItemAt: url, options: NSFileCoordinator.WritingOptions.forReplacing, error: &error) { (url) in
-            FileManager.default.createFile(atPath: url.path, contents: data, attributes: [FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication])
+            FileManager.default.createFile(atPath: url.path, contents: data, attributes: convertToOptionalFileAttributeKeyDictionary([FileAttributeKey.protectionKey.rawValue : FileProtectionType.completeUntilFirstUserAuthentication]))
         }
         
         if let error = error {
@@ -178,7 +178,7 @@ private struct FileCache : Cache {
 /// Any thread can read objects that are never deleted without any problem.
 /// Objects purged from the cache folder by the OS are not a problem as the
 /// OS will terminate the app before purging the cache.
-open class FileAssetCache : NSObject {
+@objcMembers open class FileAssetCache : NSObject {
     
     fileprivate let fileCache : FileCache
     
@@ -294,7 +294,7 @@ open class FileAssetCache : NSObject {
             return nil
         }
         
-        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil].flatMap({ $0 }).joined(separator: "_")
+        let key = [messageId, senderId, conversationId, identifier, encrypted ? "encrypted" : nil].compactMap({ $0 }).joined(separator: "_")
         
         return key.data(using: .utf8)?.zmSHA256Digest().zmHexEncodedString()
     }
@@ -310,3 +310,9 @@ public extension FileAssetCache {
     }
 }
 
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToOptionalFileAttributeKeyDictionary(_ input: [String: Any]?) -> [FileAttributeKey: Any]? {
+	guard let input = input else { return nil }
+	return Dictionary(uniqueKeysWithValues: input.map { key, value in (FileAttributeKey(rawValue: key), value)})
+}

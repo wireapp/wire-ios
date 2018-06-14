@@ -152,7 +152,7 @@ extension ZMText {
     @objc public func validatingFields() -> ZMText? {
 
         if let mentions = self.mention {
-            let validMentions = mentions.flatMap { $0.validatingFields() }
+            let validMentions = mentions.compactMap { $0.validatingFields() }
             guard validMentions.count == mentions.count else { return nil }
         }
 

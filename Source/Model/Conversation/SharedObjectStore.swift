@@ -25,7 +25,7 @@ fileprivate extension Notification {
         var changes = [AnyHashable : AnyObject]()
         for (key, value) in info {
             guard let set = value as? NSSet else { continue }
-            changes[key] = set.flatMap {
+            changes[key] = set.compactMap {
                 return ($0 as? NSManagedObject)?.objectID.uriRepresentation()
                 } as AnyObject
         }
@@ -37,7 +37,7 @@ fileprivate extension Notification {
 
 /// This class is used to persist `NSManagedObjectContext` change
 /// notifications in order to merge them into the main app contexts.
-@objc public class ContextDidSaveNotificationPersistence: NSObject {
+@objcMembers public class ContextDidSaveNotificationPersistence: NSObject {
 
     private let objectStore: SharedObjectStore<[AnyHashable: AnyObject]>
 
@@ -59,7 +59,7 @@ fileprivate extension Notification {
 
 }
 
-@objc public class StorableTrackingEvent: NSObject {
+@objcMembers public class StorableTrackingEvent: NSObject {
 
     private static let eventNameKey = "eventName"
     private static let eventAttributesKey = "eventAttributes"
@@ -88,7 +88,7 @@ fileprivate extension Notification {
 
 }
 
-@objc public class ShareExtensionAnalyticsPersistence: NSObject {
+@objcMembers public class ShareExtensionAnalyticsPersistence: NSObject {
     private let objectStore: SharedObjectStore<[String: Any]>
 
     public required init(accountContainer url: URL) {
@@ -104,7 +104,7 @@ fileprivate extension Notification {
     }
 
     public var storedTrackingEvents: [StorableTrackingEvent] {
-        return objectStore.load().flatMap(StorableTrackingEvent.init)
+        return objectStore.load().compactMap(StorableTrackingEvent.init)
     }
 }
 

@@ -35,7 +35,7 @@ extension Team : ObjectInSnapshot {
 }
 
 
-@objc public class TeamChangeInfo : ObjectChangeInfo {
+@objcMembers public class TeamChangeInfo : ObjectChangeInfo {
     
     static func changeInfo(for team: Team, changes: Changes) -> TeamChangeInfo? {
         guard changes.changedKeys.count > 0 || changes.originalChanges.count > 0 else { return nil }

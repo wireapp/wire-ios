@@ -52,7 +52,7 @@ extension ZMUser : ObjectInSnapshot {
 }
 
 
-@objc open class UserChangeInfo : ObjectChangeInfo {
+@objcMembers open class UserChangeInfo : ObjectChangeInfo {
 
     static let UserClientChangeInfoKey = "clientChanges"
     

@@ -48,7 +48,7 @@ extension ZMMessage {
     }
     
     @discardableResult
-    public static func addReaction(_ reaction: MessageReaction, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
+    @objc public static func addReaction(_ reaction: MessageReaction, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
         // confirmation that we understand the emoji
         // the UI should never send an emoji we dont handle
         if Reaction.transportReaction(from: reaction.unicodeValue) == .none{
@@ -58,7 +58,7 @@ extension ZMMessage {
         return appendReaction(reaction.unicodeValue, toMessage: message)
     }
     
-    public static func removeReaction(onMessage message:ZMConversationMessage) {
+    @objc public static func removeReaction(onMessage message:ZMConversationMessage) {
         _ = appendReaction(nil, toMessage: message)
     }
     

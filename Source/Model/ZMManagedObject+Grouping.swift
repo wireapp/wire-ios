@@ -114,7 +114,7 @@ extension NSManagedObjectContext {
             
             let ids = finalResult.filter {
                 ($0["count"] as? Int ?? 0) > 1
-            }.flatMap {
+            }.compactMap {
                 $0[keyPath]
             }
             
@@ -144,6 +144,6 @@ extension Array where Element: NSObject {
                 return TupleKeyArray(key: valueForKey, value: [$0])
             }
         
-        return tuples.flatMap { $0 }.merge()
+        return tuples.compactMap { $0 }.merge()
     }
 }

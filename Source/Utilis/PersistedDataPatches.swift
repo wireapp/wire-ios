@@ -86,7 +86,7 @@ public struct FrameworkVersion: Comparable, Equatable {
         guard asInt.first(where: { $0 == nil }) == nil else {
             return nil
         }
-        var components = asInt.flatMap { $0 }
+        var components = asInt.compactMap { $0 }
         while components.count < 3 {
             components += [0]
         }

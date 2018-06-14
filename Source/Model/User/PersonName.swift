@@ -17,7 +17,7 @@
 //
 
 
-public class PersonName : NSObject {
+@objcMembers public class PersonName : NSObject {
 
     public static func ==(lhs: PersonName, rhs: PersonName) -> Bool {
         return lhs.components == rhs.components
@@ -91,7 +91,7 @@ public class PersonName : NSObject {
     }()
     
     public static func person(withName name: String, schemeTagger: NSLinguisticTagger?) -> PersonName {
-        let tagger = schemeTagger ?? NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
+        let tagger = schemeTagger ?? NSLinguisticTagger(tagSchemes: convertToNSLinguisticTagSchemeArray([convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.script)]), options: 0)
 
         if let cachedPersonName = stringsToPersonNames.object(forKey: name as NSString) {
             return cachedPersonName
@@ -115,7 +115,7 @@ public class PersonName : NSObject {
         // If the name contains latin scheme tag, it uses the first name as the given name
         // If the name is in arab sript, we will check if the givenName consists of "servent of" + one of the names for god
         schemeTagger.string = string
-        let tags = schemeTagger.tags(in: NSMakeRange(0, schemeTagger.string!.count), scheme: NSLinguisticTagSchemeScript, options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
+        let tags = schemeTagger.tags(in: NSMakeRange(0, schemeTagger.string!.count), scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.script), options: [.omitPunctuation, .omitWhitespace, .omitOther, .joinNames], tokenRanges: nil)
         
         let nameOrder : NameOrder
         if tags.contains("Arab") {
@@ -138,9 +138,9 @@ public class PersonName : NSObject {
         
         // This is a bit more complicated because we don't want chinese names to be split up by their individual characters
         let options : NSLinguisticTagger.Options = [.omitPunctuation, .omitWhitespace, .omitOther]
-        fullName.enumerateLinguisticTags(in: fullRange, scheme: NSLinguisticTagSchemeTokenType, options: options, orthography: nil) { (tag, substringRange, _, _) in
-            guard tag == NSLinguisticTagWord else { return }
-            let substring = fullName.substring(with: substringRange)
+        fullName.enumerateLinguisticTags(in: fullRange, scheme: convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.tokenType), options: options, orthography: nil) { (tag, substringRange, _, _) in
+            guard tag == convertFromNSLinguisticTag(NSLinguisticTag.word) else { return }
+            let substring = fullName[substringRange]
             if let aComponent = component {
                 if let lastRangeBound = lastRange?.upperBound, lastRangeBound == substringRange.lowerBound {
                     component = aComponent+substring
@@ -150,7 +150,7 @@ public class PersonName : NSObject {
                 component = nil
             }
             if !substring.isEmpty {
-                component = substring
+                component = String(substring)
                 lastRange = substringRange
             } else {
                 lastRange = nil
@@ -176,4 +176,19 @@ public class PersonName : NSObject {
         return uppercaseCharacterSet.contains(scalar)
     }
 
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSLinguisticTagSchemeArray(_ input: [String]) -> [NSLinguisticTagScheme] {
+	return input.map { key in NSLinguisticTagScheme(key) }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSLinguisticTagScheme(_ input: NSLinguisticTagScheme) -> String {
+	return input.rawValue
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSLinguisticTag(_ input: NSLinguisticTag) -> String {
+	return input.rawValue
 }

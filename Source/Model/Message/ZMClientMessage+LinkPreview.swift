@@ -19,7 +19,7 @@
 import Foundation
 import WireLinkPreview
 
-extension ZMClientMessage {
+@objc extension ZMClientMessage {
     
     public static let linkPreviewImageDownloadNotification = NSNotification.Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
     
@@ -82,57 +82,57 @@ extension ZMClientMessage {
 
 extension ZMClientMessage: ZMImageOwner {
     
-    public func imageData(for format: ZMImageFormat) -> Data? {
+    @objc public func imageData(for format: ZMImageFormat) -> Data? {
         return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: format, encrypted: false)
     }
     
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
-    public func requiredImageFormats() -> NSOrderedSet {
+    @objc public func requiredImageFormats() -> NSOrderedSet {
         if let genericMessage = self.genericMessage, genericMessage.linkPreviews.count > 0 {
             return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
         }
         return NSOrderedSet()
     }
     
-    public func originalImageData() -> Data? {
+    @objc public func originalImageData() -> Data? {
         return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
     }
     
-    public func originalImageSize() -> CGSize {
+    @objc public func originalImageSize() -> CGSize {
         guard let originalImageData = self.originalImageData() else { return CGSize.zero }
         return ZMImagePreprocessor.sizeOfPrerotatedImage(with: originalImageData)
     }
     
-    public func isInline(for format: ZMImageFormat) -> Bool {
+    @objc public func isInline(for format: ZMImageFormat) -> Bool {
         return false
     }
     
-    public func isPublic(for format: ZMImageFormat) -> Bool {
+    @objc public func isPublic(for format: ZMImageFormat) -> Bool {
         return false
     }
     
-    public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
+    @objc public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
         return false
     }
     
-    public func processingDidFinish() {
+    @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteAssetData(self, format: .original, encrypted: false)
         moc.enqueueDelayedSave()
     }
     
-    var imageData: Data? {
+    @objc public var imageData: Data? {
         return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
             ?? self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .medium, encrypted: false)
     }
     
-    var hasImageData: Bool {        
+    @objc public var hasImageData: Bool {
         guard let linkPreview = self.firstZMLinkPreview else { return false }
         return linkPreview.article.hasImage() || linkPreview.hasImage()
     }
     
-    public var imageDataIdentifier: String? {
+    @objc public var imageDataIdentifier: String? {
         
         if self.imageData != nil {
             return self.nonce?.uuidString
@@ -147,7 +147,7 @@ extension ZMClientMessage: ZMImageOwner {
         return nil
     }
     
-    public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
+    @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         guard format == .medium else { return }
         guard let linkPreview = self.firstZMLinkPreview else { return }
         guard let moc = self.managedObjectContext else { return }

@@ -48,7 +48,7 @@ public enum UserClientChangeInfoKey: String {
     case FingerprintChanged = "fingerprintChanged"
 }
 
-@objc open class UserClientChangeInfo : ObjectChangeInfo {
+@objcMembers open class UserClientChangeInfo : ObjectChangeInfo {
 
     public required init(object: NSObject) {
         self.userClient = object as! UserClient

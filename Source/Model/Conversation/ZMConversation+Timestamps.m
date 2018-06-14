@@ -55,7 +55,8 @@
         if (shouldSync && self.lastReadServerTimeStamp != nil && isSyncContext) {
             [self setLocallyModifiedKeys:[NSSet setWithObject:ZMConversationLastReadServerTimeStampKey]];
         }
-        [[[NotificationInContext alloc] initWithName:ZMConversation.lastReadDidChangeNotificationName
+        NSString *name = ZMConversation.lastReadDidChangeNotificationName;
+        [[[NotificationInContext alloc] initWithName:name
                                              context:self.managedObjectContext.notificationContext
                                               object:self
                                             userInfo:nil

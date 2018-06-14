@@ -22,7 +22,7 @@ extension ZMAssetClientMessage {
     
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.array
-            .flatMap { $0 as? ZMGenericMessageData }
+            .compactMap { $0 as? ZMGenericMessageData }
             .filter { $0.genericMessage?.imageAssetData?.imageFormat() == format }
             .first
     }
@@ -98,7 +98,7 @@ extension ZMAssetClientMessage {
     func genericMessageMergedFromDataSet(filter: (ZMGenericMessage)->Bool) -> ZMGenericMessage? {
         
         let filteredMessages = self.dataSet.array
-            .flatMap { ($0 as? ZMGenericMessageData)?.genericMessage }
+            .compactMap { ($0 as? ZMGenericMessageData)?.genericMessage }
             .filter(filter)
         
         guard !filteredMessages.isEmpty else {

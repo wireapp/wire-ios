@@ -35,12 +35,12 @@ extension ZMConversation {
 extension ZMMessage {
     
     // NOTE: This is a free function meant to be called from Obj-C because you can't call protocol extension from it
-    public static func hideMessage(_ message: ZMConversationMessage) {
+    @objc public static func hideMessage(_ message: ZMConversationMessage) {
         guard let castedMessage = message as? ZMMessage else { return }
         castedMessage.hideForSelfUser()
     }
     
-    func hideForSelfUser() {
+    @objc public func hideForSelfUser() {
         guard !isZombieObject else { return }
         ZMConversation.appendHideMessageToSelfConversation(self)
 
@@ -49,12 +49,12 @@ extension ZMMessage {
         managedObjectContext?.delete(self)
     }
     
-    @discardableResult public static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
+    @discardableResult @objc public static func deleteForEveryone(_ message: ZMConversationMessage) -> ZMClientMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
         return castedMessage.deleteForEveryone()
     }
     
-    @discardableResult func deleteForEveryone() -> ZMClientMessage? {
+    @discardableResult @objc func deleteForEveryone() -> ZMClientMessage? {
         guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
         
@@ -66,11 +66,11 @@ extension ZMMessage {
         return delete
     }
     
-    public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {
+    @objc public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {
         return edit(message, newText: newText, fetchLinkPreview: true)
     }
     
-    public static func edit(_ message: ZMConversationMessage, newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
+    @objc public static func edit(_ message: ZMConversationMessage, newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
         return castedMessage.edit(newText, fetchLinkPreview: fetchLinkPreview)
     }
@@ -103,7 +103,7 @@ extension ZMMessage {
         return newMessage
     }
     
-    var isEditableMessage : Bool {
+    @objc var isEditableMessage : Bool {
         return false
     }
 }

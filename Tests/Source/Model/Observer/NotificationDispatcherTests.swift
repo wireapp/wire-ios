@@ -41,7 +41,7 @@ extension ObjectChangeInfo {
     }
 }
 
-@objc public class NotificationDispatcherTestBase : ZMBaseManagedObjectTest {
+@objcMembers public class NotificationDispatcherTestBase : ZMBaseManagedObjectTest {
 
     var dispatcher : NotificationDispatcher! {
         return sut

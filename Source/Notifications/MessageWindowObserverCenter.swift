@@ -31,7 +31,7 @@ extension NSManagedObjectContext {
 
     static let MessageWindowObserverCenterKey = "MessageWindowObserverCenterKey"
     
-    public var messageWindowObserverCenter : MessageWindowObserverCenter {
+    @objc public var messageWindowObserverCenter : MessageWindowObserverCenter {
         assert(zm_isUserInterfaceContext, "MessageWindowObserverCenter does not exist in syncMOC")
         
         if let observer = userInfo[NSManagedObjectContext.MessageWindowObserverCenterKey] as? MessageWindowObserverCenter {
@@ -302,7 +302,7 @@ extension ZMSystemMessage {
 
 extension ZMMessage {
     
-    var allUserIDs : Set<NSManagedObjectID> {
+    @objc var allUserIDs : Set<NSManagedObjectID> {
         guard let sender = sender else { return Set()}
         return Set([sender.objectID])
     }

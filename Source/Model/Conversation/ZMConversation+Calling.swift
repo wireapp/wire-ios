@@ -20,7 +20,7 @@
 public extension ZMConversation {
 
     @discardableResult
-    public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date) -> ZMSystemMessage {
+    @objc public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date) -> ZMSystemMessage {
         let (message, index) = appendSystemMessage(
             type: .missedCall,
             sender: user,
@@ -42,7 +42,7 @@ public extension ZMConversation {
     }
 
     @discardableResult
-    public func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
+    @objc public func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
         let (message, index) = appendSystemMessage(
             type: .performedCall,
             sender: caller,
@@ -64,7 +64,7 @@ public extension ZMConversation {
         return message
     }
 
-    public func associatedMessage(before message: ZMSystemMessage, at index: UInt) -> ZMSystemMessage? {
+    @objc public func associatedMessage(before message: ZMSystemMessage, at index: UInt) -> ZMSystemMessage? {
         guard index >= 1 else { return nil }
         guard let previous = messages[Int(index - 1)] as? ZMSystemMessage else { return nil }
         guard previous.systemMessageType == message.systemMessageType else { return nil }

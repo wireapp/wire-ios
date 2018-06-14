@@ -44,7 +44,7 @@ extension ZMConversation {
             return text
         }
 
-        return text.substring(from: mentionHandleRange.upperBound)
+        return String(text[mentionHandleRange.upperBound...])
 
     }
 

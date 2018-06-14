@@ -21,7 +21,7 @@ import CoreData
 import UIKit
 
 /// Singleton to manage the creation of the CoreData stack
-@objc public class StorageStack: NSObject {
+@objcMembers public class StorageStack: NSObject {
     
     /// Root folder for account specific data
     fileprivate static let accountDataFolder = "AccountData"

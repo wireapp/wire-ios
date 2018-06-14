@@ -746,10 +746,10 @@ extension ZMAssetClientMessageTests {
             sut.fileMessageData?.cancelTransfer()
             
             // then
-            let messages = sut.dataSet.flatMap { ($0 as AnyObject).genericMessage! }
-            let assets = messages.filter { $0.hasAsset() }.flatMap { $0.asset }
+            let messages = sut.dataSet.compactMap { ($0 as AnyObject).genericMessage! }
+            let assets = messages.filter { $0.hasAsset() }.compactMap { $0.asset }
             XCTAssertEqual(assets.count, 2)
-            let notUploaded = assets.filter { $0.hasNotUploaded() }.flatMap { $0.notUploaded }
+            let notUploaded = assets.filter { $0.hasNotUploaded() }.compactMap { $0.notUploaded }
             XCTAssertEqual(notUploaded.count, 1)
             XCTAssertEqual(notUploaded.first, ZMAssetNotUploaded.CANCELLED)
             

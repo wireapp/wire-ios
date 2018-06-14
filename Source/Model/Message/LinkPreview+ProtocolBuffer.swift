@@ -22,14 +22,14 @@ import WireLinkPreview
 
 extension LinkPreview {
     
-    public convenience init(protocolBuffer: ZMLinkPreview) {
+    @objc public convenience init(protocolBuffer: ZMLinkPreview) {
         self.init(originalURLString: protocolBuffer.url,
                   permanentURLString: protocolBuffer.permanentURLString,
                   resolvedURLString: protocolBuffer.permanentURLString,
                   offset: Int(protocolBuffer.urlOffset))
     }
     
-    public var protocolBuffer: ZMLinkPreview {
+    @objc public var protocolBuffer: ZMLinkPreview {
         let linkPreviewBuilder = ZMLinkPreview.builder()!
         linkPreviewBuilder.setUrl(originalURLString)
         linkPreviewBuilder.setPermanentUrl(permanentURL?.absoluteString ?? resolvedURL?.absoluteString ?? originalURLString)
