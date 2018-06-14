@@ -36,7 +36,7 @@ extension NSManagedObjectContext {
     }
     
     /// Returns the cryptobox instance associated with this managed object context
-    public var zm_cryptKeyStore : UserClientKeysStore! {
+    @objc public var zm_cryptKeyStore : UserClientKeysStore! {
         if !self.zm_isSyncContext {
             fatal("Can't access key store: Currently not on sync context")
         }
@@ -48,14 +48,14 @@ extension NSManagedObjectContext {
         }
     }
     
-    public func zm_tearDownCryptKeyStore() {
+    @objc public func zm_tearDownCryptKeyStore() {
         self.userInfo.removeObject(forKey: NSManagedObjectContext.ZMUserClientKeysStoreKey)
     }
 }
 
 public extension FileManager {
 
-    public static let keyStoreFolderPrefix = "otr"
+    @objc public static let keyStoreFolderPrefix = "otr"
     
     /// Returns the URL for the keyStore
     @objc(keyStoreURLForAccountInDirectory:createParentIfNeeded:)
@@ -75,7 +75,7 @@ public enum UserClientKeyStoreError: Error {
 }
 
 /// A storage for cryptographic keys material
-@objc(UserClientKeysStore)
+@objc(UserClientKeysStore) @objcMembers
 open class UserClientKeysStore: NSObject {
     
     /// Maximum possible ID for prekey

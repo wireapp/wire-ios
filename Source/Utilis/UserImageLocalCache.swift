@@ -59,12 +59,12 @@ extension ZMUser {
     
     /// Cache keys for all large user images
     fileprivate var largeCacheKeys: [String] {
-        return [legacyImageCacheKey(for: .complete), imageCacheKey(for: .complete)].flatMap{ $0 }
+        return [legacyImageCacheKey(for: .complete), imageCacheKey(for: .complete)].compactMap{ $0 }
     }
     
     /// Cache keys for all small user images
     fileprivate var smallCacheKeys: [String] {
-        return [legacyImageCacheKey(for: .preview), imageCacheKey(for: .preview)].flatMap{ $0 }
+        return [legacyImageCacheKey(for: .preview), imageCacheKey(for: .preview)].compactMap{ $0 }
     }
 }
 
@@ -73,7 +73,7 @@ extension ZMUser {
 let NSManagedObjectContextUserImageCacheKey = "zm_userImageCacheKey"
 extension NSManagedObjectContext
 {
-    public var zm_userImageCache : UserImageLocalCache! {
+    @objc public var zm_userImageCache : UserImageLocalCache! {
         get {
             return self.userInfo[NSManagedObjectContextUserImageCacheKey] as? UserImageLocalCache
         }
@@ -85,7 +85,7 @@ extension NSManagedObjectContext
 }
 
 // MARK: Cache
-@objc open class UserImageLocalCache : NSObject {
+@objcMembers open class UserImageLocalCache : NSObject {
     
     fileprivate let log = ZMSLog(tag: "UserImageCache")
     

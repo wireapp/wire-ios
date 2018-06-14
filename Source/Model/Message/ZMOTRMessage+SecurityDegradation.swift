@@ -71,7 +71,7 @@ extension ZMConversation {
     public var messagesThatCausedSecurityLevelDegradation : [ZMOTRMessage] {
         guard let moc = self.managedObjectContext else { return [] }
         guard let messageIds = moc.messagesThatCausedSecurityLevelDegradationByConversation[self.objectID] else { return [] }
-        return messageIds.flatMap {
+        return messageIds.compactMap {
             (try? moc.existingObject(with: $0)) as? ZMOTRMessage
         }
     }

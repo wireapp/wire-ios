@@ -19,7 +19,7 @@
 
 import Foundation
 
-@objc public final class MessageWindowChangeInfo: NSObject, SetChangeInfoOwner {
+@objcMembers public final class MessageWindowChangeInfo: NSObject, SetChangeInfoOwner {
     
     public static let MessageWindowChangeUserInfoKey = "messageWindowChangeInfo"
     public static let MessageChangeUserInfoKey = "messageChangeInfos"

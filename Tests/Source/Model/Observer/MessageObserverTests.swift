@@ -130,12 +130,12 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             expectedChangedField: #keyPath(MessageChangeInfo.linkPreviewChanged)
         )
     }
-    
+
     func testThatItNotifiesObserverWhenTheLinkPreviewStateChanges_NewGenericMessageData() {
         // given
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
-        clientMessage.add(ZMGenericMessage.message(text: name!, nonce: nonce).data())
+        clientMessage.add(ZMGenericMessage.message(text: name, nonce: nonce).data())
         let preview = ZMLinkPreview.linkPreview(
             withOriginalURL: "www.example.com",
             permanentURL: "www.example.com/permanent",
@@ -144,7 +144,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             summary: "summary",
             imageAsset: nil
         )
-        let updateGenericMessage = ZMGenericMessage.message(text: name!, linkPreview: preview, nonce: nonce)
+        let updateGenericMessage = ZMGenericMessage.message(text: name, linkPreview: preview, nonce: nonce)
         uiMOC.saveOrRollback()
         
         // when

@@ -556,7 +556,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             recordFailure(
                 withDescription: "Found \(notIndexedMessageCount) messages in conversation",
                 inFile: String(describing: file),
-                atLine: line,
+                atLine: Int(line),
                 expected: true
             )
         }

@@ -66,7 +66,7 @@ public extension ZMConversation {
         messageDestructionTimeout = timeout.rawValue
     }
 
-    public var destructionEnabled: Bool {
+    @objc public var destructionEnabled: Bool {
         return destructionTimeout != .none
     }
 
@@ -74,7 +74,7 @@ public extension ZMConversation {
         return ZMConversationMessageDestructionTimeout(rawValue: messageDestructionTimeout) ?? .none
     }
 
-    public var canSendEphemeral: Bool {
+    @objc public var canSendEphemeral: Bool {
         return self.activeParticipants.count > 1
     }
 }

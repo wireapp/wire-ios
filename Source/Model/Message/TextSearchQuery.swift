@@ -25,7 +25,7 @@ extension ZMMessage {
 
     /// This function should be called everytime the
     /// message text of a message changes.
-    func updateNormalizedText() {
+    @objc func updateNormalizedText() {
         // no-op
     }
 
@@ -111,6 +111,10 @@ public class TextQueryResult: NSObject {
 public struct TextSearchQueryFetchConfiguration {
     let notIndexedBatchSize: Int
     let indexedBatchSize: Int
+    public init(notIndexedBatchSize: Int, indexedBatchSize: Int) {
+        self.notIndexedBatchSize = notIndexedBatchSize
+        self.indexedBatchSize = indexedBatchSize
+    }
 }
 
 
@@ -124,7 +128,7 @@ private let zmLog = ZMSLog(tag: "text search")
 
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.
-public class TextSearchQuery: NSObject {
+@objcMembers public class TextSearchQuery: NSObject {
 
     private let uiMOC: NSManagedObjectContext
     private let syncMOC: NSManagedObjectContext
@@ -286,7 +290,7 @@ public class TextSearchQuery: NSObject {
         let objectIDs = messages.map { $0.objectID }
         uiMOC.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
-            let uiMessages = objectIDs.flatMap {
+            let uiMessages = objectIDs.compactMap {
                 (try? self.uiMOC.existingObject(with: $0)) as? ZMMessage
             }
 

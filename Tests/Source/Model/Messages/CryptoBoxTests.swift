@@ -36,7 +36,7 @@ class CryptoBoxTest: OtrBaseTest {
     }
     
     func testThatCryptoBoxFolderIsMarkedForEncryption() {
-        #if (arch(i386) || arch(x86_64)) && os(iOS)
+        #if targetEnvironment(simulator)
             // File protection API is not available on simulator
             XCTAssertTrue(true)
             return

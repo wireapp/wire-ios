@@ -50,7 +50,7 @@ public func ==(lhs: SearchUserAsset, rhs: SearchUserAsset) -> Bool {
 }
 
 
-@objc public class SearchUserAssetObjC: NSObject {
+@objcMembers public class SearchUserAssetObjC: NSObject {
     public let internalAsset: SearchUserAsset
 
     @objc public var legacyID: UUID? {

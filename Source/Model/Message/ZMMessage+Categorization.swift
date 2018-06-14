@@ -87,7 +87,7 @@ extension ZMMessage {
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
         
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].flatMap { $0 })
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)!
     }
     
@@ -107,7 +107,7 @@ extension ZMMessage {
             ? NSPredicate(format: "%K = %@", ZMMessageConversationKey, conversation!)
             : nil
         
-        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].flatMap { $0 })
+        let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
         return self.sortedFetchRequest(with: finalPredicate)!
     }
     

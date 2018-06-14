@@ -31,7 +31,7 @@ extension ZMConversationList {
 }
 
 
-@objc public final class ConversationListChangeInfo : NSObject, SetChangeInfoOwner {
+@objcMembers public final class ConversationListChangeInfo : NSObject, SetChangeInfoOwner {
     public typealias ChangeInfoContent = ZMConversation
     public var setChangeInfo: SetChangeInfo<ZMConversation>
     

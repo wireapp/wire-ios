@@ -33,7 +33,7 @@ import CoreData
     }
 }
 
-@objc(ZMMessageConfirmation)
+@objc(ZMMessageConfirmation) @objcMembers
 open class ZMMessageConfirmation: ZMManagedObject {
 
     @NSManaged open var type: MessageConfirmationType

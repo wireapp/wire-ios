@@ -31,7 +31,7 @@ extension NSManagedObjectContext {
     
     static let ConversationListObserverCenterKey = "ConversationListObserverCenterKey"
     
-    public var conversationListObserverCenter : ConversationListObserverCenter {
+    @objc public var conversationListObserverCenter : ConversationListObserverCenter {
         // FIXME: Uncomment and fix crash when running tests
         // assert(zm_isUserInterfaceContext, "ConversationListObserver does not exist in syncMOC")
         
@@ -242,7 +242,7 @@ class ConversationListSnapshot: NSObject {
             needsToRecalculate = false
         }
         
-        let changedSet = Set(conversationChanges.flatMap{$0.conversation})
+        let changedSet = Set(conversationChanges.compactMap{$0.conversation})
         guard let newStateUpdate = self.state.updatedState(changedSet, observedObject: list, newSet: list.toOrderedSetState())
         else {
             zmLog.debug("Recalculated list \(list.identifier), but old state is same as new state")

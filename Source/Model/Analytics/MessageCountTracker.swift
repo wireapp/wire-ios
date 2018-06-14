@@ -173,7 +173,7 @@ private let debugTrackingOverride = false
         return days >= dayThreshold
     }
 
-    public func trackLegacyMessageCount() {
+    @objc public func trackLegacyMessageCount() {
         guard shouldTrack() || debugTrackingOverride else { return }
         lastTrackDate = createDate()
         countFetcher.fetchNumberOfLegacyMessages {

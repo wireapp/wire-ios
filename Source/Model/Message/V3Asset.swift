@@ -49,7 +49,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 }
 
 
-@objc public class V3Asset: NSObject, ZMImageMessageData {
+@objcMembers public class V3Asset: NSObject, ZMImageMessageData {
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
     private let assetStorage: ImageAssetStorage

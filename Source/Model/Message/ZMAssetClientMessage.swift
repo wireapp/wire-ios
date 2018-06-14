@@ -20,7 +20,7 @@
 import Foundation
 
 /// An asset message (image, file, ...)
-@objc public class ZMAssetClientMessage: ZMOTRMessage {
+@objcMembers public class ZMAssetClientMessage: ZMOTRMessage {
 
     /// In memory cache
     var cachedGenericAssetMessage: ZMGenericMessage? = nil
@@ -75,7 +75,7 @@ import Foundation
     }
     
     /// Remote asset ID
-    public var assetId: UUID? {
+    @objc public var assetId: UUID? {
         get { return self.transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }
         set { self.setTransientUUID(newValue, forKey: #keyPath(ZMAssetClientMessage.assetId)) }
     }
@@ -113,7 +113,7 @@ import Foundation
     @NSManaged public var transferState: ZMFileTransferState
 
     /// Upload state
-    public var uploadState: AssetUploadState {
+    @objc public var uploadState: AssetUploadState {
         get {
             let key = #keyPath(ZMAssetClientMessage.uploadState)
             self.willAccessValue(forKey: key)
@@ -131,12 +131,12 @@ import Foundation
     }
     
     /// Whether the image was downloaded
-    public var hasDownloadedImage: Bool {
+    @objc public var hasDownloadedImage: Bool {
         return self.asset?.hasDownloadedImage ?? false
     }
     
     /// Whether the file was downloaded
-    public var hasDownloadedFile: Bool {
+    @objc public var hasDownloadedFile: Bool {
         return self.asset?.hasDownloadedFile ?? false
     }
     

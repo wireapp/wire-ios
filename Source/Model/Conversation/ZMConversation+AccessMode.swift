@@ -52,7 +52,7 @@ public extension ConversationAccessMode {
                                                                           .`private`: "private"]
     
     public var stringValue: [String] {
-        return ConversationAccessMode.stringValues.flatMap { self.contains($0) ? $1 : nil }
+        return ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
     }
     
     public init(values: [String]) {
@@ -95,7 +95,7 @@ public extension ZMConversation {
     /// If set to false, only team member can join the conversation.
     /// True means that a regular guest OR wireless guests could join
     /// Controls the values of `accessMode` and `accessRole`.
-    public var allowGuests: Bool {
+    @objc public var allowGuests: Bool {
         get {
             return accessMode != .teamOnly && accessRole != .team
         }

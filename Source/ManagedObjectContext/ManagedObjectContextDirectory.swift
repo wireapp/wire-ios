@@ -20,7 +20,7 @@ import Foundation
 import WireUtilities
 
 /// List of context
-@objc public class ManagedObjectContextDirectory: NSObject {
+@objcMembers public class ManagedObjectContextDirectory: NSObject {
     
     init(persistentStoreCoordinator: NSPersistentStoreCoordinator,
          accountDirectory: URL,

@@ -19,18 +19,18 @@
 
 public extension ZMConversation {
 
-    static private var emptyConversationEllipsis: String {
+    @objc static private var emptyConversationEllipsis: String {
         return "…"
     }
     
-    static private var emptyGroupConversationName: String {
+    @objc static private var emptyGroupConversationName: String {
         return NSLocalizedString("conversation.displayname.emptygroup", comment: "")
     }
 
     /// This is equal to the meaningful display name, if it exists, otherwise a
     /// fallback placeholder name is used.
     ///
-    public var displayName: String {
+    @objc public var displayName: String {
         let result = self.meaningfulDisplayName
         switch conversationType {
         case .oneOnOne, .connection: return result ?? ZMConversation.emptyConversationEllipsis
@@ -42,7 +42,7 @@ public extension ZMConversation {
     /// A meaningful display name is one that can be constructed from the conversation
     /// data, rather than relying on a fallback placeholder name, such as "…" or "Empty conversation".
     ///
-    public var meaningfulDisplayName: String? {
+    @objc public var meaningfulDisplayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()
@@ -74,7 +74,7 @@ public extension ZMConversation {
 
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
 
-        let activeNames: [String] = lastServerSyncedActiveParticipants.flatMap { (user) -> String? in
+        let activeNames: [String] = lastServerSyncedActiveParticipants.compactMap { (user) -> String? in
             guard let user = user as? ZMUser, user != selfUser && user.displayName?.count > 0 else { return nil }
             return user.displayName
         }

@@ -38,7 +38,7 @@ fileprivate extension UserDefaults {
 
 
 /// Class used to safely access and change stored accounts and the current selected account.
-public final class AccountManager: NSObject {
+@objcMembers public final class AccountManager: NSObject {
 
     private let defaults = UserDefaults.shared()
     private(set) public var accounts = [Account]()

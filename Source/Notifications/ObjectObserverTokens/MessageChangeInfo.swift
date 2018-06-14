@@ -31,7 +31,7 @@ enum MessageKey: String {
 
 extension ZMMessage : ObjectInSnapshot {
     
-    public class var observableKeys : Set<String> {
+    @objc public class var observableKeys : Set<String> {
         return [#keyPath(ZMMessage.deliveryState), #keyPath(ZMMessage.isObfuscated)]
     }
     
@@ -89,7 +89,7 @@ extension ZMSystemMessage {
 
 }
 
-@objc final public class MessageChangeInfo : ObjectChangeInfo {
+@objcMembers final public class MessageChangeInfo : ObjectChangeInfo {
     
     static let UserChangeInfoKey = "userChanges"
     static let ReactionChangeInfoKey = "reactionChanges"

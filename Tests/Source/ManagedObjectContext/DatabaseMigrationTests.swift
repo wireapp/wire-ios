@@ -376,7 +376,7 @@ class DatabaseMigrationTests: DatabaseBaseTest {
                 return
             }
             
-            guard let version = nameMatches.first! else {
+            guard let version = nameMatches.first else {
                 fatal("Wrong name format: \(modelFileName)")
             }
             

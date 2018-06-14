@@ -46,7 +46,7 @@ public extension String {
 
 public extension ZMGenericMessage {
 
-    public func obfuscatedMessage() -> ZMGenericMessage? {
+    @objc public func obfuscatedMessage() -> ZMGenericMessage? {
         guard let messageID = (messageId as String?).flatMap(UUID.init) else { return nil }
         guard hasEphemeral() else { return nil }
         

@@ -20,7 +20,7 @@ import Foundation
 
 extension ZMAssetClientMessage: ImageAssetStorage {
 
-    public func genericMessage(for format: ZMImageFormat) -> ZMGenericMessage? {
+    @objc public func genericMessage(for format: ZMImageFormat) -> ZMGenericMessage? {
         switch format {
         case .medium:
             return self.mediumGenericMessage
@@ -31,7 +31,7 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         }
     }
     
-    public func shouldReprocess(for format: ZMImageFormat) -> Bool {
+    @objc public func shouldReprocess(for format: ZMImageFormat) -> Bool {
         guard let moc = self.managedObjectContext else { return false }
         let originalImageData = moc.zm_fileAssetCache.assetData(self,
                                                                 format: format,
@@ -42,17 +42,17 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         return encryptedImageData == nil && originalImageData != nil
     }
 
-    public func originalImageData() -> Data? {
+    @objc public func originalImageData() -> Data? {
         return self.managedObjectContext?.zm_fileAssetCache.assetData(self,
                                                                       format: .original,
                                                                       encrypted: false)
     }
 
-    public func isPublic(for format: ZMImageFormat) -> Bool {
+    @objc public func isPublic(for format: ZMImageFormat) -> Bool {
         return false
     }
 
-    public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
+    @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
         guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else { return }
@@ -103,15 +103,15 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         self.add(filePreviewMessage)
     }
     
-    public func imageData(for format: ZMImageFormat) -> Data? {
+    @objc public func imageData(for format: ZMImageFormat) -> Data? {
         return self.imageData(for: format, encrypted: false)
     }
     
-    public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
+    @objc public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
         return self.asset?.imageData(for: format, encrypted: encrypted)
     }
 
-    public func updateMessage(imageData: Data, for format: ZMImageFormat) -> AnyObject? {
+    @objc public func updateMessage(imageData: Data, for format: ZMImageFormat) -> AnyObject? {
         guard let moc = self.managedObjectContext else { return nil }
         
         moc.zm_fileAssetCache.storeAssetData(self,
@@ -151,15 +151,15 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         return self
     }
     
-    public func originalImageSize() -> CGSize {
+    @objc public func originalImageSize() -> CGSize {
         return self.imageMessageData?.originalSize ?? CGSize.zero
     }
     
-    public func requiredImageFormats() -> NSOrderedSet {
+    @objc public func requiredImageFormats() -> NSOrderedSet {
         return self.asset?.requiredImageFormats ?? NSOrderedSet()
     }
     
-    public func isInline(for format: ZMImageFormat) -> Bool {
+    @objc public func isInline(for format: ZMImageFormat) -> Bool {
         switch format {
         case .preview:
             return true
@@ -168,7 +168,7 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         }
     }
 
-    public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
+    @objc public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
         switch format {
         case .medium:
             return true
@@ -177,7 +177,7 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         }
     }
 
-    public func processingDidFinish() {
+    @objc public func processingDidFinish() {
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteAssetData(self,
                                               format: .original,

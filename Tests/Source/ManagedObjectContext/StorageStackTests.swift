@@ -177,7 +177,7 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+            startedMigrationCallback: { migrationExpectation.fulfill() }
         ) { directory in
             contextDirectory = directory
             completionExpectation.fulfill()
@@ -225,7 +225,7 @@ class StorageStackTests: DatabaseBaseTest {
             StorageStack.shared.createManagedObjectContextDirectory(
                 accountIdentifier: self.accountID,
                 applicationContainer: self.applicationContainer,
-                startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+                startedMigrationCallback: { migrationExpectation.fulfill() }
             ) { MOCs in
                 defer { completionExpectation.fulfill() }
                 guard let string = MOCs.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
@@ -300,7 +300,7 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+            startedMigrationCallback: { migrationExpectation.fulfill() }
         ) { MOCs in
             defer { completionExpectation.fulfill() }
             guard let string = MOCs.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
@@ -345,7 +345,7 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in XCTFail() }
+            startedMigrationCallback: { XCTFail() }
         ) { directory in
             completionExpectation.fulfill()
         }
@@ -391,7 +391,7 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+            startedMigrationCallback: { migrationExpectation.fulfill() }
         ) { MOCs in
             defer { completionExpectation.fulfill() }
             guard let string = MOCs.uiContext.persistentStoreMetadata(forKey: testKey) as? String else {
@@ -457,7 +457,7 @@ class StorageStackTests: DatabaseBaseTest {
         StorageStack.shared.createManagedObjectContextDirectory(
             accountIdentifier: accountID,
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in migrationExpectation.fulfill() }
+            startedMigrationCallback: { migrationExpectation.fulfill() }
         ) { MOCs in
             _ = MOCs.uiContext.persistentStoreCoordinator!.persistentStores.first!.url
             completionExpectation.fulfill()
@@ -485,7 +485,7 @@ extension StorageStackTests {
         // WHEN
         StorageStack.shared.fetchUserIDFromLegacyStore(
             applicationContainer: self.applicationContainer,
-            startedMigrationCallback: { _ in XCTFail() }
+            startedMigrationCallback: { XCTFail() }
         ) { userID in
             completionExpectation.fulfill()
             XCTAssertNil(userID)
@@ -506,7 +506,7 @@ extension StorageStackTests {
             // WHEN
             StorageStack.shared.fetchUserIDFromLegacyStore(
                 applicationContainer: self.applicationContainer,
-                startedMigrationCallback: { _ in XCTFail() }
+                startedMigrationCallback: { XCTFail() }
             ) { userID in
                 completionExpectation.fulfill()
                 XCTAssertNil(userID)
@@ -534,7 +534,7 @@ extension StorageStackTests {
             // WHEN
             StorageStack.shared.fetchUserIDFromLegacyStore(
                 applicationContainer: self.applicationContainer,
-                startedMigrationCallback: { _ in XCTFail() }
+                startedMigrationCallback: { XCTFail() }
             ) { fetchedUserID in
                 completionExpectation.fulfill()
                 XCTAssertEqual(self.accountID, fetchedUserID)

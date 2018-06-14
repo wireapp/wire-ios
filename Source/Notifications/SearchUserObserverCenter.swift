@@ -26,7 +26,7 @@ extension NSManagedObjectContext {
     
     static let SearchUserObserverCenterKey = "SearchUserObserverCenterKey"
 
-    public var searchUserObserverCenter : SearchUserObserverCenter {
+    @objc public var searchUserObserverCenter : SearchUserObserverCenter {
         assert(zm_isUserInterfaceContext, "SearchUserObserverCenter does not exist in syncMOC")
         
         if let observer = self.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] as? SearchUserObserverCenter {
@@ -103,7 +103,7 @@ public class SearchUserSnapshot  {
     }
 }
 
-@objc public class SearchUserObserverCenter : NSObject, ChangeInfoConsumer {
+@objcMembers public class SearchUserObserverCenter : NSObject, ChangeInfoConsumer {
     
     /// Map of searchUser remoteID to snapshot
     internal var snapshots : [UUID : SearchUserSnapshot] = [:]
@@ -127,7 +127,7 @@ public class SearchUserSnapshot  {
     /// Removes all snapshots for searchUsers that are not contained in this set
     /// This should be called when the searchDirectory changes
     public func searchDirectoryDidUpdate(newSearchUsers: [ZMSearchUser]){
-        let remoteIDs = newSearchUsers.flatMap{$0.remoteIdentifier}
+        let remoteIDs = newSearchUsers.compactMap{$0.remoteIdentifier}
         let currentRemoteIds = Set(snapshots.keys)
         let toRemove = currentRemoteIds.subtracting(remoteIDs)
         toRemove.forEach{snapshots.removeValue(forKey: $0)}

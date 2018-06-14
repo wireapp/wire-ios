@@ -29,7 +29,7 @@ extension String {
 }
 
 
-@objc public class V2Asset: NSObject, ZMImageMessageData {
+@objcMembers public class V2Asset: NSObject, ZMImageMessageData {
 
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext

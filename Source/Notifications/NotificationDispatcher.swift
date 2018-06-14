@@ -114,7 +114,7 @@ extension ZMManagedObject {
     }
 }
 
-public class NotificationDispatcher : NSObject {
+@objcMembers public class NotificationDispatcher : NSObject {
 
     fileprivate unowned var managedObjectContext: NSManagedObjectContext
     
@@ -132,7 +132,7 @@ public class NotificationDispatcher : NSObject {
     private let snapshotCenter: SnapshotCenter
     private var changeInfoConsumers = [UnownedNSObject]()
     private var allChangeInfoConsumers : [ChangeInfoConsumer] {
-        var consumers = changeInfoConsumers.flatMap{$0.unbox as? ChangeInfoConsumer}
+        var consumers = changeInfoConsumers.compactMap{$0.unbox as? ChangeInfoConsumer}
         consumers.append(messageWindowObserverCenter)
         consumers.append(searchUserObserverCenter)
         consumers.append(conversationListObserverCenter)
@@ -248,8 +248,8 @@ public class NotificationDispatcher : NSObject {
     internal func forwardChangesToConversationListObserver(note: Notification) {
         guard let userInfo = note.userInfo as? [String: Any] else { return }
         
-        let insertedObjects = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.flatMap{$0 as? ZMConversation} ?? []
-        let deletedObjects = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.flatMap{$0 as? ZMConversation} ?? []
+        let insertedObjects = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
+        let deletedObjects = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
         self.conversationListObserverCenter.conversationsChanges(inserted: insertedObjects,
                                                             deleted: deletedObjects)
     }
@@ -257,7 +257,7 @@ public class NotificationDispatcher : NSObject {
     /// Call this from syncStrategy AFTER merging the changes from syncMOC into uiMOC
     public func didMergeChanges(_ changedObjectIDs: Set<NSManagedObjectID>) {
         guard forwardChanges else { return }
-        let changedObjects : [ZMManagedObject] = changedObjectIDs.flatMap{(try? managedObjectContext.existingObject(with: $0)) as? ZMManagedObject}
+        let changedObjects : [ZMManagedObject] = changedObjectIDs.compactMap{(try? managedObjectContext.existingObject(with: $0)) as? ZMManagedObject}
         self.extractChanges(from: Set(changedObjects))
         self.fireAllNotifications()
     }
@@ -289,7 +289,7 @@ public class NotificationDispatcher : NSObject {
         }
         else if let mappedObjects = (objects as? Set<NSObject>) {
             zmLog.warn("Unable to cast userInfo content to Set of ZMManagedObject. Is there a new entity that does not inherit form it?")
-            return Set(mappedObjects.flatMap{$0 as? ZMManagedObject})
+            return Set(mappedObjects.compactMap{$0 as? ZMManagedObject})
         }
         assertionFailure("Uh oh... Unable to map objects in userInfo")
         return Set()
@@ -297,7 +297,7 @@ public class NotificationDispatcher : NSObject {
     
     /// Checks if any messages that were inserted or updated are unread and fired notifications for those
     func checkForUnreadMessages(insertedObjects: Set<ZMManagedObject>, updatedObjects: Set<ZMManagedObject>){
-        let unreadUnsent : [ZMMessage] = updatedObjects.flatMap{
+        let unreadUnsent : [ZMMessage] = updatedObjects.compactMap{
             guard let msg = $0 as? ZMMessage else { return nil}
             return (msg.deliveryState == .failedToSend) ? msg : nil
         }
@@ -335,9 +335,7 @@ public class NotificationDispatcher : NSObject {
         return smallImageUsers.union(largeImageUsers)
     }
     
-    
-    func extractUsersWithImageChange(objectIDs: [NSManagedObjectID]?, changedKey: String) -> Set<ZMUser>
-    {
+    func extractUsersWithImageChange(objectIDs: [NSManagedObjectID]?, changedKey: String) -> Set<ZMUser> {
         guard let objectIDs = objectIDs else { return Set() }
         var users = Set<ZMUser>()
         objectIDs.forEach { objectID in

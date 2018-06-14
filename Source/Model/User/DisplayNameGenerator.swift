@@ -19,10 +19,10 @@
 private var zmLog = ZMSLog(tag: "DisplayNameGenerator")
 
 
-public class DisplayNameGenerator : NSObject {
+@objcMembers public class DisplayNameGenerator : NSObject {
     private var idToPersonNameMap : [NSManagedObjectID: PersonName] = [:]
     weak private var managedObjectContext: NSManagedObjectContext?
-    private let tagger =  NSLinguisticTagger(tagSchemes: [NSLinguisticTagSchemeScript], options: 0)
+    private let tagger =  NSLinguisticTagger(tagSchemes: convertToNSLinguisticTagSchemeArray([convertFromNSLinguisticTagScheme(NSLinguisticTagScheme.script)]), options: 0)
     
     init(managedObjectContext: NSManagedObjectContext) {
         self.managedObjectContext = managedObjectContext
@@ -77,7 +77,7 @@ public class DisplayNameGenerator : NSObject {
     }
     
     private func displayNames(for conversation: ZMConversation) -> [NSManagedObjectID : String] {
-        let givenNames : [String] = conversation.activeParticipants.array.flatMap{
+        let givenNames : [String] = conversation.activeParticipants.array.compactMap{
             guard let user = $0 as? ZMUser else { return nil }
             let personName = self.personName(for: user)
             return personName.givenName
@@ -104,4 +104,14 @@ struct ConversationDisplayNameMap {
     
     let conversationObjectID : NSManagedObjectID
     let map : [NSManagedObjectID : String]
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertToNSLinguisticTagSchemeArray(_ input: [String]) -> [NSLinguisticTagScheme] {
+	return input.map { key in NSLinguisticTagScheme(key) }
+}
+
+// Helper function inserted by Swift 4.2 migrator.
+fileprivate func convertFromNSLinguisticTagScheme(_ input: NSLinguisticTagScheme) -> String {
+	return input.rawValue
 }

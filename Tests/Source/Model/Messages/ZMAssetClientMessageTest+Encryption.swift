@@ -24,7 +24,7 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
     func decryptedMessageData(_ data: Data, forClient client: UserClient) -> ZMGenericMessage? {
         let otrMessage = ZMNewOtrMessage.builder()!.merge(from: data).build()! as? ZMNewOtrMessage
         XCTAssertNotNil(otrMessage, "Unable to generate OTR message")
-        let clientEntries = otrMessage?.recipients.flatMap { $0 }.flatMap { $0.clients }.joined()
+        let clientEntries = otrMessage?.recipients.compactMap { $0 }.compactMap { $0.clients }.joined()
         
         guard let entry = clientEntries?.first else { XCTFail("Unable to get client entry"); return nil }
         

@@ -19,7 +19,7 @@
 import Foundation
 
 
-public extension ZMAsset {
+@objc public extension ZMAsset {
     
     public static func asset(withOriginal original: ZMAssetOriginal? = nil, preview: ZMAssetPreview? = nil) -> ZMAsset {
         let builder = ZMAsset.builder()!
@@ -46,7 +46,7 @@ public extension ZMAsset {
     
 }
 
-public extension ZMAssetOriginal {
+@objc public extension ZMAssetOriginal {
     
     public static func original(withSize size: UInt64, mimeType: String, name: String?) -> ZMAssetOriginal {
         return original(withSize: size, mimeType: mimeType, name: name, imageMetaData: nil)
@@ -112,7 +112,7 @@ public extension ZMAssetOriginal {
     }
 }
 
-public extension ZMAssetPreview {
+@objc public extension ZMAssetPreview {
     
     public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData, imageMetaData: ZMAssetImageMetaData) -> ZMAssetPreview {
         let builder = ZMAssetPreview.builder()!
@@ -125,7 +125,7 @@ public extension ZMAssetPreview {
     
 }
 
-public extension ZMAssetImageMetaData {
+@objc public extension ZMAssetImageMetaData {
     public static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
         let builder = ZMAssetImageMetaData.builder()!
         builder.setWidth(width)
@@ -134,7 +134,7 @@ public extension ZMAssetImageMetaData {
     }
 }
 
-public extension ZMAssetRemoteData {
+@objc public extension ZMAssetRemoteData {
     
     public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
         let builder = ZMAssetRemoteData.builder()!
@@ -151,7 +151,7 @@ public extension ZMAssetRemoteData {
 }
 
 
-extension ZMAssetRemoteData {
+@objc extension ZMAssetRemoteData {
     func builder(withAssetID assetID: String, token: String?) -> ZMAssetRemoteDataBuilder {
         let builder = toBuilder()!
         builder.setAssetId(assetID)

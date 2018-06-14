@@ -131,7 +131,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
+                                                     modifier: { _, _ in
                                                         self.notifyNameChange(otherUser, name: "Phil")
             },
                                                      expectedChangedField: "nameChanged",
@@ -150,7 +150,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
+                                                     modifier: { _, _ in
                                                         
                                                         let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
                                                         otherUser.name = "Foo"
@@ -209,7 +209,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
+                                                     modifier: { _, _ in
                                                         otherUser.accentColorValue = ZMAccentColor.softPink
             },
                                                      expectedChangedField: nil,
@@ -236,7 +236,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { _ in
+                                                     modifier: { _, _ in
                                                         self.notifyNameChange(otherUser, name: "Phil")
             },
                                                      expectedChangedField: "nameChanged",
@@ -723,8 +723,8 @@ extension ConversationObserverTests {
         // average: 0.056, relative standard deviation: 2.400%, values: [0.056840, 0.054732, 0.059911, 0.056330, 0.055015, 0.055535, 0.055917, 0.056481, 0.056177, 0.056115]
         // 13/02/17 average: 0.049, relative standard deviation: 4.095%, values: [0.052629, 0.046448, 0.046743, 0.047157, 0.051125, 0.048899, 0.047646, 0.048362, 0.048110, 0.051135]
         let count = 50
-        
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             
             let user = ZMUser.insertNewObject(in: self.uiMOC)
             user.name = "foo"
@@ -756,7 +756,7 @@ extension ConversationObserverTests {
         // 13/02/17: average: 0.062, relative standard deviation: 10.863%, values: [0.082063, 0.059699, 0.059220, 0.059861, 0.060348, 0.059494, 0.064300, 0.060022, 0.058819, 0.058870]
         let count = 50
         
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             
             let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
             self.uiMOC.saveOrRollback()
@@ -782,7 +782,7 @@ extension ConversationObserverTests {
         // 13/02/17 - 50 : average: 0.023, relative standard deviation: 27.833%, values: [0.041493, 0.020441, 0.020226, 0.020104, 0.021268, 0.021039, 0.020917, 0.020330, 0.020558, 0.019953]
         let count = 50
         
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             
             let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
             self.uiMOC.saveOrRollback()
@@ -810,7 +810,7 @@ extension ConversationObserverTests {
         
         let count = 50
         
-        self.measureMetrics([XCTPerformanceMetric_WallClockTime], automaticallyStartMeasuring: false) {
+        self.measureMetrics([.wallClockTime], automaticallyStartMeasuring: false) {
             
             let observer = ConversationObserver()
             

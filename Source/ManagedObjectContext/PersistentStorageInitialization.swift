@@ -80,7 +80,7 @@ class PersistentStorageInitialization {
         // We use default core data protection mode NSFileProtectionCompleteUntilFirstUserAuthentication
         let storageInitialization = PersistentStorageInitialization()
         
-        storageInitialization.applicationProtectedDataDidBecomeAvailableObserver = FileManager.default.executeWhenFileSystemIsAccessible { _ in
+        storageInitialization.applicationProtectedDataDidBecomeAvailableObserver = FileManager.default.executeWhenFileSystemIsAccessible { 
             storageInitialization.applicationProtectedDataDidBecomeAvailableObserver = nil
             block()
         }

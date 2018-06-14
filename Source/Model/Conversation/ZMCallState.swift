@@ -29,7 +29,7 @@ private let UserInfoHasChangesKey = "zm_userInfoHasChanges"
 
 extension NSManagedObjectContext {
     
-    public var zm_callState: ZMCallState {
+    @objc public var zm_callState: ZMCallState {
         let oldState = self.userInfo[UserInfoCallStateKey] as? ZMCallState
         return oldState ?? { () -> ZMCallState in
             let state = ZMCallState()
@@ -38,14 +38,14 @@ extension NSManagedObjectContext {
         }()
     }
     
-    public func zm_tearDownCallState() {
+    @objc public func zm_tearDownCallState() {
         if (self.userInfo[UserInfoCallStateKey] as? ZMCallState) != nil {
             self.userInfo.removeObject(forKey: UserInfoCallStateKey);
         }
     }
     
     /// True if the context has some changes in the user info that should cause a save
-    public var zm_hasUserInfoChanges : Bool {
+    @objc public var zm_hasUserInfoChanges : Bool {
         get {
             return (self.userInfo[UserInfoHasChangesKey] as? Bool) ?? false
         }
@@ -57,11 +57,11 @@ extension NSManagedObjectContext {
     /// Checks hasChanges and callStateHasChanges.
     ///
     /// The call state changes do not dirty the context's objects, hence need to be tracked / checked seperately.
-    public var zm_hasChanges: Bool {
+    @objc public var zm_hasChanges: Bool {
         return hasChanges || self.zm_hasUserInfoChanges
     }
     
-    public func mergeCallStateChanges(fromUserInfo userInfo: [String : Any]) {
+    @objc public func mergeCallStateChanges(fromUserInfo userInfo: [String : Any]) {
         guard self.zm_isSyncContext else { return } // we don't merge anything to UI, UI is autoritative
         
         if let callState = self.userInfo[UserInfoCallStateKey] as? ZMCallState {
@@ -78,7 +78,7 @@ extension ZMConversation {
         return managedObjectContext!.zm_callState.stateForConversation(self)
     }
     
-    public var isIgnoringCall: Bool {
+    @objc public var isIgnoringCall: Bool {
         get {
             return callState.isIgnoringCall
         }
@@ -90,7 +90,7 @@ extension ZMConversation {
         }
     }
     
-    public var isCallDeviceActive: Bool {
+    @objc public var isCallDeviceActive: Bool {
         get {
             return callState.isCallDeviceActive
         }

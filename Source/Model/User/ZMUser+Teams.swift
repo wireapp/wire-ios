@@ -19,16 +19,16 @@
 
 public extension ZMUser {
 
-    public var hasTeam: Bool {
+    @objc public var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
         return nil != team || nil != teamIdentifier
     }
 
-    public var team: Team? {
+    @objc public var team: Team? {
         return membership?.team
     }
     
-    static func keyPathsForValuesAffectingTeam() -> Set<String> {
+    @objc static func keyPathsForValuesAffectingTeam() -> Set<String> {
          return [#keyPath(ZMUser.membership)]
     }
 
@@ -48,11 +48,11 @@ public extension ZMUser {
         return permissions?.contains(.removeConversationMember) ?? true
     }
 
-    public var canCreateConversation: Bool {
+    @objc public var canCreateConversation: Bool {
         return permissions?.contains(.createConversation) ?? true
     }
 
-    func _isGuest(in conversation: ZMConversation) -> Bool {
+    @objc public func _isGuest(in conversation: ZMConversation) -> Bool {
         if isSelfUser {
             // In case the self user is a guest in a team conversation, the backend will
             // return a 404 when fetching said team and we will delete the team.
@@ -68,11 +68,11 @@ public extension ZMUser {
         }
     }
 
-    public var isWirelessUser: Bool {
+    @objc public var isWirelessUser: Bool {
         return self.expiresAt != nil
     }
     
-    public var isExpired: Bool {
+    @objc public var isExpired: Bool {
         guard let expiresAt = self.expiresAt else {
             return false
         }
@@ -80,7 +80,7 @@ public extension ZMUser {
         return expiresAt.compare(Date()) != .orderedDescending
     }
     
-    public var expiresAfter: TimeInterval {
+    @objc public var expiresAfter: TimeInterval {
         guard let expiresAt = self.expiresAt else {
             return 0
         }

@@ -43,7 +43,7 @@ extension Availability {
 
 extension ZMUser {
     
-    public static func connectionsAndTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
+    @objc public static func connectionsAndTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
         var connectionsAndTeamMembers : Set<ZMUser> = Set()
         
         let selfUser = ZMUser.selfUser(in: context)
@@ -53,14 +53,14 @@ extension ZMUser {
         let connectedUsers = context.fetchOrAssert(request: request)
         connectionsAndTeamMembers.formUnion(connectedUsers)
         
-        if let teamUsers = selfUser.team?.members.flatMap({ $0.user }) {
+        if let teamUsers = selfUser.team?.members.compactMap({ $0.user }) {
             connectionsAndTeamMembers.formUnion(teamUsers)
         }
         
         return connectionsAndTeamMembers
     }
     
-    public var availability : Availability {
+    @objc public var availability : Availability {
         get {
             self.willAccessValue(forKey: AvailabilityKey)
             let value = (self.primitiveValue(forKey: AvailabilityKey) as? NSNumber) ?? NSNumber(value: 0)
@@ -82,7 +82,7 @@ extension ZMUser {
         self.didChangeValue(forKey: AvailabilityKey)
     }
     
-    public func updateAvailability(from genericMessage : ZMGenericMessage) {
+    @objc public func updateAvailability(from genericMessage : ZMGenericMessage) {
         guard let availabilityProtobuffer = genericMessage.availability else { return }
         
         updateAvailability(Availability(availabilityProtobuffer))

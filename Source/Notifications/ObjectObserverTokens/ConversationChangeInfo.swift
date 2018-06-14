@@ -21,7 +21,7 @@ import Foundation
 
 extension ZMConversation : ObjectInSnapshot {
     
-    public static var observableKeys : Set<String> {
+    @objc public static var observableKeys : Set<String> {
         return Set([#keyPath(ZMConversation.messages),
                     #keyPath(ZMConversation.lastModifiedDate),
                     #keyPath(ZMConversation.isArchived),
@@ -56,7 +56,7 @@ extension ZMConversation : ObjectInSnapshot {
 ////////////////////
 
 
-@objc public final class ConversationChangeInfo : ObjectChangeInfo {
+@objcMembers public final class ConversationChangeInfo : ObjectChangeInfo {
     
     public var messagesChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMConversation.messages))
@@ -176,14 +176,14 @@ extension ConversationChangeInfo {
 extension ConversationChangeInfo {
     
     /// True if the conversation security level is .secureWithIgnored and we tried to send a message
-    public var didNotSendMessagesBecauseOfConversationSecurityLevel : Bool {
+    @objc public var didNotSendMessagesBecauseOfConversationSecurityLevel : Bool {
         return self.securityLevelChanged &&
             self.conversation.securityLevel == .secureWithIgnored &&
             !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
     }
     
     /// Users that caused the conversation to degrade
-    public var usersThatCausedConversationToDegrade : Set<ZMUser> {
+    @objc public var usersThatCausedConversationToDegrade : Set<ZMUser> {
         guard let activeParticipants = self.conversation.activeParticipants.array as? [ZMUser] else {
             return []
         }

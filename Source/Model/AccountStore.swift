@@ -52,7 +52,7 @@ public final class AccountStore: NSObject {
     /// Loads all stored accounts.
     /// - returns: All accounts stored in this `AccountStore`.
     func load() -> Set<Account> {
-        return Set<Account>(loadURLs().flatMap(Account.load))
+        return Set<Account>(loadURLs().compactMap(Account.load))
     }
 
     /// Tries to load a stored account with the given `UUID`.
