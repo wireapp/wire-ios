@@ -166,6 +166,8 @@ public extension ZMConversation {
     }
 
     fileprivate func displayCustomPicker() {
+        delegate?.ephemeralKeyboardWantsToBeDismissed(self)
+        
         let alertController = UIAlertController(title: "Custom timer", message: nil, preferredStyle: .alert)
         alertController.addTextField { (textField: UITextField) in
             textField.keyboardType = .decimalPad
@@ -186,7 +188,13 @@ public extension ZMConversation {
         
         let cancelAction = UIAlertAction.cancel()
         alertController.addAction(cancelAction)
-        present(alertController, animated: true, completion: nil)
+        UIApplication.shared.wr_topmostController(onlyFullScreen: true)!.present(alertController, animated: true) { [weak alertController] in
+            guard let input = alertController?.textFields?.first else {
+                return
+            }
+            
+            input.becomeFirstResponder()
+        }
     }
 }
 
