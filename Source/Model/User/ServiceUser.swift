@@ -18,8 +18,6 @@
 
 import Foundation
 
-let ServiceMentionKeyword = "@bots"
-
 @objc public protocol ServiceUser: class, ZMBareUser {
     var providerIdentifier: String? { get }
     var serviceIdentifier: String? { get }
@@ -27,4 +25,9 @@ let ServiceMentionKeyword = "@bots"
 
 @objc public protocol SearchServiceUser: ServiceUser {
     var summary: String? { get }
+}
+
+extension ZMUser {
+    static let servicesMustBeMentioned = false
+    static let serviceMentionKeyword = "@bots"
 }

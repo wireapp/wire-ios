@@ -18,11 +18,15 @@
 
 import Foundation
 
-extension ZMConversation {
 
+extension ZMConversation {
     @objc(normalizeText:forMentions:)
     func normalize(text: String, for mentions: [ZMMention]) -> String {
 
+        guard ZMUser.servicesMustBeMentioned else {
+            return text
+        }
+        
         // If the message is for a bot, remove the mention handle
 
         guard let firstMention = mentions.first else {
@@ -38,9 +42,9 @@ extension ZMConversation {
             return text
         }
 
-        // Remove the ServiceMentionKeyword (while it's here)
+        // Remove the ZMUser.serviceMentionKeyword (while it's here)
 
-        guard let mentionHandleRange = text.range(of: ServiceMentionKeyword + " ") else {
+        guard let mentionHandleRange = text.range(of: ZMUser.serviceMentionKeyword + " ") else {
             return text
         }
 
@@ -53,7 +57,7 @@ extension ZMConversation {
         let serviceUsers = (self.lastServerSyncedActiveParticipants.set as! Set<ZMUser>).serviceUsers
         var mentionedUsers: [ZMUser] = []
 
-        if text.starts(with: ServiceMentionKeyword + " ") {
+        if text.starts(with: ZMUser.serviceMentionKeyword + " ") {
             mentionedUsers.append(contentsOf: serviceUsers)
         }
 

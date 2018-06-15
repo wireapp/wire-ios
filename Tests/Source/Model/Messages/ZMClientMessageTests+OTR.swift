@@ -27,6 +27,7 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
 extension ClientMessageTests_OTR {
 
     func testThatItExcludesServicesWhenNotMentioned() {
+
         self.syncMOC.performGroupedBlockAndWait {
             let regularUser1 = ZMUser.insertNewObject(in: self.syncMOC)
             regularUser1.remoteIdentifier = UUID.create()
@@ -70,9 +71,12 @@ extension ClientMessageTests_OTR {
 
             // then
 
-            switch strategy {
-            case .ignoreAllMissingClientsNotFromUsers(let users):
+            switch (ZMUser.servicesMustBeMentioned, strategy) {
+            case (true, .ignoreAllMissingClientsNotFromUsers(let users)):
                 XCTAssertEqual(users, Set([regularUser1, regularUser2, serviceUser2, selfUser]))
+            case (false, .doNotIgnoreAnyMissingClient):
+                // all good
+                break
             default:
                 XCTFail()
             }
