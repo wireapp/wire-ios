@@ -68,12 +68,12 @@ private let zmLog = ZMSLog(tag: "link previews")
         objectsBeingProcessed.insert(message)
         
         if let messageText = (message as ZMConversationMessage).textMessageData?.messageText {
-            zmLog.debug("Fetching previews in message with text \(messageText)")
+            zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
             linkPreviewDetector.downloadLinkPreviews?(inText: messageText) { [weak self] linkPreviews in
-                zmLog.debug("Found \(linkPreviews.count) previews in message with text \(messageText):\n\(linkPreviews)")
-                self?.managedObjectContext.performGroupedBlock({
+                zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
+                self?.managedObjectContext.performGroupedBlock {
                     self?.didProcessMessage(message, linkPreviews: linkPreviews)
-                })
+                }
             }
         } else {
             didProcessMessage(message, linkPreviews: [])
@@ -88,14 +88,15 @@ private let zmLog = ZMSLog(tag: "link previews")
             message.add(updatedMessage.data())
             
             if let imageData = preview.imageData.first {
-                zmLog.debug("Image in linkPreview, setting linkPreviewState to .downloaded for message with text \(messageText)")
+                zmLog.debug("image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")")
                 managedObjectContext.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: imageData)
                 message.linkPreviewState = .downloaded
             } else {
-                zmLog.debug("No image, setting linkPreviewState to .uploaded for message with text \(messageText)")
+                zmLog.debug("no image in preview, setting state to .uploaded for: \(message.nonce?.uuidString ?? "nil")")
                 message.linkPreviewState = .uploaded
             }
         } else {
+            zmLog.debug("no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .done
         }
         
