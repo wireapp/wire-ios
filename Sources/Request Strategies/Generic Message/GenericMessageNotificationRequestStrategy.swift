@@ -18,7 +18,7 @@
 
 import WireDataModel
 
-@objc
+@objcMembers
 public final class GenericMessageNotificationRequestStrategy: NSObject, RequestStrategy {
 
     private var token: Any?

@@ -17,7 +17,7 @@
 //
 
 import Foundation
-public class GenericMessageEntity : OTREntity {
+@objcMembers public class GenericMessageEntity : NSObject, OTREntity {
 
     public var message : ZMGenericMessage
     public var conversation : ZMConversation?
@@ -59,7 +59,7 @@ public class GenericMessageEntity : OTREntity {
         isExpired = true
     }
     
-    public var hashValue: Int {
+    public override var hashValue: Int {
         return self.message.hashValue
     }
 }
@@ -91,7 +91,7 @@ extension GenericMessageEntity : EncryptedPayloadGenerator {
 /// This should not be used as a standalone strategy but either subclassed or used within another
 /// strategy. Please have a look at `CallingRequestStrategy` and `GenericMessageNotificationRequestStrategy`
 /// before modifying the behaviour of this class.
-public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageEntity>, ZMRequestGenerator, ZMContextChangeTracker {
+@objcMembers public class GenericMessageRequestStrategy : OTREntityTranscoder<GenericMessageEntity>, ZMRequestGenerator, ZMContextChangeTracker {
     
     private var sync : DependencyEntitySync<GenericMessageRequestStrategy>?
     private var requestFactory = ClientMessageRequestFactory()

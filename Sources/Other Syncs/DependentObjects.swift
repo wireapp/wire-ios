@@ -32,7 +32,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
  
     /// Adds a Dependency to an
     public func add(dependency: Dependency, for dependent: Object) {
-        zmLog.debug("Adding dependency \(toPtr(of: dependency)) to object \(toPtr(dependent)), object is: \(dependent)")
+        zmLog.debug("Adding dependency \(toPtr(dependency)) to object \(toPtr(dependent)), object is: \(dependent)")
         let toDependents = self.dependenciesToDependents[dependency] ?? Set()
         self.dependenciesToDependents[dependency] = toDependents.union([dependent])
         
@@ -119,6 +119,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         return dependentObjects.anyDependency(for: object)
     }
     
+    @objc(enumerateAndRemoveObjectsForDependency:usingBlock:)
     public func enumerateAndRemoveObjects(for dependency: ZMManagedObject, block: (ZMManagedObject)->Bool) {
         self.dependentObjects.enumerateAndRemoveObjects(for: dependency, block: block)
     }

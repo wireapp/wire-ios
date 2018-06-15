@@ -23,7 +23,7 @@ import WireTransport
 fileprivate let zmLog = ZMSLog(tag: "Asset V3")
 
 
-@objc public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objcMembers public final class AssetV3DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
 
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
     private var notificationToken: Any? = nil

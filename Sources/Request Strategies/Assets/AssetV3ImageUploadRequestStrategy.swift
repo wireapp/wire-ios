@@ -140,7 +140,7 @@ extension AssetV3ImageUploadRequestStrategy: ZMContextChangeTracker {
     // will not pick up a change to keys which are already being synchronized (uploadState)
     // WHEN the user cancels a file upload
     public func objectsDidChange(_ object: Set<NSManagedObject>) {
-        let assetClientMessages = object.flatMap { object -> ZMAssetClientMessage? in
+        let assetClientMessages = object.compactMap { object -> ZMAssetClientMessage? in
             guard let message = object as? ZMAssetClientMessage,
                 message.version == 3,
                 message.genericAssetMessage?.assetData?.hasPreview() == true,

@@ -32,15 +32,15 @@ private let RequestsAvailableNotificationName = "RequestAvailableNotification"
 /// there are new potential requests available to process.
 @objc(ZMRequestAvailableNotification) public class RequestAvailableNotification : NSObject {
     
-    public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
+    @objc public static func notifyNewRequestsAvailable(_ sender: NSObjectProtocol?) {
         NotificationCenter.default.post(name: Notification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
     }
     
-    public static func addObserver(_ observer: RequestAvailableObserver) {
+    @objc public static func addObserver(_ observer: RequestAvailableObserver) {
         NotificationCenter.default.addObserver(observer, selector: #selector(RequestAvailableObserver.newRequestsAvailable), name: NSNotification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
     }
     
-    public static func removeObserver(_ observer: RequestAvailableObserver) {
+    @objc public static func removeObserver(_ observer: RequestAvailableObserver) {
         NotificationCenter.default.removeObserver(observer, name: NSNotification.Name(rawValue: RequestsAvailableNotificationName), object: nil)
     }
     

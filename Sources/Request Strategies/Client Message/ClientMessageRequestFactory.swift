@@ -86,7 +86,7 @@ extension String {
         case .ignoreAllMissingClients:
             return self + "?ignore_missing"
         case .ignoreAllMissingClientsNotFromUsers(let users):
-            let userIDs = users.flatMap{$0.remoteIdentifier?.transportString()}
+            let userIDs = users.compactMap { $0.remoteIdentifier?.transportString() }
             return self + "?report_missing=\(userIDs.joined(separator: ","))"
         }
     }
