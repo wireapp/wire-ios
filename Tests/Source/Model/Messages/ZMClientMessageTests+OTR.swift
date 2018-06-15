@@ -213,10 +213,12 @@ extension ClientMessageTests_OTR {
             
             //then
             switch payloadAndStrategy.strategy {
-            case .ignoreAllMissingClientsNotFromUsers(users: let users):
-                XCTAssertEqual(users, self.syncConversation.lastServerSyncedActiveParticipants.set as! Set<ZMUser>)
-            default:
+            case .ignoreAllMissingClientsNotFromUsers(_):
+                fallthrough
+            case .ignoreAllMissingClients:
                 XCTFail()
+            default:
+                break
             }
         }
     }
