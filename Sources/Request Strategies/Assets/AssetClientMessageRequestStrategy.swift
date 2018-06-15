@@ -85,6 +85,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
         guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.privateDescription)") }
+        requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
         return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.uploadState)], transportRequest: request)
     }
 
