@@ -155,7 +155,12 @@ class ZMConversationMentionsTests: ZMConversationTestsBase {
         // When the first mention is a bot, trim the text
 
         let serviceMentionNormalization = conversation.normalize(text: "@bots @wire Hello", for: serviceMention)
-        XCTAssertEqual(serviceMentionNormalization, "@wire Hello")
+        if ZMUser.servicesMustBeMentioned {
+            XCTAssertEqual(serviceMentionNormalization, "@wire Hello")
+        }
+        else {
+            XCTAssertEqual(serviceMentionNormalization, "@bots @wire Hello")
+        }
 
         // When the first mention is not a bot, do not trim the text
 

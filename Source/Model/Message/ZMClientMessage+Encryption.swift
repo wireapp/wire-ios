@@ -173,9 +173,13 @@ extension ZMGenericMessage {
         func allAuthorizedRecipients() -> Set<ZMUser> {
             if let connectedUser = conversation.connectedUser { return Set(arrayLiteral: connectedUser, selfUser) }
 
-            let authorizedServices = services.filtered { service in
-                self.textData?.mention?.contains { $0.userId == service.remoteIdentifier?.transportString() } ?? false
+            func mentionedServices() -> Set<ZMUser> {
+                return services.filtered { service in
+                    self.textData?.mention?.contains { $0.userId == service.remoteIdentifier?.transportString() } ?? false
+                }
             }
+            
+            let authorizedServices = ZMUser.servicesMustBeMentioned ? mentionedServices() : services
 
             return otherUsers.union(authorizedServices).union([selfUser])
         }
