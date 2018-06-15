@@ -147,11 +147,13 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
             let updatedPreview = linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
             let genericMessage = ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: updatedPreview, nonce: message.nonce!, expiresAfter: NSNumber(value: message.deletionTimeout))
             message.add(genericMessage.data())
-            zmLog.debug("Uploaded image for message with linkPreview: \(linkPreview), genericMessage: \(String(describing: message.genericMessage))")
+            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil"), genericMessage: \(String(describing: message.genericMessage))")
+            zmLog.debug("setting state to .uploaded for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .uploaded
             return true
         } else {
-            zmLog.warn("Uploaded image but message does not have a link preview: \(String(describing: message.genericMessage))")
+            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil") but message is missing link preview: \(String(describing: message.genericMessage))")
+            zmLog.debug("setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .done
         }
 
