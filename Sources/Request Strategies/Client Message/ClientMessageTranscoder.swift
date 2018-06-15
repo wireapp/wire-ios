@@ -79,6 +79,8 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
                 return nil
         }
         
+        requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
+        
         let request = self.requestFactory.upstreamRequestForMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!)!
         if message.genericMessage?.hasConfirmation() == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
             request.forceToVoipSession()
