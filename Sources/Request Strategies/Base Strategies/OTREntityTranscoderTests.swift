@@ -21,7 +21,7 @@ import WireDataModel
 import XCTest
 
 
-class MockOTREntity : OTREntity {
+@objcMembers class MockOTREntity: OTREntity, Hashable {
     
     var context: NSManagedObjectContext
     public var isExpired: Bool = false

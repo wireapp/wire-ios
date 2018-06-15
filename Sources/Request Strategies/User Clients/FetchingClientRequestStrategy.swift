@@ -27,7 +27,7 @@ private let zmLog = ZMSLog(tag: "fetchClientRS")
 
 public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID"
 
-public extension ZMUser {
+@objc public extension ZMUser {
     
     func fetchUserClients() {
         NotificationInContext(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
@@ -110,7 +110,7 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
         // Create clients from the response
         var newClients = Set<UserClient>()
         guard let arrayPayload = response.payload?.asArray() else { return }
-        let clients: [UserClient] = arrayPayload.flatMap {
+        let clients: [UserClient] = arrayPayload.compactMap {
             guard let dict = $0 as? [String: AnyObject], let identifier = dict["id"] as? String else { return nil }
             guard let client = UserClient.fetchUserClient(withRemoteId: identifier, forUser:user, createIfNeeded: true) else { return nil }
             if client.isInserted {

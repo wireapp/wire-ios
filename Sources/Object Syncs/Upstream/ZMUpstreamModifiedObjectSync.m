@@ -177,7 +177,7 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)checkForUpdatedDependency:(ZMManagedObject *)existingDependency;
 {
-    [self.updatedObjectsWithDependencies enumerateAndRemoveObjectsFor:existingDependency block:^BOOL(ZMManagedObject *mo) {
+    [self.updatedObjectsWithDependencies enumerateAndRemoveObjectsForDependency:existingDependency usingBlock:^BOOL(ZMManagedObject *mo) {
         id newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (newDependency == nil) {
             [self addUpdatedObjectWithoutDependency:mo];

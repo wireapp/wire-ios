@@ -143,7 +143,7 @@ static NSString* ZMLogTag = @"Network";
 
 - (void)checkForUpdatedDependency:(ZMManagedObject *)existingDependency;
 {
-    [self.insertedObjectsWithDependencies enumerateAndRemoveObjectsFor:existingDependency block:^BOOL(ZMManagedObject *mo) {
+    [self.insertedObjectsWithDependencies enumerateAndRemoveObjectsForDependency:existingDependency usingBlock:^BOOL(ZMManagedObject *mo) {
         id newDependency = [self.transcoder dependentObjectNeedingUpdateBeforeProcessingObject:mo];
         if (newDependency == nil) {
             [self.insertedObjects addObjectToSynchronize:mo];

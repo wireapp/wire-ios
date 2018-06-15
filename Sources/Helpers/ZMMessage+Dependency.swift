@@ -30,7 +30,7 @@ extension ZMOTRMessage: OTREntity {
     }
 
     /// Which object this message depends on when sending
-    override public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+    @objc public override var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
         guard let conversation = conversation else { return nil }
         
         let dependent: AnyHashable? = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
@@ -51,7 +51,7 @@ extension ZMOTRMessage: OTREntity {
 }
 
 /// Message that can block following messages
-private protocol BlockingMessage {
+@objc private protocol BlockingMessage {
     
     /// If true, no other messages should be sent until this message is sent
     var shouldBlockFurtherMessages : Bool { get }
@@ -60,7 +60,7 @@ private protocol BlockingMessage {
 extension ZMMessage {
     
     /// Which object this message depends on when sending
-    public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+    @objc public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
         
         // conversation not created yet on the BE?
         guard let conversation = self.conversation else { return nil }

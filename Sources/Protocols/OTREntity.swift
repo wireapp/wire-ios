@@ -21,7 +21,7 @@ import WireTransport
 
 private let zmLog = ZMSLog(tag: "Dependencies")
 
-public protocol OTREntity:  DependencyEntity, Hashable {
+@objc public protocol OTREntity: DependencyEntity {
     
     var context : NSManagedObjectContext { get }
     

@@ -26,7 +26,7 @@ public struct AssetDownloadRequestStrategyNotification {
     public static let downloadFailedNotificationName = Notification.Name("AssetDownloadRequestStrategyDownloadFailedNotificationName")
 }
 
-@objc public final class AssetDownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
+@objcMembers public final class AssetDownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
     
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSync!
     private var token: Any? = nil

@@ -53,7 +53,7 @@ class DependentObjectsTests: ZMTBaseTest {
     
     func testThatItEnumeratesAllObjectsInTheOrderTheyWereAdded() {
         // GIVEN
-        let messages = [self.messageA, self.messageB, self.messageC].flatMap { $0 }
+        let messages = [self.messageA, self.messageB, self.messageC].compactMap { $0 }
         messages.forEach {
             self.sut.add(dependency: self.conversation1!, for: $0)
         }

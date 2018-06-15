@@ -24,7 +24,7 @@ import WireUtilities
 
 private let zmLog = ZMSLog(tag: "link previews")
 
-@objc public final class LinkPreviewPreprocessor : NSObject, ZMContextChangeTracker {
+@objcMembers public final class LinkPreviewPreprocessor : NSObject, ZMContextChangeTracker {
         
     /// List of objects currently being processed
     fileprivate var objectsBeingProcessed = Set<ZMClientMessage>()
@@ -53,8 +53,9 @@ private let zmLog = ZMSLog(tag: "link previews")
     }
     
     func processObjects(_ objects: Set<NSObject>) {
-        objects.flatMap(linkPreviewsToPreprocess)
-            .filter { !self.objectsBeingProcessed.contains($0) }
+        objects
+            .compactMap(linkPreviewsToPreprocess)
+            .filter(!objectsBeingProcessed.contains)
             .forEach(processMessage)
     }
     
@@ -113,7 +114,7 @@ extension LinkPreviewPreprocessor: LinkPreviewDetectorDelegate {
         let wholeRange = NSMakeRange(0, (text as NSString).length)
         return  !regex
             .matches(in: text, options: [], range: wholeRange)
-            .map { $0.rangeAt(1) }
+            .map { $0.range(at: 1) }
             .contains { NSEqualRanges($0, range) }
     }
 }

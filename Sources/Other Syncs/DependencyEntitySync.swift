@@ -18,11 +18,10 @@
 
 import Foundation
 
-public protocol DependencyEntity : AnyObject {
-    
-    var dependentObjectNeedingUpdateBeforeProcessing : AnyHashable? { get }
-    var isExpired: Bool { get }
-    func expire()
+@objc public protocol DependencyEntity: class {
+    @objc var dependentObjectNeedingUpdateBeforeProcessing : AnyHashable? { get }
+    @objc var isExpired: Bool { get }
+    @objc func expire()
 }
 
 public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity : DependencyEntity {

@@ -192,7 +192,7 @@ extension MessagingTestBase {
             XCTFail("Recipients not found")
             return nil
         }
-        let userEntries = recipients.flatMap({ $0 })
+        let userEntries = recipients.compactMap { $0 }
         guard let userEntry = userEntries.first(where: { $0.user == client.user!.userId() }) else {
             XCTFail("User not found", file: file, line: line)
             return nil
@@ -339,7 +339,7 @@ extension MessagingTestBase {
     }
     
     override var allDispatchGroups: [ZMSDispatchGroup] {
-        return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].flatMap { $0 }
+        return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }
     }
 }
 
