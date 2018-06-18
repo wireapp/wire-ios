@@ -70,8 +70,9 @@ private let zmLog = ZMSLog(tag: "link previews")
         if let messageText = (message as ZMConversationMessage).textMessageData?.messageText {
             zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
             linkPreviewDetector.downloadLinkPreviews?(inText: messageText) { [weak self] linkPreviews in
-                zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
+
                 self?.managedObjectContext.performGroupedBlock {
+                    zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
                     self?.didProcessMessage(message, linkPreviews: linkPreviews)
                 }
             }
