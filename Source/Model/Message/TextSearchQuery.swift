@@ -36,9 +36,9 @@ extension ZMClientMessage {
     /// Reccomputes the message's `normalizedText` property if the message
     /// has a message text, otherwise sets it to an empty String.
     override func updateNormalizedText() {
-        // We check if the message is ephemeral first to avoid checking the
+        // We check if the message is obfuscated first to avoid checking the
         // protobuf for the textMessageData and return early.
-        if isEphemeral {
+        if isObfuscated {
             normalizedText = ""
             return
         }

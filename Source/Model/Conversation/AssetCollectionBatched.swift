@@ -74,7 +74,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     
     /// Returns a collection that automatically fetches the assets in batches
     /// @param matchingCategories: The AssetCollection only returns and calls the delegate for these categories
-    public init(conversation: ZMConversation, matchingCategories : [CategoryMatch],  delegate: AssetCollectionDelegate){
+    public init(conversation: ZMConversation, matchingCategories: [CategoryMatch],  delegate: AssetCollectionDelegate){
         self.conversation = conversation
         self.delegate = delegate
         self.matchingCategories = matchingCategories

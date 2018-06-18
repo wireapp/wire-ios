@@ -60,7 +60,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         XCTAssertEqual(message.categorization, MessageCategory.text)
     }
     
-    func testThatItDoesNotCategorizeTimedMessages() {
+    func testThatItCategorizeTimedMessages() {
         
         // GIVEN
         let otherUser = ZMUser.insertNewObject(in: self.conversation.managedObjectContext!)
@@ -71,7 +71,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         let message = self.conversation.appendMessage(withText: "ramble on!")! as! ZMMessage
         
         // THEN
-        XCTAssertEqual(message.categorization, MessageCategory.undefined)
+        XCTAssertEqual(message.categorization, MessageCategory.text)
     }
 
     func testThatItCategorizesATextMessageWithLink() {
