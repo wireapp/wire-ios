@@ -426,7 +426,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(editedMatch, edited)
     }
 
-    func testThatItDoesNotReturnEphemeralMessagesAsSearchResults() {
+    func testThatItReturnsEphemeralMessagesAsSearchResults() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
@@ -441,7 +441,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(message.normalizedText)
         XCTAssertNotNil(otherMessage.normalizedText)
-        XCTAssertEqual(ephemeralMessage.normalizedText, "")
+        XCTAssertEqual(ephemeralMessage.normalizedText, "this is a timed message in the conversation")
         XCTAssertEqual(conversation.messages.count, 3)
 
         // When
@@ -451,7 +451,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         }
 
         // Then
-        XCTAssert(ephemeralMatches.isEmpty)
+        XCTAssertFalse(ephemeralMatches.isEmpty)
         guard let messageMatch = firstMessageMatches.first, firstMessageMatches.count == 1 else {
             return XCTFail("Unexpected number of regular matches")
         }
