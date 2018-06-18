@@ -25,33 +25,23 @@ class ZMConversationMessageDestructionTimeoutTests : XCTestCase {
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.none.rawValue, 0)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.tenSeconds.rawValue, 10)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.fiveMinutes.rawValue, 300)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneHour.rawValue, 3600)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneDay.rawValue, 86400)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.oneWeek.rawValue, 604800)
         XCTAssertEqual(ZMConversationMessageDestructionTimeout.fourWeeks.rawValue, 2419200)
     }
 
-    func testThatItReturnsTheClosestTimeOut() {
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: -2), 10)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 0), 10)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 2), 10)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 5), 10)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 6), 10)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 14), 14)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 15), 15)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 16), 16)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 29), 29)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 30), 30)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 31), 31)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 59), 59)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 60), 60)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 61), 61)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 299), 299)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 300), 300)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 301), 301)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86399), 86399)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86400), 86400)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 86401), 86401)
-        XCTAssertEqual(ZMConversationMessageDestructionTimeout.validTimeout(for: 1234567890), 2419200)
+    func testThatItCreatesAValidTimeOut() {
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: -2), .custom(-2))
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 0), .none)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 10), .tenSeconds)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 300), .fiveMinutes)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 3600), .oneHour)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 86400), .oneDay)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 604800), .oneWeek)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 690000), .custom(690000))
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 2419200), .fourWeeks)
+        XCTAssertEqual(ZMConversationMessageDestructionTimeout(rawValue: 1234567890), .custom(1234567890))
     }
 
 }
@@ -82,32 +72,6 @@ class ZMConversationTests_Ephemeral : BaseZMMessageTests {
         
         // then
         XCTAssertEqual(conversation.messageDestructionTimeout, 10)
-    }
- 
-    func testThatSendingEphemeralToEmptyConversationIsNotPossible() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
-
-        // when
-        conversation.internalAddParticipants(Set(arrayLiteral: selfUser))
-                
-        // then
-        XCTAssertEqual(conversation.canSendEphemeral, false)
-    }
-    
-    func testThatSendingEphemeralToNormalConversationIsPossible() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.conversationType = .group
-        
-        // when
-        let user = ZMUser.insert(in: uiMOC, name: "Test")
-        user.remoteIdentifier = UUID()
-        conversation.internalAddParticipants(Set(arrayLiteral: selfUser, user))
-        
-        // then
-        XCTAssertEqual(conversation.canSendEphemeral, true)
     }
 }
 

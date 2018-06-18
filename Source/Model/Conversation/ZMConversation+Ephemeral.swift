@@ -17,14 +17,44 @@
 //
 
 
-public enum ZMConversationMessageDestructionTimeout : TimeInterval {
-    case none = 0
-    case tenSeconds = 10
-    case fiveMinutes = 300
-    case oneHour = 3600
-    case oneDay = 86400
-    case oneWeek = 604800
-    case fourWeeks = 2419200
+public enum ZMConversationMessageDestructionTimeout : RawRepresentable, Hashable {
+
+    case none
+    case tenSeconds
+    case fiveMinutes
+    case oneHour
+    case oneDay
+    case oneWeek
+    case fourWeeks
+
+    case custom(TimeInterval)
+
+    public init(rawValue: TimeInterval) {
+        switch rawValue {
+        case 0: self = .none
+        case 10: self = .tenSeconds
+        case 300: self = .fiveMinutes
+        case 3600: self = .oneHour
+        case 86400: self = .oneDay
+        case 604800: self = .oneWeek
+        case 2419200: self = .fourWeeks
+        default: self = .custom(rawValue)
+        }
+    }
+
+    public var rawValue: TimeInterval {
+        switch self {
+        case .none: return 0
+        case .tenSeconds: return 10
+        case .fiveMinutes: return 300
+        case .oneHour: return 3600
+        case .oneDay: return 86400
+        case .oneWeek: return 604800
+        case .fourWeeks: return 2419200
+        case .custom(let duration): return duration
+        }
+    }
+
 }
 
 public extension ZMConversationMessageDestructionTimeout {
@@ -44,24 +74,19 @@ public extension ZMConversationMessageDestructionTimeout {
 
 public extension ZMConversationMessageDestructionTimeout {
 
-    public static func validTimeout(for timeout: TimeInterval) -> TimeInterval {
-        return timeout.clamp(
-            between: ZMConversationMessageDestructionTimeout.tenSeconds.rawValue,
-            and: ZMConversationMessageDestructionTimeout.fourWeeks.rawValue
-        )
+    public var isKnownTimeout: Bool {
+        if case .custom = self {
+            return false
+        }
+        return true
     }
-}
 
-fileprivate extension TimeInterval {
-    func clamp(between lower: TimeInterval, and upper: TimeInterval) -> TimeInterval {
-        return fmax(lower, fmin(upper, self))
-    }
 }
 
 public extension ZMConversation {
 
     /// Sets messageDestructionTimeout
-    /// @param timeout The timeout after which an appended message should "self-destruct"
+    /// @param timeout: The timeout after which an appended message should "self-destruct"
     public func updateMessageDestructionTimeout(timeout : ZMConversationMessageDestructionTimeout) {
         messageDestructionTimeout = timeout.rawValue
     }
@@ -71,12 +96,7 @@ public extension ZMConversation {
     }
 
     public var destructionTimeout: ZMConversationMessageDestructionTimeout {
-        return ZMConversationMessageDestructionTimeout(rawValue: messageDestructionTimeout) ?? .none
-    }
-
-    @objc public var canSendEphemeral: Bool {
-        return self.activeParticipants.count > 1
+        return ZMConversationMessageDestructionTimeout(rawValue: messageDestructionTimeout)
     }
 }
-
 
