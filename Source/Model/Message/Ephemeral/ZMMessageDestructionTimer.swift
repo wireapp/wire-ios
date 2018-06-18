@@ -116,12 +116,11 @@ enum MessageDestructionType : String {
     }
     
     public func startDeletionTimer(message: ZMMessage, timeout: TimeInterval) -> TimeInterval {
-        let matchedTimeout = isTesting ? timeout : ZMConversationMessageDestructionTimeout.validTimeout(for: timeout)
-        let fireDate = Date().addingTimeInterval(matchedTimeout)
+        let fireDate = Date().addingTimeInterval(timeout)
         start(forMessageIfNeeded: message,
               fire: fireDate,
               userInfo: [MessageDestructionType.UserInfoKey : MessageDestructionType.deletion.rawValue])
-        return matchedTimeout
+        return timeout
     }
 
 }

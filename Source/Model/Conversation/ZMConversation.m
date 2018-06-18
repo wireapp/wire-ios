@@ -1283,7 +1283,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
 {
     VerifyReturnNil(genericMessage != nil);
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
 
     ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:[NSUUID uuidWithTransportString:genericMessage.messageId]
                                                  managedObjectContext:self.managedObjectContext];
@@ -1308,9 +1307,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(NSUUID *)nonce imageData:(NSData *)imageData
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-    
-    
     ZMAssetClientMessage *message =
     [[ZMAssetClientMessage alloc] initWithOriginalImage:imageData
                                                   nonce:nonce
@@ -1330,8 +1326,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-    
     NSData *data = [NSData dataWithContentsOfURL:fileMetadata.fileURL options:NSDataReadingMappedIfSafe error:nil];
     if (data == nil) {
         return nil;
@@ -1361,8 +1355,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-
     ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
@@ -1370,8 +1362,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMClientMessage *)appendOTRKnockMessageWithNonce:(NSUUID *)nonce
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-
     ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce expiresAfter:@(self.messageDestructionTimeout)];
     ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
     return message;
@@ -1379,8 +1369,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-
     NSArray<ZMMention *> *mentions = [self mentionsInText:text];
     NSString *normalizedText = [self normalizeText:text forMentions:mentions];
 
@@ -1401,8 +1389,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce
 {
-    VerifyReturnNil(!self.destructionEnabled || self.canSendEphemeral);
-
     NSError *metadataError = nil;
     NSData *imageDataWithoutMetadata = [imageData wr_imageDataWithoutMetadataAndReturnError:&metadataError];
     
