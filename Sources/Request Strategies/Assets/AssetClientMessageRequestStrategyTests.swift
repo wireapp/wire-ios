@@ -230,7 +230,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest() else { return XCTFail("No request generated") }
 
             // THEN
-            let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(self.otherUser.remoteIdentifier!.transportString())"
+            let expected = "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages"
             XCTAssertEqual(request.path, expected)
             XCTAssertEqual(request.method, .methodPOST)
         }
