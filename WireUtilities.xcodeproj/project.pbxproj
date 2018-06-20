@@ -100,6 +100,8 @@
 		BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */; };
 		BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */; };
 		BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */; };
+		BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C1B0C20DA7270001CE126 /* Equatable+OneOf.swift */; };
+		BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */; };
 		BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */; };
 		BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */; };
 		BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */ = {isa = PBXBuildFile; fileRef = BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */; };
@@ -323,6 +325,8 @@
 		BF3493F51EC36A6400B0C314 /* Iterator+ContainmentTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Iterator+ContainmentTests.swift"; sourceTree = "<group>"; };
 		BF3A7A5F1D8AA9B30034FF40 /* OptionalComparison.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparison.swift; sourceTree = "<group>"; };
 		BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OptionalComparisonTests.swift; sourceTree = "<group>"; };
+		BF3C1B0C20DA7270001CE126 /* Equatable+OneOf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Equatable+OneOf.swift"; sourceTree = "<group>"; };
+		BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Equatable+OneOfTests.swift"; sourceTree = "<group>"; };
 		BF4A15CB1D47B8860051E8BA /* enterprise-production.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-production.xml"; sourceTree = "<group>"; };
 		BF4A15CD1D47BECC0051E8BA /* appstore-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; name = "appstore-sandbox.xml"; path = "../appstore-sandbox.xml"; sourceTree = "<group>"; };
 		BF4A15CF1D47BF360051E8BA /* enterprise-sandbox.xml */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xml; path = "enterprise-sandbox.xml"; sourceTree = "<group>"; };
@@ -599,6 +603,7 @@
 			children = (
 				EF18C7D11F9E37CA0085A832 /* String+Filename.swift */,
 				F15BDB1D20889772002F36E8 /* TearDownCapable.swift */,
+				BF3C1B0C20DA7270001CE126 /* Equatable+OneOf.swift */,
 				F991CE1C1CB64205004D8465 /* ZMPropertyValidator.h */,
 				F9C9A7B41CAEAE570039E10C /* ZMAccentColorValidator.h */,
 				F9C9A7B51CAEAE570039E10C /* ZMEmailAddressValidator.h */,
@@ -702,6 +707,7 @@
 				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
 				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
 				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
+				BF3C1B0E20DA7289001CE126 /* Equatable+OneOfTests.swift */,
 				F9479C761E4A2D2F0039F55F /* NSOrderedSetTests.swift */,
 				871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */,
 				546E8A611B75045E009EBA02 /* UnownedObjectTests.swift */,
@@ -972,6 +978,7 @@
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
+				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				D504CD352090C2F800A78DAA /* Papply.swift in Sources */,
@@ -1026,6 +1033,7 @@
 				EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */,
 				091799741B7E2E4D00E60DD9 /* ZMAPNSEnvironmentTests.m in Sources */,
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
+				BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */,
 				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
