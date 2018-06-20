@@ -49,6 +49,7 @@
              @"conversation.typing" : @(ZMUpdateEventTypeConversationTyping),
              @"conversation.access-update" : @(ZMUpdateEventTypeConversationAccessModeUpdate),
              @"conversation.code-update" : @(ZMUpdateEventTypeConversationCodeUpdate),
+             @"conversation.message-timer-update" : @(ZMUpdateEventTypeConversationMessageTimerUpdate),
              @"user.connection" : @(ZMUpdateEventTypeUserConnection),
              @"user.new" : @(ZMUpdateEventTypeUserNew),
              @"user.push-remove" : @(ZMUpdateEventTypeUserPushRemove),

@@ -48,6 +48,7 @@ import WireUtilities
     case conversationTyping
     case conversationCodeUpdate
     case conversationAccessModeUpdate
+    case conversationMessageTimerUpdate
     case userConnection
     case userNew
     case userUpdate
@@ -104,6 +105,8 @@ extension ZMUpdateEventType {
             return "conversation.code-update"
         case .conversationAccessModeUpdate:
             return "conversation.access-update"
+        case .conversationMessageTimerUpdate:
+            return "conversation.message-timer-update"
         case .userConnection:
             return "user.connection"
         case .userNew:
