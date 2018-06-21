@@ -2145,7 +2145,7 @@
     ZMMessage *message = (id)[conversation appendMessageWithText:@"Test Message"];
     message.sender = self.selfUser;
     [message markAsSent];
-    conversation.messageDestructionTimeout = 15;
+    [conversation setLocalMessageDestructionTimeout:15];
     ZMMessage *ephemeralMessage = (id)[conversation appendMessageWithText:@"Ephemeral Test Message"];
     ephemeralMessage.sender = self.selfUser;
     [ephemeralMessage markAsSent];

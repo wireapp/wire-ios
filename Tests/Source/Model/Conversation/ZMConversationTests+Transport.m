@@ -572,6 +572,37 @@
     }];
 }
 
+- (void)testThatItParsesTheMessageTimer
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        NSDictionary *payload = @{
+                                  @"name" : [NSNull null],
+                                  @"creator" : @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
+                                  @"members" : @{
+                                          @"others" : @3
+                                          },
+                                  @"message_timer": @1000,
+                                  @"type" : @1,
+                                  @"id" : [uuid UUIDString]
+                                  };
+        
+        // when
+        [self performPretendingUiMocIsSyncMoc:^{
+            [self performIgnoringZMLogError:^{
+                [conversation updateWithTransportData:payload serverTimeStamp:nil];
+            }];
+        }];
+        
+        // then
+        XCTAssertNotNil(conversation);
+        XCTAssertEqual(conversation.messageDestructionTimeoutValue, 1000);
+    }];
+}
+
 @end
 
 

@@ -17,7 +17,7 @@
 //
 
 
-public enum ZMConversationMessageDestructionTimeout : RawRepresentable, Hashable {
+public enum MessageDestructionTimeoutValue: RawRepresentable, Hashable {
 
     case none
     case tenSeconds
@@ -54,12 +54,23 @@ public enum ZMConversationMessageDestructionTimeout : RawRepresentable, Hashable
         case .custom(let duration): return duration
         }
     }
+    
 
 }
 
-public extension ZMConversationMessageDestructionTimeout {
+extension MessageDestructionTimeoutValue: ExpressibleByIntegerLiteral, ExpressibleByFloatLiteral {
+    public init(integerLiteral value: TimeInterval) {
+        self.init(rawValue: value)
+    }
+    
+    public init(floatLiteral value: TimeInterval) {
+        self.init(rawValue: value)
+    }
+}
 
-    static var all: [ZMConversationMessageDestructionTimeout] {
+public extension MessageDestructionTimeoutValue {
+
+    static var all: [MessageDestructionTimeoutValue] {
         return [
             .none,
             .tenSeconds,
@@ -72,7 +83,7 @@ public extension ZMConversationMessageDestructionTimeout {
     }
 }
 
-public extension ZMConversationMessageDestructionTimeout {
+public extension MessageDestructionTimeoutValue {
 
     public var isKnownTimeout: Bool {
         if case .custom = self {
@@ -83,20 +94,138 @@ public extension ZMConversationMessageDestructionTimeout {
 
 }
 
+public enum MessageDestructionTimeout {
+    case local(MessageDestructionTimeoutValue)
+    case synced(MessageDestructionTimeoutValue)
+}
+
+fileprivate let longStyleFormatter: DateComponentsFormatter = {
+    let formatter = DateComponentsFormatter()
+    formatter.unitsStyle = .full
+    formatter.allowedUnits = [.day, .hour, .minute, .second]
+    formatter.zeroFormattingBehavior = .dropAll
+    return formatter
+}()
+
+public extension MessageDestructionTimeoutValue {
+    
+    var displayString: String? {
+        guard .none != self else { return NSLocalizedString("input.ephemeral.timeout.none", comment: "") }
+        return longStyleFormatter.string(from: TimeInterval(rawValue))
+    }
+    
+    var shortDisplayString: String? {
+        if isSeconds { return String(Int(rawValue)) }
+        if isMinutes { return String(Int(rawValue / 60)) }
+        if isHours { return String(Int(rawValue / 3600)) }
+        if isDays { return String(Int(rawValue / 86400)) }
+        return nil
+    }
+    
+}
+
+public extension MessageDestructionTimeoutValue {
+    
+    var isSeconds: Bool {
+        return rawValue < 60
+    }
+    
+    var isMinutes: Bool {
+        return 60..<3600 ~= rawValue
+    }
+    
+    var isHours: Bool {
+        return 3600..<86400 ~= rawValue
+    }
+    
+    var isDays: Bool {
+        return rawValue >= 86400
+    }
+    
+}
+
+
 public extension ZMConversation {
 
-    /// Sets messageDestructionTimeout
-    /// @param timeout: The timeout after which an appended message should "self-destruct"
-    public func updateMessageDestructionTimeout(timeout : ZMConversationMessageDestructionTimeout) {
-        messageDestructionTimeout = timeout.rawValue
-    }
+    /// Defines the time interval until an inserted messages is deleted / "self-destructs" on all clients.
+    /// Can be set to the local or to the synchronized value.
+    /// WARNING: setting the synced value: please update the value on the backend and then update the value of this
+    /// property.
+    /// Computed property from @c localMessageDestructionTimeout and @c syncedMessageDestructionTimeout.
+    public var messageDestructionTimeout: MessageDestructionTimeout? {
+        get {
+            if syncedMessageDestructionTimeout != 0 {
+                return .synced(MessageDestructionTimeoutValue(rawValue: syncedMessageDestructionTimeout))
+            }
+            else if localMessageDestructionTimeout != 0 {
+                return .local(MessageDestructionTimeoutValue(rawValue: localMessageDestructionTimeout))
+            }
+            else {
+                return nil
+            }
+        }
 
-    @objc public var destructionEnabled: Bool {
-        return destructionTimeout != .none
+        set {
+            let currentValue = messageDestructionTimeout
+            
+            if let newTimeout = newValue {
+                switch (currentValue, newTimeout) {
+                case (_, .synced(let value)):
+                    precondition(conversationType == .group)
+                    syncedMessageDestructionTimeout = value.rawValue
+                case (.synced?, .local):
+                    // It is not allowed to set a local timeout while a synced timeout is set, this should never happen.
+                    fatal("Not allowed to set local timeout when synced timeout is set")
+                case (.local?, .local(let value)):
+                    localMessageDestructionTimeout = value.rawValue
+                case (nil, .local(let value)):
+                    localMessageDestructionTimeout = value.rawValue
+                }
+            }
+            else {
+                // Reset the currently set field / type when setting to nil
+                switch currentValue {
+                case .local?:
+                    localMessageDestructionTimeout = 0
+                case .synced?:
+                    syncedMessageDestructionTimeout = 0
+                case nil:
+                    localMessageDestructionTimeout = 0
+                }
+            }
+        }
     }
-
-    public var destructionTimeout: ZMConversationMessageDestructionTimeout {
-        return ZMConversationMessageDestructionTimeout(rawValue: messageDestructionTimeout)
+    
+    @objc var messageDestructionTimeoutValue: TimeInterval {
+        switch messageDestructionTimeout {
+        case .some(.local(let value)):
+            return value.rawValue
+        case .some(.synced(let value)):
+            return value.rawValue
+        case .none:
+            return 0
+        }
     }
+    
+    @objc public func appendMessageTimerUpdateMessage(fromUser user: ZMUser, timer: Double) -> ZMSystemMessage {
+        let (message, _) = appendSystemMessage(
+            type: .messageTimerUpdate,
+            sender: user,
+            users: [user],
+            clients: nil,
+            timestamp: nil,
+            messageTimer: timer
+        )
+        
+        if isArchived && !isSilenced {
+            isArchived = false
+        }
+        
+        managedObjectContext?.enqueueDelayedSave()
+        return message
+    }
+    
+    @NSManaged internal var localMessageDestructionTimeout: TimeInterval
+    @NSManaged internal var syncedMessageDestructionTimeout: TimeInterval
 }
 

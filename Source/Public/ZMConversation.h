@@ -94,11 +94,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 /// For group conversation this will be nil, for one to one or connection conversation this will be the other user
 @property (nonatomic, readonly, nullable) ZMUser *connectedUser;
 
-/// Defines the time interval until an inserted messages is deleted / "self-destructs" on all clients
-/// Use [updateMessageDestructionTimeout:(ZMConversationMessageDestructionTimeout)timeout] for setting it
-/// Or import the internal header for testing
-@property (nonatomic, readonly) NSTimeInterval messageDestructionTimeout;
-
 /// This method loads messages in a window when there are visible messages
 - (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;
 

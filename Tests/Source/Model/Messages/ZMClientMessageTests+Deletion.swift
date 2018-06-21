@@ -470,7 +470,7 @@ extension ZMClientMessageTests_Deletion {
 
     func testThatItStopsDeletionTimerForEphemeralMessages(){
         // given
-        conversation.messageDestructionTimeout = 1000
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1000))
         let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         sut.sender = user1
         _ = uiMOC.zm_messageDeletionTimer.startDeletionTimer(message: sut, timeout: 1000)

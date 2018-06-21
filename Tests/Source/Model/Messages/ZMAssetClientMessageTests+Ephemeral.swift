@@ -57,7 +57,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItInsertsAnEphemeralMessageForAssets(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         let fileMetadata = addFile()
         
         // when
@@ -97,7 +97,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatWhenUpdatingTheThumbnailAssetIDWeReplaceAnEphemeralMessageWithAnEphemeral(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         let fileMetadata = addFile()
         
         // when
@@ -118,7 +118,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItStartsTheTimerForMultipartMessagesWhenTheAssetIsUploaded(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let fileMetadata = self.addFile()
             let message = self.syncConversation.appendMessage(with: fileMetadata) as! ZMAssetClientMessage
             message.uploadState = .uploadingFullAsset
@@ -136,7 +136,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItStartsTheTimerForImageAssetMessageWhenTheAssetIsUploaded(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let message = self.syncConversation.appendMessage(withImageData: self.verySmallJPEGData()) as! ZMAssetClientMessage
             message.uploadState = .uploadingFullAsset
             
@@ -160,7 +160,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItDoesNotStartTheTimerForMultipartMessagesWhenTheAssetWasNotUploaded(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let fileMetadata = self.addFile()
             let message = self.syncConversation.appendMessage(with: fileMetadata) as! ZMAssetClientMessage
             
@@ -176,7 +176,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItDoesNotStartTheTimerForImageAssetMessageWhenTheAssetWasNotUploaded(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let message = self.syncConversation.appendMessage(withImageData: self.verySmallJPEGData()) as! ZMAssetClientMessage
             
             // when
@@ -192,7 +192,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.conversation.messageDestructionTimeout = 10
+            self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let data = self.verySmallJPEGData()
             let message = self.conversation.appendMessage(withImageData: data) as! ZMAssetClientMessage
             
@@ -222,7 +222,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerForImageAssetMessagesIfTheMessageIsAMessageOfTheOtherUser(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -243,7 +243,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -257,7 +257,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero, mimeType: "", size: UInt64(imageData.count), nonce: nonce, expiresAfter: 10)
         message.add(assetMessage)
         
-        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), messageID: message.nonce!, expiresAfter: NSNumber(value: conversation.messageDestructionTimeout))
+        let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), messageID: message.nonce!, expiresAfter: NSNumber(value: conversation.messageDestructionTimeoutValue))
         message.add(uploaded)
         message.setImageData(imageData, for: .medium, properties: nil)
         
@@ -291,7 +291,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItDoesNotStartsATimerIfTheMessageIsAMessageOfTheOtherUser_NoMediumImage(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -311,7 +311,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItDoesNotStartATimerIfTheMessageIsAMessageOfTheOtherUser_NotUploadedYet(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -331,7 +331,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser_UploadCancelled(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -353,7 +353,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItDoesNotStartATimerForAMessageOfTheSelfuser(){
         // given
         let timeout : TimeInterval = 0.1
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout =  .local(MessageDestructionTimeoutValue(rawValue: timeout))
         let fileMetadata = self.addFile()
         let message = conversation.appendMessage(with: fileMetadata) as! ZMAssetClientMessage
         message.add(ZMGenericMessage.genericMessage(withUploadedOTRKey: Data(), sha256: Data(), messageID: message.nonce!))
@@ -369,7 +369,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func testThatItCreatesADeleteForAllMessageWhenTheTimerFires(){
         // given
         let timeout : TimeInterval = 0.1
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         let fileMetadata = self.addFile()
         let message = conversation.appendMessage(with: fileMetadata) as! ZMAssetClientMessage

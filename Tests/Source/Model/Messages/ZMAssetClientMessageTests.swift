@@ -843,7 +843,7 @@ extension ZMAssetClientMessageTests {
             // given
             let image = self.verySmallJPEGData()
             let nonce = UUID.create()
-            syncConversation.updateMessageDestructionTimeout(timeout: .fiveMinutes)
+            syncConversation.messageDestructionTimeout = .local(.fiveMinutes)
             let sut = syncConversation.appendOTRMessage(withImageData: image, nonce: nonce)!
             sut.delivered = true
             sut.progress = 56

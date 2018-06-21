@@ -207,7 +207,7 @@ extension ZMAssetClientMessageTests_Encryption {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             self.setupConversation(conversation: self.syncConversation)
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let sut = self.insertFileMessage()
             XCTAssertTrue(sut.isEphemeral)
 
@@ -222,7 +222,7 @@ extension ZMAssetClientMessageTests_Encryption {
     func testThatItReturnsCorrectStrategyForEphemeralMessages_FileAssets_GroupConversation(){
         self.syncMOC.performGroupedBlockAndWait {
             // given
-            self.syncConversation.messageDestructionTimeout = 10
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let sut = self.insertFileMessage()
             XCTAssertTrue(sut.isEphemeral)
             

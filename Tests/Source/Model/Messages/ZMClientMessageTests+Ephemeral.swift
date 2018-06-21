@@ -61,7 +61,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItCreateAEphemeralMessageWhenAutoDeleteTimeoutIs_SetToBiggerThanZero_OnConversation(){
         // given
         let timeout : TimeInterval = 10
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         // when
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
@@ -74,7 +74,7 @@ extension ZMClientMessageTests_Ephemeral {
     
     func testThatIt_DoesNot_CreateAnEphemeralMessageWhenAutoDeleteTimeoutIs_SetToZero_OnConversation(){
         // given
-        conversation.messageDestructionTimeout = 0
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 0))
         
         // when
         let message = conversation.appendMessage(withText: "foo") as! ZMMessage
@@ -86,7 +86,7 @@ extension ZMClientMessageTests_Ephemeral {
     func checkItCreatesAnEphemeralMessage(messageCreationBlock: ((ZMConversation) -> ZMMessage)) {
         // given
         let timeout : TimeInterval = 10
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         // when
         let message = conversation.appendMessage(withText: "foo") as! ZMMessage
@@ -125,7 +125,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 10
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
 
@@ -144,7 +144,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 10
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             
             let article = Article(
                 originalURLString: "www.example.com/article/original",
@@ -186,7 +186,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 0.1
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             
             // when
@@ -214,7 +214,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 0.1
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             
             // when
@@ -232,7 +232,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 0.1
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             message.markAsSent()
         }
@@ -260,7 +260,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 10
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             message.sender = self.syncUser1
             message.markAsSent()
@@ -285,7 +285,7 @@ extension ZMClientMessageTests_Ephemeral {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
             conversation.remoteIdentifier = UUID.create()
-            conversation.messageDestructionTimeout = 10
+            conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             
             let connection = ZMConnection.insertNewObject(in: self.syncMOC)
             connection.to = self.syncUser1
@@ -309,7 +309,7 @@ extension ZMClientMessageTests_Ephemeral {
 
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser(){
         // given
-        conversation.messageDestructionTimeout = 10
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
         conversation.lastReadServerTimeStamp = Date()
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
@@ -329,7 +329,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItDoesNotStartATimerForAMessageOfTheSelfuser(){
         // given
         let timeout : TimeInterval = 0.1
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         
         // when
@@ -342,7 +342,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testThatItCreatesADeleteForAllMessageWhenTheTimerFires(){
         // given
         let timeout : TimeInterval = 0.1
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         conversation.conversationType = .oneOnOne
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         message.sender = ZMUser.insertNewObject(in: uiMOC)
@@ -382,7 +382,7 @@ extension ZMClientMessageTests_Ephemeral {
     
     func insertEphemeralMessage() -> ZMMessage {
         let timeout : TimeInterval = 1.0
-        conversation.messageDestructionTimeout = timeout
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
@@ -418,7 +418,7 @@ extension ZMClientMessageTests_Ephemeral {
         var message: ZMClientMessage!
         
         syncMOC.performGroupedBlock {
-            self.syncConversation.messageDestructionTimeout = 5.0
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5.0))
             message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             
             // when
@@ -475,7 +475,7 @@ extension ZMClientMessageTests_Ephemeral {
         var message: ZMClientMessage!
 
         syncMOC.performGroupedBlock { 
-            self.syncConversation.messageDestructionTimeout = 0.5
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 0.5))
             message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             message.markAsSent()
             XCTAssertNotNil(message.destructionDate)
@@ -521,7 +521,7 @@ extension ZMClientMessageTests_Ephemeral {
         self.syncMOC.performGroupedBlockAndWait {
             // given
             let timeout : TimeInterval = 10
-            self.syncConversation.messageDestructionTimeout = timeout
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
             
             if timerHadStarted {
