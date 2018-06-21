@@ -46,7 +46,7 @@ class ConversationMessageTimerTests: IntegrationTest {
     func testThatItUpdatesTheDestructionTimerOneDay() {
         // given
         XCTAssert(login())
-        let sut = conversation(for: selfToUser1Conversation)!
+        let sut = conversation(for: groupConversation)!
         XCTAssertNil(sut.messageDestructionTimeout)
         
         // when
@@ -59,7 +59,7 @@ class ConversationMessageTimerTests: IntegrationTest {
     func testThatItRemovesTheDestructionTimer() {
         // given
         XCTAssert(login())
-        let sut = conversation(for: selfToUser1Conversation)!
+        let sut = conversation(for: groupConversation)!
         
         // given
         userSession?.enqueueChanges {
@@ -78,7 +78,7 @@ class ConversationMessageTimerTests: IntegrationTest {
     func testThatItCanSetASyncedTimerWithExistingLocalOneAndFallsBackToTheLocalAfterRemovingSyncedTimer() {
         // given
         XCTAssert(login())
-        let sut = conversation(for: selfToUser1Conversation)!
+        let sut = conversation(for: groupConversation)!
 
         userSession?.enqueueChanges {
             sut.messageDestructionTimeout = .local(.oneDay)
