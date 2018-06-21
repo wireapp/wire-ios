@@ -435,7 +435,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         
         let message = conversation.appendMessage(withText: "This is a regular message in the conversation") as! ZMMessage
         let otherMessage = conversation.appendMessage(withText: "This is the another message in the conversation") as! ZMMessage
-        conversation.messageDestructionTimeout = 300
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 300))
         let ephemeralMessage = conversation.appendMessage(withText: "This is a timed message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())

@@ -63,7 +63,8 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                            "securityLevel": 0 as Optional<NSObject>,
                                                            "isSilenced": 0 as Optional<NSObject>,
                                                            "lastServerTimeStamp": nil,
-                                                           "messageDestructionTimeout": 0 as Optional<NSObject>,
+                                                           "localMessageDestructionTimeout": 0 as Optional<NSObject>,
+                                                           "syncedMessageDestructionTimeout": 0 as Optional<NSObject>,
                                                            "clearedTimeStamp": nil,
                                                            "needsToBeUpdatedFromBackend": 0 as Optional<NSObject>,
                                                            "lastUnreadKnockDate": nil,
@@ -81,7 +82,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                            "lastServerSyncedActiveParticipants": 0,
                                            "messages": 0]
         
-        expectedAttributes.forEach{
+        expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
         }
         XCTAssertEqual(snapshot.toManyRelationships, expectedToManyRelationships)
@@ -118,7 +119,8 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "securityLevel": 0 as Optional<NSObject>,
                                                          "isSilenced": 1 as Optional<NSObject>,
                                                          "lastServerTimeStamp": conv.lastServerTimeStamp as Optional<NSObject>,
-                                                         "messageDestructionTimeout": 0 as Optional<NSObject>,
+                                                         "localMessageDestructionTimeout": 0 as Optional<NSObject>,
+                                                         "syncedMessageDestructionTimeout": 0 as Optional<NSObject>,
                                                          "clearedTimeStamp": nil,
                                                          "needsToBeUpdatedFromBackend": 0 as Optional<NSObject>,
                                                          "lastUnreadKnockDate": conv.lastUnreadKnockDate as Optional<NSObject>,

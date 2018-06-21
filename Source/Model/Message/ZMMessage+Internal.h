@@ -160,6 +160,7 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @property (nonatomic, readonly) NSDate * _Nonnull lastChildMessageDate; // Equals the serverTimestamp, if no childMessages are present
 
 @property (nonatomic, readonly) BOOL userIsTheSender; // Set to true if sender is the only user in users array. E.g. when a wireless user joins conversation
+@property (nonatomic) NSNumber * _Nullable messageTimer; // Only filled for .messageTimerUpdate
 
 + (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;

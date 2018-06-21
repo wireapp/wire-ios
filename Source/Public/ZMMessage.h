@@ -72,7 +72,8 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeUsingNewDevice,
     ZMSystemMessageTypeMessageDeletedForEveryone,
     ZMSystemMessageTypePerformedCall,
-    ZMSystemMessageTypeTeamMemberLeave
+    ZMSystemMessageTypeTeamMemberLeave,
+    ZMSystemMessageTypeMessageTimerUpdate
 };
 
 
@@ -104,6 +105,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @property (nonatomic) NSSet<id <ZMSystemMessageData>>  *childMessages;
 @property (nonatomic) id <ZMSystemMessageData> parentMessage;
 @property (nonatomic, readonly) BOOL userIsTheSender;
+@property (nonatomic) NSNumber *messageTimer;
 
 @end
 

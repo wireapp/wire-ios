@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17C205" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.47.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14133" systemVersion="17C205" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.48.0">
     <entity name="AddressBookEntry" representedClassName=".AddressBookEntry" syncable="YES">
         <attribute name="cachedName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="localIdentifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -35,7 +35,7 @@
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="connection" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="connection" inverseEntity="User" syncable="YES"/>
     </entity>
-    <entity name="Conversation" representedClassName="ZMConversation" elementID="messageDestructionTimeout" syncable="YES">
+    <entity name="Conversation" representedClassName="ZMConversation" syncable="YES">
         <attribute name="accessModeStrings" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="accessRoleString" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -52,7 +52,7 @@
         <attribute name="lastServerTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="lastUnreadKnockDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="lastUnreadMissedCallDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="messageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="localMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO" elementID="messageDestructionTimeout" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="normalizedUserDefinedName" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -60,6 +60,7 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
         <attribute name="securityLevel" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="silencedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="syncedMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="teamRemoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="teamRemoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="userDefinedName" optional="YES" attributeType="String" syncable="YES"/>
@@ -137,6 +138,7 @@
     </entity>
     <entity name="SystemMessage" representedClassName="ZMSystemMessage" parentEntity="Message" syncable="YES">
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="messageTimer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsUpdatingUsers" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="systemMessageType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
@@ -238,7 +240,7 @@
         <element name="AssetClientMessage" positionX="9" positionY="153" width="128" height="225"/>
         <element name="ClientMessage" positionX="9" positionY="153" width="128" height="105"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="165"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="555"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="570"/>
         <element name="GenericMessageData" positionX="18" positionY="162" width="128" height="90"/>
         <element name="ImageMessage" positionX="0" positionY="0" width="128" height="165"/>
         <element name="KnockMessage" positionX="0" positionY="0" width="128" height="45"/>
@@ -247,7 +249,7 @@
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="90"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="105"/>
         <element name="Session" positionX="9" positionY="153" width="128" height="60"/>
-        <element name="SystemMessage" positionX="0" positionY="0" width="128" height="195"/>
+        <element name="SystemMessage" positionX="0" positionY="0" width="128" height="210"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
         <element name="TextMessage" positionX="-153" positionY="-117" width="128" height="60"/>
         <element name="User" positionX="-434" positionY="-72" width="128" height="645"/>

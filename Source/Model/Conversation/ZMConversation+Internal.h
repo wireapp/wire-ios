@@ -128,8 +128,6 @@ NS_ASSUME_NONNULL_END
 /// updated when messages are inserted and the lastReadServerTimeStamp changes
 @property (nonatomic, nullable) NSMutableOrderedSet *unreadTimeStamps;
 
-@property (nonatomic) NSTimeInterval messageDestructionTimeout;
-
 /// sorts the messages in the conversation
 - (void)sortMessages;
 - (void)resortMessagesWithUpdatedMessage:(nonnull ZMMessage *)message;

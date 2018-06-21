@@ -309,7 +309,8 @@ extension ZMConversation {
                                          addedUsers: Set<ZMUser> = Set(),
                                          clients: Set<UserClient>?,
                                          timestamp: Date?,
-                                         duration: TimeInterval? = nil) -> (message: ZMSystemMessage, insertionIndex: UInt) {
+                                         duration: TimeInterval? = nil,
+                                         messageTimer: Double? = nil) -> (message: ZMSystemMessage, insertionIndex: UInt) {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -319,6 +320,10 @@ extension ZMConversation {
         systemMessage.serverTimestamp = timestamp
         if let duration = duration {
             systemMessage.duration = duration
+        }
+        
+        if let messageTimer = messageTimer {
+            systemMessage.messageTimer = NSNumber(value: messageTimer)
         }
         
         let index = self.sortedAppendMessage(systemMessage)
