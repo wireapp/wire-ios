@@ -108,6 +108,24 @@ extension ClientMessageTranscoderTests {
 
 extension ClientMessageTranscoderTests {
     
+    func testThatItDoesNotGenerateARequestIfSenderIsNotSelfUser() {
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let text = "Lorem ipsum"
+            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            message.sender = self.otherUser
+            self.syncMOC.saveOrRollback()
+            
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
+    
     func testThatItGeneratesARequestToSendAClientMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             
