@@ -311,7 +311,7 @@ extension FilePreprocessorTests {
     func testThatItEncryptsAnEphemeralFileMessageSentByMe() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.oneToOneConversationOnSync.messageDestructionTimeout = 10
+            self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
             let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
             self.syncMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
@@ -332,7 +332,7 @@ extension FilePreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            self.oneToOneConversationOnSync.messageDestructionTimeout = 10
+            self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
             let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
@@ -360,7 +360,7 @@ extension FilePreprocessorTests {
         
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.oneToOneConversationOnSync.messageDestructionTimeout = 10
+            self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
             let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
             XCTAssertTrue(msg.isEphemeral)

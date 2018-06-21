@@ -69,7 +69,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             withUploadedOTRKey: otrKey,
             sha256: sha,
             messageID: message.nonce!,
-            expiresAfter: NSNumber(value: conversation.messageDestructionTimeout)
+            expiresAfter: NSNumber(value: conversation.messageDestructionTimeoutValue)
         )
         
         guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {

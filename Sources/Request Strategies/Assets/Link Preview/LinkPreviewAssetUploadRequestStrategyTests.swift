@@ -49,7 +49,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
-            conversation.messageDestructionTimeout = 10
+            conversation.messageDestructionTimeout = .local(.tenSeconds)
         }
         let message = conversation.appendMessage(withText: text) as! ZMClientMessage
         message.linkPreviewState = linkPreviewState

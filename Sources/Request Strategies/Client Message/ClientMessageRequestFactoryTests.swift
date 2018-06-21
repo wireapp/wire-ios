@@ -91,7 +91,7 @@ extension ClientMessageRequestFactoryTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Boo"
-            self.groupConversation.messageDestructionTimeout = 10
+            self.groupConversation.messageDestructionTimeout = .local(.tenSeconds)
             let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
             
             // WHEN
