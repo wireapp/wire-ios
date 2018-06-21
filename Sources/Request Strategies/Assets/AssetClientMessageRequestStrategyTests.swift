@@ -118,13 +118,13 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let previewMessage = ZMGenericMessage.genericMessage(
                 asset: .asset(withOriginal: nil, preview: previewAsset),
                 messageID: message.nonce!,
-                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
+                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeoutValue)
             )
 
             message.add(previewMessage)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasPreview(), line: line)
             XCTAssertEqual(message.genericAssetMessage!.assetData!.preview.remote.hasAssetId(), previewAssetId, line: line)
-            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeout != 0, line: line)
+            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeoutValue != 0, line: line)
         }
 
         if uploaded {
@@ -133,14 +133,14 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
                 withUploadedOTRKey: otr,
                 sha256: sha,
                 messageID: message.nonce!,
-                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeout)
+                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeoutValue)
             )
             if assetId {
                 uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
             }
             message.add(uploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded(), line: line)
-            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeout != 0, line: line)
+            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeoutValue != 0, line: line)
         }
 
         message.uploadState = uploadState
@@ -223,7 +223,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesARequestForAnUploadedImageMessage_Ephemeral() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.groupConversation.messageDestructionTimeout = 15
+            self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 15))
             self.createMessage(uploaded: true, assetId: true)
 
             // WHEN
@@ -430,7 +430,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         // GIVEN
         var message: ZMAssetClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
-            self.groupConversation.messageDestructionTimeout = 15
+            self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 15))
             message = self.createMessage(uploaded: true, assetId: true)
         }
         

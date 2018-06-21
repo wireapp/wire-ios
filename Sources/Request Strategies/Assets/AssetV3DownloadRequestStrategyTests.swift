@@ -78,7 +78,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
 
         // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
-        let timer: NSNumber? = aConversation.messageDestructionTimeout > 0 ? NSNumber(value: aConversation.messageDestructionTimeout) : nil
+        let timer: NSNumber? = aConversation.messageDestructionTimeoutValue > 0 ? NSNumber(value: aConversation.messageDestructionTimeoutValue) : nil
         let uploaded = ZMGenericMessage.genericMessage(
             withUploadedOTRKey: otrKey,
             sha256: sha,
@@ -131,7 +131,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             
             // Given
-            self.conversation.messageDestructionTimeout = 5
+            self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5))
             guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
             guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData found") }
             XCTAssert(assetData.hasUploaded())

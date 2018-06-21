@@ -32,7 +32,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             self.sut = nil
-            self.groupConversation.messageDestructionTimeout = 10
+            self.groupConversation.messageDestructionTimeout = .local(.tenSeconds)
             let message = self.groupConversation.appendMessage(withText: "Foo")! as! ZMClientMessage
             message.markAsSent()
             self.syncMOC.saveOrRollback()
@@ -51,7 +51,7 @@ extension ClientMessageTranscoderTests {
         var message: ZMClientMessage!
         self.syncMOC.performGroupedBlockAndWait {
             
-            self.groupConversation.messageDestructionTimeout = 1
+            self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1))
             message = self.groupConversation.appendMessage(withText: "Foo")! as! ZMClientMessage
             message.markAsSent()
             self.syncMOC.saveOrRollback()
