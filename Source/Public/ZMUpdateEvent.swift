@@ -48,7 +48,6 @@ import WireUtilities
     case conversationTyping
     case conversationCodeUpdate
     case conversationAccessModeUpdate
-    case conversationMessageTimerUpdate
     case userConnection
     case userNew
     case userUpdate
@@ -64,6 +63,7 @@ import WireUtilities
     case teamConversationCreate
     case teamConversationDelete
     case teamMemberUpdate
+    case conversationMessageTimerUpdate
 
     case _LAST  /// ->->->->->!!! Keep this at the end of this enum !!!<-<-<-<-<-
     /// It is used to enumerate values. Hardcoding the values of this enums in tests gets very easily out of sync
@@ -105,8 +105,6 @@ extension ZMUpdateEventType {
             return "conversation.code-update"
         case .conversationAccessModeUpdate:
             return "conversation.access-update"
-        case .conversationMessageTimerUpdate:
-            return "conversation.message-timer-update"
         case .userConnection:
             return "user.connection"
         case .userNew:
@@ -137,6 +135,8 @@ extension ZMUpdateEventType {
             return "team.conversation-delete"
         case .teamMemberUpdate:
             return "team.member-update"
+        case .conversationMessageTimerUpdate:
+            return "conversation.message-timer-update"
 
         case ._LAST:
             return nil
