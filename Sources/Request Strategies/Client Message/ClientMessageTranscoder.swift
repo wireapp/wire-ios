@@ -41,7 +41,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         
         self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsWhileInBackground]
-        self.upstreamObjectSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: ZMClientMessage.entityName(), managedObjectContext: moc)
+        self.upstreamObjectSync = ZMUpstreamInsertedObjectSync(transcoder: self, entityName: ZMClientMessage.entityName(), filter: ClientMessageTranscoder.insertFilter, managedObjectContext: moc)
         self.deleteOldEphemeralMessages()
     }
     
@@ -51,6 +51,14 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return self.upstreamObjectSync.nextRequest()
+    }
+    
+    static var insertFilter: NSPredicate {
+        return NSPredicate { object, _ in
+            guard let message = object as? ZMMessage, let sender = message.sender  else { return false }
+            
+            return sender.isSelfUser
+        }
     }
 }
 
@@ -117,6 +125,9 @@ extension ClientMessageTranscoder {
             guard let updateResult = ZMOTRMessage.messageUpdateResult(from: event, in: self.managedObjectContext, prefetchResult: prefetchResult) else {
                  return nil
             }
+            
+            updateResult.message?.markAsSent()
+                        
             if type(of: self.applicationStatus!.deliveryConfirmation).sendDeliveryReceipts {
                 if updateResult.needsConfirmation {
                     let confirmation = updateResult.message!.confirmReception()!
@@ -134,7 +145,6 @@ extension ClientMessageTranscoder {
                 
             }
             
-            updateResult.message?.markAsSent()
             return updateResult.message
         default:
             return nil
