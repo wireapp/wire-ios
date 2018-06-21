@@ -20,6 +20,19 @@ import XCTest
 import WireRequestStrategy
 import WireDataModel
 
+extension MessageDestructionTimeout: Equatable {}
+
+public func ==(lhs: MessageDestructionTimeout, rhs: MessageDestructionTimeout) -> Bool {
+    switch (lhs, rhs) {
+    case (.synced(let valueL), .synced(let valueR)):
+        return valueL == valueR
+    case (.local(let valueL), .local(let valueR)):
+        return valueL == valueR
+    default:
+        return false
+    }
+}
+
 class ZMConversationTranscoderTests_Swift: ObjectTranscoderTests {
     
     var sut: ZMConversationTranscoder!
@@ -394,14 +407,14 @@ extension ZMConversationTranscoderTests_Swift {
             sut?.processEvents([event], liveEvents: true, prefetchResult: nil)
             
             // THEN
-            XCTAssertEqual(conversation?.messageDestructionTimeout, .synced(.oneDay))
+            XCTAssertEqual(conversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(.oneDay))
         }
     }
     
     func testThatItHandlesMessageTimerUpdateEvent_NoValue() {
         syncMOC.performGroupedAndWait { [sut, user, conversation] moc in
             conversation?.messageDestructionTimeout = .synced(300)
-            XCTAssertEqual(conversation?.messageDestructionTimeout, .synced(.fiveMinutes))
+            XCTAssertEqual(conversation?.messageDestructionTimeout!, MessageDestructionTimeout.synced(.fiveMinutes))
             
             // Given
             let payload: [String: Any] = [

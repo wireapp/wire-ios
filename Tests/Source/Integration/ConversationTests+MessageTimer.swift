@@ -53,7 +53,7 @@ class ConversationMessageTimerTests: IntegrationTest {
         setGlobalTimeout(for: sut, timeout: 86400)
         
         // then
-        XCTAssertEqual(sut.messageDestructionTimeout, .synced(.oneDay))
+        XCTAssertEqual(sut.messageDestructionTimeout!, MessageDestructionTimeout.synced(.oneDay))
     }
     
     func testThatItRemovesTheDestructionTimer() {
@@ -85,19 +85,19 @@ class ConversationMessageTimerTests: IntegrationTest {
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-        XCTAssertEqual(sut.messageDestructionTimeout, .local(86400))
+        XCTAssertEqual(sut.messageDestructionTimeout!, MessageDestructionTimeout.local(86400))
         
         // when
         setGlobalTimeout(for: sut, timeout: 10)
         
         // then
-        XCTAssertEqual(sut.messageDestructionTimeout, .synced(10))
+        XCTAssertEqual(sut.messageDestructionTimeout!, MessageDestructionTimeout.synced(10))
         
         // when
         setGlobalTimeout(for: sut, timeout: 0)
         
         // then
-        XCTAssertEqual(sut.messageDestructionTimeout, .local(86400))
+        XCTAssertEqual(sut.messageDestructionTimeout!, MessageDestructionTimeout.local(86400))
     }
     
     // MARK: - Helper
