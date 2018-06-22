@@ -94,7 +94,7 @@ public extension MessageDestructionTimeoutValue {
 
 }
 
-public enum MessageDestructionTimeout {
+public enum MessageDestructionTimeout: Equatable {
     case local(MessageDestructionTimeoutValue)
     case synced(MessageDestructionTimeoutValue)
 }
@@ -144,7 +144,6 @@ public extension MessageDestructionTimeoutValue {
     
 }
 
-
 public extension ZMConversation {
 
     /// Defines the time interval until an inserted messages is deleted / "self-destructs" on all clients.
@@ -190,6 +189,7 @@ public extension ZMConversation {
                 case .synced?:
                     syncedMessageDestructionTimeout = 0
                 case nil:
+                    syncedMessageDestructionTimeout = 0
                     localMessageDestructionTimeout = 0
                 }
             }
@@ -198,11 +198,11 @@ public extension ZMConversation {
     
     @objc var messageDestructionTimeoutValue: TimeInterval {
         switch messageDestructionTimeout {
-        case .some(.local(let value)):
+        case .local(let value)?:
             return value.rawValue
-        case .some(.synced(let value)):
+        case .synced(let value)?:
             return value.rawValue
-        case .none:
+        case nil:
             return 0
         }
     }
