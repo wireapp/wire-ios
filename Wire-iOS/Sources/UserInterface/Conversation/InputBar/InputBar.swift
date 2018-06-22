@@ -81,12 +81,26 @@ private struct InputBarConstants {
 
 @objcMembers public final class InputBar: UIView {
 
-    private let inputBarVerticalInset : CGFloat = 34
+    private let inputBarVerticalInset: CGFloat = 34
+    public static let rightIconSIze: CGFloat = 32
 
 
     let textView = MarkdownTextView(with: DownStyle.compact)
     public let leftAccessoryView  = UIView()
-    public let rightAccessoryView = UIView()
+    public let rightAccessoryStackView: UIStackView = {
+        let stackView = UIStackView()
+
+        let rightInset = (UIView.conversationLayoutMargins.left - rightIconSIze) / 2
+
+        stackView.spacing = 16
+        stackView.axis = .horizontal
+        stackView.alignment = .center
+        stackView.distribution = .fill
+        stackView.layoutMargins = UIEdgeInsets(top: 0, left: rightInset, bottom: 0, right: rightInset)
+        stackView.isLayoutMarginsRelativeArrangement = true
+
+        return stackView
+    }()
     
     // Contains and clips the buttonInnerContainer
     public let buttonContainer = UIView()
@@ -169,7 +183,7 @@ private struct InputBarConstants {
         buttonsView.clipsToBounds = true
         buttonContainer.clipsToBounds = true
         
-        [leftAccessoryView, textView, rightAccessoryView, buttonContainer, buttonRowSeparator].forEach(addSubview)
+        [leftAccessoryView, textView, rightAccessoryStackView, buttonContainer, buttonRowSeparator].forEach(addSubview)
         buttonContainer.addSubview(buttonInnerContainer)
         [buttonsView, secondaryButtonsView].forEach(buttonInnerContainer.addSubview)
         textView.addSubview(fakeCursor)
@@ -211,7 +225,7 @@ private struct InputBarConstants {
     
     fileprivate func createConstraints() {
         
-        constrain(buttonContainer, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView) { buttonContainer, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView in
+        constrain(buttonContainer, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryStackView) { buttonContainer, textView, buttonRowSeparator, leftAccessoryView, rightAccessoryView in
             leftAccessoryView.leading == leftAccessoryView.superview!.leading
             leftAccessoryView.top == leftAccessoryView.superview!.top
             leftAccessoryView.bottom == buttonContainer.top
