@@ -101,8 +101,10 @@ public enum MessageDestructionTimeout: Equatable {
 
 fileprivate let longStyleFormatter: DateComponentsFormatter = {
     let formatter = DateComponentsFormatter()
+    formatter.includesApproximationPhrase = false
+    formatter.maximumUnitCount = 1
     formatter.unitsStyle = .full
-    formatter.allowedUnits = [.day, .hour, .minute, .second]
+    formatter.allowedUnits = [.weekOfMonth, .day, .hour, .minute, .second]
     formatter.zeroFormattingBehavior = .dropAll
     return formatter
 }()
