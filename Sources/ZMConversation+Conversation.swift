@@ -24,9 +24,9 @@ import WireRequestStrategy
 
 extension ZMConversation: Conversation {
 
-    public var name: String { return displayName }
+    @objc public var name: String { return displayName }
     
-    public var isTrusted: Bool {
+    @objc public var isTrusted: Bool {
         return securityLevel == .secure
     }
     
