@@ -585,7 +585,7 @@
                                   @"members" : @{
                                           @"others" : @3
                                           },
-                                  @"message_timer": @1000,
+                                  @"message_timer": @31536000000,
                                   @"type" : @1,
                                   @"id" : [uuid UUIDString]
                                   };
@@ -599,7 +599,7 @@
         
         // then
         XCTAssertNotNil(conversation);
-        XCTAssertEqual(conversation.messageDestructionTimeoutValue, 1000);
+        XCTAssertEqual(conversation.messageDestructionTimeoutValue, 31536000);
     }];
 }
 
