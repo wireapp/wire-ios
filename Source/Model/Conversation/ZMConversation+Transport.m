@@ -114,7 +114,8 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     NSNumber *messageTimerNumber = [transportData optionalNumberForKey:ConversationInfoMessageTimer];
     
     if (messageTimerNumber != nil) {
-        self.syncedMessageDestructionTimeout = messageTimerNumber.doubleValue;
+        // Backend is sending the miliseconds, we need to convert to seconds.
+        self.syncedMessageDestructionTimeout = messageTimerNumber.doubleValue / 1000;
     }
 }
 
