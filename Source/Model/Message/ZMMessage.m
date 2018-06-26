@@ -996,6 +996,7 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
     switch (self.systemMessageType) {
         case ZMSystemMessageTypeParticipantsRemoved:
         case ZMSystemMessageTypeConversationNameChanged:
+        case ZMSystemMessageTypeMessageTimerUpdate:
             return NO;
 
         default:

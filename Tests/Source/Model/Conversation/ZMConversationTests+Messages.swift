@@ -87,8 +87,10 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
     {
         let types = [
             ZMSystemMessageType.teamMemberLeave,
-            ZMSystemMessageType.conversationNameChanged
+            ZMSystemMessageType.conversationNameChanged,
+            ZMSystemMessageType.messageTimerUpdate
         ]
+
         for type in types {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
