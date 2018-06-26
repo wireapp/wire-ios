@@ -153,7 +153,6 @@ static const CGFloat BurstContainerExpandedHeight = 40;
     self.messageContentView = [[UIView alloc] init];
     self.messageContentView.translatesAutoresizingMaskIntoConstraints = NO;
     self.messageContentView.accessibilityElementsHidden = NO;
-    self.messageContentView.shouldGroupAccessibilityChildren = YES;
     [self.contentView addSubview:self.messageContentView];
 
     self.authorLabel = [[UILabel alloc] init];
