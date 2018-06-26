@@ -44,31 +44,24 @@ public extension ZMConversation {
     }
     
     @objc var timeoutImage: UIImage? {
-        guard let value = self.destructionTimeout else {
-            return nil
-        }
-        
-        
-        if value.isWeeks { return WireStyleKit.imageOfWeek(with: UIColor.accent()) }
-        if value.isDays { return WireStyleKit.imageOfDay(with: UIColor.accent()) }
-        if value.isHours { return WireStyleKit.imageOfHour(with: UIColor.accent()) }
-        if value.isMinutes { return WireStyleKit.imageOfMinute(with: UIColor.accent()) }
-        if value.isSeconds { return WireStyleKit.imageOfSecond(with: UIColor.accent()) }
-        return nil
+        guard let value = self.destructionTimeout else { return nil }
+        return timeoutImage(for: value)
     }
 
     @objc var disabledTimeoutImage: UIImage? {
-        guard let value = self.destructionTimeout else {
-            return nil
-        }
-        
-        if value.isDays { return WireStyleKit.imageOfDay(with: UIColor(scheme: .lightGraphite)) }
-        if value.isHours { return WireStyleKit.imageOfHour(with: UIColor(scheme: .lightGraphite)) }
-        if value.isMinutes { return WireStyleKit.imageOfMinute(with: UIColor(scheme: .lightGraphite)) }
-        if value.isSeconds { return WireStyleKit.imageOfSecond(with: UIColor(scheme: .lightGraphite)) }
+        guard let value = self.destructionTimeout else { return nil }
+        return timeoutImage(for: value, withColor: UIColor(scheme: .lightGraphite))
+    }
+    
+    private func timeoutImage(for timeout: MessageDestructionTimeoutValue, withColor color: UIColor = UIColor.accent()) -> UIImage? {
+        if timeout.isYears    { return WireStyleKit.imageOfYear(with: color) }
+        if timeout.isWeeks    { return WireStyleKit.imageOfWeek(with: color) }
+        if timeout.isDays     { return WireStyleKit.imageOfDay(with: color) }
+        if timeout.isHours    { return WireStyleKit.imageOfHour(with: color) }
+        if timeout.isMinutes  { return WireStyleKit.imageOfMinute(with: color) }
+        if timeout.isSeconds  { return WireStyleKit.imageOfSecond(with: color) }
         return nil
     }
-
 }
 
 extension UIAlertController {
