@@ -24,6 +24,8 @@ class MimeTypeTests: XCTestCase {
     func testThatItParsesVideoMimeTypeCorrectly_Positive() {
         XCTAssertTrue("video/mp4".isVideoMimeType())
         XCTAssertTrue("video/mpeg".isVideoMimeType())
+        // WebM can be considered the video MIME type if the appropriate video player is installed on the operating system.
+        XCTAssertFalse("video/webm".isVideoMimeType())
     }
 
     func testThatItParsesVideoMimeTypeCorrectly_Negative() {
@@ -49,6 +51,10 @@ class MimeTypeTests: XCTestCase {
         XCTAssertFalse(".mp4".isAudioMimeType())
         XCTAssertFalse("video/mp4".isAudioMimeType())
         XCTAssertFalse("video/mpeg".isAudioMimeType())
+    }
+    
+    func testPlayableMimeType() {
+        XCTAssertFalse("video/webm".isPlayableVideoMimeType())
     }
 
 }

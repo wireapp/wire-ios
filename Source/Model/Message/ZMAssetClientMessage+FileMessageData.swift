@@ -216,7 +216,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var isVideo: Bool {
-        return self.mimeType?.isVideoMimeType() ?? false
+        return self.mimeType?.isPlayableVideoMimeType() ?? false
     }
     
     public var isAudio: Bool {
