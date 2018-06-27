@@ -20,11 +20,19 @@
 import Foundation
 import MobileCoreServices
 
+// WebM can be considered the video MIME type if the appropriate video player is installed on the operating system.
+fileprivate let unsupportedVideoTypes: Set<String> = ["video/webm"]
+
 extension String {
     
     /// Returns whether the string represents a video mime type
     public func isVideoMimeType() -> Bool {
         return (self as NSString).zm_conforms(to: kUTTypeMovie)
+    }
+    
+    /// Returns whether it is possible to play the file with the given mime type as the video
+    public func isPlayableVideoMimeType() -> Bool {
+        return isVideoMimeType() && !unsupportedVideoTypes.contains(self)
     }
     
     /// Returns whether the string represents an audio mime type
