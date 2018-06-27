@@ -1104,6 +1104,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
     
     if (change.destructionTimeoutChanged) {
         [self updateAccessoryViews];
+        [self updateInputBar];
     }
 }
 

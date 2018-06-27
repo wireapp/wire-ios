@@ -94,7 +94,7 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
     }
 
     func ephemeralKeyboard(_ keyboard: EphemeralKeyboardViewController, didSelectMessageTimeout timeout: TimeInterval) {
-        inputBar.setInputBarState(.writing(ephemeral: timeout != 0), animated: true)
+        inputBar.setInputBarState(.writing(ephemeral: timeout != 0 ? .message : .none), animated: true)
         updateMarkdownButton()
 
         ZMUserSession.shared()?.enqueueChanges {
@@ -102,5 +102,24 @@ extension ConversationInputBarViewController: EphemeralKeyboardViewControllerDel
             self.updateRightAccessoryView()
         }
     }
+    
+}
 
+extension ConversationInputBarViewController {
+    var ephemeralState: EphemeralState {
+        var state = EphemeralState.none
+        if !sendButtonState.ephemeral {
+            state = .none
+        } else if self.conversation.hasSyncedMessageDestructionTimeout {
+            state = .conversation
+        } else {
+            state = .message
+        }
+        
+        return state
+    }
+
+    @objc func updateInputBar() {
+        inputBar.changeEphemeralState(to: ephemeralState)
+    }
 }
