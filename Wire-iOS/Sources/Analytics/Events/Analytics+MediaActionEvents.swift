@@ -171,6 +171,17 @@ let videoDurationClusterizer: TimeIntervalClusterizer = {
     return TimeIntervalClusterizer.videoDuration()
 }()
 
+fileprivate extension ZMConversation {
+    var hasSyncedTimeout: Bool {
+        if case .synced(_)? = self.messageDestructionTimeout {
+            return true
+        }
+        else {
+            return false
+        }
+    }
+}
+
 public extension Analytics {
 
     /// User clicked on any action in cursor, giphy button or audio / video call button from toolbar.
@@ -191,9 +202,7 @@ public extension Analytics {
             attributes["conversation_type"] = typeAttribute
         }
 
-        if case .synced(_)? = conversation.messageDestructionTimeout {
-            attributes["is_global_ephemeral"] = true
-        }
+        attributes["is_global_ephemeral"] = conversation.hasSyncedTimeout
         
         for (key, value) in guestAttributes(in: conversation) {
             attributes[key] = value
