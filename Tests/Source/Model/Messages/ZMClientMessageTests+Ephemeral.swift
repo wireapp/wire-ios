@@ -140,6 +140,37 @@ extension ZMClientMessageTests_Ephemeral {
         }
     }
     
+    func testThatItStartsATimerWhenTheMessageIsMarkedAsSent_IncomingFromOtherDevice() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
+            self.syncConversation.lastReadServerTimeStamp = Date()
+            
+            let nonce = UUID()
+            let message = ZMAssetClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
+            message.sender = ZMUser.selfUser(in: self.syncMOC)
+            message.visibleInConversation = self.syncConversation
+            message.senderClientID = "other_client"
+            
+            let imageData = self.verySmallJPEGData()
+            let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero, mimeType: "", size: UInt64(imageData.count), nonce: nonce, expiresAfter: 10)
+            message.add(assetMessage)
+            
+            let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), messageID: message.nonce!, expiresAfter: NSNumber(value: self.syncConversation.messageDestructionTimeoutValue))
+            message.add(uploaded)
+            message.setImageData(imageData, for: .medium, properties: nil)
+            
+            // when
+            message.markAsSent()
+            
+            // then
+            XCTAssertTrue(message.isEphemeral)
+            XCTAssertEqual(message.deletionTimeout, 10)
+            XCTAssertNotNil(message.destructionDate)
+            XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 1)
+        }
+    }
+    
     func testThatItDoesNotStartATimerWhenTheMessageHasUnsentLinkPreviewAndIsMarkedAsSent() {
         self.syncMOC.performGroupedBlockAndWait {
             // given
