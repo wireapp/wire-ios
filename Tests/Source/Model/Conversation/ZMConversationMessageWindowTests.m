@@ -382,6 +382,37 @@
     XCTAssertEqualObjects(sut.messages, [NSOrderedSet orderedSetWithObject:newMessage]);
 }
 
+- (void)testThatDeletedMessagesAreHidden
+{
+    // given
+    ZMConversation *conversation = [self createConversationWithMessages:1];
+    ZMMessage *lastReadMessage = conversation.messages.lastObject;
+    conversation.lastReadServerTimeStamp = lastReadMessage.serverTimestamp;
+
+    ZMConversationMessageWindow *sut = [conversation conversationWindowWithSize:30];
+    ZMClientMessage *newMessage = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    [conversation.mutableMessages addObject:newMessage];
+    
+    // when
+    [sut recalculateMessages];
+    
+    
+    // then
+    NSOrderedSet *expected = [NSOrderedSet orderedSetWithArray:@[newMessage, lastReadMessage]];
+    XCTAssertEqualObjects(sut.messages, expected);
+    
+    // given
+    newMessage.hiddenInConversation = conversation;
+    newMessage.visibleInConversation = nil;
+    XCTAssert(newMessage.hasBeenDeleted);
+
+    // when
+    [sut recalculateMessages];
+    
+    // then
+    XCTAssertEqualObjects(sut.messages, [NSOrderedSet orderedSetWithObject:lastReadMessage]);
+}
+
 @end
 
 
