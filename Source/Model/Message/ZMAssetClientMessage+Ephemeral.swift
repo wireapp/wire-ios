@@ -56,7 +56,8 @@ extension ZMAssetClientMessage {
         }
     }
     
-    @objc public override func startDestructionIfNeeded() -> Bool {
+    @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
+        
         let isSelfUser = self.sender?.isSelfUser ?? false
         
         if !isSelfUser {
@@ -69,9 +70,14 @@ extension ZMAssetClientMessage {
                 }
             }
         }
+        
         // This method is called after receiving the response but before updating the
         // uploadState, which means a state of fullAsset corresponds to the asset upload being done.
-        if isSelfUser && self.uploadState != .uploadingFullAsset {
+        if isSelfUser,
+            let moc = self.managedObjectContext,
+            let selfClient = ZMUser.selfUser(in: moc).selfClient(),
+            self.senderClientID == selfClient.remoteIdentifier,
+            self.uploadState != .uploadingFullAsset {
             return false
         }
         return super.startDestructionIfNeeded()

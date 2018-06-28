@@ -230,6 +230,19 @@ import Foundation
 
     }
     
+    public override func markAsSent() {
+        super.markAsSent()
+        setObfuscationTimerIfNeeded()
+    }
+    
+    func setObfuscationTimerIfNeeded() {
+        guard self.isEphemeral else {
+            return
+        }
+        
+        startDestructionIfNeeded()
+    }
+    
     public override func resend() {
         if self.v3_isImage {
             self.uploadState = .uploadingFullAsset
