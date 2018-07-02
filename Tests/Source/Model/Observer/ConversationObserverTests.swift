@@ -287,8 +287,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                      modifier: { conversation, _ in
                                                         _ = conversation.appendMessage(withText: "foo")
             },
-                                                     expectedChangedField: "messagesChanged",
-                                                     expectedChangedKeys: ["messages"])
+                                                     expectedChangedFields: ["messagesChanged", "lastModifiedDateChanged"],
+                                                     expectedChangedKeys: ["messages", "lastModifiedDate"])
     }
     
     func testThatItNotifiesTheObserverOfAnAddedParticipant()
@@ -395,7 +395,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             message.serverTimestamp = conversation.lastReadServerTimeStamp?.addingTimeInterval(10)
             self.syncMOC.saveOrRollback()
             
-            conversation.didUpdateWhileFetchingUnreadMessages()
+            conversation.calculateLastUnreadMessages()
             self.syncMOC.saveOrRollback()
             XCTAssertEqual(conversation.estimatedUnreadCount, 1)
         }
@@ -408,7 +408,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         // when
         self.syncMOC.performGroupedBlockAndWait {
             conversation.lastReadServerTimeStamp = message.serverTimestamp
-            conversation.updateUnread()
+            conversation.calculateLastUnreadMessages()
             XCTAssertEqual(conversation.estimatedUnreadCount, 0)
             self.syncMOC.saveOrRollback()
         }
@@ -575,7 +575,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         systemMessage.systemMessageType = .missedCall;
         systemMessage.serverTimestamp = Date(timeIntervalSince1970:1231234)
         systemMessage.visibleInConversation = conversation
-        conversation.updateUnreadMessages(with: systemMessage)
+        conversation.calculateLastUnreadMessages()
     }
     
     
@@ -609,8 +609,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         guard let changes = observer.notifications.first else { return XCTFail() }
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
-                                     expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged"])
-        XCTAssertEqual(changes.changedKeys, Set(["messages", "conversationListIndicator"]))
+                                     expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged", "unreadCountChanged"])
+        XCTAssertEqual(changes.changedKeys, Set(["messages", "conversationListIndicator", "estimatedUnreadCount"]))
     }
     
     func testThatItNotifiesTheObserverOfAChangedClearedTimeStamp()

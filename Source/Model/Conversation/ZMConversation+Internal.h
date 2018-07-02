@@ -22,7 +22,6 @@
 #import "ZMMessage.h"
 #import "ZMConnection.h"
 #import "ZMConversationSecurityLevel.h"
-#import "ZMConversation+Timestamps.h"
 
 @import WireImages;
 
@@ -106,6 +105,7 @@ NS_ASSUME_NONNULL_END
 
 @property (nonatomic) BOOL internalIsArchived;
 
+@property (nonatomic, nullable) NSDate *pendingLastReadServerTimestamp;
 @property (nonatomic, nullable) NSDate *lastServerTimeStamp;
 @property (nonatomic, nullable) NSDate *lastReadServerTimeStamp;
 @property (nonatomic, nullable) NSDate *clearedTimeStamp;
@@ -123,6 +123,7 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) ZMConversationType conversationType;
 @property (nonatomic, copy, nullable) NSString *normalizedUserDefinedName;
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
+@property (nonatomic) int64_t lastReadTimestampUpdateCounter;
 
 /// unreadTimeStamps is created on didAwakeFromFetch:
 /// updated when messages are inserted and the lastReadServerTimeStamp changes
@@ -145,9 +146,6 @@ NS_ASSUME_NONNULL_END
 
 + (nonnull NSUUID *)selfConversationIdentifierInContext:(nonnull NSManagedObjectContext *)context;
 + (nonnull ZMConversation *)selfConversationInContext:(nonnull NSManagedObjectContext *)managedObjectContext;
-
-
-- (void)updateWithMessage:(nonnull ZMMessage *)message timeStamp:(nullable NSDate *)timeStamp;
 
 - (nullable ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
 - (nullable ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview;

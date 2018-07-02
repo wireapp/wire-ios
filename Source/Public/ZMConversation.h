@@ -78,9 +78,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (nonatomic, copy, nullable) NSString *draftMessageText;
 @property (nonatomic, nullable) Team *team;
 
-/// This is read only. Use -setVisibleWindowFromMessage:toMessage: to update this.
-/// This will return @c nil if the last read message has not yet been sync'd to this device, or if the conversation has no last read message.
-@property (nonatomic, readonly, nullable) ZMMessage *lastReadMessage;
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastEditableMessage;
 
@@ -94,15 +91,8 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 /// For group conversation this will be nil, for one to one or connection conversation this will be the other user
 @property (nonatomic, readonly, nullable) ZMUser *connectedUser;
 
-/// This method loads messages in a window when there are visible messages
-- (void)setVisibleWindowFromMessage:(nullable ZMMessage *)oldestMessage toMessage:(nullable ZMMessage *)newestMessage;
-
-- (void)markAsRead;
 - (BOOL)canMarkAsUnread;
 - (void)markAsUnread;
-
-/// completes a pending lastRead save, e.g. when leaving the conversation view
-- (void)savePendingLastRead;
 
 - (nonnull id<ZMConversationMessage>)appendKnock;
 

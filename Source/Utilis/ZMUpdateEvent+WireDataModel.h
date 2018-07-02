@@ -24,8 +24,6 @@
 
 @interface ZMUpdateEvent (WireDataModel)
 
-- (BOOL)canUnarchiveConversation:(nonnull ZMConversation *)conversation;
-
 /// May be nil (e.g. transient events)
 - (nullable NSDate *)timeStamp;
 - (nullable NSUUID *)senderUUID;

@@ -160,10 +160,11 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         
         // when
         let genMsg = ZMGenericMessage.knock(nonce: UUID.create())
-        let msg1 = conversation.appendClientMessage(with: genMsg)!
-        msg1.serverTimestamp = Date()
-        conversation.resortMessages(withUpdatedMessage: msg1)
         
+        let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        msg1.add(genMsg.data())
+        msg1.visibleInConversation = conversation
+        msg1.serverTimestamp = Date()
         self.uiMOC.saveOrRollback()
         
         // then

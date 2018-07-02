@@ -49,6 +49,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let selfConversation = ZMConversation.selfConversation(in: self.syncMOC)
             let message = ZMGenericMessage(lastRead: lastReadDate, ofConversationWith: self.syncConversation.remoteIdentifier!, nonce: nonce)
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
+            self.syncConversation.lastReadServerTimeStamp = nil
             
             // when
             ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)

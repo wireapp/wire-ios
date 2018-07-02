@@ -132,17 +132,6 @@
     return [self imageDataForFormat:ZMImageFormatPreview];
 }
 
-//For image messages we have two events - for preview and medium format
-//To preserve messages order we need to keep the earliest serverTimestamp of these two events
-- (void)updateTimestamp:(NSDate *)timestamp isUpdatingExistingMessage:(BOOL)isUpdate
-{
-    if (isUpdate) {
-        self.serverTimestamp = [NSDate earliestOfDate:self.serverTimestamp and:timestamp];
-    } else if (timestamp != nil) {
-        self.serverTimestamp = timestamp;
-    }
-}
-
 - (id<ZMImageMessageData>)imageMessageData
 {
     return self;
