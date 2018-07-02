@@ -104,7 +104,7 @@ enum MessageDestructionType : String {
               let type = userInfo[MessageDestructionType.UserInfoKey] as? String
         else { return }
         
-        log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(userInfo)")
+        log.debug("message timer did fire for \(message.nonce?.transportString() ?? ""), \(type)")
         switch MessageDestructionType(rawValue:type) {
         case .some(.obfuscation):
             message.obfuscate()
