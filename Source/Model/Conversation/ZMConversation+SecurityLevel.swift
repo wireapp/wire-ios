@@ -78,7 +78,7 @@ extension ZMConversation {
                                  sender: selfUser,
                                  users: Set(arrayLiteral: selfUser),
                                  clients: Set(arrayLiteral: selfClient),
-                                 timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
+                                 timestamp: timestampAfterLastMessage())
     }
 
     /// Creates a system message when a device has previously been used before, but was logged out due to invalid cookie and/ or invalidated client
@@ -119,7 +119,7 @@ extension ZMConversation {
     public func appendDecryptionFailedSystemMessage(at date: Date?, sender: ZMUser, client: UserClient?, errorCode: Int) {
         let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { Set(arrayLiteral: $0) } ?? Set<UserClient>()
-        let serverTimestamp = date ?? self.timestamp(after: self.messages.lastObject as? ZMMessage)
+        let serverTimestamp = date ?? timestampAfterLastMessage()
         self.appendSystemMessage(type: type,
                                  sender: sender,
                                  users: nil,
@@ -256,7 +256,7 @@ extension ZMConversation {
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
                                  clients: clients,
-                                 timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
+                                 timestamp: timestampAfterLastMessage())
     }
     
     fileprivate enum DiscoveryCause {
@@ -279,17 +279,13 @@ extension ZMConversation {
         }
         
         guard !clients.isEmpty || !addedUsers.isEmpty else { return }
-
-        if timestamp == .none {
-            timestamp = self.timestamp(after: self.messages.lastObject as? ZMMessage)
-        }
         
         self.appendSystemMessage(type: .newClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
                                  addedUsers: addedUsers,
                                  clients: clients,
-                                 timestamp: timestamp)
+                                 timestamp: timestamp ?? timestampAfterLastMessage())
     }
     
     fileprivate func appendIgnoredClientsSystemMessage(ignored clients: Set<UserClient>) {
@@ -299,7 +295,7 @@ extension ZMConversation {
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                  users: users,
                                  clients: clients,
-                                 timestamp: self.timestamp(after: self.messages.lastObject as? ZMMessage))
+                                 timestamp: timestampAfterLastMessage())
     }
     
     @discardableResult
@@ -308,7 +304,7 @@ extension ZMConversation {
                                          users: Set<ZMUser>?,
                                          addedUsers: Set<ZMUser> = Set(),
                                          clients: Set<UserClient>?,
-                                         timestamp: Date?,
+                                         timestamp: Date,
                                          duration: TimeInterval? = nil,
                                          messageTimer: Double? = nil) -> (message: ZMSystemMessage, insertionIndex: UInt) {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
@@ -327,13 +323,6 @@ extension ZMConversation {
         }
         
         let index = self.sortedAppendMessage(systemMessage)
-        systemMessage.visibleInConversation = self
-        
-        if systemMessage.shouldGenerateUnreadCount() {
-            precondition(timestamp != nil, "An unread dot generating system message must have a timestamp")
-            updateLastServerTimeStampIfNeeded(timestamp)
-            updateUnreadMessages(with: systemMessage)
-        }
         
         return (message: systemMessage, insertionIndex: index)
     }
@@ -356,6 +345,12 @@ extension ZMConversation {
         // this feels a bit hackish, but should work. If two messages are less than 1 milliseconds apart
         // then in this case one of them will be out of order
         return timestamp.addingTimeInterval(0.01)
+    }
+    
+    // Returns a timestamp that is shortly (as short as possible) after the last message in the conversation,
+    // or current time if there's no last message
+    fileprivate func timestampAfterLastMessage() -> Date {
+        return timestamp(after: self.messages.lastObject as? ZMMessage) ?? Date()
     }
 }
 

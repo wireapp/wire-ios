@@ -125,7 +125,6 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         
         XCTAssertTrue(conversation.isArchived);
@@ -159,7 +158,7 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeSelf);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
         
         ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
@@ -175,7 +174,7 @@
     }];
 }
 
-- (void)testThatItSetsTheServerTimeStampAsLastModifiedAndLastServerTimeStamp
+- (void)testThatItSetsTheServerTimeStamp
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
@@ -193,7 +192,7 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeSelf);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimeStamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimeStamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
     }];
 }
@@ -229,7 +228,7 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
@@ -279,7 +278,7 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
@@ -330,7 +329,7 @@
         XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
         XCTAssertNil(conversation.userDefinedName);
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
-        XCTAssertEqualObjects(conversation.lastModifiedDate, serverTimestamp);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
         ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];

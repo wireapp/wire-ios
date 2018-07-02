@@ -41,7 +41,7 @@
     systemMessage.serverTimestamp = self.lastReadServerTimeStamp ?
     [self.lastReadServerTimeStamp dateByAddingTimeInterval:1000] :
     [NSDate dateWithTimeIntervalSince1970:1231234];
-    [self updateUnreadMessagesWithMessage:systemMessage];
+    [self calculateLastUnreadMessages];
 }
 
 - (void)setHasExpiredMessage:(BOOL)hasUnreadUnsentMessage

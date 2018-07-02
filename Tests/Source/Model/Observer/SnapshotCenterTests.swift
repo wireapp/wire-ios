@@ -131,7 +131,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "lastUnreadMissedCallDate": conv.lastUnreadMissedCallDate as Optional<NSObject>,
                                                          "voiceChannel": nil,
                                                          "remoteIdentifier_data": nil,
-                                                         "lastReadServerTimeStamp": nil,
+                                                         "lastReadServerTimeStamp": conv.lastReadServerTimeStamp as Optional<NSObject>,
                                                          "normalizedUserDefinedName": conv.normalizedUserDefinedName as Optional<NSObject>,
                                                          "remoteIdentifier": nil]
         let expectedToManyRelationships = ["hiddenMessages": 0,

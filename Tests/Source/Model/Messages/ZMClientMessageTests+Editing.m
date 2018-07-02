@@ -564,6 +564,7 @@
     
     conversation.lastModifiedDate = oldDate;
     conversation.lastServerTimeStamp = oldDate;
+    conversation.lastReadServerTimeStamp = oldDate;
     XCTAssertEqual(conversation.estimatedUnreadCount, 0u);
     
     ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];

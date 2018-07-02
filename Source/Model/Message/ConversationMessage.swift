@@ -160,29 +160,23 @@ extension ZMMessage : ZMConversationMessage {
               let conversation = self.conversation,
               let managedObjectContext = self.managedObjectContext,
               let syncContext = managedObjectContext.zm_sync else {
-                
+
                 zmLog.error("Cannot mark as unread message outside of the conversation.")
                 return
         }
-        
         let conversationID = conversation.objectID
         
         conversation.lastReadServerTimeStamp = Date(timeInterval: -0.01, since: serverTimestamp)
         managedObjectContext.saveOrRollback()
         
         syncContext.performGroupedBlock {
-            guard let syncObject = try? syncContext.existingObject(with: conversationID),
-                  let syncConversation = syncObject as? ZMConversation else {
+            guard let syncObject = try? syncContext.existingObject(with: conversationID), let syncConversation = syncObject as? ZMConversation else {
                 zmLog.error("Cannot mark as unread message outside of the conversation: sync conversation cannot be fetched.")
                 return
             }
             
-            syncConversation.updateUnreadCount()
+            syncConversation.calculateLastUnreadMessages()
             syncContext.saveOrRollback()
-            
-            NotificationInContext(name: ZMConversation.lastReadDidChangeNotificationName,
-                                  context: syncContext.notificationContext,
-                                  object: syncConversation).post()
         }
     }
 }

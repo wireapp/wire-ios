@@ -184,42 +184,7 @@ NSString * const ReactionsKey = @"reactions";
                                0.01);
 }
 
-- (void)testThatItSetsTheServerTimestampToTheLatestOfTheTwoWhenUpdatingAMessageWithLaterTimestamp;
-{
-    // This is not true for image messages, see -testThatImageMessageIsUpdatedCorrectlyWhenItGetsPreviewBeforeMedium
-
-    [self.syncMOC performGroupedBlockAndWait:^{
-        // given
-        NSDate *oldTimeStamp = [NSDate dateWithTimeIntervalSinceReferenceDate:400000000];
-        NSDate *newTimeStamp = [NSDate dateWithTimeIntervalSinceReferenceDate:450000000];
-
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.remoteIdentifier = [NSUUID createUUID];
-        
-        
-        NSUUID *nonce = [NSUUID createUUID];
-        ZMGenericMessage *textMessage = [ZMGenericMessage messageWithText:self.name nonce:nonce expiresAfter:nil];
-        ZMClientMessage *msg = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.syncMOC];
-        [msg addData:textMessage.data];
-        
-        msg.visibleInConversation = conversation;
-        msg.serverTimestamp = oldTimeStamp;
-        
-        NSDictionary *data = @{@"content" : self.name,
-                               @"nonce" : msg.nonce.transportString};
-        NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data time:newTimeStamp];
-        ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-        XCTAssertNotNil(event);
-        
-        // when
-        [msg updateWithUpdateEvent:event forConversation:conversation isUpdatingExistingMessage:NO];
-        
-        // then
-        XCTAssertEqualWithAccuracy(msg.serverTimestamp.timeIntervalSinceReferenceDate, newTimeStamp.timeIntervalSinceReferenceDate, 0.1);
-    }];
-}
-
-- (void)testThatItSetsTheServerTimestampFromEventDataEvenIfItAlreadyHasADate;
+- (void)testThatItDoesNotSetTheServerTimestampFromEventDataEvenIfMessageAlreadyExists
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
@@ -242,10 +207,10 @@ NSString * const ReactionsKey = @"reactions";
         XCTAssertNotNil(event);
         
         // when
-        [msg updateWithUpdateEvent:event forConversation:conversation isUpdatingExistingMessage:NO];
+        [msg updateWithUpdateEvent:event forConversation:conversation];
         
         // then
-        XCTAssertEqualWithAccuracy(msg.serverTimestamp.timeIntervalSinceReferenceDate, 450000000, 1);
+        XCTAssertEqualWithAccuracy(msg.serverTimestamp.timeIntervalSinceReferenceDate, 400000000, 1);
     }];
 }
 

@@ -45,6 +45,7 @@ extern NSString * _Nonnull const ZMMessageOriginalDataProcessedKey;
 extern NSString * _Nonnull const ZMMessageOriginalSizeDataKey;
 extern NSString * _Nonnull const ZMMessageOriginalSizeKey;
 extern NSString * _Nonnull const ZMMessageConversationKey;
+extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageExpirationDateKey;
 extern NSString * _Nonnull const ZMMessageNameKey;
 extern NSString * _Nonnull const ZMMessageNeedsToBeUpdatedFromBackendKey;
@@ -55,7 +56,6 @@ extern NSString * _Nonnull const ZMMessageTextKey;
 extern NSString * _Nonnull const ZMMessageUserIDsKey;
 extern NSString * _Nonnull const ZMMessageUsersKey;
 extern NSString * _Nonnull const ZMMessageClientsKey;
-extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageConfirmationKey;
 extern NSString * _Nonnull const ZMMessageCachedCategoryKey;
 extern NSString * _Nonnull const ZMMessageSystemMessageClientsKey;
@@ -67,13 +67,12 @@ extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
 - (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
 
 // Use these for sorting:
-+ (NSArray * _Nonnull)defaultSortDescriptors;
++ (NSArray<NSSortDescriptor *> * _Nonnull)defaultSortDescriptors;
 - (NSComparisonResult)compare:(ZMMessage * _Nonnull)other;
 - (NSUUID * _Nullable)nonceFromPostPayload:(NSDictionary * _Nonnull)payload;
 - (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(__unused NSSet * _Nullable)updatedKeys;
 - (void)resend;
 - (BOOL)shouldGenerateUnreadCount;
-- (BOOL)shouldUpdateLastModifiedDate;
 
 /// Removes the message and deletes associated content
 /// @param clearingSender Whether information about the sender should be removed or not
@@ -103,9 +102,6 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
                                                  inConversation:(ZMConversation * _Nonnull)conversation
                                                        senderID:(NSUUID * _Nonnull)senderID
                                          inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
-
-
-- (void)updateTimestamp:(NSDate * _Nullable)timestamp isUpdatingExistingMessage:(BOOL)isUpdate;
 
 @end
 
@@ -229,11 +225,8 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
                               inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
                                       prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
-- (void)updateWithUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent forConversation:(ZMConversation * _Nonnull)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
-
 - (void)removePendingDeliveryReceipts;
-- (void)updateWithTimestamp:(NSDate * _Nonnull)serverTimestamp senderUUID:(NSUUID * _Nonnull)senderUUID forConversation:(ZMConversation * _Nonnull)conversation isUpdatingExistingMessage:(BOOL)isUpdate;
-
+- (void)updateWithUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent forConversation:(ZMConversation * _Nonnull)conversation;
 
 /// Returns whether the data represents animated GIF
 + (BOOL)isDataAnimatedGIF:(NSData * _Nonnull)data;

@@ -213,27 +213,29 @@ NSString * const DeliveredKey = @"delivered";
     BOOL isNewMessage = NO;
     if (clientMessage == nil) {
         clientMessage = [[messageClass alloc] initWithNonce:nonce managedObjectContext:moc];
+        clientMessage.senderClientID = updateEvent.senderClientID;
+        
+        if (clearedMessage != nil && [clientMessage isKindOfClass:[ZMClientMessage class]]) {
+            clientMessage.serverTimestamp = clearedMessage.serverTimestamp;
+            [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
+        } else {
+            clientMessage.serverTimestamp = updateEvent.timeStamp;
+        }
+        
         isNewMessage = YES;
     } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
         return nil;
     }
     
-    clientMessage.senderClientID = updateEvent.senderClientID;
-    
     // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
     [clientMessage updateWithGenericMessage:message updateEvent:updateEvent initialUpdate:isNewMessage];
+    
     // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true. In addition the object will still have a managedObjectContext until the context is finally saved. In this case, we need to check the nonce (which would have previously been set) to avoid setting an invalid relationship between the deleted object and the conversation and / or sender
     if (clientMessage.isZombieObject || clientMessage.nonce == nil) {
         return nil;
     }
     
-    if (clearedMessage == nil) {
-        [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation isUpdatingExistingMessage:clientMessage.delivered];
-    } else if ([clientMessage isKindOfClass:[ZMClientMessage class]]) {
-        [clientMessage updateWithTimestamp:clearedMessage.serverTimestamp senderUUID:clearedMessage.sender.remoteIdentifier forConversation:conversation isUpdatingExistingMessage:NO];
-        [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
-    }
-    
+    [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation];
     [clientMessage unarchiveConversationIfNeeded:conversation];
     [clientMessage updateCategoryCache];
     
@@ -259,7 +261,10 @@ NSString * const DeliveredKey = @"delivered";
     
     if (!olderThanClearTimestamp) {
         conversation.internalIsArchived = NO;
-        [conversation updateArchivedChangedTimeStampIfNeeded:self.serverTimestamp andSync:NO];
+        
+        if (conversation.lastServerTimeStamp != nil) {
+            [conversation updateArchived:self.serverTimestamp synchronize:NO];
+        }
     }
 }
 

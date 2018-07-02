@@ -131,6 +131,9 @@
     if(lastReadIndex != NSNotFound) {
         ZMMessage *lastRead = conversation.messages[lastReadIndex];
         conversation.lastReadServerTimeStamp = lastRead.serverTimestamp;
+    } else {
+        [conversation markAsRead];
+        WaitForAllGroupsToBeEmpty(0.5);
     }
     NSOrderedSet *expectedMessages = [[self messagesUntilEndOfConversation:conversation fromIndex:minExpectedMessage] reversedOrderedSet];
     
@@ -416,27 +419,27 @@
 @end
 
 
-
 @implementation ZMConversationMessageWindowTests (ScrollingNotification)
 
 - (void)testThatScrollingTheWindowUpCausesAScrollingNotification
 {
     // given
-    id mockObserverCenter = [OCMockObject niceMockForClass:[MessageWindowObserverCenter class]];
-    id partialMockForContext = [OCMockObject partialMockForObject:self.uiMOC];
-    [[[partialMockForContext stub] andReturn: mockObserverCenter] messageWindowObserverCenter];
-    
     ZMConversation *conversation = [self createConversationWithMessages:20];
+    [conversation markAsRead];
+    WaitForAllGroupsToBeEmpty(0.5);
     ZMConversationMessageWindow *window = [conversation conversationWindowWithSize:10];
     
     // expect
-    [[mockObserverCenter expect] windowDidScroll:window];
-    
+    [self expectationForNotification:@"MessageWindowDidChangeNotification" object:nil handler:^BOOL(NSNotification * _Nonnull notification) {
+        NOT_USED(notification);
+        return YES;
+    }];
+
     // when
     [window moveUpByMessages:10];
-    
+
     // then
-    [mockObserverCenter verify];
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 @end

@@ -371,6 +371,10 @@ extension MessageWindowObserverTests {
         
         self.uiMOC.saveOrRollback()
         
+        conversation.lastServerTimeStamp = message3.serverTimestamp
+        conversation.markAsRead()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
         let window = conversation.conversationWindow(withSize: 2)
         
         self.token = MessageWindowChangeInfo.add(observer: windowObserver, for: window)

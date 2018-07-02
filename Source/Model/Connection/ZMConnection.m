@@ -341,12 +341,12 @@ struct stringAndStatus {
 
     ZMConnectionStatus const oldStatus = connection.status;
     connection.status = status;
-    [self createOrMergeConversationWithRemoteIdentifier:conversationID forConnection:connection inContext:moc];
-    [self updateConnection:connection fromPreviousStatus:oldStatus];
-
     connection.message = message;
     connection.lastUpdateDateInGMT = lastUpdateDate;
     connection.existsOnBackend = YES;
+    
+    [self createOrMergeConversationWithRemoteIdentifier:conversationID forConnection:connection inContext:moc];
+    [self updateConnection:connection fromPreviousStatus:oldStatus];
 
     return connection;
 }
@@ -356,6 +356,12 @@ struct stringAndStatus {
     if (oldStatus == ZMConnectionStatusSent && (connection.status == ZMConnectionStatusAccepted)) {
         connection.conversation.conversationType = ZMConversationTypeOneOnOne;
         connection.needsToBeUpdatedFromBackend = YES; // Do we really need that?
+        [connection.conversation updateLastModified:connection.lastUpdateDate];
+        
+        if (connection.conversation.isArchived) {
+            // When a connection is accepted we always want to bring it out of the archive
+            connection.conversation.isArchived = NO;
+        }
     }
     
     //Handle race condition when at the same time we send request to the user and this user also send us connection request
@@ -363,6 +369,10 @@ struct stringAndStatus {
     if ((oldStatus == ZMConnectionStatusSent) && (connection.status == ZMConnectionStatusPending)) {
         connection.status = ZMConnectionStatusAccepted;
         [connection setLocallyModifiedKeys:[NSSet setWithObject:ZMConnectionStatusKey]];
+    }
+    
+    if (connection.status == ZMConnectionStatusSent) {
+        [connection.conversation updateLastModified:connection.lastUpdateDate];
     }
     
     if (connection.status == ZMConnectionStatusCancelled) {
