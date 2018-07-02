@@ -38,6 +38,8 @@
 #import <WireDataModel/WireDataModel-Swift.h>
 
 
+static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
+
 static NSTimeInterval ZMDefaultMessageExpirationTime = 30;
 
 NSString * const ZMMessageEventIDDataKey = @"eventID_data";
@@ -1058,12 +1060,14 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
 
 - (void)obfuscate;
 {
+    ZMLogDebug(@"obfuscating message %@", self.nonce.transportString);
     self.isObfuscated = true;
     self.destructionDate = nil;
 }
 
 - (void)deleteEphemeral;
 {
+    ZMLogDebug(@"deleting ephemeral %@", self.nonce.transportString);
     if (self.conversation.conversationType != ZMConversationTypeGroup) {
         self.destructionDate = nil;
     }
@@ -1083,6 +1087,7 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
 
 + (void)deleteOldEphemeralMessages:(NSManagedObjectContext *)context
 {
+    ZMLogDebug(@"deleting old ephemeral messages");
     NSFetchRequest *request = [self fetchRequestForEphemeralMessagesThatNeedToBeDeleted];
     NSArray *messages = [context executeFetchRequestOrAssert:request];
 
