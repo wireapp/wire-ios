@@ -297,6 +297,13 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 /// Inserts a delete message for the ephemeral and sets the destruction timeout to nil
 - (void)deleteEphemeral;
 
+/// Restarts the deletion timer with the given time interval. If a timer already
+/// exists, it will be stopped first.
+- (void)restartDeletionTimer:(NSTimeInterval)remainingTime;
+
+/// Restarts the deletion timer with the given time interval. If a timer already
+/// exists, it will be stopped first.
+- (void)restartObfuscationTimer:(NSTimeInterval)remainingTime;
 
 /// When we restart, we might still have messages that had a timer, but whose timer did not fire before killing the app
 /// To delete those messages immediately use this method on startup (e.g. in the init of the ZMClientMessageTranscoder) to fetch and delete those messages

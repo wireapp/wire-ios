@@ -1096,6 +1096,7 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
         NSError *error;
         ZMMessage *message = [uiContext existingObjectWithID:self.objectID error:&error];
         if (error == nil && message != nil) {
+            [uiContext.zm_messageDeletionTimer stopTimerForMessage:message];
             NOT_USED([uiContext.zm_messageDeletionTimer startDeletionTimerWithMessage:message timeout:remainingTime]);
         }
     }];
@@ -1111,6 +1112,7 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
         NSError *error;
         ZMMessage *message = [syncContext existingObjectWithID:self.objectID error:&error];
         if (error == nil && message != nil) {
+            [syncContext.zm_messageObfuscationTimer stopTimerForMessage:message];
             NOT_USED([syncContext.zm_messageObfuscationTimer startObfuscationTimerWithMessage:message timeout:remainingTime]);
         }
     }];
