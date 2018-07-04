@@ -23,9 +23,18 @@ import Cartography
     func tabBarController(_ controller: TabBarController, tabBarDidSelectIndex: Int)
 }
 
+extension UIPageViewController {
+    var scrollView: UIScrollView? {
+        return view.subviews
+            .lazy
+            .compactMap { $0 as? UIScrollView }
+            .first
+    }
+}
+
 extension UIViewController {
     @objc var wr_tabBarController: TabBarController? {
-        if (parent == nil) {
+        if parent == nil {
             return nil
         } else if (parent?.isKind(of: TabBarController.self) != nil) {
             return parent as? TabBarController
@@ -42,7 +51,7 @@ extension UIViewController {
 }
 
 @objcMembers
-class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource {
+class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageViewControllerDataSource, UIScrollViewDelegate {
 
     weak var delegate: TabBarControllerDelegate?
     
@@ -65,16 +74,17 @@ class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageVi
     }
 
     @objc(enabled)
-    var isEnabled: Bool = true {
+    var isEnabled = true {
         didSet {
-            self.tabBar?.isUserInteractionEnabled = self.isEnabled
+            tabBar?.isUserInteractionEnabled = isEnabled
         }
     }
 
     // MARK: - Views
     private var tabBar: TabBar?
     private var contentView = UIView()
-    private var isTransitioning = false
+    private var isSwiping = false
+    private var startOffset: CGFloat = 0
 
     // MARK: - Initialization
 
@@ -101,6 +111,7 @@ class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageVi
         self.view.addSubview(self.contentView)
         contentView.backgroundColor = viewControllers.first?.view?.backgroundColor
         add(pageViewController, to: contentView)
+        pageViewController.scrollView?.delegate = self
 
         if isSwipingEnabled {
             pageViewController.dataSource = self
@@ -144,15 +155,22 @@ class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageVi
         let toViewController = viewControllers[index]
         let fromViewController = pageViewController.viewControllers?.first
 
-        guard toViewController != fromViewController, !isTransitioning else { return }
+        guard toViewController != fromViewController else { return }
 
         delegate?.tabBarController(self, tabBarDidSelectIndex: index)
         tabBar?.setSelectedIndex(index, animated: animated)
         
         let forward = viewControllers.index(of: toViewController) > fromViewController.flatMap(viewControllers.index)
         let direction = forward ? UIPageViewControllerNavigationDirection.forward : .reverse
-        pageViewController.setViewControllers([toViewController], direction: direction, animated: true) { _ in
-            self.isTransitioning = false
+
+        let update = { [toViewController, pageViewController] in
+            pageViewController.setViewControllers([toViewController], direction: direction, animated: true)
+        }
+        
+        if ProcessInfo.processInfo.isRunningTests {
+            update()
+        } else {
+            DispatchQueue.main.async(execute: update)
         }
     }
     
@@ -176,8 +194,43 @@ class TabBarController: UIViewController, UIPageViewControllerDelegate, UIPageVi
         guard let selected = pageViewController.viewControllers?.first else { return }
         guard let index = viewControllers.index(of: selected) else { return }
         
+        isSwiping = false
         delegate?.tabBarController(self, tabBarDidSelectIndex: index)
-        tabBar?.setSelectedIndex(index, animated: true)
+        selectedIndex = index
+        tabBar?.setSelectedIndex(selectedIndex, animated: true)
+    }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        isSwiping = true
+        startOffset = scrollView.contentOffset.x
+    }
+    
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        isSwiping = false
+    }
+
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        guard isSwiping else { return }
+    
+        let startPosition = abs(startOffset - scrollView.contentOffset.x)
+        let numberOfItems = CGFloat(viewControllers.count)
+        let percent = (startPosition / view.frame.width) / numberOfItems
+
+        // Percentage occupied by one page, e.g. 33% when we have 3 controllers.
+        let increment = 1.0 / numberOfItems
+        // Start percentage, for example 50% when starting to swipe from the last of 2 controllers.
+        let startPercentage = increment * CGFloat(selectedIndex)
+        
+        // The adjusted percentage of the movement based on the scroll direction
+        let adjustedPercent: CGFloat = {
+            if startOffset <= scrollView.contentOffset.x {
+                return startPercentage + percent // going right or not moving
+            } else {
+                return startPercentage - percent // going left
+            }
+        }()
+
+        tabBar?.setOffsetPercentage(adjustedPercent)
     }
 
 }
