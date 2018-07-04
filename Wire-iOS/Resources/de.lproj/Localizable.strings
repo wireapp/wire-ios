@@ -379,7 +379,13 @@
 
 "content.system.conversation.with_name.participants" = "mit %@";
 
-"content.system.message_timer_changes" = "%@ hat die temporären Nachrichten auf %@ eingestellt";
+"content.system.message_timer_changes" = "%@ hat die temporären Nachrichten auf %@ gestellt";
+"content.system.message_timer_changes.you" = "Du hast die temporären Nachrichten auf %@ gestellt";
+
+"content.system.message_timer.you_part" = "Du";
+
+"content.system.message_timer_off" = "%@ hat temporäre Nachrichten ausgeschaltet";
+"content.system.message_timer_off.you" = "Du hast temporäre Nachrichten ausgeschaltet";
 
 "content.system.reactivated_device" = "Du hast %@ eine Weile nicht benutzt. Nachrichten, die in der Zwischenzeit gesendet wurden, werden nicht angezeigt.";
 
@@ -563,7 +569,7 @@
 "participants.section.participants" = "Personen (%d)";
 "participants.section.services" = "Dienste (%d)";
 "participants.footer.add_title" = "Teilnehmer hinzufügen";
-"participants.section.name.footer" = "Bis zu 128 Personen können an einer Unterhaltung teilnehmen. Videoanrufe funktionieren mit bis zu 3 anderen Personen und dir.";
+"participants.section.name.footer" = "Bis zu 256 Personen können an einer Unterhaltung teilnehmen. Videoanrufe funktionieren mit bis zu 3 anderen Personen und dir.";
 
 // Meta Menu
 "meta.menu.rename" = "Umbenennen";
