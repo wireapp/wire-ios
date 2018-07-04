@@ -128,6 +128,7 @@
 #import "PassthroughWindow.h"
 #import "PassthroughTouchesView.h"
 #import "StopWatch.h"
+#import "ZMUserSession+RequestProxy.h"
 
 // Utils
 #import "Analytics.h"
@@ -180,3 +181,6 @@
 #import "AudioTrackPlayer.h"
 #import "MediaPlaybackManager.h"
 
+// Media
+#import "MediaPreviewData.h"
+#import "MediaThumbnail.h"

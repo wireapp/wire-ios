@@ -235,6 +235,15 @@
 		5EA73D9220D903BC0001D106 /* CheckmarkCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EA73D8D20D9038F0001D106 /* CheckmarkCellTests.swift */; };
 		5EAE50332099B424003DAAC6 /* PinnableThumbnailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EAE50322099B424003DAAC6 /* PinnableThumbnailViewController.swift */; };
 		5EB45761204EA75300BA217A /* CallQualityDismissalTransition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EB45760204EA75300BA217A /* CallQualityDismissalTransition.swift */; };
+		5EC16B9020EB8C6F00955156 /* YouTubeService+DataTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC16B8D20EB8C6F00955156 /* YouTubeService+DataTypes.swift */; };
+		5EC16B9120EB8C6F00955156 /* YouTubeService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC16B8E20EB8C6F00955156 /* YouTubeService.swift */; };
+		5EC16B9220EB8C6F00955156 /* MediaPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EC16B8F20EB8C6F00955156 /* MediaPreviewViewController.m */; };
+		5EC16B9820EB9D3900955156 /* YouTubeServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC16B9420EB9D2E00955156 /* YouTubeServiceTests.swift */; };
+		5EC16BA120EBB93A00955156 /* MockProxyRequester.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EC16B9F20EBB86900955156 /* MockProxyRequester.swift */; };
+		5EC16BA820EBBF8500955156 /* yt_response_no_snippet.json in Resources */ = {isa = PBXBuildFile; fileRef = 5EC16BA420EBBF8400955156 /* yt_response_no_snippet.json */; };
+		5EC16BA920EBBF8500955156 /* yt_response_multiple_videos.json in Resources */ = {isa = PBXBuildFile; fileRef = 5EC16BA520EBBF8400955156 /* yt_response_multiple_videos.json */; };
+		5EC16BAA20EBBF8500955156 /* yt_response_no_items.json in Resources */ = {isa = PBXBuildFile; fileRef = 5EC16BA620EBBF8400955156 /* yt_response_no_items.json */; };
+		5EC16BAB20EBBF8500955156 /* yt_response_valid_video.json in Resources */ = {isa = PBXBuildFile; fileRef = 5EC16BA720EBBF8500955156 /* yt_response_valid_video.json */; };
 		5ED26CD320E7D08E00EB9ED4 /* VerticalColumnPositioningContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED26CD120E7CC5900EB9ED4 /* VerticalColumnPositioningContext.swift */; };
 		5ED26CD420E7D08E00EB9ED4 /* VerticalColumnCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B13E320E658EC002F27E2 /* VerticalColumnCollectionViewLayout.swift */; };
 		5ED26CD520E7D08E00EB9ED4 /* VerticalColumnPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED26CCD20E7A53A00EB9ED4 /* VerticalColumnPositioning.swift */; };
@@ -424,9 +433,6 @@
 		871BC3621D34F94200DF0793 /* Settings.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC33D1D34F94200DF0793 /* Settings.m */; };
 		871BC3631D34F94200DF0793 /* SoundcloudAudioTrack.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC3401D34F94200DF0793 /* SoundcloudAudioTrack.m */; };
 		871BC3641D34F94200DF0793 /* SoundcloudService.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC3421D34F94200DF0793 /* SoundcloudService.m */; };
-		871BC3681D34F94200DF0793 /* MediaPreviewData+YouTube.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC34C1D34F94200DF0793 /* MediaPreviewData+YouTube.m */; };
-		871BC3691D34F94200DF0793 /* MediaPreviewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC34E1D34F94200DF0793 /* MediaPreviewViewController.m */; };
-		871BC36A1D34F94200DF0793 /* YoutubeService.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC3501D34F94200DF0793 /* YoutubeService.m */; };
 		871BC36D1D34F96000DF0793 /* DeviceOrientationObserver.m in Sources */ = {isa = PBXBuildFile; fileRef = 871BC36C1D34F96000DF0793 /* DeviceOrientationObserver.m */; };
 		871BE95A1CD0C2E7002267E8 /* FBSnapshotTestCase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 871BE9551CD0C2DD002267E8 /* FBSnapshotTestCase.framework */; };
 		871BE95B1CD0C3A5002267E8 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 871BE9561CD0C2DD002267E8 /* OCMock.framework */; };
@@ -1552,6 +1558,16 @@
 		5EA73D8E20D903900001D106 /* GroupDetailsTimeoutOptionsCellTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GroupDetailsTimeoutOptionsCellTests.swift; sourceTree = "<group>"; };
 		5EAE50322099B424003DAAC6 /* PinnableThumbnailViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PinnableThumbnailViewController.swift; sourceTree = "<group>"; };
 		5EB45760204EA75300BA217A /* CallQualityDismissalTransition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityDismissalTransition.swift; sourceTree = "<group>"; };
+		5EC16B8C20EB8C6F00955156 /* MediaPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPreviewViewController.h; sourceTree = "<group>"; };
+		5EC16B8D20EB8C6F00955156 /* YouTubeService+DataTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "YouTubeService+DataTypes.swift"; sourceTree = "<group>"; };
+		5EC16B8E20EB8C6F00955156 /* YouTubeService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = YouTubeService.swift; sourceTree = "<group>"; };
+		5EC16B8F20EB8C6F00955156 /* MediaPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPreviewViewController.m; sourceTree = "<group>"; };
+		5EC16B9420EB9D2E00955156 /* YouTubeServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YouTubeServiceTests.swift; sourceTree = "<group>"; };
+		5EC16B9F20EBB86900955156 /* MockProxyRequester.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockProxyRequester.swift; sourceTree = "<group>"; };
+		5EC16BA420EBBF8400955156 /* yt_response_no_snippet.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = yt_response_no_snippet.json; sourceTree = "<group>"; };
+		5EC16BA520EBBF8400955156 /* yt_response_multiple_videos.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = yt_response_multiple_videos.json; sourceTree = "<group>"; };
+		5EC16BA620EBBF8400955156 /* yt_response_no_items.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = yt_response_no_items.json; sourceTree = "<group>"; };
+		5EC16BA720EBBF8500955156 /* yt_response_valid_video.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = yt_response_valid_video.json; sourceTree = "<group>"; };
 		5ED26CCD20E7A53A00EB9ED4 /* VerticalColumnPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioning.swift; sourceTree = "<group>"; };
 		5ED26CD120E7CC5900EB9ED4 /* VerticalColumnPositioningContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioningContext.swift; sourceTree = "<group>"; };
 		5EE115E0204EEC7D002AD6C2 /* CallQualityControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityControllerTests.swift; sourceTree = "<group>"; };
@@ -1846,12 +1862,6 @@
 		871BC3401D34F94200DF0793 /* SoundcloudAudioTrack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundcloudAudioTrack.m; sourceTree = "<group>"; };
 		871BC3411D34F94200DF0793 /* SoundcloudService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SoundcloudService.h; sourceTree = "<group>"; };
 		871BC3421D34F94200DF0793 /* SoundcloudService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SoundcloudService.m; sourceTree = "<group>"; };
-		871BC34B1D34F94200DF0793 /* MediaPreviewData+YouTube.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MediaPreviewData+YouTube.h"; sourceTree = "<group>"; };
-		871BC34C1D34F94200DF0793 /* MediaPreviewData+YouTube.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MediaPreviewData+YouTube.m"; sourceTree = "<group>"; };
-		871BC34D1D34F94200DF0793 /* MediaPreviewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MediaPreviewViewController.h; sourceTree = "<group>"; };
-		871BC34E1D34F94200DF0793 /* MediaPreviewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MediaPreviewViewController.m; sourceTree = "<group>"; };
-		871BC34F1D34F94200DF0793 /* YoutubeService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = YoutubeService.h; sourceTree = "<group>"; };
-		871BC3501D34F94200DF0793 /* YoutubeService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = YoutubeService.m; sourceTree = "<group>"; };
 		871BC36B1D34F96000DF0793 /* DeviceOrientationObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceOrientationObserver.h; sourceTree = "<group>"; };
 		871BC36C1D34F96000DF0793 /* DeviceOrientationObserver.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceOrientationObserver.m; sourceTree = "<group>"; };
 		871BE9551CD0C2DD002267E8 /* FBSnapshotTestCase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSnapshotTestCase.framework; path = Carthage/Build/iOS/FBSnapshotTestCase.framework; sourceTree = "<group>"; };
@@ -3461,6 +3471,35 @@
 			path = Vendor;
 			sourceTree = "<group>";
 		};
+		5EC16B8B20EB8C6F00955156 /* YouTube */ = {
+			isa = PBXGroup;
+			children = (
+				5EC16B8E20EB8C6F00955156 /* YouTubeService.swift */,
+				5EC16B8D20EB8C6F00955156 /* YouTubeService+DataTypes.swift */,
+			);
+			path = YouTube;
+			sourceTree = "<group>";
+		};
+		5EC16BA220EBBEE000955156 /* MockResponses */ = {
+			isa = PBXGroup;
+			children = (
+				5EC16BA520EBBF8400955156 /* yt_response_multiple_videos.json */,
+				5EC16BA620EBBF8400955156 /* yt_response_no_items.json */,
+				5EC16BA420EBBF8400955156 /* yt_response_no_snippet.json */,
+				5EC16BA720EBBF8500955156 /* yt_response_valid_video.json */,
+			);
+			path = MockResponses;
+			sourceTree = "<group>";
+		};
+		5EC16BA320EBBEF600955156 /* YouTube */ = {
+			isa = PBXGroup;
+			children = (
+				5EC16BA220EBBEE000955156 /* MockResponses */,
+				5EC16B9420EB9D2E00955156 /* YouTubeServiceTests.swift */,
+			);
+			path = YouTube;
+			sourceTree = "<group>";
+		};
 		5EE51CBB2099B8E0008BA4B1 /* Thumbnail */ = {
 			isa = PBXGroup;
 			children = (
@@ -3776,6 +3815,8 @@
 			isa = PBXGroup;
 			children = (
 				871BC1901D34F8F800DF0793 /* MediaPlayer.h */,
+				5EC16B8C20EB8C6F00955156 /* MediaPreviewViewController.h */,
+				5EC16B8F20EB8C6F00955156 /* MediaPreviewViewController.m */,
 				871BC1911D34F8F800DF0793 /* MediaPreviewData.h */,
 				871BC1921D34F8F800DF0793 /* MediaPreviewData.m */,
 				871BC1931D34F8F800DF0793 /* MediaPreviewView.h */,
@@ -3984,8 +4025,8 @@
 				EEB8A2CF1F628D1100958881 /* Settings+Account.swift */,
 				1EE9DCAA1B5F9A6D00E347DF /* TokenField */,
 				871BC33E1D34F94200DF0793 /* Soundcloud */,
+				5EC16B8B20EB8C6F00955156 /* YouTube */,
 				876113E51DD1DE70007F5969 /* ShareViewController */,
-				871BC34A1D34F94200DF0793 /* Youtube */,
 				7C3083AB1FE15FBF0036AFCC /* CustomSpacingStackView.swift */,
 				7C3A82CA20B6E6B800313B4F /* CameraAccess.swift */,
 			);
@@ -4038,19 +4079,6 @@
 				871BC3421D34F94200DF0793 /* SoundcloudService.m */,
 			);
 			path = Soundcloud;
-			sourceTree = "<group>";
-		};
-		871BC34A1D34F94200DF0793 /* Youtube */ = {
-			isa = PBXGroup;
-			children = (
-				871BC34B1D34F94200DF0793 /* MediaPreviewData+YouTube.h */,
-				871BC34C1D34F94200DF0793 /* MediaPreviewData+YouTube.m */,
-				871BC34D1D34F94200DF0793 /* MediaPreviewViewController.h */,
-				871BC34E1D34F94200DF0793 /* MediaPreviewViewController.m */,
-				871BC34F1D34F94200DF0793 /* YoutubeService.h */,
-				871BC3501D34F94200DF0793 /* YoutubeService.m */,
-			);
-			path = Youtube;
 			sourceTree = "<group>";
 		};
 		872CB8A019E58816006752B4 /* Views */ = {
@@ -4281,6 +4309,7 @@
 				1658C19520A1E2FA00148F6D /* MockVoiceChannel.swift */,
 				1658C19B20A1F07800148F6D /* MockCallInfoViewControllerInput.swift */,
 				5E33F0D420ADA94B00414EA6 /* MockCallPermissions.swift */,
+				5EC16B9F20EBB86900955156 /* MockProxyRequester.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -5301,6 +5330,7 @@
 				EF9C552620D2796A00D94EEB /* EphemeralTimeoutFormatterTests.swift */,
 				EFC7146D20DD471800FAA4B4 /* CountryCodeTableViewControllerTests.swift */,
 				5E52375F20E7E41800649241 /* VerticalColumns */,
+				5EC16BA320EBBEF600955156 /* YouTube */,
 			);
 			path = "Wire-iOS Tests";
 			sourceTree = "<group>";
@@ -6243,6 +6273,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EC16BA820EBBF8500955156 /* yt_response_no_snippet.json in Resources */,
 				7C374E4B1FDE7B8C00A43B9C /* unsplash_matterhorn_small_height.jpg in Resources */,
 				BFA13E181D4B509A00F0A91B /* unsplash_burger.jpg in Resources */,
 				7C374E4E1FDE7B8C00A43B9C /* unsplash_matterhorn_small_width.jpg in Resources */,
@@ -6251,6 +6282,7 @@
 				16A202751B6772DB0095BBD1 /* soundcloud-track3.json in Resources */,
 				BFEA26591D410F9F000D0ED5 /* audio_sample.m4a in Resources */,
 				16A202681B66A0040095BBD1 /* soundcloud-track1.json in Resources */,
+				5EC16BAB20EBBF8500955156 /* yt_response_valid_video.json in Resources */,
 				EF6E3C7A2089F232003F6752 /* animated.gif in Resources */,
 				BFA13E1C1D4B77C600F0A91B /* unsplash_small.jpg in Resources */,
 				87656FCF1FB5FEDC00D5286C /* 0x0.pdf in Resources */,
@@ -6259,10 +6291,12 @@
 				1E8772281B0C8CAB005BDDC6 /* emo-test-03.json in Resources */,
 				DBF7235F1B5566B80036F4C5 /* a_lot_of_people.json in Resources */,
 				8735AE722036CBF900DCE66E /* huge.pdf in Resources */,
+				5EC16BAA20EBBF8500955156 /* yt_response_no_items.json in Resources */,
 				16A202781B6774760095BBD1 /* soundcloud-playlist2.json in Resources */,
 				1E2268041B395722003980E3 /* people-01.json in Resources */,
 				16A202691B66A0040095BBD1 /* soundcloud-track2.json in Resources */,
 				7C374E4D1FDE7B8C00A43B9C /* unsplash_matterhorn_small_size.jpg in Resources */,
+				5EC16BA920EBBF8500955156 /* yt_response_multiple_videos.json in Resources */,
 				7C374E4C1FDE7B8C00A43B9C /* unsplash_matterhorn_exact_size.jpg in Resources */,
 				EF30524B2088927D00613C45 /* transparent.png in Resources */,
 				16A2027A1B67777C0095BBD1 /* soundcloud-playlist3.json in Resources */,
@@ -6640,7 +6674,6 @@
 				16719A1D1D9ABB7C00AA6B63 /* GiphyConfirmationViewController.swift in Sources */,
 				163495891F015389004E80DB /* AppDelegate+Network.swift in Sources */,
 				87DCF4791D34E95B00BB420F /* PermissionDeniedViewController.m in Sources */,
-				871BC3681D34F94200DF0793 /* MediaPreviewData+YouTube.m in Sources */,
 				EF2127181FB9DFE300625A9B /* PhoneNumberStepViewController.m in Sources */,
 				BFAF4CB71CEDB9FC00780537 /* AudioButtonOverlayState.swift in Sources */,
 				163BB8101EE1648100DF9384 /* ContactsDataSource+Searching.swift in Sources */,
@@ -6825,7 +6858,6 @@
 				EF106E83204D869B00B9F0F6 /* DeviceProtocol.swift in Sources */,
 				8784D4571E81832F007A6867 /* ConversationListViewController+TopBar.swift in Sources */,
 				16E2A09A1F6ADE75005F4DB1 /* ActiveVoiceChannelViewController.swift in Sources */,
-				871BC36A1D34F94200DF0793 /* YoutubeService.m in Sources */,
 				CE2402811E0A992200665A91 /* AnalyticsConsoleProvider.swift in Sources */,
 				D5168F562010F25000F8222A /* TokenField.m in Sources */,
 				D5168F512010F20300F8222A /* ShareViewController+Views.swift in Sources */,
@@ -6930,6 +6962,7 @@
 				16A94AF8209B5334008A5718 /* VideoGridView.swift in Sources */,
 				16719A101D99647D00AA6B63 /* GiphySearchViewController.swift in Sources */,
 				F16427081FCC5BF800D2ABFC /* SetPasswordStepDescription.swift in Sources */,
+				5EC16B9120EB8C6F00955156 /* YouTubeService.swift in Sources */,
 				8762BE151D8978F70040E4A5 /* ZMAccentColor+Additions.swift in Sources */,
 				BF2A74711CEB466A002608BF /* ConversationInputBarViewController+Audio.swift in Sources */,
 				EF44784F20906DDD00BD9827 /* FullscreenImageViewController+Zoom.swift in Sources */,
@@ -7101,6 +7134,7 @@
 				87797C0B1FF3C849009FC9A9 /* SearchServicesSectionController.swift in Sources */,
 				EF21271E1FB9DFE300625A9B /* AddEmailStepViewController.m in Sources */,
 				87BEB03E1D3E44DE00DE9575 /* CameraCell.swift in Sources */,
+				5EC16B9020EB8C6F00955156 /* YouTubeService+DataTypes.swift in Sources */,
 				BAD4D0661B613D4E008585A5 /* ColorKnobView.m in Sources */,
 				871BC2521D34F8F800DF0793 /* MediaPreviewView.m in Sources */,
 				D58192022091E2C0003BA7EC /* IconLabelButton+CallActions.swift in Sources */,
@@ -7284,6 +7318,7 @@
 				87168510203332F800AC9F81 /* UIViewController+SafeArea.swift in Sources */,
 				870DC1EB1C92F5CC005C1DB9 /* AVSLogObserver.m in Sources */,
 				EF00FD741FDA97BA0059FEDC /* UIViewController+Orientation.swift in Sources */,
+				5EC16B9220EB8C6F00955156 /* MediaPreviewViewController.m in Sources */,
 				AFD4E72A1E449925002A4732 /* Analytics+StorableTrackingEvent.swift in Sources */,
 				8F89141D1A9F287E0056AB0C /* ConversationListViewModel.m in Sources */,
 				BF10B58D1E6452B800E7036E /* ZMMessage+Likes.swift in Sources */,
@@ -7365,7 +7400,6 @@
 				BF0555BD1E6D785C00D3E9D4 /* CallCells.swift in Sources */,
 				EF21271B1FB9DFE300625A9B /* TermsOfUseStepViewController.m in Sources */,
 				D525426B2093637D001C04C1 /* IconButton+CallActions.swift in Sources */,
-				871BC3691D34F94200DF0793 /* MediaPreviewViewController.m in Sources */,
 				EF68E71B20BD5B5A003F3594 /* IPadPopoverConstants.swift in Sources */,
 				D5F4387B206BBBB9003F1F14 /* Analytics+HistoryBackup.swift in Sources */,
 				BF606D6F1CAA8A78002BAC94 /* ConversationListBottomBar.swift in Sources */,
@@ -7402,6 +7436,7 @@
 				BF16FC4C1DAFCA0000FF4325 /* EphemeralKeyboardViewControllerTests.swift in Sources */,
 				87AE8BDC207B99540058715E /* BackupPasswordViewControllerTests.swift in Sources */,
 				BF27AE4E1E9E513400809A2B /* MessageDraftTests.swift in Sources */,
+				5EC16BA120EBB93A00955156 /* MockProxyRequester.swift in Sources */,
 				FE996D9C2032039100BDE573 /* LandingViewControllerTests.swift in Sources */,
 				876376881E840E9C00B2CCF0 /* ConversationStatusTests.swift in Sources */,
 				87AAE4211E42441B00E1D13A /* FontSchemeTests.swift in Sources */,
@@ -7471,6 +7506,7 @@
 				EEAC654C206BD64700365C0C /* LinkInteractionTextViewTests.swift in Sources */,
 				5EE115E1204EEC7D002AD6C2 /* CallQualityControllerTests.swift in Sources */,
 				1658C19820A1E55200148F6D /* CallInfoRootViewControllerTests.swift in Sources */,
+				5EC16B9820EB9D3900955156 /* YouTubeServiceTests.swift in Sources */,
 				EF31DC7C2092020300A4F09F /* UIViewController+iPhoneSize.swift in Sources */,
 				87DE06B41D2663960009411F /* AudioEffectsPickerViewControllerTests.swift in Sources */,
 				EF7F74041FCC033D0059C13F /* EmailAdresssValidatorTests.swift in Sources */,
