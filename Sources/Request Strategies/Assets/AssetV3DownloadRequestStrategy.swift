@@ -95,8 +95,15 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
                 assetClientMessage.transferState = .failedDownload
             }
         }
+        else if response.result == .permanentError {
+            if assetClientMessage.transferState == .downloading {
+                zmLog.debug("asset unavailable on remote (\(response.httpStatus)), setting state to .unavailable")
+                assetClientMessage.transferState = .unavailable
+            }
+        }
         else {
             if assetClientMessage.transferState == .downloading {
+                zmLog.debug("error loading asset (\(response.httpStatus)), setting state to .failedDownload")
                 assetClientMessage.transferState = .failedDownload
             }
         }

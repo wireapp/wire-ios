@@ -98,11 +98,14 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
 
     fileprivate func configureForDownloading(message: ZMAssetClientMessage) {
-        message.fileMessageData?.transferState = .downloading
-        self.syncMOC.saveOrRollback()
+        contextDirectory.uiContext.zm_fileAssetCache.deleteAssetData(message)
+        contextDirectory.syncContext.zm_fileAssetCache.deleteAssetData(message)
 
-        self.sut.contextChangeTrackers.forEach { tracker in
-            tracker.objectsDidChange(Set(arrayLiteral: message))
+        message.requestFileDownload()
+        syncMOC.saveOrRollback()
+
+        sut.contextChangeTrackers.forEach { tracker in
+            tracker.objectsDidChange([message])
         }
     }
 
@@ -221,47 +224,46 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-
     func testThatItMarksDownloadAsFailedIfCannotDownload_PermanentError_V3() {
-        
-        var message : ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
-            
+        let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
-            message = msg
             let request = self.sut.nextRequest()
             let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: .none)
             
             // WHEN
             request?.complete(with: response)
+            return msg
         }
+
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        self.syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedBlockAndWait {
             // THEN
-            XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.failedDownload.rawValue)
+            XCTAssertEqual(message.fileMessageData?.transferState, .unavailable)
+            self.configureForDownloading(message: message)
+            XCTAssertNil(self.sut.nextRequest())
         }
     }
 
     func testThatItMarksDownloadAsFailedIfCannotDownload_TemporaryError_V3() {
-        var message : ZMMessage!
-        self.syncMOC.performGroupedBlockAndWait {
-
+        let message: ZMAssetClientMessage = syncMOC.performGroupedAndWait { _ in
             // GIVEN
             let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
-            message = msg
             let request = self.sut.nextRequest()
-            let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 500, transportSessionError: .none)
-            
+            let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 500, transportSessionError: nil)
+
             // WHEN
             request?.complete(with: response)
+            return msg
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        self.syncMOC.performGroupedBlockAndWait {
+        syncMOC.performGroupedBlockAndWait {
             // THEN
             XCTAssertEqual(message.fileMessageData?.transferState.rawValue, ZMFileTransferState.failedDownload.rawValue)
+            self.configureForDownloading(message: message)
+            XCTAssertNotNil(self.sut.nextRequest())
         }
     }
 
