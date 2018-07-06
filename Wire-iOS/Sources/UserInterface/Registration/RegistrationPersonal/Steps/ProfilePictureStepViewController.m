@@ -29,7 +29,6 @@
 #import "Button.h"
 
 #import "AnalyticsTracker+Registration.h"
-#import <AFNetworking/UIImageView+AFNetworking.h>
 #import "UIImagePickerController+GetImage.h"
 #import "RegistrationFormController.h"
 @import WireExtensionComponents;
@@ -265,22 +264,20 @@ NSString * const UnsplashRandomImageLowQualityURL = @"https://source.unsplash.co
             urlString = UnsplashRandomImageLowQualityURL;
         }
         NSURL *imageURL = [NSURL URLWithString:urlString];
-        NSURLRequest *request = [[NSURLRequest alloc] initWithURL:imageURL];
-        
+
         self.showLoadingView = YES;
         @weakify(self);
-        [self.profilePictureImageView setImageWithURLRequest:request
-                                            placeholderImage:nil
-                                                     success:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, UIImage * _Nonnull image) {
+        [self.profilePictureImageView displayImageAtURL:imageURL
+                                              onSuccess:^(UIImage * _Nonnull image) {
                                                          @strongify(self);
                                                          self.profilePictureImageView.image = image;
                                                          self.defaultProfilePictureImage = image;
                                                          self.showLoadingView = NO;
-                                                     }
-                                                     failure:^(NSURLRequest * _Nonnull request, NSHTTPURLResponse * _Nullable response, NSError * _Nonnull error) {
+                                                       }
+                                                onError:^(NSError * _Nullable error) {
                                                          @strongify(self);
                                                          self.showLoadingView = NO;
-                                                     }];
+                                                       }];
     }
 }
 
