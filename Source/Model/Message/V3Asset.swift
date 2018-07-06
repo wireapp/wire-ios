@@ -141,6 +141,7 @@ extension V3Asset: AssetProxyType {
     public func requestFileDownload() {
         guard assetClientMessage.fileMessageData != nil else { return }
         if (isImage && !hasDownloadedImage) || (!isImage && !hasDownloadedFile) {
+            guard assetClientMessage.transferState != .unavailable else { return }
             assetClientMessage.transferState = .downloading
         }
     }
