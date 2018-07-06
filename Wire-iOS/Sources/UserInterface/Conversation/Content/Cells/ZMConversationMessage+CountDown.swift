@@ -1,6 +1,6 @@
-////
+//
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2018 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,21 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-#import "ConversationCell.h"
+import Foundation
 
-@class DestructionCountdownView;
+extension ZMConversationMessage {
 
-@interface ConversationCell ()
 
-@property (nonatomic) BOOL showsPreview;
+    /// Return the percentage (range: 0 to 1) to destruct of a ephemeral message. Return if self is not a ephemeral message or invalid deletionTimeout
+    var countdownProgress: Double? {
+        guard let destructionDate = destructionDate, deletionTimeout > 0 else { return nil }
 
-- (void)startCountdownAnimationIfNeeded:(id<ZMConversationMessage>)message;
-- (BOOL)showDestructionCountdown;
-- (void)tearDownCountdown;
-
-@property (nonatomic) BOOL countdownContainerViewHidden;
-@property (nonatomic) CADisplayLink *destructionLink;
-@property (nonatomic) DestructionCountdownView *countdownView;
-
-@end
-
+        return 1 - destructionDate.timeIntervalSinceNow / deletionTimeout
+    }
+}
