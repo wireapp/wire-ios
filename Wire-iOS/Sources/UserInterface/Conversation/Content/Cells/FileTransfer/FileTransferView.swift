@@ -186,7 +186,7 @@ import Classy
             self.topLabel.attributedText = firstLine
             self.bottomLabel.attributedText = secondLine
             
-        case .uploaded, .failedDownload:
+        case .uploaded, .failedDownload, .unavailable:
             let firstLine = fileNameAttributed
             let secondLine = fileSizeAttributed + dot + extAttributed
             self.topLabel.attributedText = firstLine
@@ -269,6 +269,7 @@ import Classy
             self.delegate?.transferView(self, didSelect: .present)
         case .uploaded:
             self.delegate?.transferView(self, didSelect: .present)
+        case .unavailable:
             break
         }
     }
