@@ -145,6 +145,8 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
     ZMFileTransferStateCancelledUpload,
     /// File is on backend, but it was failed to download to the client.
     ZMFileTransferStateFailedDownload,
+    /// File is not available on the backend anymore.
+    ZMFileTransferStateUnavailable
 };
 
 
