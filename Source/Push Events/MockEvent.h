@@ -24,49 +24,6 @@
 @protocol ZMTransportData;
 @class MockUser;
 
-typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
-    ZMTUpdateEventUnknown = 0,
-    ZMTUpdateEventCallCandidatesAdd,
-    ZMTUpdateEventCallCandidatesUpdate,
-    ZMTUpdateEventCallDeviceInfo,
-    ZMTUpdateEventCallFlowActive,
-    ZMTUpdateEventCallFlowAdd,
-    ZMTUpdateEventCallFlowDelete,
-    ZMTUpdateEventCallState,
-    ZMTUpdateEventCallParticipants,
-    ZMTUpdateEventCallRemoteSDP,
-    ZMTUpdateEventConversationAssetAdd,
-    ZMTUpdateEventConversationConnectRequest,
-    ZMTUpdateEventConversationCreate,
-    ZMTUpdateEventConversationHotKnock,
-    ZMTUpdateEventConversationKnock,
-    ZMTUpdateEventConversationMemberJoin,
-    ZMTUpdateEventConversationMemberLeave,
-    ZMTUpdateEventConversationMemberUpdate,
-    ZMTUpdateEventConversationMessageAdd,
-    ZMTUpdateEventConversationClientMessageAdd,
-    ZMTUpdateEventConversationOTRMessageAdd,
-    ZMTUpdateEventConversationOTRAssetAdd,
-    ZMTUpdateEventConversationRename,
-    ZMTUpdateEventConversationTyping,
-    ZMTUpdateEventConversationVoiceChannel,
-    ZMTUpdateEventConversationVoiceChannelActivate,
-    ZMTUpdateEventConversationVoiceChannelDeactivate,
-    ZMTUpdateEventUserConnection,
-    ZMTUpdateEventUserNew,
-    ZMTUpdateEventUserUpdate,
-    ZMTUpdateEventUserPushRemove,
-    ZMTUPdateEventUserClientAdd,
-    ZMTUpdateEventUserClientRemove,
-    ZMTUpdateEventTeamCreate,
-    ZMTUpdateEventTeamUpdate,
-    ZMTUpdateEventTeamDelete,
-    ZMTUpdateEventTeamMemberJoin,
-    ZMTUpdateEventTeamMemberLeave,
-    ZMTUpdateEventTeamConversationCreate,
-    ZMTUpdateEventTeamConversationDelete
-};
-
 
 @interface MockEvent : NSManagedObject
 
@@ -74,15 +31,15 @@ typedef NS_ENUM(NSUInteger, ZMTUpdateEventType) {
 @property (nonatomic, nonnull) NSString *identifier;
 @property (nonatomic, nullable) NSDate *time;
 @property (nonatomic, nonnull) NSString *type;
-@property (nonatomic, readonly) ZMTUpdateEventType eventType;
+@property (nonatomic, readonly) ZMUpdateEventType eventType;
 @property (nonatomic, nullable) id data;
 @property (nonatomic, nullable) NSData* decryptedOTRData;
 @property (nonatomic, nullable) MockConversation *conversation;
 
 - (nonnull id<ZMTransportData>)transportData;
 
-+ (nullable NSString *)stringFromType:(ZMTUpdateEventType)status;
-+ (ZMTUpdateEventType)typeFromString:(nonnull NSString *)string;
++ (nullable NSString *)stringFromType:(ZMUpdateEventType)type;
++ (ZMUpdateEventType)typeFromString:(nonnull NSString *)string;
 
 // Event considered persistent on the backend should receive an identifier
 + (nonnull NSArray *)persistentEvents;

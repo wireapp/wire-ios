@@ -29,7 +29,7 @@
 
 @interface TestPushChannelEvent : NSObject
 
-@property (nonatomic, readonly) ZMTUpdateEventType type;
+@property (nonatomic, readonly) ZMUpdateEventType type;
 @property (nonatomic, readonly) id<ZMTransportData> payload;
 @property (nonatomic, readonly) NSUUID *uuid;
 @property (nonatomic, readonly) BOOL isTransient;

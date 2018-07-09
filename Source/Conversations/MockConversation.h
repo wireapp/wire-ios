@@ -89,7 +89,6 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
                                        isInline:(BOOL)isInline;
 
 - (nonnull MockEvent *)insertKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce;
-- (nonnull MockEvent *)insertHotKnockFromUser:(nonnull MockUser *)fromUser nonce:(nonnull NSUUID *)nonce ref:(nonnull NSString *)eventID;
 - (nonnull MockEvent *)insertTypingEventFromUser:(nonnull MockUser *)fromUser isTyping:(BOOL)isTyping;
 - (nonnull MockEvent *)remotelyArchiveFromUser:(nonnull MockUser *)fromUser referenceDate:(nonnull NSDate *)referenceDate;
 - (nonnull MockEvent *)remotelyClearHistoryFromUser:(nonnull MockUser *)fromUser referenceDate:(nonnull NSDate *)referenceDate;

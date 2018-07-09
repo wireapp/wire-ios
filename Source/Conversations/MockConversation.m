@@ -89,21 +89,18 @@
     return [self insertConversationIntoContext:moc withSelfUser:creator creator:creator otherUsers:otherUsers type:type];
 }
 
-- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMTUpdateEventType)type data:(id<ZMTransportData>)data
+- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data
 {
-    NSArray *eventTypesWithPushOnInsert = @[@(ZMTUpdateEventConversationAssetAdd),
-                                            @(ZMTUpdateEventConversationMessageAdd),
-                                            @(ZMTUpdateEventConversationClientMessageAdd),
-                                            @(ZMTUpdateEventConversationOTRMessageAdd),
-                                            @(ZMTUpdateEventConversationOTRAssetAdd),
-                                            @(ZMTUpdateEventConversationCreate),
-                                            @(ZMTUpdateEventConversationMemberJoin),
-                                            @(ZMTUpdateEventConversationConnectRequest),
-                                            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
-                                            @(ZMTUpdateEventCallState),
-                                            @(ZMTUpdateEventConversationKnock),
-                                            @(ZMTUpdateEventConversationHotKnock),
-                                            @(ZMTUpdateEventConversationMemberUpdate)];
+    NSArray *eventTypesWithPushOnInsert = @[@(ZMUpdateEventTypeConversationAssetAdd),
+                                            @(ZMUpdateEventTypeConversationMessageAdd),
+                                            @(ZMUpdateEventTypeConversationClientMessageAdd),
+                                            @(ZMUpdateEventTypeConversationOtrMessageAdd),
+                                            @(ZMUpdateEventTypeConversationOtrAssetAdd),
+                                            @(ZMUpdateEventTypeConversationCreate),
+                                            @(ZMUpdateEventTypeConversationMemberJoin),
+                                            @(ZMUpdateEventTypeConversationConnectRequest),
+                                            @(ZMUpdateEventTypeConversationKnock),
+                                            @(ZMUpdateEventTypeConversationMemberUpdate)];
     
 
     if(self.isInserted && ![eventTypesWithPushOnInsert containsObject:@(type)]) {
@@ -220,7 +217,7 @@
 
 - (MockEvent *)insertClientMessageFromUser:(MockUser *)fromUser data:(NSData *)data
 {
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationClientMessageAdd data:[data base64EncodedStringWithOptions:0]];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationClientMessageAdd data:[data base64EncodedStringWithOptions:0]];
 }
 
 
@@ -236,7 +233,7 @@
                                 @"recipient": toClient.identifier,
                                 @"text": [data base64EncodedStringWithOptions:0]
                                 };
-    return [self eventIfNeededByUser:fromClient.user type:ZMTUpdateEventConversationOTRMessageAdd data:eventData];
+    return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrMessageAdd data:eventData];
 }
 
 - (MockEvent *)encryptAndInsertDataFromClient:(MockUserClient *)fromClient
@@ -268,21 +265,21 @@
                                 @"key": [metaData base64EncodedStringWithOptions:0],
                                 @"data": imageData != nil && isInline ? [imageData base64EncodedStringWithOptions:0] : [NSNull null]
                                 };
-    return [self eventIfNeededByUser:fromClient.user type:ZMTUpdateEventConversationOTRAssetAdd data:eventData];
+    return [self eventIfNeededByUser:fromClient.user type:ZMUpdateEventTypeConversationOtrAssetAdd data:eventData];
 }
 
 - (MockEvent *)remotelyArchiveFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
     self.otrArchivedRef = referenceDate.transportString;
     self.otrArchived = YES;
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
 - (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
     self.otrArchivedRef = referenceDate.transportString;
     self.otrArchived = YES;
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
 }
 
 - (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
@@ -292,25 +289,7 @@
 
 - (MockEvent *)insertKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce;
 {
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationKnock data:@{@"nonce": nonce.transportString}];
-}
-
-- (MockEvent *)insertHotKnockFromUser:(MockUser *)fromUser nonce:(NSUUID *)nonce ref:(NSString *)eventID
-{
-    NSDictionary *payload;
-    if (eventID) {
-        payload = @{
-                    @"nonce": nonce.transportString,
-                    @"ref": eventID
-                    };
-    }
-    else {
-        payload = @{
-                    @"nonce": nonce.transportString
-                    };
-    }
-    
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationHotKnock data:payload];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationKnock data:@{@"nonce": nonce.transportString}];
 }
 
 - (void)insertImageEventsFromUser:(MockUser *)fromUser;
@@ -326,7 +305,7 @@
 {
     NSDictionary *data = @{@"status": isTyping ? @"started" : @"stopped"};
     
-    return [self eventIfNeededByUser:fromUser type:ZMTUpdateEventConversationTyping data:data];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationTyping data:data];
 }
 
 
@@ -395,7 +374,7 @@
                            return [obj identifier];
                        }],
                        };
-    return [self eventIfNeededByUser:byUser type:ZMTUpdateEventConversationMemberJoin data:data];
+    return [self eventIfNeededByUser:byUser type:ZMUpdateEventTypeConversationMemberJoin data:data];
 }
 
 - (MockEvent *)connectRequestByUser:(MockUser *)byUser toUser:(MockUser *)user message:(NSString *)message
@@ -406,7 +385,7 @@
                            @"name" : user.name,
                            @"recipiend" : user.identifier
                            };
-    return [self eventIfNeededByUser:byUser type:ZMTUpdateEventConversationConnectRequest data:data];
+    return [self eventIfNeededByUser:byUser type:ZMUpdateEventTypeConversationConnectRequest data:data];
 }
 
 - (MockEvent *)removeUsersByUser:(MockUser *)byUser removedUser:(MockUser *)removedUser;
@@ -414,13 +393,13 @@
     [self.mutableActiveUsers removeObject:removedUser];
     
     NSDictionary *data = @{@"user_ids" : @[removedUser.identifier] };
-    return [self eventIfNeededByUser:byUser type:ZMTUpdateEventConversationMemberLeave data:data];
+    return [self eventIfNeededByUser:byUser type:ZMUpdateEventTypeConversationMemberLeave data:data];
 }
 
 -(MockEvent *)changeNameByUser:(MockUser *)user name:(NSString *)name
 {
     [self setValue:name forKey:@"name"];
-    return [self eventIfNeededByUser:user type:ZMTUpdateEventConversationRename data:@{@"name" : name}];
+    return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationRename data:@{@"name" : name}];
 
 }
 
@@ -445,7 +424,7 @@
                                    }
                            };
     
-    return [self eventIfNeededByUser:user type:ZMTUpdateEventConversationAssetAdd data:payload];
+    return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationAssetAdd data:payload];
 }
 
 @end

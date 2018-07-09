@@ -523,7 +523,7 @@
     XCTAssertEqual(response.HTTPStatus, 201);
     MockEvent *lastEvent = conversation.events.lastObject;
     XCTAssertNotNil(lastEvent);
-    XCTAssertEqual(lastEvent.eventType, ZMTUpdateEventConversationOTRMessageAdd);
+    XCTAssertEqual(lastEvent.eventType, ZMUpdateEventTypeConversationOtrMessageAdd);
     XCTAssertNotNil(lastEvent.decryptedOTRData);
     ZMGenericMessage *decryptedMessage = (ZMGenericMessage *)[[[[ZMGenericMessageBuilder alloc] init] mergeFromData:lastEvent.decryptedOTRData] build];
     XCTAssertEqualObjects(decryptedMessage.text.content, messageText);
