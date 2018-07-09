@@ -22,14 +22,15 @@ import XCTest
 
 class MockTransportSessionTeamEventsTests : MockTransportSessionTests {
     
-    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, team: MockTeam, data: [String : String] = [:], file: StaticString = #file, line: UInt = #line) {
+    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, team: MockTeam, data: [String : String] = [:], file: StaticString = #file, line: UInt = #line) {
         check(event: event, hasType: type, teamIdentifier: team.identifier, data: data, file: file, line: line)
     }
     
-    func check(event: TestPushChannelEvent?, hasType type: ZMTUpdateEventType, teamIdentifier: String, data: [String : String?] = [:], file: StaticString = #file, line: UInt = #line) {
+    func check(event: TestPushChannelEvent?, hasType type: ZMUpdateEventType, teamIdentifier: String, data: [String : String?] = [:], file: StaticString = #file, line: UInt = #line) {
         guard let event = event else { XCTFail("Should have event", file: file, line: line); return }
         
-        XCTAssertEqual(event.type, type, "Wrong type", file: file, line: line)
+        
+        XCTAssertEqual(event.type, type, "Wrong type \(String(describing: ZMUpdateEvent.eventTypeString(for: type)))", file: file, line: line)
         
         guard let payload = event.payload as? [String : Any] else { XCTFail("Event should have payload", file: file, line: line); return }
         
@@ -78,7 +79,7 @@ extension MockTransportSessionTeamEventsTests {
         let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
         XCTAssertEqual(events.count, 1)
         
-        check(event: events.first, hasType: .ZMTUpdateEventTeamDelete, teamIdentifier: teamIdentifier)
+        check(event: events.first, hasType: .teamDelete, teamIdentifier: teamIdentifier)
     }
     
     func testThatItCreatesEventsForUpdatedTeams() {
@@ -112,7 +113,7 @@ extension MockTransportSessionTeamEventsTests {
             "icon" : assetId,
             "icon_key" : assetKey
         ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamUpdate, team: team, data: updateData)
+        check(event: events.first, hasType: .teamUpdate, team: team, data: updateData)
     }
     
     func testThatItCreatesEventsForUpdatedTeamsAndHasOnlyChangedData() {
@@ -142,7 +143,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "name" : newName,
         ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamUpdate, team: team, data: updateData)
+        check(event: events.first, hasType: .teamUpdate, team: team, data: updateData)
     }
 
 }
@@ -176,7 +177,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "user" : newUser.identifier,
             ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamMemberJoin, team: team, data: updateData)
+        check(event: events.first, hasType: .teamMemberJoin, team: team, data: updateData)
     }
     
     func testThatItCreatesEventWhenMemberIsRemovedFromTeam() {
@@ -206,7 +207,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "user" : user.identifier,
             ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamMemberLeave, team: team, data: updateData)
+        check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
     
     func testThatItCreatesEventWhenSelfMemberIsRemovedFromTeam() {
@@ -234,7 +235,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "user" : selfUser.identifier,
             ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamMemberLeave, team: team, data: updateData)
+        check(event: events.first, hasType: .teamMemberLeave, team: team, data: updateData)
     }
 }
 
@@ -268,7 +269,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "conv" : conversation.identifier,
             ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamConversationCreate, team: team, data: updateData)
+        check(event: events.first, hasType: .teamConversationCreate, team: team, data: updateData)
     }
 
     func testThatItCreatesEventWhenConversationIsDeletedInTeam() {
@@ -302,7 +303,7 @@ extension MockTransportSessionTeamEventsTests {
         let updateData = [
             "conv" : conversationIdentifier!,
             ]
-        check(event: events.first, hasType: .ZMTUpdateEventTeamConversationDelete, team: team, data: updateData)
+        check(event: events.first, hasType: .teamConversationDelete, team: team, data: updateData)
     }
     
     func testThatItDoesNotSendEventsFromATeamThatYouAreNotAMemberOf() {

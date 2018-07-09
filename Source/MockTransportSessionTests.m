@@ -33,7 +33,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 @property (nonatomic) id<ZMTransportData> payload;
 @property (nonatomic) NSUUID *uuid;
 @property (nonatomic) BOOL isTransient;
-@property (nonatomic) ZMTUpdateEventType type;
+@property (nonatomic) ZMUpdateEventType type;
 
 @end
 
@@ -48,7 +48,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         self.isTransient = transient;
         self.type = [MockEvent typeFromString:payload[@"type"]];
         
-        if(self.type == ZMTUpdateEventUnknown) {
+        if(self.type == ZMUpdateEventTypeUnknown) {
             ZMLogError(@"Unknown event type in event: %@", payload);
             return nil;
         }
@@ -56,7 +56,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     return self;
 }
 
-- (ZMTUpdateEventType)type
+- (ZMUpdateEventType)type
 {
     return [MockEvent typeFromString:[[self.payload asDictionary] stringForKey:@"type"]];
 }

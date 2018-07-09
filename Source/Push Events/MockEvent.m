@@ -37,92 +37,29 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
 @dynamic conversation;
 @dynamic decryptedOTRData;
 
-+ (NSArray *)eventStringToEnumValueTuples
+
++ (NSString *)stringFromType:(ZMUpdateEventType)type
 {
-    static NSArray *mapping;
-    static dispatch_once_t onceToken;
-    dispatch_once(&onceToken, ^{
-        mapping =
-        @[
-          @[@(ZMTUpdateEventCallDeviceInfo),@"call.device-info"],
-          @[@(ZMTUpdateEventCallFlowActive),@"call.flow-active"],
-          @[@(ZMTUpdateEventCallFlowAdd),@"call.flow-add"],
-          @[@(ZMTUpdateEventCallFlowDelete),@"call.flow-delete"],
-          @[@(ZMTUpdateEventCallParticipants),@"call.participants"],
-          @[@(ZMTUpdateEventCallCandidatesAdd),@"call.remote-candidates-add"],
-          @[@(ZMTUpdateEventCallCandidatesUpdate),@"call.remote-candidates-update"],
-          @[@(ZMTUpdateEventCallRemoteSDP),@"call.remote-sdp"],
-          @[@(ZMTUpdateEventCallState),@"call.state"],
-          @[@(ZMTUpdateEventConversationAssetAdd),@"conversation.asset-add"],
-          @[@(ZMTUpdateEventConversationConnectRequest),@"conversation.connect-request"],
-          @[@(ZMTUpdateEventConversationCreate),@"conversation.create"],
-          @[@(ZMTUpdateEventConversationHotKnock),@"conversation.hot-knock"],
-          @[@(ZMTUpdateEventConversationKnock),@"conversation.knock"],
-          @[@(ZMTUpdateEventConversationMemberJoin),@"conversation.member-join"],
-          @[@(ZMTUpdateEventConversationMemberLeave),@"conversation.member-leave"],
-          @[@(ZMTUpdateEventConversationMemberUpdate),@"conversation.member-update"],
-          @[@(ZMTUpdateEventConversationMessageAdd),@"conversation.message-add"],
-          @[@(ZMTUpdateEventConversationClientMessageAdd),@"conversation.client-message-add"],
-          @[@(ZMTUpdateEventConversationOTRMessageAdd),@"conversation.otr-message-add"],
-          @[@(ZMTUpdateEventConversationOTRAssetAdd),@"conversation.otr-asset-add"],
-          @[@(ZMTUpdateEventConversationRename),@"conversation.rename"],
-          @[@(ZMTUpdateEventConversationTyping),@"conversation.typing"],
-          @[@(ZMTUpdateEventConversationVoiceChannel),@"conversation.voice-channel"],
-          @[@(ZMTUpdateEventConversationVoiceChannelActivate),@"conversation.voice-channel-activate"],
-          @[@(ZMTUpdateEventConversationVoiceChannelDeactivate),@"conversation.voice-channel-deactivate"],
-          @[@(ZMTUpdateEventUserConnection),@"user.connection"],
-          @[@(ZMTUpdateEventUserNew),@"user.new"],
-          @[@(ZMTUpdateEventUserPushRemove),@"user.push-remove"],
-          @[@(ZMTUpdateEventUserUpdate),@"user.update"],
-          @[@(ZMTUPdateEventUserClientAdd),@"user.client-add"],
-          @[@(ZMTUpdateEventUserClientRemove),@"user.client-remove"],
-          @[@(ZMTUpdateEventTeamCreate),@"team.create"],
-          @[@(ZMTUpdateEventTeamUpdate),@"team.update"],
-          @[@(ZMTUpdateEventTeamDelete),@"team.delete"],
-          @[@(ZMTUpdateEventTeamMemberJoin),@"team.member-join"],
-          @[@(ZMTUpdateEventTeamMemberLeave),@"team.member-leave"],
-          @[@(ZMTUpdateEventTeamConversationCreate),@"team.conversation-create"],
-          @[@(ZMTUpdateEventTeamConversationDelete),@"team.conversation-delete"]
-          ];
-    });
-    return mapping;
+    return [ZMUpdateEvent eventTypeStringForUpdateEventType:type];
 }
 
-+ (NSString *)stringFromType:(ZMTUpdateEventType)type
++ (ZMUpdateEventType)typeFromString:(NSString *)string
 {
-    for(NSArray *tuple in [MockEvent eventStringToEnumValueTuples]) {
-        if([tuple[0] isEqualToNumber:@(type)]) {
-            return tuple[1];
-        }
-    }
-    RequireString(false, "Failed to parse ZMTUpdateEventType %lu", (unsigned long)type);
-}
-
-+ (ZMTUpdateEventType)typeFromString:(NSString *)string
-{
-    for(NSArray *tuple in [MockEvent eventStringToEnumValueTuples]) {
-        if([tuple[1] isEqualToString:string]) {
-            return (ZMTUpdateEventType) ((NSNumber *)tuple[0]).intValue;
-        }
-    }
-    RequireString(false, "Failed to parse ZMTConnectionStatus %s", string.UTF8String);
+    return [ZMUpdateEvent updateEventTypeForEventTypeString:string];
 }
 
 + (NSArray *)persistentEvents;
 {
-   return @[@(ZMTUpdateEventConversationRename),
-            @(ZMTUpdateEventConversationMemberJoin),
-            @(ZMTUpdateEventConversationMemberLeave),
-            @(ZMTUpdateEventConversationConnectRequest),
-            @(ZMTUpdateEventConversationMessageAdd),
-            @(ZMTUpdateEventConversationClientMessageAdd),
-            @(ZMTUpdateEventConversationAssetAdd),
-            @(ZMTUpdateEventConversationKnock),
-            @(ZMTUpdateEventConversationHotKnock),
-            @(ZMTUpdateEventConversationVoiceChannelActivate),
-            @(ZMTUpdateEventConversationVoiceChannelDeactivate),
-            @(ZMTUpdateEventConversationOTRMessageAdd),
-            @(ZMTUpdateEventConversationOTRAssetAdd)
+    return @[@(ZMUpdateEventTypeConversationRename),
+             @(ZMUpdateEventTypeConversationMemberJoin),
+             @(ZMUpdateEventTypeConversationMemberLeave),
+             @(ZMUpdateEventTypeConversationConnectRequest),
+             @(ZMUpdateEventTypeConversationMessageAdd),
+             @(ZMUpdateEventTypeConversationClientMessageAdd),
+             @(ZMUpdateEventTypeConversationAssetAdd),
+             @(ZMUpdateEventTypeConversationKnock),
+             @(ZMUpdateEventTypeConversationOtrMessageAdd),
+             @(ZMUpdateEventTypeConversationOtrAssetAdd)
             ];
 }
 
@@ -138,9 +75,9 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
             };
 }
 
-- (ZMTUpdateEventType)eventType
+- (ZMUpdateEventType)eventType
 {
-    return [[self class] typeFromString:self.type];
+    return (ZMUpdateEventType)[[self class] typeFromString:self.type];
 }
 
 @end
