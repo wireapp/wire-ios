@@ -16,18 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
 
-let ZiphyErrorDomain = "com.wearezeta.ziphy"
+/**
+ * The list of errors that can occur when interacting with the Giphy service.
+ */
 
+public enum ZiphyError: Error {
 
-@objc public enum ZiphyError:Int {
-    
-    case malformedURL = -1001
-    case badResponse
+    case malformedURL(String)
+    case networkError(Error)
+    case badResponseCode(Int)
+    case badResponse(String)
+    case jsonSerialization(Error)
     case noSuchResource
     case noMorePages
-    case maxRetries
+    case unknownError(Error)
+    case requestRejected(Error)
+
+    init(_ error: Error) {
+        self = (error as? ZiphyError) ?? .unknownError(error)
+    }
     
 }
