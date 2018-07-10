@@ -19,19 +19,19 @@
 
 #import "MockTransportSessionTests.h"
 
-@interface MockTransportAPNSTokenTests : MockTransportSessionTests
+@interface MockTransportPushTokenTests : MockTransportSessionTests
 
 @end
 
-@implementation MockTransportAPNSTokenTests
+@implementation MockTransportPushTokenTests
 
-- (void)testThatWeCanRegisterAPushToken;
+- (void)testThatWeCanRegisterVOIPPushToken;
 {
     // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
     NSDictionary *payload = @{@"token" : token,
                               @"app" : @"com.wire.zclient.mac",
-                              @"transport" : @"APNS"};
+                              @"transport" : @"APNS_VOIP"};
     
     // WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
@@ -41,13 +41,28 @@
     XCTAssertEqualObjects(response.payload, payload);
 }
 
-- (void)testThatItFailsWhenAnyFieldIsMissing;
+- (void)testItFailsToRegisterRegularToken;
 {
     // GIVEN
     NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
     NSDictionary *payload = @{@"token" : token,
                               @"app" : @"com.wire.zclient.mac",
                               @"transport" : @"APNS"};
+
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/push/tokens" method:ZMMethodPOST];
+
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, (NSInteger) 400);
+}
+
+- (void)testThatItFailsWhenAnyFieldIsMissing;
+{
+    // GIVEN
+    NSString *token = @"c5e31e41e4d4599037928449349487547ef14f162c77aee3a08e12a39c8db1d5";
+    NSDictionary *payload = @{@"token" : token,
+                              @"app" : @"com.wire.zclient.mac",
+                              @"transport" : @"APNS_VOIP"};
     
     for (NSString *key in payload.allKeys) {
         NSMutableDictionary *p2 = [payload mutableCopy];

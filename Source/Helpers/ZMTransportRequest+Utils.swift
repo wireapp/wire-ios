@@ -63,6 +63,15 @@ import Foundation
 }
 
 @objc public extension ZMTransportRequest {
+    /// Returns whether the path of the request matches the given string.
+    /// Wildcards are allowed using the special symbol "*"
+    /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
+    func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
+        return self.method == method && self.matches(path: path)
+    }
+}
+
+public extension ZMTransportRequest {
     
     /// Returns whether the path of the request matches the given string.
     /// Wildcards are allowed using the special symbol "*"
@@ -79,19 +88,8 @@ import Foundation
             return expected != "*" && expected != actual
         }) == nil
     }
-    
-    /// Returns whether the path of the request matches the given string.
-    /// Wildcards are allowed using the special symbol "*"
-    /// E.g. `/users/ * /clients` will match `/users/ab12da/clients`
-    func matches(path: String, method: ZMTransportRequestMethod) -> Bool {
-        return self.method == method && self.matches(path: path)
+
+    static func ~=(path: String, request: ZMTransportRequest) -> Bool {
+        return request.matches(path: path)
     }
-}
-
-func ~=(query: (path: String, method: ZMTransportRequestMethod), request: ZMTransportRequest) -> Bool {
-    return request.matches(path: query.path, method: query.method)
-}
-
-func ~=(path: String, request: ZMTransportRequest) -> Bool {
-    return request.matches(path: path)
 }

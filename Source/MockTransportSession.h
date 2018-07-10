@@ -62,7 +62,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic, readonly) MockUser* selfUser;
 @property (nonatomic, readonly) BOOL isPushChannelActive;
 @property (nonatomic, copy, nullable) ZMCustomResponseGeneratorBlock responseGeneratorBlock;
-@property (nonatomic, readonly) NSArray *pushTokens;
+@property (nonatomic, readonly) NSDictionary <NSString *, NSDictionary *> *pushTokens;
 @property (nonatomic) BOOL disableEnqueueRequests;
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
 
@@ -71,6 +71,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 
 + (NSString *)binaryDataTypeAsMIME:(NSString *)type;
+
+- (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;
+- (void)removePushToken:(NSString *)token;
 
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 
