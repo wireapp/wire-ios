@@ -24,7 +24,6 @@
 #import "MockTransportSession+conversations.h"
 #import "MockTransportSession+internal.h"
 #import "MockTransportSession+connections.h"
-#import "MockTransportSession+PushToken.h"
 #import "MockEvent.h"
 #import "MockConnection.h"
 #import "MockPreKey.h"
@@ -79,7 +78,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 /// The mapping between the taskIdentifiers on ZMTransportRequest, can be used to cancel the request
 @property (nonatomic) NSMutableDictionary <NSNumber *, ZMTransportRequest *> *taskIdentifierMapping;
 
-@property (nonatomic) NSMutableArray *pushTokens;
+@property (nonatomic, readwrite) NSDictionary <NSString *, NSDictionary *> *pushTokens;
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
@@ -132,7 +131,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.emailsWaitingForVerificationForRegistration = [NSMutableSet set];
         
         self.reachability = [[MockReachability alloc] init];
-        self.pushTokens = [NSMutableArray array];
+        self.pushTokens = [NSMutableDictionary dictionary];
         _nonCompletedRequests = [NSMutableArray array];
     }
     return self;
@@ -177,9 +176,16 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.generatedPushEvents addObject:mockPushEvent];
 }
 
-- (void)addPushToken:(NSDictionary *)pushToken;
+- (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload
 {
-    [(NSMutableArray *) self.pushTokens addObject:pushToken];
+    NSMutableDictionary *dict = (NSMutableDictionary *)self.pushTokens;
+    dict[token] = payload;
+}
+
+- (void)removePushToken:(NSString *)token
+{
+    NSMutableDictionary *dict = (NSMutableDictionary *)self.pushTokens;
+    [dict removeObjectForKey:token];
 }
 
 - (void)expireAllBlockedRequests;

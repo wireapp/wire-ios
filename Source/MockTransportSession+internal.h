@@ -31,7 +31,6 @@
 - (MockConversation *)fetchConversationWithIdentifier:(NSString *)conversationID;
 - (MockUser *)fetchUserWithIdentifier:(NSString *)userID;
 - (MockConnection *)fetchConnectionFrom:(MockUser *)userID to:(MockUser *)otherUserID;
-- (void)addPushToken:(NSDictionary *)pushToken;
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data;
 
