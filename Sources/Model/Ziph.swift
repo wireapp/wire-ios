@@ -1,4 +1,4 @@
-// 
+//
 // Wire
 // Copyright (C) 2016 Wire Swiss GmbH
 // 
@@ -16,15 +16,34 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+import Foundation
 
-#import <UIKit/UIKit.h>
+/**
+ * An item representing a post from Giphy.
+ */
 
-//! Project version number for ziphy.
-FOUNDATION_EXPORT double ziphyVersionNumber;
+public struct Ziph: Codable {
 
-//! Project version string for ziphy.
-FOUNDATION_EXPORT const unsigned char ziphyVersionString[];
+    public let identifier: String
+    public let images: ZiphyAnimatedImageList
+    public let title: String?
 
-// In this header, you should import all the public headers of your framework using statements like #import <ziphy/PublicHeader.h>
+    public var description: String {
+        return "identifier: \(self.identifier)\n" +
+        "title: \(self.title ?? "nil")\n" +
+        "images:\n\(self.images)\n"
+    }
 
+    // MARK: - Initialization
 
+    public init(identifier: String, images: ZiphyAnimatedImageList, title: String) {
+        self.identifier = identifier
+        self.images = images
+        self.title = title
+    }
+
+    public enum CodingKeys: String, CodingKey {
+        case title, images, identifier = "id"
+    }
+
+}
