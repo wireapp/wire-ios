@@ -21,7 +21,7 @@ import Foundation
 /// A circular array behaves like an array, but once it reaches a maximum size
 /// new elements that are inserted will overwrite the oldest elements, allowing
 /// for inserting an infinite amount of elements (at the cost of discarding the old ones)
-public struct CircularArray<T> {
+public struct CircularArray<Element> {
     
     /// Max size
     private let size : Int
@@ -30,7 +30,7 @@ public struct CircularArray<T> {
     /// Once it reaches the end (full), it starts to overwrite from the beginning
     /// The same operation could be achieved by appending to the end and removing from
     /// the front, but this would cause reallocating the array
-    private var circularArray : [T]
+    private var circularArray : [Element]
     
     /// Where to insert the next element
     private var listEnd = 0
@@ -40,18 +40,25 @@ public struct CircularArray<T> {
     }
     
     /// Insert an element in the array
-    public mutating func add(_ element: T) {
+    /// - Returns: old element that is going to be replaced with @c element
+    @discardableResult public mutating func add(_ element: Element) -> Element? {
+        let discardedElement: Element?
+        
         if !self.isFull {
             circularArray.append(element)
+            discardedElement = nil
         } else {
+            discardedElement = circularArray[listEnd]
             circularArray[listEnd] = element
         }
 
         listEnd = (listEnd + 1) % size
+        
+        return discardedElement
     }
     
     /// Returns the cache content
-    public var content : [T] {
+    public var content : [Element] {
         if self.isFull {
             return Array(circularArray[listEnd..<size]) + Array(circularArray[0..<listEnd])
         }
@@ -65,9 +72,9 @@ public struct CircularArray<T> {
         self.circularArray.reserveCapacity(size)
     }
     
-    public init(size: Int) {
+    public init(size: Int, initialValue: [Element] = []) {
         self.size = size
-        self.circularArray = []
+        self.circularArray = initialValue
         self.circularArray.reserveCapacity(size)
     }
 }
