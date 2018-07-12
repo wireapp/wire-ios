@@ -79,9 +79,10 @@ class MockTransportPushTokenTests_Swift: MockTransportSessionTests {
 
         // then
         XCTAssertEqual(result?.httpStatus, 200)
-        guard let payload = result?.payload?.asArray() as? [NSDictionary] else { return XCTFail() }
+        guard let payload = result?.payload?.asDictionary() as? [String : NSArray] else { XCTFail(); return }
         XCTAssertFalse(payload.isEmpty)
-        XCTAssertTrue(payload.contains(payload1))
-        XCTAssertTrue(payload.contains(payload2))
+        guard let results = payload["tokens"] else { XCTFail(); return }
+        XCTAssertTrue(results.contains(payload1))
+        XCTAssertTrue(results.contains(payload2))
     }
 }
