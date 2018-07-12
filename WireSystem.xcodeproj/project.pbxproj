@@ -42,6 +42,8 @@
 		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
 		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
 		54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */; };
+		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
+		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
 		D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */; };
 /* End PBXBuildFile section */
@@ -106,6 +108,8 @@
 		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
 		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
 		54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTestDetectionTests.m; sourceTree = "<group>"; };
+		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
+		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
 		D59F3A1C206A47E80023474F /* DispatchQueueHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchQueueHelperTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -167,6 +171,7 @@
 		5473E7C61B31A95A00C6A937 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				8701221520F64171001E6342 /* Cache.swift */,
 				54180BD61F459DCF0020D2BD /* MemoryReferenceDebugger.h */,
 				54180BD71F459DCF0020D2BD /* MemoryReferenceDebugger.swift */,
 				54F5148B1B7377CA00FACDAA /* ZMSGroupQueue.h */,
@@ -218,6 +223,7 @@
 		54A327381B99A3650004EB95 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				8701221720F641A4001E6342 /* CacheTests.swift */,
 				54180BDA1F459DFB0020D2BD /* MemoryReferenceDebuggerTests.m */,
 				54180BDB1F459DFB0020D2BD /* MemoryReferenceDebuggerTests.swift */,
 				54A327391B99A3840004EB95 /* ZMLoggingTests.m */,
@@ -372,6 +378,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				544CFC511B70B933007AA694 /* ZMSLog.swift in Sources */,
+				8701221620F64171001E6342 /* Cache.swift in Sources */,
 				54180BD91F459DCF0020D2BD /* MemoryReferenceDebugger.swift in Sources */,
 				54F249C91BB9242900040600 /* ZMSDispatchGroup.m in Sources */,
 				54C0CC411C9C7635000A9286 /* ZMSAsserts.m in Sources */,
@@ -394,6 +401,7 @@
 			files = (
 				54C5DF8A1BBADA3D00DCFC95 /* ZMSDispatchGroupTests.m in Sources */,
 				54180BDE1F459DFF0020D2BD /* MemoryReferenceDebuggerTests.m in Sources */,
+				8701221920F641BE001E6342 /* CacheTests.swift in Sources */,
 				54A3273C1B99C04F0004EB95 /* ZMLogTests.swift in Sources */,
 				54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */,
 				D59F3A1D206A47E80023474F /* DispatchQueueHelperTests.swift in Sources */,
