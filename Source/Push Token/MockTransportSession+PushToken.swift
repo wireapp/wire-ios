@@ -35,7 +35,10 @@ extension MockTransportSession {
     }
 
     func processGetPushTokens() -> ZMTransportResponse {
-        return ZMTransportResponse(payload: Array(pushTokens.values) as NSArray, httpStatus: 200, transportSessionError: nil)
+        let payload = [
+            "tokens" : Array(pushTokens.values)
+        ] as NSDictionary
+        return ZMTransportResponse(payload: payload, httpStatus: 200, transportSessionError: nil)
     }
 
     func processDeletePushToken(_ token: String?) -> ZMTransportResponse {
