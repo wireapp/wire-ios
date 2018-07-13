@@ -83,6 +83,10 @@ public final class EncryptionContext : NSObject {
     /// to allow re-entry
     fileprivate var performCount : UInt = 0
     
+    // The maximum size of the end-to-end encrypted payload is defined by ZMClientMessageByteSizeExternalThreshold
+    // It's currently 128KB of data. We will allow up to 8 messages of maximum size to persist in the cache.
+    fileprivate let cache = Cache<GenericHash, Data>(maxCost: 1_000_000, maxElementsCount: 100)
+
     /// Opens cryptobox from a given folder
     /// - throws: CryptoBox error in case of lower-level error
     public init(path: URL) {
@@ -125,7 +129,8 @@ extension EncryptionContext {
     public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
-            self.currentSessionsDirectory = EncryptionSessionsDirectory(generatingContext: self)
+            self.currentSessionsDirectory = EncryptionSessionsDirectory(generatingContext: self,
+                                                                        encryptionPayloadCache: cache)
         }
         performCount += 1
         block(self.currentSessionsDirectory!)

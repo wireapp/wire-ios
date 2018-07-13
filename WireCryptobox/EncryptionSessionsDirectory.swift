@@ -62,6 +62,8 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// Local fingerprint
     public var localFingerprint : Data
     
+    fileprivate let encryptionPayloadCache: Cache<GenericHash, Data>
+    
     /// Cache of transient sessions, indexed by client ID.
     /// Transient sessions are session that are (potentially) modified in memory
     /// and not yet committed to disk. When trying to load a session,
@@ -76,9 +78,10 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// load once and save once at the end.
     fileprivate var pendingSessionsCache : [EncryptionSessionIdentifier : EncryptionSession] = [:]
     
-    init(generatingContext: EncryptionContext) {
+    init(generatingContext: EncryptionContext, encryptionPayloadCache: Cache<GenericHash, Data>) {
         self.generatingContext = generatingContext
         self.localFingerprint = generatingContext.implementation.localFingerprint
+        self.encryptionPayloadCache = encryptionPayloadCache
         super.init()
     }
     
@@ -103,13 +106,71 @@ public final class EncryptionSessionsDirectory : NSObject {
     deinit {
         self.commitCache()
     }
+    
+    private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
+        let builder = GenericHashBuilder()
+        builder.append(data)
+        builder.append(recipient.rawValue.data(using: .utf8)!)
+        return builder.build()
+    }
+    
+    /// Encrypts data for a client. Caches the encrypted payload based on `hash(data + recepient)` as the cache key.
+    /// It invokes @c encrypt() in case of the cache miss.
+    /// - throws: EncryptionSessionError in case no session with given recipient
+    public func encryptCaching(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
+        let key = hash(for: plainText, recipient: recipientIdentifier)
+        
+        if let cachedObject = encryptionPayloadCache.value(for: key) {
+            zmLog.debug("Cache hit: \(key)")
+            return cachedObject
+        }
+        else {
+            zmLog.debug("Cache miss: \(key)")
+            let data = try encrypt(plainText, for: recipientIdentifier)
+            encryptionPayloadCache.set(value: data, for: key, cost: data.count)
+            return data
+        }
+    }
+    
+    /// Purges the cache of encrypted payloads created as the result of @c encryptCaching() call
+    public func purgeEncryptedPayloadCache() {
+        zmLog.debug("Cache purged")
+        encryptionPayloadCache.purge()
+    }
 }
 
-// MARK: - Accessing sessions
-extension EncryptionSessionsDirectory {
-    
+// MARK: - Encryption sessions
+public protocol EncryptionSessionManager {
     /// Migrate session to a new identifier, if a session with the old identifier exists
     /// and a session with the new identifier does not exist
+    func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier)
+    
+    /// Creates a session to a client using a prekey of that client
+    /// The session is not saved to disk until the cache is committed
+    /// - throws: CryptoBox error in case of lower-level error
+    func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws
+    
+    /// Creates a session to a client using a prekey message from that client
+    /// The session is not saved to disk until the cache is committed
+    /// - returns: the plaintext
+    /// - throws: CryptoBox error in case of lower-level error
+    func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data
+    
+    /// Deletes a session with a client
+    func delete(_ identifier: EncryptionSessionIdentifier)
+    
+    /// Returns true if there is an existing session for this client ID
+    func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool
+    
+    /// Closes all transient sessions without saving them
+    func discardCache()
+    
+    /// Returns the remote fingerprint of a encryption session
+    func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data?
+}
+
+extension EncryptionSessionsDirectory: EncryptionSessionManager {
+    
     public func migrateSession(from previousIdentifier: String, to newIdentifier: EncryptionSessionIdentifier) {
         
         let previousSessionIdentifier = EncryptionSessionIdentifier(rawValue: previousIdentifier)
@@ -144,9 +205,6 @@ extension EncryptionSessionsDirectory {
         
     }
     
-    /// Creates a session to a client using a prekey of that client
-    /// The session is not saved to disk until the cache is committed
-    /// - throws: CryptoBox error in case of lower-level error
     public func createClientSession(_ identifier: EncryptionSessionIdentifier, base64PreKeyString: String) throws {
         
         // validate
@@ -182,10 +240,6 @@ extension EncryptionSessionsDirectory {
         session.dumpSessionContent()
     }
     
-    /// Creates a session to a client using a prekey message from that client
-    /// The session is not saved to disk until the cache is committed
-    /// - returns: the plaintext
-    /// - throws: CryptoBox error in case of lower-level error
     public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
         let context = self.validateContext()
         let cbsession = _CBoxSession()
@@ -213,7 +267,6 @@ extension EncryptionSessionsDirectory {
         return plainText
     }
     
-    /// Deletes a session with a client
     public func delete(_ identifier: EncryptionSessionIdentifier) {
         let context = self.validateContext()
         self.discardFromCache(identifier)
@@ -224,10 +277,87 @@ extension EncryptionSessionsDirectory {
             fatal("Error in deletion in cbox: \(result)")
         }
     }
+    
+    /// Returns an existing session for a client
+    /// - returns: a session if it exists, or nil if not there
+    fileprivate func clientSession(for identifier: EncryptionSessionIdentifier) -> EncryptionSession? {
+        let context = self.validateContext()
+        
+        // check cache
+        if let transientSession = self.pendingSessionsCache[identifier] {
+            zmLog.debug("Tried to load session for client \(identifier), session was already loaded")
+            return transientSession
+        }
+        
+        let cbsession = _CBoxSession()
+        let result = cbox_session_load(context.implementation.ptr, identifier.rawValue, &cbsession.ptr)
+        switch(result) {
+        case CBOX_SESSION_NOT_FOUND:
+            zmLog.debug("Tried to load session for client \(identifier), no session found")
+            return nil
+        case CBOX_SUCCESS:
+            let session = EncryptionSession(id: identifier,
+                                            session: cbsession,
+                                            requiresSave: false,
+                                            cryptoboxPath: self.generatingContext!.path)
+            self.pendingSessionsCache[identifier] = session
+            zmLog.debug("Loaded session for client \(identifier)")
+            session.dumpSessionContent()
+            return session
+        default:
+            fatalError("Error in loading from cbox: \(result)")
+        }
+    }
+    
+    public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
+        return (clientSession(for: identifier) != nil)
+    }
+    
+    public func discardCache() {
+        zmLog.debug("Discarded all sessions from cache")
+        self.pendingSessionsCache = [:]
+    }
+    
+    /// Save and unload all transient sessions
+    fileprivate func commitCache() {
+        for (_, session) in self.pendingSessionsCache {
+            session.save(self.box)
+        }
+        discardCache()
+    }
+    
+    /// Closes a transient session. Any unsaved change will be lost
+    fileprivate func discardFromCache(_ identifier: EncryptionSessionIdentifier) {
+        zmLog.debug("Discarded session \(identifier.rawValue) from cache")
+        self.pendingSessionsCache.removeValue(forKey: identifier)
+    }
+    
+    /// Saves the cached session for a client and removes it from the cache
+    fileprivate func saveSession(_ identifier: EncryptionSessionIdentifier) {
+        guard let session = pendingSessionsCache[identifier] else {
+            return
+        }
+        session.save(self.box)
+        discardFromCache(identifier)
+    }
+    
+    public func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data? {
+        guard let session = self.clientSession(for: identifier) else {
+            return nil
+        }
+        return session.remoteFingerprint
+    }
+}
+
+public protocol PrekeyGeneratorType {
+    func generatePrekey(_ id: UInt16) throws -> String
+    func generateLastPrekey() throws -> String
+    func generatePrekeys(_ range: CountableRange<UInt16>) throws -> [(id: UInt16, prekey: String)]
+    func generatePrekeys(_ nsRange: NSRange) throws -> [[String : AnyObject]]
 }
 
 // MARK: - Prekeys
-extension EncryptionSessionsDirectory {
+extension EncryptionSessionsDirectory: PrekeyGeneratorType {
     
     /// Generates one prekey of the given ID. If the prekey exists already,
     /// it will replace that prekey
@@ -283,87 +413,6 @@ extension _CBox {
             fatal("Can't get local fingerprint") // this is so rare, that we don't even throw
         }
         return Data.moveFromCBoxVector(vectorBacking)!
-    }
-}
-
-extension EncryptionSessionsDirectory {
-    
-    /// Returns the remote fingerprint of a encryption session
-    public func fingerprint(for identifier: EncryptionSessionIdentifier) -> Data? {
-        guard let session = self.clientSession(for: identifier) else {
-            return nil
-        }
-        return session.remoteFingerprint
-    }
-}
-
-
-// MARK: - Sessions cache management
-extension EncryptionSessionsDirectory {
-    
-    /// Returns an existing session for a client
-    /// - returns: a session if it exists, or nil if not there
-    fileprivate func clientSession(for identifier: EncryptionSessionIdentifier) -> EncryptionSession? {
-        let context = self.validateContext()
-        
-        // check cache
-        if let transientSession = self.pendingSessionsCache[identifier] {
-            zmLog.debug("Tried to load session for client \(identifier), session was already loaded")
-            return transientSession
-        }
-        
-        let cbsession = _CBoxSession()
-        let result = cbox_session_load(context.implementation.ptr, identifier.rawValue, &cbsession.ptr)
-        switch(result) {
-        case CBOX_SESSION_NOT_FOUND:
-            zmLog.debug("Tried to load session for client \(identifier), no session found")
-            return nil
-        case CBOX_SUCCESS:
-            let session = EncryptionSession(id: identifier,
-                                            session: cbsession,
-                                            requiresSave: false,
-                                            cryptoboxPath: self.generatingContext!.path)
-            self.pendingSessionsCache[identifier] = session
-            zmLog.debug("Loaded session for client \(identifier)")
-            session.dumpSessionContent()
-            return session
-        default:
-            fatalError("Error in loading from cbox: \(result)")
-        }
-    }
-    
-    /// Returns true if there is an existing session for this client ID
-    public func hasSession(for identifier: EncryptionSessionIdentifier) -> Bool {
-        return (clientSession(for: identifier) != nil)
-    }
-    
-    /// Closes all transient sessions without saving them
-    public func discardCache() {
-        zmLog.debug("Discarded all sessions from cache")
-        self.pendingSessionsCache = [:]
-    }
-    
-    /// Save and unload all transient sessions
-    fileprivate func commitCache() {
-        for (_, session) in self.pendingSessionsCache {
-            session.save(self.box)
-        }
-        discardCache()
-    }
-    
-    /// Closes a transient session. Any unsaved change will be lost
-    fileprivate func discardFromCache(_ identifier: EncryptionSessionIdentifier) {
-        zmLog.debug("Discarded session \(identifier.rawValue) from cache")
-        self.pendingSessionsCache.removeValue(forKey: identifier)
-    }
-
-    /// Saves the cached session for a client and removes it from the cache
-    fileprivate func saveSession(_ identifier: EncryptionSessionIdentifier) {
-        guard let session = pendingSessionsCache[identifier] else {
-            return
-        }
-        session.save(self.box)
-        discardFromCache(identifier)
     }
 }
 
@@ -435,12 +484,24 @@ class EncryptionSession {
     }
 }
 
-// MARK: - Encryption and decryption
-extension EncryptionSessionsDirectory {
-    
+// MARK: - Encryption
+public protocol Encryptor: class {
     /// Encrypts data for a client
     /// It immediately saves the session
-    /// - returns: nil if there is no session with that client
+    /// - throws: EncryptionSessionError in case no session with given recipient
+    func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data
+}
+
+// MARK: - Decryption
+public protocol Decryptor: class {
+    /// Decrypts data from a client
+    /// The session is not saved to disk until the cache is committed
+    /// - throws: EncryptionSessionError in case no session with given recipient
+    func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data
+}
+
+extension EncryptionSessionsDirectory: Encryptor, Decryptor {
+
     public func encrypt(_ plainText: Data, for recipientIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: recipientIdentifier) else {
@@ -452,9 +513,6 @@ extension EncryptionSessionsDirectory {
         return cypherText
     }
     
-    /// Decrypts data from a client
-    /// The session is not saved to disk until the cache is committed
-    /// - returns: nil if there is no session with that client
     public func decrypt(_ cypherText: Data, from senderIdentifier: EncryptionSessionIdentifier) throws -> Data {
         _ = self.validateContext()
         guard let session = self.clientSession(for: senderIdentifier) else {
@@ -566,3 +624,4 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
 public func ==(lhs: EncryptionSessionIdentifier, rhs: EncryptionSessionIdentifier) -> Bool {
     return lhs.rawValue == rhs.rawValue
 }
+
