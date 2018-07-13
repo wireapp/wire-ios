@@ -86,6 +86,20 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
         guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
         guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.privateDescription)") }
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
+        
+        // We need to flush the encrypted payloads cache, since the client is online now (request succeeded).
+        let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+            guard let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient(),
+                response.result == .success else {
+                return
+            }
+            selfClient.keysStore.encryptionContext.perform { (session) in
+                session.purgeEncryptedPayloadCache()
+            }
+        }
+        
+        request.add(completionHandler)
+        
         return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.uploadState)], transportRequest: request)
     }
 

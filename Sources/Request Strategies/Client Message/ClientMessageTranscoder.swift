@@ -90,6 +90,20 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
         
         let request = self.requestFactory.upstreamRequestForMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!)!
+        
+        // We need to flush the encrypted payloads cache, since the client is online now (request succeeded).
+        let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
+            guard let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient(),
+                    response.result == .success else {
+                return
+            }
+            selfClient.keysStore.encryptionContext.perform { (session) in
+                session.purgeEncryptedPayloadCache()
+            }
+        }
+        
+        request.add(completionHandler)
+        
         if message.genericMessage?.hasConfirmation() == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
             request.forceToVoipSession()
         }
