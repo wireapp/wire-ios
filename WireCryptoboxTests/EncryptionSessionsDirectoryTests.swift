@@ -20,7 +20,7 @@
 import Foundation
 import XCTest
 @testable import WireCryptobox
-
+import WireSystem
 
 class EncryptionSessionsDirectoryTests : XCTestCase {
     
@@ -270,7 +270,8 @@ extension EncryptionSessionsDirectoryTests {
         try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
         
         // THEN
-        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
+        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice,
+                                                          encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
         statusAliceCopy.debug_disableContextValidityCheck = true
         let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
         XCTAssertNil(cypher)
@@ -286,7 +287,8 @@ extension EncryptionSessionsDirectoryTests {
         statusAlice = nil
         
         // THEN
-        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
+        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice,
+                                                          encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
         statusAliceCopy.debug_disableContextValidityCheck = true
         let prekeyMessage = try! statusAliceCopy.encrypt(plainText, for: Person.Bob.identifier)
         let decoded = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
@@ -303,7 +305,8 @@ extension EncryptionSessionsDirectoryTests {
         statusAlice = nil
         
         // THEN
-        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice)
+        let statusAliceCopy = EncryptionSessionsDirectory(generatingContext: contextAlice,
+                                                          encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
         statusAliceCopy.debug_disableContextValidityCheck = true
         let cypher = try? statusAliceCopy.encrypt("foo".data(using: String.Encoding.utf8)!, for: Person.Bob.identifier)
         XCTAssertNil(cypher)
@@ -325,7 +328,8 @@ extension EncryptionSessionsDirectoryTests {
         statusBob = nil
         
         // THEN
-        let statusBobCopy = EncryptionSessionsDirectory(generatingContext: contextBob)
+        let statusBobCopy = EncryptionSessionsDirectory(generatingContext: contextBob,
+                                                        encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
         statusBobCopy.debug_disableContextValidityCheck = true
         let decoded = try! statusBobCopy.decrypt(cypherText, from: Person.Alice.identifier)
         XCTAssertEqual(decoded, plainText)
@@ -558,11 +562,13 @@ extension EncryptionSessionsDirectoryTests {
     /// statuses, if any.
     func recreateStatuses(only: Person? = nil) {
         if only == nil || only == .Alice {
-            self.statusAlice = EncryptionSessionsDirectory(generatingContext: contextAlice)
+            self.statusAlice = EncryptionSessionsDirectory(generatingContext: contextAlice,
+                                                           encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
             self.statusAlice.debug_disableContextValidityCheck = true
         }
         if only == nil || only == .Bob {
-            self.statusBob = EncryptionSessionsDirectory(generatingContext: contextBob)
+            self.statusBob = EncryptionSessionsDirectory(generatingContext: contextBob,
+                                                         encryptionPayloadCache: Cache<GenericHash, Data>(maxCost: 1000, maxElementsCount: 100))
             self.statusBob.debug_disableContextValidityCheck = true
         }
     }
