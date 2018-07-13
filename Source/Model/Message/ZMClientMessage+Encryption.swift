@@ -101,7 +101,7 @@ extension ZMGenericMessage {
     public func encryptedMessagePayloadData(_ conversation: ZMConversation, externalData: Data?) -> (data: Data, strategy: MissingClientsStrategy)? {
         guard let context = conversation.managedObjectContext else { return nil }
         
-        let recipientsAndStrategy = recipientUsersforMessage(in: conversation, selfUser: ZMUser.selfUser(in: context))
+        let recipientsAndStrategy = recipientUsersForMessage(in: conversation, selfUser: ZMUser.selfUser(in: context))
         if let data = encryptedMessagePayloadData(for: recipientsAndStrategy.users, externalData: nil, context: context) {
             return (data, recipientsAndStrategy.strategy)
         }
@@ -142,7 +142,7 @@ extension ZMGenericMessage {
         return messageData
     }
 
-    func recipientUsersforMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
+    func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
         let (services, otherUsers) = (conversation.lastServerSyncedActiveParticipants.set as! Set<ZMUser>).categorize()
 
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
@@ -218,7 +218,7 @@ extension ZMGenericMessage {
                             externalData: Data?,
                             sessionDirectory: EncryptionSessionsDirectory) -> (message: ZMNewOtrMessage, strategy: MissingClientsStrategy) {
 
-        let (recipientUsers, strategy) = recipientUsersforMessage(in: conversation, selfUser: selfClient.user!)
+        let (recipientUsers, strategy) = recipientUsersForMessage(in: conversation, selfUser: selfClient.user!)
         let recipients = self.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionDirectory)
 
         let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
@@ -242,8 +242,8 @@ extension ZMGenericMessage {
     
     /// Returns the recipients and the encrypted data for each recipient
     func recipientsWithEncryptedData(_ selfClient: UserClient,
-                                             recipients: Set<ZMUser>,
-                                             sessionDirectory: EncryptionSessionsDirectory
+                                     recipients: Set<ZMUser>,
+                                     sessionDirectory: EncryptionSessionsDirectory
         ) -> [ZMUserEntry]
     {
         let userEntries = recipients.compactMap { user -> ZMUserEntry? in
@@ -269,7 +269,7 @@ extension ZMGenericMessage {
                         }
                     }
                     
-                    guard let encryptedData = try? sessionDirectory.encrypt(self.data(), for: clientRemoteIdentifier) else {
+                    guard let encryptedData = try? sessionDirectory.encryptCaching(self.data(), for: clientRemoteIdentifier) else {
                         return nil
                     }
                     return ZMClientEntry.entry(withClient: client, data: encryptedData)
