@@ -63,3 +63,9 @@ public func requireInternal(_ condition: Bool, _ message: @autoclosure () -> Str
     guard !Environment.current.isAppStore, !condition else { return }
     fatal(message(), file: file, line: line)
 }
+
+/// Termiantes the application if the current build is not an AppsStore build
+public func requireInternalFailure(_ message: @autoclosure () -> String, file: String = #file, line: Int = #line) {
+    guard !Environment.current.isAppStore else { return }
+    fatal(message(), file: file, line: line)
+}
