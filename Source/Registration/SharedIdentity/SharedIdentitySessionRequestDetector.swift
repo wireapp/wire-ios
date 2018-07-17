@@ -48,8 +48,8 @@ import UIKit
      * handler will be called on the main thread with the result.
      */
 
-    @objc public func detectCopiedRequestCode(_ completionHandler: @escaping (UUID?) -> Void) {
-        func complete(_ code: UUID?) {
+    @objc public func detectCopiedRequestCode(_ completionHandler: @escaping (String?) -> Void) {
+        func complete(_ code: String?) {
             DispatchQueue.main.async {
                 completionHandler(code)
             }
@@ -61,22 +61,34 @@ import UIKit
                 return
             }
 
-            let code = self.detectRequestCode(in: text)
-            complete(code)
+            guard SharedIdentitySessionRequestDetector.isValidRequestCode(in: text) else {
+                complete(nil)
+                return
+            }
+
+            complete(text)
         }
     }
 
     /**
-     * Tries to extract the session request code from the user input.
+     * Tries to extract the request ID from the contents of the text.
      */
 
-    @objc public func detectRequestCode(in string: String) -> UUID? {
+    @objc public static func requestCode(in string: String) -> UUID? {
         guard let prefixRange = string.range(of: "wire-") else {
             return nil
         }
 
         let codeString = string[prefixRange.upperBound ..< string.endIndex]
         return UUID(uuidString: String(codeString))
+    }
+
+    /**
+     * Validates the session request code from the user input.
+     */
+
+    @objc public static func isValidRequestCode(in string: String) -> Bool {
+        return requestCode(in: string) != nil
     }
 
 }
