@@ -197,11 +197,13 @@ extension MockUserClient {
 
 // MARK: - Encryption and sessions
 @objc extension MockUserClient {
+
+    @objc public static var mockEncryptionSessionDirectory: URL {
+        return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
+    }
     
     fileprivate var encryptionContext: EncryptionContext {
-        let documentURL = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
-        let directory = documentURL
-            .appendingPathComponent("mocktransport-encryptionDirectory")
+        let directory = MockUserClient.mockEncryptionSessionDirectory
             .appendingPathComponent("mockclient_\(self.user?.identifier ?? "USER")_\(self.identifier ?? "IDENTIFIER")")
         try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: directory)
