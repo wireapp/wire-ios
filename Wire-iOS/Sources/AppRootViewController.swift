@@ -459,7 +459,7 @@ extension AppRootViewController: ZMRequestsToOpenViewsDelegate {
         })
     }
 
-    internal func whenRequestsToOpenViewsDelegateAvailable(do closure: @escaping (ZMRequestsToOpenViewsDelegate)->()) {
+    internal func whenRequestsToOpenViewsDelegateAvailable(do closure: @escaping (ZMRequestsToOpenViewsDelegate) -> ()) {
         if let delegate = self.requestToOpenViewDelegate {
             closure(delegate)
         }
@@ -557,10 +557,8 @@ extension AppRootViewController: SessionManagerSwitchingDelegate {
             self?.sessionManager?.activeUserSession?.callCenter?.endAllCalls()
             completion(true)
         }))
-        alert.addAction(UIAlertAction(title: "general.cancel".localized, style: .cancel, handler: { (action) in
-            completion(false)
-        }))
-        
+        alert.addAction(.cancel { completion(false) })
+
         topmostController.present(alert, animated: true, completion: nil)
     }
     
