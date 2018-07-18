@@ -186,6 +186,7 @@ import UIKit
     /// Using a ManagedObjectContextDirectory created by a stack after the stack has been
     /// reset will cause a crash
     public static func reset() {
+        StorageStack.currentStack?.managedObjectContextDirectory?.tearDown()
         StorageStack.currentStack = nil
     }
 }

@@ -52,6 +52,7 @@
         self.accountIdentifier = identifier;
         self.containerURL = [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] firstObject];
         self.storeURL = [[StorageStack accountFolderWithAccountIdentifier:self.accountIdentifier applicationContainer:self.containerURL] URLAppendingPersistentStoreLocation];
+        self.shouldUseInMemoryStore = YES;
     }
 
     return self;
