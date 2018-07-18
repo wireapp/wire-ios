@@ -352,6 +352,14 @@ public extension UserClient {
         guard self.fingerprint == .none,
             let syncMOC = self.managedObjectContext?.zm_sync
             else { return }
+
+        if self.objectID.isTemporaryID {
+            do {
+                try syncMOC.obtainPermanentIDs(for: [self])
+            } catch {
+                fatal("Error obtaining permanent id for client")
+            }
+        }
         
         let selfObjectID = self.objectID
         
