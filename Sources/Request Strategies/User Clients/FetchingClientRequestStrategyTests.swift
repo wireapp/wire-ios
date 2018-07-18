@@ -277,8 +277,9 @@ extension FetchClientRequestStrategyTests {
         // GIVEN
         var payload: ZMTransportData!
         let remoteIdentifier = "aabbccdd0011"
-        let sessionIdentifier = EncryptionSessionIdentifier(rawValue: "\(self.otherUser.remoteIdentifier!)_\(remoteIdentifier)")
+        var sessionIdentifier: EncryptionSessionIdentifier!
         self.syncMOC.performGroupedBlockAndWait {
+            sessionIdentifier = EncryptionSessionIdentifier(rawValue: "\(self.otherUser.remoteIdentifier!)_\(remoteIdentifier)")
             self.otherUser.fetchUserClients()
             payload = [["id" : remoteIdentifier]] as NSArray
             self.selfClient.keysStore.encryptionContext.perform {

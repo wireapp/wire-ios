@@ -688,7 +688,7 @@ static NSString *foo = @"foo";
     MockEntity2 *dependency2 = [MockEntity2 insertNewObjectInManagedObjectContext:self.testMOC];
     self.objectIDToObjectDependency[entity.objectID] = dependency1;
     
-    __block BOOL addObjectWasCalled;
+    __block BOOL addObjectWasCalled = NO;
     
     // expect
     [[self.mockLocallyModifiedSet expect] addPossibleObjectToSynchronize:[OCMArg checkWithBlock:^BOOL(id obj) {

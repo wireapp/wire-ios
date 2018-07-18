@@ -29,8 +29,10 @@ class FilePreprocessorTests : MessagingTestBase {
     
     override func setUp() {
         super.setUp()
-        sut = FilePreprocessor(managedObjectContext: self.syncMOC, filter: NSPredicate(value: true))
-        oneToOneConversationOnSync = self.syncMOC.object(with: oneToOneConversation.objectID) as! ZMConversation
+        self.syncMOC.performGroupedAndWait { moc in
+            self.sut = FilePreprocessor(managedObjectContext: moc, filter: NSPredicate(value: true))
+            self.oneToOneConversationOnSync = moc.object(with: self.oneToOneConversation.objectID) as! ZMConversation
+        }
     }
     
     override func tearDown() {

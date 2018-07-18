@@ -70,9 +70,11 @@ class OTREntityTranscoderTests : MessagingTestBase {
     
     override func setUp() {
         super.setUp()
-        
-        self.mockEntity = MockOTREntity(conversation: self.groupConversation, context: syncMOC)
-        self.sut = OTREntityTranscoder(context: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
+
+        self.syncMOC.performGroupedAndWait { moc in
+            self.mockEntity = MockOTREntity(conversation: self.groupConversation, context: moc)
+            self.sut = OTREntityTranscoder(context: moc, clientRegistrationDelegate: self.mockClientRegistrationStatus)
+        }
     }
     
     override func tearDown() {
@@ -82,72 +84,76 @@ class OTREntityTranscoderTests : MessagingTestBase {
     }
     
     func testThatItHandlesDeletionOfSelfClient() {
-        
-        // GIVEN
-        let payload = [
-            "label" : "unknown-client"
-        ]
-        
-        let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil)
-        
-        // WHEN
-        XCTAssertFalse(sut.shouldTryToResend(entity: mockEntity, afterFailureWithResponse: response))
-        
-        // THEN
-        XCTAssertEqual(mockClientRegistrationStatus.deletionCalls, 1)
+        self.syncMOC.performGroupedAndWait { _ in
+            // GIVEN
+            let payload = [
+                "label" : "unknown-client"
+            ]
+
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 403, transportSessionError: nil)
+
+            // WHEN
+            XCTAssertFalse(self.sut.shouldTryToResend(entity: self.mockEntity, afterFailureWithResponse: response))
+
+            // THEN
+            XCTAssertEqual(self.mockClientRegistrationStatus.deletionCalls, 1)
+        }
     }
     
     func testThatItHandlesDeletionOfClient() {
-        
-        // GIVEN
-        let payload = [
-            "deleted" : ["\(self.otherUser.remoteIdentifier!)" : [self.otherClient.remoteIdentifier!] ]
-        ]
-        let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
-        
-        // WHEN
-        sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
-        
-        // THEN
-        XCTAssertTrue(self.otherClient.isDeleted)
+        self.syncMOC.performGroupedAndWait { _ in
+            // GIVEN
+            let payload = [
+                "deleted" : ["\(self.otherUser.remoteIdentifier!)" : [self.otherClient.remoteIdentifier!] ]
+            ]
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+
+            // WHEN
+            self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
+
+            // THEN
+            XCTAssertTrue(self.otherClient.isDeleted)
+        }
     }
     
     func testThatItHandlesMissingClient_addsClientToListOfMissingClients() {
-        
-        // GIVEN
-        let user = ZMUser.insertNewObject(in: syncMOC)
-        user.remoteIdentifier = UUID.create()
-        let clientId = "ajsd9898u13a"
-        
-        let payload = [
-            "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
-        ]
-        let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
-        
-        // WHEN
-        sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
-        
-        // THEN
-        XCTAssertEqual(selfClient.missingClients!.count, 1)
-        XCTAssertEqual(selfClient.missingClients!.first!.remoteIdentifier, clientId)
+        self.syncMOC.performGroupedAndWait { moc in
+            // GIVEN
+            let user = ZMUser.insertNewObject(in: moc)
+            user.remoteIdentifier = UUID.create()
+            let clientId = "ajsd9898u13a"
+
+            let payload = [
+                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+            ]
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+
+            // WHEN
+            self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
+
+            // THEN
+            XCTAssertEqual(self.selfClient.missingClients!.count, 1)
+            XCTAssertEqual(self.selfClient.missingClients!.first!.remoteIdentifier, clientId)
+        }
     }
     
     func testThatItHandlesMissingClient_MarkAsNeedsToDownloadNotAlreadyThere() {
-        
-        // GIVEN
-        let user = self.createUser()
-        let clientId = "ajsd9898u13a"
-        
-        let payload = [
-            "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
-        ]
-        let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
-        
-        // WHEN
-        sut.request(forEntity: mockEntity, didCompleteWithResponse: response)
-        
-        // THEN
-        XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
+        self.syncMOC.performGroupedAndWait { _ in
+            // GIVEN
+            let user = self.createUser()
+            let clientId = "ajsd9898u13a"
+
+            let payload = [
+                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+            ]
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+
+            // WHEN
+            self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
+
+            // THEN
+            XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
+        }
     }
     
 }

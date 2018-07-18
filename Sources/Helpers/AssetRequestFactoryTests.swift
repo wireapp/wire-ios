@@ -30,6 +30,7 @@ class AssetRequestFactoryTests: ZMTBaseTest {
     }
     
     override func tearDown() {
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.testSession.tearDown()
         self.testSession = nil
         super.tearDown()

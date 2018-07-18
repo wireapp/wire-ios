@@ -31,7 +31,9 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
 
-        sut = GenericMessageNotificationRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
+        self.syncMOC.performGroupedAndWait { moc in
+            self.sut = GenericMessageNotificationRequestStrategy(managedObjectContext: moc, clientRegistrationDelegate: self.mockClientRegistrationStatus)
+        }
 
     }
     
@@ -41,22 +43,26 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestWhenNoNotificationWasFired() {
-        // WHEN & then
-        XCTAssertNil(sut.nextRequest())
+        self.syncMOC.performGroupedAndWait { _ in
+            // WHEN & then
+            XCTAssertNil(self.sut.nextRequest())
+        }
     }
 
     func testThatItCreatesARequestWhenPostingAGenericMessageScheduleNotification() {
-        // GIVEN
-        let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create())
+        self.syncMOC.performGroupedAndWait { moc in
+            // GIVEN
+            let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create())
 
-        // WHEN
-        GenericMessageScheduleNotification.post(message: genericMessage, conversation: self.groupConversation)
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // THEN
-        guard let request = sut.nextRequest() else { return XCTFail("No request created") }
-        XCTAssertEqual(request.method, .methodPOST)
-        XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+            // WHEN
+            GenericMessageScheduleNotification.post(message: genericMessage, conversation: self.groupConversation)
+        }
+        self.syncMOC.performGroupedAndWait { syncMOC in
+            // THEN
+            guard let request = self.sut.nextRequest() else { XCTFail("No request created"); return }
+            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
+        }
     }
     
 }
