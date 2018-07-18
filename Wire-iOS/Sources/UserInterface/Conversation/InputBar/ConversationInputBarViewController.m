@@ -193,6 +193,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
     [super viewDidLoad];
     
     [self setupCallStateObserver];
+    [self setupAppLockedObserver];
     
     [self createSingleTapGestureRecognizer];
     

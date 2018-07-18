@@ -30,7 +30,23 @@ extension ConversationInputBarViewController {
             callStateObserverToken = WireCallCenterV3.addCallStateObserver(observer: self, userSession:userSession)
         }
     }
-    
+
+    @objc func setupAppLockedObserver() {
+        NotificationCenter.default.addObserver(self,
+        selector: #selector(ConversationInputBarViewController.appUnlocked),
+        name: .appUnlocked,
+        object: .none)
+    }
+
+    @objc func appUnlocked() {
+        // show the record keyboard after it is hide after the app went to background
+        if AppLock.isActive &&
+           mode == .audioRecord &&
+           !self.inputBar.textView.isFirstResponder {
+            displayRecordKeyboard()
+        }
+    }
+
     @objc func configureAudioButton(_ button: IconButton) {
         let longPressRecognizer = UILongPressGestureRecognizer(target: self, action: #selector(audioButtonLongPressed(_:)))
         longPressRecognizer.minimumPressDuration = 0.3
