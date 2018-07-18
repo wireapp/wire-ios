@@ -23,7 +23,7 @@
 
 @protocol ConversationCellDelegate;
 
-@interface ConversationMessageWindowTableViewAdapter : NSObject <UITableViewDataSource>
+@interface ConversationMessageWindowTableViewAdapter : NSObject
 
 @property (nonatomic) id<ZMConversationMessage> firstUnreadMessage;
 @property (nonatomic) id<ZMConversationMessage> selectedMessage;
