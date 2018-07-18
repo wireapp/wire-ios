@@ -106,21 +106,23 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
     
     func testThatItMarksConversationToDownloadFromRedundantUploadResponse() {
         // GIVEN
-        XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
-        let payload = [
-            "missing" : [:],
-            "deleted" : [:],
-            "redundant" : [
-                self.otherUser.remoteIdentifier!.transportString() : "aabbccdd"
+        self.syncMOC.performGroupedAndWait { moc in
+            XCTAssertFalse(self.groupConversation.needsToBeUpdatedFromBackend)
+            let payload = [
+                "missing" : [:],
+                "deleted" : [:],
+                "redundant" : [
+                    self.otherUser.remoteIdentifier!.transportString() : "aabbccdd"
+                ]
             ]
-        ]
-        
-        // WHEN
-        _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
-        self.syncMOC.saveOrRollback()
-        
-        // THEN
-        XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
+
+            // WHEN
+            _ = self.message.parseUploadResponse(ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil), clientRegistrationDelegate: MockClientRegistrationStatus())
+            moc.saveOrRollback()
+
+            // THEN
+            XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
+        }
     }
     
 }

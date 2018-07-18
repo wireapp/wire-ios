@@ -28,9 +28,11 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
 
     override func setUp() {
         super.setUp()
-        applicationStatus = MockApplicationStatus()
-        applicationStatus.mockSynchronizationState = .eventProcessing
-        sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
+        self.syncMOC.performGroupedAndWait { syncMOC in
+            self.applicationStatus = MockApplicationStatus()
+            self.applicationStatus.mockSynchronizationState = .eventProcessing
+            self.sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
+        }
     }
     
     override func tearDown() {
@@ -40,80 +42,99 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     }
 
     func testThatItDoesNotCreateARequestInState_Done() {
-        verifyThatItDoesNotCreateARequest(for: .done)
+        self.verifyThatItDoesNotCreateARequest(for: .done)
     }
 
     func testThatItDoesNotCreateARequestInState_WaitingToBeProcessed() {
-        verifyThatItDoesNotCreateARequest(for: .waitingToBeProcessed)
+        self.verifyThatItDoesNotCreateARequest(for: .waitingToBeProcessed)
     }
 
     func testThatItDoesNotCreateARequestInState_Downloaded() {
-        verifyThatItDoesNotCreateARequest(for: .downloaded)
+        self.verifyThatItDoesNotCreateARequest(for: .downloaded)
     }
 
     func testThatItDoesNotCreateARequestInState_Processed() {
-        verifyThatItDoesNotCreateARequest(for: .processed)
+        self.verifyThatItDoesNotCreateARequest(for: .processed)
     }
 
     func testThatItDoesCreateARequestInState_Uploaded() {
-        // Given
-        let message = insertMessage(with: .uploaded)
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            let message = self.insertMessage(with: .uploaded)
 
-        // When
-        process(message)
-
-        // Then
-        verifyItCreatesARequest(in: groupConversation)
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            // Then
+            self.verifyItCreatesARequest(in: self.groupConversation)
+        }
     }
 
     func testThatItDoesCreateARequestInState_Uploaded_WhenTheFirstRequestFailed() {
-        // Given
-        let message = insertMessage(with: .uploaded)
+        var message: ZMClientMessage!
 
-        // When
-        process(message)
-        guard let request = verifyItCreatesARequest(in: groupConversation) else { return }
+        self.syncMOC.performGroupedAndWait { moc in
 
-        // When
-        let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError())
-        request.complete(with: response)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            // Given
+            message = self.insertMessage(with: .uploaded)
 
-        XCTAssertEqual(message.linkPreviewState, .uploaded)
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
 
-        // Then
-        verifyItCreatesARequest(in: groupConversation)
+            // When
+            let response = ZMTransportResponse(transportSessionError: NSError.tryAgainLaterError())
+            request.complete(with: response)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+
+            XCTAssertEqual(message.linkPreviewState, .uploaded)
+
+            // Then
+            self.verifyItCreatesARequest(in: self.groupConversation)
+        }
     }
     
     func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
-        // Given
-        let message = insertMessage(with: .uploaded)
-        selfClient.missesClient(otherClient)
-        
-        // When
-        process(message)
-        
-        // Then
-        let dependency = sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
-        XCTAssertEqual(dependency as? UserClient, selfClient)
+        var message: ZMClientMessage!
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            message = self.insertMessage(with: .uploaded)
+            self.selfClient.missesClient(self.otherClient)
+
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            // Then
+            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            XCTAssertEqual(dependency as? UserClient, self.selfClient)
+        }
     }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
-        // Given
-        let message = insertMessage(with: .uploaded)
-        process(message)
+        var message: ZMClientMessage!
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            message = self.insertMessage(with: .uploaded)
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            // Then
+            guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
 
-        // Then
-        guard let request = verifyItCreatesARequest(in: groupConversation) else { return }
-
-        // When
-        let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
-        request.complete(with: response)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-
-        // Then
-        XCTAssertEqual(message.linkPreviewState, .done)
-        XCTAssertNil(sut.nextRequest())
+            // When
+            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+            request.complete(with: response)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            // Then
+            XCTAssertEqual(message.linkPreviewState, .done)
+            XCTAssertNil(self.sut.nextRequest())
+        }
     }
 
     // MARK: - Helper
@@ -127,14 +148,18 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     }
 
     func verifyThatItDoesNotCreateARequest(for state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) {
-        // Given
-        let message = insertMessage(with: state)
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            let message = self.insertMessage(with: state)
 
-        // When
-        process(message)
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
 
-        // Then
-        XCTAssertNil(sut.nextRequest())
+            // Then
+            XCTAssertNil(self.sut.nextRequest())
+        }
     }
 
     @discardableResult
@@ -146,11 +171,9 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
         return request
     }
 
-    func process(_ message: ZMClientMessage, file: StaticString = #file, line: UInt = #line) {
+    func process(_ message: ZMClientMessage) {
         sut.contextChangeTrackers.forEach {
             $0.objectsDidChange([message])
         }
-
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
     }
 }
