@@ -48,6 +48,7 @@ extension UIAlertController {
         
         controller.addTextField { textField in
             textField.text = prefilledCode
+            textField.accessibilityIdentifier = "textfield.sso.code"
             textField.placeholder = "login.sso.alert.text_field.placeholder".localized
             token = NotificationCenter.default.addObserver(forName: .UITextFieldTextDidChange, object: textField, queue: .main) { _ in
                 loginAction.isEnabled = textField.text.map(validator) ?? false
