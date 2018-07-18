@@ -167,6 +167,13 @@ extension ZMGenericMessage {
                 zmLog.error("sender of deleted ephemeral message \(self.deleted.messageId) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 return Set(arrayLiteral: selfUser)
             }
+            
+            // if self deletes their own message, we want to send delete msg
+            // for everyone, so return nil.
+            guard !sender.isSelfUser else { return nil }
+            
+            // otherwise we delete only for self and the sender, all other
+            // recipients are unaffected.
             return Set(arrayLiteral: sender, selfUser)
         }
 
