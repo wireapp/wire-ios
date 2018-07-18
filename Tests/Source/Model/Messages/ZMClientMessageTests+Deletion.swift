@@ -494,6 +494,54 @@ extension ZMClientMessageTests_Deletion {
         // teardown
         uiMOC.zm_teardownMessageDeletionTimer()
     }
+    
+    func testThatIfSenderDeletesGroupEphemeralThenAllUsersAreRecipientsOfDeleteMessage() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // given
+            self.syncConversation.conversationType = .group
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1000))
+            
+            // self sends ephemeral
+            let sut = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            sut.sender = self.syncSelfUser
+            XCTAssertTrue(sut.startDestructionIfNeeded())
+            XCTAssertNotNil(sut.destructionDate)
+            
+            // when self deletes the ephemeral
+            let deletedMessage = ZMGenericMessage(deleteMessage: sut.nonce!, nonce: UUID())
+            let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users
+            
+            // then all users receive delete message
+            XCTAssertEqual(4, recipients.count)
+            XCTAssertTrue(recipients.contains(self.syncSelfUser))
+            XCTAssertTrue(recipients.contains(self.syncUser1))
+            XCTAssertTrue(recipients.contains(self.syncUser2))
+            XCTAssertTrue(recipients.contains(self.syncUser3))
+        }
+        
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+    
+    func testThatIfUserDeletesGroupEphemeralThenSelfAndSenderAreRecipientsOfDeleteMessage() {
+        // given
+        conversation.conversationType = .group
+        conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1000))
+        
+        // ephemeral received
+        let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        sut.sender = user1
+        XCTAssertTrue(sut.startDestructionIfNeeded())
+        XCTAssertNotNil(sut.destructionDate)
+        
+        // when self deletes the ephemeral
+        let deletedMessage = ZMGenericMessage(deleteMessage: sut.nonce!, nonce: UUID())
+        let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users
+        
+        // then only sender & self recieve the delete message
+        XCTAssertEqual(2, recipients.count)
+        XCTAssertTrue(recipients.contains(selfUser))
+        XCTAssertTrue(recipients.contains(user1))
+    }
 }
 
 // MARK: - Helper
