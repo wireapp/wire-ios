@@ -48,8 +48,8 @@ public final class ClientMessageRequestFactory: NSObject {
         return request
     }
     
-    public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID, isEncrypted: Bool) -> ZMTransportRequest {
-        let path = "/" + ["conversations", conversationId.transportString(), isEncrypted ? "otr" : "", "assets", assetId].joined(separator: "/")
+    public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID) -> ZMTransportRequest {
+        let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId].joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path)
         request.forceToBackgroundSession()
         return request
