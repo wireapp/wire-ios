@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-system" ~> 22.0
+github "wireapp/wire-ios-system" "feature/xcode9_4"
