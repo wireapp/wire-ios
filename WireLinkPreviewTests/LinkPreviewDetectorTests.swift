@@ -61,6 +61,20 @@ class LinkPreviewDetectorTests: XCTestCase, LinkPreviewDetectorDelegate {
         XCTAssertEqual(linkWithOffset?.range.location, 35)
     }
     
+    func testThatItReturnsTheDetectedLinkAndOffsetInATextContainingWideEmojis() {
+        // given
+        let text = "This is a sample 👩🏻‍🚀👨‍👩‍👧‍👧😣 containig a link: www.example.com"
+        
+        // when
+        let links = sut.containedLinks(inText: text)
+        
+        // then
+        XCTAssertEqual(links.count, 1)
+        let linkWithOffset = links.first
+        XCTAssertEqual(linkWithOffset?.URL, URL(string: "http://www.example.com")!)
+        XCTAssertEqual(linkWithOffset?.range.location, 35 + ("👩🏻‍🚀👨‍👩‍👧‍👧😣 " as NSString).length)
+    }
+    
     func testThatItReturnsTheURLsAndOffsetsOfMultipleLinksInAText() {
         // given
         let text = "First: www.example.com/first and second: www.example.com/second"
