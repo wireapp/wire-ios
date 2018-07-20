@@ -22,9 +22,6 @@
 #import "ZMBaseManagedObjectTest.h"
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
-#import "ZMConversationMessageWindow.h"
-#import "ZMConversationMessageWindow+Internal.h"
-
 
 
 @interface ZMConversationMessageWindowTests : ZMBaseManagedObjectTest

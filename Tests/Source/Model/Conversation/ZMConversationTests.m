@@ -24,7 +24,6 @@
 #import "ZMConversation+Internal.h"
 #import "ZMMessage+Internal.h"
 #import "ZMConversationList+Internal.h"
-#import "ZMConversationMessageWindow.h"
 #import "ZMConnection+Internal.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversationList+Internal.h"

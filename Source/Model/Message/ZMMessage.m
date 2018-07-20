@@ -1035,7 +1035,7 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
 - (void)obfuscate;
 {
     ZMLogDebug(@"obfuscating message %@", self.nonce.transportString);
-    self.isObfuscated = true;
+    self.isObfuscated = YES;
     self.destructionDate = nil;
 }
 

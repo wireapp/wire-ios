@@ -43,9 +43,6 @@
 #import <WireDataModel/ZMConversation+Transport.h>
 #import <WireDataModel/ZMConversationSecurityLevel.h>
 
-#import <WireDataModel/ZMConversationMessageWindow.h>
-#import <WireDataModel/ZMConversationMessageWindow+Internal.h>
-
 #import <WireDataModel/ZMConnection+Internal.h>
 
 #import <WireDataModel/ZMConversationList.h>
