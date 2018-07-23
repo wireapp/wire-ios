@@ -81,6 +81,34 @@ private let zmLog = ZMSLog(tag: "UserClient")
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
 
+    private enum Keys {
+        static let PushToken = "pushToken"
+    }
+
+    @NSManaged private var primitivePushToken: Data?
+    public var pushToken: PushToken? {
+        set {
+            precondition(managedObjectContext!.zm_isSyncContext, "Push token should be set only on sync context")
+            if newValue != pushToken {
+                self.willChangeValue(forKey: Keys.PushToken)
+                primitivePushToken = try? JSONEncoder().encode(newValue)
+                self.didChangeValue(forKey: Keys.PushToken)
+                setLocallyModifiedKeys([Keys.PushToken])
+            }
+        }
+        get {
+            self.willAccessValue(forKey: Keys.PushToken)
+            let token: PushToken?
+            if let data = primitivePushToken {
+                token = try? JSONDecoder().decode(PushToken.self, from:data)
+            } else {
+                token = nil
+            }
+            self.didAccessValue(forKey: Keys.PushToken)
+            return token
+        }
+    }
+
     /// Clients that are trusted by self client.
     @NSManaged public var trustedClients: Set<UserClient>
     
@@ -125,7 +153,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
     }
 
     public override func keysTrackedForLocalModifications() -> Set<String> {
-        return [ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey]
+        return [ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey, Keys.PushToken]
     }
     
     public override static func sortKey() -> String {

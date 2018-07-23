@@ -225,6 +225,7 @@
         <attribute name="needsToUploadSignalingKeys" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="numberOfKeysRemaining" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="preKeysRangeMax" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pushToken" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" defaultValueString="permanent" syncable="YES"/>
         <relationship name="addedOrRemovedInSystemMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="clients" inverseEntity="SystemMessage" syncable="YES"/>
@@ -255,6 +256,6 @@
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
         <element name="TextMessage" positionX="-153" positionY="-117" width="128" height="60"/>
         <element name="User" positionX="-434" positionY="-72" width="128" height="645"/>
-        <element name="UserClient" positionX="9" positionY="153" width="128" height="450"/>
+        <element name="UserClient" positionX="9" positionY="153" width="128" height="465"/>
     </elements>
 </model>
