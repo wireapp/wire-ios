@@ -81,6 +81,8 @@ NSString * const ZMMessageDurationKey = @"duration";
 NSString * const ZMMessageChildMessagesKey = @"childMessages";
 NSString * const ZMMessageParentMessageKey = @"parentMessage";
 NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
+NSString * const ZMSystemMessageAllTeamUsersAddedKey = @"allTeamUsersAdded";
+NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
 
 
 @interface ZMMessage ()
@@ -685,6 +687,8 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
                              ZMMessageChildMessagesKey,
                              ZMMessageParentMessageKey,
                              ZMSystemMessageMessageTimerKey,
+                             ZMSystemMessageAllTeamUsersAddedKey,
+                             ZMSystemMessageNumberOfGuestsAddedKey,
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -855,6 +859,10 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
     
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
+    
+    [message updateNewConversationSystemMessageIfNeededWithUsers:usersSet
+                                                         context:moc
+                                                    conversation:conversation];
     
     if (type == ZMSystemMessageTypeParticipantsAdded || type == ZMSystemMessageTypeParticipantsRemoved) {
         [conversation insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:message];
