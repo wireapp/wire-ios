@@ -88,6 +88,8 @@
 		54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C581BC81976005F0FBB /* android_image.encrypted */; };
 		54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */ = {isa = PBXBuildFile; fileRef = 54D06C5A1BC81983005F0FBB /* android_image.decrypted */; };
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
+		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
+		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
 		870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */; };
 		871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */; };
 		872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */; };
@@ -313,6 +315,8 @@
 		54D06C581BC81976005F0FBB /* android_image.encrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.encrypted; sourceTree = "<group>"; };
 		54D06C5A1BC81983005F0FBB /* android_image.decrypted */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = android_image.decrypted; sourceTree = "<group>"; };
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
+		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
+		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
 		870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+ZMSCrypto.swift"; sourceTree = "<group>"; };
 		871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedNSObjectTests.swift; path = Source/UnownedNSObjectTests.swift; sourceTree = "<group>"; };
 		8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLengthValidator.swift; sourceTree = "<group>"; };
@@ -653,6 +657,7 @@
 				163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */,
 				16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */,
 				8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */,
+				5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -728,6 +733,7 @@
 				EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */,
 				54181A511F594E6F00155ABC /* FileManager+MoveTests.swift */,
 				54181A571F59516600155ABC /* FileManager+ProtectionTests.swift */,
+				5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -961,6 +967,7 @@
 				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
 				EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */,
+				5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */,
 				F9C9A7AC1CAEACB10039E10C /* ZMEmailAddressValidator.m in Sources */,
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
 				091799531B7DFA1500E60DD9 /* ZMMobileProvisionParser.m in Sources */,
@@ -1039,6 +1046,7 @@
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
 				F9D381AA1B70B91F00E6E4EB /* NSURL+QueryComponentsTest.m in Sources */,
 				F9FCE0A51C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m in Sources */,
+				5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */,
 				F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */,
 				091799761B7E2E4D00E60DD9 /* ZMMobileProvisionParserTests.m in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
