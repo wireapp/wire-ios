@@ -32,7 +32,7 @@ public final class ZMConversationMessageWindow: NSObject {
         return mutableMessages.reversed
     }
 
-    init(conversation: ZMConversation, size: UInt) {
+    @objc public init(conversation: ZMConversation, size: UInt) {
         self.conversation = conversation
         self.size = size
         mutableMessages = NSMutableOrderedSet()
