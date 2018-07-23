@@ -83,7 +83,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
     }
     
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set(arrayLiteral: ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey)
+        let expectedKeys = Set(arrayLiteral: ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey, "pushToken")
         let client = UserClient.insertNewObject(in: self.uiMOC)
 
         XCTAssertEqual(client.keysTrackedForLocalModifications() , expectedKeys)
@@ -789,6 +789,49 @@ extension UserClientTests {
             
             XCTAssertEqual(client1, client2)
         }
+    }
+}
+
+extension UserClientTests {
+    func testThatClientHasNoPushTokenWhenCreated() {
+        // given
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+
+        // then
+        XCTAssertNil(client.pushToken)
+    }
+
+    func testThatWeCanAccessPushTokenAfterCreation() {
+        syncMOC.performGroupedAndWait { _ in
+            // given
+            let client = UserClient.insertNewObject(in: self.syncMOC)
+            let token = PushToken(deviceToken: Data(), appIdentifier: "one", transportType: "two", isRegistered: false)
+
+            // when
+            client.pushToken = token
+
+            // then
+            XCTAssertEqual(client.pushToken, token)
+        }
+    }
+
+    func testThatWeCanAccessPushTokenFromAnotherContext() throws {
+        // given
+        let client = UserClient.insertNewObject(in: self.uiMOC)
+        let token = PushToken(deviceToken: Data(), appIdentifier: "one", transportType: "two", isRegistered: false)
+        self.uiMOC.saveOrRollback()
+
+        self.syncMOC.performGroupedBlockAndWait {
+            let syncClient = try? self.syncMOC.existingObject(with: client.objectID) as! UserClient
+
+            // when
+            syncClient?.pushToken = token
+            self.syncMOC.saveOrRollback()
+        }
+
+        // then
+        self.uiMOC.refreshAllObjects()
+        XCTAssertEqual(client.pushToken, token)
     }
 }
 
