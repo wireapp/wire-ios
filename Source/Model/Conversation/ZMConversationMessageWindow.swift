@@ -19,9 +19,10 @@
 import Foundation
 
 public final class ZMConversationMessageWindow: NSObject {
-    private(set) var size: UInt
-    let mutableMessages: NSMutableOrderedSet
+    @objc public private(set) var size: UInt
     @objc public let conversation: ZMConversation
+
+    let mutableMessages: NSMutableOrderedSet
 
     var activeSize: UInt {
         return min(size, UInt(conversation.messages.count))
