@@ -346,7 +346,6 @@ public class SharingSession {
         transportSession.reachability.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
-        StorageStack.reset()
     }
     
     private func setupCaches(at cachesDirectory: URL) {
