@@ -10,7 +10,7 @@ You can find the published source code at [github.com/wireapp/wire](https://gith
 
 For licensing information, see the attached LICENSE file and the list of third-party licenses at [wire.com/legal/licenses/](https://wire.com/legal/licenses/).
 
-#wire-ios-ziphy
+# wire-ios-ziphy
 
 This framework is part of the [Wire iOS client](http://github.com/wireapp/wire-ios).
 
