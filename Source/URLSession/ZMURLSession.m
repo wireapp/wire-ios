@@ -433,6 +433,15 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
     [request updateProgress:progress];
 }
 
+- (void)URLSession:(NSURLSession *)session task:(NSURLSessionTask *)task didFinishCollectingMetrics:(NSURLSessionTaskMetrics *)metrics
+{
+    NOT_USED(session);
+    NOT_USED(task);
+    if (nil != metrics.transactionMetrics.firstObject) {
+        ZMLogInfo(@"Reused connection: %d", metrics.transactionMetrics.firstObject.reusedConnection);
+    }
+}
+
 - (BOOL)completeRestartedRequestIfNeeded:(ZMTransportRequest *)request
                                 progress:(float)progress
                               totalBytes:(int64_t)totalBytes
