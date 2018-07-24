@@ -235,15 +235,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         for i in 0 ..< count {
             let id = String(i)
             let url = URL(string: "http://localhost/media/image\(id).gif")!
-
-            let imagesList: [ZiphyImageType: ZiphyAnimatedImage] = [
-                .preview: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 51200),
-                .fixedWidthDownsampled: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 204800),
-                .original: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 2048000),
-                .downsized: ZiphyAnimatedImage(url: url, width: 300, height: 200, fileSize: 5000000),
-            ]
-
-            let ziph = Ziph(identifier: id, images: ZiphyAnimatedImageList(images: imagesList), title: id)
+            let ziph = ZiphHelper.createZiph(id: id, url: url)
             ziphs.append(ziph)
         }
 
