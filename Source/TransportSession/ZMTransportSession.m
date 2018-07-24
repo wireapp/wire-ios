@@ -119,7 +119,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     // RFC 2616 recommends no more than 2 connections per host when using pipelining.
     // https://tools.ietf.org/html/rfc2616
     configuration.HTTPShouldUsePipelining = YES;
-    configuration.HTTPMaximumConnectionsPerHost = 2;
+    configuration.HTTPMaximumConnectionsPerHost = 1;
     
     configuration.TLSMinimumSupportedProtocol = kTLSProtocol12;
     
@@ -133,7 +133,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     // If not data is transmitted for this amount of time for a request, it will time out.
     // <https://wearezeta.atlassian.net/browse/MEC-622>.
     // Note that it is ok for the request to take longer, we just require there to be _some_ data to be transmitted within this time window.
-    configuration.timeoutIntervalForRequest = 15;
+    configuration.timeoutIntervalForRequest = 60;
     
     // This is a conservative (!) upper bound for a requested resource:
     configuration.timeoutIntervalForResource = 12 * 60;
@@ -158,7 +158,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 + (NSURLSessionConfiguration *)voipSessionConfiguration
 {
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
-    configuration.timeoutIntervalForRequest = 15; 
+    configuration.timeoutIntervalForRequest = 60; 
     configuration.timeoutIntervalForResource = 12 * 60;
     configuration.networkServiceType = NSURLNetworkServiceTypeVoIP;
     [self setUpConfiguration:configuration];
