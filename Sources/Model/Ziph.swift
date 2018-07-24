@@ -28,6 +28,22 @@ public struct Ziph: Codable {
     public let images: ZiphyAnimatedImageList
     public let title: String?
 
+    // Some ziph do not have preview-gif KVP, use original instead
+    public var previewImage: ZiphyAnimatedImage? {
+        if let image = images[.preview] {
+            return image
+        }
+
+        for imageType in ZiphyImageType.previewFallbackList {
+            if let image = images[imageType] {
+                return image
+            }
+        }
+
+        return nil
+    }
+
+
     public var description: String {
         return "identifier: \(self.identifier)\n" +
         "title: \(self.title ?? "nil")\n" +

@@ -38,3 +38,9 @@ public enum ZiphyImageType: String, CodingKey {
     case preview = "preview_gif"
 
 }
+
+extension ZiphyImageType {
+    static var previewFallbackList: [ZiphyImageType] {
+        return [.fixedWidthDownsampled, .fixedWidth, .downsized, .original]
+    }
+}
