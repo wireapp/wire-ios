@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17C205" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.48.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14135" systemVersion="17C205" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.50.0">
     <entity name="AddressBookEntry" representedClassName=".AddressBookEntry" syncable="YES">
         <attribute name="cachedName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="localIdentifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -137,9 +137,12 @@
         <relationship name="selfUser" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
     </entity>
     <entity name="SystemMessage" representedClassName="ZMSystemMessage" parentEntity="Message" syncable="YES">
+        <attribute name="allTeamUsersAdded" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="duration" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="messageTimer" optional="YES" attributeType="Double" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsUpdatingUsers" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="numberOfGuestsAdded" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="relevantForConversationStatus" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="systemMessageType" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="text" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="addedUsers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="showingUserAdded" inverseEntity="User" syncable="YES"/>
@@ -223,6 +226,7 @@
         <attribute name="needsToUploadSignalingKeys" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="numberOfKeysRemaining" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="preKeysRangeMax" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="pushToken" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="remoteIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="type" attributeType="String" defaultValueString="permanent" syncable="YES"/>
         <relationship name="addedOrRemovedInSystemMessages" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SystemMessage" inverseName="clients" inverseEntity="SystemMessage" syncable="YES"/>
@@ -249,10 +253,10 @@
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="90"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="105"/>
         <element name="Session" positionX="9" positionY="153" width="128" height="60"/>
-        <element name="SystemMessage" positionX="0" positionY="0" width="128" height="210"/>
+        <element name="SystemMessage" positionX="0" positionY="0" width="128" height="255"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
         <element name="TextMessage" positionX="-153" positionY="-117" width="128" height="60"/>
         <element name="User" positionX="-434" positionY="-72" width="128" height="645"/>
-        <element name="UserClient" positionX="9" positionY="153" width="128" height="450"/>
+        <element name="UserClient" positionX="9" positionY="153" width="128" height="465"/>
     </elements>
 </model>

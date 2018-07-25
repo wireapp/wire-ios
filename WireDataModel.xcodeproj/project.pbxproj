@@ -105,6 +105,7 @@
 		5E771F382080BB0000575629 /* PBMessage+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E771F372080BB0000575629 /* PBMessage+Validation.swift */; };
 		5E771F3B2080C42300575629 /* PBMessageValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E771F392080C40B00575629 /* PBMessageValidationTests.swift */; };
 		5EDDC7A62088CE3B00B24850 /* ZMConversation+Invalid.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDDC7A52088CE3B00B24850 /* ZMConversation+Invalid.swift */; };
+		7C0E50D221074637000D8A75 /* store2-49-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 7C0E50D121074632000D8A75 /* store2-49-0.wiredatabase */; };
 		7C7AF812201892FA00D0A3BE /* UTType+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C7AF811201892FA00D0A3BE /* UTType+MIMEType.swift */; };
 		7CBC3FC120177C3C008D06E4 /* RasterImages+Protobuf.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CBC3FC020177C3C008D06E4 /* RasterImages+Protobuf.swift */; };
 		871DD79F2084A316006B1C56 /* BatchDeleteTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871DD79E2084A316006B1C56 /* BatchDeleteTests.swift */; };
@@ -593,6 +594,8 @@
 		5E771F372080BB0000575629 /* PBMessage+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PBMessage+Validation.swift"; sourceTree = "<group>"; };
 		5E771F392080C40B00575629 /* PBMessageValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBMessageValidationTests.swift; sourceTree = "<group>"; };
 		5EDDC7A52088CE3B00B24850 /* ZMConversation+Invalid.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Invalid.swift"; sourceTree = "<group>"; };
+		7C0E50D121074632000D8A75 /* store2-49-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-49-0.wiredatabase"; sourceTree = "<group>"; };
+		7C2E467721072A31007E2566 /* zmessaging2.50.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.50.0.xcdatamodel; sourceTree = "<group>"; };
 		7C7AF811201892FA00D0A3BE /* UTType+MIMEType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UTType+MIMEType.swift"; sourceTree = "<group>"; };
 		7CBC3FC020177C3C008D06E4 /* RasterImages+Protobuf.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RasterImages+Protobuf.swift"; sourceTree = "<group>"; };
 		8702B0EA20527F47006B60B9 /* zmessaging2.44.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.44.0.xcdatamodel; sourceTree = "<group>"; };
@@ -1978,6 +1981,7 @@
 		F9C9A83D1CAEDBC40039E10C /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				7C0E50D121074632000D8A75 /* store2-49-0.wiredatabase */,
 				87FFC71920DBF2820005076E /* store2-47-0.wiredatabase */,
 				87C1C266207F92190083BF6B /* store2-46-0.wiredatabase */,
 				87C1C262207F88530083BF6B /* store2-45-0.wiredatabase */,
@@ -2223,6 +2227,7 @@
 				876344472052B1E400458C7F /* store2-43-0.wiredatabase in Resources */,
 				873B88FA2040431200FBE254 /* store2-42-0.wiredatabase in Resources */,
 				54829DAF1DE6F7BA009100D3 /* store1-27.wiredatabase in Resources */,
+				7C0E50D221074637000D8A75 /* store2-49-0.wiredatabase in Resources */,
 				87C1C264207F889D0083BF6B /* store2-45-0.wiredatabase in Resources */,
 				54829DB41DE6F7BA009100D3 /* store2-6.wiredatabase in Resources */,
 				F9A706FE1CAEE32A00C2F5FE /* not_animated.gif in Resources */,
@@ -2791,6 +2796,7 @@
 		F189988C1E7BE03800E579A2 /* zmessaging.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
+				7C2E467721072A31007E2566 /* zmessaging2.50.0.xcdatamodel */,
 				BF5DF5CB20F4E8DD002BCB67 /* zmessaging2.49.0.xcdatamodel */,
 				87140ACC20D7DD700036B7CB /* zmessaging2.48.0.xcdatamodel */,
 				87C1C265207F8FE40083BF6B /* zmessaging2.47.0.xcdatamodel */,
@@ -2830,7 +2836,7 @@
 				F18998A41E7BE03800E579A2 /* zmessaging2.8.xcdatamodel */,
 				F18998A51E7BE03800E579A2 /* zmessaging2.9.xcdatamodel */,
 			);
-			currentVersion = BF5DF5CB20F4E8DD002BCB67 /* zmessaging2.49.0.xcdatamodel */;
+			currentVersion = 7C2E467721072A31007E2566 /* zmessaging2.50.0.xcdatamodel */;
 			path = zmessaging.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;
