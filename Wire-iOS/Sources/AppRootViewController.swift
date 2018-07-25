@@ -614,6 +614,10 @@ extension AppRootViewController: SessionManagerURLHandlerDelegate {
             self.present(alert, animated: true, completion: nil)
 
         case .companyLoginFailure(let label):
+            defer {
+                notifyCompanyLoginCompletion()
+            }
+            
             guard case .unauthenticated = appStateController.appState else {
                 callback(false)
                 return
@@ -629,12 +633,24 @@ extension AppRootViewController: SessionManagerURLHandlerDelegate {
             self.present(alert, animated: true, completion: nil)
 
         case .companyLoginSuccess:
+            defer {
+                notifyCompanyLoginCompletion()
+            }
+
             guard case .unauthenticated = appStateController.appState else {
                 callback(false)
                 return
             }
-            
+
             callback(true)
         }
     }
+
+    private func notifyCompanyLoginCompletion() {
+        NotificationCenter.default.post(name: .companyLoginDidFinish, object: self)
+    }
+}
+
+extension Notification.Name {
+    static let companyLoginDidFinish = Notification.Name("Wire.CompanyLoginDidFinish")
 }
