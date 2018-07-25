@@ -844,6 +844,9 @@ extension SessionManager: ZMConversationListObserver {
     
     @objc fileprivate func applicationWillEnterForeground(_ note: Notification) {
         updateAllUnreadCounts()
+        
+        // Delete expired url scheme verification tokens
+        CompanyLoginVerificationToken.flushIfNeeded()
     }
     
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
