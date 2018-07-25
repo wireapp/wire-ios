@@ -30,6 +30,7 @@
 		09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */; };
 		09A218021B78DFAF0076547A /* ZMTSwiftHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A217F31B78DFAF0076547A /* ZMTSwiftHelpers.swift */; };
 		09A218041B78E01A0076547A /* FakeGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09A218031B78E01A0076547A /* FakeGroupContext.swift */; };
+		16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */; };
 		5454E1441B73A01800F131F8 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD7BB1B68D41D00E007A8 /* WireTesting.framework */; };
 		5454E1451B73A02200F131F8 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 096AD7ED1B68D8F900E007A8 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5454E14A1B73A09100F131F8 /* ZMTExpectationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */; };
@@ -108,6 +109,7 @@
 		09A218031B78E01A0076547A /* FakeGroupContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FakeGroupContext.swift; sourceTree = "<group>"; };
 		09F1863A1B6903A4007A3DA6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTesting.xcconfig; sourceTree = "<group>"; };
+		16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+Helpers.swift"; sourceTree = "<group>"; };
 		5442DE6B1E92767E00D2F33D /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		5454E1471B73A09100F131F8 /* WireTesting-iosTests-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "WireTesting-iosTests-Bridging-Header.h"; sourceTree = "<group>"; };
 		5454E1491B73A09100F131F8 /* ZMTExpectationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTExpectationTests.swift; sourceTree = "<group>"; };
@@ -262,6 +264,7 @@
 				09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */,
 				098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */,
 				098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */,
+				16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */,
 				09A217F11B78DFAF0076547A /* ZMTFailureRecorder.h */,
 				09A217F21B78DFAF0076547A /* ZMTFailureRecorder.m */,
 				091799561B7DFBD100E60DD9 /* NSUUID+WireTesting.h */,
@@ -456,6 +459,7 @@
 				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
+				16E2561F21089DAE00919DB0 /* XCTestCase+Helpers.swift in Sources */,
 				098CFBC11B7BA68C000B02B1 /* NSObject+WireTesting.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
