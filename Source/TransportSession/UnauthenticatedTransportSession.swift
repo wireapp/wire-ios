@@ -28,13 +28,18 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 }
 
 
-public struct UserInfo {
+@objcMembers public class UserInfo: NSObject {
     public let identifier: UUID
     public let cookieData: Data
     
     public init(identifier: UUID, cookieData: Data) {
         self.identifier = identifier
         self.cookieData = cookieData
+    }
+    
+    public override func isEqual(_ object: Any?) -> Bool {
+        guard let other = object as? UserInfo else { return false }
+        return other.cookieData == cookieData && other.identifier == identifier
     }
 }
 
@@ -192,7 +197,7 @@ private enum UserKey: String {
 }
 
 
-public extension ZMTransportResponse {
+@objc public extension ZMTransportResponse {
 
     /// Extracts the wire cookie data from the response.
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
