@@ -52,7 +52,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             "securityLevelChanged",
             "createdRemotelyChanged",
             "allowGuestsChanged",
-            "destructionTimeoutChanged"
+            "destructionTimeoutChanged",
+            "languageChanged"
         ]
     }
     
@@ -472,21 +473,38 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                      expectedChangedKeys: [#keyPath(ZMConversation.syncedMessageDestructionTimeout)])
     }
     
-    func testThatLocalDestructionTimeoutChangeIsTriggeringObservation()
-    {
-        // given
+    func createGroupConversation() -> ZMConversation{
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
+
+        return conversation
+    }
+
+    func testThatLocalDestructionTimeoutChangeIsTriggeringObservation()
+    {
+        // given
+        let conversation = createGroupConversation()
+
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in conversation.localMessageDestructionTimeout = 1000 },
                                                      expectedChangedField: "destructionTimeoutChanged",
                                                      expectedChangedKeys: [#keyPath(ZMConversation.localMessageDestructionTimeout)])
     }
-    
+
+    func testThatLanguageChangeIsTriggeringObservation() {
+        // given
+        let conversation = createGroupConversation()
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                     modifier: { conversation, _ in conversation.language = "de-DE" },
+                                                     expectedChangedField: "languageChanged",
+                                                     expectedChangedKeys: [#keyPath(ZMConversation.language)])
+    }
+
     func testThatAccessRoleChangeIsTriggeringObservation()
     {
         // given
