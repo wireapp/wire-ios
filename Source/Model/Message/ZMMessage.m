@@ -819,6 +819,19 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
 @dynamic messageTimer;
 @dynamic relevantForConversationStatus;
 
+- (instancetype)initWithNonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)managedObjectContext
+{
+    NSEntityDescription *entity = [NSEntityDescription entityForName:[self.class entityName] inManagedObjectContext:managedObjectContext];
+    self = [super initWithEntity:entity insertIntoManagedObjectContext:managedObjectContext];
+    
+    if (self != nil) {
+        self.nonce = nonce;
+        self.relevantForConversationStatus = YES; //default value
+    }
+    
+    return self;
+}
+
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
                                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult

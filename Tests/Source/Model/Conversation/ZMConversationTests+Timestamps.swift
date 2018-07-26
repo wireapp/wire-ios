@@ -286,4 +286,37 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         XCTAssertNil(conversation.firstUnreadMessage)
     }
     
+    // MARK: - Relevant Messages
+    
+    func testThatNotRelevantMessagesDoesntCountTowardsUnreadMessagesAmount() {
+        
+        syncMOC.performGroupedBlockAndWait {
+
+            // given
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            
+            let systemMessage1 = ZMSystemMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            systemMessage1.systemMessageType = .missedCall
+            systemMessage1.visibleInConversation = conversation
+            
+            let systemMessage2 = ZMSystemMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            systemMessage2.systemMessageType = .missedCall
+            systemMessage2.visibleInConversation = conversation
+            systemMessage2.relevantForConversationStatus = false
+            
+            let textMessage = ZMTextMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            textMessage.text = "Test"
+            textMessage.visibleInConversation = conversation
+            
+            // when
+            conversation.updateTimestampsAfterInsertingMessage(textMessage)
+            
+            // then
+            XCTAssertEqual(conversation.unreadMessages.count, 2)
+            XCTAssertTrue(conversation.unreadMessages.contains  { $0.nonce == systemMessage1.nonce} )
+            XCTAssertFalse(conversation.unreadMessages.contains { $0.nonce == systemMessage2.nonce} )
+            XCTAssertTrue(conversation.unreadMessages.contains  { $0.nonce == textMessage.nonce}    )
+        }
+    }
+    
 }

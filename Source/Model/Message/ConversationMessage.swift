@@ -123,6 +123,12 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var canBeMarkedUnread: Bool { get }
 }
 
+public extension ZMConversationMessage {
+    var messageIsRelevantForConversationStatus: Bool {
+        return (self as? ZMSystemMessage)?.relevantForConversationStatus ?? true
+    }
+}
+
 // MARK:- Conversation managed properties
 extension ZMMessage {
     

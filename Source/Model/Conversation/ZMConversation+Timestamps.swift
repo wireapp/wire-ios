@@ -315,7 +315,7 @@ extension ZMConversation {
                                              ZMMessageServerTimestampKey, lastReadServerTimestamp as NSDate)
         fetchRequest.sortDescriptors = ZMMessage.defaultSortDescriptors()
         
-        return managedObjectContext.fetchOrAssert(request: fetchRequest)
+        return managedObjectContext.fetchOrAssert(request: fetchRequest).filter(\.messageIsRelevantForConversationStatus)
     }
     
     fileprivate func lastUnreadMessage(olderOrEqualThan date: Date) -> ZMMessage? {
