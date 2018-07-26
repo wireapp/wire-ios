@@ -17,6 +17,7 @@
 //
 
 import XCTest
+@testable import WireDataModel
 
 class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
     func testThatItParsesTheBasicPayload() {
@@ -28,7 +29,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
                                       "id": uuid.transportString()]
         
         // when
-        let user = ZMSearchUser(payload: payload, userSession: self)!
+        let user = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
         
         // then
         XCTAssertEqual(user.name, "A user that was found")
@@ -51,7 +52,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
                                       "provider": provider.transportString()]
         
         // when
-        let user = ZMSearchUser(payload: payload, userSession: self)!
+        let user = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
         
         // then
         XCTAssertTrue(user.isServiceUser)
@@ -76,13 +77,14 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
                                                   "key": assetKey]]]
         
         // when
-        let _ = ZMSearchUser(payload: payload, userSession: self)!
+        let searchUser = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
         
         // then
-        let userAsset = ZMSearchUser.searchUserToMediumAssetIDCache().object(forKey: uuid as NSUUID) as! SearchUserAssetObjC
-        
-        XCTAssertNotNil(userAsset)
-        XCTAssertEqual(userAsset.assetKey, assetKey)
+        if case .asset(preview: let previewAssetKey, complete: _)? = searchUser.assetKeys {
+            XCTAssertEqual(previewAssetKey, assetKey)
+        } else {
+            XCTFail()
+        }
     }
     
     func testThatItParsesService_IgnoresOtherImageIdentifier() throws {
@@ -100,10 +102,65 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
                                                   "key": assetKey]]]
         
         // when
-        let _ = ZMSearchUser(payload: payload, userSession: self)!
+        let searchUser = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
         
         // then
-        XCTAssertNil(ZMSearchUser.searchUserToMediumAssetIDCache().object(forKey: uuid as NSUUID))
+        XCTAssertNil(searchUser.assetKeys)
+//        XCTAssertNil(ZMSearchUser.searchUserToMediumAssetIDCache().object(forKey: uuid as NSUUID))
+    }
+    
+    
+    func testThatCachedSearchUserIsReturnedFromPayloadConstructor() throws {
+        // given
+        let uuid = UUID()
+        let provider = UUID()
+        let assetKey = "1234567890-ASSET-KEY"
+        let payload: [String: Any] = ["name": "A user that was found",
+                                      "handle": "@user",
+                                      "accent_id": 5,
+                                      "id": uuid.transportString(),
+                                      "provider": provider.transportString(),
+                                      "assets": [["type": "image",
+                                                  "size": "preview",
+                                                  "key": assetKey]]]
+        
+        let searchUser1 = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
+        
+        // when
+        let searchUser2 = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
+        
+        // then
+        XCTAssertNotNil(searchUser2)
+        XCTAssertEqual(searchUser1, searchUser2)
+    }
+    
+    func testThatCachedSearchUserIsUpdatedWithLocalUser() throws {
+        // given
+        let uuid = UUID()
+        let provider = UUID()
+        let assetKey = "1234567890-ASSET-KEY"
+        let payload: [String: Any] = ["name": "A user that was found",
+                                      "handle": "@user",
+                                      "accent_id": 5,
+                                      "id": uuid.transportString(),
+                                      "provider": provider.transportString(),
+                                      "assets": [["type": "image",
+                                                  "size": "preview",
+                                                  "key": assetKey]]]
+        
+        let searchUser1 = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
+        XCTAssertNil(searchUser1.user)
+        
+        let localUser = ZMUser.insertNewObject(in: uiMOC)
+        localUser.remoteIdentifier = uuid
+        
+        // when
+        let searchUser2 = ZMSearchUser.searchUser(from: payload, contextProvider: self)
+        
+        // then
+        XCTAssertNotNil(searchUser2)
+        XCTAssertEqual(searchUser1, searchUser2)
+        XCTAssertEqual(searchUser2?.user, localUser)
     }
 }
 

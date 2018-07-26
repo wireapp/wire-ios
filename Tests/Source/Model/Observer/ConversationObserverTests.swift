@@ -789,7 +789,7 @@ extension ConversationObserverTests {
             self.startMeasuring()
             for _ in 1...count {
                 let temp = lastName
-                lastName = user.name
+                lastName = user.name!
                 user.name = temp
                 self.uiMOC.saveOrRollback()
             }

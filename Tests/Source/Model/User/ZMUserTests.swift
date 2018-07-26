@@ -272,7 +272,7 @@ extension ZMUserTests {
         let noteExpectation = expectation(description: "PreviewAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID? = nil
         
-        let token = ManagedObjectObserverToken(name: ZMUser.previewAssetFetchNotification,
+        let token = ManagedObjectObserverToken(name: .userDidRequestPreviewAsset,
                                                managedObjectContext: self.uiMOC)
         { note in
             let objectId = note.object as? NSManagedObjectID
@@ -281,11 +281,10 @@ extension ZMUserTests {
             noteExpectation.fulfill()
         }
 
-        syncMOC.performGroupedBlock {
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            userObjectId = user?.objectID
-            user?.requestPreviewAsset()
-        }
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID.create()
+        userObjectId = user.objectID
+        user.requestPreviewProfileImage()
         
         withExtendedLifetime(token) { () -> () in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -297,7 +296,7 @@ extension ZMUserTests {
         let noteExpectation = expectation(description: "CompleteAssetFetchNotification should be fired")
         var userObjectId: NSManagedObjectID? = nil
         
-        let token = ManagedObjectObserverToken(name: ZMUser.completeAssetFetchNotification,
+        let token = ManagedObjectObserverToken(name: .userDidRequestCompleteAsset,
                                                managedObjectContext: self.uiMOC)
         { note in
             let objectId = note.object as? NSManagedObjectID
@@ -306,11 +305,10 @@ extension ZMUserTests {
             noteExpectation.fulfill()
         }
         
-        syncMOC.performGroupedBlock {
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            userObjectId = user?.objectID
-            user?.requestCompleteAsset()
-        }
+        let user =  ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID.create()
+        userObjectId = user.objectID
+        user.requestCompleteProfileImage()
         
         withExtendedLifetime(token) { () -> () in
             XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

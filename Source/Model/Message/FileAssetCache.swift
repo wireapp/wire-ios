@@ -193,6 +193,10 @@ private struct FileCache : Cache {
         super.init()
     }
     
+    open func assetData(_ key: String) -> Data? {
+        return cache.assetData(key)
+    }
+    
     /// Returns the image asset data for a given message. This will probably cause I/O
     open func assetData(_ message : ZMConversationMessage, format: ZMImageFormat, encrypted: Bool) -> Data? {
         guard let key = type(of: self).cacheKeyForAsset(message, format: format, encrypted: encrypted) else { return nil }

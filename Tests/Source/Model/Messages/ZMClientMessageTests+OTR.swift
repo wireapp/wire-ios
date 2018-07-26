@@ -91,7 +91,7 @@ extension ClientMessageTests_OTR {
             otherUser.remoteIdentifier = UUID.create()
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients!
+            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
             let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
             let notSelfClients = selfClients.filter { $0 != selfClient }
 
@@ -139,7 +139,7 @@ extension ClientMessageTests_OTR {
             otherUser.remoteIdentifier = UUID.create()
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
             let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients!
+            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
             let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
             let notSelfClients = selfClients.filter { $0 != selfClient }
             

@@ -141,18 +141,14 @@ extension ZMMessage {
 
     
     fileprivate var imageCategory : MessageCategory {
-        guard let imageData = self.imageMessageData else {
+        guard let imageMessageData = self.imageMessageData else {
             return .none
         }
         var category = MessageCategory.image
-        if let asset = self as? ZMAssetClientMessage,
-            (asset.imageAssetStorage.originalImageData() == nil
-                && asset.imageAssetStorage.mediumGenericMessage == nil
-                && imageData.mediumData == nil)
-        {
+        if let asset = self as? ZMAssetClientMessage, (asset.imageAssetStorage.mediumGenericMessage == nil && imageMessageData.imageData == nil) {
             category.update(with: .excludedFromCollection)
         }
-        if imageData.isAnimatedGIF {
+        if imageMessageData.isAnimatedGIF {
             category.update(with: .GIF)
         }
         return category

@@ -25,6 +25,7 @@
 #import "ZMManagedObject+Internal.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"
+#import "WireDataModelTests-Swift.h"
 
 
 static NSString * const InvitationToConnectBaseURL = @"https://www.wire.com/c/";
@@ -577,6 +578,70 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     //then
     XCTAssertNil(extractedData);
+}
+
+- (void)testProfileImageCanBeFetchedAsynchrounouslyForSelfUser
+{
+    // given
+    NSData *imageData = [self verySmallJPEGData];
+    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.mediumRemoteIdentifier = [NSUUID createUUID];
+    user.imageMediumData = imageData;
+    user.smallProfileRemoteIdentifier = [NSUUID createUUID];
+    user.imageSmallProfileData = imageData;
+
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC saveOrRollback];
+    }];
+    
+    // expect
+    XCTestExpectation *previewDataArrived = [self expectationWithDescription:@"preview image data arrived"];
+    XCTestExpectation *completeDataArrived = [self expectationWithDescription:@"complete image data arrived"];
+    
+    // when
+    [user imageDataFor:ProfileImageSizePreview queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
+        XCTAssertEqual(imageDataResult, imageData);
+        [previewDataArrived fulfill];
+    }];
+    
+    [user imageDataFor:ProfileImageSizeComplete queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
+        XCTAssertEqual(imageDataResult, imageData);
+        [completeDataArrived fulfill];
+    }];
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testProfileImageCanBeFetchedAsynchrounouslyForOtherUsers
+{
+    // given
+    NSData *imageData = [self verySmallJPEGData];
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user.remoteIdentifier = [NSUUID createUUID];
+    user.mediumRemoteIdentifier = [NSUUID createUUID];
+    user.imageMediumData = imageData;
+    user.smallProfileRemoteIdentifier = [NSUUID createUUID];
+    user.imageSmallProfileData = imageData;
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC saveOrRollback];
+    }];
+    
+    // expect
+    XCTestExpectation *previewDataArrived = [self expectationWithDescription:@"preview image data arrived"];
+    XCTestExpectation *completeDataArrived = [self expectationWithDescription:@"complete image data arrived"];
+    
+    // when
+    [user imageDataFor:ProfileImageSizePreview queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
+        XCTAssertEqual(imageDataResult, imageData);
+        [previewDataArrived fulfill];
+    }];
+    
+    [user imageDataFor:ProfileImageSizeComplete queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
+        XCTAssertEqual(imageDataResult, imageData);
+        [completeDataArrived fulfill];
+    }];
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
 }
 
 - (void)testThatItHandlesRemovingPictures
@@ -1420,43 +1485,12 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.uiMOC saveOrRollback];
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
 }
-
-
-- (void)testThatItCallsTheCompletionHandlerAfterSendingAConnectionRequest
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-
-    // when
-    __block BOOL completionHandlerWasCalled = NO;
-    [user connectWithMessageText:@"" completionHandler:^{
-        completionHandlerWasCalled = YES;
-    }];
-    
-    XCTAssertTrue([self waitOnMainLoopUntilBlock:^BOOL{
-        return completionHandlerWasCalled == YES;
-    } timeout:0.5]);
-    
-    // then
-    XCTAssertTrue(completionHandlerWasCalled);
-}
-
-
-- (void)testThatItDoesNotTryToCallTheCompletionHandlerIfItIsNil
-{
-    // given
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // then
-    XCTAssertNoThrow([user connectWithMessageText:@"" completionHandler:nil]);
-}
-
 
 - (void)testThatConnectingToAUserThatHasNotAcceptedYetDoesNotCreateAnyChanges;
 {
@@ -1470,7 +1504,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self.uiMOC saveOrRollback];
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     
     // then
     XCTAssertFalse(self.uiMOC.hasChanges);
@@ -1491,7 +1525,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     NSString *originalText = [connection.message copy];
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     
     // then
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
@@ -1512,7 +1546,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     NSString *originalText = [connection.message copy];
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     
     // then
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
@@ -1537,7 +1571,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     NSString *originalText = [connection.message copy];
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     
     // then
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
@@ -1560,7 +1594,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [connection setValue:[NSSet set] forKey:@"modifiedKeys"]; // Simulate no local changes
     
     // when
-    [user connectWithMessageText:@"Foo, bar, baz!" completionHandler:nil];
+    [user connectWithMessage:@"Foo, bar, baz!"];
     [self.uiMOC saveOrRollback];
     
     // then
@@ -1579,10 +1613,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     
     // when
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Connection done"];
-    [user connectWithMessageText:@"Bla bla bla" completionHandler:^{
-        [expectation fulfill];
-    }];
+    [user connectWithMessage:@"Bla bla bla"];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -1602,10 +1633,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     ZMConversation *conversation = connection.conversation;
     
     // when
-    XCTestExpectation *expectation = [self expectationWithDescription:@"Connection done"];
-    [connection.to connectWithMessageText:@"Bla bla bla" completionHandler:^{
-        [expectation fulfill];
-    }];
+    [connection.to connectWithMessage:@"Bla bla bla"];
     [self.uiMOC saveOrRollback];
     WaitForAllGroupsToBeEmpty(0.5);
     

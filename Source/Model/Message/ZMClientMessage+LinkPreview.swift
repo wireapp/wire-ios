@@ -65,16 +65,23 @@ import WireLinkPreview
 
     public override func requestImageDownload() {
         guard !self.objectID.isTemporaryID,
-            self.linkPreview != nil,
-            let moc = self.managedObjectContext,
-            let linkPreview = self.firstZMLinkPreview else {
-                return
-        }
+              self.linkPreview != nil,
+              let moc = self.managedObjectContext,
+              let linkPreview = self.firstZMLinkPreview else { return }
         
-        guard linkPreview.article.image.uploaded.hasAssetId() || linkPreview.image.uploaded.hasAssetId(),
-            self.imageData == nil else { return }
+        guard linkPreview.article.image.uploaded.hasAssetId() || linkPreview.image.uploaded.hasAssetId(), !hasDownloadedImage() else { return }
         
         NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
+    }
+    
+    func fetchLinkPreviewImageData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
+        guard let cache = managedObjectContext?.zm_fileAssetCache else { return }
+        let originalKey =  FileAssetCache.cacheKeyForAsset(self, format: .original)
+        let mediumKey =  FileAssetCache.cacheKeyForAsset(self, format: .medium)
+        
+        queue.async {
+            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+        }
     }
     
 }
@@ -122,19 +129,19 @@ extension ZMClientMessage: ZMImageOwner {
         moc.enqueueDelayedSave()
     }
     
-    @objc public var imageData: Data? {
+    @objc public var linkPreviewImageData: Data? {
         return self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .original, encrypted: false)
             ?? self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .medium, encrypted: false)
     }
     
-    @objc public var hasImageData: Bool {
+    @objc public var linkPreviewHasImage: Bool {
         guard let linkPreview = self.firstZMLinkPreview else { return false }
         return linkPreview.article.hasImage() || linkPreview.hasImage()
     }
     
-    @objc public var imageDataIdentifier: String? {
+    @objc public var linkPreviewImageCacheKey: String? {
         
-        if self.imageData != nil {
+        if self.linkPreviewImageData != nil {
             return self.nonce?.uuidString
         }
         

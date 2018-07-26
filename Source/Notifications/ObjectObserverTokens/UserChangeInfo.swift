@@ -80,7 +80,7 @@ extension ZMUser : ObjectInSnapshot {
     }
     
     public required init(object: NSObject) {
-        self.user = object as! ZMBareUser
+        self.user = object as! UserType
         super.init(object: object)
     }
 
@@ -93,11 +93,11 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     open var imageMediumDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.imageMediumData))
+        return changedKeysContain(keys: #keyPath(UserType.completeImageData)) || changedKeysContain(keys: #keyPath(ZMUser.imageMediumData))
     }
 
     open var imageSmallProfileDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMUser.imageSmallProfileData))
+        return changedKeysContain(keys: #keyPath(UserType.previewImageData)) || changedKeysContain(keys: #keyPath(ZMUser.imageSmallProfileData))
     }
 
     open var profileInformationChanged : Bool {
@@ -131,7 +131,7 @@ extension ZMUser : ObjectInSnapshot {
         return changedKeys.contains(#keyPath(ZMUser.availability))
     }
 
-    open let user: ZMBareUser
+    open let user: UserType
     open var userClientChangeInfos : [UserClientChangeInfo] {
         return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
     }
@@ -150,7 +150,7 @@ extension UserChangeInfo {
     /// Adds an observer for the user if one specified or to all ZMUsers is none is specified
     /// You must hold on to the token and use it to unregister
     @objc(addUserObserver:forUser:managedObjectContext:)
-    public static func add(observer: ZMUserObserver, for user: ZMUser?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+    public static func add(userObserver observer: ZMUserObserver, for user: ZMUser?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
         return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user)
         { [weak observer] (note) in
             guard let `observer` = observer,
@@ -180,19 +180,19 @@ extension UserChangeInfo {
         }
     }
     
-    // MARK: Registering ZMBareUser
+    // MARK: Registering UserType
     /// Adds an observer for the ZMUser or ZMSearchUser
     /// You must hold on to the token and use it to unregister
-    @objc(addObserver:forBareUser:managedObjectContext:)
+    @objc(addObserver:forUser:managedObjectContext:)
     public static func add(observer: ZMUserObserver,
-                           forBareUser user: ZMBareUser,
+                           for user: UserType,
                            managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol?
     {
         if let user = user as? ZMSearchUser {
             return add(searchUserObserver: observer, for: user, managedObjectContext: managedObjectContext)
         }
         else if let user = user as? ZMUser {
-            return add(observer: observer, for:user, managedObjectContext: managedObjectContext)
+            return add(userObserver: observer, for:user, managedObjectContext: managedObjectContext)
         }
         return nil
     }

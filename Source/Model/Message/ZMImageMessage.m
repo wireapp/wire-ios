@@ -137,6 +137,11 @@
     return self;
 }
 
+- (BOOL)isDownloaded
+{
+    return [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatMedium encrypted:NO] || [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatOriginal encrypted:NO];
+}
+
 - (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     [self.managedObjectContext.zm_fileAssetCache deleteAssetData:self];
@@ -144,6 +149,32 @@
     self.mediumRemoteIdentifier = nil;
 
     [super removeMessageClearingSender:clearingSender];
+}
+
+- (void)fetchImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
+    NSManagedObjectContext *syncContext =  self.managedObjectContext.zm_syncContext;
+    
+    [syncContext performGroupedBlock:^{
+        ZMImageMessage *imageMessage = [syncContext objectWithID:self.objectID];
+        NSData *imageData = imageMessage.imageData;
+        
+        [syncContext.dispatchGroup asyncOnQueue:queue block:^{
+            completionHandler(imageData);
+        }];
+    }];
+}
+
+- (void)fetchPreviewDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
+    NSManagedObjectContext *syncContext =  self.managedObjectContext.zm_syncContext;
+    
+    [syncContext performGroupedBlock:^{
+        ZMImageMessage *imageMessage = [syncContext objectWithID:self.objectID];
+        NSData *imageData = imageMessage.previewData;
+        
+        [syncContext.dispatchGroup asyncOnQueue:queue block:^{
+            completionHandler(imageData);
+        }];
+    }];
 }
 
 @end

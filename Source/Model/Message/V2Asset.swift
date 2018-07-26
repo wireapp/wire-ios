@@ -30,7 +30,22 @@ extension String {
 
 
 @objcMembers public class V2Asset: NSObject, ZMImageMessageData {
-
+    
+    public var isDownloaded: Bool {
+        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
+               moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
+    }
+    
+    public func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!) {
+        let cache = moc.zm_fileAssetCache
+        let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
+        
+        queue.async {
+            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+        }
+    }
+    
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
     fileprivate let assetStorage: ImageAssetStorage
@@ -70,10 +85,7 @@ extension String {
     }
 
     public var previewData: Data? {
-        if assetStorage.previewGenericMessage?.imageAssetData?.width > 0 {
-            // Image preview data
-            return assetStorage.imageData(for: .original, encrypted: false)
-        } else if nil != assetClientMessage.fileMessageData, assetClientMessage.hasDownloadedImage {
+        if nil != assetClientMessage.fileMessageData, assetClientMessage.hasDownloadedImage {
             // File preview data
             return imageData(for: .original) ?? imageData(for: .medium)
         }

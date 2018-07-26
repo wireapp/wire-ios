@@ -79,6 +79,8 @@ extern NSString * __nonnull const AvailabilityKey;
 
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
+@property (nullable, nonatomic, copy) NSString *name;
+@property (nonatomic) ZMAccentColor accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;
 

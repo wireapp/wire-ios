@@ -45,7 +45,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer.update(withOtrKey: Data(), sha256: Data()), nonce: nonce).data())
         
         // when
-        let willHaveAnImage = clientMessage.textMessageData!.hasImageData
+        let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
         // then
         XCTAssertTrue(willHaveAnImage)
@@ -68,7 +68,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce).data())
         
         // when
-        let willHaveAnImage = clientMessage.textMessageData!.hasImageData
+        let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
         // then
         XCTAssertFalse(willHaveAnImage)
@@ -93,7 +93,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: updated, nonce: nonce).data())
         
         // when
-        let willHaveAnImage = clientMessage.textMessageData!.hasImageData
+        let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
         // then
         XCTAssertTrue(willHaveAnImage)
@@ -117,7 +117,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce).data())
         
         // when
-        let willHaveAnImage = clientMessage.textMessageData!.hasImageData
+        let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
         // then
         XCTAssertFalse(willHaveAnImage)
@@ -143,10 +143,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: linkPreview, nonce: nonce).data())
         
         // when
-        let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
+        let linkPreviewImageCacheKey = clientMessage.textMessageData!.linkPreviewImageCacheKey
         
         // then
-        XCTAssertEqual(imageDataIdentifier, assetKey)
+        XCTAssertEqual(linkPreviewImageCacheKey, assetKey)
     }
     
     func testThatItDoesntReturnsImageDataIdentifier_whenArticleHasNoImage() {
@@ -165,10 +165,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "sample text", linkPreview: article.protocolBuffer, nonce: nonce).data())
         
         // when
-        let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
+        let linkPreviewImageCacheKey = clientMessage.textMessageData!.linkPreviewImageCacheKey
         
         // then
-        XCTAssertNil(imageDataIdentifier)
+        XCTAssertNil(linkPreviewImageCacheKey)
     }
     
     func testThatItReturnsImageDataIdentifier_whenTwitterStatusHasImage() {
@@ -192,10 +192,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.nonce = nonce
         
         // when
-        let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
+        let linkPreviewImageCacheKey = clientMessage.textMessageData!.linkPreviewImageCacheKey
         
         // then
-        XCTAssertEqual(imageDataIdentifier, assetKey)
+        XCTAssertEqual(linkPreviewImageCacheKey, assetKey)
     }
     
     func testThatItDoesntReturnsImageDataIdentifier_whenTwitterStatusHasNoImage() {
@@ -215,10 +215,10 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         clientMessage.add(ZMGenericMessage.message(text: "Text", linkPreview: preview.protocolBuffer, nonce: nonce).data())
         
         // when
-        let imageDataIdentifier = clientMessage.textMessageData!.imageDataIdentifier
+        let linkPreviewImageCacheKey = clientMessage.textMessageData!.linkPreviewImageCacheKey
         
         // then
-        XCTAssertNil(imageDataIdentifier)
+        XCTAssertNil(linkPreviewImageCacheKey)
     }
     
     
