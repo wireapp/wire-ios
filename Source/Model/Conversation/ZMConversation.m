@@ -91,6 +91,7 @@ static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 static NSString *const LocalMessageDestructionTimeoutKey = @"localMessageDestructionTimeout";
 static NSString *const SyncedMessageDestructionTimeoutKey = @"syncedMessageDestructionTimeout";
 
+static NSString *const LanguageKey = @"language";
 
 static NSString *const DownloadedMessageIDsDataKey = @"downloadedMessageIDs_data";
 static NSString *const LastEventIDDataKey = @"lastEventID_data";
@@ -371,7 +372,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             TeamRemoteIdentifierKey,
             TeamRemoteIdentifierDataKey,
             AccessModeStringsKey,
-            AccessRoleStringKey
+            AccessRoleStringKey,
+            LanguageKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
