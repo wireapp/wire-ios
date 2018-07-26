@@ -283,20 +283,9 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     return self.connection != nil && self.connection.status == ZMConnectionStatusAccepted;
 }
 
-- (NSUInteger)totalCommonConnections
-{
-    return 0;
-}
-
 - (BOOL)isTeamMember
 {
     return nil != self.membership;
-}
-
-- (BOOL)isGuestInConversation:(ZMConversation *)conversation
-{
-    // See ZMUser+Teams.swift
-    return [self _isGuestIn:conversation];
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsConnected
@@ -304,7 +293,7 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
 }
 
-- (void)connectWithMessageText:(NSString *)text completionHandler:(dispatch_block_t)handler;
+- (void)connectWithMessage:(NSString *)message;
 {
     if(self.connection == nil || self.connection.status == ZMConnectionStatusCancelled) {
         ZMConversation *existingConversation;
@@ -313,10 +302,10 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
             self.connection = nil;
         }
         self.connection = [ZMConnection insertNewSentConnectionToUser:self existingConversation:existingConversation];
-        self.connection.message = text;
+        self.connection.message = message;
     }
     else {
-        NOT_USED(text);
+        NOT_USED(message);
         switch (self.connection.status) {
             case ZMConnectionStatusInvalid:
                 self.connection.lastUpdateDate = [NSDate date];
@@ -338,9 +327,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                 }
                 break;
         }
-    }
-    if (handler) {
-        handler();
     }
 }
 
@@ -922,7 +908,7 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 
 - (void)accept;
 {
-    [self connectWithMessageText:nil completionHandler:nil];
+    [self connectWithMessage:@""];
 }
 
 - (void)block;

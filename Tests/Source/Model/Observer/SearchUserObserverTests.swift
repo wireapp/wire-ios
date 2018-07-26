@@ -18,8 +18,9 @@
 
 
 import Foundation
+@testable import WireDataModel
 
-class SearchUserObserverTests : NotificationDispatcherTestBase {
+class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectContextProvider {
     
     class TestSearchUserObserver : NSObject, ZMUserObserver {
         
@@ -28,6 +29,14 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         func userDidChange(_ changeInfo: UserChangeInfo) {
             receivedChangeInfo.append(changeInfo)
         }
+    }
+    
+    var managedObjectContext: NSManagedObjectContext! {
+        return uiMOC
+    }
+    
+    var syncManagedObjectContext: NSManagedObjectContext! {
+        return syncMOC
     }
     
     var testObserver : TestSearchUserObserver!
@@ -47,19 +56,13 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(name: "Hans",
-                                      handle: "hans",
-                                      accentColor: .brightOrange,
-                                      remoteID: remoteID,
-                                      user: nil,
-                                      syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, forBareUser: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
         
         // when
-        searchUser.notifyNewSmallImageData(self.verySmallJPEGData(), searchUserObserverCenter: uiMOC.searchUserObserverCenter)
+        searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
         
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
@@ -74,16 +77,10 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(name: "Foo",
-                                      handle: "foo",
-                                      accentColor: .brightYellow,
-                                      remoteID: user.remoteIdentifier,
-                                      user: user,
-                                      syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, forBareUser:searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, managedObjectContext: self.uiMOC)
         
         // when
         user.smallProfileRemoteIdentifier = UUID.create()
@@ -101,20 +98,14 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(name: "Hans",
-                                      handle: "hans",
-                                      accentColor: .brightOrange,
-                                      remoteID: remoteID,
-                                      user: nil,
-                                      syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, forBareUser: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
         
         // when
         self.token = nil
-        searchUser.notifyNewSmallImageData(self.verySmallJPEGData(), searchUserObserverCenter: uiMOC.searchUserObserverCenter)
+        searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
         
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 0)
@@ -124,26 +115,15 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
     
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(name: "Hans",
-                                      handle: "hans",
-                                      accentColor: .brightOrange,
-                                      remoteID: remoteID,
-                                      user: nil,
-                                      syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, forBareUser: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
 
-        // expect
-        let callbackCalled = expectation(description: "Connection callback was called")
-        
         // when
-        searchUser.connect(withMessageText: "Hey") { 
-            callbackCalled.fulfill()
-        }
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        searchUser.connect(message: "Hey")
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)
@@ -159,31 +139,20 @@ class SearchUserObserverTests : NotificationDispatcherTestBase {
         user.remoteIdentifier = UUID()
         XCTAssert(uiMOC.saveOrRollback())
 
-        let searchUser = ZMSearchUser(name: "Hans",
-                                      handle: "hans",
-                                      accentColor: .brightOrange,
-                                      remoteID: nil,
-                                      user: user,
-                                      syncManagedObjectContext: self.syncMOC,
-                                      uiManagedObjectContext:self.uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: nil, user: user)
         
         let testObserver2 = TestSearchUserObserver()
         var tokens: [AnyObject] = []
         self.token = tokens
-        tokens.append(UserChangeInfo.add(observer: testObserver, forBareUser: user, managedObjectContext: self.uiMOC)!)
+        tokens.append(UserChangeInfo.add(observer: testObserver, for: user, managedObjectContext: self.uiMOC)!)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        tokens.append(UserChangeInfo.add(observer: testObserver2, forBareUser: searchUser, managedObjectContext: self.uiMOC)!)
-        
-        // expect
-        let callbackCalled = expectation(description: "Connection callback was called")
+        tokens.append(UserChangeInfo.add(observer: testObserver2, for: searchUser, managedObjectContext: self.uiMOC)!)
         
         // when
-        searchUser.connect(withMessageText: "Hey") {
-            callbackCalled.fulfill()
-        }
+        searchUser.connect(message: "Hey")
         XCTAssert(uiMOC.saveOrRollback())
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // when
         XCTAssertTrue(searchUser.user!.isPendingApprovalByOtherUser)

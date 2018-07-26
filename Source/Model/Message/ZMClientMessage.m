@@ -342,8 +342,8 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (BOOL)hasDownloadedImage
 {
     if (nil != self.textMessageData && nil != self.textMessageData.linkPreview) {
-        return [self.managedObjectContext.zm_fileAssetCache assetData:self format:ZMImageFormatMedium encrypted:NO] != nil // processed or downloaded
-        || [self.managedObjectContext.zm_fileAssetCache assetData:self format:ZMImageFormatOriginal encrypted:NO] != nil; // original
+        return [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatMedium encrypted:NO] || // processed or downloaded
+               [self.managedObjectContext.zm_fileAssetCache hasDataOnDisk:self format:ZMImageFormatOriginal encrypted:NO]; // original
     }
     return false;
 }

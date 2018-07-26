@@ -20,6 +20,24 @@ import Foundation
 import WireUtilities
 import WireSystem
 
+extension ZMUser: UserConnectionType { }
+
+extension ZMUser: UserType {
+    
+    public func isGuest(in conversation: ZMConversation) -> Bool {
+        return _isGuest(in: conversation)
+    }
+    
+    public var previewImageData: Data? {
+        return imageSmallProfileData
+    }
+    
+    public var completeImageData: Data? {
+        return imageMediumData
+    }
+    
+}
+
 public struct AssetKey {
     
     static let legalCharacterSet = CharacterSet.alphanumerics.union(CharacterSet.punctuationCharacters)
@@ -95,6 +113,11 @@ extension ProfileImageSize: CustomDebugStringConvertible {
 extension ZMUser: ServiceUser {
     @NSManaged public var providerIdentifier: String?
     @NSManaged public var serviceIdentifier: String?
+}
+
+public extension Notification.Name {
+    static let userDidRequestPreviewAsset = Notification.Name("UserDidRequestPreviewAsset")
+    static let userDidRequestCompleteAsset = Notification.Name("UserDidRequestCompleteAsset")
 }
 
 extension ZMUser {
@@ -175,9 +198,6 @@ extension ZMUser {
     @objc static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     @objc static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
     
-    @objc public static let previewAssetFetchNotification = Notification.Name(rawValue:"ZMRequestUserProfilePreviewAssetV3NotificationName")
-    @objc public static let completeAssetFetchNotification = Notification.Name(rawValue:"ZMRequestUserProfileCompleteAssetV3NotificationName")
-
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?
     
@@ -213,6 +233,18 @@ extension ZMUser {
         }
         didChangeValue(forKey: key)
         managedObjectContext?.saveOrRollback()
+    }
+    
+    public func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
+        if isSelfUser {
+            let imageData = self.imageData(for: size)
+            
+            queue.async {
+                completion(imageData)
+            }
+        } else {
+            managedObjectContext?.zm_userImageCache?.userImage(self, size: size, queue: queue, completion: completion)
+        }
     }
     
     @objc(imageDataforSize:)
@@ -284,16 +316,24 @@ extension ZMUser {
         }
     }
     
-    @objc public func requestPreviewAsset() {
-        guard let moc = self.managedObjectContext?.zm_userInterface else { return }
-        NotificationInContext(name: ZMUser.previewAssetFetchNotification,
+    @objc public func requestPreviewProfileImage() {
+        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .preview) else { return }
+        
+        localSmallProfileRemoteIdentifier = nil
+        moc.enqueueDelayedSave()
+        
+        NotificationInContext(name: .userDidRequestPreviewAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
     }
     
-    @objc public func requestCompleteAsset() {
-        guard let moc = self.managedObjectContext?.zm_userInterface else { return }
-        NotificationInContext(name: ZMUser.completeAssetFetchNotification,
+    @objc public func requestCompleteProfileImage() {
+        guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .complete) else { return }
+        
+        localMediumRemoteIdentifier = nil
+        moc.enqueueDelayedSave()
+        
+        NotificationInContext(name: .userDidRequestCompleteAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
     }

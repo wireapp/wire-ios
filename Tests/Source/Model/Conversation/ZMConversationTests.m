@@ -3595,11 +3595,10 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
-        conversation.lastReadServerTimeStamp = orginalDate;
-        conversation.lastServerTimeStamp = orginalDate;
+        NSDate *originalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
+        conversation.lastReadServerTimeStamp = originalDate;
+        conversation.lastServerTimeStamp = originalDate;
         [conversation calculateLastUnreadMessages];
-//        [conversation updateUnread];
         
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
         
@@ -3610,8 +3609,6 @@
         
         // then
         XCTAssertTrue(conversation.hasUnreadMissedCall);
-        XCTAssertNotEqual(conversation.lastServerTimeStamp, orginalDate);
-//        XCTAssertEqualWithAccuracy([conversation.lastServerTimeStamp timeIntervalSince1970], [[NSDate date] timeIntervalSince1970], 0.5);
     }];
 }
 

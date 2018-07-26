@@ -162,6 +162,19 @@ extension NSManagedObjectContext
         }
     }
     
+    open func userImage(_ user: ZMUser, size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
+        guard let cacheKey = user.resolvedCacheKey(for: size) else { return completion(nil) }
+        
+        queue.async {
+            switch size {
+            case .preview:
+                completion(self.smallUserImageCache.object(forKey: cacheKey) as? Data)
+            case .complete:
+                completion(self.largeUserImageCache.object(forKey: cacheKey) as? Data)
+            }
+        }
+    }
+    
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
         guard let cacheKey = user.resolvedCacheKey(for: size) else { return nil }
         let data: Data?
@@ -172,10 +185,21 @@ extension NSManagedObjectContext
             data = largeUserImageCache.object(forKey: cacheKey) as? Data
         }
         if let data = data {
-            log.info("Getting [\(user.displayName ?? user.remoteIdentifier?.transportString() ?? "")] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
+            log.info("Getting [\(user.displayName)] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
         }
 
         return data
+    }
+    
+    open func hasUserImage(_ user: ZMUser, size: ProfileImageSize) -> Bool {
+        guard let cacheKey = user.resolvedCacheKey(for: size) else { return false }
+        
+        switch size {
+        case .preview:
+            return smallUserImageCache.containsObject(forKey: cacheKey)
+        case .complete:
+            return largeUserImageCache.containsObject(forKey: cacheKey)
+        }
     }
     
     var usersWithChangedSmallImage : [NSManagedObjectID] = []

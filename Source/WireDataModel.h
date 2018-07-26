@@ -34,9 +34,6 @@
 #import <WireDataModel/ZMUser+OneOnOne.h>
 #import <WireDataModel/UserClientTypes.h>
 
-#import <WireDataModel/ZMSearchUser.h>
-#import <WireDataModel/ZMSearchUser+Internal.h>
-
 #import <WireDataModel/ZMConversation.h>
 #import <WireDataModel/ZMConversation+Internal.h>
 #import <WireDataModel/ZMConversation+UnreadCount.h>

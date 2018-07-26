@@ -55,6 +55,34 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
         XCTAssertNil(sut.userImage(testUser, size: .preview))
         XCTAssertNil(sut.userImage(testUser, size: .complete))
     }
+    
+    func testThatPersistedDataCanBeRetrievedAsynchronously() {
+        // given
+        testUser.setV3PictureIdentifiers()
+        let largeData = "LARGE".data(using: .utf8)!
+        let smallData = "SMALL".data(using: .utf8)!
+        
+        // when
+        sut.setUserImage(testUser, imageData: largeData, size: .complete)
+        sut.setUserImage(testUser, imageData: smallData, size: .preview)
+        sut = UserImageLocalCache()
+        
+        // then
+        let previewImageArrived = expectation(description: "Preview image arrived")
+        let completeImageArrived = expectation(description: "Complete image arrived")
+        sut.userImage(testUser, size: .preview, queue: .global()) { (smallDataResult) in
+            XCTAssertEqual(smallDataResult, smallData)
+            previewImageArrived.fulfill()
+        }
+        
+        sut.userImage(testUser, size: .complete, queue: .global()) { (largeDataResult) in
+            XCTAssertEqual(largeDataResult, largeData)
+            completeImageArrived.fulfill()
+        }
+        
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+    
 }
 
 // MARK: - Asset V2 only
@@ -147,8 +175,9 @@ extension UserImageLocalCacheTests {
 
 }
 
-// MARK: - Asset V2 and V2
+// MARK: - Asset V2 and V3
 extension UserImageLocalCacheTests {
+    
     func testThatItTReturnsV3AssetsWhenBothArePresent() {
         // given
         testUser.setV2PictureIdentifiers()

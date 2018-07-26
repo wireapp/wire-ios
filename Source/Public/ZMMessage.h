@@ -37,15 +37,15 @@
 
 @protocol ZMImageMessageData <NSObject>
 
-@property (nonatomic, readonly) NSData *mediumData; ///< N.B.: Will go away from public header
-@property (nonatomic, readonly) NSData *imageData; ///< This will either returns the mediumData or the original image data. Usefull only for newly inserted messages.
+@property (nonatomic, readonly) NSData *imageData; ///< This will either returns the mediumData or the original image data. Useful only for newly inserted messages.
 @property (nonatomic, readonly) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
 
-@property (nonatomic, readonly) NSData *previewData;
-@property (nonatomic, readonly) NSString *imagePreviewDataIdentifier; /// This can be used as a cache key for @c -previewData
 @property (nonatomic, readonly) BOOL isAnimatedGIF; // If it is GIF and has more than 1 frame
+@property (nonatomic, readonly) BOOL isDownloaded; // If it is GIF and has more than 1 frame
 @property (nonatomic, readonly) NSString *imageType; // UTI e.g. kUTTypeGIF
 @property (nonatomic, readonly) CGSize originalSize;
+
+- (void)fetchImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
 
 @end
 
@@ -82,12 +82,15 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 
 @property (nonatomic, readonly) NSString *messageText;
 @property (nonatomic, readonly) LinkPreview *linkPreview;
-/// Returns image data associated with the link preview
-@property (nonatomic, readonly) NSData *imageData;
+
 /// Returns true if the link preview will have an image
-@property (nonatomic, readonly) BOOL hasImageData;
+@property (nonatomic, readonly) BOOL linkPreviewHasImage;
+
 /// Unique identifier for imageData. Returns nil there's not imageData associated with the message.
-@property (nonatomic, readonly) NSString *imageDataIdentifier;
+@property (nonatomic, readonly) NSString *linkPreviewImageCacheKey;
+
+/// Fetch linkpreview image data from disk on the given queue
+- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
 
 @end
 

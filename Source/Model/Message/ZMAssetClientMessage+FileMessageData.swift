@@ -49,7 +49,7 @@ import Foundation
     /// Dimensions of the video
     var videoDimensions: CGSize { get }
     
-    /// Document preview frame
+    /// File thumbnail preview image
     var previewData: Data? { get }
     
     /// This can be used as a cache key for @c -previewData
@@ -77,6 +77,9 @@ import Foundation
     
     /// Whether the file message represents a v3 image
     var v3_isImage: Bool { get }
+    
+    /// Fetch preview image data from disk
+    func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void)
     
 }
 
@@ -137,6 +140,12 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     
     public var previewData: Data? {
         return self.asset?.previewData
+    }
+    
+    public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
+        guard nil != self.fileMessageData, !isImage else { return }
+        
+        self.asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }
     
     /// File name as was sent or `nil` in case of an image asset

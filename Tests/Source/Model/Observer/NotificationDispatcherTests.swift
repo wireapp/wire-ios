@@ -209,7 +209,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         XCTAssertTrue(user!.isFault)
         let observer = UserObserver()
         
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user!, managedObjectContext: self.uiMOC)) { () -> () in
         
             // when
             user = nil

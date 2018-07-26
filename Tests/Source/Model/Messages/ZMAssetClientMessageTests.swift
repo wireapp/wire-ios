@@ -226,7 +226,7 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         // i.e. cache folder is cleared but message is already processed
         self.uiMOC.zm_fileAssetCache.deleteAssetData(message, format: ZMImageFormat.medium, encrypted: false)
         
-        XCTAssertNil(message.imageMessageData?.mediumData)
+        XCTAssertNil(message.imageMessageData?.imageData)
         XCTAssertFalse(message.hasDownloadedImage)
         XCTAssertEqual(message.version, 0)
     }
@@ -1287,7 +1287,23 @@ extension ZMAssetClientMessageTests {
             
         }
     }
-
+    
+    func testThatImageDataCanBeFetchedAsynchrounously() {
+        // given
+        let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: true)
+        uiMOC.saveOrRollback()
+        
+        // expect
+        let expectation = self.expectation(description: "Image arrived")
+        
+        // when
+        message.imageMessageData?.fetchImageData(with: DispatchQueue.global(qos: .background), completionHandler: { (imageData) in
+            XCTAssertNotNil(imageData)
+            expectation.fulfill()
+        })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
+    }
+    
     func testThatItReturnsTheOriginalImageSize() {
         
         // given
@@ -2039,7 +2055,13 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(sut.hasDownloadedFile)
         XCTAssertTrue(sut.hasDownloadedImage)
         XCTAssertEqual(sut.version, 3)
-        XCTAssertEqual(sut.fileMessageData?.previewData, previewData)
+        
+        let expectation = self.expectation(description: "preview data was retreived")
+        sut.fileMessageData?.fetchImagePreviewData(queue: .global(qos: .background), completionHandler: { (previewDataResult) in
+            XCTAssertEqual(previewDataResult, previewData)
+            expectation.fulfill()
+        })
+        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
     }
 
     func testThatIsHasDownloadedImageAndReturnsItWhenTheImageIsOnDisk_V3() {

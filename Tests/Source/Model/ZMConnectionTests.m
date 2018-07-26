@@ -867,7 +867,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     XCTAssertEqual(connection.status, ZMConnectionStatusIgnored);
     XCTAssertEqualObjects(connection.keysThatHaveLocalModifications, [NSSet setWithObject:@"status"]);
-    [user connectWithMessageText:@"some message" completionHandler:nil];
+    [user connectWithMessage:@"some message"];
     XCTAssert([self.uiMOC saveOrRollback]);
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
     XCTAssertEqualObjects(connection.keysThatHaveLocalModifications, [NSSet setWithObject:@"status"]);
@@ -900,7 +900,7 @@
     XCTAssert([self.uiMOC saveOrRollback]);
     XCTAssertEqual(connection.status, ZMConnectionStatusBlocked);
     XCTAssertEqualObjects(connection.keysThatHaveLocalModifications, [NSSet setWithObject:@"status"]);
-    [user connectWithMessageText:@"some message" completionHandler:nil];
+    [user connectWithMessage:@"some message"];
     XCTAssert([self.uiMOC saveOrRollback]);
     XCTAssertEqual(connection.status, ZMConnectionStatusAccepted);
     XCTAssertEqualObjects(connection.keysThatHaveLocalModifications, [NSSet setWithObject:@"status"]);
@@ -948,7 +948,7 @@
     ZMUser *user = connection.to;
     
     // and when
-    [user connectWithMessageText:@"some message" completionHandler:nil];
+    [user connectWithMessage:@"some message"];
     XCTAssert([self.uiMOC saveOrRollback]);
 
     // then
@@ -970,7 +970,7 @@
     ZMConversation *conversation = connection.conversation;
     
     // and when
-    [user connectWithMessageText:@"some message" completionHandler:nil];
+    [user connectWithMessage:@"some message"];
     XCTAssert([self.uiMOC saveOrRollback]);
     // then
     XCTAssertNotEqual(user.connection, connection);

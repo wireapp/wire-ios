@@ -647,6 +647,31 @@ NSString * const ReactionsKey = @"reactions";
     XCTAssertNil(message.knockMessageData);
 }
 
+- (void)testThatImageDataCanBeFetchedAsynchrounously
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    NSData *imageData = [self dataForResource:@"tiny" extension:@"jpg"];
+    ZMImageMessage *message = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    message.sender = self.selfUser;
+    message.visibleInConversation = conversation;
+    message.previewData = imageData;
+    message.mediumData = imageData;
+    [self.uiMOC saveOrRollback];
+    
+    // expect
+    XCTestExpectation *imageDataArrived = [self expectationWithDescription:@"image data arrived"];
+    
+    // when
+    [message fetchImageDataWithQueue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completionHandler:^(NSData *imageDataResult) {
+        XCTAssertEqualObjects(imageDataResult, imageData);
+        [imageDataArrived fulfill];
+    }];
+    
+    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
 @end
 
 

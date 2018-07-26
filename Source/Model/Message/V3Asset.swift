@@ -42,6 +42,9 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
     func requestFileDownload()
     func requestImageDownload()
+    
+    @objc(fetchImageDataWithQueue:completionHandler:)
+    func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!)
 
     // Image preprocessing
     var requiredImageFormats: NSOrderedSet { get }
@@ -50,7 +53,22 @@ private let zmLog = ZMSLog(tag: "AssetV3")
 
 
 @objcMembers public class V3Asset: NSObject, ZMImageMessageData {
-
+    
+    @objc(fetchImageDataWithQueue:completionHandler:)
+    public func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!) {
+        let cache = moc.zm_fileAssetCache
+        let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
+        let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
+        
+        queue.async {
+            completionHandler([mediumKey, originalKey].lazy.compactMap({ $0 }).compactMap({ cache.assetData($0) }).first)
+        }
+    }
+        
+    public var isDownloaded: Bool {
+        return hasDownloadedImage
+    }
+    
     fileprivate let assetClientMessage: ZMAssetClientMessage
     private let assetStorage: ImageAssetStorage
     fileprivate let moc: NSManagedObjectContext
@@ -71,7 +89,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         return self
     }
 
-    public var mediumData: Data? {
+    public var mediumData: Data? {        
         guard nil != assetClientMessage.fileMessageData, isImage else { return nil }
         return imageData(for: .medium, encrypted: false)
     }

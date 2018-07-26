@@ -44,8 +44,8 @@ public class SearchUserSnapshot  {
     
     /// Keys that we want to be notified for
     static let observableKeys : [String] = [#keyPath(ZMSearchUser.name),
-                                            #keyPath(ZMSearchUser.imageMediumData),
-                                            #keyPath(ZMSearchUser.imageSmallProfileData),
+                                            #keyPath(ZMSearchUser.completeImageData),
+                                            #keyPath(ZMSearchUser.previewImageData),
                                             #keyPath(ZMSearchUser.isConnected),
                                             #keyPath(ZMSearchUser.user),
                                             #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)]
@@ -119,7 +119,7 @@ public class SearchUserSnapshot  {
         guard let remoteID = searchUser.remoteIdentifier,
             let moc = self.managedObjectContext else {
             zmLog.warn("SearchUserObserverCenter: SearchUser does not have a remoteIdentifier? \(searchUser)")
-            return 
+            return
         }
         snapshots[remoteID] = snapshots[remoteID] ?? SearchUserSnapshot(searchUser: searchUser, managedObjectContext: moc)
     }

@@ -18,7 +18,15 @@
 
 @testable import WireDataModel
 
-class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
+class SearchUserSnapshotTests : ZMBaseManagedObjectTest, ZMManagedObjectContextProvider {
+    
+    var syncManagedObjectContext: NSManagedObjectContext! {
+        return syncMOC
+    }
+    
+    var managedObjectContext: NSManagedObjectContext! {
+        return uiMOC
+    }
     
     var token: Any? = nil
     
@@ -29,14 +37,14 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
     
     func testThatItCreatesASnapshotOfAllValues_noUser(){
         // given
-        let searchUser = ZMSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteID: UUID(), user: nil, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteIdentifier: UUID())
 
         // when
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // then
-        XCTAssertEqual(searchUser.imageMediumData,              sut.snapshotValues[ #keyPath(ZMSearchUser.imageMediumData)] as? Data)
-        XCTAssertEqual(searchUser.imageSmallProfileData,        sut.snapshotValues[ #keyPath(ZMSearchUser.imageSmallProfileData)] as? Data)
+        XCTAssertEqual(searchUser.completeImageData,            sut.snapshotValues[ #keyPath(ZMSearchUser.completeImageData)] as? Data)
+        XCTAssertEqual(searchUser.previewImageData,             sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
         XCTAssertEqual(searchUser.user,                         sut.snapshotValues[ #keyPath(ZMSearchUser.user)] as? ZMUser)
         XCTAssertEqual(searchUser.isConnected,                  sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
         XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
@@ -48,14 +56,14 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         user.imageSmallProfileData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
         
         // when
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // then
-        XCTAssertEqual(searchUser.imageMediumData,              sut.snapshotValues[ #keyPath(ZMSearchUser.imageMediumData)] as? Data)
-        XCTAssertEqual(searchUser.imageSmallProfileData,        sut.snapshotValues[ #keyPath(ZMSearchUser.imageSmallProfileData)] as? Data)
+        XCTAssertEqual(searchUser.completeImageData,            sut.snapshotValues[ #keyPath(ZMSearchUser.completeImageData)] as? Data)
+        XCTAssertEqual(searchUser.previewImageData,             sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
         XCTAssertEqual(searchUser.user,                         sut.snapshotValues[ #keyPath(ZMSearchUser.user)] as? ZMUser)
         XCTAssertEqual(searchUser.isConnected,                  sut.snapshotValues[ #keyPath(ZMSearchUser.isConnected)] as? Bool)
         XCTAssertEqual(searchUser.isPendingApprovalByOtherUser, sut.snapshotValues[ #keyPath(ZMSearchUser.isPendingApprovalByOtherUser)] as? Bool)
@@ -67,7 +75,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
 
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // expect
@@ -90,7 +98,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         
         // then
         XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
-        XCTAssertEqual(searchUser.imageSmallProfileData, sut.snapshotValues[ #keyPath(ZMSearchUser.imageSmallProfileData)] as? Data)
+        XCTAssertEqual(searchUser.previewImageData, sut.snapshotValues[ #keyPath(ZMSearchUser.previewImageData)] as? Data)
     }
     
     func testThatItPostsANotificationWhenConnectionChanged(){
@@ -99,7 +107,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // expect
@@ -134,7 +142,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         connection.to = user
         connection.status = .pending
         
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // expect
@@ -165,7 +173,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         
-        let searchUser = ZMSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteID: UUID(), user: nil, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteIdentifier: UUID())
         let sut = SearchUserSnapshot(searchUser: searchUser, managedObjectContext: self.uiMOC)
         
         // expect
@@ -189,13 +197,22 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest {
     }
 }
 
-class SearchUserObserverCenterTests : ModelObjectsTests {
+class SearchUserObserverCenterTests : ModelObjectsTests, ZMManagedObjectContextProvider {
+    
+    var syncManagedObjectContext: NSManagedObjectContext! {
+        return syncMOC
+    }
+    
+    var managedObjectContext: NSManagedObjectContext! {
+        return uiMOC
+    }
 
     var sut : SearchUserObserverCenter!
     
     override func setUp() {
         super.setUp()
         sut = SearchUserObserverCenter(managedObjectContext: self.uiMOC)
+        uiMOC.userInfo[NSManagedObjectContext.SearchUserObserverCenterKey] = sut
     }
     
     override func tearDown() {
@@ -209,11 +226,12 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
-        uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
+        sut.addSearchUser(searchUser)
         
         // when
-        weak var observerCenter = uiMOC.searchUserObserverCenter
+        weak var observerCenter = sut
+        sut = nil
         uiMOC.userInfo.removeObject(forKey: NSManagedObjectContext.SearchUserObserverCenterKey)
         
         // then
@@ -222,7 +240,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
     
     func testThatItAddsASnapshot(){
         // given
-        let searchUser = ZMSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteID: UUID(), user: nil, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteIdentifier: UUID())
         XCTAssertEqual(sut.snapshots.count, 0)
 
         // when
@@ -234,7 +252,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
     
     func testThatItRemovesAllSnapshotsOnReset(){
         // given
-        let searchUser = ZMSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteID: UUID(), user: nil, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteIdentifier: UUID())
         sut.addSearchUser(searchUser)
         XCTAssertEqual(sut.snapshots.count, 1)
         
@@ -251,7 +269,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
         
-        let searchUser = ZMSearchUser(name: nil, handle: nil, accentColor: .undefined, remoteID: nil, user: user, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: nil, user: user)
         sut.addSearchUser(searchUser)
         
         // expect
@@ -278,7 +296,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
     
     func testThatItForwardCallsForUserUpdatesToTheSnapshot(){
         // given
-        let searchUser = ZMSearchUser(name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteID: UUID(), user: nil, syncManagedObjectContext: syncMOC, uiManagedObjectContext: uiMOC)
+        let searchUser = ZMSearchUser(contextProvider: self, name: "Bernd", handle: "dasBrot", accentColor: .brightOrange, remoteIdentifier: UUID())
         sut.addSearchUser(searchUser)
         
         // expect
@@ -295,7 +313,7 @@ class SearchUserObserverCenterTests : ModelObjectsTests {
         
         withExtendedLifetime(token) { () -> () in
             // when
-            searchUser.setAndNotifyNewMediumImageData(verySmallJPEGData(), searchUserObserverCenter: sut)
+            searchUser.updateImageData(for: .complete, imageData: verySmallJPEGData())
             
             // then
             XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
