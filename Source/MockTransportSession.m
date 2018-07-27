@@ -242,7 +242,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     __unused id store = [psc addPersistentStoreWithType:NSInMemoryStoreType configuration:nil URL:nil options:nil error:nil];
     NSAssert(store != nil, @"");
     
-    self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
+    self.managedObjectContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSMainQueueConcurrencyType];
     [self.managedObjectContext createDispatchGroups];
     [self.managedObjectContext addGroup:group];
     self.managedObjectContext.persistentStoreCoordinator = psc;    
