@@ -17,11 +17,13 @@
 //
 
 import Foundation
+import os.log
 
 // MARK: - Log level management
 
 /// Map of the level set for each log tag
 private var logTagToLevel : [String : ZMLogLevel_t] = [:]
+private var logTagToLogger : [String : OSLog] = [:]
 
 @objc extension ZMSLog {
     
@@ -55,6 +57,17 @@ private var logTagToLevel : [String : ZMLogLevel_t] = [:]
         if logTagToLevel[tag] == nil {
             logTagToLevel[tag] = ZMLogLevel_t.warn
         }
+    }
+
+    @available(iOS 10, *)
+    static func logger(tag: String?) -> OSLog {
+        guard let tag = tag else { return OSLog.default }
+        if logTagToLogger[tag] == nil {
+            let bundleID = Bundle.main.bundleIdentifier ?? "com.wire.zmessaging.test"
+            let logger = OSLog(subsystem: bundleID, category: tag)
+            logTagToLogger[tag] = logger
+        }
+        return logTagToLogger[tag]!
     }
     
     /// Get all tags
