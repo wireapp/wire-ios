@@ -63,6 +63,14 @@ public extension VoidResult {
         }
     }
     
+    init(error: Error?) {
+        if let error = error {
+            self = .failure(error)
+        } else {
+            self = .success
+        }
+    }
+    
     var error: Error? {
         guard case let .failure(error) = self else { return nil }
         return error
