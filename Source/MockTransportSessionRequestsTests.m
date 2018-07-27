@@ -368,7 +368,8 @@
     // WHEN
     [self.sut resetReceivedRequests];
     [self sendRequestToMockTransportSession:req3];
-    
+    WaitForAllGroupsToBeEmpty(0.5);
+
     // THEN
     XCTAssertEqualObjects(self.sut.receivedRequests, @[req3]);
 }
