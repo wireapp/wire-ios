@@ -513,12 +513,8 @@ class CallingV3Tests : IntegrationTest {
         // and when
         closeCall(user: user, reason: .canceled)
         
-        // then
-        XCTAssertEqual(convObserver!.notifications.count, 2)
-        if let change = convObserver!.notifications.lastObject as? ConversationChangeInfo {
-            XCTAssertTrue(change.conversationListIndicatorChanged)
-        }
-        XCTAssertEqual(conversationUnderTest.conversationListIndicator, .missedCall)
+        // then (We don't show a missed call indicator for calls which the self user previously ignored)
+        XCTAssertEqual(conversationUnderTest.conversationListIndicator, .none)
     }
 
     func testThatItFiresAConversationChangeNotificationWhenAGroupCallIsJoined() {
