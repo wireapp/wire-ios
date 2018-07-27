@@ -59,14 +59,32 @@ public protocol CompanyLoginRequesterDelegate: class {
 
 }
 
+@objc public protocol URLSessionProtocol: class {
+    @objc(dataTaskWithURL:completionHandler:)
+    func dataTask(with url: URL, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) -> URLSessionDataTask
+}
+
+extension URLSession: URLSessionProtocol {}
+
 /**
  * An object that validates the identity of the user and creates a session using company login.
  */
 
+public enum ValidationError {
+    case invalidCode
+    case unknown
+    
+    init?(response: HTTPURLResponse?, error: Error?) {
+        switch (response?.statusCode, error) {
+        case (404?, _): self = .invalidCode
+        case ((400...599)?, _), (_, .some), (.none, _): self = .unknown
+        default: return nil
+        }
+    }
+}
+
 public class CompanyLoginRequester {
     
-    
-
     /// The URL scheme that where the callback will be provided.
     public let callbackScheme: String
 
@@ -75,12 +93,44 @@ public class CompanyLoginRequester {
 
     let backendHost: String
     private let defaults: UserDefaults
+    private let session: URLSessionProtocol
 
     /// Creates a session requester that uses the specified parameters.
-    public init(backendHost: String, callbackScheme: String, defaults: UserDefaults = .shared()) {
+    public init(
+        backendHost: String,
+        callbackScheme: String,
+        defaults: UserDefaults = .shared(),
+        session: URLSessionProtocol = URLSession.shared
+        ) {
         self.backendHost = backendHost
         self.callbackScheme = callbackScheme
         self.defaults = defaults
+        self.session = session
+    }
+    
+    // MARK: - Token Validation
+    
+    /**
+     * Validated a company login token.
+     *
+     * This method will verify a compy login token with the backend.
+     * The requester provided by the `enqueueProvider` passed to `init` will
+     * be used to perform the request.
+     *
+     * - parameter token: The user login token.
+     * - parameter completion: The completion closure called with the validation result.
+     */
+    
+    public func validate(token: UUID, completion: @escaping (ValidationError?) -> Void) {
+        guard let url = urlComponents(for: token).url else { fatalError("Invalid company login url.") }
+    
+        let request = session.dataTask(with: url) { _, response, error in
+            DispatchQueue.main.async {
+                completion(ValidationError(response: response as? HTTPURLResponse, error: error))
+            }
+        }
+        
+        request.resume()
     }
 
     // MARK: - Identity Request
@@ -96,19 +146,10 @@ public class CompanyLoginRequester {
      */
 
     public func requestIdentity(for token: UUID) {
-        var urlComponents = URLComponents()
-        urlComponents.scheme = "https"
-        urlComponents.host = backendHost
-        urlComponents.path = "/sso/initiate-login/\(token.uuidString)"
-        
         let validationToken = CompanyLoginVerificationToken()
+        let components = urlComponents(for: token, validationToken: validationToken)
 
-        urlComponents.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.successRedirect, value: makeSuccessCallbackString(using: validationToken)),
-            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken))
-        ]
-
-        guard let url = urlComponents.url else {
+        guard let url = components.url else {
             fatalError("Invalid company login URL. This is a developer error.")
         }
 
@@ -117,8 +158,22 @@ public class CompanyLoginRequester {
     }
 
     // MARK: - Utilities
+    
+    private func urlComponents(for token: UUID, validationToken: CompanyLoginVerificationToken? = nil) -> URLComponents {
+        var components = URLComponents()
+        components.scheme = "https"
+        components.host = backendHost
+        components.path = "/sso/initiate-login/\(token.uuidString)"
+        
+        components.queryItems = [
+            URLQueryItem(name: URLQueryItem.Key.successRedirect, value: makeSuccessCallbackString(using: validationToken)),
+            URLQueryItem(name: URLQueryItem.Key.errorRedirect, value: makeFailureCallbackString(using: validationToken))
+        ]
+        
+        return components
+    }
 
-    private func makeSuccessCallbackString(using token: CompanyLoginVerificationToken) -> String {
+    private func makeSuccessCallbackString(using token: CompanyLoginVerificationToken?) -> String {
         var components = URLComponents()
         components.scheme = callbackScheme
         components.host = URL.Host.login
@@ -126,23 +181,27 @@ public class CompanyLoginRequester {
 
         components.queryItems = [
             URLQueryItem(name: URLQueryItem.Key.cookie, value: URLQueryItem.Template.cookie),
-            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString())
+            URLQueryItem(name: URLQueryItem.Key.userIdentifier, value: URLQueryItem.Template.userIdentifier)
         ]
+        
+        if let token = token {
+            components.queryItems?.append(.init(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString()))
+        }
 
         return components.url!.absoluteString
     }
 
-    private func makeFailureCallbackString(using token: CompanyLoginVerificationToken) -> String {
+    private func makeFailureCallbackString(using token: CompanyLoginVerificationToken?) -> String {
         var components = URLComponents()
         components.scheme = callbackScheme
         components.host = URL.Host.login
         components.path = "/" + URL.Path.failure
 
-        components.queryItems = [
-            URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel),
-            URLQueryItem(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString())
-        ]
+        components.queryItems = [URLQueryItem(name: URLQueryItem.Key.errorLabel, value: URLQueryItem.Template.errorLabel)]
+        
+        if let token = token {
+            components.queryItems?.append(.init(name: URLQueryItem.Key.validationToken, value: token.uuid.transportString()))
+        }
 
         return components.url!.absoluteString
     }
