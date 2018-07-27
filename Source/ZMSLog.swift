@@ -18,6 +18,7 @@
 
 
 import Foundation
+import os.log
 
 /// A logging facility based on tags to switch on and off certain logs
 ///
@@ -167,6 +168,22 @@ extension ZMSLog {
     }
 }
 
+extension ZMLogLevel_t {
+    @available(iOS 10.0, *)
+    var logLevel: OSLogType {
+        switch self {
+        case .error:
+            return .error
+        case .warn:
+            return .error
+        case .info:
+            return .info
+        case .debug:
+            return .debug
+        }
+    }
+}
+
 // MARK: - Internal stuff
 extension ZMSLog {
     
@@ -179,7 +196,11 @@ extension ZMSLog {
             }
         
             if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
+                if #available(iOS 10, *) {
+                    os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, concreteMessage)
+                } else {
+                    sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
+                }
                 self.notifyHooks(level: level, tag: tag, message: concreteMessage)
             }
         }
