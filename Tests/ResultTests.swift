@@ -77,5 +77,21 @@ class ResultTests: XCTestCase {
         // Then
         XCTAssertEqual(transformed.error as NSError?, error)
     }
+    
+    func testThatItCanInitializeAVoidResultFromAnError() {
+        // Given
+        let error = NSError(domain: "", code: 0, userInfo: nil)
+        
+        // When
+        let result = VoidResult(error: error)
+        
+        // Then
+        XCTAssertEqual(result.error as NSError?, error)
+    }
+    
+    func testThatItCanInitializeAVoidResultFromAnError_Nil() {
+        // When & Then
+        XCTAssertNil(VoidResult(error: nil).error)
+    }
 
 }
