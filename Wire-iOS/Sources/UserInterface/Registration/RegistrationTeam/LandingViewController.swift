@@ -166,11 +166,15 @@ final class LandingViewController: UIViewController, CompanyLoginControllerDeleg
         updateStackViewAxis()
         updateConstraintsForIPad()
         updateBarButtonItem()
+        disableTrackingIfNeeded()
 
         NotificationCenter.default.addObserver(
             forName: AccountManagerDidUpdateAccountsNotificationName,
             object: SessionManager.shared?.accountManager,
-            queue: nil) { _ in self.updateBarButtonItem()  }
+            queue: nil) { _ in
+                self.updateBarButtonItem()
+                self.disableTrackingIfNeeded()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -290,6 +294,12 @@ final class LandingViewController: UIViewController, CompanyLoginControllerDeleg
             cancelItem.accessibilityIdentifier = "CancelButton"
             cancelItem.accessibilityLabel = "general.cancel".localized
             navigationBar.topItem?.rightBarButtonItem = cancelItem
+        }
+    }
+    
+    private func disableTrackingIfNeeded() {
+        if SessionManager.shared?.firstAuthenticatedAccount == nil {
+            TrackingManager.shared.disableCrashAndAnalyticsSharing = true
         }
     }
 
