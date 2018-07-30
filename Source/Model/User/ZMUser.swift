@@ -218,6 +218,8 @@ extension ZMUser {
     
     @NSManaged var expiresAt: Date?
     
+    @NSManaged var usesCompanyLogin: Bool
+    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         let key = size.userKeyPath
