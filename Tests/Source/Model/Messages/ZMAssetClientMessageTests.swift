@@ -1590,7 +1590,7 @@ extension ZMAssetClientMessageTests {
         }
         
         // when
-        message.requestImageDownload()
+        message.imageMessageData?.requestImageDownload()
 
         // then
         withExtendedLifetime(token) { () -> () in
@@ -2100,7 +2100,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, .uploaded)
 
         // when
-        sut.requestImageDownload()
+        sut.imageMessageData?.requestImageDownload()
 
         // then
         XCTAssertEqual(sut.transferState, .downloading)
@@ -2119,7 +2119,7 @@ extension ZMAssetClientMessageTests {
         sut.transferState = .unavailable
         
         // when
-        sut.requestImageDownload()
+        sut.imageMessageData?.requestImageDownload()
         
         // then
         XCTAssertEqual(sut.transferState, .unavailable)

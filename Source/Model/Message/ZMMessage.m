@@ -765,9 +765,15 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
     return ZMDeliveryStateDelivered;
 }
 
-- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
+- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler
+{
     NOT_USED(queue);
     NOT_USED(completionHandler);
+}
+
+- (void)requestLinkPreviewImageDownload
+{
+    
 }
 
 @end

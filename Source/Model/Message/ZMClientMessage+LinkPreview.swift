@@ -63,7 +63,7 @@ import WireLinkPreview
         return Set([#keyPath(ZMClientMessage.dataSet), #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
-    public override func requestImageDownload() {
+    public func requestLinkPreviewImageDownload() {
         guard !self.objectID.isTemporaryID,
               self.linkPreview != nil,
               let moc = self.managedObjectContext,

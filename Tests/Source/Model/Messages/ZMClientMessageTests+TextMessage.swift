@@ -276,7 +276,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             expectation.fulfill()
         }
         
-        clientMessage.requestImageDownload()
+        clientMessage.textMessageData?.requestLinkPreviewImageDownload()
         
         // then
         withExtendedLifetime(token) { () -> () in

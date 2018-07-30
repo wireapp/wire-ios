@@ -61,6 +61,9 @@ import Foundation
     /// Marks file to be downloaded
     func requestFileDownload()
     
+    /// Marks file image preview to be downloaded
+    func requestImagePreviewDownload()
+    
     /// Video-message related properties
     /// if MIME type is indicating the video content
     var isVideo: Bool { get }
@@ -262,6 +265,14 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             return nil
         }
         return assetData.original.normalizedLoudnessLevels
+    }
+    
+    public func requestFileDownload() {
+        asset?.requestFileDownload()
+    }
+    
+    public func requestImagePreviewDownload() {
+        asset?.requestImageDownload()
     }
 }
 

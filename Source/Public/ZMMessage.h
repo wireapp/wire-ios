@@ -47,6 +47,11 @@
 
 - (void)fetchImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
 
+/// Request the download of the image if not already present.
+/// The download will be executed asynchronously. The caller can be notified by observing the message window.
+/// This method can safely be called multiple times, even if the content is already available locally
+- (void)requestImageDownload;
+
 @end
 
 
@@ -91,6 +96,9 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 
 /// Fetch linkpreview image data from disk on the given queue
 - (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
+
+/// Request link preview image to be downloaded
+- (void)requestLinkPreviewImageDownload;
 
 @end
 
