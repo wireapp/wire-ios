@@ -81,6 +81,7 @@ static NSString *const ServiceIdentifierKey = @"serviceIdentifier";
 static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
 static NSString *const ExpiresAtKey = @"expiresAt";
+static NSString *const UsesCompanyLoginKey = @"usesCompanyLogin";
 
 static NSString *const TeamIdentifierDataKey = @"teamIdentifier_data";
 static NSString *const TeamIdentifierKey = @"teamIdentifier";
@@ -410,7 +411,8 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                                            ServiceIdentifierKey,
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,
-                                           TeamIdentifierDataKey
+                                           TeamIdentifierDataKey,
+                                           UsesCompanyLoginKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -529,6 +531,9 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
             self.providerIdentifier = providerIdentifier;
         }
     }
+    
+    NSDictionary *ssoData = [transportData optionalDictionaryForKey:@"sso_id"];
+    self.usesCompanyLogin = nil != ssoData;
 
     NSUUID *remoteID = [transportData[@"id"] UUID];
     if (self.remoteIdentifier == nil) {
