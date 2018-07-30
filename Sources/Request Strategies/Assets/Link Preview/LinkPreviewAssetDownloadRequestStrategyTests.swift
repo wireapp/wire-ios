@@ -97,7 +97,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
@@ -120,7 +120,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
@@ -144,7 +144,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // WHEN
-        message.requestImageDownload()
+        message.textMessageData?.requestLinkPreviewImageDownload()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
@@ -166,7 +166,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
 
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
@@ -188,7 +188,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length:256))
 
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
@@ -216,7 +216,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
         self.syncMOC.performGroupedAndWait { syncMOC in
             // THEN
@@ -247,7 +247,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
             // WHEN
-            message.requestImageDownload()
+            message.textMessageData?.requestLinkPreviewImageDownload()
         }
 
         self.syncMOC.performGroupedAndWait { syncMOC in

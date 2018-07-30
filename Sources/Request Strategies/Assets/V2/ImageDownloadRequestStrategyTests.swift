@@ -89,7 +89,7 @@ class ImageDownloadRequestStrategyTests: MessagingTestBase {
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {
         // remove image data or it won't be downloaded
         syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
-        message.requestImageDownload()
+        message.imageMessageData?.requestImageDownload()
         return sut.nextRequest()!
     }
     
@@ -100,7 +100,7 @@ class ImageDownloadRequestStrategyTests: MessagingTestBase {
             
             // remove image data or it won't be downloaded
             self.syncMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
-            message.requestImageDownload()
+            message.imageMessageData?.requestImageDownload()
         }
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

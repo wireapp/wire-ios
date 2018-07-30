@@ -174,7 +174,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertNotNil(message.fileMessageData)
             
             // WHEN
-            message.requestImageDownload()
+            message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -200,7 +200,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             self.prepareDownload(of: message)
             
             // WHEN
-            message.requestImageDownload()
+            message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -212,7 +212,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(request.method, .methodGET)
             
             // WHEN
-            message.requestImageDownload()
+            message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -238,7 +238,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             
             message.add(previewGenericMessage)
             self.prepareDownload(of: message)
-            message.requestImageDownload()
+            message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -266,7 +266,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            message.requestImageDownload()
+            message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.syncMOC.performGroupedBlockAndWait {
