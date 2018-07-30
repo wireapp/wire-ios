@@ -191,15 +191,6 @@ import Foundation
         return Set(arrayLiteral: #keyPath(ZMAssetClientMessage.associatedTaskIdentifier_data))
     }
     
-    /// Marks file to be downloaded
-    override public func requestFileDownload() {
-        self.asset?.requestFileDownload()
-    }
-
-    override public func requestImageDownload() {
-        self.asset?.requestImageDownload()
-    }
-    
     var v2Asset: V2Asset? {
         return V2Asset(with: self)
     }

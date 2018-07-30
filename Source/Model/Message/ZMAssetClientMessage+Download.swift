@@ -19,21 +19,8 @@
 
 import Foundation
 
-
-
 extension ZMAssetClientMessage {
 
     /// Name of notification fired when requesting a download of an image
     public static let imageDownloadNotificationName = NSNotification.Name(rawValue: "ZMAssetClientMessageImageDownloadNotification")
-}
-
-extension ZMImageMessage {
-    
-    public override func requestImageDownload() {
-        // V2
-        // objects with temp ID on the UI must just have been inserted so no need to download
-        guard !self.objectID.isTemporaryID,
-            let moc = self.managedObjectContext?.zm_userInterface else { return }
-        NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: self.objectID).post()
-    }
 }

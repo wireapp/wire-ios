@@ -70,16 +70,6 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     var usersReaction : Dictionary<String, [ZMUser]> { get }
     
-    /// Request the download of the file if not already present.
-    /// The download will be executed asynchronously. The caller can be notified by observing the message window.
-    /// This method can safely be called multiple times, even if the content is already available locally
-    func requestFileDownload()
-    
-    /// Request the download of the image if not already present.
-    /// The download will be executed asynchronously. The caller can be notified by observing the message window.
-    /// This method can safely be called multiple times, even if the content is already available locally
-    func requestImageDownload()
-    
     /// In case this message failed to deliver, this will resend it
     func resend()
     
@@ -225,10 +215,6 @@ extension ZMMessage {
         }
         return .pending
     }
-    
-    @objc public func requestFileDownload() {}
-    
-    @objc public func requestImageDownload() {}
     
     @objc public var usersReaction : Dictionary<String, [ZMUser]> {
         var result = Dictionary<String, [ZMUser]>()
