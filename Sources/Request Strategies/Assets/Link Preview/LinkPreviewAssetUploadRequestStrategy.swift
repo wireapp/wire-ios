@@ -80,7 +80,7 @@ public final class LinkPreviewAssetUploadRequestStrategy : AbstractRequestStrate
     
     public init(managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, linkPreviewPreprocessor: LinkPreviewPreprocessor?, previewImagePreprocessor: ZMImagePreprocessingTracker?) {
         if nil == LinkPreviewDetectorHelper.test_debug_linkPreviewDetector() {
-            LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current!))
+            LinkPreviewDetectorHelper.setTest_debug_linkPreviewDetector(LinkPreviewDetector(resultsQueue: OperationQueue.current ?? .main))
         }
         self.linkPreviewPreprocessor = linkPreviewPreprocessor ?? LinkPreviewPreprocessor(linkPreviewDetector: LinkPreviewDetectorHelper.test_debug_linkPreviewDetector()!, managedObjectContext: managedObjectContext)
         self.previewImagePreprocessor = previewImagePreprocessor ?? ZMImagePreprocessingTracker.createPreviewImagePreprocessingTracker(managedObjectContext: managedObjectContext)
