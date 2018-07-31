@@ -30,14 +30,22 @@
 /// and reset when the visible window changes
 @property (nonatomic) BOOL hasUnreadUnsentMessage;
 
+@property (nonatomic, readonly) BOOL hasUnreadMessagesInOtherConversations;
+
 @property (nonatomic, readonly) ZMConversationListIndicator unreadListIndicator;
 + (NSSet *)keyPathsForValuesAffectingUnreadListIndicator;
 
 /// Predicate for conversations that will be considered unread for the purpose of the badge count
 + (NSPredicate *)predicateForConversationConsideredUnread;
 
-/// Count of unread conversation
+/// Predicate for conversations that will be considered unread for the purpose of the back arrow dot
++ ( NSPredicate *)predicateForConversationConsideredUnreadIncludingSilenced;
+
+/// Count of unread conversations (exluding silenced converations)
 + (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
+
+/// Count of unread conversations (including silenced conversations)
++ (NSUInteger)unreadConversationCountIncludingSilencedInContext:(NSManagedObjectContext *)moc excluding:(ZMConversation *)conversation;
 
 @end
 
