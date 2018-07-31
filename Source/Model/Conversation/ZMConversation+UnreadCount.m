@@ -94,9 +94,15 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
     request.predicate = [self predicateForConversationConsideredUnread];
     
-    NSSet *conversations = [[moc registeredObjects] filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"self.class == %@", ZMConversation.class]];
-    ZMConversation *conv = [conversations anyObject];
-    NOT_USED(conv);
+    return [moc countForFetchRequest:request error:nil];
+}
+
++ (NSUInteger)unreadConversationCountIncludingSilencedInContext:(NSManagedObjectContext *)moc excluding:(ZMConversation *)conversation
+{
+    NSPredicate *excludedConversationPredicate = [NSPredicate predicateWithFormat:@"SELF !=  %@", conversation];
+    NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
+    request.predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[excludedConversationPredicate, [self predicateForConversationConsideredUnreadIncludingSilenced]]];
+    
     return [moc countForFetchRequest:request error:nil];
 }
 
@@ -110,6 +116,15 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     NSPredicate *acceptablePredicate = [NSCompoundPredicate orPredicateWithSubpredicates:@[pendingConnection, unreadMessages]];
     
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[notSilencedPredicate, notSelfConversation, notInvalidConversation, acceptablePredicate]];
+}
+
++ (NSPredicate *)predicateForConversationConsideredUnreadIncludingSilenced;
+{
+    NSPredicate *notSelfConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeSelf];
+    NSPredicate *notInvalidConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeInvalid];
+    NSPredicate *unreadMessages = [NSPredicate predicateWithFormat:@"%K > 0", ZMConversationInternalEstimatedUnreadCountKey];
+    
+    return [NSCompoundPredicate andPredicateWithSubpredicates:@[notSelfConversation, notInvalidConversation, unreadMessages]];
 }
 
 - (void)setInternalEstimatedUnreadCount:(int64_t)internalEstimatedUnreadCount
@@ -138,6 +153,11 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 + (NSSet *)keyPathsForValuesAffectingUnreadListIndicator
 {
     return [NSSet setWithObjects:ZMConversationLastUnreadMissedCallDateKey, ZMConversationLastUnreadKnockDateKey, ZMConversationInternalEstimatedUnreadCountKey, ZMConversationLastReadServerTimeStampKey, ZMConversationHasUnreadUnsentMessageKey,  nil];
+}
+
+- (BOOL)hasUnreadMessagesInOtherConversations
+{
+    return [ZMConversation unreadConversationCountIncludingSilencedInContext:self.managedObjectContext excluding:self] > 0;
 }
 
 @end
