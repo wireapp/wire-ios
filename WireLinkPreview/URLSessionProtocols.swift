@@ -24,6 +24,7 @@ typealias DataTaskCompletion = (Data?, URLResponse?, Error?) -> Void
 protocol URLSessionType {
     func dataTask(with request: URLRequest) -> URLSessionDataTaskType
     func dataTaskWithURL(_ url: URL, completionHandler: @escaping DataTaskCompletion) -> URLSessionDataTaskType
+    func invalidateAndCancel()
 }
 
 protocol URLSessionDataTaskType {

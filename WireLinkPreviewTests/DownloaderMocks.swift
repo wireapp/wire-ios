@@ -34,6 +34,11 @@ class MockPreviewDownloader: PreviewDownloaderType {
         requestOpenGraphDataCompletions.append(completion)
         completion(mockOpenGraphData)
     }
+
+    var tornDown = false
+    func tearDown() {
+        tornDown = true
+    }
 }
 
 class MockImageDownloader: ImageDownloaderType {

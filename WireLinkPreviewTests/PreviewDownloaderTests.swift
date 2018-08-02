@@ -38,6 +38,24 @@ class PreviewDownloaderTests: XCTestCase {
         sut = PreviewDownloader(resultsQueue: .main, parsingQueue: .main, urlSession: mockSession)
     }
 
+    override func tearDown() {
+        mockSession = nil
+        mockDataTask = nil
+        sut = nil
+        super.tearDown()
+    }
+
+    func testThatItInvalidatesSessionAfterTearDown() {
+        // given
+        XCTAssertFalse(mockSession.invalidated)
+
+        // when
+        sut.tearDown()
+
+        // then
+        XCTAssertTrue(mockSession.invalidated)
+    }
+
     func testThatItAsksTheSessionForADataTaskWhenOpenGraphDataIsRequested() {
         // given
         let completion: PreviewDownloader.DownloadCompletion = { _ in }
