@@ -37,23 +37,20 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     private let previewDownloader: PreviewDownloaderType
     private let imageDownloader: ImageDownloaderType
     private let workerQueue: OperationQueue
-    private let resultsQueue: OperationQueue
     
     public typealias DetectCompletion = ([LinkPreview]) -> Void
     typealias URLWithRange = (URL: URL, range: NSRange)
     
-    public convenience init(resultsQueue: OperationQueue) {
+    public convenience override init() {
         let workerQueue = OperationQueue()
         self.init(
             previewDownloader: PreviewDownloader(resultsQueue: workerQueue),
             imageDownloader: ImageDownloader(resultsQueue: workerQueue),
-            resultsQueue: resultsQueue,
             workerQueue: workerQueue
         )
     }
     
-    init(previewDownloader: PreviewDownloaderType, imageDownloader: ImageDownloaderType, resultsQueue: OperationQueue, workerQueue: OperationQueue) {
-        self.resultsQueue = resultsQueue
+    init(previewDownloader: PreviewDownloaderType, imageDownloader: ImageDownloaderType, workerQueue: OperationQueue) {
         self.workerQueue = workerQueue
         self.previewDownloader = previewDownloader
         self.imageDownloader = imageDownloader
@@ -80,6 +77,8 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      The preview data is generated from the [Open Graph](http://ogp.me) information contained in the head of the html of the link.
      For debugging Open Graph please use the [Sharing Debugger](https://developers.facebook.com/tools/debug/sharing).
 
+     The completion block will be called on private background queue, make sure to switch to main or other queue.
+
      **Attention: For now this method only downloads the preview data (and only one image for this link preview) 
      for the first link found in the text!**
 
@@ -87,23 +86,21 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
     public func downloadLinkPreviews(inText text: String, completion : @escaping DetectCompletion) {
-        guard let (url, range) = containedLinks(inText: text).first, !blacklist.isBlacklisted(url) else { return callCompletion(completion, result: []) }
+        guard let (url, range) = containedLinks(inText: text).first, !blacklist.isBlacklisted(url) else { return completion([]) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
             guard let `self` = self else { return }
             let originalURLString = (text as NSString).substring(with: range)
-            guard let data = openGraphData else { return self.callCompletion(completion, result: []) }
+            guard let data = openGraphData else { return completion([]) }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)
             linkPreview.requestAssets(withImageDownloader: self.imageDownloader) { _ in
-                self.callCompletion(completion, result: [linkPreview])
+                completion([linkPreview])
             }
         }
     }
-    
-    private func callCompletion(_ completion: @escaping DetectCompletion, result: [LinkPreview]) {
-        resultsQueue.addOperation { 
-            completion(result)
-        }
+
+    deinit {
+        previewDownloader.tearDown()
     }
     
 }

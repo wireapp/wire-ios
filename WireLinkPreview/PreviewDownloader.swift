@@ -23,6 +23,7 @@ private let userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHT
 
 protocol PreviewDownloaderType {
     func requestOpenGraphData(fromURL url: URL, completion: @escaping (OpenGraphData?) -> Void)
+    func tearDown()
 }
 
 enum HeaderKey: String {
@@ -132,6 +133,10 @@ final class PreviewDownloader: NSObject, URLSessionDataDelegate, PreviewDownload
         }
         
         scanner.parse()
+    }
+
+    func tearDown() {
+        session.invalidateAndCancel()
     }
 
 }

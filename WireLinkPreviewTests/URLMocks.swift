@@ -63,4 +63,9 @@ class MockURLSession: URLSessionType {
             return mockDataTask!
         }
     }
+
+    var invalidated = false
+    func invalidateAndCancel() {
+        invalidated = true
+    }
 }
