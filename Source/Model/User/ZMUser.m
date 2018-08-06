@@ -1101,6 +1101,12 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                                                             error:outError];
 }
 
++ (BOOL)isValidName:(NSString *)name
+{
+    NSString *value = [name copy];
+    return [self validateName:&value error:nil];
+}
+
 + (BOOL)validateAccentColorValue:(NSNumber **)ioAccent error:(NSError **)outError
 {
     return [ZMAccentColorValidator validateValue:ioAccent error:outError];
@@ -1111,6 +1117,12 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     return [ZMEmailAddressValidator validateValue:ioEmailAddress error:outError];
 }
 
++ (BOOL)isValidEmailAddress:(NSString *)emailAddress
+{
+    NSString *value = [emailAddress copy];
+    return [self validateEmailAddress:&value error:nil];
+}
+
 + (BOOL)validatePassword:(NSString **)ioPassword error:(NSError **)outError
 {
     return [StringLengthValidator validateValue:ioPassword
@@ -1118,6 +1130,12 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                             maximumStringLength:120
                               maximumByteLength:INT_MAX
                                           error:outError];
+}
+
++ (BOOL)isValidPassword:(NSString *)password
+{
+    NSString *value = [password copy];
+    return [self validatePassword:&value error:nil];
 }
 
 + (BOOL)validatePhoneNumber:(NSString **)ioPhoneNumber error:(NSError **)outError
@@ -1130,6 +1148,12 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     }
 }
 
++ (BOOL)isValidPhoneNumber:(NSString *)phoneNumber
+{
+    NSString *value = [phoneNumber copy];
+    return [self validatePhoneNumber:&value error:nil];
+}
+
 + (BOOL)validatePhoneVerificationCode:(NSString **)ioVerificationCode error:(NSError **)outError
 {
     return [StringLengthValidator validateValue:ioVerificationCode
@@ -1137,6 +1161,12 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                             maximumStringLength:6
                               maximumByteLength:INT_MAX
                                           error:outError];
+}
+
++ (BOOL)isValidPhoneVerificationCode:(NSString *)phoneVerificationCode
+{
+    NSString *value = [phoneVerificationCode copy];
+    return [self validatePhoneVerificationCode:&value error:nil];
 }
 
 - (BOOL)validateValue:(id *)value forKey:(NSString *)key error:(NSError **)error
@@ -1163,8 +1193,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 {
     return [ZMUser validateAccentColorValue:ioAccent error:outError];
 }
-
-
 
 @end
 
