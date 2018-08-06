@@ -85,4 +85,10 @@ ZM_EMPTY_ASSERTING_INIT()
     return YES;
 }
 
++ (BOOL)isValidPhoneNumber:(NSString *)phoneNumber
+{
+    NSString* value = [phoneNumber copy];
+    return [self validateValue:&value error:nil];
+}
+
 @end

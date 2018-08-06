@@ -21,4 +21,6 @@
 
 @interface ZMPhoneNumberValidator : NSObject <ZMPropertyValidator>
 
++ (BOOL)isValidPhoneNumber:(NSString * _Nullable)phoneNumber;
+
 @end
