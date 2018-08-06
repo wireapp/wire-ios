@@ -21,7 +21,7 @@ import Foundation
 import WireDataModel
 import WireTransport
 import WireRequestStrategy
-
+import WireLinkPreview
 
 class PushMessageHandlerDummy : NSObject, PushMessageHandler {
 
@@ -108,19 +108,22 @@ class ApplicationStatusDirectory : ApplicationStatus {
     
     /// The client registration status used to lookup if a user has registered a self client
     public let clientRegistrationStatus : ClientRegistrationDelegate
+
+    public let linkPreviewDetector: LinkPreviewDetectorType
     
-    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider , clientRegistrationStatus: ClientRegistrationStatus) {
+    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider , clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.deliveryConfirmationDummy = DeliveryConfirmationDummy()
+        self.linkPreviewDetector = linkPreviewDetector
     }
     
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
-        
-        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus)
+        let linkPreviewDetector = LinkPreviewDetector()
+        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
     }
     
     public var synchronizationState: SynchronizationState {
@@ -307,10 +310,12 @@ public class SharingSession {
     public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, cachesDirectory: URL, accountContainer: URL) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
+        let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: contextDirectory.syncContext)
         
         let strategyFactory = StrategyFactory(
             syncContext: contextDirectory.syncContext,
-            applicationStatus: applicationStatusDirectory
+            applicationStatus: applicationStatusDirectory,
+            linkPreviewPreprocessor: linkPreviewPreprocessor
         )
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -378,6 +383,22 @@ public class SharingSession {
             self?.userInterfaceContext.saveOrRollback()
             completionHandler?()
         }
+    }
+
+}
+
+extension SharingSession: LinkPreviewDetectorType {
+    public var delegate: LinkPreviewDetectorDelegate? {
+        get {
+            return applicationStatusDirectory.linkPreviewDetector.delegate
+        }
+        set(newValue) {
+            applicationStatusDirectory.linkPreviewDetector.delegate = newValue
+        }
+    }
+
+    @objc public func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void) {
+        applicationStatusDirectory.linkPreviewDetector.downloadLinkPreviews?(inText: text, completion: completion)
     }
 
 }

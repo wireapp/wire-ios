@@ -20,20 +20,22 @@
 import Foundation
 import WireRequestStrategy
 import WireTransport.ZMRequestCancellation
-
+import WireLinkPreview
 
 class StrategyFactory {
 
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatus
+    let linkPreviewPreprocessor: LinkPreviewPreprocessor
     private(set) var strategies = [AnyObject]()
 
     private var tornDown = false
 
-    init(syncContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    init(syncContext: NSManagedObjectContext, applicationStatus: ApplicationStatus, linkPreviewPreprocessor: LinkPreviewPreprocessor) {
+        self.linkPreviewPreprocessor = linkPreviewPreprocessor
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
-        self.strategies = createStrategies()
+        self.strategies = createStrategies(linkPreviewPreprocessor: linkPreviewPreprocessor)
     }
 
     deinit {
@@ -49,7 +51,7 @@ class StrategyFactory {
         tornDown = true
     }
 
-    private func createStrategies() -> [AnyObject] {
+    private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
         return [
             // Missing Clients
             createMissingClientsStrategy(),
@@ -58,7 +60,7 @@ class StrategyFactory {
             createClientMessageTranscoder(),
 
             // Link Previews
-            createLinkPreviewAssetUploadRequestStrategy(),
+            createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: linkPreviewPreprocessor),
             createLinkPreviewUploadRequestStrategy(),
 
             // Assets V3
@@ -82,12 +84,12 @@ class StrategyFactory {
 
     // MARK: – Link Previews
 
-    private func createLinkPreviewAssetUploadRequestStrategy() -> LinkPreviewAssetUploadRequestStrategy {
+    private func createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> LinkPreviewAssetUploadRequestStrategy {
         
         return LinkPreviewAssetUploadRequestStrategy(
             managedObjectContext: syncContext,
             applicationStatus: applicationStatus,
-            linkPreviewPreprocessor: nil,
+            linkPreviewPreprocessor: linkPreviewPreprocessor,
             previewImagePreprocessor: nil
         )
     }

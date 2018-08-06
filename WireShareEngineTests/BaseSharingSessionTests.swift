@@ -21,6 +21,8 @@ import XCTest
 import WireDataModel
 import WireMockTransport
 import WireTesting
+import WireRequestStrategy
+import WireLinkPreview
 @testable import WireShareEngine
 
 class FakeAuthenticationStatus: AuthenticationStatusProvider {
@@ -54,6 +56,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [])
         let registrationStatus = ClientRegistrationStatus(context: directory.syncContext)
+        let linkPreviewDetector = LinkPreviewDetector()
         let operationLoop = RequestGeneratingOperationLoop(
             userContext: directory.uiContext,
             syncContext: directory.syncContext,
@@ -64,12 +67,14 @@ class BaseSharingSessionTests: ZMTBaseTest {
         let applicationStatusDirectory = ApplicationStatusDirectory(
             transportSession: transportSession,
             authenticationStatus: authenticationStatus,
-            clientRegistrationStatus: registrationStatus
+            clientRegistrationStatus: registrationStatus,
+            linkPreviewDetector: linkPreviewDetector
         )
 
         let strategyFactory = StrategyFactory(
             syncContext: directory.syncContext,
-            applicationStatus: applicationStatusDirectory
+            applicationStatus: applicationStatusDirectory,
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: directory.syncContext)
         )
 
         sharingSession = try! SharingSession(
