@@ -21,4 +21,6 @@
 
 @interface ZMEmailAddressValidator : NSObject <ZMPropertyValidator>
 
++ (BOOL)isValidEmailAddress:(NSString * _Nullable)emailAddress;
+
 @end

@@ -51,11 +51,14 @@
       @""];
     
     BOOL isValid;
+    BOOL isValidWithNonMutableCheck;
     NSError *error;
     for (NSString *phoneNumber in validPhoneNumbers) {
         NSString *value = phoneNumber;
         isValid = [ZMPhoneNumberValidator validateValue:&value error:&error];
+        isValidWithNonMutableCheck = [ZMPhoneNumberValidator isValidPhoneNumber:value];
         XCTAssertTrue(value);
+        XCTAssertTrue(isValidWithNonMutableCheck);
         XCTAssertNil(error);
     }
 }
@@ -70,11 +73,14 @@
       ];
 
     BOOL isValid;
+    BOOL isValidWithNonMutableCheck;
     NSError *error;
     for (NSString *phoneNumber in invalidPhoneNumbers) {
         NSString *value = phoneNumber;
         isValid = [ZMPhoneNumberValidator validateValue:&value error:&error];
+        isValidWithNonMutableCheck = [ZMPhoneNumberValidator isValidPhoneNumber:value];
         XCTAssertFalse(isValid);
+        XCTAssertFalse(isValidWithNonMutableCheck);
         XCTAssertNotNil(error);
     }
 }

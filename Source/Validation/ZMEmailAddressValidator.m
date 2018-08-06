@@ -179,4 +179,10 @@ ZM_EMPTY_ASSERTING_INIT()
     return YES;
 }
 
++ (BOOL)isValidEmailAddress:(NSString *)emailAddress
+{
+    NSString* value = [emailAddress copy];
+    return [self validateValue:&value error:nil];
+}
+
 @end

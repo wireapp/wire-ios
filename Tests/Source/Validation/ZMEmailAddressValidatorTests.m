@@ -77,13 +77,16 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
       };
     
     BOOL isValid;
+    BOOL isValidWithNonMutableCheck;
     NSError *error;
     NSMutableArray *validatedEmails = [NSMutableArray new];
     for (NSString *email in validEmailAddresses) {
         NSString *validatedEmail = email;
         isValid = [ZMEmailAddressValidator validateValue:&validatedEmail error:&error];
+        isValidWithNonMutableCheck = [ZMEmailAddressValidator isValidEmailAddress:validatedEmail];
         [validatedEmails addObject:validatedEmail];
         XCTAssertTrue(isValid);
+        XCTAssertTrue(isValidWithNonMutableCheck);
         XCTAssertNil(error);
     }
     AssertArraysContainsSameObjects(validatedEmails, validEmailAddresses.allValues);
@@ -124,11 +127,14 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
       ];
     
     BOOL isValid;
+    BOOL isValidWithNonMutableCheck;
     NSError *error;
     for (NSString *email in invalidEmailAddresses) {
         NSString *validatedEmail = email;
         isValid = [ZMEmailAddressValidator validateValue:&validatedEmail error:&error];
+        isValidWithNonMutableCheck = [ZMEmailAddressValidator isValidEmailAddress:validatedEmail];
         XCTAssertFalse(isValid, @"failed for %@", email);
+        XCTAssertFalse(isValidWithNonMutableCheck, @"isValidEmailAddress failed for %@", email);
         XCTAssertNotNil(error);
     }
 }
