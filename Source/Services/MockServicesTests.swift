@@ -22,12 +22,13 @@ import Foundation
 class MockServicesTests: MockTransportSessionTests {
     func testThatInsertedServiceCanBeQueried() {
         // given
+        let teamID = UUID()
         let service1 = sut.insertService(name: "Normal Service", identifier: UUID().transportString(), provider: UUID().transportString())
         let _ = sut.insertService(name: "Other Service", identifier: UUID().transportString(), provider: UUID().transportString())
 
         // when
 
-        let response = sut.processServicesSearchRequest(ZMTransportRequest(path: "/services?tags=tutorial&start=Normal", method: .methodGET, payload: nil))
+        let response = sut.processTeamsRequest(ZMTransportRequest(path: "/teams/\(teamID.transportString())/services/whitelisted?prefix=Normal", method: .methodGET, payload: nil))
         // then
         XCTAssertEqual(response.httpStatus, 200)
         XCTAssertNotNil(response.payload?.asDictionary()?["services"])

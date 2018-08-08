@@ -19,17 +19,15 @@
 import Foundation
 
 extension MockTransportSession {
-    @objc(processServicesSearchRequest:)
-    public func processServicesSearchRequest(_ request: ZMTransportRequest) -> ZMTransportResponse {
-        guard let _ = request.queryParameters["tags"] as? String,
-                let startsWith = request.queryParameters["start"] as? String else {
-                    return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+
+    func fetchWhitelistedServicesForTeam(with identifier: String?, query: [String : Any]) -> ZMTransportResponse? {
+        var predicate: NSPredicate? = nil
+        if let prefix = query["prefix"] as? String {
+            predicate = NSPredicate(format: "%K beginswith[c] %@", #keyPath(MockService.name), prefix)
         }
-        
-        let predicate = NSPredicate(format: "%K beginswith[c] %@", #keyPath(MockService.name), startsWith)
-        
+
         let services: [MockService] = MockService.fetchAll(in: managedObjectContext, withPredicate: predicate)
-        
+
         let payload: [String : Any] = [
             "services" : services.map { $0.payload },
             "has_more" : false

@@ -34,6 +34,8 @@ extension MockTransportSession {
             response = fetchAllTeams(query: request.queryParameters)
         case "/teams/*":
             response = fetchTeam(with: request.RESTComponents(index: 1))
+        case "/teams/*/services/whitelisted":
+            response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters)
         case "/teams/*/invitations":
             response = sendTeamInvitation(with: request.RESTComponents(index: 1))
         case "/teams/*/members":
