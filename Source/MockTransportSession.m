@@ -437,7 +437,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
              @[@"/invitations", @"processInvitationsRequest:"],
              @[@"/teams", @"processTeamsRequest:"],
              @[@"/broadcast", @"processBroadcastRequest:"],
-             @[@"/services", @"processServicesSearchRequest:"],
              @[@"/providers", @"processServicesProvidersRequest:"]
              ];
 }
