@@ -2150,3 +2150,14 @@ extension ZMAssetClientMessageTests {
         }
     }
 }
+
+// MARK: - PassKit
+extension ZMAssetClientMessageTests {
+    func testThatItDetectsPass_MIME() {
+        // GIVEN
+        let passMIME = "application/vnd.apple.pkpass"
+
+        // WHEN & THEN
+        XCTAssertTrue(passMIME.isPassMimeType)
+    }
+}

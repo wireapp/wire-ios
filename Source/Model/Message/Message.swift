@@ -41,6 +41,10 @@ public extension ZMConversationMessage {
         return fileMessageData != nil && !fileMessageData!.v3_isImage
     }
 
+    public var isPass: Bool {
+        return isFile && fileMessageData!.isPass
+    }
+
     public var isVideo: Bool {
         return isFile && fileMessageData!.isVideo
     }
