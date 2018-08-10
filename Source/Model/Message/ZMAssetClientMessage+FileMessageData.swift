@@ -67,7 +67,10 @@ import Foundation
     /// Video-message related properties
     /// if MIME type is indicating the video content
     var isVideo: Bool { get }
-    
+
+    /// if MIME type is indicating the PKPass content
+    var isPass: Bool { get }
+
     /// Cancels the pending download or upload of the file.
     /// Deisgned to be used in case the file transfer on sender side is
     /// in `ZMFileMessageStateUploading` state, or in `ZMFileMessageStateDownloading`
@@ -225,6 +228,10 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     
     public var imagePreviewDataIdentifier: String? {
         return self.asset?.imagePreviewDataIdentifier
+    }
+
+    public var isPass: Bool {
+        return self.mimeType?.isPassMimeType ?? false
     }
 
     public var isVideo: Bool {

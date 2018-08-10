@@ -367,6 +367,45 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertFalse(fileMessage.fileMessageData!.isAudio)
     }
 
+    func testThatWeCanInsertAPassFileMessage() {
+        // given
+        let filename = "ticket.pkpass"
+        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+        let fileURL = URL(fileURLWithPath: documents).appendingPathComponent(filename)
+        let data = Data.randomEncryptionKey()
+        let size = data.count
+        try! data.write(to: fileURL)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+
+        // when
+        let fileMetaData = ZMFileMetadata(fileURL: fileURL)
+        let fileMessage = conversation.appendMessage(with: fileMetaData) as! ZMAssetClientMessage
+
+        // then
+        XCTAssertEqual(conversation.messages.count, 1)
+        XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
+
+        XCTAssertNotNil(fileMessage)
+        XCTAssertNotNil(fileMessage.nonce)
+        XCTAssertNotNil(fileMessage.fileMessageData)
+        XCTAssertNotNil(fileMessage.genericAssetMessage)
+        XCTAssertNil(fileMessage.assetId)
+        XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage)
+        XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage)
+        XCTAssertEqual(fileMessage.uploadState, .uploadingPlaceholder)
+        XCTAssertFalse(fileMessage.delivered)
+        XCTAssertTrue(fileMessage.hasDownloadedFile)
+        XCTAssertEqual(fileMessage.size, UInt64(size))
+        XCTAssertEqual(fileMessage.progress, 0)
+        XCTAssertEqual(fileMessage.filename, filename)
+        XCTAssertEqual(fileMessage.mimeType, "application/vnd.apple.pkpass")
+        XCTAssertFalse(fileMessage.fileMessageData!.isVideo)
+        XCTAssertFalse(fileMessage.fileMessageData!.isAudio)
+        XCTAssert(fileMessage.fileMessageData!.isPass)
+    }
+
+
     func testThatWeCanInsertALocationMessage()
     {
         // given
@@ -454,7 +493,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(fileMessageData.videoDimensions.height, dimensions.height)
         XCTAssertEqual(fileMessageData.videoDimensions.width, dimensions.width)
     }
-    
+
     func testThatWeCanInsertAnAudioMessage() {
         
         // given

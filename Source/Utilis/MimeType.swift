@@ -25,6 +25,10 @@ fileprivate let unsupportedVideoTypes: Set<String> = ["video/webm"]
 
 extension String {
     
+    public var isPassMimeType: Bool {
+        return self.hasSuffix("apple.pkpass")
+    }
+
     /// Returns whether the string represents a video mime type
     public func isVideoMimeType() -> Bool {
         return (self as NSString).zm_conforms(to: kUTTypeMovie)
