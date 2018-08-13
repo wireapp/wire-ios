@@ -1127,6 +1127,7 @@
 		EF30524B2088927D00613C45 /* transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = EF30524A2088927D00613C45 /* transparent.png */; };
 		EF31DC7C2092020300A4F09F /* UIViewController+iPhoneSize.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF31DC792092008100A4F09F /* UIViewController+iPhoneSize.swift */; };
 		EF32A4CD204EFD8E003632FB /* CameraCellTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF32A4CC204EFD8E003632FB /* CameraCellTests.swift */; };
+		EF3976CE2114506E0030BE68 /* KeyboardAvoidingViewController+Animation.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3976CD2114506E0030BE68 /* KeyboardAvoidingViewController+Animation.swift */; };
 		EF3BA5D421075FC60093048F /* ConversationInputBarViewController+Language.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */; };
 		EF3BA5D72107688D0093048F /* InputLanguageSettable.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */; };
 		EF40005720568C4400E03347 /* NetworkStatusBarConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF40005620568C4400E03347 /* NetworkStatusBarConstants.swift */; };
@@ -2789,6 +2790,8 @@
 		EF30524A2088927D00613C45 /* transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = transparent.png; sourceTree = "<group>"; };
 		EF31DC792092008100A4F09F /* UIViewController+iPhoneSize.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+iPhoneSize.swift"; sourceTree = "<group>"; };
 		EF32A4CC204EFD8E003632FB /* CameraCellTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCellTests.swift; sourceTree = "<group>"; };
+		EF3976CD2114506E0030BE68 /* KeyboardAvoidingViewController+Animation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "KeyboardAvoidingViewController+Animation.swift"; sourceTree = "<group>"; };
+		EF3976CF21148A110030BE68 /* KeyboardAvoidingViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "KeyboardAvoidingViewController+Internal.h"; sourceTree = "<group>"; };
 		EF3BA5D321075FC60093048F /* ConversationInputBarViewController+Language.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ConversationInputBarViewController+Language.swift"; sourceTree = "<group>"; };
 		EF3BA5D62107688D0093048F /* InputLanguageSettable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputLanguageSettable.swift; sourceTree = "<group>"; };
 		EF40005620568C4400E03347 /* NetworkStatusBarConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkStatusBarConstants.swift; sourceTree = "<group>"; };
@@ -3695,7 +3698,9 @@
 				871BC36C1D34F96000DF0793 /* DeviceOrientationObserver.m */,
 				871BC1511D34F8F800DF0793 /* Giphy */,
 				871BC15E1D34F8F800DF0793 /* KeyboardAvoidingViewController.h */,
+				EF3976CF21148A110030BE68 /* KeyboardAvoidingViewController+Internal.h */,
 				871BC15F1D34F8F800DF0793 /* KeyboardAvoidingViewController.m */,
+				EF3976CD2114506E0030BE68 /* KeyboardAvoidingViewController+Animation.swift */,
 				871BC1601D34F8F800DF0793 /* KeyboardFrameObserver+iOS.h */,
 				871BC1611D34F8F800DF0793 /* KeyboardFrameObserver+iOS.m */,
 				871BC1621D34F8F800DF0793 /* KeyboardFrameObserver.h */,
@@ -5656,6 +5661,7 @@
 				EF2126DD1FB9DFE300625A9B /* Steps */,
 				EF2126F11FB9DFE300625A9B /* NagScreen */,
 				EF2126B71FB9DFE300625A9B /* CheckmarkView.m */,
+				EF2126D31FB9DFE300625A9B /* RegistrationViewController.h */,
 				EF2126B81FB9DFE300625A9B /* RegistrationViewController.m */,
 				EF2126B91FB9DFE300625A9B /* RegistrationTextField.m */,
 				EF2126BA1FB9DFE300625A9B /* GuidanceDotView.m */,
@@ -5672,7 +5678,6 @@
 				EF2126C51FB9DFE300625A9B /* FormStepDelegate.h */,
 				EF2126D11FB9DFE300625A9B /* GuidanceDotView.h */,
 				EF2126D21FB9DFE300625A9B /* RegistrationTextField.h */,
-				EF2126D31FB9DFE300625A9B /* RegistrationViewController.h */,
 				EF2126D41FB9DFE300625A9B /* CheckmarkView.h */,
 				EF2126F91FB9DFE300625A9B /* GuidanceLabel.m */,
 				EF2126FA1FB9DFE300625A9B /* EmailFormViewController.h */,
@@ -6950,6 +6955,7 @@
 				5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */,
 				871BC2551D34F8F800DF0793 /* CrossfadeTransition.m in Sources */,
 				16D4932A203DCCCA008DDFFA /* UserCell.swift in Sources */,
+				EF3976CE2114506E0030BE68 /* KeyboardAvoidingViewController+Animation.swift in Sources */,
 				872CB8B819E58816006752B4 /* ProfileSendConnectionRequestFooterView.m in Sources */,
 				877B07821E3B4C4A0070A6F2 /* ZMConversationMessage+Properties.swift in Sources */,
 				EF2127231FB9DFE300625A9B /* RegistrationFormController.m in Sources */,
