@@ -1,4 +1,4 @@
-//
+////
 // Wire
 // Copyright (C) 2018 Wire Swiss GmbH
 //
@@ -16,18 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import Foundation
+#import <UIKit/UIKit.h>
 
-extension UIViewController {
-    @objc var isHorizontalSizeClassRegular: Bool {
-        return traitCollection.horizontalSizeClass == .regular
-    }
+@interface KeyboardAvoidingViewController ()
 
-    func isIPadRegular(device: DeviceProtocol = UIDevice.current) -> Bool {
-        return device.userInterfaceIdiom == .pad && isHorizontalSizeClassRegular
-    }
+@property (nonatomic, nullable) NSLayoutConstraint *bottomEdgeConstraint;
+@property (nonatomic, nullable) UIViewPropertyAnimator *animator;
 
-    func isIPadRegularPortrait(device: DeviceProtocol, application: ApplicationProtocol) -> Bool {
-        return isIPadRegular(device: device) && application.statusBarOrientation.isPortrait
-    }
-}
+@end
