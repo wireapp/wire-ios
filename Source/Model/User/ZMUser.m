@@ -250,8 +250,13 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 
 - (NSString *)displayName;
 {
-    PersonName *personName = [self.managedObjectContext.zm_displayNameGenerator personNameFor:self];
-    return personName.givenName ?: @"";
+    if (self.isServiceUser) {
+        return self.name;
+    }
+    else {
+        PersonName *personName = [self.managedObjectContext.zm_displayNameGenerator personNameFor:self];
+        return personName.givenName ?: @"";
+    }
 }
 
 - (NSString *)initials
