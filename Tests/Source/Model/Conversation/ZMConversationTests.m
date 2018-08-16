@@ -2466,11 +2466,11 @@
         XCTAssert([self.syncMOC saveOrRollback]);
         
         //then
-        XCTAssertEqual([ZMConversation unreadConversationCountIncludingSilencedInContext:self.syncMOC excluding:conversation], 0lu);
+        XCTAssertEqual([ZMConversation unreadConversationCountExcludingSilencedInContext:self.syncMOC excluding:conversation], 0lu);
     }];
 }
 
-- (void)testThatItCountsSilencedConversationsUnreadContentAsUnread;
+- (void)testThatItDoesNotCountsSilencedConversationsUnreadContentAsUnread;
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -2483,7 +2483,23 @@
         XCTAssert([self.syncMOC saveOrRollback]);
         
         // then
-        XCTAssertEqual([ZMConversation unreadConversationCountIncludingSilencedInContext:self.syncMOC excluding:nil], 1lu);
+        XCTAssertEqual([ZMConversation unreadConversationCountExcludingSilencedInContext:self.syncMOC excluding:nil], 0lu);
+    }];
+}
+
+- (void)testThatItDoesCountsNonSilencedNonExcludedConversationsUnreadContentAsUnread;
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
+        
+        [self insertConversationWithUnread:YES];
+        
+        // when
+        XCTAssert([self.syncMOC saveOrRollback]);
+        
+        // then
+        XCTAssertEqual([ZMConversation unreadConversationCountExcludingSilencedInContext:self.syncMOC excluding:nil], 1lu);
     }];
 }
 
