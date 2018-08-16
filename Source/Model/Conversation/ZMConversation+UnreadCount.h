@@ -39,13 +39,14 @@
 + (NSPredicate *)predicateForConversationConsideredUnread;
 
 /// Predicate for conversations that will be considered unread for the purpose of the back arrow dot
-+ ( NSPredicate *)predicateForConversationConsideredUnreadIncludingSilenced;
++ (NSPredicate *)predicateForConversationConsideredUnreadExcludingSilenced;
 
 /// Count of unread conversations (exluding silenced converations)
 + (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
 
-/// Count of unread conversations (including silenced conversations)
-+ (NSUInteger)unreadConversationCountIncludingSilencedInContext:(NSManagedObjectContext *)moc excluding:(ZMConversation *)conversation;
+/// Count of unread conversations (excluding silenced conversations)
++ (NSUInteger)unreadConversationCountExcludingSilencedInContext:(NSManagedObjectContext *)moc
+                                                      excluding:(ZMConversation *)conversation;
 
 @end
 
