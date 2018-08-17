@@ -24,7 +24,7 @@ import MobileCoreServices
 struct UTType: CustomStringConvertible {
     let value: CFString
     init?(mimeType: String) {
-        guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeUnretainedValue() else { return nil }
+        guard let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mimeType as CFString, nil)?.takeRetainedValue() else { return nil }
         value = UTI
     }
     
