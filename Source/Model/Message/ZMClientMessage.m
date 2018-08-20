@@ -194,7 +194,9 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *__unused)updateEvent initialUpdate:(BOOL)initialUpdate
 {
-    if (!initialUpdate && (message.text.linkPreview.count == 0 || ![self.messageText isEqualToString:message.text.content])) {
+    if (!initialUpdate
+        && (message.text != nil && (message.text.linkPreview.count == 0 || ![self.messageText isEqualToString:message.text.content]))
+        && (message.ephemeral.text != nil && (message.ephemeral.text.linkPreview.count == 0 || ![self.messageText isEqualToString:message.ephemeral.text.content]))) {
         return; // We only update client messages if the update contains a link preview and the content didn't change
     }
     
