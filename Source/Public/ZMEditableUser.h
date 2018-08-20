@@ -33,3 +33,37 @@
 @property (nonatomic, copy, readonly) NSString *phoneNumber;
 
 @end
+
+
+@interface ZMCompleteRegistrationUser : NSObject <ZMEditableUser>
+
+@property (nonatomic, readonly, copy) NSString *emailAddress;
+@property (nonatomic, readonly, copy) NSString *password;
+@property (nonatomic, readonly, copy) NSString *phoneNumber;
+@property (nonatomic, readonly, copy) NSString *phoneVerificationCode;
+@property (nonatomic, readonly, copy) NSString *invitationCode;
+@property (nonatomic, copy) NSData *profileImageData;
+
++ (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password;
++ (instancetype)registrationUserWithPhoneNumber:(NSString *)phoneNumber phoneVerificationCode:(NSString *)phoneVerificationCode;
++ (instancetype)registrationUserWithEmail:(NSString *)email password:(NSString *)password invitationCode:(NSString *)invitationCode;
++ (instancetype)registrationUserWithPhoneNumber:(NSString *)phoneNumber invitationCode:(NSString *)invitationCode;
+
+@end
+
+
+
+@interface ZMIncompleteRegistrationUser : NSObject <ZMEditableUser>
+
+@property (nonatomic, copy) NSString *emailAddress;
+@property (nonatomic, copy) NSString *password;
+@property (nonatomic, copy) NSString *phoneNumber;
+@property (nonatomic, copy) NSString *phoneVerificationCode;
+@property (nonatomic, copy) NSString *invitationCode;
+@property (nonatomic, copy) NSData *profileImageData;
+
+/// This will assert if the email - password - phone - phoneVerificationCode is not set up properly.
+- (ZMCompleteRegistrationUser *)completeRegistrationUser;
+
+@end
+
