@@ -201,6 +201,21 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
         XCTAssertTrue(message.isDeleted);
     }
     
+    func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {
+        // given
+        let sut = appendFileMessage(to: conversation)!
+        self.uiMOC.zm_fileAssetCache.storeAssetData(sut, format: .medium, encrypted: false, data: Data.secureRandomData(ofLength: 100))
+        guard let tempFolder = sut.temporaryDirectoryURL else { XCTFail(); return }
+        
+        XCTAssertNotNil(sut.fileURL)
+        XCTAssertTrue(FileManager.default.fileExists(atPath: tempFolder.path))
+        
+        //when
+        sut.deleteContent()
+        
+        //then
+        XCTAssertFalse(FileManager.default.fileExists(atPath: tempFolder.path))
+    }
     
     func testThatItMarksMediumNeededToBeDownloadedIfNoEncryptedNoDecryptedDataStored() {
         
