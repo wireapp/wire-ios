@@ -14,7 +14,7 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//  
 
 
 #import "ZMMessageTests.h"
@@ -525,6 +525,46 @@
     
     // then
     XCTAssertNotNil(sut);
+    XCTAssertNotNil(existingMessage.linkPreview);
+    XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
+}
+
+- (void)testThatItUpdates_AnAlreadyExistingEphemeralClientMessageWhichContainLinkPreviewUpdate
+{
+    // given
+    NSString *initialText = @"initial text";
+    
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    
+    UserClient *selfClient = [self createSelfClient];
+    
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithText:initialText nonce:nonce expiresAfter:nil];
+    [existingMessage addData:message.data];
+    existingMessage.visibleInConversation = conversation;
+    existingMessage.sender = self.selfUser;
+    existingMessage.senderClientID = selfClient.remoteIdentifier;
+    
+    ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithText:initialText linkPreview:linkPreview nonce:nonce expiresAfter:@3600];
+    
+    NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
+    
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+    
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    
+    // then
+    XCTAssertNotNil(sut);
+    XCTAssertTrue(existingMessage.isEphemeral);
     XCTAssertNotNil(existingMessage.linkPreview);
     XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
 }
