@@ -95,14 +95,14 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     func testThatItDoesNotSetAllTeamUsersAddedWhenItIsNotTheCaseForTeamUser() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = self.createTeam()
+            let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            self.createMembership(user: selfUser, team: team)
-            let membership = self.createMembership(user: selfUser, team: team)
+            self.createMembership(in: self.syncMOC, user: selfUser, team: team)
+            let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
             
-            let user1 = self.createTeamMember(for: team)
-            self.createTeamMember(for: team)
+            let user1 = self.createTeamMember(in: self.syncMOC, for: team)
+            self.createTeamMember(in: self.syncMOC, for: team)
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1], name: self.name, in: team)
@@ -123,13 +123,13 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     func testThatItDoesSetAllTeamUsersAddedWhenItIsTheCaseForTeamUser() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = self.createTeam()
+            let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let membership = self.createMembership(user: selfUser, team: team)
+            let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
             
-            let user1 = self.createTeamMember(for: team)
-            let user2 = self.createTeamMember(for: team)
+            let user1 = self.createTeamMember(in: self.syncMOC, for: team)
+            let user2 = self.createTeamMember(in: self.syncMOC, for: team)
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1, user2], name: self.name, in: team)
@@ -150,13 +150,13 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithAllTeamUsers() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = self.createTeam()
+            let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let membership = self.createMembership(user: selfUser, team: team)
+            let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
             
-            let user1 = self.createTeamMember(for: team)
-            let user2 = self.createTeamMember(for: team)
+            let user1 = self.createTeamMember(in: self.syncMOC, for: team)
+            let user2 = self.createTeamMember(in: self.syncMOC, for: team)
             let guest1 = self.createUser(onMoc: self.syncMOC)!
             let guest2 = self.createUser(onMoc: self.syncMOC)!
             
@@ -179,13 +179,13 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
     func testThatItIncludesNumberOfGuestsAddedInNewConversationSystemMessageWithoutAllTeamUsers() {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let team = self.createTeam()
+            let team = self.createTeam(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let membership = self.createMembership(user: selfUser, team: team)
+            let membership = self.createMembership(in: self.syncMOC, user: selfUser, team: team)
             membership.permissions = .admin
             
-            let user1 = self.createTeamMember(for: team)
-            self.createTeamMember(for: team)
+            let user1 = self.createTeamMember(in: self.syncMOC, for: team)
+            self.createTeamMember(in: self.syncMOC, for: team)
             let guest1 = self.createUser(onMoc: self.syncMOC)!
             let guest2 = self.createUser(onMoc: self.syncMOC)!
             
@@ -205,35 +205,4 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
         }
     }
 
-}
-
-// MARK: - Helper
-
-extension ZMConversationTestsBase {
-    
-    func createConversation() -> ZMConversation {
-        let conversation = ZMConversation.insertNewObject(in: syncMOC)
-        conversation.remoteIdentifier = UUID()
-        conversation.conversationType = .group
-        return conversation
-    }
-    
-    func createTeam() -> Team {
-        let team = Team.insertNewObject(in: syncMOC)
-        team.remoteIdentifier = UUID()
-        return team
-    }
-    
-    @discardableResult func createMembership(user: ZMUser, team: Team) -> Member {
-        let member = Member.insertNewObject(in: syncMOC)
-        member.user = user
-        member.team = team
-        return member
-    }
-    
-    @discardableResult func createTeamMember(for team: Team) -> ZMUser {
-        let user = createUser(onMoc: syncMOC)!
-        createMembership(user: user, team: team)
-        return user
-    }
 }
