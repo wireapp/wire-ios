@@ -100,6 +100,19 @@ class ZMConversationTests_Services : BaseZMMessageTests {
         XCTAssertNil(conversation)
     }
 
+    func testThatItChecksOnlyConversationsWithNoUserDefinedName() {
+        // given
+        let existingConversation = createConversation(with: service)
+
+        // when
+        existingConversation.userDefinedName = "First"
+        let conversation = ZMConversation.existingConversation(in: uiMOC, service: service, team: team)
+
+        // then
+        XCTAssertNil(conversation)
+    }
+
+
     func testThatItFindsConversationWithCorrectService() {
         // given
         let existingConversation = createConversation(with: service)

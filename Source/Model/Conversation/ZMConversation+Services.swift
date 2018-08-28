@@ -27,7 +27,8 @@ extension ZMConversation {
         let selfIsActiveMember = NSPredicate(format: "%K == YES", #keyPath(ZMConversation.isSelfAnActiveMember))
         let onlyOneOtherParticipant = NSPredicate(format: "%K.@count == 1", ZMConversationLastServerSyncedActiveParticipantsKey)
         let hasParticipantWithServiceIdentifier = NSPredicate(format: "ANY %K.%K == %@", ZMConversationLastServerSyncedActiveParticipantsKey, #keyPath(ZMUser.serviceIdentifier), serviceID)
-        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [sameTeam, groupConversation, selfIsActiveMember, onlyOneOtherParticipant, hasParticipantWithServiceIdentifier])
+        let noUserDefinedName = NSPredicate(format: "%K == nil", #keyPath(ZMConversation.userDefinedName))
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [sameTeam, groupConversation, selfIsActiveMember, onlyOneOtherParticipant, hasParticipantWithServiceIdentifier, noUserDefinedName])
 
         let fetchRequest = sortedFetchRequest(with: predicate)
         fetchRequest?.fetchLimit = 1
