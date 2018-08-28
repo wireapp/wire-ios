@@ -1212,6 +1212,15 @@
 			name = Reaction;
 			sourceTree = "<group>";
 		};
+		F1103BD82135471A00EB9ED6 /* Calling */ = {
+			isa = PBXGroup;
+			children = (
+				161541B91E27EBD400AC2FFB /* ZMConversation+Calling.swift */,
+				165D3A2B1E1D47AB0052E654 /* ZMCallState.swift */,
+			);
+			path = Calling;
+			sourceTree = "<group>";
+		};
 		F93A30281D6EFB66005CCB1D /* Confirmation */ = {
 			isa = PBXGroup;
 			children = (
@@ -1313,7 +1322,7 @@
 		F9A705D91CAEE01D00C2F5FE /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
-				165D3A2B1E1D47AB0052E654 /* ZMCallState.swift */,
+				F1103BD82135471A00EB9ED6 /* Calling */,
 				F9B71F111CB264EF001DB03F /* ZMConversation+Internal.h */,
 				F9B71F101CB264EF001DB03F /* ZMConversation.m */,
 				F92C99291DAFBC910034AFDD /* ZMConversation+Ephemeral.swift */,
@@ -1327,7 +1336,6 @@
 				544E8C121E2F825700F9B8B8 /* ZMConversation+SecurityLevel.swift */,
 				547E66481F7503A5008CB1FA /* ZMConversation+Notifications.swift */,
 				F125BAD61EE9849B0018C2F8 /* ZMConversation+Teams.swift */,
-				161541B91E27EBD400AC2FFB /* ZMConversation+Calling.swift */,
 				1626344A20D935C0000D4063 /* ZMConversation+Timestamps.swift */,
 				F137EEBD212C14300043FDEB /* ZMConversation+Services.swift */,
 				F9B71F181CB264EF001DB03F /* ZMConversation+Transport.h */,
