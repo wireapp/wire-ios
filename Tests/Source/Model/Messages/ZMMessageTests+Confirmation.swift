@@ -24,24 +24,26 @@ class ZMMessageTests_Confirmation: BaseZMClientMessageTests {
 // MARK: - Adding confirmation locally
 extension ZMMessageTests_Confirmation {
     
-    func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(
-        _ conversationType: ZMConversationType,
-        shouldSendConfirmation: Bool,
-        timestamp: Date = .init(),
-        file: StaticString = #file,
-        line: UInt = #line
-        ) {
+    func checkThatItInsertsAConfirmationMessageWhenItReceivesAMessage(_ conversationType: ZMConversationType,
+                                                                      shouldSendConfirmation: Bool,
+                                                                      timestamp: Date = .init(),
+                                                                      file: StaticString = #file,
+                                                                      line: UInt = #line ) {
         // given
-        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.remoteIdentifier = UUID.create()
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
         conversation.conversationType = conversationType
+        conversation.mutableLastServerSyncedActiveParticipants.add(user)
         
         let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
         
         // when
         // other user sends confirmation
-        let sut = insertMessage(conversation, timestamp: timestamp)
+        let sut = insertMessage(conversation, fromSender: user, timestamp: timestamp)
         XCTAssertTrue(uiMOC.saveOrRollback(), file: file, line: line)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         

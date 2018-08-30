@@ -1361,65 +1361,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic isSelfAnActiveMember;
 @dynamic lastServerSyncedActiveParticipants;
 
-- (void)insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:(ZMSystemMessage *)participantsChange
-{
-    NSUInteger messageIndex = [self.messages indexOfObject:participantsChange];
-    if (messageIndex == 0) {
-        return;
-    }
-    ZMMessage *previousMessage = [self.messages objectAtIndex:messageIndex - 1];
-    
-    BOOL (^isAppropriateVerificationSystemMessage)(ZMMessage *message) = ^BOOL(ZMMessage *message) {
-        if (![previousMessage isKindOfClass:[ZMSystemMessage class]]) {
-            return NO;
-        }
-        
-        ZMSystemMessage *systemMessage = (ZMSystemMessage *)message;
-        
-        if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsAdded &&
-            systemMessage.systemMessageType == ZMSystemMessageTypeNewClient) {
-            return ([systemMessage.addedUsers isEqualToSet:participantsChange.users]);
-        }
-        else if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsRemoved &&
-                 systemMessage.systemMessageType == ZMSystemMessageTypeConversationIsSecure) {
-            return ([systemMessage.users isEqualToSet:participantsChange.users]);
-        }
-        
-        return NO;
-    };
-    
-    if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsAdded) {
-        // Check if the previous system message about the conversation degradation must be now moved or inserted
-        // The message needs to be moved when the action (adding the participant) was local
-        // The message needs to be inserted when the action was remote
-        
-        if (isAppropriateVerificationSystemMessage(previousMessage)) {
-            NSDate *newDate = [participantsChange.serverTimestamp dateByAddingTimeInterval:0.01];
-            
-            previousMessage.serverTimestamp = newDate;
-            [self resortMessagesWithUpdatedMessage:previousMessage];
-        }
-        else {
-            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[NSSet set] causedByAddedUsers:participantsChange.users];
-        }
-    }
-    else if (participantsChange.systemMessageType == ZMSystemMessageTypeParticipantsRemoved) {
-        // Check if the previous system message about the conversation is secured must be now moved or inserted
-        // The message needs to be moved when the action (removing the participant) was local
-        // The message needs to be inserted when the action was remote
-        
-        if (isAppropriateVerificationSystemMessage(previousMessage)) {
-            NSDate *newDate = [participantsChange.serverTimestamp dateByAddingTimeInterval:0.01];
-            
-            previousMessage.serverTimestamp = newDate;
-            [self resortMessagesWithUpdatedMessage:previousMessage];
-        }
-        else {
-            [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:participantsChange.users];
-        }
-    }
-}
-
 @end
 
 
@@ -1521,24 +1462,19 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     const static NSUInteger NumberOfMessagesToKeep = 3;
     
-    if(![self hasFaultForRelationshipNamed:ZMConversationMessagesKey])
-    {
+    if (![self hasFaultForRelationshipNamed:ZMConversationMessagesKey]) {
         const NSUInteger length = self.messages.count;
-        if(length == 0) {
+        
+        if (length == 0) {
             return [NSSet set];
         }
-        NSUInteger currentIndex = length-1;
-        const NSUInteger keepUntilIndex = (length-1 >= NumberOfMessagesToKeep) // avoid overflow
-        ? (length-1 - NumberOfMessagesToKeep)
-        : length-1;
         
-        while(YES) { // not using a for loop because when hitting 0, --i would make it overflow and wrap
-            [messagesToKeep addObject:self.messages[currentIndex]];
-            if(currentIndex == keepUntilIndex) {
-                break;
-            }
-            --currentIndex;
-        };
+        const NSUInteger startIndex = length > NumberOfMessagesToKeep ? length - NumberOfMessagesToKeep : 0;
+        const NSUInteger endIndex = length - 1;
+        
+        for (NSUInteger index = startIndex; index <= endIndex; index++) {
+            [messagesToKeep addObject:self.messages[index]];
+        }
     }
     
     return messagesToKeep;

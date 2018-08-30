@@ -890,11 +890,7 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
     [message updateNewConversationSystemMessageIfNeededWithUsers:usersSet
                                                          context:moc
                                                     conversation:conversation];
-    
-    if (type == ZMSystemMessageTypeParticipantsAdded || type == ZMSystemMessageTypeParticipantsRemoved) {
-        [conversation insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:message];
-    }
-    
+        
     [conversation updateTimestampsAfterUpdatingMessage:message];
     
     return message;

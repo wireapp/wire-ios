@@ -154,6 +154,9 @@ NSString * const DeliveredKey = @"delivered";
         ZMSystemMessage *systemMessage = [conversation appendInvalidSystemMessageAt:updateEvent.timeStamp sender:sender];
         return [[MessageUpdateResult alloc] initWithMessage:systemMessage needsConfirmation:NO wasInserted:YES];
     }
+    
+    // Verify sender is part of conversation
+    [conversation addParticipantIfMissing:[ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc] date: [updateEvent.timeStamp dateByAddingTimeInterval:-0.01]];
 
     // Insert the message
 
