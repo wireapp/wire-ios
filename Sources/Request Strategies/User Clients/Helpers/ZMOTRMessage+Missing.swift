@@ -35,28 +35,3 @@ public extension ZMOTRMessage {
     }
 
 }
-
-extension ZMConversation {
-    
-    /// If a missing client is not in this conversation, then we are out of sync with the BE
-    /// and we should refetch
-    func checkIfMissingActiveParticipant(_ user: ZMUser) {
-        // are we out of sync?
-        guard !self.activeParticipants.contains(user) else { return }
-        
-        self.needsToBeUpdatedFromBackend = true
-        if(self.conversationType == .oneOnOne || self.conversationType == .connection) {
-            if(user.connection == nil) {
-                if(self.connection == nil) {
-                    user.connection = ZMConnection.insertNewObject(in: self.managedObjectContext!)
-                    self.connection = user.connection
-                } else {
-                    user.connection = self.connection
-                }
-            }
-        } else if (self.connection == nil) {
-            self.connection = user.connection
-        }
-        user.connection?.needsToBeUpdatedFromBackend = true
-    }
-}

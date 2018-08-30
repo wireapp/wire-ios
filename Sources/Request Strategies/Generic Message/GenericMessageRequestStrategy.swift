@@ -17,6 +17,7 @@
 //
 
 import Foundation
+
 @objcMembers public class GenericMessageEntity : NSObject, OTREntity {
 
     public var message : ZMGenericMessage
@@ -52,7 +53,7 @@ import Foundation
     }
     
     public func detectedMissingClient(for user: ZMUser) {
-        conversation?.checkIfMissingActiveParticipant(user)
+        conversation?.addParticipantIfMissing(user)
     }
     
     public func expire() {
