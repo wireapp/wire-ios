@@ -195,10 +195,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) BOOL isSelfAnActiveMember; ///< whether the self user is an active member (as opposed to a past member)
 @property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *lastServerSyncedActiveParticipants;
 
-/// Checks if the security level changed as the result of the participants change.
-/// Appends or moves the security level system message.
-- (void)insertOrUpdateSecurityVerificationMessageAfterParticipantsChange:(nonnull ZMSystemMessage *)participantsChange;
-
 @end
 
 

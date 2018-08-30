@@ -19,11 +19,59 @@
 
 #import "ZMConversationTests.h"
 #import "ZMConversation+Transport.h"
+#import "WireDataModelTests-Swift.h"
+#import <WireDataModel/WireDataModel-Swift.h>
 
 @interface ZMConversationParticipantsTests : ZMConversationTestsBase
 @end
 
 @implementation ZMConversationParticipantsTests
+
+- (void)testThatItAddsMissingParticipantInGroup
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    
+    // when
+    [conversation addParticipantIfMissing:user date:[NSDate date]];
+    
+    // then
+    [conversation.activeParticipants containsObject:user];
+    ZMSystemMessage *systemMessage =  conversation.messages.lastObject;
+    XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeParticipantsAdded);
+}
+
+- (void)testThatItDoesntAddParticipantsAddedSystemMessageIfUserIsNotMissing
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    [conversation internalAddParticipants:[NSSet setWithObject:user]];
+    
+    // when
+    [conversation addParticipantIfMissing:user date:[NSDate date]];
+    
+    // then
+    [conversation.activeParticipants containsObject:user];
+    XCTAssertEqual(conversation.messages.count, 0lu);
+}
+
+- (void)testThatItAddsMissingParticipantInOneToOne
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    
+    // when
+    [conversation addParticipantIfMissing:user date:[NSDate date]];
+    
+    // then
+    [conversation.activeParticipants containsObject:user];
+}
 
 - (void)testThatItReturnsAllParticipantsAsActiveParticipantsInOneOnOneConversations
 {
@@ -61,7 +109,6 @@
     // then
     XCTAssertEqual(conversation.activeParticipants.count, 2u);
 }
-
 
 - (void)testThatItReturnsSelfUserAsActiveParticipantsInSelfConversations
 {

@@ -50,9 +50,7 @@ extension ZMConversation {
     public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy message: ZMOTRMessage?) {
         guard self.decreaseSecurityLevelIfNeeded() else { return }
         self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.message(message))
-        if let message = message {
-            self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation(staringFrom: message)
-        }
+        self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
     }
     
     /// Should be called when a new user is added to the conversation
@@ -60,6 +58,7 @@ extension ZMConversation {
     public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy users: Set<ZMUser>) {
         guard self.decreaseSecurityLevelIfNeeded() else { return }
         self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.addedUsers(users))
+        self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
     }
 
     /// Should be called when a client is ignored
@@ -142,6 +141,31 @@ extension ZMConversation {
         self.securityLevel = .secure
         return true
     }
+    
+    /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
+    @objc(addParticipantIfMissing:date:)
+    public func addParticipantIfMissing(_ user: ZMUser, at date: Date = Date()) {
+        guard !activeParticipants.contains(user) else { return }
+        
+        switch conversationType {
+        case .group:
+            appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
+            internalAddParticipants(Set(arrayLiteral: user))
+        case .oneOnOne, .connection:
+            if user.connection == nil {
+                user.connection = connection ?? ZMConnection.insertNewObject(in: managedObjectContext!)
+            } else if connection == nil {
+                connection = user.connection
+            }
+            
+            user.connection?.needsToBeUpdatedFromBackend = true
+        default:
+            break
+        }
+        
+        // A missing user indicate that we are out of sync with the BE so we'll re-sync the conversation
+        needsToBeUpdatedFromBackend = true
+    }
 }
 
 // MARK: - Messages resend/expiration
@@ -187,27 +211,44 @@ extension ZMConversation {
         }
     }
     
-    /// Expire all pending message after the given message, including the given message
-    fileprivate func expireAllPendingMessagesBecauseOfSecurityLevelDegradation(staringFrom startingMessage: ZMMessage) {
-        self.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
-            guard let message = msg as? ZMOTRMessage else { return }
-            if message.deliveryState != .delivered && message.deliveryState != .sent {
-                if let clientMessage = message as? ZMClientMessage,
-                    let genericMessage = clientMessage.genericMessage,
-                    genericMessage.hasConfirmation() {
-                    // Delivery receipt: just expire it
-                    clientMessage.expire()
-                } else {
-                    // All other messages: expire and mark that it caused security degradation
-                    message.expire()
-                    message.causedSecurityLevelDegradation = true
-                }
-            }
-            if startingMessage == message {
-                stop.initialize(to: true)
+    /// Expire all pending messages
+    fileprivate func expireAllPendingMessagesBecauseOfSecurityLevelDegradation() {
+        for message in undeliveredMessages {
+            if let clientMessage = message as? ZMClientMessage, let genericMessage = clientMessage.genericMessage, genericMessage.hasConfirmation() {
+                // Delivery receipt: just expire it
+                message.expire()
+            } else {
+                // All other messages: expire and mark that it caused security degradation
+                message.expire()
+                message.causedSecurityLevelDegradation = true
             }
         }
     }
+    
+    fileprivate var undeliveredMessages: [ZMOTRMessage] {
+        guard let managedObjectContext = managedObjectContext else { return [] }
+        
+        let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        let undeliveredMessagesPredicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == NO AND %K > %@",
+                                                       ZMMessageConversationKey, self,
+                                                       ZMMessageSenderKey, selfUser,
+                                                       DeliveredKey,
+                                                       ZMMessageServerTimestampKey, timeoutLimit as NSDate)
+        
+        let fetchRequest = NSFetchRequest<ZMClientMessage>(entityName: ZMClientMessage.entityName())
+        fetchRequest.predicate = undeliveredMessagesPredicate
+        
+        let assetFetchRequest = NSFetchRequest<ZMAssetClientMessage>(entityName: ZMAssetClientMessage.entityName())
+        assetFetchRequest.predicate = undeliveredMessagesPredicate
+        
+        var undeliveredMessages: [ZMOTRMessage] = []
+        undeliveredMessages += managedObjectContext.fetchOrAssert(request: fetchRequest) as [ZMOTRMessage]
+        undeliveredMessages += managedObjectContext.fetchOrAssert(request: assetFetchRequest) as [ZMOTRMessage]
+        
+        return undeliveredMessages
+    }
+    
 }
 
 // MARK: - HotFix
