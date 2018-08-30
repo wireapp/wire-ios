@@ -45,7 +45,7 @@ extension ZMOTRMessage: OTREntity {
     }
     
     public func detectedMissingClient(for user: ZMUser) {
-        conversation?.checkIfMissingActiveParticipant(user)
+        conversation?.addParticipantIfMissing(user)
     }
     
 }
