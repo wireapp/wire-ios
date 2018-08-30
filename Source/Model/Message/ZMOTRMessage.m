@@ -241,6 +241,7 @@ NSString * const DeliveredKey = @"delivered";
     [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation];
     [clientMessage unarchiveConversationIfNeeded:conversation];
     [clientMessage updateCategoryCache];
+    [conversation resortMessagesWithUpdatedMessage:clientMessage];
     
     BOOL needsConfirmation = NO;
     if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
