@@ -160,13 +160,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration ephemeralSessionConfiguration];
     configuration.timeoutIntervalForRequest = 60; 
     configuration.timeoutIntervalForResource = 12 * 60;
-
-    if (@available(iOS 10, *)) {
-        configuration.networkServiceType = NSURLNetworkServiceTypeCallSignaling;
-    } else {
-        configuration.networkServiceType = NSURLNetworkServiceTypeVoIP;
-    }
-
+    configuration.networkServiceType = NSURLNetworkServiceTypeVoIP;
     [self setUpConfiguration:configuration];
     return configuration;
 }
