@@ -207,6 +207,7 @@
 		55DD5C341FA236F60082170C /* CallQualityViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55DD5C331FA236F60082170C /* CallQualityViewController.swift */; };
 		5E0EB1FB2100D80B00B5DC2B /* CompanyLoginFlowOpener.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0EB1FA2100D80B00B5DC2B /* CompanyLoginFlowOpener.swift */; };
 		5E0FB21B2057F50C00FD9867 /* CallQualitySurveyReview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB21A2057F50C00FD9867 /* CallQualitySurveyReview.swift */; };
+		5E144FFF213EA0EC00B65E14 /* PreviewImageView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E144FFD213E973B00B65E14 /* PreviewImageView.swift */; };
 		5E2B13E820E67EA7002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B13E620E67EA1002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift */; };
 		5E33F0CC20AC39C800414EA6 /* CallVideoPlaceholderState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E33F0CB20AC39C800414EA6 /* CallVideoPlaceholderState.swift */; };
 		5E33F0D020AD629D00414EA6 /* CallPermissionsConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E33F0CF20AD629D00414EA6 /* CallPermissionsConfiguration.swift */; };
@@ -263,6 +264,7 @@
 		5ED26CD420E7D08E00EB9ED4 /* VerticalColumnCollectionViewLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B13E320E658EC002F27E2 /* VerticalColumnCollectionViewLayout.swift */; };
 		5ED26CD520E7D08E00EB9ED4 /* VerticalColumnPositioning.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5ED26CCD20E7A53A00EB9ED4 /* VerticalColumnPositioning.swift */; };
 		5ED26CD620E7D08E00EB9ED4 /* VerticalColumnCollectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2B13EB20E68443002F27E2 /* VerticalColumnCollectionViewController.swift */; };
+		5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */; };
 		5EDD253A213FFD9700C0E254 /* Licenses.generated.plist in Resources */ = {isa = PBXBuildFile; fileRef = 5EDD2539213FFD9700C0E254 /* Licenses.generated.plist */; };
 		5EDD253C2140044D00C0E254 /* SettingsLicenseItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD253B2140044D00C0E254 /* SettingsLicenseItem.swift */; };
 		5EDD25412140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDD25402140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift */; };
@@ -834,7 +836,7 @@
 		BF8EE5581D6351B100B0D6D7 /* InputBarEditViewTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8EE5571D6351B100B0D6D7 /* InputBarEditViewTests.swift */; };
 		BF96A6C61E2FA1790057974A /* UnsentSendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF96A6C31E2F845E0057974A /* UnsentSendable.swift */; };
 		BF96A6C81E2FC7B60057974A /* SendController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF96A6C71E2FC7B60057974A /* SendController.swift */; };
-		BF96A6CA1E2FD3340057974A /* SLComposeServiceViewController+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF96A6C91E2FD3340057974A /* SLComposeServiceViewController+Attachments.swift */; };
+		BF96A6CA1E2FD3340057974A /* NSExtensionContext+Attachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF96A6C91E2FD3340057974A /* NSExtensionContext+Attachments.swift */; };
 		BF96A6CC1E2FD3BA0057974A /* NSItemProvider+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF96A6CB1E2FD3BA0057974A /* NSItemProvider+Fetching.swift */; };
 		BF989D081E896D210052BF8F /* ConversationCellBurstTimestampView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF989D071E896D210052BF8F /* ConversationCellBurstTimestampView.swift */; };
 		BF999B601C0C984C008D5414 /* ProfileDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF999B5F1C0C984C008D5414 /* ProfileDevicesViewController.m */; };
@@ -1587,6 +1589,7 @@
 		55DD5C331FA236F60082170C /* CallQualityViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualityViewController.swift; sourceTree = "<group>"; };
 		5E0EB1FA2100D80B00B5DC2B /* CompanyLoginFlowOpener.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompanyLoginFlowOpener.swift; sourceTree = "<group>"; };
 		5E0FB21A2057F50C00FD9867 /* CallQualitySurveyReview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CallQualitySurveyReview.swift; sourceTree = "<group>"; };
+		5E144FFD213E973B00B65E14 /* PreviewImageView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PreviewImageView.swift; sourceTree = "<group>"; };
 		5E2B13E320E658EC002F27E2 /* VerticalColumnCollectionViewLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnCollectionViewLayout.swift; sourceTree = "<group>"; };
 		5E2B13E620E67EA1002F27E2 /* VerticalColumnCollectionViewLayoutTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnCollectionViewLayoutTests.swift; sourceTree = "<group>"; };
 		5E2B13EB20E68443002F27E2 /* VerticalColumnCollectionViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnCollectionViewController.swift; sourceTree = "<group>"; };
@@ -1643,6 +1646,7 @@
 		5EC16BA720EBBF8500955156 /* yt_response_valid_video.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = yt_response_valid_video.json; sourceTree = "<group>"; };
 		5ED26CCD20E7A53A00EB9ED4 /* VerticalColumnPositioning.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioning.swift; sourceTree = "<group>"; };
 		5ED26CD120E7CC5900EB9ED4 /* VerticalColumnPositioningContext.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VerticalColumnPositioningContext.swift; sourceTree = "<group>"; };
+		5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SLComposeServiceViewController+Preview.swift"; sourceTree = "<group>"; };
 		5EDD2539213FFD9700C0E254 /* Licenses.generated.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Licenses.generated.plist; sourceTree = "<group>"; };
 		5EDD253B2140044D00C0E254 /* SettingsLicenseItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsLicenseItem.swift; sourceTree = "<group>"; };
 		5EDD25402140240B00C0E254 /* SettingsStaticTextCellDescriptor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsStaticTextCellDescriptor.swift; sourceTree = "<group>"; };
@@ -2488,7 +2492,7 @@
 		BF8EE55B1D64576400B0D6D7 /* Message+Private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Message+Private.h"; sourceTree = "<group>"; };
 		BF96A6C31E2F845E0057974A /* UnsentSendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnsentSendable.swift; sourceTree = "<group>"; };
 		BF96A6C71E2FC7B60057974A /* SendController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SendController.swift; sourceTree = "<group>"; };
-		BF96A6C91E2FD3340057974A /* SLComposeServiceViewController+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SLComposeServiceViewController+Attachments.swift"; sourceTree = "<group>"; };
+		BF96A6C91E2FD3340057974A /* NSExtensionContext+Attachments.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSExtensionContext+Attachments.swift"; sourceTree = "<group>"; };
 		BF96A6CB1E2FD3BA0057974A /* NSItemProvider+Fetching.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSItemProvider+Fetching.swift"; sourceTree = "<group>"; };
 		BF989D071E896D210052BF8F /* ConversationCellBurstTimestampView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationCellBurstTimestampView.swift; sourceTree = "<group>"; };
 		BF999B5E1C0C984C008D5414 /* ProfileDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProfileDevicesViewController.h; sourceTree = "<group>"; };
@@ -3164,31 +3168,10 @@
 		168A16AA1D9597C2005CFA6C /* Wire-iOS Share Extension */ = {
 			isa = PBXGroup;
 			children = (
-				161285E01DD201A1004728E9 /* Wire-iOS Share Extension.entitlements */,
-				168A16AB1D9597C2005CFA6C /* ShareExtensionViewController.swift */,
-				D5D8977E201A121900FAF69C /* Account+ShareExtensionDisplayName.swift */,
-				BF6EC9091EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift */,
-				BFBE45761E36205F009FBF60 /* Error+Logging.swift */,
-				BF96A6C31E2F845E0057974A /* UnsentSendable.swift */,
-				543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */,
-				7C0BB6E41FE680F200386A19 /* AccountSelectionViewController.swift */,
-				543E0C651E23A72F000E2161 /* SendingProgressViewController.swift */,
-				BF96A6C91E2FD3340057974A /* SLComposeServiceViewController+Attachments.swift */,
-				BF96A6CB1E2FD3BA0057974A /* NSItemProvider+Fetching.swift */,
+				5E7F012F213E928300C6F3E9 /* Sources */,
+				5E7F012E213E921400C6F3E9 /* Resources */,
+				5E7F012D213E91F700C6F3E9 /* Supporting Files */,
 				BF2756DA1E38E16D00082786 /* ShareExtensionAnalytics.swift */,
-				BF96A6C71E2FC7B60057974A /* SendController.swift */,
-				545BA2181E2D3C4900AA373E /* PostContent.swift */,
-				BF9AEE151E4A0BA20005FBA7 /* CrashReporter.swift */,
-				BF9AEE171E4A0BC00005FBA7 /* PreprocessorHelper.h */,
-				BF9AEE181E4A0BC00005FBA7 /* PreprocessorHelper.m */,
-				543E0C671E23A7C3000E2161 /* NotSignedInViewController.swift */,
-				BF2ADF481E27C3DB00E81B1E /* Localizable.strings */,
-				165FDC491DD5D447009D75A2 /* NSItemProvider+Helper.h */,
-				165FDC4A1DD5D447009D75A2 /* NSItemProvider+Helper.m */,
-				168A16AD1D9597C2005CFA6C /* MainInterface.storyboard */,
-				168A16B01D9597C2005CFA6C /* Info.plist */,
-				165FDC481DD5D447009D75A2 /* Wire-iOS Share Extension-Bridging-Header.h */,
-				7CB082D51FB20E0E00972488 /* ShareExtensionNetworkObserver.swift */,
 			);
 			path = "Wire-iOS Share Extension";
 			sourceTree = "<group>";
@@ -3509,6 +3492,55 @@
 			path = CallQualityController;
 			sourceTree = "<group>";
 		};
+		5E144FF9213E92A700B65E14 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				BF9AEE171E4A0BC00005FBA7 /* PreprocessorHelper.h */,
+				BF9AEE181E4A0BC00005FBA7 /* PreprocessorHelper.m */,
+				165FDC491DD5D447009D75A2 /* NSItemProvider+Helper.h */,
+				165FDC4A1DD5D447009D75A2 /* NSItemProvider+Helper.m */,
+				BF9AEE151E4A0BA20005FBA7 /* CrashReporter.swift */,
+				BFBE45761E36205F009FBF60 /* Error+Logging.swift */,
+				7CB082D51FB20E0E00972488 /* ShareExtensionNetworkObserver.swift */,
+				D5D8977E201A121900FAF69C /* Account+ShareExtensionDisplayName.swift */,
+				BF6EC9091EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift */,
+				BF96A6CB1E2FD3BA0057974A /* NSItemProvider+Fetching.swift */,
+			);
+			name = Helpers;
+			sourceTree = "<group>";
+		};
+		5E144FFA213E92CD00B65E14 /* View Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				168A16AB1D9597C2005CFA6C /* ShareExtensionViewController.swift */,
+				543E0C671E23A7C3000E2161 /* NotSignedInViewController.swift */,
+				7C0BB6E41FE680F200386A19 /* AccountSelectionViewController.swift */,
+				543E0C651E23A72F000E2161 /* SendingProgressViewController.swift */,
+				543E0C611E2394E7000E2161 /* ConversationSelectionViewController.swift */,
+			);
+			name = "View Controllers";
+			sourceTree = "<group>";
+		};
+		5E144FFB213E937C00B65E14 /* Content */ = {
+			isa = PBXGroup;
+			children = (
+				BF96A6C71E2FC7B60057974A /* SendController.swift */,
+				BF96A6C31E2F845E0057974A /* UnsentSendable.swift */,
+				545BA2181E2D3C4900AA373E /* PostContent.swift */,
+				BF96A6C91E2FD3340057974A /* NSExtensionContext+Attachments.swift */,
+				5EDD2536213FD5C300C0E254 /* SLComposeServiceViewController+Preview.swift */,
+			);
+			name = Content;
+			sourceTree = "<group>";
+		};
+		5E144FFC213E96F800B65E14 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				5E144FFD213E973B00B65E14 /* PreviewImageView.swift */,
+			);
+			name = Views;
+			sourceTree = "<group>";
+		};
 		5E2B13E520E67206002F27E2 /* CollectionLayouts */ = {
 			isa = PBXGroup;
 			children = (
@@ -3553,6 +3585,36 @@
 				5E52376A20E7F99500649241 /* EasingFunction.swift */,
 			);
 			path = Animations;
+			sourceTree = "<group>";
+		};
+		5E7F012D213E91F700C6F3E9 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				168A16B01D9597C2005CFA6C /* Info.plist */,
+				168A16AD1D9597C2005CFA6C /* MainInterface.storyboard */,
+				161285E01DD201A1004728E9 /* Wire-iOS Share Extension.entitlements */,
+				165FDC481DD5D447009D75A2 /* Wire-iOS Share Extension-Bridging-Header.h */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		5E7F012E213E921400C6F3E9 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				BF2ADF481E27C3DB00E81B1E /* Localizable.strings */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		5E7F012F213E928300C6F3E9 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				5E144FFC213E96F800B65E14 /* Views */,
+				5E144FFB213E937C00B65E14 /* Content */,
+				5E144FFA213E92CD00B65E14 /* View Controllers */,
+				5E144FF9213E92A700B65E14 /* Helpers */,
+			);
+			name = Sources;
 			sourceTree = "<group>";
 		};
 		5EA73D7A20D900A10001D106 /* Cells */ = {
@@ -6620,9 +6682,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				7CB082DC1FB2137100972488 /* ShareExtensionNetworkObserver.swift in Sources */,
-				BF96A6CA1E2FD3340057974A /* SLComposeServiceViewController+Attachments.swift in Sources */,
+				BF96A6CA1E2FD3340057974A /* NSExtensionContext+Attachments.swift in Sources */,
 				BF6EC90A1EB1FD0C009D9A69 /* ExtensionBackupExcluder.swift in Sources */,
 				BF96A6C61E2FA1790057974A /* UnsentSendable.swift in Sources */,
+				5E144FFF213EA0EC00B65E14 /* PreviewImageView.swift in Sources */,
+				5EDD2538213FD5E200C0E254 /* SLComposeServiceViewController+Preview.swift in Sources */,
 				BF9AEE191E4A0BC00005FBA7 /* PreprocessorHelper.m in Sources */,
 				BFBE45771E36205F009FBF60 /* Error+Logging.swift in Sources */,
 				165FDC4B1DD5D447009D75A2 /* NSItemProvider+Helper.m in Sources */,
