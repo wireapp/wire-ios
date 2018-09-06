@@ -97,10 +97,11 @@ extension OTREntity {
             let recipientClients = recipients.flatMap {
                 return Array($0.clients)
             }
-            // Don't block sending of messages if they that are not affected by the missing clients
+            // Don't block sending of messages if they are not affected by the missing clients
             if !missingClients.intersection(recipientClients).isEmpty {
                 // make sure that we fetch those clients, even if we somehow gave up on fetching them
                 selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                context.enqueueDelayedSave()
                 return selfClient
             }
         }
