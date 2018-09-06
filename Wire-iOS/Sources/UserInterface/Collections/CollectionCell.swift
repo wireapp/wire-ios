@@ -138,7 +138,12 @@ open class CollectionCell: UICollectionViewCell {
 
     // MARK: - Obfuscation
 
-    let secureContentsView = UIView()
+    let secureContentsView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .placeholderBackground
+
+        return view
+    }()
 
     var obfuscationIcon: ZetaIconType {
         return .exclamationMarkCircle
@@ -152,7 +157,7 @@ open class CollectionCell: UICollectionViewCell {
         let isObfuscated = message?.isObfuscated == true
         secureContentsView.isHidden = isObfuscated
         obfuscationView.isHidden = !isObfuscated
-        obfuscationView.backgroundColor = UIColor(scheme: .accentDimmedFlat)
+        obfuscationView.backgroundColor = .accentDimmedFlat
     }
 
     // MARK: - Menu

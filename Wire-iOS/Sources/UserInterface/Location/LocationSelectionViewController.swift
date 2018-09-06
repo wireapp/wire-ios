@@ -44,7 +44,7 @@ import CoreLocation
     }()
 
     public let locationButtonContainer = UIView()
-    fileprivate let mapView = MKMapView()
+    fileprivate var mapView = MKMapView()
     fileprivate let toolBar: ModalTopBar
     fileprivate let locationManager = CLLocationManager()
     fileprivate let geocoder = CLGeocoder()
@@ -70,10 +70,12 @@ import CoreLocation
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+
         locationManager.delegate = self
         mapView.delegate = self
         toolBar.delegate = self
         sendViewController.delegate = self
+
         configureViews()
         createConstraints()
     }
