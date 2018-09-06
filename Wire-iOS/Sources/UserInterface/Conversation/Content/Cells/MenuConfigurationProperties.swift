@@ -16,35 +16,12 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
+import Foundation
 
-final class PingCellTests: XCTestCase {
-
-    var sut: PingCell!
-
-    override func setUp() {
-
-        super.setUp()
-
-        sut = createPingCellForTest()
-    }
-
-    override func tearDown() {
-        sut = nil
-
-        super.tearDown()
-    }
-
-    // MARK: shortcut menu
-
-    func testThatDeleteItemIsInMenu(){
-        // GIVEN & WHEN
-        sut.showMenu()
-
-        // THEN
-        XCTAssertEqual(UIMenuController.shared.menuItems?.count, 1)
-        XCTAssertEqual(UIMenuController.shared.menuItems?.first?.title, "Delete")
-    }
+@objcMembers public class MenuConfigurationProperties: NSObject {
+    var targetRect = CGRect.zero
+    var targetView: UIView!
+    var selectedMenuBlock: SelectedMenuBlock?
+    var additionalItems: [AdditionalMenuItem]?
+    var likeItemIndex: Int = 0
 }
-
