@@ -99,9 +99,12 @@ extension OTREntity {
             }
             // Don't block sending of messages if they are not affected by the missing clients
             if !missingClients.intersection(recipientClients).isEmpty {
+                
                 // make sure that we fetch those clients, even if we somehow gave up on fetching them
-                selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
-                context.enqueueDelayedSave()
+                if !(selfClient.modifiedKeys?.contains(ZMUserClientMissingKey) ?? false) {
+                    selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                    context.enqueueDelayedSave()
+                }
                 return selfClient
             }
         }
