@@ -408,6 +408,7 @@ public extension UserClient {
                 if !syncClient.hasSessionWithSelfClient {
                     syncSelfClient.missesClient(syncClient)
                     syncSelfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientMissingKey))
+                    syncMOC.saveOrRollback()
                 }
                 else {
                     syncSelfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
@@ -460,6 +461,8 @@ public extension UserClient {
     }
     
     @objc public func missesClients(_ clients: Set<UserClient>) {
+        
+        zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
 
         self.mutableSetValue(forKey: ZMUserClientMissingKey).union(clients)
         if !hasLocalModifications(forKey: ZMUserClientMissingKey) {
@@ -469,6 +472,8 @@ public extension UserClient {
     
     /// Use this method only for the selfClient
     @objc public func removeMissingClient(_ client: UserClient) {
+        zmLog.debug("Removing client from list of missing clients")
+        
         self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
     }
     
@@ -578,6 +583,8 @@ extension UserClient {
         
         clients.forEach { client in client.needsToNotifyUser = false; }
         
+        zmLog.debug("Marking client as trusted")
+        
         self.changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
     }
 
@@ -596,6 +603,8 @@ extension UserClient {
         let notSelfClients = Set(clients.filter {$0 != self})
 
         guard notSelfClients.count > 0 else { return notSelfClients }
+        
+        zmLog.debug("Marking client as ignored")
         
         self.mutableSetValue(forKey: ZMUserClientTrustedKey).minus(notSelfClients)
         self.mutableSetValue(forKey: ZMUserClientIgnoredKey).union(notSelfClients)
