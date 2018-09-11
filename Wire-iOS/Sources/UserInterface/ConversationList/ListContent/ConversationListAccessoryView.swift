@@ -29,13 +29,15 @@ import Cartography
     let mediaPlaybackManager: MediaPlaybackManager
     
     let badgeView = RoundedBadge(view: UIView())
-    let typingView = UIImageView()
+    let transparentIconView = UIImageView()
     let textLabel = UILabel()
     let iconView = UIImageView()
     var collapseWidthConstraint: NSLayoutConstraint!
     var expandWidthConstraint: NSLayoutConstraint!
-    var expandTypingViewWidthConstraint: NSLayoutConstraint!
-
+    var expandTransparentIconViewWidthConstraint: NSLayoutConstraint!
+    let defaultViewWidth: CGFloat = 28
+    let activeCallWidth: CGFloat = 20
+    
     @objc init(mediaPlaybackManager: MediaPlaybackManager) {
         self.mediaPlaybackManager = mediaPlaybackManager
         super.init(frame: .zero)
@@ -49,11 +51,11 @@ import Cartography
         textLabel.textAlignment = .center
         textLabel.font = FontSpec(.medium, .semibold).font!
         
-        typingView.contentMode = .center
-        typingView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        typingView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
-        typingView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
-        typingView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
+        transparentIconView.contentMode = .center
+        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        transparentIconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .vertical)
+        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
+        transparentIconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
         
         iconView.contentMode = .center
         iconView.setContentHuggingPriority(UILayoutPriority.defaultHigh, for: .horizontal)
@@ -61,19 +63,19 @@ import Cartography
         iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .horizontal)
         iconView.setContentCompressionResistancePriority(UILayoutPriority.defaultHigh, for: .vertical)
         
-        [badgeView, typingView].forEach(addSubview)
+        [badgeView, transparentIconView].forEach(addSubview)
         
-        constrain(self, badgeView, typingView) { selfView, badgeView, typingView in
+        constrain(self, badgeView, transparentIconView) { selfView, badgeView, transparentIconView in
             badgeView.height == 20
             badgeView.edges == selfView.edges
             
-            typingView.leading == selfView.leading ~ 999.0
-            typingView.trailing == selfView.trailing ~ 999.0
-            typingView.top == selfView.top
-            typingView.bottom == selfView.bottom
-            self.expandTypingViewWidthConstraint = typingView.width >= 28
+            transparentIconView.leading == selfView.leading ~ 999.0
+            transparentIconView.trailing == selfView.trailing ~ 999.0
+            transparentIconView.top == selfView.top
+            transparentIconView.bottom == selfView.bottom
+            self.expandTransparentIconViewWidthConstraint = transparentIconView.width >= defaultViewWidth
             
-            self.expandWidthConstraint = selfView.width >= 28
+            self.expandWidthConstraint = selfView.width >= defaultViewWidth
             self.collapseWidthConstraint = selfView.width == 0
         }
         self.collapseWidthConstraint.isActive = false
@@ -92,9 +94,8 @@ import Cartography
             self.accessibilityValue = "conversation_list.voiceover.status.pending_connection".localized
             return iconView
         case .activeCall(false):
-            iconView.image = UIImage(for: .phone, fontSize: 18.0, color: .white)
             self.accessibilityValue = "conversation_list.voiceover.status.active_call".localized
-            return iconView
+            return .none
         case .activeCall(true):
             textLabel.text = "conversation_list.right_accessory.join_button.title".localized.uppercased()
             self.accessibilityValue = textLabel.text
@@ -136,12 +137,12 @@ import Cartography
     func updateCollapseConstraints(isCollapsed: Bool) {
         if isCollapsed {
             expandWidthConstraint.isActive = false
-            expandTypingViewWidthConstraint.isActive = false
+            expandTransparentIconViewWidthConstraint.isActive = false
             collapseWidthConstraint.isActive = true
         } else {
             collapseWidthConstraint.isActive = false
             expandWidthConstraint.isActive = true
-            expandTypingViewWidthConstraint.isActive = true
+            expandTransparentIconViewWidthConstraint.isActive = true
         }
 
         badgeView.updateCollapseConstraints(isCollapsed: isCollapsed)
@@ -152,26 +153,35 @@ import Cartography
         self.badgeView.backgroundColor = UIColor(white: 0, alpha: 0.16)
 
         self.badgeView.isHidden = false
-        self.typingView.isHidden = true
+        self.transparentIconView.isHidden = true
+        
+        self.expandTransparentIconViewWidthConstraint.constant = defaultViewWidth
+        self.expandWidthConstraint.constant = defaultViewWidth
         
         self.textLabel.textColor = UIColor(scheme: .textForeground, variant: .dark)
         
         switch self.icon {
         case .none:
             self.badgeView.isHidden = true
-            self.typingView.isHidden = true
+            self.transparentIconView.isHidden = true
 
             updateCollapseConstraints(isCollapsed: true)
 
             return
         case .activeCall(false):
-            self.badgeView.backgroundColor = .clear
+            self.badgeView.isHidden = true
+            self.transparentIconView.isHidden = false
+            self.transparentIconView.image = UIImage(for: .phone, fontSize: 18.0, color: .white)
+            
+            self.expandTransparentIconViewWidthConstraint.constant = activeCallWidth
+            self.expandWidthConstraint.constant = activeCallWidth
+
         case .activeCall(true): // "Join" button
             self.badgeView.backgroundColor = ZMAccentColor.strongLimeGreen.color
         case .typing:
             self.badgeView.isHidden = true
-            self.typingView.isHidden = false
-            self.typingView.image = UIImage(for: .pencil, fontSize: 12.0, color: .white)
+            self.transparentIconView.isHidden = false
+            self.transparentIconView.image = UIImage(for: .pencil, fontSize: 12.0, color: .white)
             
         case .unreadMessages(_):
             self.badgeView.backgroundColor = UIColor(white: 0, alpha: 0.16)
@@ -185,7 +195,7 @@ import Cartography
             self.badgeView.backgroundColor = UIColor(scheme: .textBackground, variant: .light)
 
         default:
-            self.typingView.image = .none
+            self.transparentIconView.image = .none
         }
         
         updateCollapseConstraints(isCollapsed: false)
