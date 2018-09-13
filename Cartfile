@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-utilities" ~> 25.0
+github "wireapp/wire-ios-utilities" "xcode10"

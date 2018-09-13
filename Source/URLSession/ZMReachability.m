@@ -31,9 +31,6 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChangedNotification";
 
 @interface ZMReachability() <ReachabilityProvider, TearDownCapable>
-{
-    int32_t _tornDown;
-}
 
 @property (nonatomic, copy) NSArray *names;
 @property (nonatomic, copy) NSArray *reachabilityReferences;
@@ -45,6 +42,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 @property (atomic) BOOL isMobileConnection;
 @property (atomic) BOOL oldMayBeReachable;
 @property (atomic) BOOL oldIsMobileConnection;
+@property (atomic) BOOL tornDown;
 
 @end
 
@@ -68,7 +66,8 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
 - (void)tearDown;
 {
-    if (OSAtomicCompareAndSwap32Barrier(0, 1, &_tornDown)) {
+    if (!self.tornDown) {
+        self.tornDown = YES;
         NSArray *refs = self.reachabilityReferences;
         self.reachabilityReferences = nil;
         self.referenceToFlag = nil;
@@ -86,7 +85,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
 - (void)dealloc;
 {
-    RequireString(_tornDown != 0, "Object was never torn down.");
+    RequireString(self.tornDown, "Object was never torn down.");
 }
 
 - (id)addReachabilityObserver:(id<ZMReachabilityObserver>)observer queue:(NSOperationQueue *)queue
