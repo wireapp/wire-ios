@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Darwin
 
 public enum EnqueueResult {
     case success, nilRequest, maximumNumberOfRequests
@@ -72,6 +73,7 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     private let baseURL: URL
     private var session: SessionProtocol!
     fileprivate let reachability: ReachabilityProvider
+    fileprivate let atomicQueue = DispatchQueue(label: "UnauthenticatedTransportSession.Atomic")
     
     public init(baseURL: URL, urlSession: SessionProtocol? = nil, reachability: ReachabilityProvider) {
         self.baseURL = baseURL
@@ -131,7 +133,7 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// - parameter notify: Whether a new request available notificaiton should be posted
     /// when the amount of running requests is below the maximum after decrementing.
     private func decrement(notify: Bool) {
-        let newCount = withUnsafeMutablePointer(to: &numberOfRunningRequests, OSAtomicDecrement32)
+        let newCount: Int32 = atomicQueue.sync { numberOfRunningRequests -= 1; return numberOfRunningRequests }
         guard newCount < maximumNumberOfRequests, notify else { return }
         ZMTransportSession.notifyNewRequestsAvailable(self)
     }
@@ -139,7 +141,7 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// Increments the number of running requests.
     /// - returns: The value after the increment.
     private func increment() -> Int32 {
-        return withUnsafeMutablePointer(to: &numberOfRunningRequests, OSAtomicIncrement32)
+        return atomicQueue.sync { numberOfRunningRequests += 1; return numberOfRunningRequests }
     }
     
     public func tearDown() {
