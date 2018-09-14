@@ -196,11 +196,7 @@ extension ZMSLog {
             }
         
             if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                if #available(iOS 10, *) {
-                    os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, concreteMessage)
-                } else {
-                    sharedASLClient.sendMessage("\(file):\(line) \(tag ?? "") \(concreteMessage)", level: level)
-                }
+                os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, concreteMessage)
                 self.notifyHooks(level: level, tag: tag, message: concreteMessage)
             }
         }
@@ -296,9 +292,6 @@ extension ZMSLog {
         }
     }
 }
-
-// Shared ASL client used to log
-private let sharedASLClient : ZMSASLClient = ZMSASLClient(identifier: Bundle.main.bundleIdentifier ?? "com.wire.zmessaging.test", facility: nil)
 
 /// Synchronization queue
 let logQueue = DispatchQueue(label: "ZMSLog")
