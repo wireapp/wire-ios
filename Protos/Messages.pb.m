@@ -2426,8 +2426,8 @@ static ZMEphemeral* defaultZMEphemeralInstance = nil;
 
 @interface ZMText ()
 @property (strong) NSString* content;
-@property (strong) NSMutableArray<ZMMention*> * mentionArray;
 @property (strong) NSMutableArray<ZMLinkPreview*> * linkPreviewArray;
+@property (strong) NSMutableArray<ZMMention*> * mentionsArray;
 @end
 
 @implementation ZMText
@@ -2439,10 +2439,10 @@ static ZMEphemeral* defaultZMEphemeralInstance = nil;
   hasContent_ = !!_value_;
 }
 @synthesize content;
-@synthesize mentionArray;
-@dynamic mention;
 @synthesize linkPreviewArray;
 @dynamic linkPreview;
+@synthesize mentionsArray;
+@dynamic mentions;
 - (instancetype) init {
   if ((self = [super init])) {
     self.content = @"";
@@ -2461,30 +2461,22 @@ static ZMText* defaultZMTextInstance = nil;
 - (instancetype) defaultInstance {
   return defaultZMTextInstance;
 }
-- (NSArray<ZMMention*> *)mention {
-  return mentionArray;
-}
-- (ZMMention*)mentionAtIndex:(NSUInteger)index {
-  return [mentionArray objectAtIndex:index];
-}
 - (NSArray<ZMLinkPreview*> *)linkPreview {
   return linkPreviewArray;
 }
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index {
   return [linkPreviewArray objectAtIndex:index];
 }
+- (NSArray<ZMMention*> *)mentions {
+  return mentionsArray;
+}
+- (ZMMention*)mentionsAtIndex:(NSUInteger)index {
+  return [mentionsArray objectAtIndex:index];
+}
 - (BOOL) isInitialized {
   if (!self.hasContent) {
     return NO;
   }
-  __block BOOL isInitmention = YES;
-   [self.mention enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
-    if (!element.isInitialized) {
-      isInitmention = NO;
-      *stop = YES;
-    }
-  }];
-  if (!isInitmention) return isInitmention;
   __block BOOL isInitlinkPreview = YES;
    [self.linkPreview enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
     if (!element.isInitialized) {
@@ -2493,17 +2485,25 @@ static ZMText* defaultZMTextInstance = nil;
     }
   }];
   if (!isInitlinkPreview) return isInitlinkPreview;
+  __block BOOL isInitmentions = YES;
+   [self.mentions enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+    if (!element.isInitialized) {
+      isInitmentions = NO;
+      *stop = YES;
+    }
+  }];
+  if (!isInitmentions) return isInitmentions;
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
   if (self.hasContent) {
     [output writeString:1 value:self.content];
   }
-  [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
-    [output writeMessage:2 value:element];
-  }];
   [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
     [output writeMessage:3 value:element];
+  }];
+  [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+    [output writeMessage:4 value:element];
   }];
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -2517,11 +2517,11 @@ static ZMText* defaultZMTextInstance = nil;
   if (self.hasContent) {
     size_ += computeStringSize(1, self.content);
   }
-  [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
-    size_ += computeMessageSize(2, element);
-  }];
   [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
     size_ += computeMessageSize(3, element);
+  }];
+  [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+    size_ += computeMessageSize(4, element);
   }];
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -2561,14 +2561,14 @@ static ZMText* defaultZMTextInstance = nil;
   if (self.hasContent) {
     [output appendFormat:@"%@%@: %@\n", indent, @"content", self.content];
   }
-  [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
-    [output appendFormat:@"%@%@ {\n", indent, @"mention"];
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@ {\n", indent, @"linkPreview"];
     [element writeDescriptionTo:output
                      withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }];
-  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
-    [output appendFormat:@"%@%@ {\n", indent, @"linkPreview"];
+  [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@ {\n", indent, @"mentions"];
     [element writeDescriptionTo:output
                      withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
@@ -2579,15 +2579,15 @@ static ZMText* defaultZMTextInstance = nil;
   if (self.hasContent) {
     [dictionary setObject: self.content forKey: @"content"];
   }
-  for (ZMMention* element in self.mentionArray) {
-    NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
-    [element storeInDictionary:elementDictionary];
-    [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"mention"];
-  }
   for (ZMLinkPreview* element in self.linkPreviewArray) {
     NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
     [element storeInDictionary:elementDictionary];
     [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"linkPreview"];
+  }
+  for (ZMMention* element in self.mentionsArray) {
+    NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
+    [element storeInDictionary:elementDictionary];
+    [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"mentions"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -2602,8 +2602,8 @@ static ZMText* defaultZMTextInstance = nil;
   return
       self.hasContent == otherMessage.hasContent &&
       (!self.hasContent || [self.content isEqual:otherMessage.content]) &&
-      [self.mentionArray isEqualToArray:otherMessage.mentionArray] &&
       [self.linkPreviewArray isEqualToArray:otherMessage.linkPreviewArray] &&
+      [self.mentionsArray isEqualToArray:otherMessage.mentionsArray] &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -2611,10 +2611,10 @@ static ZMText* defaultZMTextInstance = nil;
   if (self.hasContent) {
     hashCode = hashCode * 31 + [self.content hash];
   }
-  [self.mentionArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
+  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
     hashCode = hashCode * 31 + [element hash];
   }];
-  [self.linkPreviewArray enumerateObjectsUsingBlock:^(ZMLinkPreview *element, NSUInteger idx, BOOL *stop) {
+  [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     hashCode = hashCode * 31 + [element hash];
   }];
   hashCode = hashCode * 31 + [self.unknownFields hash];
@@ -2663,18 +2663,18 @@ static ZMText* defaultZMTextInstance = nil;
   if (other.hasContent) {
     [self setContent:other.content];
   }
-  if (other.mentionArray.count > 0) {
-    if (resultText.mentionArray == nil) {
-      resultText.mentionArray = [[NSMutableArray alloc] initWithArray:other.mentionArray];
-    } else {
-      [resultText.mentionArray addObjectsFromArray:other.mentionArray];
-    }
-  }
   if (other.linkPreviewArray.count > 0) {
     if (resultText.linkPreviewArray == nil) {
       resultText.linkPreviewArray = [[NSMutableArray alloc] initWithArray:other.linkPreviewArray];
     } else {
       [resultText.linkPreviewArray addObjectsFromArray:other.linkPreviewArray];
+    }
+  }
+  if (other.mentionsArray.count > 0) {
+    if (resultText.mentionsArray == nil) {
+      resultText.mentionsArray = [[NSMutableArray alloc] initWithArray:other.mentionsArray];
+    } else {
+      [resultText.mentionsArray addObjectsFromArray:other.mentionsArray];
     }
   }
   [self mergeUnknownFields:other.unknownFields];
@@ -2702,16 +2702,16 @@ static ZMText* defaultZMTextInstance = nil;
         [self setContent:[input readString]];
         break;
       }
-      case 18: {
-        ZMMentionBuilder* subBuilder = [ZMMention builder];
-        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
-        [self addMention:[subBuilder buildPartial]];
-        break;
-      }
       case 26: {
         ZMLinkPreviewBuilder* subBuilder = [ZMLinkPreview builder];
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self addLinkPreview:[subBuilder buildPartial]];
+        break;
+      }
+      case 34: {
+        ZMMentionBuilder* subBuilder = [ZMMention builder];
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self addMentions:[subBuilder buildPartial]];
         break;
       }
     }
@@ -2733,27 +2733,6 @@ static ZMText* defaultZMTextInstance = nil;
   resultText.content = @"";
   return self;
 }
-- (NSMutableArray<ZMMention*> *)mention {
-  return resultText.mentionArray;
-}
-- (ZMMention*)mentionAtIndex:(NSUInteger)index {
-  return [resultText mentionAtIndex:index];
-}
-- (ZMTextBuilder *)addMention:(ZMMention*)value {
-  if (resultText.mentionArray == nil) {
-    resultText.mentionArray = [[NSMutableArray alloc]init];
-  }
-  [resultText.mentionArray addObject:value];
-  return self;
-}
-- (ZMTextBuilder *)setMentionArray:(NSArray<ZMMention*> *)array {
-  resultText.mentionArray = [[NSMutableArray alloc]initWithArray:array];
-  return self;
-}
-- (ZMTextBuilder *)clearMention {
-  resultText.mentionArray = nil;
-  return self;
-}
 - (NSMutableArray<ZMLinkPreview*> *)linkPreview {
   return resultText.linkPreviewArray;
 }
@@ -2773,6 +2752,27 @@ static ZMText* defaultZMTextInstance = nil;
 }
 - (ZMTextBuilder *)clearLinkPreview {
   resultText.linkPreviewArray = nil;
+  return self;
+}
+- (NSMutableArray<ZMMention*> *)mentions {
+  return resultText.mentionsArray;
+}
+- (ZMMention*)mentionsAtIndex:(NSUInteger)index {
+  return [resultText mentionsAtIndex:index];
+}
+- (ZMTextBuilder *)addMentions:(ZMMention*)value {
+  if (resultText.mentionsArray == nil) {
+    resultText.mentionsArray = [[NSMutableArray alloc]init];
+  }
+  [resultText.mentionsArray addObject:value];
+  return self;
+}
+- (ZMTextBuilder *)setMentionsArray:(NSArray<ZMMention*> *)array {
+  resultText.mentionsArray = [[NSMutableArray alloc]initWithArray:array];
+  return self;
+}
+- (ZMTextBuilder *)clearMentions {
+  resultText.mentionsArray = nil;
   return self;
 }
 @end
@@ -4269,20 +4269,13 @@ static ZMArticle* defaultZMArticleInstance = nil;
 @end
 
 @interface ZMMention ()
-@property (strong) NSString* userId;
 @property SInt32 start;
 @property SInt32 end;
+@property (strong) NSString* userId;
 @end
 
 @implementation ZMMention
 
-- (BOOL) hasUserId {
-  return !!hasUserId_;
-}
-- (void) setHasUserId:(BOOL) _value_ {
-  hasUserId_ = !!_value_;
-}
-@synthesize userId;
 - (BOOL) hasStart {
   return !!hasStart_;
 }
@@ -4297,11 +4290,18 @@ static ZMArticle* defaultZMArticleInstance = nil;
   hasEnd_ = !!_value_;
 }
 @synthesize end;
+- (BOOL) hasUserId {
+  return !!hasUserId_;
+}
+- (void) setHasUserId:(BOOL) _value_ {
+  hasUserId_ = !!_value_;
+}
+@synthesize userId;
 - (instancetype) init {
   if ((self = [super init])) {
-    self.userId = @"";
     self.start = 0;
     self.end = 0;
+    self.userId = @"";
   }
   return self;
 }
@@ -4327,14 +4327,14 @@ static ZMMention* defaultZMMentionInstance = nil;
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
-  if (self.hasUserId) {
-    [output writeString:3 value:self.userId];
-  }
   if (self.hasStart) {
-    [output writeInt32:4 value:self.start];
+    [output writeInt32:1 value:self.start];
   }
   if (self.hasEnd) {
-    [output writeInt32:5 value:self.end];
+    [output writeInt32:2 value:self.end];
+  }
+  if (self.hasUserId) {
+    [output writeString:3 value:self.userId];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -4345,14 +4345,14 @@ static ZMMention* defaultZMMentionInstance = nil;
   }
 
   size_ = 0;
-  if (self.hasUserId) {
-    size_ += computeStringSize(3, self.userId);
-  }
   if (self.hasStart) {
-    size_ += computeInt32Size(4, self.start);
+    size_ += computeInt32Size(1, self.start);
   }
   if (self.hasEnd) {
-    size_ += computeInt32Size(5, self.end);
+    size_ += computeInt32Size(2, self.end);
+  }
+  if (self.hasUserId) {
+    size_ += computeStringSize(3, self.userId);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -4389,26 +4389,26 @@ static ZMMention* defaultZMMentionInstance = nil;
   return [ZMMention builderWithPrototype:self];
 }
 - (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
-  if (self.hasUserId) {
-    [output appendFormat:@"%@%@: %@\n", indent, @"userId", self.userId];
-  }
   if (self.hasStart) {
     [output appendFormat:@"%@%@: %@\n", indent, @"start", [NSNumber numberWithInteger:self.start]];
   }
   if (self.hasEnd) {
     [output appendFormat:@"%@%@: %@\n", indent, @"end", [NSNumber numberWithInteger:self.end]];
   }
+  if (self.hasUserId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"userId", self.userId];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
-  if (self.hasUserId) {
-    [dictionary setObject: self.userId forKey: @"userId"];
-  }
   if (self.hasStart) {
     [dictionary setObject: [NSNumber numberWithInteger:self.start] forKey: @"start"];
   }
   if (self.hasEnd) {
     [dictionary setObject: [NSNumber numberWithInteger:self.end] forKey: @"end"];
+  }
+  if (self.hasUserId) {
+    [dictionary setObject: self.userId forKey: @"userId"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -4421,24 +4421,24 @@ static ZMMention* defaultZMMentionInstance = nil;
   }
   ZMMention *otherMessage = other;
   return
-      self.hasUserId == otherMessage.hasUserId &&
-      (!self.hasUserId || [self.userId isEqual:otherMessage.userId]) &&
       self.hasStart == otherMessage.hasStart &&
       (!self.hasStart || self.start == otherMessage.start) &&
       self.hasEnd == otherMessage.hasEnd &&
       (!self.hasEnd || self.end == otherMessage.end) &&
+      self.hasUserId == otherMessage.hasUserId &&
+      (!self.hasUserId || [self.userId isEqual:otherMessage.userId]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
   __block NSUInteger hashCode = 7;
-  if (self.hasUserId) {
-    hashCode = hashCode * 31 + [self.userId hash];
-  }
   if (self.hasStart) {
     hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.start] hash];
   }
   if (self.hasEnd) {
     hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.end] hash];
+  }
+  if (self.hasUserId) {
+    hashCode = hashCode * 31 + [self.userId hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -4483,14 +4483,14 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (other == [ZMMention defaultInstance]) {
     return self;
   }
-  if (other.hasUserId) {
-    [self setUserId:other.userId];
-  }
   if (other.hasStart) {
     [self setStart:other.start];
   }
   if (other.hasEnd) {
     [self setEnd:other.end];
+  }
+  if (other.hasUserId) {
+    [self setUserId:other.userId];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -4513,36 +4513,20 @@ static ZMMention* defaultZMMentionInstance = nil;
         }
         break;
       }
+      case 8: {
+        [self setStart:[input readInt32]];
+        break;
+      }
+      case 16: {
+        [self setEnd:[input readInt32]];
+        break;
+      }
       case 26: {
         [self setUserId:[input readString]];
         break;
       }
-      case 32: {
-        [self setStart:[input readInt32]];
-        break;
-      }
-      case 40: {
-        [self setEnd:[input readInt32]];
-        break;
-      }
     }
   }
-}
-- (BOOL) hasUserId {
-  return resultMention.hasUserId;
-}
-- (NSString*) userId {
-  return resultMention.userId;
-}
-- (ZMMentionBuilder*) setUserId:(NSString*) value {
-  resultMention.hasUserId = YES;
-  resultMention.userId = value;
-  return self;
-}
-- (ZMMentionBuilder*) clearUserId {
-  resultMention.hasUserId = NO;
-  resultMention.userId = @"";
-  return self;
 }
 - (BOOL) hasStart {
   return resultMention.hasStart;
@@ -4574,6 +4558,22 @@ static ZMMention* defaultZMMentionInstance = nil;
 - (ZMMentionBuilder*) clearEnd {
   resultMention.hasEnd = NO;
   resultMention.end = 0;
+  return self;
+}
+- (BOOL) hasUserId {
+  return resultMention.hasUserId;
+}
+- (NSString*) userId {
+  return resultMention.userId;
+}
+- (ZMMentionBuilder*) setUserId:(NSString*) value {
+  resultMention.hasUserId = YES;
+  resultMention.userId = value;
+  return self;
+}
+- (ZMMentionBuilder*) clearUserId {
+  resultMention.hasUserId = NO;
+  resultMention.userId = @"";
   return self;
 }
 @end
