@@ -14,5 +14,5 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 This framework is part of Wire iOS. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
-The wire-ios-system framework covers the interaction with ASL (Apple System Log), profiling and provides wrappers of some Foundation classes.
+The wire-ios-system framework covers the interaction with OS Log, profiling and provides wrappers of some Foundation classes.
 
