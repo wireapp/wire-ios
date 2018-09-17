@@ -60,7 +60,7 @@ class ZiphyClientTests: XCTestCase {
         }
 
         guard case let .success(ziph) = fetchResult else {
-            XCTFail("The client returned an error: \(fetchResult.error)")
+            XCTFail("The client returned an error: \(fetchResult.error!)")
             return
         }
 
@@ -93,7 +93,7 @@ class ZiphyClientTests: XCTestCase {
         }
 
         guard case let .success(ziphs) = fetchResult else {
-            XCTFail("The client returned an error: \(fetchResult.error)")
+            XCTFail("The client returned an error: \(fetchResult.error!)")
             return
         }
 
