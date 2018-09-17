@@ -657,7 +657,7 @@
 					0928E2331BA0777A0057232E = {
 						CreatedOnToolsVersion = 6.4;
 						DevelopmentTeam = W5KEQBF9B5;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 					};
 					5471A6541D24215B0092A9A9 = {
 						CreatedOnToolsVersion = 7.3.1;
@@ -666,7 +666,7 @@
 					};
 					BA7EF9681B7109B600204A8E = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 						TestTargetID = 5471A6541D24215B0092A9A9;
 					};
 				};
@@ -831,7 +831,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -841,7 +841,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -852,6 +852,7 @@
 				INFOPLIST_FILE = "test-host/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -862,6 +863,7 @@
 				INFOPLIST_FILE = "test-host/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -869,6 +871,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E11F0A482B001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -876,6 +879,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1E21F0A482B001F43A6 /* project.xcconfig */;
 			buildSettings = {
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -887,7 +891,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 			};
 			name = Debug;
@@ -900,7 +904,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 			};
 			name = Release;
