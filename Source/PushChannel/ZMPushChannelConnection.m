@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 @import WireSystem;
+@import WireUtilities;
 
 #import "ZMPushChannelConnection.h"
 #import "ZMPushChannelConnection+WebSocket.h"
@@ -26,15 +26,10 @@
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 
-
 static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 
-
 @interface ZMPushChannelConnection ()
-{
-    int32_t _isClosed;
-}
 
 @property (nonatomic, weak) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic, weak) id<ZMSGroupQueue> consumerQueue;
@@ -44,13 +39,9 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 @property (nonatomic) NSTimeInterval pingInterval;
 @property (nonatomic) NSTimer *pingTimer;
 @property (nonatomic) NSHTTPURLResponse *closeResponse;
+@property (nonatomic) ZMAtomicInteger *closedFlag;
 
 @end
-
-
-
-
-
 
 @implementation ZMPushChannelConnection
 
@@ -91,13 +82,14 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         }
         self.webSocket = webSocket;
         self.pingInterval = 40;
+        self.closedFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
     }
     return self;
 }
 
 - (BOOL)isOpen;
 {
-    return (_isClosed == 0);
+    return self.closedFlag.rawValue == NO;
 }
 
 - (BOOL)didCompleteHandshake
@@ -123,8 +115,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
-    if (OSAtomicCompareAndSwap32Barrier(0, 1, &_isClosed)) {
-        
+    if ([self.closedFlag setValueWithEqualityCondition:NO newValue:YES]) {
         ZMLogDebug(@"-[%@ %@]", self.class, NSStringFromSelector(_cmd));
         [[NSNotificationCenter defaultCenter] removeObserver:self];
         
@@ -147,7 +138,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 - (void)dealloc;
 {
-    Require(_isClosed != 0);
+    Require(self.closedFlag.rawValue == YES);
 }
 
 

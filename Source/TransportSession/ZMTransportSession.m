@@ -54,10 +54,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 
 @interface ZMTransportSession () <ZMAccessTokenHandlerDelegate, ZMTimerClient>
-{
-    // This needs to be an instance variable such that we can use OSAtomic{Increment,Decrement} on it.
-    int32_t _numberOfRequestsInProgress;
-}
 
 @property (nonatomic) Class pushChannelClass;
 @property (nonatomic) BOOL applicationIsBackgrounded;
@@ -92,6 +88,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic) id<RequestRecorder> requestLoopDetection;
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;
 @property (nonatomic) id reachabilityObserverToken;
+@property (nonatomic) ZMAtomicInteger *numberOfRequestsInProgress;
 
 @end
 
@@ -247,6 +244,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     if (self) {
         self.baseURL = baseURL;
         self.websocketURL = websocketURL;
+        self.numberOfRequestsInProgress = [[ZMAtomicInteger alloc] initWithInteger:0];
         
         self.workQueue = queue;
         _workGroup = group;
@@ -352,7 +350,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest;
 {
-    OSAtomicIncrement32Barrier(&_numberOfRequestsInProgress);
+    [self.numberOfRequestsInProgress increment];
     [self enqueueTransportRequest:searchRequest];
 }
 
@@ -366,10 +364,10 @@ static NSInteger const DefaultMaximumRequests = 6;
     }
     self.firstRequestFired = YES;
     
-    int32_t const limit = ((int32_t) MIN(self.maximumConcurrentRequests, self.requestScheduler.concurrentRequestCountLimit));
-    int32_t const newCount = OSAtomicIncrement32Barrier(&_numberOfRequestsInProgress);
+    NSInteger const limit = MIN(self.maximumConcurrentRequests, self.requestScheduler.concurrentRequestCountLimit);
+    NSInteger const newCount = [self.numberOfRequestsInProgress increment];
     if (limit < newCount) {
-        ZMLogInfo(@"Reached limit of %d concurrent requests. Not enqueueing.", limit);
+        ZMLogInfo(@"Reached limit of %ld concurrent requests. Not enqueueing.", (long)limit);
         [self decrementNumberOfRequestsInProgressAndNotifyOperationLoop:NO];
         return [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
     } else {
@@ -526,8 +524,8 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)decrementNumberOfRequestsInProgressAndNotifyOperationLoop:(BOOL)notify
 {
-    int32_t const limit = (int32_t) MIN(self.maximumConcurrentRequests, self.requestScheduler.concurrentRequestCountLimit);
-    if (OSAtomicDecrement32Barrier(&_numberOfRequestsInProgress) < limit) {
+    NSInteger const limit = MIN(self.maximumConcurrentRequests, self.requestScheduler.concurrentRequestCountLimit);
+    if ([self.numberOfRequestsInProgress decrement] < limit) {
         if (notify) {
             [ZMTransportSession notifyNewRequestsAvailable:self];
         }
