@@ -66,7 +66,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         guard case let .success(fetchedZiphs) = result else {
-            XCTFail("An error was thrown: \(result.error)")
+            XCTFail("An error was thrown: \(result.error!)")
             return
         }
 
@@ -106,7 +106,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         guard case let .success(fetchedZiphs) = result else {
-            XCTFail("An error was thrown: \(result.error)")
+            XCTFail("An error was thrown: \(result.error!)")
             return
         }
 
@@ -146,7 +146,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         guard case let .success(data) = result else {
-            XCTFail("An error was thrown: \(result.error)")
+            XCTFail("An error was thrown: \(result.error!)")
             return
         }
 
@@ -188,7 +188,7 @@ class ZiphySearchResultsControllerTests: XCTestCase {
         }
 
         guard case let .success(fetchedZiphs) = result else {
-            XCTFail("An error was thrown: \(result.error)")
+            XCTFail("An error was thrown: \(result.error!)")
             return
         }
 

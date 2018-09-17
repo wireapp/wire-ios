@@ -74,7 +74,7 @@ class ZiphyPaginationControllerTests: XCTestCase {
         }
 
         guard case let .success(insertedZiphs) = result else {
-            XCTFail("The update returned an error: \(result.error)")
+            XCTFail("The update returned an error: \(result.error!)")
             return
         }
 
