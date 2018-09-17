@@ -255,7 +255,7 @@ public class SharingSession {
         }
         
         while !didCreateStorageStack {
-            if !RunLoop.current.run(mode: .defaultRunLoopMode, before: Date(timeIntervalSinceNow: 0.002)) {
+            if !RunLoop.current.run(mode: RunLoop.Mode.default, before: Date(timeIntervalSinceNow: 0.002)) {
                 Thread.sleep(forTimeInterval: 0.002)
             }
         }
