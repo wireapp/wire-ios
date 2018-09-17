@@ -44,12 +44,6 @@ class IntegrationTests: XCTestCase {
         let mockData = OpenGraphMockDataProvider.washingtonPostData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
-
-    func testThatItParsesSampleDataWithoutCrash() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 30, type: "article", siteNameString: "iPhone Photography School", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
-        let mockData = OpenGraphMockDataProvider.crashingData()
-        assertThatItCanParseSampleData(mockData, expected: expectation)
-    }
     
     func testThatItParsesSampleDataYouTube() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "video.other", siteNameString: "YouTube", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
