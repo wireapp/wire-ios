@@ -27,9 +27,9 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 @objcMembers open class ZMFileMetadata : NSObject {
     
-    open let fileURL : URL
-    open let thumbnail : Data?
-    open let filename : String
+    public let fileURL : URL
+    public let thumbnail : Data?
+    public let filename : String
     
     required public init(fileURL: URL, thumbnail: Data? = nil, name: String? = nil) {
         self.fileURL = fileURL
@@ -57,8 +57,8 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 open class ZMAudioMetadata : ZMFileMetadata {
     
-    open let duration : TimeInterval
-    open let normalizedLoudness : [Float]
+    public let duration : TimeInterval
+    public let normalizedLoudness : [Float]
     
     required public init(fileURL: URL, duration: TimeInterval, normalizedLoudness: [Float] = [], thumbnail: Data? = nil) {
         self.duration = duration
@@ -88,8 +88,8 @@ open class ZMAudioMetadata : ZMFileMetadata {
 
 open class ZMVideoMetadata : ZMFileMetadata {
     
-    open let duration : TimeInterval
-    open let dimensions : CGSize
+    public let duration : TimeInterval
+    public let dimensions : CGSize
     
     required public init(fileURL: URL, duration: TimeInterval, dimensions: CGSize, thumbnail: Data? = nil) {
         self.duration = duration

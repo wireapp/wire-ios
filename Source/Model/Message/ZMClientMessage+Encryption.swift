@@ -164,7 +164,7 @@ extension ZMGenericMessage {
             guard let message = ZMMessage.fetch(withNonce:nonce, for:conversation, in:conversation.managedObjectContext!) else { return nil }
             guard message.destructionDate != nil else { return nil }
             guard let sender = message.sender else {
-                zmLog.error("sender of deleted ephemeral message \(self.deleted.messageId) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
+                zmLog.error("sender of deleted ephemeral message \(String(describing: self.deleted.messageId)) is already cleared \n ConvID: \(String(describing: conversation.remoteIdentifier)) ConvType: \(conversation.conversationType.rawValue)")
                 return Set(arrayLiteral: selfUser)
             }
             
@@ -195,7 +195,7 @@ extension ZMGenericMessage {
 
         if self.hasConfirmation() {
             guard let recipients = recipientForConfirmationMessage() ?? recipientForOtherUsers() else {
-                let confirmationInfo = hasConfirmation() ? ", original message: \(self.confirmation.firstMessageId)" : ""
+                let confirmationInfo = hasConfirmation() ? ", original message: \(String(describing: self.confirmation.firstMessageId))" : ""
                 fatal("confirmation need a recipient\n ConvType: \(conversation.conversationType.rawValue) \(confirmationInfo)")
             }
             recipientUsers = recipients

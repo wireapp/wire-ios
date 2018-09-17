@@ -48,9 +48,9 @@ public protocol SetChangeInfoOwner {
 open class SetChangeInfo<T: Hashable> : NSObject {
     
     let changeSet : ChangedIndexes<T>
-    open let orderedSetState : OrderedSetState<T>
+    public let orderedSetState : OrderedSetState<T>
     
-    open let observedObject : NSObject
+    public let observedObject : NSObject
     open var insertedIndexes : IndexSet { return changeSet.insertedIndexes }
     open var deletedIndexes : IndexSet { return changeSet.deletedIndexes }
     open var deletedObjects: Set<AnyHashable> { return changeSet.deletedObjects }

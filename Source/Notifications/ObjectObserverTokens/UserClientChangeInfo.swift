@@ -71,7 +71,7 @@ public enum UserClientChangeInfoKey: String {
         return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
     }
 
-    open let userClient: UserClient
+    public let userClient: UserClient
     
     
     static func changeInfo(for client: UserClient, changes: Changes) -> UserClientChangeInfo? {

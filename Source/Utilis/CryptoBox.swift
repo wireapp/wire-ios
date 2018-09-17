@@ -143,7 +143,7 @@ open class UserClientKeysStore: NSObject {
     }
     
     /// Whether we need to migrate to a new identity (legacy e2ee transition phase)
-    open static func needToMigrateIdentity(applicationContainer: URL, accountIdentifier: UUID) -> Bool {
+    public static func needToMigrateIdentity(applicationContainer: URL, accountIdentifier: UUID) -> Bool {
         return getFirstExistingLegacyKeyStore(applicationContainer: applicationContainer, accountIdentifier: accountIdentifier) != nil
     }
     
@@ -204,9 +204,9 @@ open class UserClientKeysStore: NSObject {
     
     fileprivate func preKeysRange(_ count: UInt16, start: UInt16) -> CountableRange<UInt16> {
         if start >= UserClientKeysStore.MaxPreKeyID-count {
-            return CountableRange(0..<count)
+            return 0 ..< count
         }
-        return CountableRange(start..<(start + count))
+        return start ..< (start + count)
     }
     
 }
