@@ -67,8 +67,8 @@ fileprivate extension ZMTransportResponse {
 /// to create a regular transport session with it.
 final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTransportSessionProtocol {
 
-    private let maximumNumberOfRequests: Int32 = 3
-    private var numberOfRunningRequests: Int32 = 0
+    private let maximumNumberOfRequests: Int = 3
+    private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
     private let baseURL: URL
     private var session: SessionProtocol!
     fileprivate let reachability: ReachabilityProvider
@@ -131,15 +131,15 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     /// - parameter notify: Whether a new request available notificaiton should be posted
     /// when the amount of running requests is below the maximum after decrementing.
     private func decrement(notify: Bool) {
-        let newCount = withUnsafeMutablePointer(to: &numberOfRunningRequests, OSAtomicDecrement32)
+        let newCount = numberOfRunningRequests.decrement()
         guard newCount < maximumNumberOfRequests, notify else { return }
         ZMTransportSession.notifyNewRequestsAvailable(self)
     }
 
     /// Increments the number of running requests.
     /// - returns: The value after the increment.
-    private func increment() -> Int32 {
-        return withUnsafeMutablePointer(to: &numberOfRunningRequests, OSAtomicIncrement32)
+    private func increment() -> Int {
+        return numberOfRunningRequests.increment()
     }
     
     public func tearDown() {

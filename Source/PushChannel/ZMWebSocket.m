@@ -35,9 +35,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 @end
 
 @interface ZMWebSocket ()
-{
-    int32_t _isOpen;
-}
 
 @property (nonatomic) NSURL *URL;
 @property (nonatomic) NSMutableArray *dataPendingTransmission;
@@ -51,6 +48,7 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 @property (nonatomic) ZMWebSocketHandshake *handshake;
 @property (nonatomic) NSError *handshakeError;
 @property (nonatomic, copy) NSDictionary* additionalHeaderFields;
+@property (nonatomic) ZMAtomicInteger *openFlag;
 
 @end
 
@@ -95,6 +93,7 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
         self.consumer = consumer;
         self.consumerQueue = queue;
         self.consumerGroup = group;
+        self.openFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
         
         self.networkSocketQueue = networkSocketQueue ? : dispatch_queue_create("ZMWebSocket", DISPATCH_QUEUE_SERIAL);
         
@@ -130,7 +129,8 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 
 - (void)open;
 {
-    RequireString(OSAtomicCompareAndSwap32Barrier(0, 1, &_isOpen), "Trying to open %p multiple times.", (__bridge void *) self);
+    RequireString([self.openFlag setValueWithEqualityCondition:NO newValue:YES],
+                  "Trying to open %p multiple times.", (__bridge void *) self);
     
     [self.networkSocket open];
 }
@@ -191,7 +191,7 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 {
     // The compare & swap ensure that the code only runs if the values of isClosed was 0 and sets it to 1.
     // The check for 0 and setting it to 1 happen as a single atomic operation.
-    if (OSAtomicCompareAndSwap32Barrier(1, 0, &_isOpen)) {
+    if ([self.openFlag setValueWithEqualityCondition:YES newValue:NO]) {
         dispatch_queue_t queue = self.consumerQueue;
         ZMSDispatchGroup *group = self.consumerGroup;
         self.consumerQueue = nil;

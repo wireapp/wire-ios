@@ -45,6 +45,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 @property (atomic) BOOL isMobileConnection;
 @property (atomic) BOOL oldMayBeReachable;
 @property (atomic) BOOL oldIsMobileConnection;
+@property (nonatomic) ZMAtomicInteger *tornDownFlag;
 
 @end
 
@@ -61,6 +62,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
         self.workQueue = dispatch_queue_create("ZMReachability", 0);
         self.referenceToFlag = [NSMapTable strongToStrongObjectsMapTable];
         self.referenceToName = [NSMapTable strongToStrongObjectsMapTable];
+        self.tornDownFlag = [[ZMAtomicInteger alloc] initWithInteger:0];
         [self setupReachability];
     }
     return self;
@@ -68,7 +70,7 @@ NSString * const ZMReachabilityChangedNotificationName = @"ZMReachabilityChanged
 
 - (void)tearDown;
 {
-    if (OSAtomicCompareAndSwap32Barrier(0, 1, &_tornDown)) {
+    if ([self.tornDownFlag setValueWithEqualityCondition:NO newValue:YES]) {
         NSArray *refs = self.reachabilityReferences;
         self.reachabilityReferences = nil;
         self.referenceToFlag = nil;
