@@ -33,7 +33,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            message = self.groupConversation.appendMessage(withText: "bao") as! ZMClientMessage
+            message = self.groupConversation.appendMessage(withText: "bao") as? ZMClientMessage
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else { return XCTFail() }
@@ -57,7 +57,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            message = self.groupConversation.appendMessage(withText: "bao") as! ZMClientMessage
+            message = self.groupConversation.appendMessage(withText: "bao") as? ZMClientMessage
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else { return XCTFail() }
@@ -78,7 +78,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            message = self.groupConversation.appendMessage(withText: "bao") as! ZMClientMessage
+            message = self.groupConversation.appendMessage(withText: "bao") as? ZMClientMessage
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else { return XCTFail() }

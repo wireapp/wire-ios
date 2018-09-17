@@ -205,7 +205,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
             }
         }
 
-        fatalError("Cannot generate request for \(object)")
+        fatalError("Cannot generate request for \(String(describing: object))")
     }
 
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {

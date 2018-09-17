@@ -63,7 +63,7 @@ extension ClientMessageRequestFactory {
         let path = "/conversations/\(identifier.transportString())/otr/assets/\(message.assetId!.transportString())"
         
         let request = ZMTransportRequest(getFromPath: path)
-        request.addContentDebugInformation("Downloading file (Asset)\n\(message.dataSetDebugInformation)")
+        request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
         request.forceToBackgroundSession()
         return request
     }

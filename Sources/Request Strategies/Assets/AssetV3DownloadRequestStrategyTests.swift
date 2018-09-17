@@ -418,7 +418,7 @@ extension AssetV3DownloadRequestStrategyTests {
                 "conversation":self.conversation.remoteIdentifier!.transportString(),
                 "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
             
-            message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+            message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil).message as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation
             message.transferState = .downloading
             
@@ -488,7 +488,7 @@ extension AssetV3DownloadRequestStrategyTests {
                 "conversation":self.conversation.remoteIdentifier!.transportString(),
                 "time":Date(timeIntervalSince1970: 555555).transportString()] as NSDictionary), uuid: nil)
             
-            message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+            message = ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.syncMOC, prefetchResult: nil).message as? ZMAssetClientMessage
             message.visibleInConversation = self.conversation
             message.transferState = .downloading
             

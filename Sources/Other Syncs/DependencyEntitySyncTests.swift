@@ -21,7 +21,6 @@ import WireTesting
 
 @testable import WireRequestStrategy
 
-
 class MockDependencyEntity : DependencyEntity, Hashable {
     public var isExpired: Bool = false
     fileprivate let uuid = UUID()
@@ -29,9 +28,9 @@ class MockDependencyEntity : DependencyEntity, Hashable {
     public func expire() {
          isExpired = true
     }
-    
-    var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable?
-    
+
+    var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
+
     var hashValue: Int {
         return self.uuid.hashValue
     }
@@ -121,14 +120,13 @@ class DependencyEntitySyncTests : ZMTBaseTest {
     }
     
     func testThatEntityIsExpired_whenExpiringEntitiesWithDependencies() {
-        
         // given
         let entity = MockDependencyEntity()
         entity.dependentObjectNeedingUpdateBeforeProcessing = dependency
         sut.synchronize(entity: entity)
         
         // when
-        sut.expireEntities(withDependency: dependency as AnyHashable)
+        sut.expireEntities(withDependency: dependency)
         
         // then
         XCTAssertTrue(entity.isExpired)

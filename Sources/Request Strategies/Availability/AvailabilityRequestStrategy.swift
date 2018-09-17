@@ -119,7 +119,7 @@ extension AvailabilityRequestStrategy : OTREntity {
         }
     }
     
-    public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+    public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: ZMUser.connectionsAndTeamMembers(in: managedObjectContext))
     }
     

@@ -61,7 +61,7 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
     }
     
     public func dependents(on dependency: Dependency) -> Set<Object> {
-        return self.dependenciesToDependents[dependency] ?? Set()
+        return self.dependenciesToDependents[dependency as Dependency] ?? Set()
     }
 
     public func remove(dependency: Dependency, for dependent: Object) {
