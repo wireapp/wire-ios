@@ -91,7 +91,7 @@ extension FileManager {
         // (3) App is awake on the background due to VoIP push notification
         
         return NotificationCenter.default.addObserver(
-            forName: .UIApplicationProtectedDataDidBecomeAvailable,
+            forName: UIApplication.protectedDataDidBecomeAvailableNotification,
             object: nil,
             queue: nil) { _ in block() }
     }
