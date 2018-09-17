@@ -433,16 +433,17 @@
 					5470D3E71D76E1B000FDE440 = {
 						CreatedOnToolsVersion = 7.3.1;
 						DevelopmentTeam = W5KEQBF9B5;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 					};
 					5470D3F11D76E1B000FDE440 = {
 						CreatedOnToolsVersion = 7.3.1;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 						TestTargetID = F154EE071F44826400CB8184;
 					};
 					F154EE071F44826400CB8184 = {
 						CreatedOnToolsVersion = 8.3.2;
 						DevelopmentTeam = EDF3JCE8BC;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -597,7 +598,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -607,7 +608,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engine";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -619,7 +620,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "WireShareEngineTests/WireShareEngine-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
 			};
 			name = Debug;
@@ -632,7 +633,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "WireShareEngineTests/WireShareEngine-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
 			};
 			name = Release;
@@ -644,7 +645,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -655,7 +656,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/WireShareEngineTests/WireShareEngineTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireShareEngineTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
