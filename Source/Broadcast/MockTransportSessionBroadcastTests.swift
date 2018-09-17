@@ -46,7 +46,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             secondSelfClient = session.registerClient(for: selfUser, label: "self2", type: "permanent")
             
             otherUser = session.insertUser(withName: "bar")
-            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
             secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent")
             otherUserRedundantClient = session.registerClient(for: otherUser, label: "other redundant", type: "permanent")
             
@@ -107,7 +107,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
 
             otherUser = session.insertUser(withName: "Team member1")
-            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
 
             session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
         }
@@ -156,7 +156,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
 
             otherUser = session.insertUser(withName: "Team member1")
-            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
 
             session.insertTeam(withName: "Team Foo", isBound: false, users: Set<MockUser>(arrayLiteral: selfUser, otherUser))
         }
@@ -206,7 +206,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
 
             otherUser = session.insertUser(withName: "Team member1")
-            otherUserClient = otherUser.clients.anyObject() as! MockUserClient
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
 
             let connection = session.insertConnection(withSelfUser: selfUser, to: otherUser)
             connection.status = "accepted"

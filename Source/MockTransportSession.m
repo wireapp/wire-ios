@@ -367,7 +367,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     }];
 }
 
-- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(ZMTransportRequestGenerator)generator;
+- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(__attribute__((noescape)) ZMTransportRequestGenerator)generator;
 {
     if (self.disableEnqueueRequests) {
         return [ZMTransportEnqueueResult resultDidHaveLessRequestsThanMax:NO didGenerateNonNullRequest:NO];
