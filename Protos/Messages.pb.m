@@ -4270,7 +4270,7 @@ static ZMArticle* defaultZMArticleInstance = nil;
 
 @interface ZMMention ()
 @property SInt32 start;
-@property SInt32 end;
+@property SInt32 length;
 @property (strong) NSString* userId;
 @end
 
@@ -4283,13 +4283,13 @@ static ZMArticle* defaultZMArticleInstance = nil;
   hasStart_ = !!_value_;
 }
 @synthesize start;
-- (BOOL) hasEnd {
-  return !!hasEnd_;
+- (BOOL) hasLength {
+  return !!hasLength_;
 }
-- (void) setHasEnd:(BOOL) _value_ {
-  hasEnd_ = !!_value_;
+- (void) setHasLength:(BOOL) _value_ {
+  hasLength_ = !!_value_;
 }
-@synthesize end;
+@synthesize length;
 - (BOOL) hasUserId {
   return !!hasUserId_;
 }
@@ -4300,7 +4300,7 @@ static ZMArticle* defaultZMArticleInstance = nil;
 - (instancetype) init {
   if ((self = [super init])) {
     self.start = 0;
-    self.end = 0;
+    self.length = 0;
     self.userId = @"";
   }
   return self;
@@ -4321,7 +4321,7 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (!self.hasStart) {
     return NO;
   }
-  if (!self.hasEnd) {
+  if (!self.hasLength) {
     return NO;
   }
   return YES;
@@ -4330,8 +4330,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (self.hasStart) {
     [output writeInt32:1 value:self.start];
   }
-  if (self.hasEnd) {
-    [output writeInt32:2 value:self.end];
+  if (self.hasLength) {
+    [output writeInt32:2 value:self.length];
   }
   if (self.hasUserId) {
     [output writeString:3 value:self.userId];
@@ -4348,8 +4348,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (self.hasStart) {
     size_ += computeInt32Size(1, self.start);
   }
-  if (self.hasEnd) {
-    size_ += computeInt32Size(2, self.end);
+  if (self.hasLength) {
+    size_ += computeInt32Size(2, self.length);
   }
   if (self.hasUserId) {
     size_ += computeStringSize(3, self.userId);
@@ -4392,8 +4392,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (self.hasStart) {
     [output appendFormat:@"%@%@: %@\n", indent, @"start", [NSNumber numberWithInteger:self.start]];
   }
-  if (self.hasEnd) {
-    [output appendFormat:@"%@%@: %@\n", indent, @"end", [NSNumber numberWithInteger:self.end]];
+  if (self.hasLength) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"length", [NSNumber numberWithInteger:self.length]];
   }
   if (self.hasUserId) {
     [output appendFormat:@"%@%@: %@\n", indent, @"userId", self.userId];
@@ -4404,8 +4404,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (self.hasStart) {
     [dictionary setObject: [NSNumber numberWithInteger:self.start] forKey: @"start"];
   }
-  if (self.hasEnd) {
-    [dictionary setObject: [NSNumber numberWithInteger:self.end] forKey: @"end"];
+  if (self.hasLength) {
+    [dictionary setObject: [NSNumber numberWithInteger:self.length] forKey: @"length"];
   }
   if (self.hasUserId) {
     [dictionary setObject: self.userId forKey: @"userId"];
@@ -4423,8 +4423,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   return
       self.hasStart == otherMessage.hasStart &&
       (!self.hasStart || self.start == otherMessage.start) &&
-      self.hasEnd == otherMessage.hasEnd &&
-      (!self.hasEnd || self.end == otherMessage.end) &&
+      self.hasLength == otherMessage.hasLength &&
+      (!self.hasLength || self.length == otherMessage.length) &&
       self.hasUserId == otherMessage.hasUserId &&
       (!self.hasUserId || [self.userId isEqual:otherMessage.userId]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
@@ -4434,8 +4434,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (self.hasStart) {
     hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.start] hash];
   }
-  if (self.hasEnd) {
-    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.end] hash];
+  if (self.hasLength) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithInteger:self.length] hash];
   }
   if (self.hasUserId) {
     hashCode = hashCode * 31 + [self.userId hash];
@@ -4486,8 +4486,8 @@ static ZMMention* defaultZMMentionInstance = nil;
   if (other.hasStart) {
     [self setStart:other.start];
   }
-  if (other.hasEnd) {
-    [self setEnd:other.end];
+  if (other.hasLength) {
+    [self setLength:other.length];
   }
   if (other.hasUserId) {
     [self setUserId:other.userId];
@@ -4518,7 +4518,7 @@ static ZMMention* defaultZMMentionInstance = nil;
         break;
       }
       case 16: {
-        [self setEnd:[input readInt32]];
+        [self setLength:[input readInt32]];
         break;
       }
       case 26: {
@@ -4544,20 +4544,20 @@ static ZMMention* defaultZMMentionInstance = nil;
   resultMention.start = 0;
   return self;
 }
-- (BOOL) hasEnd {
-  return resultMention.hasEnd;
+- (BOOL) hasLength {
+  return resultMention.hasLength;
 }
-- (SInt32) end {
-  return resultMention.end;
+- (SInt32) length {
+  return resultMention.length;
 }
-- (ZMMentionBuilder*) setEnd:(SInt32) value {
-  resultMention.hasEnd = YES;
-  resultMention.end = value;
+- (ZMMentionBuilder*) setLength:(SInt32) value {
+  resultMention.hasLength = YES;
+  resultMention.length = value;
   return self;
 }
-- (ZMMentionBuilder*) clearEnd {
-  resultMention.hasEnd = NO;
-  resultMention.end = 0;
+- (ZMMentionBuilder*) clearLength {
+  resultMention.hasLength = NO;
+  resultMention.length = 0;
   return self;
 }
 - (BOOL) hasUserId {
