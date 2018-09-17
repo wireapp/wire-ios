@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-testing" ~> 16.0
+github "wireapp/wire-ios-testing" "xcode10"
