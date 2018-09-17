@@ -90,6 +90,9 @@
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
 		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
+		5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */; };
+		5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
 		870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */; };
 		871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */; };
 		872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A611D8AAB8A0034FF40 /* OptionalComparisonTests.swift */; };
@@ -317,6 +320,9 @@
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
+		5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicIntegerTests.swift; sourceTree = "<group>"; };
+		5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAtomicInteger.h; sourceTree = "<group>"; };
+		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
 		870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+ZMSCrypto.swift"; sourceTree = "<group>"; };
 		871E12341C4FEED200862958 /* UnownedNSObjectTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = UnownedNSObjectTests.swift; path = Source/UnownedNSObjectTests.swift; sourceTree = "<group>"; };
 		8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLengthValidator.swift; sourceTree = "<group>"; };
@@ -537,6 +543,8 @@
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				54181A551F594FD800155ABC /* FileManager+FileProtectionLock.swift */,
 				EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */,
+				5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */,
+				5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -734,6 +742,7 @@
 				54181A511F594E6F00155ABC /* FileManager+MoveTests.swift */,
 				54181A571F59516600155ABC /* FileManager+ProtectionTests.swift */,
 				5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */,
+				5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -766,6 +775,7 @@
 				F9C9A7B81CAEAE570039E10C /* ZMAccentColorValidator.h in Headers */,
 				F9C9A7B31CAEADFF0039E10C /* ZMAccentColor.h in Headers */,
 				54CA312F1B74F36B00B820C0 /* NSOperationQueue+Helpers.h in Headers */,
+				5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */,
 				F9C9A7B91CAEAE570039E10C /* ZMEmailAddressValidator.h in Headers */,
 				54CA312B1B74F36B00B820C0 /* NSData+ZMAdditions.h in Headers */,
 				F9D381B61B70B95A00E6E4EB /* WireUtilities-Tests.pch in Headers */,
@@ -859,11 +869,11 @@
 					3E88BD371B1F3EA300232589 = {
 						CreatedOnToolsVersion = 6.3.2;
 						DevelopmentTeam = W5KEQBF9B5;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 					};
 					3E88BD421B1F3EA300232589 = {
 						CreatedOnToolsVersion = 6.3.2;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 						TestTargetID = 09F028CD1B78BE2700BADDB6;
 					};
 				};
@@ -996,6 +1006,7 @@
 				3E88BE511B1F478200232589 /* ZMOSVersions.m in Sources */,
 				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
+				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
 				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				F9C9A7AA1CAEACB10039E10C /* ZMAccentColorValidator.m in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
@@ -1064,6 +1075,7 @@
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
+				5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */,
 				546E8A621B75045E009EBA02 /* UnownedObjectTests.swift in Sources */,
 				D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */,
 				D504CD392090CCE400A78DAA /* CurryingTests.swift in Sources */,
@@ -1146,6 +1158,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148C4207BAED000F81833 /* project-debug.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};
@@ -1155,6 +1168,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148CC207BAED000F81833 /* project.xcconfig */;
 			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 				SWIFT_VERSION = 4.0;
 			};
@@ -1166,8 +1180,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1177,8 +1190,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1190,8 +1202,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Debug;
@@ -1204,8 +1215,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "WireUtilities-Tests";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
-				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
 			};
 			name = Release;
