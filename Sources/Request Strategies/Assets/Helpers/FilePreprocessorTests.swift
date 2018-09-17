@@ -31,7 +31,7 @@ class FilePreprocessorTests : MessagingTestBase {
         super.setUp()
         self.syncMOC.performGroupedAndWait { moc in
             self.sut = FilePreprocessor(managedObjectContext: moc, filter: NSPredicate(value: true))
-            self.oneToOneConversationOnSync = moc.object(with: self.oneToOneConversation.objectID) as! ZMConversation
+            self.oneToOneConversationOnSync = moc.object(with: self.oneToOneConversation.objectID) as? ZMConversation
         }
     }
     

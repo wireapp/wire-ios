@@ -56,7 +56,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         var message: ZMAssetClientMessage!
         syncMOC.performGroupedBlockAndWait {
             self.conversation.messageDestructionTimeout = ephemeral ? .local(.tenSeconds) : nil
-            message = self.conversation.appendMessage(withImageData: self.imageData) as! ZMAssetClientMessage
+            message = self.conversation.appendMessage(withImageData: self.imageData) as? ZMAssetClientMessage
             self.syncMOC.saveOrRollback()
         }
 
@@ -69,7 +69,7 @@ class AssetV3ImageUploadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             self.conversation.messageDestructionTimeout = ephemeral ? .local(.tenSeconds) : nil
             let url = Bundle(for: AssetV3ImageUploadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as! ZMAssetClientMessage
+            message = self.conversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
             self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: self.imageData)
             self.syncMOC.saveOrRollback()
         }

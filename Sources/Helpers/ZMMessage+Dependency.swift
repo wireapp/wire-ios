@@ -30,10 +30,10 @@ extension ZMOTRMessage: OTREntity {
     }
 
     /// Which object this message depends on when sending
-    @objc public override var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+    @objc public override var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         guard let conversation = conversation else { return nil }
         
-        let dependent: AnyHashable? = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
+        let dependent = self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(in: conversation)
         return dependent ?? super.dependentObjectNeedingUpdateBeforeProcessing
     }
     
@@ -60,7 +60,7 @@ extension ZMOTRMessage: OTREntity {
 extension ZMMessage {
     
     /// Which object this message depends on when sending
-    @objc public var dependentObjectNeedingUpdateBeforeProcessing: AnyHashable? {
+    @objc public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         
         // conversation not created yet on the BE?
         guard let conversation = self.conversation else { return nil }

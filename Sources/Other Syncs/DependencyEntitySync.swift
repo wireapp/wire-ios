@@ -19,14 +19,14 @@
 import Foundation
 
 @objc public protocol DependencyEntity: class {
-    @objc var dependentObjectNeedingUpdateBeforeProcessing : AnyHashable? { get }
+    @objc var dependentObjectNeedingUpdateBeforeProcessing : NSObject? { get }
     @objc var isExpired: Bool { get }
     @objc func expire()
 }
 
 public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextChangeTracker, ZMRequestGenerator  where Transcoder.Entity : DependencyEntity {
     
-    private var entitiesWithDependencies : DependentObjects<Transcoder.Entity, AnyHashable> = DependentObjects()
+    private var entitiesWithDependencies : DependentObjects<Transcoder.Entity, NSObject> = DependentObjects()
     private var entitiesWithoutDependencies : [Transcoder.Entity] = []
     private weak var transcoder : Transcoder?
     private var context : NSManagedObjectContext
@@ -36,7 +36,7 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
         self.context = context
     }
     
-    public func expireEntities(withDependency dependency: AnyHashable) {
+    public func expireEntities(withDependency dependency: NSObject) {
         for entity in entitiesWithDependencies.dependents(on: dependency) {
             entity.expire()
         }
@@ -55,7 +55,7 @@ public class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMC
             for entity in entitiesWithDependencies.dependents(on: object) {
                 let newDependency = entity.dependentObjectNeedingUpdateBeforeProcessing
                 
-                if let newDependency = newDependency, newDependency != (object as AnyHashable) {
+                if let newDependency = newDependency, newDependency != object {
                     entitiesWithDependencies.add(dependency: newDependency, for: entity)
                 } else if newDependency == nil {
                     entitiesWithDependencies.remove(dependency: object, for: entity)

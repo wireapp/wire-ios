@@ -36,7 +36,7 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { syncMOC in
             self.mockApplicationStatus = MockApplicationStatus()
             self.mockApplicationStatus.mockSynchronizationState = .eventProcessing
-            self.oneToOneconversationOnSync = syncMOC.object(with: self.oneToOneConversation.objectID) as! ZMConversation
+            self.oneToOneconversationOnSync = syncMOC.object(with: self.oneToOneConversation.objectID) as? ZMConversation
 
             self.sut = LinkPreviewAssetDownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }

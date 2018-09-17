@@ -52,7 +52,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1))
-            message = self.groupConversation.appendMessage(withText: "Foo")! as! ZMClientMessage
+            message = self.groupConversation.appendMessage(withText: "Foo")! as? ZMClientMessage
             message.markAsSent()
             self.syncMOC.saveOrRollback()
             XCTAssertFalse(message.isObfuscated)
