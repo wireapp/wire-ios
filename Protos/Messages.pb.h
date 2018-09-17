@@ -969,22 +969,22 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 @end
 
 #define Mention_start @"start"
-#define Mention_end @"end"
+#define Mention_length @"length"
 #define Mention_user_id @"userId"
 @interface ZMMention : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasStart_:1;
-  BOOL hasEnd_:1;
+  BOOL hasLength_:1;
   BOOL hasUserId_:1;
   SInt32 start;
-  SInt32 end;
+  SInt32 length;
   NSString* userId;
 }
 - (BOOL) hasStart;
-- (BOOL) hasEnd;
+- (BOOL) hasLength;
 - (BOOL) hasUserId;
 @property (readonly) SInt32 start;
-@property (readonly) SInt32 end;
+@property (readonly) SInt32 length;
 @property (readonly, strong) NSString* userId;
 
 + (instancetype) defaultInstance;
@@ -1027,10 +1027,10 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMMentionBuilder*) setStart:(SInt32) value;
 - (ZMMentionBuilder*) clearStart;
 
-- (BOOL) hasEnd;
-- (SInt32) end;
-- (ZMMentionBuilder*) setEnd:(SInt32) value;
-- (ZMMentionBuilder*) clearEnd;
+- (BOOL) hasLength;
+- (SInt32) length;
+- (ZMMentionBuilder*) setLength:(SInt32) value;
+- (ZMMentionBuilder*) clearLength;
 
 - (BOOL) hasUserId;
 - (NSString*) userId;
