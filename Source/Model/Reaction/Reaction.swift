@@ -35,7 +35,7 @@ public let ZMReactionUsersValueKey      = "users"
     @NSManaged var users        : Set<ZMUser>
     
     
-    open static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction {
+    public static func insertReaction(_ unicodeValue: String, users: [ZMUser], inMessage message: ZMMessage) -> Reaction {
         let reaction = insertNewObject(in: message.managedObjectContext!)
         reaction.message = message
         reaction.unicodeValue = unicodeValue
@@ -48,11 +48,11 @@ public let ZMReactionUsersValueKey      = "users"
         return [ZMReactionUsersValueKey]
     }
     
-    open override static func entityName() -> String {
+    open override class func entityName() -> String {
         return "Reaction"
     }
     
-    open override static func sortKey() -> String? {
+    open override class func sortKey() -> String? {
         return ZMReactionUnicodeValueKey
     }
     

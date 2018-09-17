@@ -73,7 +73,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
         zmLog.ifDebug {
             (conversationList as Array).forEach{
-                zmLog.debug("Conversation in \(conversationList.identifier) includes: \($0.objectID) with type: \($0.conversationType.rawValue)")
+                zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)")
             }
         }
         listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList, managedObjectContext: self.managedObjectContext)

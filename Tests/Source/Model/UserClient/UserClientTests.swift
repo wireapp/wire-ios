@@ -133,7 +133,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
@@ -166,7 +166,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             let selfClient = self.createSelfClient(onMOC: self.syncMOC)
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
@@ -255,7 +255,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
             
             let otherClient = UserClient.insertNewObject(in: self.syncMOC)
@@ -653,7 +653,7 @@ extension UserClientTests {
             var preKeys : [(id: UInt16, prekey: String)] = []
             
             selfClient.keysStore.encryptionContext.perform({ (sessionsDirectory) in
-                preKeys = try! sessionsDirectory.generatePrekeys(CountableRange<UInt16>(0..<2))
+                preKeys = try! sessionsDirectory.generatePrekeys(0 ..< 2)
             })
         
             guard let preKey = preKeys.first

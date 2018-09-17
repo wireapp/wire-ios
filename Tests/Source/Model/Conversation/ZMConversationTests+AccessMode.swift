@@ -84,7 +84,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
             sut.accessMode = $0
             // then
             if let strings = $1 {
-                XCTAssertEqual(sut.accessModeStrings!, strings)
+                XCTAssertEqual(Set(sut.accessModeStrings!), Set(strings))
             }
             else {
                 XCTAssertTrue(sut.accessModeStrings == nil)
@@ -112,8 +112,8 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
             // when
             sut.allowGuests = $0.0
             // then
-            XCTAssertEqual(sut.accessModeStrings!, $0.1)
-            XCTAssertEqual(sut.accessRoleString!, $0.2)
+            XCTAssertEqual(Set(sut.accessModeStrings!), Set($0.1))
+            XCTAssertEqual(Set(sut.accessRoleString!), Set($0.2))
         }
     }
     
@@ -141,7 +141,7 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
                                                                   name: "Test Conversation",
                                                                   in: team)!
         // then
-        XCTAssertEqual(conversation.accessModeStrings!, ["code", "invite"])
+        XCTAssertEqual(Set(conversation.accessModeStrings!), ["code", "invite"])
         XCTAssertEqual(conversation.accessRoleString!, ConversationAccessRole.nonActivated.rawValue)
     }
     
@@ -166,8 +166,8 @@ class ZMConversationAccessModeTests: ZMConversationTestsBase {
                                                                       in: team,
                                                                       allowGuests: $0.0)!
             // then
-            XCTAssertEqual(conversation.accessModeStrings!, $0.1)
-            XCTAssertEqual(conversation.accessRoleString!, $0.2)
+            XCTAssertEqual(Set(conversation.accessModeStrings!), Set($0.1))
+            XCTAssertEqual(Set(conversation.accessRoleString!), Set($0.2))
         }
     }
     

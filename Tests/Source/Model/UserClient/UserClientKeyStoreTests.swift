@@ -100,7 +100,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
             // then
             iterations += 1
             if (iterations > maxIterations) {
-                XCTFail("Too many keys are generated without wrapping: \(iterations) iterations, max key is \(maxKey)")
+                XCTFail("Too many keys are generated without wrapping: \(iterations) iterations, max key is \(String(describing: maxKey))")
                 return
             }
             
@@ -115,7 +115,7 @@ class UserClientKeysStoreTests: OtrBaseTest {
             
             previousMaxKeyId = maxKey
             if (maxKey > UserClientKeysStore.MaxPreKeyID) {
-                XCTFail("Prekey \(maxKey) is too big")
+                XCTFail("Prekey \(String(describing: maxKey)) is too big")
                 return
             }
             

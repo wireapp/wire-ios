@@ -75,7 +75,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
             let selfClient = self.createSelfClient(in: syncMOC)
             var preKeys : [(id: UInt16, prekey: String)] = []
             selfClient.keysStore.encryptionContext.perform {
-                preKeys = try! $0.generatePrekeys(CountableRange<UInt16>(0..<2))
+                preKeys = try! $0.generatePrekeys(0 ..< 2)
             }
 
             let otherClient = UserClient.insertNewObject(in: syncMOC)

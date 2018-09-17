@@ -218,7 +218,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 0.1
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
             
             // when
             message.markAsSent()
@@ -264,7 +264,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 0.1
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
             message.markAsSent()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -292,7 +292,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 10
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
             message.sender = self.syncUser1
             message.markAsSent()
         }
@@ -450,7 +450,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         syncMOC.performGroupedBlock {
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5.0))
-            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
             
             // when
             // start timer
@@ -507,7 +507,7 @@ extension ZMClientMessageTests_Ephemeral {
 
         syncMOC.performGroupedBlock { 
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 0.5))
-            message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
             message.markAsSent()
             XCTAssertNotNil(message.destructionDate)
         }

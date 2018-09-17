@@ -131,7 +131,7 @@ extension ZMUser : ObjectInSnapshot {
         return changedKeys.contains(#keyPath(ZMUser.availability))
     }
 
-    open let user: UserType
+    public let user: UserType
     open var userClientChangeInfos : [UserClientChangeInfo] {
         return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
     }

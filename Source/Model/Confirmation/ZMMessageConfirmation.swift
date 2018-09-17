@@ -55,7 +55,7 @@ open class ZMMessageConfirmation: ZMManagedObject {
     
     /// Creates a ZMMessageConfirmation object that holds a reference to a message that was confirmed and the user who confirmed it.
     /// It can have 2 types: Delivered and Read depending on the genericMessage confirmation type
-    static open func createOrUpdateMessageConfirmation(_ genericMessage: ZMGenericMessage, conversation: ZMConversation, sender: ZMUser) -> ZMMessageConfirmation? {
+    public static func createOrUpdateMessageConfirmation(_ genericMessage: ZMGenericMessage, conversation: ZMConversation, sender: ZMUser) -> ZMMessageConfirmation? {
         
         guard genericMessage.hasConfirmation(),
             let moc = conversation.managedObjectContext,

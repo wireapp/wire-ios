@@ -390,7 +390,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         var conversation : ZMConversation!
         var message : ZMMessage!
         self.syncMOC.performGroupedBlockAndWait{
-            conversation = self.syncMOC.object(with: uiConversation.objectID) as! ZMConversation
+            conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             message = ZMMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.visibleInConversation = conversation
             message.serverTimestamp = conversation.lastReadServerTimeStamp?.addingTimeInterval(10)
@@ -606,7 +606,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         var conversation : ZMConversation!
         self.syncMOC.performGroupedBlockAndWait{
-            conversation = self.syncMOC.object(with: uiConversation.objectID) as! ZMConversation
+            conversation = self.syncMOC.object(with: uiConversation.objectID) as? ZMConversation
             self.syncMOC.saveOrRollback()
         }
 

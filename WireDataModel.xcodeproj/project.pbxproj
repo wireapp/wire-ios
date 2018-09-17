@@ -2182,12 +2182,12 @@
 				TargetAttributes = {
 					F9C9A4FB1CAD5DF10039E10C = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0930;
+						LastSwiftMigration = 1000;
 						ProvisioningStyle = Manual;
 					};
 					F9C9A5051CAD5DF10039E10C = {
 						CreatedOnToolsVersion = 7.2;
-						LastSwiftMigration = 0800;
+						LastSwiftMigration = 1000;
 						TestTargetID = F9C9A7F21CAED9510039E10C;
 					};
 					F9C9A7F21CAED9510039E10C = {
@@ -2720,7 +2720,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModel;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -2731,7 +2731,7 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				MOMC_NO_INVERSE_RELATIONSHIP_WARNINGS = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModel;
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -2743,7 +2743,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireDataModelTestHost.app/WireDataModelTestHost";
 			};
 			name = Debug;
@@ -2756,7 +2756,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(SRCROOT)/Tests/Resources/Test-Bridging-Header.h";
-				SWIFT_VERSION = 4.0;
+				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireDataModelTestHost.app/WireDataModelTestHost";
 			};
 			name = Release;
