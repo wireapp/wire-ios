@@ -22,10 +22,10 @@ import Foundation
 
 @objcMembers open class LinkPreview : NSObject {
     
-    open let originalURLString: String
-    open let permanentURL: URL?
-    open let resolvedURL: URL?
-    open let characterOffsetInText: Int
+    public let originalURLString: String
+    public let permanentURL: URL?
+    public let resolvedURL: URL?
+    public let characterOffsetInText: Int
     open var imageURLs = [URL]()
     open var imageData = [Data]()
     
