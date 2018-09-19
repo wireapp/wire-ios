@@ -30,7 +30,7 @@ class ZMOTRMessageMissingTests: MessagingTestBase {
         
         super.setUp()
         self.syncMOC.performGroupedBlockAndWait {
-            self.message = self.groupConversation.appendMessage(withText: "Test message") as! ZMClientMessage
+            self.message = self.groupConversation.append(text: "Test message") as! ZMClientMessage
             self.syncMOC.saveOrRollback()
         }
     }

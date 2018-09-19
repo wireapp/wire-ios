@@ -35,7 +35,7 @@ extension ClientMessageRequestFactoryTests {
             
             // GIVEN
             let text = "Antani"
-            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
             
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
@@ -62,7 +62,7 @@ extension ClientMessageRequestFactoryTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Antani"
-            let message = self.oneToOneConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
             message.sender = self.otherUser
             let confirmationMessage = message.confirmReception()!
             
@@ -92,7 +92,7 @@ extension ClientMessageRequestFactoryTests {
             // GIVEN
             let text = "Boo"
             self.groupConversation.messageDestructionTimeout = .local(.tenSeconds)
-            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
             
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {

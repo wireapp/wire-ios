@@ -52,7 +52,7 @@ class GenericMessageNotificationRequestStrategyTests: MessagingTestBase {
     func testThatItCreatesARequestWhenPostingAGenericMessageScheduleNotification() {
         self.syncMOC.performGroupedAndWait { moc in
             // GIVEN
-            let genericMessage = ZMGenericMessage.sessionReset(withNonce: UUID.create())
+            let genericMessage = ZMGenericMessage.clientAction(.RESETSESSION)
 
             // WHEN
             GenericMessageScheduleNotification.post(message: genericMessage, conversation: self.groupConversation)

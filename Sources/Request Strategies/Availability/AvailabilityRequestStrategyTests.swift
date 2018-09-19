@@ -82,7 +82,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: moc)
             _ = ZMConversation(remoteID: selfUser.remoteIdentifier!, createIfNeeded: true, in: moc) // create self conversation
 
-            let message = ZMGenericMessage.genericMessage(withAvailability: .away)
+            let message = ZMGenericMessage.message(content: ZMAvailability.availability(.away))
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
                         "text": message.data().base64String()] as NSDictionary

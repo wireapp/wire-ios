@@ -28,7 +28,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.selfClient.missesClient(self.otherClient)
@@ -43,7 +43,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.selfClient.missesClient(self.otherClient)
@@ -59,7 +59,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.oneToOneConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.oneToOneConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.selfClient.missesClient(self.otherClient)
@@ -77,7 +77,7 @@ extension ClientMessageTranscoderTests {
             // GIVEN
             let user2 = self.createUser()
             let conversation2 = self.createGroupConversation(with: user2)
-            let message = conversation2.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = conversation2.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.selfClient.missesClient(self.otherClient)
@@ -92,7 +92,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // THEN
             let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
@@ -105,15 +105,15 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let timeZero = Date(timeIntervalSince1970: 10000)
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             message.serverTimestamp = timeZero
             message.markAsSent()
             
-            let nextMessage = self.groupConversation.appendMessage(withText: "bar") as! ZMClientMessage
+            let nextMessage = self.groupConversation.append(text: "bar") as! ZMClientMessage
             // nextMessage.serverTimestamp = timeZero.addingTimeInterval(100) // this ensures the sorting
             
             // WHEN
-            let lastMessage = self.groupConversation.appendMessage(withText: "zoo") as! ZMClientMessage
+            let lastMessage = self.groupConversation.append(text: "zoo") as! ZMClientMessage
             
             // THEN
             let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: lastMessage)
@@ -126,12 +126,12 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let timeZero = Date(timeIntervalSince1970: 10000)
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             message.serverTimestamp = timeZero
             message.markAsSent()
             
             // WHEN
-            let lastMessage = self.groupConversation.appendMessage(withText: "zoo") as! ZMClientMessage
+            let lastMessage = self.groupConversation.append(text: "zoo") as! ZMClientMessage
             
             // THEN
             let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: lastMessage)
@@ -143,7 +143,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.set(conversation: self.groupConversation, securityLevel: .secureWithIgnored)
@@ -158,7 +158,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.set(conversation: self.groupConversation, securityLevel: .notSecure)
@@ -172,7 +172,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let message = self.groupConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
             
             // WHEN
             self.set(conversation: self.groupConversation, securityLevel: .secure)

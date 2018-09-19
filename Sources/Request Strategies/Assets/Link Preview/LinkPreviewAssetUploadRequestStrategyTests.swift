@@ -51,13 +51,13 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         if isEphemeral {
             conversation.messageDestructionTimeout = .local(.tenSeconds)
         }
-        let message = conversation.appendMessage(withText: text) as! ZMClientMessage
+        let message = conversation.append(text: text) as! ZMClientMessage
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!, expiresAfter: NSNumber(value:10)).data())
+            message.add(ZMGenericMessage.message(content: ZMText.text(with: text, mentions: [], linkPreviews: [linkPreview.protocolBuffer]), nonce: message.nonce!, expiresAfter: 10).data())
         } else {
-            message.add(ZMGenericMessage.message(text: text, linkPreview: linkPreview.protocolBuffer, nonce: message.nonce!).data())
+            message.add(ZMGenericMessage.message(content: ZMText.text(with: text, mentions: [], linkPreviews: [linkPreview.protocolBuffer]), nonce: message.nonce!).data())
         }
         self.syncMOC.saveOrRollback()
         
@@ -92,7 +92,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         var linkPreview = message.genericMessage!.linkPreviews.first!
         linkPreview = linkPreview.update(withOtrKey: otrKey, sha256: sha256)
         
-        message.add(ZMGenericMessage.message(text: (message.textMessageData?.messageText)!, linkPreview: linkPreview, nonce: message.nonce!, expiresAfter: NSNumber(value:message.deletionTimeout)).data())
+        message.add(ZMGenericMessage.message(content: ZMText.text(with: message.textMessageData!.messageText!, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfter: message.deletionTimeout).data())
         
         return (otrKey, sha256)
     }

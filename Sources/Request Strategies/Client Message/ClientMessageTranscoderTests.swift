@@ -114,7 +114,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = "Lorem ipsum"
-            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
             message.sender = self.otherUser
             self.syncMOC.saveOrRollback()
             
@@ -131,7 +131,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = "Lorem ipsum"
-            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -159,7 +159,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = String(repeating: "Hi", count: 100000)
-            let message = self.groupConversation.appendMessage(withText: text) as! ZMClientMessage
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN

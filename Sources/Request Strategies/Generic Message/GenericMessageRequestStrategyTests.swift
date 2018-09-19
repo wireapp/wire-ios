@@ -58,7 +58,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             // GIVEN
             let expectation = self.expectation(description: "Should complete")
             let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
-            let genericMessage = ZMGenericMessage(editMessage: UUID.create(), newText: "bar", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: "bar"), replacingMessageId: UUID.create()))
             let message = GenericMessageEntity(conversation: self.conversation, message: genericMessage) {
                 XCTAssertEqual($0, response)
                 expectation.fulfill()
@@ -78,7 +78,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             // GIVEN
             let expectation = self.expectation(description: "Should complete")
             let response = ZMTransportResponse(payload: nil, httpStatus: 412, transportSessionError: nil)
-            let genericMessage = ZMGenericMessage(editMessage: UUID.create(), newText: "bar", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: "bar"), replacingMessageId: UUID.create()))
             let message = GenericMessageEntity(conversation: self.conversation, message: genericMessage) {
                 XCTAssertEqual($0, response)
                 expectation.fulfill()
@@ -97,7 +97,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let genericMessage = ZMGenericMessage(editMessage: UUID.create(), newText: "bar", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: "bar"), replacingMessageId: UUID.create()))
             self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
             
             // WHEN
@@ -115,7 +115,7 @@ class GenericMessageRequestStrategyTests : MessagingTestBase {
             // GIVEN
             self.selfClient.missesClient(self.otherClient)
             
-            let genericMessage = ZMGenericMessage(editMessage: UUID.create(), newText: "bar", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: "bar"), replacingMessageId: UUID.create()))
             self.sut.schedule(message: genericMessage, inConversation: self.groupConversation) { ( _ ) in }
             
             // WHEN

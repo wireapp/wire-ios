@@ -74,17 +74,11 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sha: Data  = Data.randomEncryptionKey()
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
-        let message = aConversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = aConversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
 
         // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
-        let timer: NSNumber? = aConversation.messageDestructionTimeoutValue > 0 ? NSNumber(value: aConversation.messageDestructionTimeoutValue) : nil
-        let uploaded = ZMGenericMessage.genericMessage(
-            withUploadedOTRKey: otrKey,
-            sha256: sha,
-            messageID: message.nonce!,
-            expiresAfter: timer
-        )
+        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
 
         guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
             XCTFail("Failed to update asset")
@@ -406,7 +400,7 @@ extension AssetV3DownloadRequestStrategyTests {
                     .setAssetToken("someToken"))
                 .build()
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId)
+            let genericMessage = ZMGenericMessage.message(content: asset!, nonce: messageId)
             
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
@@ -476,7 +470,7 @@ extension AssetV3DownloadRequestStrategyTests {
                     .setAssetToken("someToken"))
                 .build()
             
-            let genericMessage = ZMGenericMessage.genericMessage(asset: asset!, messageID: messageId)
+            let genericMessage = ZMGenericMessage.message(content: asset!, nonce: messageId)
             
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
