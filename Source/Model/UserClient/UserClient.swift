@@ -263,8 +263,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
                 guard
                     let user = (try? uiMOC.existingObject(with: userID)) as? ZMUser,
                     let conversation = self.conversation(for: user) else { return }
-                let message = ZMGenericMessage.sessionReset(withNonce: UUID())
-                GenericMessageScheduleNotification.post(message: message, conversation: conversation)
+                GenericMessageScheduleNotification.post(message: ZMGenericMessage.clientAction(ZMClientAction.RESETSESSION), conversation: conversation)
             }
         }
     }

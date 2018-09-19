@@ -279,7 +279,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
     func testThatClearingAConversationInATeamMovesItToClearedListInTheTeam() {
         // given
         let conversation1 = createGroupConversation(in: team)
-        let message = conversation1.appendMessage(withText: "Text") as! ZMMessage
+        let message = conversation1.append(text: "Text") as! ZMMessage
         message.serverTimestamp = Date()
 
         // then

@@ -507,7 +507,7 @@ extension ZMUserTests {
         XCTAssertEqual(user.availability, .none)
                 
         // when
-        user.updateAvailability(from: ZMGenericMessage.genericMessage(withAvailability: .away))
+        user.updateAvailability(from: ZMGenericMessage.message(content: ZMAvailability.availability(.away)))
         
         // then
         XCTAssertEqual(user.availability, .away)

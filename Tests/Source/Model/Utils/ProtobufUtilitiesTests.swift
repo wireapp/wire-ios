@@ -143,7 +143,7 @@ class ProtobufUtilitiesTests: XCTestCase {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create())
+        let sut = ZMGenericMessage.message(content: asset, nonce: UUID.create())
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -162,7 +162,7 @@ class ProtobufUtilitiesTests: XCTestCase {
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
         let (assetId, token) = ("id", "token")
         let asset = ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha)
-        let sut = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value: 15))
+        let sut = ZMGenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 15)
 
         // when
         guard let updated = sut.updatedUploaded(withAssetId: assetId, token: token) else { return XCTFail() }
@@ -187,10 +187,9 @@ class ProtobufUtilitiesTests: XCTestCase {
             imageMetaData: .imageMetaData(withWidth: 123, height: 420)
         )
 
-        let sut = ZMGenericMessage.genericMessage(
-            asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create(),
-            expiresAfter: NSNumber(value: 0)
+        let sut = ZMGenericMessage.message(
+            content: ZMAsset.asset(withOriginal: nil, preview: previewAsset),
+            nonce: UUID.create()
         )
 
         // when
@@ -216,10 +215,10 @@ class ProtobufUtilitiesTests: XCTestCase {
             imageMetaData: .imageMetaData(withWidth: 123, height: 420)
         )
 
-        let sut = ZMGenericMessage.genericMessage(
-            asset: .asset(withOriginal: nil, preview: previewAsset),
-            messageID: UUID.create(),
-            expiresAfter: NSNumber(value: 15)
+        let sut = ZMGenericMessage.message(
+            content: ZMAsset.asset(withOriginal: nil, preview: previewAsset),
+            nonce: UUID.create(),
+            expiresAfter: 15
         )
 
         // when

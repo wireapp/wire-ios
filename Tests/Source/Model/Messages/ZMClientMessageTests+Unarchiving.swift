@@ -28,7 +28,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         
-        let genericMessage = ZMGenericMessage.message(text: "bar", nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
 
         // when
@@ -48,7 +48,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         conversation.isSilenced = true
 
-        let genericMessage = ZMGenericMessage.message(text: "bar", nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         
         // when
@@ -68,12 +68,12 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let lastMessage = conversation.append(text: "foo") as! ZMClientMessage
         lastMessage.serverTimestamp = Date().addingTimeInterval(10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
         
-        let genericMessage = ZMGenericMessage.message(text: "bar", nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         XCTAssertNotNil(event)
         
@@ -96,12 +96,12 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let lastMessage = conversation.append(text: "foo") as! ZMClientMessage
         lastMessage.serverTimestamp = Date().addingTimeInterval(-10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
 
-        let genericMessage = ZMGenericMessage.message(text: "bar", nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         
         XCTAssertLessThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)

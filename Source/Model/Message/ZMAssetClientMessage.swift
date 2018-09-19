@@ -36,13 +36,10 @@ import Foundation
         // We update the size once the preprocessing is done
         // mimeType is assigned first, to make sure UI can handle animated GIF file correctly
         let mimeType = ZMAssetMetaDataEncoder.contentType(forImageData: imageData) ?? ""
+        let asset = ZMAsset.asset(originalWithImageSize: CGSize.zero, mimeType: mimeType, size: UInt64(imageData.count))
+        let message = ZMGenericMessage.message(content: asset, nonce: nonce, expiresAfter: timeout)
         
-        let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero,
-                                                           mimeType: mimeType,
-                                                           size: UInt64(imageData.count),
-                                                           nonce: nonce,
-                                                           expiresAfter: timeout as NSNumber)
-        add(assetMessage)
+        add(message)
         preprocessedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         uploadState = .uploadingFullAsset
         transferState = .uploading
@@ -64,7 +61,7 @@ import Foundation
         delivered = false
         version = 3
         
-        add(ZMGenericMessage.genericMessage(fileMetadata: metadata, messageID: nonce, expiresAfter: timeout as NSNumber))
+        add(ZMGenericMessage.message(content: metadata.asset, nonce: nonce, expiresAfter: timeout))
     }
     
     public override func prepareForDeletion() {

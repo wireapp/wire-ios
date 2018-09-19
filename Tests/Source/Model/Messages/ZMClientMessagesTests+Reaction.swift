@@ -28,7 +28,7 @@ extension ZMClientMessageTests_Reaction {
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = .create()
         
-        let message = conversation.appendMessage(withText: "JCVD, full split please") as! ZMMessage
+        let message = conversation.append(text: "JCVD, full split please") as! ZMMessage
         message.sender = sender
         uiMOC.saveOrRollback()
 
@@ -37,14 +37,14 @@ extension ZMClientMessageTests_Reaction {
     
     func updateEventForAddingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = ZMGenericMessage(emojiString: "❤️", messageID: message.nonce!, nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: "❤️", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
     
     func updateEventForRemovingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = ZMGenericMessage(emojiString: "", messageID: message.nonce!, nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: "", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -87,8 +87,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
         
         let message = insertMessage()
-        
-        let genericMessage = ZMGenericMessage(emojiString: "TROP BIEN", messageID: message.nonce!, nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: "TROP BIEN", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
         
         // when

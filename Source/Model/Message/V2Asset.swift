@@ -36,7 +36,7 @@ extension String {
                moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .original, encrypted: false)
     }
     
-    public func fetchImageData(with queue: DispatchQueue!, completionHandler: ((Data?) -> Void)!) {
+    public func fetchImageData(with queue: DispatchQueue, completionHandler: @escaping ((Data?) -> Void)) {
         let cache = moc.zm_fileAssetCache
         let mediumKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .medium)
         let originalKey = FileAssetCache.cacheKeyForAsset(assetClientMessage, format: .original)
@@ -183,44 +183,29 @@ extension V2Asset: AssetProxyType {
     }
 
     func processAddedMediumImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
-        let messageID = assetClientMessage.nonce!
+        let nonce = assetClientMessage.nonce!
+        let imageAsset = ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium)
+        let mediumUpdate = ZMGenericMessage.message(content: imageAsset, nonce: nonce, expiresAfter: assetClientMessage.deletionTimeout)
 
-        let mediumMessage = ZMGenericMessage.genericMessage(
-            mediumImageProperties: properties,
-            processedImageProperties: properties,
-            encryptionKeys: keys,
-            nonce: messageID,
-            format: .medium,
-            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
-        )
-        assetClientMessage.add(mediumMessage)
+        assetClientMessage.add(mediumUpdate)
 
-        if var preview = assetStorage.genericMessage(for: .preview), preview.imageAssetData?.size > 0 { // if the preview is there, update it with the medium size
-            preview = ZMGenericMessage.genericMessage(
-                mediumImageProperties: imageProperties(from: mediumMessage),
-                processedImageProperties: imageProperties(from: preview),
-                encryptionKeys: encryptionKeys(from: preview),
-                nonce: messageID,
-                format: .preview,
-                expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
-            )
-
-            assetClientMessage.add(preview)
+        if let preview = assetStorage.genericMessage(for: .preview), preview.imageAssetData?.size > 0 { // if the preview is there, update it with the medium size
+            let previewImageAsset = ZMImageAsset(mediumProperties: imageProperties(from: mediumUpdate),
+                                                 processedProperties: imageProperties(from: preview),
+                                                 encryptionKeys: encryptionKeys(from: preview),
+                                                 format: .preview)
+            
+            let previewUpdate = ZMGenericMessage.message(content: previewImageAsset, nonce: nonce, expiresAfter: assetClientMessage.deletionTimeout)
+            assetClientMessage.add(previewUpdate)
         }
     }
 
     func processAddedPreviewImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
         let medium = assetStorage.genericMessage(for: .medium)
-        let message = ZMGenericMessage.genericMessage(
-            mediumImageProperties: medium.map(imageProperties),
-            processedImageProperties: properties,
-            encryptionKeys: keys,
-            nonce: assetClientMessage.nonce!,
-            format: .preview,
-            expiresAfter: NSNumber(value: assetClientMessage.deletionTimeout)
-        )
-        assetClientMessage.add(message)
-
+        let previewImageAsset = ZMImageAsset(mediumProperties: medium.map(imageProperties)!, processedProperties: properties, encryptionKeys: keys, format: .preview)
+        let previewUpdate = ZMGenericMessage.message(content: previewImageAsset, nonce: assetClientMessage.nonce!, expiresAfter: assetClientMessage.deletionTimeout)
+        
+        assetClientMessage.add(previewUpdate)
     }
 
     func imageProperties(from message: ZMGenericMessage) -> ZMIImageProperties {

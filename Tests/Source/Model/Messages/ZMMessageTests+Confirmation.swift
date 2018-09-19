@@ -101,7 +101,7 @@ extension ZMMessageTests_Confirmation {
         // given
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = .create()
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         message.markAsSent()
         let confirmationUpdate = createMessageConfirmationUpdateEvent(message.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
@@ -165,7 +165,7 @@ extension ZMMessageTests_Confirmation {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = .create()
     
-        let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let sut = conversation.append(text: "foo") as! ZMClientMessage
         sut.markAsSent()
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -204,7 +204,7 @@ extension ZMMessageTests_Confirmation {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = .create()
         
-        let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let sut = conversation.append(text: "foo") as! ZMClientMessage
         sut.markAsSent()
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -257,7 +257,7 @@ extension ZMMessageTests_Confirmation {
         let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
         
-        let sut = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let sut = conversation.append(text: "foo") as! ZMClientMessage
         sut.markAsSent()
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -294,7 +294,7 @@ extension ZMMessageTests_Confirmation {
         let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
         
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
 
         // when
         let sut = message.confirmReception()!
@@ -309,7 +309,7 @@ extension ZMMessageTests_Confirmation {
     
     func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> MessageUpdateResult {
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(text: "foo", nonce: nonce)
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "foo"), nonce: nonce)
         let messageEvent = createUpdateEvent(
             nonce,
             conversationID: conversation.remoteIdentifier!,
@@ -337,7 +337,7 @@ extension ZMMessageTests_Confirmation {
     }
     
     func createMessageConfirmationUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage(confirmation: nonce, type: .DELIVERED, nonce: UUID.create())
+        let genericMessage = ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: nonce))
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
     }
     

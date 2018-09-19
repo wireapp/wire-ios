@@ -60,7 +60,7 @@ class ProtosTests: XCTestCase {
         let processedProperties = ZMIImageProperties(size: CGSize(width: 640, height: 480), length: 200, mimeType: "downsized image")!
         
         // when
-        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: nil, nonce: nonce, format: format, expiresAfter:0.0)
+        let message = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: mediumProperties, processedProperties: processedProperties, encryptionKeys: nil, format: format), nonce: nonce)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -90,7 +90,7 @@ class ProtosTests: XCTestCase {
         let keys = ZMImageAssetEncryptionKeys(otrKey: otrKey, macKey: macKey, mac: mac)
         
         // when
-        let message = ZMGenericMessage.genericMessage(mediumImageProperties: mediumProperties, processedImageProperties: processedProperties, encryptionKeys: keys, nonce: nonce, format: format, expiresAfter:0.0)
+        let message = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: mediumProperties, processedProperties: processedProperties, encryptionKeys: keys, format: format), nonce: nonce)
         
         //then
         XCTAssertEqual(message.image.width, Int32(processedProperties.size.width))
@@ -115,7 +115,7 @@ class ProtosTests: XCTestCase {
         let nonce = UUID.create()
         
         // when
-        let message = ZMGenericMessage.genericMessage(imageData: data as Data, format: .medium, nonce: nonce, expiresAfter:0)
+        let message = ZMGenericMessage.message(content: ZMImageAsset(data: data as Data, format: .medium)!, nonce: nonce)
         
         // then
         XCTAssertEqual(message.image.width, 0)
@@ -132,7 +132,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanCreateKnock() {
         let nonce = UUID()
-        let message = ZMGenericMessage.knock(nonce: nonce, expiresAfter:0.0)
+        let message = ZMGenericMessage.message(content: ZMKnock.knock(), nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasKnock())
@@ -145,7 +145,7 @@ class ProtosTests: XCTestCase {
         let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
-        let message = ZMGenericMessage(lastRead: timeStamp as Date, ofConversationWith: conversationID, nonce: nonce)
+        let message = ZMGenericMessage.message(content: ZMLastRead(timestamp: timeStamp as Date, conversationRemoteID: conversationID), nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasLastRead())
@@ -161,7 +161,7 @@ class ProtosTests: XCTestCase {
         let conversationID = UUID.create()
         let timeStamp = NSDate(timeIntervalSince1970: 5000)
         let nonce = UUID.create()
-        let message = ZMGenericMessage(clearedTimestamp: timeStamp as Date, ofConversationWith: conversationID, nonce: nonce)
+        let message = ZMGenericMessage.message(content: ZMCleared(timestamp: timeStamp as Date, conversationRemoteID: conversationID), nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasCleared())
@@ -174,7 +174,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanCreateSessionReset() {
         let nonce = UUID.create()
-        let message = ZMGenericMessage.sessionReset(withNonce: nonce)
+        let message = ZMGenericMessage.clientAction(.RESETSESSION, nonce: nonce)
         
         XCTAssertNotNil(message)
         XCTAssertTrue(message.hasClientAction())
@@ -185,7 +185,7 @@ class ProtosTests: XCTestCase {
     
     func testThatItCanBuildAnEphemeralMessage() {
         let nonce = UUID.create()
-        let message = ZMGenericMessage.knock(nonce: nonce, expiresAfter:1)
+        let message = ZMGenericMessage.message(content: ZMKnock.knock(), nonce: nonce, expiresAfter: 1)
         
         XCTAssertNotNil(message)
         XCTAssertEqual(message.messageId, nonce.transportString())

@@ -26,113 +26,6 @@ class ClientMessageTests_OTR: BaseZMClientMessageTests {
 // MARK: - Payload creation
 extension ClientMessageTests_OTR {
 
-    func testThatItExcludesServicesWhenNotMentioned() {
-
-        self.syncMOC.performGroupedBlockAndWait {
-            let regularUser1 = ZMUser.insertNewObject(in: self.syncMOC)
-            regularUser1.remoteIdentifier = UUID.create()
-
-            let regularUser2 = ZMUser.insertNewObject(in: self.syncMOC)
-            regularUser2.remoteIdentifier = UUID.create()
-
-            let serviceUser1 = ZMUser.insertNewObject(in: self.syncMOC)
-            serviceUser1.remoteIdentifier = UUID.create()
-            serviceUser1.serviceIdentifier = UUID.create().transportString()
-            serviceUser1.providerIdentifier = UUID.create().transportString()
-
-            let serviceUser2 = ZMUser.insertNewObject(in: self.syncMOC)
-            serviceUser2.name = "Wire News"
-            serviceUser2.remoteIdentifier = UUID.create()
-            serviceUser2.serviceIdentifier = UUID.create().transportString()
-            serviceUser2.providerIdentifier = UUID.create().transportString()
-
-            let selfUser = ZMUser.selfUser(in: self.syncMOC)
-            let remoteUsers: Set<ZMUser> = [regularUser1, regularUser2, serviceUser1, serviceUser2]
-
-            let nonce = UUID.create()
-
-            let builder = ZMGenericMessage.builder()!
-            let text = ZMText(message: self.textMessageRequiringExternalMessage(2), linkPreview: nil,
-                              mentions: ZMMentionBuilder.build([serviceUser2]))
-            builder.setText(text)
-            builder.setMessageId(nonce.transportString())
-            let textMessage = builder.build()!
-
-            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
-            conversation.conversationType = .group
-            conversation.remoteIdentifier = UUID.create()
-            conversation.internalAddParticipants(remoteUsers)
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
-
-            // when
-
-            guard let (_, strategy) = textMessage.encryptedMessagePayloadData(conversation, externalData: nil)
-                else { return XCTFail() }
-
-            // then
-
-            switch (ZMUser.servicesMustBeMentioned, strategy) {
-            case (true, .ignoreAllMissingClientsNotFromUsers(let users)):
-                XCTAssertEqual(users, Set([regularUser1, regularUser2, serviceUser2, selfUser]))
-            case (false, .doNotIgnoreAnyMissingClient):
-                // all good
-                break
-            default:
-                XCTFail()
-            }
-
-
-        }
-    }
-
-    func testThatItExcludesUnmentionedServicesForTextMessage() {
-        self.syncMOC.performGroupedBlockAndWait {
-            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
-            otherUser.remoteIdentifier = UUID.create()
-            let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            let secondClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
-            let selfClients = ZMUser.selfUser(in: self.syncMOC).clients
-            let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
-            let notSelfClients = selfClients.filter { $0 != selfClient }
-
-            let nonce = UUID.create()
-            let builder = ZMGenericMessage.builder()!
-            let textBuilder = ZMText.builder()!
-            textBuilder.setContent(self.textMessageRequiringExternalMessage(2))
-            builder.setText(textBuilder.build()!)
-            builder.setMessageId(nonce.transportString())
-            let textMessage = builder.build()!
-
-            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
-            conversation.conversationType = .group
-            conversation.remoteIdentifier = UUID.create()
-            conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
-            XCTAssertTrue(self.syncMOC.saveOrRollback())
-
-            // when
-            guard let dataAndStrategy = textMessage.encryptedMessagePayloadData(conversation, externalData: nil)
-                else { return XCTFail() }
-
-            // then
-            guard let createdMessage = ZMNewOtrMessage.builder()!.merge(from: dataAndStrategy.data).build()! as? ZMNewOtrMessage
-                else { return XCTFail() }
-
-            XCTAssertEqual(createdMessage.hasBlob(), true)
-            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ZMClientId] in
-                return (userEntry.clients).map { clientEntry -> ZMClientId in
-                    return clientEntry.client
-                }
-            }
-            let clientSet = Set(clientIds)
-            XCTAssertEqual(clientSet.count, 2 + notSelfClients.count)
-            XCTAssertTrue(clientSet.contains(firstClient.clientId))
-            XCTAssertTrue(clientSet.contains(secondClient.clientId))
-            notSelfClients.forEach{
-                XCTAssertTrue(clientSet.contains($0.clientId))
-            }
-        }
-    }
-
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() {
         self.syncMOC.performGroupedBlockAndWait { 
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
@@ -185,10 +78,10 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let message = self.syncConversation.appendOTRMessage(withText: self.name, nonce: UUID.create(), fetchLinkPreview: true)
+            let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
-            guard let payloadAndStrategy = message?.encryptedMessagePayloadData() else {
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
                 XCTFail()
                 return
             }
@@ -209,7 +102,7 @@ extension ClientMessageTests_OTR {
             
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            guard let message = self.syncConversation.appendOTRMessage(withText: self.name, nonce: UUID.create(), fetchLinkPreview: true) else { XCTFail(); return }
+            guard let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage else { XCTFail(); return }
             XCTAssertTrue(message.isEphemeral)
             
             //when
@@ -233,7 +126,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            syncMessage = self.syncConversation.appendOTRMessage(withText: self.name, nonce: UUID.create(), fetchLinkPreview: true)
+            syncMessage = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
             self.syncMOC.saveOrRollback()
@@ -270,7 +163,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            syncMessage = self.syncConversation.appendOTRMessage(withText: self.name, nonce: UUID.create(), fetchLinkPreview: true)
+            syncMessage = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
             self.syncMOC.saveOrRollback()
@@ -357,11 +250,11 @@ extension ClientMessageTests_OTR {
         
         syncMOC.performGroupedBlockAndWait {
             // given
-            let message = self.syncConversation.appendOTRMessage(withText: self.name, nonce: UUID.create(), fetchLinkPreview: true)
+            let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
             // when
-            guard let payloadAndStrategy = message?.encryptedMessagePayloadData() else {
+            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
                 XCTFail()
                 return
             }
@@ -398,11 +291,11 @@ extension ClientMessageTests_OTR {
             
             self.syncMOC.saveOrRollback()
                         
-            let textMessage = conversation.appendOTRMessage(withText: self.stringLargeEnoughToRequireExternal, nonce: UUID.create(), fetchLinkPreview: true)
+            let textMessage = conversation.append(text: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
-            textMessage?.sender = self.syncUser1
-            textMessage?.senderClientID = senderID
-            let confirmationMessage = textMessage?.confirmReception()
+            textMessage.sender = self.syncUser1
+            textMessage.senderClientID = senderID
+            let confirmationMessage = textMessage.confirmReception()
             
             //when
             guard let payloadAndStrategy = confirmationMessage?.encryptedMessagePayloadData()
@@ -446,12 +339,12 @@ extension ClientMessageTests_OTR {
             conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             
             self.syncMOC.saveOrRollback()
+                                    
+            let textMessage = conversation.append(text: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
-            let textMessage = conversation.appendOTRMessage(withText: self.stringLargeEnoughToRequireExternal, nonce: UUID.create(), fetchLinkPreview: true)
-            
-            textMessage?.sender = self.syncUser1
-            textMessage?.senderClientID = senderID
-            let confirmationMessage = textMessage?.confirmReception()
+            textMessage.sender = self.syncUser1
+            textMessage.senderClientID = senderID
+            let confirmationMessage = textMessage.confirmReception()
             
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
@@ -471,7 +364,7 @@ extension ClientMessageTests_OTR {
             connection.status = .accepted
             conversation.connection = connection
             
-            let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation
@@ -494,7 +387,7 @@ extension ClientMessageTests_OTR {
             conversation.remoteIdentifier = UUID.create()
             conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             
-            let genericMessage = ZMGenericMessage.message(text: "yo", nonce: UUID.create())
+            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             clientmessage.add(genericMessage.data())
             clientmessage.visibleInConversation = conversation

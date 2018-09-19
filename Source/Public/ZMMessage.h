@@ -24,6 +24,7 @@
 @class ZMConversation;
 @class UserClient;
 @class LinkPreview;
+@class Mention;
 
 @protocol ZMImageMessageData;
 @protocol ZMSystemMessageData;
@@ -37,15 +38,15 @@
 
 @protocol ZMImageMessageData <NSObject>
 
-@property (nonatomic, readonly) NSData *imageData; ///< This will either returns the mediumData or the original image data. Useful only for newly inserted messages.
-@property (nonatomic, readonly) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
+@property (nonatomic, readonly, nullable) NSData *imageData; ///< This will either returns the mediumData or the original image data. Useful only for newly inserted messages.
+@property (nonatomic, readonly, nullable) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
 
 @property (nonatomic, readonly) BOOL isAnimatedGIF; // If it is GIF and has more than 1 frame
 @property (nonatomic, readonly) BOOL isDownloaded; // If it is GIF and has more than 1 frame
-@property (nonatomic, readonly) NSString *imageType; // UTI e.g. kUTTypeGIF
+@property (nonatomic, readonly, nullable) NSString *imageType; // UTI e.g. kUTTypeGIF
 @property (nonatomic, readonly) CGSize originalSize;
 
-- (void)fetchImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
+- (void)fetchImageDataWithQueue:(dispatch_queue_t _Nonnull )queue completionHandler:(void (^_Nonnull)(NSData * _Nullable imageData))completionHandler;
 
 /// Request the download of the image if not already present.
 /// The download will be executed asynchronously. The caller can be notified by observing the message window.
@@ -85,17 +86,18 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 
 @protocol ZMTextMessageData <NSObject>
 
-@property (nonatomic, readonly) NSString *messageText;
-@property (nonatomic, readonly) LinkPreview *linkPreview;
+@property (nonatomic, readonly, nullable) NSString *messageText;
+@property (nonatomic, readonly, nullable) LinkPreview *linkPreview;
+@property (nonatomic, readonly, nonnull) NSArray<Mention *> *mentions;
 
 /// Returns true if the link preview will have an image
 @property (nonatomic, readonly) BOOL linkPreviewHasImage;
 
 /// Unique identifier for imageData. Returns nil there's not imageData associated with the message.
-@property (nonatomic, readonly) NSString *linkPreviewImageCacheKey;
+@property (nonatomic, readonly, nullable) NSString *linkPreviewImageCacheKey;
 
 /// Fetch linkpreview image data from disk on the given queue
-- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *imageData))completionHandler;
+- (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t _Nonnull )queue completionHandler:(void (^_Nonnull)(NSData * _Nullable imageData))completionHandler;
 
 /// Request link preview image to be downloaded
 - (void)requestLinkPreviewImageDownload;
@@ -106,17 +108,17 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @protocol ZMSystemMessageData <NSObject>
 
 @property (nonatomic, readonly) ZMSystemMessageType systemMessageType;
-@property (nonatomic, readonly) NSSet <ZMUser *>*users;
-@property (nonatomic, readonly) NSSet <id<UserClientType>>*clients;
-@property (nonatomic) NSSet<ZMUser *> *addedUsers; // Only filled for ZMSystemMessageTypePotentialGap
-@property (nonatomic) NSSet<ZMUser *> *removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
-@property (nonatomic, readonly, copy) NSString *text;
+@property (nonatomic, readonly, nonnull) NSSet <ZMUser *>*users;
+@property (nonatomic, readonly, nonnull) NSSet <id<UserClientType>>*clients;
+@property (nonatomic, nonnull) NSSet<ZMUser *> *addedUsers; // Only filled for ZMSystemMessageTypePotentialGap
+@property (nonatomic, nonnull) NSSet<ZMUser *> *removedUsers; // Only filled for ZMSystemMessageTypePotentialGap
+@property (nonatomic, readonly, copy, nullable) NSString *text;
 @property (nonatomic) BOOL needsUpdatingUsers;
 @property (nonatomic) NSTimeInterval duration;
-@property (nonatomic) NSSet<id <ZMSystemMessageData>>  *childMessages;
-@property (nonatomic) id <ZMSystemMessageData> parentMessage;
+@property (nonatomic, nonnull) NSSet<id <ZMSystemMessageData>>  *childMessages;
+@property (nonatomic, nullable) id <ZMSystemMessageData> parentMessage;
 @property (nonatomic, readonly) BOOL userIsTheSender;
-@property (nonatomic) NSNumber *messageTimer;
+@property (nonatomic, nullable) NSNumber *messageTimer;
 
 @end
 
@@ -168,7 +170,7 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
 @property (nonatomic, readonly) float longitude;
 @property (nonatomic, readonly) float latitude;
 
-@property (nonatomic, readonly) NSString *name; // nil if not specified
+@property (nonatomic, readonly, nullable) NSString *name; // nil if not specified
 @property (nonatomic, readonly) int32_t zoomLevel; // 0 if not specified
 
 @end

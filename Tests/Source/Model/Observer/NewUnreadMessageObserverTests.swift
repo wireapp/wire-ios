@@ -159,7 +159,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let genMsg = ZMGenericMessage.knock(nonce: UUID.create())
+        let genMsg = ZMGenericMessage.message(content: ZMKnock.knock())
         
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         msg1.add(genMsg.data())

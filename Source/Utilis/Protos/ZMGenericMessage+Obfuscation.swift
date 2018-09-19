@@ -60,20 +60,21 @@ public extension ZMGenericMessage {
                     let originalURL = obfuscatedContent[offsetIndex...]
                     obfuscatedLinkPreviews = linkPreviews.map{$0.obfuscated(originalURL: String(originalURL))}
                 }
-                return ZMGenericMessage.message(text: obfuscatedContent, linkPreview:obfuscatedLinkPreviews.first, nonce: messageID, mentions: [])
+                let obfuscatedText = ZMText.text(with: obfuscatedContent, mentions: [], linkPreviews: obfuscatedLinkPreviews)
+                return ZMGenericMessage.message(content: obfuscatedText, nonce: messageID)
             }
         }
         if let someAsset = assetData {
             let obfuscatedAsset = someAsset.obfuscated()
-            return ZMGenericMessage.genericMessage(asset: obfuscatedAsset, messageID: messageID)
+            return ZMGenericMessage.message(content: obfuscatedAsset, nonce: messageID)
         }
         if locationData != nil {
             let obfuscatedLocation = ZMLocation.location(withLatitude: 0.0, longitude: 0.0)
-            return ZMGenericMessage.genericMessage(location: obfuscatedLocation, messageID: messageID)
+             return ZMGenericMessage.message(content: obfuscatedLocation, nonce: messageID)
         }
         if let imageAsset = imageAssetData {
             let obfuscatedImage = imageAsset.obfuscated()
-            return ZMGenericMessage.genericMessage(pbMessage: obfuscatedImage, messageID: messageID)
+            return ZMGenericMessage.message(content: obfuscatedImage, nonce: messageID)
         }
         return nil
     }

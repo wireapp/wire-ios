@@ -20,13 +20,6 @@
 @import WireProtos;
 
 
-@interface ZMText (Utils)
-
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview;
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
-
-@end
-
 
 @interface ZMLastRead (Utils)
 
@@ -45,34 +38,12 @@
 @end
 
 
-
-
-@interface ZMMessageHide (Utils)
-
-+ (instancetype)messageHideWithMessageID:(NSUUID *)messageID
-                          conversationID:(NSUUID *)conversationID;
-
-@end
-
-
-
-
 @interface ZMMessageDelete (Utils)
 
 + (instancetype)messageDeleteWithMessageID:(NSUUID *)messageID;
 
 @end
 
-
-
-
-@interface ZMMessageEdit (Utils)
-
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview;
-
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions;
-
-@end
 
 
 @interface ZMReaction (Utils)

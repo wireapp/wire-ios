@@ -76,7 +76,7 @@ NSString *const SecurityLevelKey = @"securityLevel";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
-static NSString *const DraftMessageTextKey = @"draftMessageText";
+static NSString *const DraftMessageDataKey = @"draftMessageData";
 static NSString *const IsPendingConnectionConversationKey = @"isPendingConnectionConversation";
 static NSString *const LastModifiedDateKey = @"lastModifiedDate";
 static NSString *const LastReadMessageKey = @"lastReadMessage";
@@ -149,7 +149,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic messages;
 @dynamic lastModifiedDate;
 @dynamic creator;
-@dynamic draftMessageText;
 @dynamic normalizedUserDefinedName;
 @dynamic conversationType;
 @dynamic clearedTimeStamp;
@@ -344,7 +343,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationConnectionKey,
             ZMConversationConversationTypeKey,
             CreatorKey,
-            DraftMessageTextKey,
+            DraftMessageDataKey,
             LastModifiedDateKey,
             ZMNormalizedUserDefinedNameKey,
             ZMConversationLastServerSyncedActiveParticipantsKey,
@@ -533,75 +532,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
              [NSSortDescriptor sortDescriptorWithKey:ZMConversationRemoteIdentifierDataKey ascending:YES],];
 }
 
-- (id <ZMConversationMessage>)appendMessageWithText:(NSString *)text;
-{
-    return [self appendMessageWithText:text fetchLinkPreview:YES];
-}
-
-- (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text fetchLinkPreview:(BOOL)fetchPreview;
-{    
-    VerifyReturnNil(![text zmHasOnlyWhitespaceCharacters]);
-    VerifyReturnNil(text != nil);
-
-    NSUUID *nonce = NSUUID.UUID;
-
-    id <ZMConversationMessage> message = [self appendOTRMessageWithText:text nonce:nonce fetchLinkPreview:fetchPreview];
-
-    [[[NotificationInContext alloc] initWithName:ZMConversation.clearTypingNotificationName
-                                        context:self.managedObjectContext.notificationContext
-                                         object:self
-                                       userInfo:nil
-     ] post];
-
-    return message;
-}
-
-- (id<ZMConversationMessage>)appendMessageWithImageAtURL:(NSURL *)fileURL;
-{
-    VerifyReturnNil(fileURL != nil);
-    if (! fileURL.isFileURL) {
-        ZMLogWarn(@"Trying to add an image message, but the URL is not a file URL.");
-        return nil;
-    }
-    NSError *error;
-    // We specifically do not want the data to be mapped at this place, because the underlying file might go away before we're done using the data.
-    NSData * const originalImageData = [NSData dataWithContentsOfURL:fileURL options:0 error:&error];
-    VerifyReturnNil(originalImageData != nil);
-    CGSize const originalSize = [ZMImagePreprocessor sizeOfPrerotatedImageAtURL:fileURL];
-    VerifyReturnNil(! CGSizeEqualToSize(originalSize, CGSizeZero));
-    return [self appendMessageWithOriginalImageData:originalImageData originalSize:originalSize];
-}
-
-- (id<ZMConversationMessage>)appendMessageWithImageData:(NSData *)imageData;
-{
-    imageData = [imageData copy];
-    VerifyReturnNil(imageData != nil);
-    CGSize const originalSize = [ZMImagePreprocessor sizeOfPrerotatedImageWithData:imageData];
-    VerifyReturnNil(! CGSizeEqualToSize(originalSize, CGSizeZero));
-
-    return [self appendMessageWithOriginalImageData:imageData originalSize:originalSize];
-}
-
-- (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata
-{
-    return [self appendOTRMessageWithFileMetadata:fileMetadata nonce:NSUUID.UUID];
-}
-
-- (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData
-{
-    return [self appendOTRMessageWithLocationData:locationData nonce:NSUUID.UUID];
-}
-
-- (id<ZMConversationMessage>)appendMessageWithOriginalImageData:(NSData *)originalImageData originalSize:(CGSize __unused)originalSize;
-{
-    return [self appendOTRMessageWithImageData:originalImageData nonce:NSUUID.UUID];
-}
-
-- (id<ZMConversationMessage>)appendKnock;
-{
-    return [self appendOTRKnockMessageWithNonce:[NSUUID UUID]];
-}
-
 - (BOOL)isPendingConnectionConversation;
 {
     return self.connection != nil && self.connection.status == ZMConnectionStatusPending;
@@ -633,14 +563,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 }
 
 
-- (BOOL)hasDraftMessageText
+- (BOOL)hasDraftMessage
 {
-    return (0 < self.draftMessageText.length);
+    return (0 < self.draftMessage.text.length);
 }
 
-+ (NSSet *)keyPathsForValuesAffectingHasDraftMessageText
++ (NSSet *)keyPathsForValuesAffectingHasDraftMessage
 {
-    return [NSSet setWithObject:DraftMessageTextKey];
+    return [NSSet setWithObject:DraftMessageDataKey];
 }
 
 - (ZMMessage *)lastEditableMessage;
@@ -1053,85 +983,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return message;
 }
 
-- (ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(ZMFileMetadata *)fileMetadata nonce:(NSUUID *)nonce
-{
-    NSData *data = [NSData dataWithContentsOfURL:fileMetadata.fileURL options:NSDataReadingMappedIfSafe error:nil];
-    if (data == nil) {
-        return nil;
-    }
-    
-    ZMAssetClientMessage *message =
-    [[ZMAssetClientMessage alloc] initWith:fileMetadata
-                                     nonce:nonce
-                      managedObjectContext:self.managedObjectContext
-                              expiresAfter:self.messageDestructionTimeoutValue];
-
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    [self sortedAppendMessage:message];
-    [self unarchiveIfNeeded];
-    
-    [self.managedObjectContext.zm_fileAssetCache storeAssetData:message encrypted:NO data:data];
-
-    if (fileMetadata.thumbnail != nil) {
-        [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:fileMetadata.thumbnail];
-    }
-    
-    [message updateCategoryCache];
-    [message prepareToSend];
-    
-    return message;
-}
-
-- (ZMClientMessage *)appendOTRMessageWithLocationData:(ZMLocationData *)locationData nonce:(NSUUID *)nonce
-{
-    ZMGenericMessage *genericMessage = [ZMGenericMessage genericMessageWithLocation:locationData.zmLocation messageID:nonce expiresAfter:@(self.messageDestructionTimeoutValue)];
-    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
-    return message;
-}
-
-- (ZMClientMessage *)appendOTRKnockMessageWithNonce:(NSUUID *)nonce
-{
-    ZMGenericMessage *genericMessage = [ZMGenericMessage knockWithNonce:nonce expiresAfter:@(self.messageDestructionTimeoutValue)];
-    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
-    return message;
-}
-
-- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview
-{
-    NSArray<ZMMention *> *mentions = [self mentionsInText:text];
-    NSString *normalizedText = [self normalizeText:text forMentions:mentions];
-
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:normalizedText.stringByRemovingExtremeCombiningCharacters
-                                                             linkPreview:nil
-                                                                   nonce:nonce
-                                                            expiresAfter:@(self.messageDestructionTimeoutValue)
-                                                                mentions: mentions];
-    ZMClientMessage *message = [self appendClientMessageWithGenericMessage:genericMessage];
-    message.linkPreviewState = fetchPreview ? ZMLinkPreviewStateWaitingToBeProcessed : ZMLinkPreviewStateDone;
-    return message;
-}
-
-- (ZMClientMessage *)appendOTRMessageWithText:(NSString *)text nonce:(NSUUID *)nonce
-{
-    return [self appendOTRMessageWithText:text nonce:nonce fetchLinkPreview:YES];
-}
-
-- (ZMAssetClientMessage *)appendOTRMessageWithImageData:(NSData *)imageData nonce:(NSUUID *)nonce
-{
-    NSError *metadataError = nil;
-    NSData *imageDataWithoutMetadata = [imageData wr_imageDataWithoutMetadataAndReturnError:&metadataError];
-    
-    if (metadataError != nil) {
-        ZMLogError(@"Cannot remove image metadata: %@", metadataError);
-    }
-    if (imageDataWithoutMetadata == nil) {
-        imageDataWithoutMetadata = imageData;
-    }
-    
-    ZMAssetClientMessage *message = [self appendAssetClientMessageWithNonce:nonce imageData:imageDataWithoutMetadata];
-    return message;
-}
-
 - (void)appendNewConversationSystemMessageIfNeeded;
 {
     ZMMessage *firstMessage = self.messages.firstObject;
@@ -1250,7 +1101,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 
     NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithLastRead:lastRead ofConversationWithID:convID nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMLastRead lastReadWithTimestamp:lastRead conversationRemoteID:convID] nonce:nonce];
     VerifyReturnNil(message != nil);
     
     return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
@@ -1279,7 +1130,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithClearedTimestamp:cleared ofConversationWithID:convID nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMCleared clearedWithTimestamp:cleared conversationRemoteID:convID] nonce:nonce];
     VerifyReturnNil(message != nil);
     
     return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];

@@ -96,10 +96,8 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         let builder = ZMAsset.builder()!
         builder.setPreview(preview)
         let asset = builder.build()!
+        let filePreviewMessage = ZMGenericMessage.message(content: asset, nonce: nonce!, expiresAfter: deletionTimeout)
         
-        let filePreviewMessage = ZMGenericMessage.genericMessage(asset: asset,
-                                                                 messageID: self.nonce!,
-                                                                 expiresAfter: self.deletionTimeout as NSNumber)
         self.add(filePreviewMessage)
     }
     

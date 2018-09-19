@@ -35,13 +35,7 @@ extension ZMMessage {
         guard message.deliveryState == ZMDeliveryState.sent || message.deliveryState == ZMDeliveryState.delivered else { return nil }
         
         let emoji = unicodeValue ?? ""
-        
-        let genericMessage = ZMGenericMessage(
-            emojiString: emoji,
-            messageID: messageID,
-            nonce: UUID()
-        )
-    
+        let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: emoji, messageID: messageID))    
         let clientMessage = message.conversation?.appendClientMessage(with: genericMessage, expires: false, hidden: true)
         message.addReaction(unicodeValue, forUser: .selfUser(in: context))
         return clientMessage
