@@ -31,19 +31,19 @@ extension ZMConversation: Conversation {
     }
     
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
-        return appendMessage(withText: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
+        return append(text: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
     }
     
     public func appendImage(_ data: Data) -> Sendable? {
-        return appendMessage(withImageData: data) as? Sendable
+        return append(imageFromData: data) as? Sendable
     }
     
-    public func appendFile(_ metaData: ZMFileMetadata) -> Sendable? {
-        return appendMessage(with: metaData) as? Sendable
+    public func appendFile(_ metadata: ZMFileMetadata) -> Sendable? {
+        return append(file: metadata) as? Sendable
     }
     
     public func appendLocation(_ location: LocationData) -> Sendable? {
-        return appendMessage(with: location) as? Sendable
+        return append(location: location) as? Sendable
     }
     
     /// Adds an observer for when the conversation verification status degrades
