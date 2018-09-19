@@ -151,7 +151,7 @@ extension ZMGenericMessageBuilder {
 extension ZMText {
     @objc public func validatingFields() -> ZMText? {
 
-        if let mentions = self.mention {
+        if let mentions = self.mentions {
             let validMentions = mentions.compactMap { $0.validatingFields() }
             guard validMentions.count == mentions.count else { return nil }
         }

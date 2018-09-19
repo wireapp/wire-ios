@@ -22,12 +22,12 @@ import WireCryptobox
 
 extension ZMConversation {
     static func appendHideMessageToSelfConversation(_ message: ZMMessage) {
-        guard let messageNonce = message.nonce,
+        guard let messageId = message.nonce,
               let conversation = message.conversation,
-              let convID = conversation.remoteIdentifier
+              let conversationId = conversation.remoteIdentifier
         else { return }
-
-        let genericMessage = ZMGenericMessage(hideMessage: messageNonce, inConversation: convID, nonce: UUID())
+        
+        let genericMessage = ZMGenericMessage.message(content: ZMMessageHide.hide(conversationId: conversationId, messageId: messageId))
         ZMConversation.appendSelfConversation(with: genericMessage, managedObjectContext: message.managedObjectContext!)
     }
 }
@@ -61,38 +61,24 @@ extension ZMMessage {
         guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
         
-        // We insert a message of type `ZMMessageDelete` containing the nonce of the message that should be deleted
-        let deletedMessage = ZMGenericMessage(deleteMessage: messageNonce, nonce: UUID())
-        let delete = conversation.appendClientMessage(with: deletedMessage, expires: false, hidden: true)
+        let message =  conversation.append(message: ZMMessageDelete.delete(messageId: messageNonce), hidden: true)
+        
         removeClearingSender(false)
         updateCategoryCache()
-        return delete
+        return message
     }
     
-    @objc public static func edit(_ message: ZMConversationMessage, newText: String) -> ZMMessage? {
-        return edit(message, newText: newText, fetchLinkPreview: true)
-    }
-    
-    @objc public static func edit(_ message: ZMConversationMessage, newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
+    @objc public static func edit(_ message: ZMConversationMessage, newText: String, mentions: [Mention] = [], fetchLinkPreview: Bool = true) -> ZMMessage? {
         guard let castedMessage = message as? ZMMessage else { return nil }
-        return castedMessage.edit(newText, fetchLinkPreview: fetchLinkPreview)
+        return castedMessage.edit(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
     }
-    
-    func edit(_ newText: String) -> ZMMessage? {
-        return edit(newText, fetchLinkPreview: true)
-    }
-    
-    func edit(_ newText: String, fetchLinkPreview: Bool) -> ZMMessage? {
+        
+    func edit(_ newText: String, mentions: [Mention] = [], fetchLinkPreview: Bool) -> ZMMessage? {
         guard isEditableMessage else { return nil }
         guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil }
-
-        let mentions = conversation.mentions(in: newText)
-        let normalizedNewText = conversation.normalize(text: newText, for: mentions)
-
-        let edited = ZMGenericMessage(editMessage: messageNonce, newText: normalizedNewText, nonce: UUID(), mentions: mentions)
+        guard let newMessage = conversation.append(message: ZMMessageEdit.edit(with: ZMText.text(with: newText, mentions: mentions), replacingMessageId: messageNonce), expires: true) else { return nil }
         
-        guard let newMessage = conversation.appendClientMessage(with: edited, expires: true, hidden: false) else { return nil }
         newMessage.updatedTimestamp = newMessage.serverTimestamp
         newMessage.serverTimestamp = serverTimestamp
         let oldIndex = conversation.messages.index(of: self)

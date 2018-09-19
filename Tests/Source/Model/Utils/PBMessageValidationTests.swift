@@ -52,46 +52,6 @@ class ModelValidationTests: XCTestCase {
 
     }
 
-    // MARK: Mention
-
-    func testThatItCreatesTextWithValidMentions() {
-
-        let mentionBuilder = ZMMention.builder()!
-        mentionBuilder.setUserName("John Appleseed")
-        mentionBuilder.setUserId("8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")
-
-        let textBuilder = ZMText.builder()!
-        textBuilder.setContent("Hello @John Appleseed")
-        textBuilder.addMention(mentionBuilder.build()!)
-
-        let builder = ZMGenericMessage.builder()!
-        builder.setMessageId(UUID.create().transportString())
-        builder.setText(textBuilder.build()!)
-
-        let message = builder.buildAndValidate()
-        XCTAssertNotNil(message)
-
-    }
-
-    func testThatItDoesNotCreateTextWithInvalidMention() {
-
-        let mentionBuilder = ZMMention.builder()!
-        mentionBuilder.setUserName("Jane Appleseed")
-        mentionBuilder.setUserId("user\u{0}")
-
-        let textBuilder = ZMText.builder()!
-        textBuilder.setContent("Hello @John Appleseed")
-        textBuilder.addMention(mentionBuilder.build()!)
-
-        let builder = ZMGenericMessage.builder()!
-        builder.setMessageId(UUID.create().transportString())
-        builder.setText(textBuilder.build()!)
-
-        let message = builder.buildAndValidate()
-        XCTAssertNil(message)
-
-    }
-
     // MARK: Last Read
 
     func testThatItCreatesLastReadWithValidFields() {
@@ -429,7 +389,7 @@ class ModelValidationTests: XCTestCase {
 
         builder.setUploaded(assetRemoteData(id: assetId, token: assetToken))
 
-        return ZMGenericMessage.genericMessage(asset: builder.buildPartial()!, messageID: UUID.create()).validatingFields()
+        return ZMGenericMessage.message(content: builder.buildPartial()!).validatingFields()
 
     }
 

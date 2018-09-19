@@ -28,7 +28,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let knock = ZMGenericMessage.knock(nonce: UUID())
+            let knock = ZMGenericMessage.message(content: ZMKnock.knock())
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             message.add(knock.data())
             message.serverTimestamp = timestamp

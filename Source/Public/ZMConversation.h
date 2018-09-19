@@ -74,8 +74,7 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;
 @property (nonatomic, readonly) ZMConversationListIndicator conversationListIndicator;
-@property (nonatomic, readonly) BOOL hasDraftMessageText;
-@property (nonatomic, copy, nullable) NSString *draftMessageText;
+@property (nonatomic, readonly) BOOL hasDraftMessage;
 @property (nonatomic, nullable) Team *team;
 
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
@@ -93,8 +92,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 
 - (BOOL)canMarkAsUnread;
 - (void)markAsUnread;
-
-- (nonnull id<ZMConversationMessage>)appendKnock;
 
 ///// Insert a new group conversation into the user session
 + (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
@@ -116,21 +113,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 
 /// If that conversation exists, it is returned, @c nil otherwise.
 + (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMManagedObjectContextProvider> )session;
-
-/// It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text;
-/// It's safe to pass @c nil. Returns @c nil if no message was inserted. Specify if a linkPreview should be fetched when available.
-- (nullable id <ZMConversationMessage>)appendMessageWithText:(nullable NSString *)text fetchLinkPreview:(BOOL)fetchPreview;
-
-/// The given URL must be a file URL. It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (nullable id<ZMConversationMessage>)appendMessageWithImageAtURL:(nonnull NSURL *)fileURL;
-/// The given data must be compressed image dat, e.g. JPEG data. It's safe to pass @c nil. Returns @c nil if no message was inserted.
-- (nullable id<ZMConversationMessage>)appendMessageWithImageData:(nonnull NSData *)imageData;
-/// Appends a file. see ZMFileMetaData, ZMAudioMetaData, ZMVideoMetaData.
-- (nullable id<ZMConversationMessage>)appendMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata;
-
-/// Appends a location, see @c LocationData.
-- (nullable id<ZMConversationMessage>)appendMessageWithLocationData:(nonnull ZMLocationData *)locationData;
 
 @end
 

@@ -27,14 +27,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
         // given
         let (latitude, longitude): (Float, Float) = (48.53775, 9.041169)
         let (name, zoom) = ("Tuebingen, Deutschland", Int32(3))
-        let message = ZMGenericMessage.genericMessage(
-                location: .location(
-                withLatitude: latitude,
-                longitude: longitude,
-                name: name,
-                zoomLevel: zoom),
-            messageID: UUID.create()
-        )
+        let message = ZMGenericMessage.message(content: LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoom).zmLocation())
         
         // when
         let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)

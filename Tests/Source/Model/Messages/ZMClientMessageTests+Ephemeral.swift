@@ -64,7 +64,7 @@ extension ZMClientMessageTests_Ephemeral {
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         // when
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         
         // then
         XCTAssertTrue(message.isEphemeral)
@@ -77,7 +77,7 @@ extension ZMClientMessageTests_Ephemeral {
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 0))
         
         // when
-        let message = conversation.appendMessage(withText: "foo") as! ZMMessage
+        let message = conversation.append(text: "foo") as! ZMMessage
         
         // then
         XCTAssertFalse(message.isEphemeral)
@@ -89,7 +89,7 @@ extension ZMClientMessageTests_Ephemeral {
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         
         // when
-        let message = conversation.appendMessage(withText: "foo") as! ZMMessage
+        let message = conversation.append(text: "foo") as! ZMMessage
         
         // then
         XCTAssertTrue(message.isEphemeral)
@@ -107,7 +107,7 @@ extension ZMClientMessageTests_Ephemeral {
     func testItCreatesAnEphemeralMessageForLocation(){
         checkItCreatesAnEphemeralMessage { (conv) -> ZMMessage in
             let location = LocationData(latitude: 1.0, longitude: 1.0, name: "foo", zoomLevel: 1)
-            let message = conv.appendOTRMessage(with: location, nonce: UUID.create())
+            let message = conv.append(location: location, nonce: UUID.create()) as? ZMClientMessage
             XCTAssertTrue((message?.genericMessage!.ephemeral.hasLocation())!)
             return message!
         }
@@ -115,7 +115,7 @@ extension ZMClientMessageTests_Ephemeral {
 
     func testItCreatesAnEphemeralMessageForImages(){
         checkItCreatesAnEphemeralMessage { (conv) -> ZMMessage in
-            let message = conv.appendMessage(withImageData: verySmallJPEGData()) as! ZMAssetClientMessage
+            let message = conv.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
             XCTAssertTrue(message.genericAssetMessage!.ephemeral.hasImage())
             return message
         }
@@ -126,7 +126,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 10
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.syncConversation.append(text: "foo") as! ZMClientMessage
             XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
 
             // when
@@ -153,10 +153,10 @@ extension ZMClientMessageTests_Ephemeral {
             message.senderClientID = "other_client"
             
             let imageData = self.verySmallJPEGData()
-            let assetMessage = ZMGenericMessage.genericMessage(withImageSize: CGSize.zero, mimeType: "", size: UInt64(imageData.count), nonce: nonce, expiresAfter: 10)
+            let assetMessage = ZMGenericMessage.message(content: ZMAsset.asset(originalWithImageSize: .zero, mimeType: "", size: UInt64(imageData.count)), nonce: nonce, expiresAfter: 10)
             message.add(assetMessage)
             
-            let uploaded = ZMGenericMessage.genericMessage(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), messageID: message.nonce!, expiresAfter: NSNumber(value: self.syncConversation.messageDestructionTimeoutValue))
+            let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: self.syncConversation.messageDestructionTimeoutValue)
             message.add(uploaded)
             message.setImageData(imageData, for: .medium, properties: nil)
             
@@ -186,7 +186,7 @@ extension ZMClientMessageTests_Ephemeral {
             article.title = "title"
             article.summary = "summary"
             let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
-            let genericMessage = ZMGenericMessage.message(text: "foo", linkPreview: linkPreview, nonce: UUID.create(), expiresAfter: NSNumber(value: timeout))
+            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "foo", linkPreviews: [linkPreview]), nonce: UUID.create(), expiresAfter: timeout)
             let message = self.syncConversation.appendClientMessage(with: genericMessage)!
             message.linkPreviewState = .processed
             XCTAssertEqual(message.linkPreviewState, .processed)
@@ -218,7 +218,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 0.1
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
+            message = self.syncConversation.append(text: "foo") as? ZMClientMessage
             
             // when
             message.markAsSent()
@@ -246,7 +246,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 0.1
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.syncConversation.append(text: "foo") as! ZMClientMessage
             
             // when
             message.expire()
@@ -264,7 +264,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 0.1
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
+            message = self.syncConversation.append(text: "foo") as? ZMClientMessage
             message.markAsSent()
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -275,7 +275,7 @@ extension ZMClientMessageTests_Ephemeral {
             XCTAssertNil(message.destructionDate)
 
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce!, nonce: UUID.create())
+            let delete = ZMGenericMessage.message(content: ZMMessageDelete.delete(messageId: message.nonce!), nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.syncUser1.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             
@@ -292,7 +292,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 10
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
+            message = self.syncConversation.append(text: "foo") as? ZMClientMessage
             message.sender = self.syncUser1
             message.markAsSent()
         }
@@ -300,7 +300,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         self.syncMOC.performGroupedBlockAndWait {
             // when
-            let delete = ZMGenericMessage(deleteMessage: message.nonce!, nonce: UUID.create())
+            let delete = ZMGenericMessage.message(content: ZMMessageDelete.delete(messageId: message.nonce!), nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
             _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
             
@@ -325,10 +325,10 @@ extension ZMClientMessageTests_Ephemeral {
             conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
             self.syncMOC.saveOrRollback()
             
-            let textMessage = conversation.appendOTRMessage(withText: "foo", nonce: UUID.create(), fetchLinkPreview: true)
+            let textMessage = conversation.append(text: "foo", fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
-            guard let _ = textMessage?.encryptedMessagePayloadData()
+            guard let _ = textMessage.encryptedMessagePayloadData()
                 else { return XCTFail()}
         }
     }
@@ -345,7 +345,7 @@ extension ZMClientMessageTests_Ephemeral {
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = UUID.create()
         
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         message.sender = sender
         
         // when
@@ -361,7 +361,7 @@ extension ZMClientMessageTests_Ephemeral {
         // given
         let timeout : TimeInterval = 0.1
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         
         // when
         XCTAssertFalse(message.startDestructionIfNeeded())
@@ -375,7 +375,7 @@ extension ZMClientMessageTests_Ephemeral {
         let timeout : TimeInterval = 0.1
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
         conversation.conversationType = .oneOnOne
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
 
@@ -414,7 +414,7 @@ extension ZMClientMessageTests_Ephemeral {
     func insertEphemeralMessage() -> ZMMessage {
         let timeout : TimeInterval = 1.0
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         message.sender = ZMUser.insertNewObject(in: uiMOC)
         message.sender?.remoteIdentifier = UUID.create()
         uiMOC.saveOrRollback()
@@ -450,7 +450,7 @@ extension ZMClientMessageTests_Ephemeral {
         
         syncMOC.performGroupedBlock {
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5.0))
-            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
+            message = self.syncConversation.append(text: "foo") as? ZMClientMessage
             
             // when
             // start timer
@@ -507,7 +507,7 @@ extension ZMClientMessageTests_Ephemeral {
 
         syncMOC.performGroupedBlock { 
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 0.5))
-            message = self.syncConversation.appendMessage(withText: "foo") as? ZMClientMessage
+            message = self.syncConversation.append(text: "foo") as? ZMClientMessage
             message.markAsSent()
             XCTAssertNotNil(message.destructionDate)
         }
@@ -553,7 +553,7 @@ extension ZMClientMessageTests_Ephemeral {
             // given
             let timeout : TimeInterval = 10
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
-            let message = self.syncConversation.appendMessage(withText: "foo") as! ZMClientMessage
+            let message = self.syncConversation.append(text: "foo") as! ZMClientMessage
             
             if timerHadStarted {
                 message.markAsSent()

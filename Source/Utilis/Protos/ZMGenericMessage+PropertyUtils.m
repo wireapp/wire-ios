@@ -21,30 +21,6 @@
 #import "ZMGenericMessage+PropertyUtils.h"
 
 
-
-@implementation ZMText (Utils)
-
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview
-{
-    return [self textWithMessage:message linkPreview:linkPreview mentions:@[]];
-}
-
-+ (instancetype)textWithMessage:(NSString *)message linkPreview:(ZMLinkPreview *)linkPreview mentions:(NSArray<ZMMention *> *)mentions
-{
-    ZMTextBuilder *textBuilder = [ZMText builder];
-    textBuilder.content = message;
-    if (linkPreview != nil) {
-        [textBuilder addLinkPreview:linkPreview];
-    }
-    if (mentions != nil) {
-        [textBuilder setMentionArray:mentions];
-    }
-    return [textBuilder build];
-}
-
-@end
-
-
 @implementation ZMLastRead (Utils)
 
 + (instancetype)lastReadWithTimestamp:(NSDate *)timeStamp conversationRemoteID:(NSUUID *)conversationID;
@@ -72,19 +48,6 @@
 
 @end
 
-@implementation ZMMessageHide (Utils)
-
-+ (instancetype)messageHideWithMessageID:(NSUUID *)messageID
-                          conversationID:(NSUUID *)conversationID;
-{
-    ZMMessageHideBuilder *builder = [ZMMessageHide builder];
-    builder.conversationId = conversationID.transportString;
-    builder.messageId = messageID.transportString;
-    return [builder build];
-}
-
-@end
-
 @implementation ZMMessageDelete (Utils)
 
 + (instancetype)messageDeleteWithMessageID:(NSUUID *)messageID;
@@ -96,23 +59,6 @@
 
 @end
 
-
-@implementation ZMMessageEdit (Utils)
-
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview
-{
-    return [self messageEditWithMessageID:messageID newText:newText linkPreview:linkPreview mentions:@[]];
-}
-
-+ (instancetype)messageEditWithMessageID:(NSUUID *)messageID newText:(NSString *)newText linkPreview:(ZMLinkPreview*)linkPreview mentions:(NSArray<ZMMention *> *)mentions
-{
-    ZMMessageEditBuilder *builder = [ZMMessageEdit builder];
-    builder.replacingMessageId = messageID.transportString;
-    builder.text = [ZMText textWithMessage:newText linkPreview:linkPreview mentions: mentions];
-    return [builder build];
-}
-
-@end
 
 @implementation ZMReaction (Utils)
 

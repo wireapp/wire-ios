@@ -207,8 +207,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             let asset = assetBuilder.build()!
             
             if self.isEphemeral {
-                let ephemeral = ZMEphemeral.ephemeral(pbMessage: asset, expiresAfter: self.deletionTimeout as NSNumber)
-                messageBuilder.setEphemeral(ephemeral)
+                messageBuilder.setEphemeral(ZMEphemeral.ephemeral(content: asset, expiresAfter: deletionTimeout))
             } else {
                 messageBuilder.setAsset(asset)
             }
@@ -296,10 +295,8 @@ extension ZMAssetClientMessage {
         else {
             return // already canceled or not yet sent
         }
-                
-        let notUploadedMessage = ZMGenericMessage.genericMessage(notUploaded: notUploaded,
-                                                                 messageID: messageID,
-                                                                 expiresAfter: self.deletionTimeout as NSNumber)
+        
+        let notUploadedMessage = ZMGenericMessage.message(content: ZMAsset.asset(withNotUploaded: notUploaded), nonce: messageID, expiresAfter: deletionTimeout)
         self.add(notUploadedMessage)
         self.uploadState = .uploadingFailed
     }

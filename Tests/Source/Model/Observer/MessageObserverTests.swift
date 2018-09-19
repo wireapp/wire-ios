@@ -108,11 +108,11 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                                               macKey: Data.zmRandomSHA256Key(),
                                               mac: Data.zmRandomSHA256Key())
 
-        let imageMessage = ZMGenericMessage.genericMessage(mediumImageProperties: properties,
-                                                           processedImageProperties: properties,
-                                                           encryptionKeys: keys,
-                                                           nonce: UUID.create(),
-                                                           format: .preview)
+        let imageMessage = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties,
+                                                                          processedProperties: properties,
+                                                                          encryptionKeys: keys,
+                                                                          format: .preview),
+                                                    nonce: UUID.create())
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
@@ -135,7 +135,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         // given
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
-        clientMessage.add(ZMGenericMessage.message(text: name, nonce: nonce).data())
+        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: name), nonce: nonce).data())
         let preview = ZMLinkPreview.linkPreview(
             withOriginalURL: "www.example.com",
             permanentURL: "www.example.com/permanent",
@@ -144,7 +144,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             summary: "summary",
             imageAsset: nil
         )
-        let updateGenericMessage = ZMGenericMessage.message(text: name, linkPreview: preview, nonce: nonce)
+        let updateGenericMessage = ZMGenericMessage.message(content: ZMText.text(with: name, linkPreviews: [preview]), nonce: nonce)
         uiMOC.saveOrRollback()
         
         // when
@@ -170,7 +170,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessage() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
         // when
@@ -183,7 +183,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessageFromADifferentUser() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
@@ -200,7 +200,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         message.addReaction("LOVE IT, HUH", forUser: selfUser)
@@ -216,7 +216,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionFromADifferentUserIsAddedOnTopOfSelfReaction() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
@@ -236,7 +236,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenDeliveredChanges(){
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.appendMessage(withText: "foo") as! ZMClientMessage
+        let message = conversation.append(text: "foo") as! ZMClientMessage
         XCTAssertFalse(message.delivered)
         uiMOC.saveOrRollback()
         

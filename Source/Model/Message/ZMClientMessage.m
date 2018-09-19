@@ -64,10 +64,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 @end
 
-@interface ZMClientMessage (ZMTextMessageData) <ZMTextMessageData>
-
-@end
-
 @implementation ZMClientMessage
 
 @dynamic updatedTimestamp;
@@ -241,7 +237,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (void)resend
 {
     if (self.genericMessage.hasEdited) {
-        NOT_USED([ZMMessage edit:self newText:self.textMessageData.messageText]);
+        NOT_USED([ZMMessage edit:self newText:self.textMessageData.messageText mentions:self.textMessageData.mentions fetchLinkPreview:YES]); // TODO jacob why can't we just resend the message?
     } else {
         [super resend];
     }
@@ -379,21 +375,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 - (int32_t)zoomLevel
 {
     return self.genericMessage.locationData.zoom ?: 0;
-}
-
-@end
-
-
-@implementation ZMClientMessage (ZMTextMessageData)
-
-- (NSString *)messageText
-{
-    return self.genericMessage.textData.content.stringByRemovingExtremeCombiningCharacters;
-}
-
-- (BOOL)isEdited
-{
-    return self.genericMessage.hasEdited;
 }
 
 @end

@@ -52,7 +52,7 @@
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:YES];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -112,7 +112,7 @@
     NSUInteger oldIndex = [conversation.messages indexOfObject:message];
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:YES];
     
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -151,7 +151,7 @@
     XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:YES];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -174,7 +174,7 @@
     XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewStateDone);
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText fetchLinkPreview:fetchLinkPreview];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:fetchLinkPreview];
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
@@ -195,7 +195,7 @@
     XCTAssertEqual(message.deliveryState, ZMDeliveryStateFailedToSend);
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:YES];
     
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -222,7 +222,7 @@
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
     
     // when
-    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:@"Foo"];
+    ZMClientMessage *newMessage = (id)[ZMMessage edit:message newText:@"Foo" mentions:@[] fetchLinkPreview:NO];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
@@ -250,7 +250,7 @@
     XCTAssertEqual(conversation.messages.count, 1u);
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
     
-    ZMMessage *newMessage = [ZMMessage edit:message newText:newText];
+    ZMMessage *newMessage = [ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:NO];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // inserting the newMessage updates the lastModifiedDate
@@ -301,7 +301,7 @@
     XCTAssertEqual(conversation.messages.count, 1u);
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
     
-    ZMMessage *newMessage = [ZMMessage edit:message newText:newText];
+    ZMMessage *newMessage = [ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:NO];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // inserting the newMessage updates the lastModifiedDate
@@ -345,7 +345,7 @@
     XCTAssertEqual(conversation.messages.count, 1u);
     XCTAssertEqual(conversation.hiddenMessages.count, 0u);
     
-    ZMMessage *newMessage1 = [ZMMessage edit:message newText:newText];
+    ZMMessage *newMessage1 = [ZMMessage edit:message newText:newText mentions:@[] fetchLinkPreview:NO];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // inserting the newMessage updates the lastModifiedDate
@@ -380,7 +380,7 @@
 
 - (ZMUpdateEvent *)createMessageEditUpdateEventWithOldNonce:(NSUUID *)oldNonce newNonce:(NSUUID *)newNonce conversationID:(NSUUID*)conversationID senderID:(NSUUID *)senderID newText:(NSString *)newText
 {
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithEditMessage:oldNonce newText:newText nonce:newNonce];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithContent:[ZMMessageEdit editWith:[ZMText textWith:newText mentions:@[] linkPreviews:@[]] replacingMessageId:oldNonce] nonce:newNonce];
     
     NSDictionary *payload = @{
                    @"conversation": conversationID.transportString,
@@ -397,7 +397,7 @@
 
 - (ZMUpdateEvent *)createTextAddedEventWithNonce:(NSUUID *)nonce conversationID:(NSUUID*)conversationID senderID:(NSUUID *)senderID
 {
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithText:@"Yeah!" nonce:nonce expiresAfter:nil];
+    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:@"Yeah!" mentions:@[] linkPreviews:@[]] nonce:nonce];
     
     NSDictionary *payload = @{
                               @"conversation": conversationID.transportString,

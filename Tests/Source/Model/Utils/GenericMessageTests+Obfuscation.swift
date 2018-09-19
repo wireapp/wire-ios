@@ -36,7 +36,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesEmojis(){
         // given
         let text = "📲"
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create(), expiresAfter: NSNumber(value: 1.0))
+        let message = ZMGenericMessage.message(content: ZMText.text(with: text), nonce: UUID.create(), expiresAfter: 1.0)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -48,7 +48,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesCyrillic(){
         // given
         let text = "привет мир!"
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create(), expiresAfter: NSNumber(value: 1.0))
+        let message = ZMGenericMessage.message(content: ZMText.text(with: text), nonce: UUID.create(), expiresAfter: 1.0)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -61,7 +61,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesTextMessages(){
         // given
         let text = "foo"
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create(), expiresAfter: NSNumber(value: 1.0))
+        let message = ZMGenericMessage.message(content: ZMText.text(with: text), nonce: UUID.create(), expiresAfter: 1.0)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -74,7 +74,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesTextMessageDifferentlyEachTime() {
         // given
         let text = "foo"
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create(), expiresAfter: NSNumber(value: 1.0))
+        let message = ZMGenericMessage.message(content: ZMText.text(with: text), nonce: UUID.create(), expiresAfter: 1.0)
         
         // when
         let obfuscatedMessage1 = message.obfuscatedMessage()
@@ -91,7 +91,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItDoesNotObfuscateNonEphemeralTextMessages(){
         // given
         let text = "foo"
-        let message = ZMGenericMessage.message(text: text, nonce: UUID.create())
+        let message = ZMGenericMessage.message(content: ZMText.text(with: text), nonce: UUID.create())
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()
@@ -110,7 +110,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let offset : Int32 = 4
         
         let linkPreview = ZMLinkPreview.linkPreview(withOriginalURL: origURL, permanentURL: permURL, offset: offset, title: title, summary: summary, imageAsset: nil)
-        let genericMessage = ZMGenericMessage.message(text: text, linkPreview: linkPreview, nonce: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: text, linkPreviews: [linkPreview]), nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -144,7 +144,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let offset : Int32 = 4
 
         let linkPreview = ZMLinkPreview.linkPreview(withOriginalURL: origURL, permanentURL: permURL, offset: offset, title: title, summary: summary, imageAsset: image)
-        let genericMessage = ZMGenericMessage.message(text: text, linkPreview: linkPreview, nonce: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: text, linkPreviews: [linkPreview]), nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -174,7 +174,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let offset : Int32 = 4
         
         let linkPreview = ZMLinkPreview.linkPreview(withOriginalURL: origURL, permanentURL: permURL, offset: offset, title: title, summary: summary, imageAsset: nil, tweet: tweet)
-        let genericMessage = ZMGenericMessage.message(text: text, linkPreview: linkPreview, nonce: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: text, linkPreviews: [linkPreview]), nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -194,7 +194,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesImageAssetContent(){
         // given
         let image = ZMImageAsset(data: verySmallJPEGData(), format: .medium)!
-        let genericMessage = ZMGenericMessage.genericMessage(pbMessage: image, messageID: UUID.create(), expiresAfter: NSNumber(value: 3.0))
+        let genericMessage = ZMGenericMessage.message(content: image, nonce: UUID.create(), expiresAfter: 3.0)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(genericMessage.ephemeral.hasImage())
         XCTAssertEqual(genericMessage.imageAssetData?.mimeType, "image/jpeg")
@@ -221,7 +221,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesAssetsImageContent(){
         // given
         let asset  = assetWithImage()
-        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -246,7 +246,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let original = ZMAssetOriginal.original(withSize: 200, mimeType: "video", name: "foo", videoDurationInMillis: 500, videoDimensions: CGSize(width: 305, height: 200))
         
         let asset  = ZMAsset.asset(withOriginal: original, preview: nil)
-        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -270,7 +270,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         // given
         let original = ZMAssetOriginal.original(withSize: 200, mimeType: "audio", name: "foo", audioDurationInMillis: 300, normalizedLoudness: [2.9])
         let asset  = ZMAsset.asset(withOriginal: original, preview: nil)
-        let genericMessage = ZMGenericMessage.genericMessage(asset: asset, messageID: UUID.create(), expiresAfter: NSNumber(value:20))
+        let genericMessage = ZMGenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscated =  genericMessage.obfuscatedMessage()
@@ -291,7 +291,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
     func testThatItObfuscatesLocationMessages() {
         // given
         let location  = ZMLocation.location(withLatitude: 2.0, longitude: 3.0)
-        let message = ZMGenericMessage.genericMessage(location: location, messageID: UUID.create(), expiresAfter: NSNumber(value:20))
+        let message = ZMGenericMessage.message(content: location, nonce: UUID.create(), expiresAfter: 20.0)
         
         // when
         let obfuscatedMessage = message.obfuscatedMessage()

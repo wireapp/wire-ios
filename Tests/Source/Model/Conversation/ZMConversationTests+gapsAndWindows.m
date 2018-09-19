@@ -219,16 +219,16 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    conversation.draftMessageText = @"";
+    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"" mentions:@[]];
     
     // then
-    XCTAssertFalse(conversation.hasDraftMessageText);
+    XCTAssertFalse(conversation.hasDraftMessage);
     
     // when
-    conversation.draftMessageText = nil;
+    conversation.draftMessage = nil;
     
     // then
-    XCTAssertFalse(conversation.hasDraftMessageText);
+    XCTAssertFalse(conversation.hasDraftMessage);
 }
 
 - (void)testThatHasDraftMessageTextReturnsYESWhenNotEmpty;
@@ -237,18 +237,17 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    conversation.draftMessageText = @"A";
+    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"A" mentions:@[]];
     
     // then
-    XCTAssertTrue(conversation.hasDraftMessageText);
+    XCTAssertTrue(conversation.hasDraftMessage);
     
     // when
-    conversation.draftMessageText = @"Once upon a time";
+    conversation.draftMessage =[[DraftMessage alloc] initWithText: @"Once upon a time" mentions:@[]];
     
     // then
-    XCTAssertTrue(conversation.hasDraftMessageText);
+    XCTAssertTrue(conversation.hasDraftMessage);
 }
-
 
 - (void)testThatTheConversationIsNotSilencedByDefault
 {

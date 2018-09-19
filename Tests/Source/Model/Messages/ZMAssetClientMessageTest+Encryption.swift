@@ -54,7 +54,7 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             let fileMetadata = ZMFileMetadata(fileURL: url)
             
             // when
-            let sut = self.syncConversation.appendOTRMessage(with: fileMetadata, nonce: nonce)!
+            let sut = self.syncConversation.append(file: fileMetadata, nonce: nonce) as! ZMAssetClientMessage
             
             // then
             XCTAssertNotNil(sut)
@@ -84,11 +84,11 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             let data = self.createTestFile(url)
             defer { self.removeTestFile(url) }
             let fileMetadata = ZMFileMetadata(fileURL: url)
-            let sut = self.syncConversation.appendOTRMessage(with: fileMetadata, nonce: nonce)!
+            let sut = self.syncConversation.append(file: fileMetadata, nonce: nonce) as! ZMAssetClientMessage
             
             // when
             let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce!))
+            sut.add(ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: sut.nonce!))
             
             // then
             guard let (encryptedData, _) = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
@@ -126,11 +126,11 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
             let size = data.count
             defer { self.removeTestFile(url) }
             let videoMetadata = ZMVideoMetadata(fileURL: url, duration: duration, dimensions: dimensions)
-            let sut = syncConversation.appendOTRMessage(with: videoMetadata, nonce: nonce)!
+            let sut = syncConversation.append(file: videoMetadata, nonce: nonce) as! ZMAssetClientMessage
             
             // when
             let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce!))
+            sut.add(ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: sut.nonce!))
             
             // then
             guard let (encryptedData, _) = sut.encryptedMessagePayloadForDataType(.fullAsset) else { return XCTFail() }
@@ -162,7 +162,7 @@ class ZMAssetClientMessageTests_Encryption : BaseZMAssetClientMessageTests {
         self.syncMOC.performAndWait {
             // given
             let fileMetadata = self.addFile()
-            let sut = syncConversation.appendOTRMessage(with: fileMetadata, nonce: UUID.create())!
+            let sut = syncConversation.append(file: fileMetadata, nonce: UUID.create()) as! ZMAssetClientMessage
             sut.delivered = true
             
             XCTAssertNotNil(sut.fileMessageData)
@@ -196,9 +196,9 @@ extension ZMAssetClientMessageTests_Encryption {
     }
     
     func insertFileMessage() -> ZMAssetClientMessage{
-        let sut = syncConversation.appendOTRMessage(with: addFile(), nonce: UUID.create())!
+        let sut = syncConversation.append(file: addFile(), nonce: UUID.create()) as! ZMAssetClientMessage
         let (otrKey, sha256) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-        sut.add(.genericMessage(withUploadedOTRKey: otrKey, sha256: sha256, messageID: sut.nonce!, expiresAfter: NSNumber(value: sut.deletionTimeout)))
+        sut.add(ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha256), nonce: sut.nonce!, expiresAfter: sut.deletionTimeout))
         return sut
     }
     

@@ -132,6 +132,7 @@ NS_ASSUME_NONNULL_END
 /// sorts the messages in the conversation
 - (void)sortMessages;
 - (void)resortMessagesWithUpdatedMessage:(nonnull ZMMessage *)message;
+- (void)unarchiveIfNeeded;
 
 /**
     Appends the given message in the conversation at the proper place to keep the conversation sorted.
@@ -147,13 +148,6 @@ NS_ASSUME_NONNULL_END
 + (nonnull NSUUID *)selfConversationIdentifierInContext:(nonnull NSManagedObjectContext *)context;
 + (nonnull ZMConversation *)selfConversationInContext:(nonnull NSManagedObjectContext *)managedObjectContext;
 
-- (nullable ZMClientMessage *)appendOTRKnockMessageWithNonce:(nonnull NSUUID *)nonce;
-- (nullable ZMClientMessage *)appendOTRMessageWithText:(nonnull NSString *)text nonce:(nonnull NSUUID *)nonce fetchLinkPreview:(BOOL)fetchPreview;
-- (nullable ZMClientMessage *)appendOTRMessageWithLocationData:(nonnull ZMLocationData *)locationData nonce:(nonnull NSUUID *)nonce;
-- (nullable ZMAssetClientMessage *)appendOTRMessageWithImageData:(nonnull NSData *)imageData nonce:(nonnull NSUUID *)nonce;
-- (nullable ZMAssetClientMessage *)appendOTRMessageWithFileMetadata:(nonnull ZMFileMetadata *)fileMetadata nonce:(nonnull NSUUID *)nonce;
-
-
 /// Appends a new message to the conversation.
 /// @param genericMessage the generic message that should be appended
 /// @param expires wether the message should expire or tried to be send infinitively
@@ -163,6 +157,9 @@ NS_ASSUME_NONNULL_END
 /// Appends a new message to the conversation.
 /// @param genericMessage the generic message that should be appended
 - (nullable ZMClientMessage *)appendClientMessageWithGenericMessage:(nonnull ZMGenericMessage *)genericMessage;
+
+
+- (nullable ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(nonnull NSUUID *)nonce imageData:(nonnull NSData *)imageData;
 
 
 - (void)appendNewConversationSystemMessageIfNeeded;
@@ -186,7 +183,6 @@ NS_ASSUME_NONNULL_END
 @end
 
 
-
 @interface ZMConversation (ParticipantsInternal)
 
 - (void)internalAddParticipants:(nonnull NSSet<ZMUser *> *)participants;
@@ -198,8 +194,6 @@ NS_ASSUME_NONNULL_END
 @end
 
 
-
-
 @interface ZMConversation (ZMConversationMessageWindow)
 
 @property (nonatomic, nullable) ZMConversationMessageWindow *messageWindow;
@@ -207,13 +201,11 @@ NS_ASSUME_NONNULL_END
 @end
 
 
-
 @interface NSUUID (ZMSelfConversation)
 
 - (BOOL)isSelfConversationRemoteIdentifierInContext:(nonnull NSManagedObjectContext *)moc;
 
 @end
-
 
 
 @interface ZMConversation (Optimization)

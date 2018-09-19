@@ -40,8 +40,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
-        let otherMessage = otherConversation.appendMessage(withText: "This is the first message in the other conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
+        let otherMessage = otherConversation.append(text: "This is the first message in the other conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 40, normalized: false)
         fillConversationWithMessages(conversation: otherConversation, messageCount: 40, normalized: false)
         [firstMessage, otherMessage].forEach {
@@ -76,8 +76,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let otherConversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
-        let otherMessage = otherConversation.appendMessage(withText: "This is the first message in the other conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
+        let otherMessage = otherConversation.append(text: "This is the first message in the other conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 40, normalized: true)
         fillConversationWithMessages(conversation: otherConversation, messageCount: 40, normalized: true)
 
@@ -107,10 +107,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
+        let secondMessage = conversation.append(text: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: false)
-        let lastMessage = conversation.appendMessage(withText: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = conversation.append(text: "This is the last message in the conversation") as! ZMMessage
         [firstMessage, secondMessage, lastMessage].forEach {
             $0.normalizedText = nil
         }
@@ -147,9 +147,9 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
         firstMessage.serverTimestamp = Date()
-        let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = conversation.append(text: "This is the second message in the conversation") as! ZMMessage
         secondMessage.serverTimestamp = firstMessage.serverTimestamp?.addingTimeInterval(100)
 
         XCTAssert(uiMOC.saveOrRollback())
@@ -189,12 +189,12 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
         Thread.sleep(forTimeInterval: 0.05)
-        let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = conversation.append(text: "This is the second message in the conversation") as! ZMMessage
         Thread.sleep(forTimeInterval: 0.05)
         fillConversationWithMessages(conversation: conversation, messageCount: 400, normalized: true)
-        let lastMessage = conversation.appendMessage(withText: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = conversation.append(text: "This is the last message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -227,10 +227,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
-        let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
+        let secondMessage = conversation.append(text: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 2, normalized: true)
-        let lastMessage = conversation.appendMessage(withText: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = conversation.append(text: "This is the last message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
@@ -268,11 +268,11 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.remoteIdentifier = .create()
 
         // We insert old messages that have not yet been indexed
-        let firstMessage = conversation.appendMessage(withText: "This is the first message in the conversation") as! ZMMessage
+        let firstMessage = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: false)
-        let secondMessage = conversation.appendMessage(withText: "This is the second message in the conversation") as! ZMMessage
+        let secondMessage = conversation.append(text: "This is the second message in the conversation") as! ZMMessage
         fillConversationWithMessages(conversation: conversation, messageCount: 200, normalized: true)
-        let lastMessage = conversation.appendMessage(withText: "This is the last message in the conversation") as! ZMMessage
+        let lastMessage = conversation.append(text: "This is the last message in the conversation") as! ZMMessage
         [firstMessage, secondMessage].forEach {
             $0.normalizedText = nil
         }
@@ -373,7 +373,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        _ = conversation.appendMessage(withText: "aa bb a b c dd") as! ZMMessage
+        _ = conversation.append(text: "aa bb a b c dd") as! ZMMessage
         XCTAssert(uiMOC.saveOrRollback())
 
         let delegate = MockTextSearchQueryDelegate()
@@ -397,7 +397,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        let message = conversation.appendMessage(withText: "Håkon") as! ZMMessage
+        let message = conversation.append(text: "Håkon") as! ZMMessage
         message.markAsSent()
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertEqual(message.normalizedText, "hakon")
@@ -433,10 +433,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         conversation.conversationType = .group
         conversation.mutableLastServerSyncedActiveParticipants.addObjects(from: [user1, user2])
         
-        let message = conversation.appendMessage(withText: "This is a regular message in the conversation") as! ZMMessage
-        let otherMessage = conversation.appendMessage(withText: "This is the another message in the conversation") as! ZMMessage
+        let message = conversation.append(text: "This is a regular message in the conversation") as! ZMMessage
+        let otherMessage = conversation.append(text: "This is the another message in the conversation") as! ZMMessage
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 300))
-        let ephemeralMessage = conversation.appendMessage(withText: "This is a timed message in the conversation") as! ZMMessage
+        let ephemeralMessage = conversation.append(text: "This is a timed message in the conversation") as! ZMMessage
 
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(message.normalizedText)
@@ -491,14 +491,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
                 summary: summary,
                 imageAsset: image
             )
-
-            let genericMessage = ZMGenericMessage.message(
-                text: message.textMessageData!.messageText,
-                linkPreview: preview,
-                nonce: message.nonce!,
-                expiresAfter: NSNumber(value: message.deletionTimeout)
-            )
-
+            
+            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: message.textMessageData!.messageText!, linkPreviews: [preview]), nonce: message.nonce!)
             clientMessage.add(genericMessage.data())
             message.markAsSent()
         }
@@ -512,10 +506,10 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        _ = conversation.appendMessage(with: .init(latitude: 52.520008, longitude: 13.404954, name: "Berlin, Germany", zoomLevel: 8))
-        _ = conversation.appendMessage(withImageData: mediumJPEGData())
+        _ = conversation.append(location: .init(latitude: 52.520008, longitude: 13.404954, name: "Berlin, Germany", zoomLevel: 8))
+        _ = conversation.append(imageFromData: mediumJPEGData())
         _ = conversation.appendKnock()
-        _ = conversation.appendMessage(withImageData: verySmallJPEGData())
+        _ = conversation.append(imageFromData: verySmallJPEGData())
         fillConversationWithMessages(conversation: conversation, messageCount: 10, normalized: true)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         verifyAllMessagesAreIndexed(in: conversation)
@@ -533,7 +527,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
     func fillConversationWithMessages(conversation: ZMConversation, messageCount: Int, normalized: Bool) {
         for index in 0..<messageCount {
             let text = "This is the text message at index \(index)"
-            let message = conversation.appendMessage(withText: text) as! ZMMessage
+            let message = conversation.append(text: text) as! ZMMessage
             if normalized {
                 message.updateNormalizedText()
             } else {
@@ -577,7 +571,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         if nil == conversation.remoteIdentifier {
             conversation.remoteIdentifier = .create()
         }
-        let message = conversation.appendMessage(withText: text) as! ZMMessage
+        let message = conversation.append(text: text) as! ZMMessage
         messageModifier?(message)
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 

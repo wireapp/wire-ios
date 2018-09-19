@@ -101,7 +101,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         }
         conv.isSilenced = true
         conv.isSelfAnActiveMember = false
-        conv.appendMessage(withText: "foo")
+        conv.append(text: "foo")
         conv.resetLocallyModifiedKeys(conv.keysThatHaveLocalModifications)
         _ = sut.extractChangedKeysFromSnapshot(for: conv)
         

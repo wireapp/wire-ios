@@ -74,7 +74,7 @@ import WireLinkPreview
         NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
     }
     
-    func fetchLinkPreviewImageData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
+    public func fetchLinkPreviewImageData(with queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void) {
         guard let cache = managedObjectContext?.zm_fileAssetCache else { return }
         let originalKey =  FileAssetCache.cacheKeyForAsset(self, format: .original)
         let mediumKey =  FileAssetCache.cacheKeyForAsset(self, format: .medium)
@@ -166,36 +166,23 @@ extension ZMClientMessage: ZMImageOwner {
         let original = ZMAssetOriginal.original(withSize: UInt64(imageData.count), mimeType: properties?.mimeType ?? "", name: nil, imageMetaData: imageMetaData)
         
         let updatedPreview = linkPreview.update(withOtrKey: keys.otrKey, sha256: keys.sha256!, original: original)
-        var mentions: [ZMMention] = []
-
-        if let conversation = conversation {
-            mentions = conversation.mentions(in: self.textMessageData?.messageText ?? "")
-        }
 
         if let genericMessage = self.genericMessage {
+            
+            let text = ZMText.text(with: textMessageData?.messageText ?? "", linkPreviews: [updatedPreview])
+            let messageUpdate: MessageContentType
 
-            if genericMessage.hasText() || (genericMessage.hasEphemeral() && genericMessage.ephemeral.hasText()) {
-
-                let newMessage = ZMGenericMessage.message(text: self.textMessageData?.messageText ?? "",
-                                                          linkPreview: updatedPreview,
-                                                          nonce: self.nonce!,
-                                                          expiresAfter: self.deletionTimeout as NSNumber,
-                                                          mentions: mentions)
-                self.add(newMessage.data())
-            } else if genericMessage.hasEdited() {
-
-                guard let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageId) else {
-                    return
-                }
-
-                let newMessage = ZMGenericMessage(editMessage: replacingMessageID,
-                                                  newText: self.textMessageData?.messageText ?? "",
-                                                  linkPreview: updatedPreview,
-                                                  nonce: self.nonce!,
-                                                  mentions: mentions)
-
-                self.add(newMessage.data())
+            if genericMessage.hasText() {
+                messageUpdate = text
+            } else if genericMessage.hasEphemeral() && genericMessage.ephemeral.hasText() {
+                messageUpdate = ZMEphemeral.ephemeral(content: text, expiresAfter: deletionTimeout)
+            } else if genericMessage.hasEdited(), let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageId) {
+                messageUpdate = ZMMessageEdit.edit(with: text, replacingMessageId: replacingMessageID)
+            } else {
+                return
             }
+            
+            self.add(ZMGenericMessage.message(content: messageUpdate, nonce: nonce!).data())
         }
         
         moc.enqueueDelayedSave()
