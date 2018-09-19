@@ -56,7 +56,7 @@ extension FilePreprocessorTests {
             // GIVEN
             self.sut = FilePreprocessor(managedObjectContext: self.syncMOC, filter: NSPredicate(format: "version > 2"))
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             XCTAssertEqual(msg.version, 3)
             
             self.syncMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
@@ -77,7 +77,7 @@ extension FilePreprocessorTests {
             // GIVEN
             self.sut = FilePreprocessor(managedObjectContext: self.syncMOC, filter: NSPredicate(value: false))
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             XCTAssertEqual(msg.version, 3)
             self.syncMOC.saveOrRollback()
             self.syncMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
@@ -97,7 +97,7 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             self.syncMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             self.syncMOC.zm_fileAssetCache.deleteAssetData(msg, encrypted: true)
             
@@ -114,7 +114,7 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
             // WHEN
@@ -142,7 +142,7 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.uploadState = .uploadingFullAsset
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             XCTAssertFalse(msg.v3_isReadyToUploadFile)
@@ -165,7 +165,7 @@ extension FilePreprocessorTests {
             // GIVEN
             let encData = "foobar".data(using: String.Encoding.utf8)!
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: true, data: encData)
             
@@ -182,7 +182,7 @@ extension FilePreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let msg = self.oneToOneConversationOnSync.appendMessage(withImageData: self.verySmallJPEGData()) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
             
             // WHEN
             self.sut.objectsDidChange(Set(arrayLiteral: msg))
@@ -198,7 +198,7 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.delivered = true
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
@@ -215,7 +215,7 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.transferState = .uploaded
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
@@ -231,7 +231,7 @@ extension FilePreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.transferState = .failedUpload
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
@@ -248,7 +248,7 @@ extension FilePreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.transferState = .failedDownload
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
@@ -264,7 +264,7 @@ extension FilePreprocessorTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.transferState = .uploading
             msg.delivered = true
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
@@ -283,15 +283,15 @@ extension FilePreprocessorTests {
             
             // GIVEN
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             msg.transferState = .uploading
             msg.delivered = false
             
-            let otherMsg = self.oneToOneConversationOnSync.appendMessage(withImageData: self.verySmallJPEGData()) as! ZMAssetClientMessage
+            let otherMsg = self.oneToOneConversationOnSync.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
             otherMsg.transferState = .failedUpload
             otherMsg.delivered = false
             
-            let wrongMsg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let wrongMsg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             wrongMsg.transferState = .uploading
             wrongMsg.delivered = true
             self.syncMOC.saveOrRollback()
@@ -315,7 +315,7 @@ extension FilePreprocessorTests {
             // GIVEN
             self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             self.syncMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             self.syncMOC.zm_fileAssetCache.deleteAssetData(msg, encrypted: true)
             XCTAssertTrue(msg.isEphemeral)
@@ -336,7 +336,7 @@ extension FilePreprocessorTests {
             // GIVEN
             self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             
             // WHEN
@@ -364,7 +364,7 @@ extension FilePreprocessorTests {
             // GIVEN
             self.oneToOneConversationOnSync.messageDestructionTimeout = .local(.tenSeconds)
             let metadata = ZMFileMetadata(fileURL: testDataURL)
-            let msg = self.oneToOneConversationOnSync.appendMessage(with: metadata) as! ZMAssetClientMessage
+            let msg = self.oneToOneConversationOnSync.append(file: metadata) as! ZMAssetClientMessage
             XCTAssertTrue(msg.isEphemeral)
             self.uiMOC.zm_fileAssetCache.storeAssetData(msg, encrypted: false, data: testData)
             do {

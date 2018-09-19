@@ -295,13 +295,11 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
     }
 
     func scheduleImageProcessing(forMessage message: ZMAssetClientMessage, format: ZMImageFormat) {
-        let genericMessage = ZMGenericMessage.genericMessage(
-            withImageSize: .zero,
-            mimeType: "",
-            size: message.size,
-            nonce: message.nonce!,
-            expiresAfter: NSNumber(value: message.deletionTimeout)
-        )
+        let genericMessage = ZMGenericMessage.message(content: ZMAsset.asset(originalWithImageSize: .zero,
+                                                                             mimeType: "",
+                                                                             size: message.size),
+                                                      nonce: message.nonce!,
+                                                      expiresAfter: message.deletionTimeout)
         message.add(genericMessage)
         RequestAvailableNotification.notifyNewRequestsAvailable(self)
     }

@@ -42,28 +42,15 @@ class ImageDownloadRequestStrategyTests: MessagingTestBase {
     func createImageMessage(withAssetId assetId: UUID?) -> ZMAssetClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.appendOTRMessage(withImageData: verySmallJPEGData(), nonce: UUID.create())!
+        let message = conversation.append(imageFromData: verySmallJPEGData(), nonce: UUID.create()) as! ZMAssetClientMessage
         message.version = 0;
         let imageData = message.imageAssetStorage.originalImageData()
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size: imageSize, length: UInt(imageData!.count), mimeType: "image/jpeg")
         let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
         
-        message.add(ZMGenericMessage.genericMessage(
-            mediumImageProperties: properties,
-            processedImageProperties: properties,
-            encryptionKeys: keys,
-            nonce: message.nonce!,
-            format: .medium,
-            expiresAfter:nil))
-        
-        message.add(ZMGenericMessage.genericMessage(
-            mediumImageProperties: properties,
-            processedImageProperties: properties,
-            encryptionKeys: keys,
-            nonce: message.nonce!,
-            format: .preview,
-            expiresAfter:nil))
+        message.add(ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
+        message.add(ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
         
         message.resetLocallyModifiedKeys(["uploadedState"])
         message.assetId = assetId
@@ -79,11 +66,11 @@ class ImageDownloadRequestStrategyTests: MessagingTestBase {
         let nonce = UUID.create()
         let fileURL = Bundle(for: ImageDownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
         let metadata = ZMFileMetadata(fileURL: fileURL)
-        let message = conversation.appendOTRMessage(with: metadata, nonce: nonce)
+        let message = conversation.append(file: metadata, nonce: nonce) as! ZMAssetClientMessage
         
         syncMOC.saveOrRollback()
         
-        return message!
+        return message
     }
     
     func requestToDownloadAsset(withMessage message: ZMAssetClientMessage) -> ZMTransportRequest {

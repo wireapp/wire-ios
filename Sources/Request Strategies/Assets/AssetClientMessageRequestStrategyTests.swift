@@ -89,10 +89,10 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         let message: ZMAssetClientMessage!
         if isImage {
-            message = self.groupConversation.appendMessage(withImageData: imageData) as? ZMAssetClientMessage
+            message = self.groupConversation.append(imageFromData: imageData) as? ZMAssetClientMessage
         } else {
             let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = self.groupConversation.appendMessage(with: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
+            message = self.groupConversation.append(file: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
         }
 
         if isImage {
@@ -115,10 +115,10 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
                 imageMetaData: .imageMetaData(withWidth: 123, height: 420)
             )
 
-            let previewMessage = ZMGenericMessage.genericMessage(
-                asset: .asset(withOriginal: nil, preview: previewAsset),
-                messageID: message.nonce!,
-                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeoutValue)
+            let previewMessage = ZMGenericMessage.message(
+                content: ZMAsset.asset(withOriginal: nil, preview: previewAsset),
+                nonce: message.nonce!,
+                expiresAfter: groupConversation.messageDestructionTimeoutValue
             )
 
             message.add(previewMessage)
@@ -129,11 +129,10 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
 
         if uploaded {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            var uploaded = ZMGenericMessage.genericMessage(
-                withUploadedOTRKey: otr,
-                sha256: sha,
-                messageID: message.nonce!,
-                expiresAfter: NSNumber(value: self.groupConversation.messageDestructionTimeoutValue)
+            var uploaded = ZMGenericMessage.message(
+                content: ZMAsset.asset(withUploadedOTRKey: otr, sha256: sha),
+                nonce: message.nonce!,
+                expiresAfter: groupConversation.messageDestructionTimeoutValue
             )
             if assetId {
                 uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
@@ -334,7 +333,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let notUploaded = ZMGenericMessage.genericMessage(notUploaded: .CANCELLED, messageID: message.nonce!)
+            let notUploaded = ZMGenericMessage.message(content: ZMAsset.asset(withNotUploaded: .CANCELLED), nonce: message.nonce!)
             message.add(notUploaded)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasNotUploaded())
         }

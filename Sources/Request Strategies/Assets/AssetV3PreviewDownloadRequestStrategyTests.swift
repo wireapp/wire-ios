@@ -60,17 +60,12 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     
     fileprivate func createMessage(in conversation: ZMConversation) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
         
-        let message = conversation.appendMessage(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
         
         // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
-        let uploaded = ZMGenericMessage.genericMessage(
-            withUploadedOTRKey: otrKey,
-            sha256: sha,
-            messageID: message.nonce!,
-            expiresAfter: NSNumber(value: conversation.messageDestructionTimeoutValue)
-        )
+        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
         
         guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
             XCTFail("Failed to update asset")
@@ -108,7 +103,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         _ = assetBuilder?.setPreview(previewBuilder)
         
         let previewMeta = (otr, sha, assetId, token)
-        return (ZMGenericMessage.genericMessage(asset: assetBuilder!.build(), messageID: nonce), previewMeta)
+        return (ZMGenericMessage.message(content: assetBuilder!.build(), nonce: nonce), previewMeta)
     }
     
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {

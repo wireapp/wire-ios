@@ -28,7 +28,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Trentatre trentini andarono a Trento tutti e trentatre trotterellando"
-            let generic = ZMGenericMessage.message(text: text, nonce: UUID.create())
+            let generic = ZMGenericMessage.message(content: ZMText.text(with: text))
             
             // WHEN
             let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
@@ -51,11 +51,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: image)
             let properties = ZMIImageProperties(size: imageSize, length: UInt(image.count), mimeType: "image/jpg")
             let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), sha256: image.zmSHA256Digest())
-            let generic = ZMGenericMessage.genericMessage(mediumImageProperties: properties,
-                                                          processedImageProperties: properties,
-                                                          encryptionKeys: keys,
-                                                          nonce: UUID.create(),
-                                                          format: .medium)
+            let generic = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium))
             
             // WHEN
             let decryptedEvent = self.decryptedAssetUpdateEventFromOtherClient(message: generic)
@@ -112,7 +108,7 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let crlf = "\u{0000}\u{0001}\u{0000}\u{000D}\u{0000A}"
             let text = "https://wir\("".padding(toLength: crlf.count * 20_000, withPad: crlf, startingAt: 0))e.com/"
             XCTAssertGreaterThan(text.count, 18_000)
-            let message = ZMGenericMessage.message(text: text, nonce: UUID.create())
+            let message = ZMGenericMessage.message(content: ZMText.text(with: text))
 
             let wrapper = NSDictionary(dictionary: [
                 "id": UUID.create().transportString(),
