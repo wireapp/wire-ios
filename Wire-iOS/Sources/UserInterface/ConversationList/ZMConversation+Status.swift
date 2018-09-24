@@ -278,7 +278,7 @@ final internal class CallingMatcher: ConversationStatusMatcher {
 // "A, B, C: typing a message..."
 final internal class TypingMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        return status.isTyping
+        return status.isTyping && !status.hasSelfMention && !status.isSilenced
     }
     
     func description(with status: ConversationStatus, conversation: ZMConversation) -> NSAttributedString? {
@@ -305,7 +305,7 @@ final internal class TypingMatcher: ConversationStatusMatcher {
 // "Silenced"
 final internal class SilencedMatcher: ConversationStatusMatcher {
     func isMatching(with status: ConversationStatus) -> Bool {
-        return status.isSilenced && !status.hasSelfMention
+        return status.isSilenced
     }
     
     func description(with status: ConversationStatus, conversation: ZMConversation) -> NSAttributedString? {
@@ -330,11 +330,12 @@ extension ConversationStatus {
     }
     
     var shouldSummarizeMessages: Bool {
-        if hasSelfMention {
+        if isSilenced {
+            return true
+        } else if hasSelfMention {
             return !latestMessageIsSelfMention
-        }
-        else {
-            return isSilenced
+        } else {
+            return false
         }
     }
 }
@@ -623,7 +624,7 @@ private var allMatchers: [ConversationStatusMatcher] = {
     let failedSendMatcher = FailedSendMatcher()
     failedSendMatcher.combinesWith = [silencedMatcher, newMessageMatcher, groupActivityMatcher]
     
-    return [SelfUserLeftMatcher(), BlockedMatcher(), CallingMatcher(), TypingMatcher(), silencedMatcher, newMessageMatcher, failedSendMatcher, groupActivityMatcher, StartConversationMatcher(), UnsernameMatcher()]
+    return [SelfUserLeftMatcher(), BlockedMatcher(), CallingMatcher(), silencedMatcher, TypingMatcher(), newMessageMatcher, failedSendMatcher, groupActivityMatcher, StartConversationMatcher(), UnsernameMatcher()]
 }()
 
 extension ConversationStatus {
