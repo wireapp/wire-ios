@@ -48,11 +48,9 @@ import WireLinkPreview
         guard let linkPreview = self.firstZMLinkPreview else { return nil }
         if linkPreview.hasTweet() {
             return TwitterStatus(protocolBuffer: linkPreview)
-        } else if linkPreview.hasArticle() {
+        } else {
             return Article(protocolBuffer: linkPreview)
         }
-        return nil
-        
     }
     
     var firstZMLinkPreview: ZMLinkPreview? {
