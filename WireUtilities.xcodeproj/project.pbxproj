@@ -30,6 +30,8 @@
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
 		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
 		168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */; };
+		16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */; };
+		16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */; };
 		16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */; };
 		16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */; };
 		16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */; };
@@ -252,6 +254,8 @@
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
 		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
 		168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueueTests.swift; sourceTree = "<group>"; };
+		16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+Helpers.swift"; sourceTree = "<group>"; };
+		16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+HelperTests.swift"; sourceTree = "<group>"; };
 		16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUnregisteringNotificationCenterToken.swift; sourceTree = "<group>"; };
 		16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMEType.swift"; sourceTree = "<group>"; };
 		16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMETypeTests.swift"; sourceTree = "<group>"; };
@@ -540,6 +544,7 @@
 				091799631B7E04FE00E60DD9 /* ZMDeploymentEnvironment.m */,
 				F9FCE0A11C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m */,
 				54181A4F1F594E4100155ABC /* FileManager+Move.swift */,
+				16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */,
 				54181A531F594F6B00155ABC /* FileManager+Protection.swift */,
 				54181A551F594FD800155ABC /* FileManager+FileProtectionLock.swift */,
 				EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */,
@@ -717,6 +722,7 @@
 				0917996E1B7E2E4600E60DD9 /* ZMAPNSEnvironmentTests.m */,
 				0917996F1B7E2E4600E60DD9 /* ZMDeploymentEnvironmentTests.m */,
 				091799701B7E2E4600E60DD9 /* ZMMobileProvisionParserTests.m */,
+				16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */,
 				546E8A5B1B7503C6009EBA02 /* FunctionalTests.swift */,
 				163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */,
 				168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */,
@@ -995,6 +1001,7 @@
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
+				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
@@ -1073,6 +1080,7 @@
 				54181A521F594E6F00155ABC /* FileManager+MoveTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
+				16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
 				5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */,
