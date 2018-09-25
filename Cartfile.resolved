@@ -1,2 +1,4 @@
 github "wireapp/HTMLString" "4.0.2-xcode_10"
 github "wireapp/ono" "1.4.0"
+github "wireapp/wire-ios-system" "24.0.0"
+github "wireapp/wire-ios-utilities" "26.1.0"

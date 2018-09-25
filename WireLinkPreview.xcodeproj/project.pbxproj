@@ -7,15 +7,20 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		16A5FE18215A87F500AEEBBD /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE11215A87B600AEEBBD /* HTMLString.framework */; };
+		16A5FE19215A87F500AEEBBD /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE13215A87B600AEEBBD /* Ono.framework */; };
+		16A5FE1A215A87F500AEEBBD /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE10215A87B600AEEBBD /* WireSystem.framework */; };
+		16A5FE1B215A87F500AEEBBD /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE12215A87B600AEEBBD /* WireUtilities.framework */; };
+		16A5FE1C215A882700AEEBBD /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE11215A87B600AEEBBD /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		16A5FE1D215A882700AEEBBD /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE13215A87B600AEEBBD /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		16A5FE1E215A882700AEEBBD /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE10215A87B600AEEBBD /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		16A5FE1F215A882700AEEBBD /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE12215A87B600AEEBBD /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5E2BEC54214BA4A600E65B53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */; };
 		5E2BEC56214BA4A600E65B53 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2BEC55214BA4A600E65B53 /* ViewController.swift */; };
 		5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC57214BA4A600E65B53 /* Main.storyboard */; };
 		5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */; };
 		5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
-		87B48ECD20A09E4A00DBAD9D /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; };
-		87B48ECE20A09E9B00DBAD9D /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; };
-		87B48ECF20A09EBD00DBAD9D /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 87B48ECC20A09E4900DBAD9D /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
 		BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */; };
 		BF21CC8F1E925AA300A874F5 /* instagram_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */; };
@@ -55,9 +60,6 @@
 		BF4F2B5C1E925AFE000B22D1 /* PreviewBlackListTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B521E925AFE000B22D1 /* PreviewBlackListTests.swift */; };
 		BF4F2B5D1E925AFE000B22D1 /* PreviewDownloaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B531E925AFE000B22D1 /* PreviewDownloaderTests.swift */; };
 		BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF4F2B541E925AFE000B22D1 /* StringXMLEntityParserTests.swift */; };
-		BF7699881D34F881009C378B /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; };
-		BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; };
-		BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF7699871D34F881009C378B /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */; };
 		F1202A761FA0830000296B4B /* crash.txt in Resources */ = {isa = PBXBuildFile; fileRef = F1202A751FA0830000296B4B /* crash.txt */; };
 /* End PBXBuildFile section */
@@ -86,14 +88,20 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				87B48ECF20A09EBD00DBAD9D /* HTMLString.framework in CopyFiles */,
-				BFB7B3D41D81AE8100EBD1C5 /* Ono.framework in CopyFiles */,
+				16A5FE1C215A882700AEEBBD /* HTMLString.framework in CopyFiles */,
+				16A5FE1D215A882700AEEBBD /* Ono.framework in CopyFiles */,
+				16A5FE1E215A882700AEEBBD /* WireSystem.framework in CopyFiles */,
+				16A5FE1F215A882700AEEBBD /* WireUtilities.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		16A5FE10215A87B600AEEBBD /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
+		16A5FE11215A87B600AEEBBD /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
+		16A5FE12215A87B600AEEBBD /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
+		16A5FE13215A87B600AEEBBD /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		54BD49F61D41FDE5006E29D1 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		54BD49F71D41FDE5006E29D1 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
@@ -106,7 +114,6 @@
 		5E2BEC5D214BA4A700E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5E2BEC5F214BA4A700E65B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
-		87B48ECC20A09E4900DBAD9D /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = guardian_head.txt; path = WireLinkPreviewTests/guardian_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6F1E925A9E00A874F5 /* instagram_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = instagram_head.txt; path = WireLinkPreviewTests/instagram_head.txt; sourceTree = SOURCE_ROOT; };
@@ -161,7 +168,6 @@
 		BF4F2B541E925AFE000B22D1 /* StringXMLEntityParserTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = StringXMLEntityParserTests.swift; path = WireLinkPreviewTests/StringXMLEntityParserTests.swift; sourceTree = SOURCE_ROOT; };
 		BF4F2B601E926D44000B22D1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WireLinkPreviewTests/Info.plist; sourceTree = SOURCE_ROOT; };
 		BF4F2B621E926D5E000B22D1 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = WireLinkPreviewTests/Info.plist; sourceTree = SOURCE_ROOT; };
-		BF7699871D34F881009C378B /* Ono.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Ono.framework; path = Carthage/Build/iOS/Ono.framework; sourceTree = "<group>"; };
 		BFF0578A1D25434D004A2C29 /* WireLinkPreview.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireLinkPreview.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		BFF057941D25434E004A2C29 /* WireLinkPreviewTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireLinkPreviewTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1202A751FA0830000296B4B /* crash.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash.txt; sourceTree = "<group>"; };
@@ -179,8 +185,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87B48ECD20A09E4A00DBAD9D /* HTMLString.framework in Frameworks */,
-				BF7699881D34F881009C378B /* Ono.framework in Frameworks */,
+				16A5FE18215A87F500AEEBBD /* HTMLString.framework in Frameworks */,
+				16A5FE19215A87F500AEEBBD /* Ono.framework in Frameworks */,
+				16A5FE1A215A87F500AEEBBD /* WireSystem.framework in Frameworks */,
+				16A5FE1B215A87F500AEEBBD /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -188,8 +196,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				87B48ECE20A09E9B00DBAD9D /* HTMLString.framework in Frameworks */,
-				BFB7B3D21D81ACE300EBD1C5 /* Ono.framework in Frameworks */,
 				BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -197,6 +203,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		16A5FE0F215A868700AEEBBD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				16A5FE11215A87B600AEEBBD /* HTMLString.framework */,
+				16A5FE13215A87B600AEEBBD /* Ono.framework */,
+				16A5FE10215A87B600AEEBBD /* WireSystem.framework */,
+				16A5FE12215A87B600AEEBBD /* WireUtilities.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		5E2BEC52214BA4A600E65B53 /* WireLinkPreviewTestsHost */ = {
 			isa = PBXGroup;
 			children = (
@@ -288,8 +305,7 @@
 				54BD49F71D41FDE5006E29D1 /* Cartfile.private */,
 				54BD49F81D41FDE5006E29D1 /* Cartfile.resolved */,
 				54BD49F91D41FDE5006E29D1 /* README.md */,
-				87B48ECC20A09E4900DBAD9D /* HTMLString.framework */,
-				BF7699871D34F881009C378B /* Ono.framework */,
+				16A5FE0F215A868700AEEBBD /* Frameworks */,
 				BFF0578C1D25434D004A2C29 /* WireLinkPreview */,
 				BFF057981D25434E004A2C29 /* WireLinkPreviewTests */,
 				5E2BEC52214BA4A600E65B53 /* WireLinkPreviewTestsHost */,
