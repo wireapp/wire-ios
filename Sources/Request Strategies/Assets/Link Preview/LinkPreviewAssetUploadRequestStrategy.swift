@@ -20,21 +20,18 @@
 import Foundation
 import WireLinkPreview
 
-@objcMembers public final class LinkPreviewDetectorHelper : NSObject {
+public final class LinkPreviewDetectorHelper : NSObject {
     fileprivate static var _test_debug_linkPreviewDetector : LinkPreviewDetectorType? = nil
     
-    @objc public class func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType?
-    {
+    public class func test_debug_linkPreviewDetector() -> LinkPreviewDetectorType? {
         return _test_debug_linkPreviewDetector
     }
     
-    @objc public class func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?)
-    {
+    public class func setTest_debug_linkPreviewDetector(_ detectorType: LinkPreviewDetectorType?) {
         _test_debug_linkPreviewDetector = detectorType
     }
     
-    @objc public class func tearDown()
-    {
+    public class func tearDown() {
         _test_debug_linkPreviewDetector = nil
     }
     

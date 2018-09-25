@@ -36,7 +36,6 @@ private let zmLog = ZMSLog(tag: "link previews")
         self.linkPreviewDetector = linkPreviewDetector
         self.managedObjectContext = managedObjectContext
         super.init()
-        self.linkPreviewDetector.delegate = self
     }
 
     public func objectsDidChange(_ objects: Set<NSManagedObject>) {
@@ -67,9 +66,18 @@ private let zmLog = ZMSLog(tag: "link previews")
     func processMessage(_ message: ZMClientMessage) {
         objectsBeingProcessed.insert(message)
         
-        if let messageText = (message as ZMConversationMessage).textMessageData?.messageText {
+        if let textMessageData = (message as ZMConversationMessage).textMessageData,
+           let messageText = textMessageData.messageText {
             zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
-            linkPreviewDetector.downloadLinkPreviews?(inText: messageText) { [weak self] linkPreviews in
+            
+            // We DONT want to generate link previews inside a mentions
+            let mentionRanges = textMessageData.mentions.compactMap{ Range<Int>($0.range) }
+            
+            // We DONT want to generate link previews for markdown links such as
+            // [click me!](www.example.com).
+            let markdownRanges = markdownLinkRanges(in: messageText)
+            
+            linkPreviewDetector.downloadLinkPreviews(inText: messageText, excluding: mentionRanges + markdownRanges) { [weak self] linkPreviews in
 
                 self?.managedObjectContext.performGroupedBlock {
                     zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
@@ -106,18 +114,12 @@ private let zmLog = ZMSLog(tag: "link previews")
         // which is why we need to enque a save maually here
         managedObjectContext.enqueueDelayedSave()
     }
-}
-
-extension LinkPreviewPreprocessor: LinkPreviewDetectorDelegate {
-    public func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool {
-        // We DONT want to generate link previews for markdown links such as
-        // [click me!](www.example.com). So, we get all ranges of markdown links
-        // and return false if the url range is equal to one of these
-        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return true }
+    
+    fileprivate func markdownLinkRanges(in text: String) -> [Range<Int>] {
+        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return [] }
+        
         let wholeRange = NSMakeRange(0, (text as NSString).length)
-        return  !regex
-            .matches(in: text, options: [], range: wholeRange)
-            .map { $0.range(at: 1) }
-            .contains { NSEqualRanges($0, range) }
+        
+        return regex.matches(in: text, options: [], range: wholeRange).compactMap {  Range<Int>($0.range(at: 0)) }
     }
 }
