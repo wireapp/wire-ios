@@ -18,19 +18,15 @@
 
 
 import Foundation
+import WireUtilities
 
-@objc public protocol LinkPreviewDetectorType {
-    @objc optional func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void)
-    weak var delegate: LinkPreviewDetectorDelegate? { get set }
-}
-
-@objc public protocol LinkPreviewDetectorDelegate: class {
-    func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool
+public protocol LinkPreviewDetectorType {
+    
+    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkPreview]) -> Void)
+    
 }
 
 public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
-    
-    public weak var delegate: LinkPreviewDetectorDelegate?
     
     private let blacklist = PreviewBlacklist()
     private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
@@ -57,17 +53,24 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
         super.init()
     }
     
-    public func containsLink(inText text: String) -> Bool {
-        return !containedLinks(inText: text).isEmpty
+    func containsLink(inText text: String) -> Bool {
+        return !containedLinks(inText: text, excluding: []).isEmpty
     }
     
-    func containedLinks(inText text: String) -> [URLWithRange] {
-        let range = NSRange(location: 0, length: (text as NSString).length)
+    /// Return URLs found in text together with their range in within the text
+    /// parameter text: text in which to search for URLs
+    /// parameter excluding: ranges (UTF-16) within the text which should we excluded from the search.
+    func containedLinks(inText text: String, excluding: [Range<Int>] = []) -> [URLWithRange] {
+        
+        let wholeTextRange = Range<Int>(text.startIndex.encodedOffset...text.endIndex.encodedOffset)
+        let validRangeIndexSet = IndexSet(integersIn: wholeTextRange, excluding: excluding)
+        
+        let range = NSRange(location: 0, length: text.utf16.count)
         guard let matches = linkDetector?.matches(in: text, options: [], range: range) else { return [] }
         return matches.compactMap {
             guard let url = $0.url,
-                delegate?.shouldDetectURL(url, range: $0.range, text: text) ?? true
-                else { return nil }
+                  let range = Range<Int>($0.range),
+                  validRangeIndexSet.contains(integersIn: range) else { return nil }
             return (url, $0.range)
         }
     }
@@ -83,10 +86,11 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      for the first link found in the text!**
 
      - parameter text:       The text with potentially contained links, if links are found the preview data is downloaded.
+     - parameter exluding:   Ranges in the text which should be skipped when searching for links.
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
-    public func downloadLinkPreviews(inText text: String, completion : @escaping DetectCompletion) {
-        guard let (url, range) = containedLinks(inText: text).first, !blacklist.isBlacklisted(url) else { return completion([]) }
+    public func downloadLinkPreviews(inText text: String, excluding: [Range<Int>] = [], completion : @escaping DetectCompletion) {
+        guard let (url, range) = containedLinks(inText: text, excluding: excluding).first, !blacklist.isBlacklisted(url) else { return completion([]) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
             guard let `self` = self else { return }
             let originalURLString = (text as NSString).substring(with: range)

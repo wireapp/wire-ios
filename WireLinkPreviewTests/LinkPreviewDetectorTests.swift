@@ -22,13 +22,12 @@ import XCTest
 
 
 
-class LinkPreviewDetectorTests: XCTestCase, LinkPreviewDetectorDelegate {
+class LinkPreviewDetectorTests: XCTestCase {
     
     var sut: LinkPreviewDetector!
     var mockImageTask: MockURLSessionDataTask!
     var imageDownloader: MockImageDownloader!
     var previewDownloader: MockPreviewDownloader!
-    var shouldDetectLink = true
     
     override func setUp() {
         super.setUp()
@@ -50,10 +49,6 @@ class LinkPreviewDetectorTests: XCTestCase, LinkPreviewDetectorDelegate {
         super.tearDown()
     }
     
-    func shouldDetectURL(_ url: URL, range: NSRange, text: String) -> Bool {
-        return shouldDetectLink
-    }
-
     func testThatItCallsTeardownAfterDeallocating() {
         // given
         XCTAssertFalse(previewDownloader.tornDown)
@@ -120,22 +115,39 @@ class LinkPreviewDetectorTests: XCTestCase, LinkPreviewDetectorDelegate {
         XCTAssertTrue(links.isEmpty)
     }
     
-    func testThatItObeysItsDelegate() {
-        sut.delegate = self
-        [true, false].forEach {
-            // given
-            self.shouldDetectLink = $0
-            let text = "This is a sample containing a link: www.example.com"
-            
-            // when
-            let links = sut.containedLinks(inText: text)
-            
-            // then
-            XCTAssertEqual(links.count, self.shouldDetectLink ? 1 : 0)
-        }
+    func testThatItDoesReturnALinkIfItsNotInsideAnExcludedRange() {
+        // given
+        let text = "First: www.example.com/first and second: www.example.com/second"
         
+        // when
+        let links = sut.containedLinks(inText: text, excluding: [Range<Int>((text as NSString).range(of: "and"))!])
+        
+        // then
+        XCTAssertEqual(links.count, 2)
     }
     
+    func testThatItDoesNotReturnALinkIfItsInsideAnExcludedRange() {
+        // given
+        let text = "First: www.example.com/first and second: www.example.com/second"
+        
+        // when
+        let links = sut.containedLinks(inText: text, excluding: [42..<64])
+        
+        // then
+        XCTAssertEqual(links.count, 1)
+    }
+    
+    func testThatItDoesNotReturnALinkIfItsPartiallyInsideAnExcludedRange() {
+        // given
+        let text = "First: www.example.com/first and second: www.example.com/second"
+        
+        // when
+        let links = sut.containedLinks(inText: text, excluding: [40..<42])
+        
+        // then
+        XCTAssertEqual(links.count, 1)
+    }
+        
     func testThatItCallsTheCompletionWithAnEmptyArrayWhenThereIsNoLinkInTheText() {
         // given
         let text = "This is a sample containing no link"
