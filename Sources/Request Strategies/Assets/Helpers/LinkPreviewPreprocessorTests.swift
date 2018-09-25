@@ -20,19 +20,19 @@
 import XCTest
 import WireLinkPreview
 import WireDataModel
-import WireRequestStrategy
-import WireRequestStrategy
 import WireImages
+
+@testable import WireRequestStrategy
 
 final class MockLinkDetector: LinkPreviewDetectorType {
     
     var nextResult = [LinkPreview]()
     var downloadLinkPreviewsCallCount: Int = 0
+    var excludedRanges: [Range<Int>] = []
     
-    weak var delegate: LinkPreviewDetectorDelegate?
-    
-    @objc func downloadLinkPreviews(inText text: String, completion: @escaping ([LinkPreview]) -> Void) {
+    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkPreview]) -> Void) {
         downloadLinkPreviewsCallCount += 1
+        excludedRanges = excluding
         completion(nextResult)
     }
     
@@ -57,13 +57,13 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
     
     // MARK: - Helper
 
-    func createMessage(_ state: ZMLinkPreviewState = .waitingToBeProcessed, isEphemeral : Bool = false) -> ZMClientMessage {
+    func createMessage(text: String = "text message 123", mentions: [Mention] = [], state: ZMLinkPreviewState = .waitingToBeProcessed, isEphemeral : Bool = false) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
             conversation.messageDestructionTimeout = .local(.tenSeconds)
         }
-        let message = conversation.append(text: name) as! ZMClientMessage
+        let message = conversation.append(text: text, mentions: mentions) as! ZMClientMessage
         message.linkPreviewState = state
         return message
     }
@@ -71,7 +71,7 @@ class LinkPreviewPreprocessorTests: MessagingTestBase {
     func assertThatItProcessesMessageWithLinkPreviewState(_ state: ZMLinkPreviewState, shouldProcess: Bool = false, line: UInt = #line) {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            let message = self.createMessage(state)
+            let message = self.createMessage(state: state)
             
             // WHEN
             self.sut.objectsDidChange([message])
@@ -163,7 +163,7 @@ extension LinkPreviewPreprocessorTests {
         }
     }
     
-    func testThatItSetsTheStateToDoneIfTheMessageDoesNotHaceTextMessageData() {
+    func testThatItSetsTheStateToDoneIfTheMessageDoesNotHaveTextMessageData() {
         var message : ZMClientMessage!
 
         self.syncMOC.performGroupedBlockAndWait {
@@ -183,28 +183,46 @@ extension LinkPreviewPreprocessorTests {
         }
     }
     
-    func testThatItShouldNotDetectLinkPreviewsForMarkdownLinks() {
-        // GIVEN
-        let text = "[click me!](www.example.com)"
-        let url = URL(string: "wwww.example.com")!
-        
-        // WHEN
-        let result = self.sut.shouldDetectURL(url, range: NSMakeRange(12, 15), text: text)
-        
-        // THEN
-        XCTAssertFalse(result)
+    func testThatItShouldExcludeMentionsFromLinkPreviewGeneration() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let text = "@john - www.sunet.se hello"
+            let message = self.createMessage(text: text, mentions: [Mention(range: NSMakeRange(0, 20), user: self.otherUser)])
+            
+            // WHEN
+            self.sut.processMessage(message)
+            
+            // THEN
+            XCTAssertEqual(self.mockDetector.excludedRanges, [Range<Int>(NSMakeRange(0, 20))!])
+        }
     }
     
-    func testThatItShouldDetectLinkPreviewsForNonMarkdownLinks() {
-        // GIVEN
-        let text = "click this: www.example.com"
-        let url = URL(string: "wwww.example.com")!
-        
-        // WHEN
-        let result = self.sut.shouldDetectURL(url, range: NSMakeRange(12, 15), text: text)
-        
-        // THEN
-        XCTAssertTrue(result)
+    func testThatItShouldExcludeMarkdownLinksFromLinkPreviewGeneration() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let text = "[click me!](www.example.com) hello"
+            let message = self.createMessage(text: text)
+            
+            // WHEN
+            self.sut.processMessage(message)
+            
+            // THEN
+            XCTAssertEqual(self.mockDetector.excludedRanges, [Range<Int>(NSMakeRange(0, 28))!])
+        }
+    }
+    
+    func testThatItShouldNotExcludeNonMarkdownLinksFromLinkPreviewGeneration() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let text = "click this: www.example.com"
+            let message = self.createMessage(text: text)
+            
+            // WHEN
+            self.sut.processMessage(message)
+            
+            // THEN
+            XCTAssertTrue(self.mockDetector.excludedRanges.isEmpty)
+        }
     }
 }
 
