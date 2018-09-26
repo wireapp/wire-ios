@@ -46,6 +46,8 @@ class UserSearchResultsViewController: UIViewController {
 
         setupCollectionView()
         setupConstraints()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillChangeFrame(_:)), name: UIResponder.keyboardWillChangeFrameNotification, object: nil)
     }
     
     private func setupCollectionView() {
@@ -82,25 +84,32 @@ class UserSearchResultsViewController: UIViewController {
     
     @objc func reloadTable(with results: [UserType]) {
         searchResults = results
+        resizeTable()
         
+        collectionView.reloadData()
+        collectionView.layoutIfNeeded()
+        
+        scrollToLastItem()
+
+        if results.count > 0 {
+            show()
+        } else {
+            dismiss()
+        }
+    }
+    
+    private func resizeTable() {
         let viewHeight = self.view.bounds.size.height
         let minValue = min(viewHeight, CGFloat(searchResults.count) * rowHeight)
         collectionViewHeight?.constant = minValue
         collectionView.isScrollEnabled = (minValue == viewHeight)
-        
-        collectionView.reloadData()
-        collectionView.layoutIfNeeded()
-
+    }
+    
+    private func scrollToLastItem() {
         let firstMatchIndexPath = IndexPath(item: searchResults.count - 1, section: 0)
-
+        
         if collectionView.containsCell(at: firstMatchIndexPath) {
             collectionView.scrollToItem(at: firstMatchIndexPath, at: .bottom, animated: false)
-        }
-
-        if minValue > 0 {
-            show()
-        } else {
-            dismiss()
         }
     }
     
@@ -108,6 +117,15 @@ class UserSearchResultsViewController: UIViewController {
         self.view.isHidden = false
     }
     
+    @objc dynamic func keyboardWillChangeFrame(_ notification: Notification) {
+        guard let duration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval else { return }
+        resizeTable()
+        UIView.animate(withDuration: duration) {
+            self.view.layoutIfNeeded()
+            self.scrollToLastItem()
+        }
+    }
+
 }
 
 extension UserSearchResultsViewController: Dismissable {
