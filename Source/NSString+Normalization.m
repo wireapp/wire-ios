@@ -45,6 +45,11 @@
     return string.removePunctuationCharacters;
 }
 
+- (instancetype)normalizedForMentionSearch
+{
+    return [self stringByFoldingWithOptions:NSCaseInsensitiveSearch | NSDiacriticInsensitiveSearch locale:nil];
+}
+
 - (instancetype)normalizedString;
 {
     NSString *string = [self normalizedEmailaddress];

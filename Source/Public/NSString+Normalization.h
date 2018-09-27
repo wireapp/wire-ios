@@ -23,6 +23,7 @@
 
 - (instancetype)normalizedString;
 - (instancetype)normalizedForSearch;
+- (instancetype)normalizedForMentionSearch;
 - (instancetype)normalizedEmailaddress;
 
 - (BOOL)zmHasOnlyWhitespaceCharacters;

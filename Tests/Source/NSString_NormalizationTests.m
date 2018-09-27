@@ -152,4 +152,20 @@
     XCTAssertEqualObjects(normalizedString4, @"hey");
 }
 
+- (void)testThatItDoesNotRemovePunctuationCharacters_ForMentionSearch
+{
+    NSString *normalizedEmailaddress = [@"hêlló. wörld? wõrlds!..." normalizedForMentionSearch];
+    XCTAssertEqualObjects(normalizedEmailaddress, @"hello. world? worlds!...");
+    
+    NSString *normalizedString2 = [@"#hëy" normalizedForMentionSearch];
+    XCTAssertEqualObjects(normalizedString2, @"#hey");
+    
+    NSString *normalizedString3 = [@"@hēy" normalizedForMentionSearch];
+    XCTAssertEqualObjects(normalizedString3, @"@hey");
+    
+    NSString *normalizedString4 = [@"(hęy)" normalizedForMentionSearch];
+    XCTAssertEqualObjects(normalizedString4, @"(hey)");
+}
+
+
 @end
