@@ -165,9 +165,9 @@ extension ZMClientMessage: ZMImageOwner {
         
         let updatedPreview = linkPreview.update(withOtrKey: keys.otrKey, sha256: keys.sha256!, original: original)
 
-        if let genericMessage = self.genericMessage {
+        if let genericMessage = self.genericMessage, let textMessageData = textMessageData {
             
-            let text = ZMText.text(with: textMessageData?.messageText ?? "", linkPreviews: [updatedPreview])
+            let text = ZMText.text(with: textMessageData.messageText ?? "", mentions: textMessageData.mentions, linkPreviews: [updatedPreview])
             let messageUpdate: MessageContentType
 
             if genericMessage.hasText() {
