@@ -218,6 +218,26 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         XCTAssertEqual(conversation.firstUnreadMessage as? ZMClientMessage, message)
     }
     
+    func testThatItReturnsTheFirstUnreadMessageMentioningSelfIfWeHaveItLocally() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        
+        // when
+        let message1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        message1.visibleInConversation = conversation
+        message1.serverTimestamp = Date(timeIntervalSinceNow: -2)
+        
+        let nonce = UUID()
+        let message2 = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
+        let mention = Mention(range: NSRange(location: 0, length: 4), user: selfUser)
+        message2.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+        message2.visibleInConversation = conversation
+        message1.serverTimestamp = Date(timeIntervalSinceNow: -1)
+        
+        // then
+        XCTAssertEqual(conversation.firstUnreadMessageMentioningSelf as? ZMClientMessage, message2)
+    }
+    
     func testThatItReturnsNilIfTheLastReadServerTimestampIsMoreRecent() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

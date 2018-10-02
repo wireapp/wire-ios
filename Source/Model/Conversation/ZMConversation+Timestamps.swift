@@ -296,6 +296,11 @@ extension ZMConversation {
         return unreadMessagesIncludingInvisible.lazy.map(replaceChildWithParent).filter({ $0.visibleInConversation != nil }).first(where: { $0.shouldGenerateUnreadCount() })
     }
     
+    // Returns first unread message mentioning the self user
+    public var firstUnreadMessageMentioningSelf: ZMConversationMessage? {
+        return unreadMessages.first(where: { $0.textMessageData?.isMentioningSelf ?? false })
+    }
+    
     /// Returns all unread messages. This may contain unread child messages of a system message which aren't directly visible in the conversation.
     @objc
     public var unreadMessages: [ZMConversationMessage] {
