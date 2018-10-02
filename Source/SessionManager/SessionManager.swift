@@ -72,6 +72,12 @@ public protocol SessionManagerType : class {
     
     /// Configure user notification settings. This will ask the user for permission to display notifications.
     func configureUserNotifications()
+    
+    /// Switch account and and ask UI to to navigate to a message in a conversation
+    func showConversation(_ conversation: ZMConversation, at message: ZMConversationMessage?, in session: ZMUserSession)
+    
+    /// Switch account and and ask UI to navigate to the conversatio list
+    func showConversationList(in session: ZMUserSession)
 
 }
 
@@ -162,8 +168,8 @@ public protocol ForegroundNotificationResponder: class {
 
     public fileprivate(set) var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     public fileprivate(set) var unauthenticatedSession: UnauthenticatedSession?
+    public weak var showContentDelegate: ShowContentDelegate?
     public weak var foregroundNotificationResponder: ForegroundNotificationResponder?
-    public weak var requestToOpenViewDelegate: ZMRequestsToOpenViewsDelegate?
     public weak var switchingDelegate: SessionManagerSwitchingDelegate?
     public let groupQueue: ZMSGroupQueue = DispatchGroupQueue(queue: .main)
     
@@ -557,7 +563,6 @@ public protocol ForegroundNotificationResponder: class {
     }
     
     fileprivate func configure(session userSession: ZMUserSession, for account: Account) {
-        userSession.requestToOpenViewDelegate = self
         userSession.sessionManager = self
         require(backgroundUserSessions[account.userIdentifier] == nil, "User session is already loaded")
         backgroundUserSessions[account.userIdentifier] = userSession
@@ -896,7 +901,7 @@ extension SessionManager : WireCallCenterCallStateObserver {
         switch callState {
         case .answered, .outgoing:
             for (_, session) in backgroundUserSessions where session.managedObjectContext == moc && activeUserSession != session {
-                session.open(conversation, at: nil)
+                showConversation(conversation, at: nil, in: session)
             }
         default:
             return

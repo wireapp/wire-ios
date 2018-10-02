@@ -219,7 +219,7 @@ extension ZMUserSession: UNUserNotificationCenterDelegate {
         case ConversationNotificationAction.connect.rawValue:
             acceptConnectionRequest(with: userInfo, completionHandler: completionHandler)
         default:
-            open(userInfo.conversation(in: managedObjectContext), at: nil)
+            showContent(for: userInfo)
             completionHandler()
             break
         }
