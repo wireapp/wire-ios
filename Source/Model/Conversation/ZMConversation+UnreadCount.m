@@ -108,7 +108,7 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 
 + (NSPredicate *)predicateForConversationConsideredUnread;
 {
-    NSPredicate *notSilencedPredicate = [NSPredicate predicateWithFormat:@"%K == %@", ZMConversationIsSilencedKey, @NO];
+    NSPredicate *notSilencedPredicate = [NSPredicate predicateWithFormat:@"%K == 0", ZMConversationMutedStatusKey];
     NSPredicate *notSelfConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeSelf];
     NSPredicate *notInvalidConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeInvalid];
     NSPredicate *pendingConnection = [NSPredicate predicateWithFormat:@"%K != nil AND %K.status == %d", ZMConversationConnectionKey, ZMConversationConnectionKey, ZMConnectionStatusPending];
@@ -123,7 +123,7 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     NSPredicate *notSelfConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeSelf];
     NSPredicate *notInvalidConversation = [NSPredicate predicateWithFormat:@"%K != %d", ZMConversationConversationTypeKey, ZMConversationTypeInvalid];
     NSPredicate *unreadMessages = [NSPredicate predicateWithFormat:@"%K > 0", ZMConversationInternalEstimatedUnreadCountKey];
-    NSPredicate *notSilenced = [NSPredicate predicateWithFormat:@"%K == NO", ZMConversationIsSilencedKey];
+    NSPredicate *notSilenced = [NSPredicate predicateWithFormat:@"%K == 0", ZMConversationMutedStatusKey];
 
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[notSelfConversation, notInvalidConversation, unreadMessages, notSilenced]];
 }

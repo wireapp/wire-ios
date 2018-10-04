@@ -46,7 +46,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
-        conversation.isSilenced = true
+        conversation.mutedMessageTypes = .all
 
         let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)

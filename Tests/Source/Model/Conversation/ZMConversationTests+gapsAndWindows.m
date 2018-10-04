@@ -249,15 +249,6 @@
     XCTAssertTrue(conversation.hasDraftMessage);
 }
 
-- (void)testThatTheConversationIsNotSilencedByDefault
-{
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    
-    // then
-    XCTAssertFalse(conversation.isSilenced);
-}
-
 - (void)testThatTheConversationIsNotArchivedByDefault
 {
     // given

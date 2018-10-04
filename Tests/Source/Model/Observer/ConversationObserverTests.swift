@@ -46,7 +46,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             "unreadCountChanged",
             "connectionStateChanged",
             "isArchivedChanged",
-            "isSilencedChanged",
+            "mutedMessageTypesChanged",
             "conversationListIndicatorChanged",
             "clearedChanged",
             "securityLevelChanged",
@@ -582,9 +582,9 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.isSilenced = true },
-                                                     expectedChangedField: "isSilencedChanged" ,
-                                                     expectedChangedKeys: ["isSilenced"])
+                                                     modifier: { conversation, _ in conversation.mutedMessageTypes = .nonMentions },
+                                                     expectedChangedField: "mutedMessageTypesChanged" ,
+                                                     expectedChangedKeys: ["mutedStatus"])
         
     }
     

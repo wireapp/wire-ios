@@ -119,8 +119,24 @@ extension ZMConversation {
         return false
     }
     
+    @objc(updateMutedStatusWithPayload:)
+    func updateMuted(with payload: [String: Any]) {
+        guard let referenceDateAsString = payload[ZMConversationInfoOTRMutedReferenceKey] as? String,
+              let referenceDate = NSDate(transport: referenceDateAsString),
+              updateMuted(referenceDate as Date, synchronize: false) else {
+            return
+        }
+        
+        if let mutedStatus = payload[ZMConversationInfoOTRMutedStatusValueKey] as? Int32 {
+            self.mutedStatus = mutedStatus
+        }
+        else if let mutedLegacyFlag = payload[ZMConversationInfoOTRMutedValueKey] as? Int {
+            self.mutedStatus = (mutedLegacyFlag == 0) ? MutedMessageTypes.none.rawValue : MutedMessageTypes.nonMentions.rawValue
+        }
+    }
+    
     @objc @discardableResult
-    func updateSilenced(_ timestamp: Date, synchronize: Bool = false) -> Bool {
+    func updateMuted(_ timestamp: Date, synchronize: Bool = false) -> Bool {
         guard let managedObjectContext = managedObjectContext else { return false }
         
         if timestamp > silencedChangedTimestamp {

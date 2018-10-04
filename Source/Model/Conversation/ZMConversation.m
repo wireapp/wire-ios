@@ -51,7 +51,7 @@ NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
 NSString *const ZMConversationIsArchivedKey = @"internalIsArchived";
 NSString *const ZMConversationIsSelfAnActiveMemberKey = @"isSelfAnActiveMember";
-NSString *const ZMConversationIsSilencedKey = @"isSilenced";
+NSString *const ZMConversationMutedStatusKey = @"mutedStatus";
 NSString *const ZMConversationMessagesKey = @"messages";
 NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationLastServerSyncedActiveParticipantsKey = @"lastServerSyncedActiveParticipants";
@@ -154,8 +154,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic clearedTimeStamp;
 @dynamic lastReadServerTimeStamp;
 @dynamic lastServerTimeStamp;
-@dynamic isSilenced;
-@dynamic isMuted;
 @dynamic internalIsArchived;
 @dynamic archivedChangedTimestamp;
 @dynamic silencedChangedTimestamp;
@@ -188,22 +186,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 + (NSSet *)keyPathsForValuesAffectingEstimatedUnreadCount
 {
     return [NSSet setWithObjects: ZMConversationInternalEstimatedUnreadCountKey, ZMConversationLastReadServerTimeStampKey, nil];
-}
-
-- (void)setIsSilenced:(BOOL)isSilenced
-{
-    [self willChangeValueForKey:ZMConversationIsSilencedKey];
-    [self setPrimitiveValue:@(isSilenced) forKey:ZMConversationIsSilencedKey];
-    [self didChangeValueForKey:ZMConversationIsSilencedKey];
-    
-    if (self.managedObjectContext.zm_isUserInterfaceContext && self.lastServerTimeStamp) {
-        [self updateSilenced:self.lastServerTimeStamp synchronize:YES];
-    }
-}
-
-+ (NSSet *)keyPathsForValuesAffectingIsSilenced
-{
-    return [NSSet setWithObject:ZMConversationIsSilencedKey];
 }
 
 + (NSFetchRequest *)sortedFetchRequest
@@ -359,7 +341,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationLastReadLocalTimestampKey,
             ZMConversationInternalEstimatedUnreadCountKey,
             ZMConversationIsArchivedKey,
-            ZMConversationIsSilencedKey,
+            ZMConversationMutedStatusKey,
             LocalMessageDestructionTimeoutKey,
             SyncedMessageDestructionTimeoutKey,
             DownloadedMessageIDsDataKey,

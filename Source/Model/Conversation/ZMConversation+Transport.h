@@ -29,6 +29,7 @@ typedef NS_ENUM(int, ZMBackendConversationType) {
 
 extern NSString *const ZMConversationInfoOTRMutedValueKey;
 extern NSString *const ZMConversationInfoOTRMutedReferenceKey;
+extern NSString *const ZMConversationInfoOTRMutedStatusValueKey;
 extern NSString *const ZMConversationInfoOTRArchivedValueKey;
 extern NSString *const ZMConversationInfoOTRArchivedReferenceKey;
 

@@ -240,7 +240,7 @@ public extension ZMConversation {
             messageTimer: timer
         )
         
-        if isArchived && !isSilenced {
+        if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
         

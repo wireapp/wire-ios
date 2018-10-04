@@ -30,5 +30,5 @@
 - (void)didReceiveWindowNotification:(NSNotification *)notification;
 - (ZMUser *)createUser; ///< creates user on the UI moc
 - (ZMUser *)createUserOnMoc:(NSManagedObjectContext *)moc;
-
+- (ZMConversation *)insertConversationWithUnread:(BOOL)hasUnread;
 @end
