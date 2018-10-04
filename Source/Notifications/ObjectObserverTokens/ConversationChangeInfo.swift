@@ -26,7 +26,7 @@ extension ZMConversation : ObjectInSnapshot {
                     #keyPath(ZMConversation.lastModifiedDate),
                     #keyPath(ZMConversation.isArchived),
                     #keyPath(ZMConversation.conversationListIndicator),
-                    #keyPath(ZMConversation.isSilenced),
+                    #keyPath(ZMConversation.mutedStatus),
                     #keyPath(ZMConversation.securityLevel),
                     #keyPath(ZMConversation.displayName),
                     #keyPath(ZMConversation.estimatedUnreadCount),
@@ -93,8 +93,8 @@ extension ZMConversation : ObjectInSnapshot {
         return changedKeysContain(keys: #keyPath(ZMConversation.isArchived))
     }
 
-    public var isSilencedChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMConversation.isSilenced))
+    public var mutedMessageTypesChanged : Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.mutedStatus))
     }
 
     public var conversationListIndicatorChanged : Bool {
@@ -138,7 +138,7 @@ extension ZMConversation : ObjectInSnapshot {
         "lastModifiedDateChanged: \(lastModifiedDateChanged)," +
         "connectionStateChanged: \(connectionStateChanged)," +
         "isArchivedChanged: \(isArchivedChanged)," +
-        "isSilencedChanged: \(isSilencedChanged)," +
+        "mutedMessageTypesChanged: \(mutedMessageTypesChanged)," +
         "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
         "clearedChanged \(clearedChanged)," +
         "securityLevelChanged \(securityLevelChanged)," +

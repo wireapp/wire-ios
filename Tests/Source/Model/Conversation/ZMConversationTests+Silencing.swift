@@ -28,7 +28,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.lastServerTimeStamp = timestamp
         
         // when
-        conversation.isSilenced = true
+        conversation.mutedMessageTypes = .all
         uiMOC.saveOrRollback()
         
         // then
@@ -45,7 +45,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.silencedChangedTimestamp = timestamp
         
         // when
-        conversation.isSilenced = true
+        conversation.mutedMessageTypes = .all
         uiMOC.saveOrRollback()
         
         // then
@@ -61,7 +61,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
             conversation.lastServerTimeStamp = timestamp
         
             // when
-            conversation.updateSilenced(timestamp, synchronize: true)
+            conversation.updateMuted(timestamp, synchronize: true)
             self.syncMOC.saveOrRollback()
             
             // then
@@ -86,10 +86,10 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.mutableLastServerSyncedActiveParticipants.add(otherUser)
         
         conversation.isArchived = true
-        conversation.isSilenced = true
+        conversation.mutedMessageTypes = .all
         
         XCTAssertTrue(conversation.isArchived)
-        XCTAssertTrue(conversation.isSilenced)
+        XCTAssertEqual(conversation.mutedMessageTypes, .all)
         
         // WHEN
         
@@ -110,7 +110,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         
         // THEN
         XCTAssertFalse(conversation.isArchived)
-        XCTAssertTrue(conversation.isSilenced)
+        XCTAssertEqual(conversation.mutedMessageTypes, .all)
     }
     
 }

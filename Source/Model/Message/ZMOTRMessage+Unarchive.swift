@@ -55,7 +55,7 @@ extension ZMOTRMessage {
     }
     
     private func unarchiveIfNotSilenced(_ conversation: ZMConversation) {
-        if conversation.isArchived, !conversation.isSilenced {
+        if conversation.isArchived, conversation.mutedMessageTypes == .none {
             conversation.unarchive(with: self)
         }
     }

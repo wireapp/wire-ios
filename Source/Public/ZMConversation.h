@@ -80,8 +80,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastEditableMessage;
 
-@property (nonatomic) BOOL isSilenced;
-@property (nonatomic) BOOL isMuted DEPRECATED_ATTRIBUTE;
 @property (nonatomic) BOOL isArchived;
 
 /// returns whether the user is allowed to write to this conversation

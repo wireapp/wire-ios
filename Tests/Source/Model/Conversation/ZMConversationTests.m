@@ -41,7 +41,6 @@
 
 - (ZMMessage *)insertDownloadedMessageAfterMessageIntoConversation:(ZMConversation *)conversation;
 - (ZMMessage *)insertDownloadedMessageIntoConversation:(ZMConversation *)conversation;
-- (ZMConversation *)insertConversationWithUnread:(BOOL)hasUnread;
 
 @end
 
@@ -237,8 +236,6 @@
     [self checkConversationAttributeForKey:@"conversationType" value:@(1)];
     [self checkConversationAttributeForKey:@"lastModifiedDate" value:[NSDate dateWithTimeIntervalSince1970:123456]];
     [self checkConversationAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
-    [self checkConversationAttributeForKey:ZMConversationIsSilencedKey value:@YES];
-    [self checkConversationAttributeForKey:ZMConversationIsSilencedKey value:@NO];
     [self checkConversationAttributeForKey:ZMConversationIsArchivedKey value:@YES];
     [self checkConversationAttributeForKey:ZMConversationIsArchivedKey value:@NO];
     [self checkConversationAttributeForKey:ZMConversationIsSelfAnActiveMemberKey value:@YES];
@@ -2470,34 +2467,17 @@
     }];
 }
 
-- (void)testThatItDoesNotCountsSilencedConversationsUnreadContentAsUnread;
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-        
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
-        conversation.isSilenced = YES;
-        
-        // when
-        XCTAssert([self.syncMOC saveOrRollback]);
-        
-        // then
-        XCTAssertEqual([ZMConversation unreadConversationCountExcludingSilencedInContext:self.syncMOC excluding:nil], 0lu);
-    }];
-}
-
 - (void)testThatItDoesCountsNonSilencedNonExcludedConversationsUnreadContentAsUnread;
 {
     // given
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-        
+
         [self insertConversationWithUnread:YES];
-        
+
         // when
         XCTAssert([self.syncMOC saveOrRollback]);
-        
+
         // then
         XCTAssertEqual([ZMConversation unreadConversationCountExcludingSilencedInContext:self.syncMOC excluding:nil], 1lu);
     }];
@@ -2611,23 +2591,6 @@
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
         connection.conversation = conversation;
         connection.status = ZMConnectionStatusIgnored;
-        
-        // when
-        XCTAssert([self.syncMOC saveOrRollback]);
-        
-        // then
-        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-    }];
-}
-
-- (void)testThatItDoesNotCountSilencedConversationsEvenWithUnreadContentAsUnread;
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
-    
-        ZMConversation *conversation = [self insertConversationWithUnread:YES];
-        conversation.isSilenced = YES;
         
         // when
         XCTAssert([self.syncMOC saveOrRollback]);

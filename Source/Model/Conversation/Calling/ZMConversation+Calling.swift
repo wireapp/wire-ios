@@ -30,7 +30,7 @@ public extension ZMConversation {
             relevantForStatus: relevantForStatus
         )
 
-        if isArchived && !isSilenced {
+        if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
 
@@ -53,7 +53,7 @@ public extension ZMConversation {
             duration: duration
         )
 
-        if isArchived && !isSilenced {
+        if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
 
