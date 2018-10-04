@@ -494,7 +494,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         
         NSDictionary *selfMember = members[@"self"];
         XCTAssertTrue([selfMember isKindOfClass:[NSDictionary class]]);
-        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_archived", @"otr_archived_ref"];
+        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_muted_status", @"otr_archived", @"otr_archived_ref"];
         AssertDictionaryHasKeys(selfMember, keys);
         
         XCTAssertEqualObjects(selfMember[@"otr_muted"], @(conversation.otrMuted));

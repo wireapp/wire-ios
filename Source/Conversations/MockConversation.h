@@ -38,6 +38,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 @property (nonatomic, nullable) NSString *otrArchivedRef;
 @property (nonatomic, nullable) NSString *otrMutedRef;
+@property (nonatomic, nullable) NSNumber *otrMutedStatus;
 @property (nonatomic) BOOL otrArchived;
 @property (nonatomic) BOOL otrMuted;
 

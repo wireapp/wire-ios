@@ -47,6 +47,7 @@
 @dynamic otrArchivedRef;
 @dynamic otrMuted;
 @dynamic otrMutedRef;
+@dynamic otrMutedStatus;
 @dynamic team;
 @dynamic accessRole;
 @dynamic accessMode;
@@ -192,6 +193,7 @@
     selfInfo[@"id"] = self.selfIdentifier;
     selfInfo[@"otr_muted_ref"] = self.otrMutedRef ?: [NSNull null];
     selfInfo[@"otr_muted"] = @(self.otrMuted);
+    selfInfo[@"otr_muted_status"] = self.otrMutedStatus ?: [NSNull null];
     selfInfo[@"otr_archived_ref"] = self.otrArchivedRef ?: [NSNull null];
     selfInfo[@"otr_archived"] = @(self.otrArchived);
     
