@@ -236,6 +236,13 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return archivedRef != nil;
 }
 
+- (BOOL)updateConversation:(MockConversation *)conversation isOTRMutedStatusFromPutSelfConversationPayload:(NSDictionary *)payload
+{
+    NSNumber *mutedStatus = [payload optionalNumberForKey:@"otr_muted_status"];
+    conversation.otrMutedStatus = mutedStatus;
+    return mutedStatus != nil;
+}
+
 - (ZMTransportResponse *)processPutConversationSelf:(NSString *)conversationId payload:(NSDictionary *)payload;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
@@ -245,8 +252,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     
     BOOL hadOTRMuted = [self updateConversation:conversation isOTRMutedFromPutSelfConversationPayload:payload];
     BOOL hadOTRArchived = [self updateConversation:conversation isOTRArchivedFromPutSelfConversationPayload:payload];
+    BOOL hadOTRMutedStatus = [self updateConversation:conversation isOTRMutedStatusFromPutSelfConversationPayload:payload];
 
-    if( !hadOTRArchived && !hadOTRMuted) {
+    if( !hadOTRArchived && !hadOTRMuted && !hadOTRMutedStatus) {
         return [ZMTransportResponse responseWithPayload:@{@"error":@"no useful payload"} HTTPStatus:400 transportSessionError:nil];
     }
     
