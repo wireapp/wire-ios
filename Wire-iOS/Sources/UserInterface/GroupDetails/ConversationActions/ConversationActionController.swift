@@ -83,6 +83,9 @@
         case .markUnread: self.enqueue {
             self.conversation.markAsUnread()
             }
+        case .configureNotifications: self.requestNotificationResult(for: self.conversation) { result in
+            self.handleNotificationResult(result, for: self.conversation)
+        }
         case .silence(isSilenced: let isSilenced): self.enqueue {
             self.conversation.mutedMessageTypes = isSilenced ? .none : .all 
             }
@@ -101,9 +104,6 @@
             self.handleBlockResult(result, for: self.conversation)
             }
         case .remove: fatalError()
-        case .setMutedMessageTypes:
-            // TODO mentions: open menu
-            fatalError()
         }
     }
     
