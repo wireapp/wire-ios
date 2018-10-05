@@ -34,7 +34,7 @@ public struct MutedMessageTypes: OptionSet {
     
     /// Only non-mentions are muted.
     public static let nonMentions = MutedMessageTypes(rawValue: 1 << 0)
-    private static let mentions = MutedMessageTypes(rawValue: 1 << 1)
+    public static let mentions = MutedMessageTypes(rawValue: 1 << 1)
 }
 
 public extension ZMConversation {
@@ -52,6 +52,33 @@ public extension ZMConversation {
                 let lastServerTimestamp = self.lastServerTimeStamp {
                 updateMuted(lastServerTimestamp, synchronize: true)
             }
+        }
+    }
+}
+
+extension ZMConversationMessage {
+    var isSilenced: Bool {
+        guard let conversation = self.conversation else {
+            return false
+        }
+        
+        guard let sender = self.sender, !sender.isSelfUser else {
+            return true
+        }
+        
+        if conversation.mutedMessageTypes == .none {
+            return false
+        }
+        
+        guard let textMessageData = self.textMessageData else {
+            return true
+        }
+        
+        if conversation.mutedMessageTypes == .nonMentions && textMessageData.isMentioningSelf {
+            return false
+        }
+        else {
+            return true
         }
     }
 }
