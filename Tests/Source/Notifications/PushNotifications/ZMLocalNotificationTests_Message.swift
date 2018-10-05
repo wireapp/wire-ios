@@ -170,7 +170,7 @@ class ZMLocalNotificationTests_Message : ZMLocalNotificationTests {
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilenced(){
         
         // given
-        groupConversation.isSilenced = true
+        groupConversation.mutedMessageTypes = .all
 
         // when
         let note = textNotification(groupConversation, sender: sender)
@@ -181,7 +181,7 @@ class ZMLocalNotificationTests_Message : ZMLocalNotificationTests {
     
     func testThatItDoesNotCreateANotificationWhenTheConversationIsSilencedAndOtherUserIsMentioned() {
         // Given
-        groupConversation.isSilenced = true
+        groupConversation.mutedMessageTypes = .all
         
         // When
         let note = textNotification(groupConversation, sender: sender, mentionedUser: sender)
@@ -190,9 +190,20 @@ class ZMLocalNotificationTests_Message : ZMLocalNotificationTests {
         XCTAssertNil(note)
     }
     
+    func testThatItDoesNotCreateANotificationWhenTheConversationIsFullySilencedAndSelfUserIsMentioned() {
+        // Given
+        groupConversation.mutedMessageTypes = .all
+        
+        // When
+        let note = textNotification(groupConversation, sender: sender, mentionedUser: selfUser)
+        
+        // Then
+        XCTAssertNil(note)
+    }
+    
     func testThatItDoesCreateANotificationWhenTheConversationIsSilencedAndSelfUserIsMentioned() {
         // Given
-        groupConversation.isSilenced = true
+        groupConversation.mutedMessageTypes = .nonMentions
         
         // When
         let note = textNotification(groupConversation, sender: sender, mentionedUser: selfUser)
