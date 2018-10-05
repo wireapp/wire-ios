@@ -16,13 +16,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class PermissionDeniedViewController;
-@class ConversationActionController;
+import Foundation
 
-@interface ConversationListViewController ()
+extension ProfileDetailsViewController {
+    @objc func setupStyle() {
+        remainingTimeLabel.textColor = .textDimmed
+        remainingTimeLabel.font = .mediumSemiboldFont
+    }
 
-@property (nonatomic, nonnull) UILabel *noConversationLabel;
-@property (nonatomic, nullable) PermissionDeniedViewController *pushPermissionDeniedViewController;
-@property (nonatomic, nullable) ConversationActionController *actionsController;
+    //MARK: - action menu
 
-@end
+    @objc func presentMenuSheetController() {
+        actionsController = ConversationActionController(conversation: conversation, target: self)
+        actionsController.presentMenu(from: footerView)
+    }
+}
