@@ -22,7 +22,7 @@ extension ZMConversation {
     enum Action {
         case delete
         case leave
-        case setMutedMessageTypes
+        case configureNotifications
         case silence(isSilenced: Bool)
         case archive(isArchived: Bool)
         case cancelRequest
@@ -74,8 +74,13 @@ extension ZMConversation {
         }
         
         if !isReadOnly {
-            let isSilenced = mutedMessageTypes != .none
-            actions.append(.silence(isSilenced: isSilenced))
+            if ZMUser.selfUser()?.hasTeam ?? false {
+                actions.append(.configureNotifications)
+            }
+            else {
+                let isSilenced = mutedMessageTypes != .none
+                actions.append(.silence(isSilenced: isSilenced))
+            }
         }
 
         actions.append(.archive(isArchived: isArchived))
@@ -113,11 +118,11 @@ extension ZMConversation.Action {
         case .leave: return "meta.menu.leave"
         case .markRead: return "meta.menu.mark_read"
         case .markUnread: return "meta.menu.mark_unread"
+        case .configureNotifications: return "meta.menu.configure_notifications"
         case .silence(isSilenced: let muted): return "meta.menu.silence.\(muted ? "unmute" : "mute")"
         case .archive(isArchived: let archived): return "meta.menu.\(archived ? "unarchive" : "archive")"
         case .cancelRequest: return "meta.menu.cancel_connection_request"
         case .block(isBlocked: let blocked): return blocked ? "profile.unblock_button_title" : "profile.block_button_title"
-        case .setMutedMessageTypes: return "meta.menu.silence"
         }
     }
     
