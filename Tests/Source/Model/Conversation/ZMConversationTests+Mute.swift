@@ -56,3 +56,67 @@ class ZMConversationTests_Mute : ZMConversationTestsBase {
     }
 
 }
+
+extension ZMConversationTests_Mute {
+    func testMessageShouldNotCreateNotification_SelfMessage() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.append(text: "Hello")!
+        // THEN
+        XCTAssertTrue(message.isSilenced)
+    }
+    
+    func testMessageShouldNotCreateNotification_FullySilenced() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .all
+        let message = conversation.append(text: "Hello")!
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        (message as! ZMClientMessage).sender = user
+        // THEN
+        XCTAssertTrue(message.isSilenced)
+    }
+    
+    func testMessageShouldNotCreateNotification_MentionSilenced_NotATextMessage() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .nonMentions
+        let message = conversation.appendKnock()!
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        (message as! ZMClientMessage).sender = user
+        // THEN
+        XCTAssertTrue(message.isSilenced)
+    }
+    
+    func testMessageShouldNotCreateNotification_MentionSilenced_HasNoMention() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .nonMentions
+        let message = conversation.append(text: "Hello")!
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        (message as! ZMClientMessage).sender = user
+        // THEN
+        XCTAssertTrue(message.isSilenced)
+    }
+    
+    func testMessageShouldCreateNotification_NotSilenced() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.append(text: "Hello")!
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        (message as! ZMClientMessage).sender = user
+        // THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+    
+    func testMessageShouldCreateNotification_MentionSilenced_HasMention() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .nonMentions
+        let message = conversation.append(text: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())!
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        (message as! ZMClientMessage).sender = user
+        // THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+}
