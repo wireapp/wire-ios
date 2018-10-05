@@ -57,7 +57,7 @@ public extension ZMConversation {
 }
 
 extension ZMConversationMessage {
-    var isSilenced: Bool {
+    public var isSilenced: Bool {
         guard let conversation = self.conversation else {
             return false
         }
