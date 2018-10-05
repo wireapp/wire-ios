@@ -127,11 +127,28 @@ extension ZMConversation {
             return
         }
         
-        if let mutedStatus = payload[ZMConversationInfoOTRMutedStatusValueKey] as? Int32 {
-            self.mutedStatus = mutedStatus
+        let mutedStatus = payload[ZMConversationInfoOTRMutedStatusValueKey] as? Int32
+        let mutedLegacyFlag = payload[ZMConversationInfoOTRMutedValueKey] as? Int
+        
+        if let legacyFlag = mutedLegacyFlag {
+            // In case both flags are set we want to respect the legacy one and only read the second bit from the new status.
+            if let status = mutedStatus {
+                var statusFlags = MutedMessageTypes(rawValue: status)
+                if legacyFlag != 0 {
+                    statusFlags.formUnion(.nonMentions)
+                }
+                else {
+                    statusFlags = MutedMessageTypes.none
+                }
+                
+                self.mutedStatus = statusFlags.rawValue
+            }
+            else {
+                self.mutedStatus = (legacyFlag == 0) ? MutedMessageTypes.none.rawValue : MutedMessageTypes.nonMentions.rawValue
+            }
         }
-        else if let mutedLegacyFlag = payload[ZMConversationInfoOTRMutedValueKey] as? Int {
-            self.mutedStatus = (mutedLegacyFlag == 0) ? MutedMessageTypes.none.rawValue : MutedMessageTypes.nonMentions.rawValue
+        else if let status = mutedStatus {
+            self.mutedStatus = status
         }
     }
     
