@@ -23,8 +23,12 @@
 @interface ZMConversation (UnreadCount)
 
 /// internalEstimatedUnreadCount can only be set from the syncMOC
-/// It is calculated by counting the unreadTimeStamps which are managed on the sync context
+/// It is calculated by counting the unread messages which should generate an unread dot
 @property (nonatomic) int64_t internalEstimatedUnreadCount;
+
+/// internalEstimatedUnreadSelfMentionCount can only be set from the syncMOC
+/// It is calculated by counting the unread messages which mention the self user
+@property (nonatomic) int64_t internalEstimatedUnreadSelfMentionCount;
 
 /// hasUnreadUnsentMessage is set when a message expires
 /// and reset when the visible window changes

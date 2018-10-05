@@ -241,6 +241,14 @@
         syncConv.internalEstimatedUnreadCount = [@(unreadCount) intValue];
     }];
 }
+
+- (void)simulateUnreadSelfMentionCount:(NSUInteger)unreadCount forConversation:(nonnull ZMConversation *)conversation mergeBlock:(void(^_Nullable)(void))mergeBlock;
+{
+    [self performChangesSyncConversation:conversation mergeBlock:mergeBlock changeBlock:^(ZMConversation * syncConv) {
+        syncConv.internalEstimatedUnreadSelfMentionCount = [@(unreadCount) intValue];
+    }];
+}
+
 - (void)simulateUnreadMissedCallInConversation:(nonnull ZMConversation *)conversation mergeBlock:(void(^_Nullable)(void))mergeBlock;
 {
     [self performChangesSyncConversation:conversation mergeBlock:mergeBlock changeBlock:^(ZMConversation * syncConv) {
@@ -258,6 +266,11 @@
 - (void)simulateUnreadCount:(NSUInteger)unreadCount forConversation:(ZMConversation *)conversation;
 {
     [self simulateUnreadCount:unreadCount forConversation:conversation mergeBlock:nil];
+}
+
+- (void)simulateUnreadSelfMentionCount:(NSUInteger)unreadCount forConversation:(ZMConversation *)conversation;
+{
+    [self simulateUnreadSelfMentionCount:unreadCount forConversation:conversation mergeBlock:nil];
 }
 
 - (void)simulateUnreadMissedCallInConversation:(ZMConversation *)conversation;

@@ -244,7 +244,6 @@
     [self checkConversationAttributeForKey:@"needsToBeUpdatedFromBackend" value:@NO];
     [self checkConversationAttributeForKey:ZMConversationLastReadServerTimeStampKey value:[NSDate date]];
     [self checkConversationAttributeForKey:ZMConversationLastServerTimeStampKey value:[NSDate date]];
-
 }
 
 - (void)checkConversationAttributeForKey:(NSString *)key value:(id)value;
@@ -2640,7 +2639,7 @@
 
 
 
-@implementation ZMConversationTests (ConversaitonListIndicator)
+@implementation ZMConversationTests (ConversationListIndicator)
 
 - (void)setConversationAsHavingKnock:(ZMConversation *)conversation
 {
@@ -2668,6 +2667,19 @@
     
     // then
     XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorNone);
+}
+
+- (void)testThatConversationListIndicatorIsUnreadMentionWhenItHasUnreadSelfMention
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        [self simulateUnreadSelfMentionCount:2 forConversation:conversation];
+        
+        // then
+        XCTAssertEqual(conversation.conversationListIndicator, ZMConversationListIndicatorUnreadSelfMention);
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
 }
 
 - (void)testThatConversationListIndicatorIsUnreadMessageWhenItHasUnread

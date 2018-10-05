@@ -18,6 +18,13 @@
 
 import Foundation
 
+@objc
+public enum MutedMessageOptionValue: Int32 {
+    case none = 0
+    case nonMentions = 1
+    case mentions = 2
+}
+
 /// Defines what kind of messages are muted.
 public struct MutedMessageTypes: OptionSet {
     public let rawValue: Int32
@@ -27,14 +34,14 @@ public struct MutedMessageTypes: OptionSet {
     }
     
     /// None of the messages are muted.
-    public static let none     = MutedMessageTypes(rawValue: 0)
+    public static let none     = MutedMessageTypes(rawValue: MutedMessageOptionValue.none.rawValue)
 
     /// All messages, including mentions, are muted.
     public static let all: MutedMessageTypes = [.nonMentions, .mentions]
     
     /// Only non-mentions are muted.
-    public static let nonMentions = MutedMessageTypes(rawValue: 1 << 0)
-    public static let mentions = MutedMessageTypes(rawValue: 1 << 1)
+    public static let nonMentions = MutedMessageTypes(rawValue: MutedMessageOptionValue.nonMentions.rawValue)
+    public static let mentions = MutedMessageTypes(rawValue: MutedMessageOptionValue.mentions.rawValue)
 }
 
 public extension ZMConversation {

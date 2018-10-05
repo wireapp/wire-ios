@@ -72,6 +72,7 @@ extern const NSUInteger ZMConversationMaxTextMessageLength;
 extern NSTimeInterval ZMConversationDefaultLastReadTimestampSaveDelay;
 extern NSString *const ZMConversationEstimatedUnreadCountKey;
 
+extern NSString *const ZMConversationInternalEstimatedUnreadSelfMentionCountKey;
 extern NSString *const ZMConversationInternalEstimatedUnreadCountKey;
 extern NSString *const ZMConversationLastUnreadKnockDateKey;
 extern NSString *const ZMConversationLastUnreadMissedCallDateKey;

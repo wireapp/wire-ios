@@ -76,6 +76,27 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             
             // then
             XCTAssertEqual(conversation.estimatedUnreadCount, 1)
+            XCTAssertEqual(conversation.estimatedUnreadSelfMentionCount, 0)
+        }
+    }
+    
+    func testThatSelfMentionUnreadCountIsUpdatedWhenMessageIsInserted() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let nonce = UUID()
+            let timestamp = Date()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
+            let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            message.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+            message.serverTimestamp = timestamp
+            message.visibleInConversation = conversation
+            
+            // when
+            conversation.updateTimestampsAfterInsertingMessage(message)
+            
+            // then
+            XCTAssertEqual(conversation.estimatedUnreadSelfMentionCount, 1)
         }
     }
     
@@ -96,6 +117,29 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             
             // then
             XCTAssertEqual(conversation.estimatedUnreadCount, 0)
+        }
+    }
+    
+    func testThatUnreadSelfMentionCountIsUpdatedWhenMessageIsDeleted() {
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let nonce = UUID()
+            let timestamp = Date()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
+            let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
+            message.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+            message.serverTimestamp = timestamp
+            message.visibleInConversation = conversation
+            conversation.updateTimestampsAfterInsertingMessage(message)
+            XCTAssertEqual(conversation.internalEstimatedUnreadSelfMentionCount, 1)
+            
+            // when
+            message.visibleInConversation = nil
+            conversation.updateTimestampsAfterDeletingMessage()
+            
+            // then
+            XCTAssertEqual(conversation.internalEstimatedUnreadSelfMentionCount, 0)
         }
     }
     
