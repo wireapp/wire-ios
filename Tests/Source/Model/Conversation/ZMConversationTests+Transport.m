@@ -159,7 +159,7 @@
                                                       conversationType:ZMConvTypeGroup
                                                             isArchived:YES
                                                            archivedRef:archivedDate
-                                                            isSilenced:NO
+                                                            isSilenced:YES
                                                            silencedRef:silencedDate
                                                         silencedStatus:@(3)];
         
@@ -181,6 +181,47 @@
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
     }];
 }
+
+- (void)testThatItUpdatesItselfFromTransportData_mutedStatusToLegacy
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        conversation.mutedStatus = 3;
+        NSDate *serverTimestamp = [NSDate date];
+        NSDate *archivedDate = [NSDate date];
+        NSDate *silencedDate = [archivedDate dateByAddingTimeInterval:10];
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation
+                                                      conversationType:ZMConvTypeGroup
+                                                            isArchived:YES
+                                                           archivedRef:archivedDate
+                                                            isSilenced:NO
+                                                           silencedRef:silencedDate
+                                                        silencedStatus:nil];
+        
+        // when
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
+        
+        // then
+        XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
+        XCTAssertNil(conversation.userDefinedName);
+        XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
+        
+        XCTAssertTrue(conversation.isArchived);
+        XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertFalse(conversation.isFullyMuted);
+        XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
+    }];
+}
+
+
 - (void)testThatItUpdatesItselfFromTransportData_mutedStatus_onlyMentions
 {
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -196,7 +237,7 @@
                                                       conversationType:ZMConvTypeGroup
                                                             isArchived:YES
                                                            archivedRef:archivedDate
-                                                            isSilenced:NO
+                                                            isSilenced:YES
                                                            silencedRef:silencedDate
                                                         silencedStatus:@(1)];
         
@@ -219,6 +260,83 @@
     }];
 }
 
+- (void)testThatItUpdatesItselfFromTransportData_keepsNonMutedMentions
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        conversation.mutedStatus = 1;
+        NSDate *serverTimestamp = [NSDate date];
+        NSDate *archivedDate = [NSDate date];
+        NSDate *silencedDate = [archivedDate dateByAddingTimeInterval:10];
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation
+                                                      conversationType:ZMConvTypeGroup
+                                                            isArchived:YES
+                                                           archivedRef:archivedDate
+                                                            isSilenced:YES
+                                                           silencedRef:silencedDate
+                                                        silencedStatus:@(1)];
+        
+        // when
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
+        
+        // then
+        XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
+        XCTAssertNil(conversation.userDefinedName);
+        XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
+        
+        XCTAssertTrue(conversation.isArchived);
+        XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertTrue(conversation.isOnlyMentions);
+        XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
+    }];
+}
+
+- (void)testThatItUpdatesItselfFromTransportData_keepsFullMutedMentions
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        conversation.mutedStatus = 3;
+        NSDate *serverTimestamp = [NSDate date];
+        NSDate *archivedDate = [NSDate date];
+        NSDate *silencedDate = [archivedDate dateByAddingTimeInterval:10];
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation
+                                                      conversationType:ZMConvTypeGroup
+                                                            isArchived:YES
+                                                           archivedRef:archivedDate
+                                                            isSilenced:YES
+                                                           silencedRef:silencedDate
+                                                        silencedStatus:@(3)];
+        
+        // when
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
+        
+        // then
+        XCTAssertEqualObjects(conversation.remoteIdentifier, [payload[@"id"] UUID]);
+        XCTAssertNil(conversation.userDefinedName);
+        XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
+        XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
+        
+        XCTAssertTrue(conversation.isArchived);
+        XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertTrue(conversation.isFullyMuted);
+        XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
+        
+        XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
+    }];
+}
 
 - (void)testThatItUpdatesItselfFromTransportDataForGroupConversation
 {
