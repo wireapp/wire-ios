@@ -23,9 +23,17 @@ public enum MutedMessageOptionValue: Int32 {
     case none = 0
     case nonMentions = 1
     case mentions = 2
+    case all = 3
 }
 
 /// Defines what kind of messages are muted.
+/// +--------------+----------------+-------------------------------+--------+
+/// | mutedStatus  | Normal Message | Message that contains mention |  Call  |
+/// +--------------+----------------+-------------------------------+--------+
+/// | none         | Notify         | Notify                        | Notify |
+/// | onlyMentions | X              | Notify                        | X      |
+/// | all          | X              | X                             | X      |
+/// +--------------+----------------+-------------------------------+--------+
 public struct MutedMessageTypes: OptionSet {
     public let rawValue: Int32
     
@@ -34,13 +42,16 @@ public struct MutedMessageTypes: OptionSet {
     }
     
     /// None of the messages are muted.
-    public static let none     = MutedMessageTypes(rawValue: MutedMessageOptionValue.none.rawValue)
+    public static let none = MutedMessageTypes(rawValue: MutedMessageOptionValue.none.rawValue)
 
     /// All messages, including mentions, are muted.
     public static let all: MutedMessageTypes = [.nonMentions, .mentions]
     
     /// Only non-mentions are muted.
     public static let nonMentions = MutedMessageTypes(rawValue: MutedMessageOptionValue.nonMentions.rawValue)
+    
+    /// Only mentions are muted. Only used to check the bits in the bitmask.
+    /// Please do not set this as the value on the conversation.
     public static let mentions = MutedMessageTypes(rawValue: MutedMessageOptionValue.mentions.rawValue)
 }
 
@@ -49,13 +60,34 @@ public extension ZMConversation {
     
     public var mutedMessageTypes: MutedMessageTypes {
         get {
-            return MutedMessageTypes(rawValue: mutedStatus)
+            guard let managedObjectContext = self.managedObjectContext else {
+                return .none
+            }
+            
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            
+            if selfUser.hasTeam {
+                return MutedMessageTypes(rawValue: mutedStatus)
+            }
+            else {
+                return mutedStatus == MutedMessageOptionValue.none.rawValue ? MutedMessageTypes.none : MutedMessageTypes.all
+            }
         }
         set {
-            mutedStatus = newValue.rawValue
+            guard let managedObjectContext = self.managedObjectContext else {
+                return
+            }
             
-            if let moc = managedObjectContext,
-                moc.zm_isUserInterfaceContext,
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            
+            if selfUser.hasTeam {
+                mutedStatus = newValue.rawValue
+            }
+            else {
+                mutedStatus = (newValue == .none) ? MutedMessageOptionValue.none.rawValue : (MutedMessageOptionValue.all.rawValue)
+            }
+            
+            if managedObjectContext.zm_isUserInterfaceContext,
                 let lastServerTimestamp = self.lastServerTimeStamp {
                 updateMuted(lastServerTimestamp, synchronize: true)
             }

@@ -57,7 +57,7 @@
                                        archivedRef:nil
                                         isSilenced:NO
                                        silencedRef:nil
-                                    silencedStatus:@(3)
+                                    silencedStatus:@(MutedMessageOptionValueAll)
                                             teamID:nil
                                         accessMode:@[]
                                         accessRole:@"non_activated"];
@@ -110,6 +110,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
+        [ZMUser selfUserInContext:self.syncMOC].teamIdentifier = [NSUUID UUID];
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
@@ -161,7 +162,7 @@
                                                            archivedRef:archivedDate
                                                             isSilenced:YES
                                                            silencedRef:silencedDate
-                                                        silencedStatus:@(3)];
+                                                        silencedStatus:@(MutedMessageOptionValueAll)];
         
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
@@ -226,6 +227,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
+        [ZMUser selfUserInContext:self.syncMOC].teamIdentifier = [NSUUID UUID];
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
@@ -264,6 +266,7 @@
 {
     [self.syncMOC performGroupedBlockAndWait:^{
         // given
+        [ZMUser selfUserInContext:self.syncMOC].teamIdentifier = [NSUUID UUID];
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
@@ -317,7 +320,7 @@
                                                            archivedRef:archivedDate
                                                             isSilenced:YES
                                                            silencedRef:silencedDate
-                                                        silencedStatus:@(3)];
+                                                        silencedStatus:@(MutedMessageOptionValueAll)];
         
         // when
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
@@ -384,7 +387,7 @@
         NSUUID *uuid = NSUUID.createUUID;
         conversation.remoteIdentifier = uuid;
         
-        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:1 isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil silencedStatus:@(3)];
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation conversationType:1 isArchived:NO archivedRef:nil isSilenced:NO silencedRef:nil silencedStatus:@(MutedMessageOptionValueAll)];
 
         // when
         NSDate *serverTimeStamp = [NSDate date];
@@ -419,7 +422,7 @@
                                                            archivedRef:nil
                                                             isSilenced:NO
                                                            silencedRef:nil
-                                                        silencedStatus:@(3)
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
                                                                 teamID:teamID
                                                             accessMode:@[]
                                                             accessRole:@"non_activated"];
@@ -471,7 +474,7 @@
                                                            archivedRef:nil
                                                             isSilenced:NO
                                                            silencedRef:nil
-                                                        silencedStatus:@(3)
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
                                                                 teamID:team.remoteIdentifier
                                                             accessMode:@[]
                                                             accessRole:@"non_activated"];
@@ -524,7 +527,7 @@
                                                            archivedRef:nil
                                                             isSilenced:NO
                                                            silencedRef:nil
-                                                        silencedStatus:@(3)
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
                                                                 teamID:nil
                                                             accessMode:@[]
                                                             accessRole:@"non_activated"];
@@ -571,7 +574,7 @@
                                                            archivedRef:nil
                                                             isSilenced:NO
                                                            silencedRef:nil
-                                                        silencedStatus:@(3)
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
                                                                 teamID:nil
                                                             accessMode:@[@"invite", @"code"]
                                                             accessRole:@"non_activated"];
@@ -605,7 +608,7 @@
                                                            archivedRef:nil
                                                             isSilenced:NO
                                                            silencedRef:nil
-                                                        silencedStatus:@(3)
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
                                                                 teamID:nil
                                                             accessMode:@[]
                                                             accessRole:@"team"];

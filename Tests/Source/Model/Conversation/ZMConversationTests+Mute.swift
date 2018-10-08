@@ -55,6 +55,14 @@ class ZMConversationTests_Mute : ZMConversationTestsBase {
         XCTAssertEqual(conversation.mutedMessageTypes, .none)
     }
 
+    func testThatItReturnsMutedAllViaGetterForNonTeam() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = [.nonMentions]
+        
+        // then
+        XCTAssertEqual(conversation.mutedMessageTypes, .all)
+    }
 }
 
 extension ZMConversationTests_Mute {
@@ -111,8 +119,11 @@ extension ZMConversationTests_Mute {
     
     func testMessageShouldCreateNotification_MentionSilenced_HasMention() {
         // GIVEN
+        selfUser.teamIdentifier = UUID()
+        
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.mutedMessageTypes = .nonMentions
+        selfUser.teamIdentifier = UUID()
         let message = conversation.append(text: "@you", mentions: [Mention(range: NSRange(location: 0, length: 4), user: selfUser)], fetchLinkPreview: false, nonce: UUID())!
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         (message as! ZMClientMessage).sender = user
