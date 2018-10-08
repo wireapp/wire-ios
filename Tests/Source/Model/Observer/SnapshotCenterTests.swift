@@ -133,7 +133,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "lastReadServerTimeStamp": conv.lastReadServerTimeStamp as Optional<NSObject>,
                                                          "normalizedUserDefinedName": conv.normalizedUserDefinedName as Optional<NSObject>,
                                                          "remoteIdentifier": nil,
-                                                         "mutedStatus": 3 as Optional<NSObject>]
+                                                         "mutedStatus": (MutedMessageOptionValue.all.rawValue) as Optional<NSObject>]
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
                                            "messages": 1]
