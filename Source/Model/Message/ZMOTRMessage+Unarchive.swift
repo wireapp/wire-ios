@@ -49,7 +49,7 @@ extension ZMOTRMessage {
             let sender = self.sender,
             !sender.isSelfUser,
             let textMessageData = self.textMessageData,
-            textMessageData.isMentioningSelf {
+            !conversation.mutedMessageTypes.contains(.mentions) && textMessageData.isMentioningSelf {
             conversation.unarchive(with: self)
         }
     }
