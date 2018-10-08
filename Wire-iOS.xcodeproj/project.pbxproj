@@ -1247,6 +1247,7 @@
 		EFB23D0A1FC852380055B866 /* TextFieldValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF61B3411FC8508400D8E631 /* TextFieldValidator.swift */; };
 		EFB23D0B1FC853CF0055B866 /* AccessoryTextFieldValidationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF61B33F1FC84B0100D8E631 /* AccessoryTextFieldValidationTests.swift */; };
 		EFBCC90F2152A93F006AAB70 /* AnalyticsProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBCC90E2152A93F006AAB70 /* AnalyticsProvider.swift */; };
+		EFBCC917215548EE006AAB70 /* AVAudioSessionType.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBCC916215548EE006AAB70 /* AVAudioSessionType.swift */; };
 		EFBCC9112153EA36006AAB70 /* String+Emoji.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBCC9102153EA36006AAB70 /* String+Emoji.swift */; };
 		EFBCC9132154FF18006AAB70 /* CGFloat+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBCC9122154FF18006AAB70 /* CGFloat+Extension.swift */; };
 		EFBCC91521551694006AAB70 /* ContactsViewController+ViewLifeCycle.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBCC91421551694006AAB70 /* ContactsViewController+ViewLifeCycle.swift */; };
@@ -2998,6 +2999,7 @@
 		EFAFCA8B21342A1E002B31A6 /* ConversationListViewController+Internal.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ConversationListViewController+Internal.h"; sourceTree = "<group>"; };
 		EFAFCA8C213433D6002B31A6 /* ConversationListViewControllerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ConversationListViewControllerTests.swift; sourceTree = "<group>"; };
 		EFBCC90E2152A93F006AAB70 /* AnalyticsProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsProvider.swift; sourceTree = "<group>"; };
+		EFBCC916215548EE006AAB70 /* AVAudioSessionType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AVAudioSessionType.swift; sourceTree = "<group>"; };
 		EFBCC9102153EA36006AAB70 /* String+Emoji.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Emoji.swift"; sourceTree = "<group>"; };
 		EFBCC9122154FF18006AAB70 /* CGFloat+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "CGFloat+Extension.swift"; sourceTree = "<group>"; };
 		EFBCC91421551694006AAB70 /* ContactsViewController+ViewLifeCycle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ContactsViewController+ViewLifeCycle.swift"; sourceTree = "<group>"; };
@@ -5201,6 +5203,7 @@
 				EFDACABA20FF84B900791207 /* ConversationInputBarViewController+FilesPopover.swift */,
 				EF24036B20A1A2EE002813BE /* ConversationInputBarViewController+ImagePicker.swift */,
 				EF71BFD320EBC39000894A7C /* ConversationInputBarViewController+Location.swift */,
+				EFBCC916215548EE006AAB70 /* AVAudioSessionType.swift */,
 				EF71BFD520EBCC5F00894A7C /* UIView+IPadPopover.swift */,
 				EF71BFD720EBD0DC00894A7C /* UIPopoverPresentationController+config.swift */,
 				87BEB03A1D3E44BA00DE9575 /* CameraKeyboard */,
@@ -7259,6 +7262,7 @@
 				BF52C1591CAEBD8D0037331F /* ArchivedNavigationBar.swift in Sources */,
 				F12CDAE71E43880100CEFCEB /* RegistrationTextViewCell.swift in Sources */,
 				EF71BFD620EBCC5F00894A7C /* UIView+IPadPopover.swift in Sources */,
+				EFBCC917215548EE006AAB70 /* AVAudioSessionType.swift in Sources */,
 				87BEB03C1D3E44BA00DE9575 /* CameraKeyboardViewController.swift in Sources */,
 				5EDD25442141555600C0E254 /* LicensesLoader.swift in Sources */,
 				876113EB1DD1FEC4007F5969 /* ConversationContentViewController+Forward.swift in Sources */,
