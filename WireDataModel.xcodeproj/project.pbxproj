@@ -123,7 +123,6 @@
 		876344472052B1E400458C7F /* store2-43-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 8702B0EB20529C78006B60B9 /* store2-43-0.wiredatabase */; };
 		8767E85B216391DF00390F75 /* ZMConversation+Mute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8767E85A216391DF00390F75 /* ZMConversation+Mute.swift */; };
 		8767E8642163B2C200390F75 /* store2-53-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 8767E8622163B2C000390F75 /* store2-53-0.wiredatabase */; };
-		8767E8662163B6C900390F75 /* migration2.54.xcmappingmodel in Sources */ = {isa = PBXBuildFile; fileRef = 8767E8652163B6C900390F75 /* migration2.54.xcmappingmodel */; };
 		8767E8682163B9EE00390F75 /* ZMConversationTests+Mute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8767E8672163B9EE00390F75 /* ZMConversationTests+Mute.swift */; };
 		878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
 		878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
@@ -635,7 +634,6 @@
 		8767E85A216391DF00390F75 /* ZMConversation+Mute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Mute.swift"; sourceTree = "<group>"; };
 		8767E85C2163AA4800390F75 /* zmessaging2.54.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.54.0.xcdatamodel; sourceTree = "<group>"; };
 		8767E8622163B2C000390F75 /* store2-53-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; name = "store2-53-0.wiredatabase"; path = "Tests/Resources/store2-53-0.wiredatabase"; sourceTree = SOURCE_ROOT; };
-		8767E8652163B6C900390F75 /* migration2.54.xcmappingmodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcmappingmodel; path = migration2.54.xcmappingmodel; sourceTree = "<group>"; };
 		8767E8672163B9EE00390F75 /* ZMConversationTests+Mute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Mute.swift"; sourceTree = "<group>"; };
 		878B822F20A1C7AF007455CA /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		87A7FA23203DD11100AA066C /* ZMConversationTests+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+AccessMode.swift"; sourceTree = "<group>"; };
@@ -1946,7 +1944,6 @@
 				F189988C1E7BE03800E579A2 /* zmessaging.xcdatamodeld */,
 				F9C9A5DC1CAD76A50039E10C /* Info.plist */,
 				F9C9A6781CAD7A790039E10C /* Configurations */,
-				8767E8652163B6C900390F75 /* migration2.54.xcmappingmodel */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -2524,7 +2521,6 @@
 				F9A706991CAEE01D00C2F5FE /* ZMManagedObject.m in Sources */,
 				BF491CE41F063EDB0055EE44 /* Account.swift in Sources */,
 				16DCB6631DDA2715002A7AC2 /* PersistentStoreRelocator.swift in Sources */,
-				8767E8662163B6C900390F75 /* migration2.54.xcmappingmodel in Sources */,
 				F991CE1B1CB561B0004D8465 /* ZMAddressBookContact.m in Sources */,
 				F9A7069E1CAEE01D00C2F5FE /* ZMChangedIndexes.mm in Sources */,
 				541D1B351F1FAE3C0078C1F2 /* ManagedObjectContextDirectory.swift in Sources */,
