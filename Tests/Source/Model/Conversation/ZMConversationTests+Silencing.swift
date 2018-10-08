@@ -68,17 +68,13 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
             XCTAssertEqual(conversation.silencedChangedTimestamp, timestamp)
             XCTAssertTrue(conversation.modifiedKeys!.contains(ZMConversationSilencedChangedTimeStampKey))
         }
-
     }
     
-    func testThatAppendingAMentionSelfMessageInAnArchivedSilencedConversationUnarchivesIt() {
-        // GIVEN
+    func archivedConversation(with mutedMessageTypes: MutedMessageTypes) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
         conversation.remoteIdentifier = UUID()
         
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        selfUser.remoteIdentifier = UUID()
         
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.remoteIdentifier = UUID()
@@ -86,32 +82,66 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         conversation.mutableLastServerSyncedActiveParticipants.add(otherUser)
         
         conversation.isArchived = true
-        conversation.mutedMessageTypes = .all
+        conversation.mutedMessageTypes = mutedMessageTypes
         
         XCTAssertTrue(conversation.isArchived)
-        XCTAssertEqual(conversation.mutedMessageTypes, .all)
+        XCTAssertEqual(conversation.mutedMessageTypes, mutedMessageTypes)
         
-        // WHEN
-        
-        let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
-        let text = ZMText.text(with: "@selfUser", mentions: [mention], linkPreviews: [])
+        return conversation
+    }
+    
+    func event(for message: String, in conversation: ZMConversation, mentions: [Mention]) -> ZMUpdateEvent {
+        let text = ZMText.text(with: message, mentions: mentions, linkPreviews: [])
         let message = ZMGenericMessage.message(content: text, nonce: UUID())
         
         let dataString = message.data()!.base64EncodedString()
         
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: dataString)!
         
-        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID())
+        return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID())!
+    }
+    
+    func testThatAppendingAMentionSelfMessageInAnArchivedOnlyMentionsConversationUnarchivesIt() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.teamIdentifier = UUID()
         
-        // when
+        let conversation = archivedConversation(with: .nonMentions)
+        
+        // WHEN
+        let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
+        let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
+        
         self.performPretendingUiMocIsSyncMoc {
             XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
         }
         
         // THEN
         XCTAssertFalse(conversation.isArchived)
+        XCTAssertEqual(conversation.mutedMessageTypes, .nonMentions)
+    }
+
+    func testThatAppendingAMentionSelfMessageInAnArchivedFullyMutedConversationDoesNotUnarchiveIt() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.teamIdentifier = UUID()
+        
+        let conversation = archivedConversation(with: .all)
+        
+        // WHEN
+        let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
+        let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
+        
+        self.performPretendingUiMocIsSyncMoc {
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+        }
+        
+        // THEN
+        XCTAssertTrue(conversation.isArchived)
         XCTAssertEqual(conversation.mutedMessageTypes, .all)
     }
-    
+
 }
 
