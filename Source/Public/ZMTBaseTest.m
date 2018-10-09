@@ -345,6 +345,20 @@
 
 }
 
++ (NSData *)largeJPEGData
+{
+    NSURL *imageURL = [[NSBundle bundleForClass:[ZMTBaseTest class]] URLForResource:@"large" withExtension:@"jpg"];
+    NSData *data = [NSData dataWithContentsOfURL:imageURL];
+    RequireString(data != nil, "large.jpg not found");
+    return data;
+}
+
+- (NSData *)largeJPEGData
+{
+    return [[self class] largeJPEGData];
+    
+}
+
 @end
 
 
