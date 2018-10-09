@@ -26,6 +26,32 @@ extension ZMConversation {
         return NSPredicate(format: "\(ZMConversationConversationTypeKey) != \(ZMConversationType.invalid.rawValue) && \(ZMConversationConversationTypeKey) != \(selfType.rawValue)")
     }
 
+    @objc
+    public class func predicate(forSearchQuery searchQuery: String) -> NSPredicate! {
+        let formatDict = [ZMConversationLastServerSyncedActiveParticipantsKey: "ANY %K.normalizedName MATCHES %@", ZMNormalizedUserDefinedNameKey: "%K MATCHES %@"]
+        guard let searchPredicate = NSPredicate(formatDictionary: formatDict, matchingSearch: searchQuery) else { return .none }
+        let activeMemberPredicate = NSPredicate(format: "%K == NULL OR %K == YES", ZMConversationClearedTimeStampKey, ZMConversationIsSelfAnActiveMemberKey)
+        let basePredicate = NSPredicate(format: "(\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue))")
+
+        /// do not include team 1 to 1 conversations
+
+        let activeParticipantsPredicate = NSPredicate(format: "%K.@count == 1",                                                                      ZMConversationLastServerSyncedActiveParticipantsKey
+        )
+
+        let userDefinedNamePredicate = NSPredicate(format: "%K == NULL",                                                                      ZMConversationUserDefinedNameKey
+        )
+
+        let teamRemoteIdentifierPredicate = NSPredicate(format: "%K != NULL",                                                                      TeamRemoteIdentifierKey
+        )
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate,
+                                                                   activeMemberPredicate,
+                                                                   basePredicate, NSCompoundPredicate(notPredicateWithSubpredicate:NSCompoundPredicate(andPredicateWithSubpredicates:[
+                                                                   activeParticipantsPredicate,
+                                                                   userDefinedNamePredicate,
+                                                                   teamRemoteIdentifierPredicate]))])
+    }
+
     @objc(predicateForConversationsInTeam:)
     class func predicateForConversations(in team: Team?) -> NSPredicate {
         if let team = team {

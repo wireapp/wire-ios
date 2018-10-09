@@ -66,6 +66,7 @@ extern NSString *const ZMConversationSilencedChangedTimeStampKey;
 
 extern NSString *const ZMNotificationConversationKey;
 extern NSString *const ZMConversationRemoteIdentifierDataKey;
+extern NSString *const TeamRemoteIdentifierKey;
 
 
 extern const NSUInteger ZMConversationMaxTextMessageLength;
@@ -99,7 +100,6 @@ NS_ASSUME_NONNULL_END
 + (nonnull ZMConversationList *)pendingConversationsInContext:(nonnull NSManagedObjectContext *)moc;
 
 + (nonnull NSPredicate *)predicateForSearchQuery:(nonnull NSString *)searchQuery team:(nullable Team *)team;
-+ (nonnull NSPredicate *)predicateForSearchQuery:(nonnull NSString *)searchQuery;
 + (nonnull NSPredicate *)userDefinedNamePredicateForSearchString:(nonnull NSString *)searchString;
 
 @property (readonly, nonatomic, nonnull) NSMutableOrderedSet *mutableLastServerSyncedActiveParticipants;
