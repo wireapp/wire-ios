@@ -68,6 +68,29 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
     
+    fileprivate func createImageMessageWithAssetId(in aConversation: ZMConversation,
+                                                   otrKey: Data = Data.randomEncryptionKey(),
+                                                   sha: Data  = Data.randomEncryptionKey(),
+                                                   data: Data? = nil) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
+        
+        
+        let message = aConversation.append(imageFromData: data ?? verySmallJPEGData()) as! ZMAssetClientMessage
+        let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
+        
+        // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
+        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
+        
+        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
+            XCTFail("Failed to update asset")
+            return nil
+        }
+        
+        message.add(uploadedWithId)
+        configureForDownloading(message: message)
+        XCTAssertEqual(message.version, 3)
+        return (message, assetId, token)
+    }
+    
     fileprivate func createFileMessageWithAssetId(
         in aConversation: ZMConversation,
         otrKey: Data = Data.randomEncryptionKey(),
@@ -190,6 +213,88 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
 // tests on result of request
 extension AssetV3DownloadRequestStrategyTests {
+    
+    func testThatItStoresAndDecryptsImageWhenSuccessfullyDownloaded() {
+        var message: ZMMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let plainTextData = Data.secureRandomData(length: 500)
+            let key = Data.randomEncryptionKey()
+            let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+            let sha = encryptedData.zmSHA256Digest()
+            
+            let (msg, _, _) = self.createImageMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
+            message = msg
+            
+            let request = self.sut.nextRequest()
+            let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+            
+            // WHEN
+            request?.complete(with: response)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // THEN
+            XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false))
+        }
+    }
+    
+    func testThatItStoresAndDecryptsLargeImageAsFileWhenSuccessfullyDownloaded() {
+        var message: ZMMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let plainTextData = Data.secureRandomData(length: 500)
+            let key = Data.randomEncryptionKey()
+            let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+            let sha = encryptedData.zmSHA256Digest()
+            
+            let (msg, _, _) = self.createImageMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha, data: self.largeJPEGData())!
+            message = msg
+            
+            let request = self.sut.nextRequest()
+            let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+            
+            // WHEN
+            request?.complete(with: response)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // THEN
+            XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(message, encrypted: false))
+        }
+    }
+    
+    func testThatItStoresAndDecryptsFileWhenSuccessfullyDownloaded() {
+        var message: ZMMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let plainTextData = Data.secureRandomData(length: 500)
+            let key = Data.randomEncryptionKey()
+            let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
+            let sha = encryptedData.zmSHA256Digest()
+            
+            let (msg, _, _) = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
+            message = msg
+            
+            let request = self.sut.nextRequest()
+            let response = ZMTransportResponse(imageData: encryptedData, httpStatus: 200, transportSessionError: .none, headers: [:])
+            
+            // WHEN
+            request?.complete(with: response)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        self.syncMOC.performGroupedBlockAndWait {
+            // THEN
+            XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(message, encrypted: false))
+        }
+    }
+    
 
     func testThatItMarksDownloadAsSuccessIfSuccessfulDownloadAndDecryption_V3() {
         var message: ZMMessage!
