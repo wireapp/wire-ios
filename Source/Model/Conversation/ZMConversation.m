@@ -83,7 +83,7 @@ static NSString *const LastReadMessageKey = @"lastReadMessage";
 static NSString *const lastEditableMessageKey = @"lastEditableMessage";
 static NSString *const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
 static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
-static NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
+NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
 static NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
 static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
@@ -883,22 +883,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     NSPredicate *teamPredicate = [NSPredicate predicateWithFormat:@"(%K == %@)", TeamKey, team];
     
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[[self predicateForSearchQuery:searchQuery], teamPredicate]];
-}
-
-+ (nonnull NSPredicate *)predicateForSearchQuery:(nonnull NSString *)searchQuery
-{
-    NSDictionary *formatDict = @{ZMConversationLastServerSyncedActiveParticipantsKey : @"ANY %K.normalizedName MATCHES %@",
-                                 ZMNormalizedUserDefinedNameKey: @"%K MATCHES %@"};
-    NSPredicate *searchPredicate = [NSPredicate predicateWithFormatDictionary:formatDict
-                                                         matchingSearchString:searchQuery];
-    NSPredicate *activeMemberPredicate = [NSPredicate predicateWithFormat:@"%K == NULL OR %K == YES",
-                                          ZMConversationClearedTimeStampKey,
-                                          ZMConversationIsSelfAnActiveMemberKey];
-    
-    NSPredicate *basePredicate = [NSPredicate predicateWithFormat:@"(%K == %@)",
-                                  ZMConversationConversationTypeKey, @(ZMConversationTypeGroup)];
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[searchPredicate, activeMemberPredicate, basePredicate]];
+    return [NSCompoundPredicate andPredicateWithSubpredicates:@[[ZMConversation predicateForSearchQuery:searchQuery], teamPredicate]];
 }
 
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
