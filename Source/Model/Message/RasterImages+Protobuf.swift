@@ -21,6 +21,12 @@ public extension ZMAssetOriginal {
     var hasRasterImage: Bool {
         return hasImage() && UTType(mimeType: mimeType)?.isSVG == false
     }
+    
+    var hasValidImageSize: Bool {
+        return hasRasterImage && hasSize() && size <= ZMAssetOriginal.maxImageSize
+    }
+    
+    private static let maxImageSize = 5_000_000 // 5 MB
 }
 
 fileprivate extension ZMImageAsset {
