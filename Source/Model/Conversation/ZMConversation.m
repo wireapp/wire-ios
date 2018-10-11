@@ -83,8 +83,8 @@ static NSString *const LastReadMessageKey = @"lastReadMessage";
 static NSString *const lastEditableMessageKey = @"lastEditableMessage";
 static NSString *const NeedsToBeUpdatedFromBackendKey = @"needsToBeUpdatedFromBackend";
 static NSString *const RemoteIdentifierKey = @"remoteIdentifier";
-NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
-static NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
+static NSString *const TeamRemoteIdentifierKey = @"teamRemoteIdentifier";
+NSString *const TeamRemoteIdentifierDataKey = @"teamRemoteIdentifier_data";
 static NSString *const VoiceChannelKey = @"voiceChannel";
 static NSString *const VoiceChannelStateKey = @"voiceChannelState";
 

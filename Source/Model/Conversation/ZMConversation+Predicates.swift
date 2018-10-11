@@ -41,15 +41,21 @@ extension ZMConversation {
         let userDefinedNamePredicate = NSPredicate(format: "%K == NULL",                                                                      ZMConversationUserDefinedNameKey
         )
 
-        let teamRemoteIdentifierPredicate = NSPredicate(format: "%K != NULL",                                                                      TeamRemoteIdentifierKey
+        let teamRemoteIdentifierPredicate = NSPredicate(format: "%K != NULL",                                                                      TeamRemoteIdentifierDataKey
         )
 
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [searchPredicate,
-                                                                   activeMemberPredicate,
-                                                                   basePredicate, NSCompoundPredicate(notPredicateWithSubpredicate:NSCompoundPredicate(andPredicateWithSubpredicates:[
-                                                                   activeParticipantsPredicate,
-                                                                   userDefinedNamePredicate,
-                                                                   teamRemoteIdentifierPredicate]))])
+        let notTeamMemberPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: NSCompoundPredicate(andPredicateWithSubpredicates: [
+            activeParticipantsPredicate,
+            userDefinedNamePredicate ,
+            teamRemoteIdentifierPredicate
+            ]))
+
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [
+            searchPredicate,
+            activeMemberPredicate,
+            basePredicate,
+            notTeamMemberPredicate
+            ])
     }
 
     @objc(predicateForConversationsInTeam:)
