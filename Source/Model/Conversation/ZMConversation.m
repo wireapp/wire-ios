@@ -947,6 +947,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     
+    [message setExpirationDate];
     [self sortedAppendMessage:message];
     [self unarchiveIfNeeded];
     [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:imageData];
