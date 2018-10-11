@@ -36,7 +36,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
     {
         self.localNotificationDispatcher = localNotificationDispatcher
         self.requestFactory = ClientMessageRequestFactory()
-        self.messageExpirationTimer = MessageExpirationTimer(moc: moc, entityName: ZMClientMessage.entityName(), localNotificationDispatcher: localNotificationDispatcher)
+        self.messageExpirationTimer = MessageExpirationTimer(moc: moc, entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()], localNotificationDispatcher: localNotificationDispatcher)
         
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         

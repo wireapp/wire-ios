@@ -21,16 +21,16 @@ import Foundation
 public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     
     let localNotificationsDispatcher: PushMessageHandler
-    let entityName: String
+    let entityNames: [String]
     let filter: NSPredicate?
     
     public override init() {
         fatalError("Should not use this init")
     }
     
-    public init(moc: NSManagedObjectContext, entityName: String, localNotificationDispatcher: PushMessageHandler, filter: NSPredicate? = nil) {
+    public init(moc: NSManagedObjectContext, entityNames: [String], localNotificationDispatcher: PushMessageHandler, filter: NSPredicate? = nil) {
         self.localNotificationsDispatcher = localNotificationDispatcher
-        self.entityName = entityName
+        self.entityNames = entityNames
         self.filter = filter
         super.init(managedObjectContext: moc)
         self.timerCompletionBlock = { [weak self] message, dictionary in
@@ -67,7 +67,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
         let now = Date()
         let messages = objects.compactMap { $0 as? ZMMessage }
         messages.forEach {
-            guard type(of: $0).entityName() == self.entityName else { return }
+            guard self.entityNames.contains(type(of: $0).entityName()) else { return }
             
             if let filter = self.filter, !filter.evaluate(with: $0) {
                 return
