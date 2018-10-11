@@ -238,6 +238,19 @@ extension AssetV3ImageUploadRequestStrategy: ZMUpstreamTranscoder {
             })
         }
         
+        if message.uploadState == .uploadingFullAsset {
+            request.add(ZMTaskProgressHandler(on: self.managedObjectContext) { progress in
+                message.setExpirationDate()
+            })
+            
+            request.add(ZMCompletionHandler(on: managedObjectContext) { response in
+                message.associatedTaskIdentifier = nil
+                if response.result == .success {
+                    message.removeExpirationDate()
+                }
+            })
+        }
+        
         return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.uploadState)], transportRequest: request)
     }
 
