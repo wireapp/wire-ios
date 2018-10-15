@@ -30,8 +30,7 @@ public protocol EphemeralMessageContentType: MessageContentType {
 @objc public extension ZMGenericMessage {
 
     var v3_isImage: Bool {
-        guard let original = assetData?.original else { return false }
-        return original.hasRasterImage && original.hasValidImageSize
+        return assetData?.original.hasRasterImage ?? false
     }
 
     var v3_uploadedAssetId: String? {
