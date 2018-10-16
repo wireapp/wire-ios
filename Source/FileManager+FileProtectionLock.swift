@@ -32,11 +32,11 @@ extension FileManager {
     public func isFileSystemAccessible() -> Bool {
         
         // create dummy file
-        let tempDir = self.urls(for: .cachesDirectory, in: .userDomainMask).first!
-        self.createAndProtectDirectory(at: tempDir)
-        let dummyFile = tempDir.appendingPathComponent("dummy_lock")
+        guard let cachesDirectory = self.urls(for: .cachesDirectory, in: .userDomainMask).first else { return false }
+        createAndProtectDirectory(at: cachesDirectory)
+        let dummyFile = cachesDirectory.appendingPathComponent("dummy_lock")
         let data = "testing".data(using: .utf8)!
-        try! data.write(to: dummyFile)
+        try? data.write(to: dummyFile)
         
         // protect until first unlock
         self.setProtectionUntilFirstUserAuthentication(dummyFile)
