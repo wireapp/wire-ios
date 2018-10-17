@@ -79,6 +79,9 @@ public protocol SessionManagerType : class {
     /// Switch account and and ask UI to navigate to the conversatio list
     func showConversationList(in session: ZMUserSession)
 
+    /// Needs to be called before we try to register another device because API requires password
+    func update(credentials: ZMCredentials) -> Bool
+    
 }
 
 @objc
@@ -496,7 +499,7 @@ public protocol ForegroundNotificationResponder: class {
         guard let authenticatedAccount = account, authenticatedAccount.isAuthenticated else {
             completion(nil)
             createUnauthenticatedSession()
-            delegate?.sessionManagerDidFailToLogin(account: account, error: NSError(code: .accessTokenExpired, userInfo: nil))
+            delegate?.sessionManagerDidFailToLogin(account: account, error: NSError(code: .accessTokenExpired, userInfo: account?.loginCredentials?.dictionaryRepresentation))
             return
         }
         
@@ -699,6 +702,9 @@ extension SessionManager {
             if let userProfileImage = selfUser.imageSmallProfileData {
                 account.imageData = userProfileImage
             }
+
+            account.loginCredentials = selfUser.loginCredentials
+
             //an optional `teamImageData` image could be saved here
             accountManager.addOrUpdate(account)
         }

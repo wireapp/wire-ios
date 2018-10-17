@@ -41,14 +41,6 @@ class MockSessionManager : NSObject, WireSyncEngine.SessionManagerType {
         }
     }
     
-    func updateAppIconBadge(accountID: UUID, unreadCount: Int) {
-        
-    }
-    
-    func configureUserNotifications() {
-        
-    }
-    
     var lastRequestToShowMessage: (ZMUserSession, ZMConversation, ZMConversationMessage)?
     var lastRequestToShowConversation: (ZMUserSession, ZMConversation)?
     var lastRequestToShowConversationsList: ZMUserSession?
@@ -69,11 +61,18 @@ class MockSessionManager : NSObject, WireSyncEngine.SessionManagerType {
     func updatePushToken(for session: ZMUserSession) {
         updatePushTokenCalled = true
     }
-    
-    deinit {
-        try? FileManager.default.removeItem(at: MockSessionManager.accountManagerURL)
+
+    func updateAppIconBadge(accountID: UUID, unreadCount: Int) {
+        // no-op
     }
     
+    func configureUserNotifications() {
+        // no-op
+    }
+
+    func update(credentials: ZMCredentials) -> Bool {
+        return false
+    }
     
 }
 
