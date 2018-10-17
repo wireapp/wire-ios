@@ -46,6 +46,15 @@ class String_EmojiTests: XCTestCase {
         XCTAssertFalse("الأشخاص المفضلين".containsEmoji)
     }
 
+    func testThatGlagoliticNotDetectedAsContainingEmoji() {
+        XCTAssertFalse("ⰀⰁ".containsEmoji)
+    }
+
+    func testThatGeorgianNotDetectedAsContainingEmoji() {
+        XCTAssertFalse("ქართული".containsEmoji)
+        XCTAssertFalse("Ⴀჟჯჰ".containsEmoji)
+    }
+
     func testThatNonLatinWithEmojiIsDetectedAsContainingEmoji() {
         XCTAssertTrue("الأشخاص المفضلين🙈".containsEmoji)
     }

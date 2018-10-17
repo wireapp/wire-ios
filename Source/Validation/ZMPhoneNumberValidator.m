@@ -50,7 +50,7 @@ ZM_EMPTY_ASSERTING_INIT()
 
 + (BOOL)validateValue:(inout id *)ioPhoneNumber error:(out NSError **)outError
 {
-    if ([(*ioPhoneNumber) length] < 1) {
+    if ([(NSString *)(*ioPhoneNumber) length] < 1) {
         return YES;
     }
     
