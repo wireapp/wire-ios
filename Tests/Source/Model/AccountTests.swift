@@ -28,12 +28,15 @@ final class AccountTests: ZMConversationTestsBase {
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
 
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+
         let account = Account(
             userName: "Bruno",
             userIdentifier: .create(),
             teamName: "Wire",
             imageData: verySmallJPEGData(),
-            teamImageData: verySmallJPEGData()
+            teamImageData: verySmallJPEGData(),
+            loginCredentials: credentials
         )
 
         // when
@@ -42,7 +45,7 @@ final class AccountTests: ZMConversationTestsBase {
         // then the test did not fail
     }
 
-    func testThatItCanLoadAnAccountFromDisk() throws {
+    func testThatItCanLoadAnAccountFromDiskWithoutLoginCredentials() throws {
         // given
         let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
         defer { try? FileManager.default.removeItem(at: url) }
@@ -55,7 +58,8 @@ final class AccountTests: ZMConversationTestsBase {
                                   teamName: team,
                                   imageData: image,
                                   teamImageData: image,
-                                  unreadConversationCount: count)
+                                  unreadConversationCount: count,
+                                  loginCredentials: nil)
             try account.write(to: url)
         }
 
@@ -69,7 +73,41 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account.imageData, image)
         XCTAssertEqual(account.teamImageData, image)
         XCTAssertEqual(account.unreadConversationCount, count)
+        XCTAssertNil(account.loginCredentials)
     }
+
+    func testThatItCanLoadAnAccountFromDiskWithLoginCredentials() throws {
+        // given
+        let url = URL(fileURLWithPath: NSTemporaryDirectory() + "/AccountTests")
+        defer { try? FileManager.default.removeItem(at: url) }
+        let userName = "Bruno", team = "Wire", id = UUID.create(), image = verySmallJPEGData(), count = 14
+        let credentials = LoginCredentials(emailAddress: "bruno@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+
+        // we create and store an account
+        do {
+            let account = Account(userName: userName,
+                                  userIdentifier: id,
+                                  teamName: team,
+                                  imageData: image,
+                                  teamImageData: image,
+                                  unreadConversationCount: count,
+                                  loginCredentials: credentials)
+            try account.write(to: url)
+        }
+
+        // when
+        guard let account = Account.load(from: url) else { return XCTFail("Unable to load account") }
+
+        // then
+        XCTAssertEqual(account.userName, userName)
+        XCTAssertEqual(account.teamName, team)
+        XCTAssertEqual(account.userIdentifier, id)
+        XCTAssertEqual(account.imageData, image)
+        XCTAssertEqual(account.teamImageData, image)
+        XCTAssertEqual(account.unreadConversationCount, count)
+        XCTAssertEqual(account.loginCredentials, credentials)
+    }
+
 
     func testThatAccountsAreEqualWhenNotImportantPropertiesAreDifferent() {
         // given

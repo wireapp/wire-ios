@@ -28,14 +28,15 @@ extension Notification.Name {
 /// An `Account` holds information related to a single account,
 /// such as the accounts users name,
 /// team name if there is any, picture and uuid.
-public final class Account: NSObject {
+public final class Account: NSObject, Codable {
 
     public var userName: String
     public var teamName: String?
     public let userIdentifier: UUID
     public var imageData: Data?
     public var teamImageData: Data?
-    
+    public var loginCredentials: LoginCredentials?
+
     public var unreadConversationCount: Int = 0 {
         didSet {
             if oldValue != self.unreadConversationCount {
@@ -49,13 +50,15 @@ public final class Account: NSObject {
                          teamName: String? = nil,
                          imageData: Data? = nil,
                          teamImageData: Data? = nil,
-                         unreadConversationCount: Int = 0) {
+                         unreadConversationCount: Int = 0,
+                         loginCredentials: LoginCredentials? = nil) {
         self.userName = userName
         self.userIdentifier = userIdentifier
         self.teamName = teamName
         self.imageData = imageData
         self.teamImageData = teamImageData
         self.unreadConversationCount = unreadConversationCount
+        self.loginCredentials = loginCredentials
         super.init()
     }
     
@@ -69,6 +72,7 @@ public final class Account: NSObject {
         self.teamName = account.teamName
         self.imageData = account.imageData
         self.teamImageData = account.teamImageData
+        self.loginCredentials = account.loginCredentials
     }
 
     public override func isEqual(_ object: Any?) -> Bool {
@@ -81,49 +85,7 @@ public final class Account: NSObject {
     }
 
     public override var debugDescription: String {
-        return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
-    }
-}
-
-// MARK: - Dictionary Representation
-
-extension Account {
-
-    /// The use of a separate enum, instead of using #keyPath
-    /// is intentional here to allow easy renaming of properties.
-    private enum Key: String {
-        case name, identifier, team, image, teamImage, unreadConversationCount
-    }
-
-    public convenience init?(json: [String: Any]) {
-        guard let id = (json[Key.identifier.rawValue] as? String).flatMap(UUID.init),
-            let name = json[Key.name.rawValue] as? String else { return nil }
-        self.init(
-            userName: name,
-            userIdentifier: id,
-            teamName: json[Key.team.rawValue] as? String,
-            imageData: (json[Key.image.rawValue] as? String).flatMap { Data(base64Encoded: $0) },
-            teamImageData: (json[Key.teamImage.rawValue] as? String).flatMap { Data(base64Encoded: $0) },
-            unreadConversationCount: (json[Key.unreadConversationCount.rawValue] as? Int) ?? 0
-        )
-    }
-
-    public func jsonRepresentation() -> [String: Any] {
-        var json: [String: Any] = [
-            Key.name.rawValue: userName,
-            Key.identifier.rawValue: userIdentifier.uuidString
-        ]
-        if let teamName = teamName {
-            json[Key.team.rawValue] = teamName
-        }
-        if let imageData = imageData {
-            json[Key.image.rawValue] = imageData.base64EncodedString()
-        }
-        if let teamImageData = teamImageData {
-            json[Key.teamImage.rawValue] = teamImageData.base64EncodedString()
-        }
-        json[Key.unreadConversationCount.rawValue] = self.unreadConversationCount
-        return json
+        return "<Account>:\n\tname: \(userName)\n\tid: \(userIdentifier)\n\tcredentials:\n\t\(String(describing: loginCredentials?.debugDescription))\n\tteam: \(String(describing: teamName))\n\timage: \(String(describing: imageData?.count))\n\tteamImageData: \(String(describing: teamImageData?.count))\n"
     }
 
 }
@@ -133,15 +95,16 @@ extension Account {
 extension Account {
 
     func write(to url: URL) throws {
-        let data = try JSONSerialization.data(withJSONObject: jsonRepresentation())
+        let encoder = JSONEncoder()
+        let data = try encoder.encode(self)
         try data.write(to: url, options: [.atomic])
     }
 
     static func load(from url: URL) -> Account? {
         let data = try? Data(contentsOf: url)
-        return data.flatMap {
-            (try? JSONSerialization.jsonObject(with: $0, options: [])) as? [String: Any]
-        }.flatMap(Account.init)
+        let decoder = JSONDecoder()
+
+        return data.flatMap { try? decoder.decode(Account.self, from: $0) }
     }
 
 }
