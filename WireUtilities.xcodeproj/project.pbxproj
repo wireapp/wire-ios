@@ -137,7 +137,7 @@
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
-		EF638D7C2170EDF000344C8A /* EmojiOnlyStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */; };
+		EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */; };
 		F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BDB1D20889772002F36E8 /* TearDownCapable.swift */; };
 		F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -1023,7 +1023,6 @@
 				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
 				BF3493F41EC362D400B0C314 /* Iterator+Containment.swift in Sources */,
 				F9C9A78B1CAE9F9A0039E10C /* NSString+Normalization.m in Sources */,
-				EF638D7C2170EDF000344C8A /* EmojiOnlyStringTests.swift in Sources */,
 				163FB9061F2229DF00802AF4 /* DispatchGroupContext.swift in Sources */,
 				3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */,
 				87B6489C2076078A002FC9E7 /* Composition.swift in Sources */,
@@ -1069,6 +1068,7 @@
 				F9D381AA1B70B91F00E6E4EB /* NSURL+QueryComponentsTest.m in Sources */,
 				F9FCE0A51C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m in Sources */,
 				5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */,
+				EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */,
 				F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */,
 				091799761B7E2E4D00E60DD9 /* ZMMobileProvisionParserTests.m in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
