@@ -45,6 +45,16 @@ public final class Account: NSObject, Codable {
         }
     }
 
+    enum CodingKeys: String, CodingKey {
+        case userName = "name"
+        case teamName = "team"
+        case userIdentifier = "identifier"
+        case imageData = "image"
+        case teamImageData = "teamImage"
+        case unreadConversationCount = "unreadConversationCount"
+        case loginCredentials = "loginCredentials"
+    }
+
     public required init(userName: String,
                          userIdentifier: UUID,
                          teamName: String? = nil,
