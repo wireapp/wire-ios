@@ -293,4 +293,60 @@ final class AccountStoreTests: ZMConversationTestsBase {
         XCTAssertEqual(store.load(), [account2])
     }
 
+    func testThatItDecodesAccountOnDiskWithoutLoginCredentials() throws {
+        // given
+        let store = AccountStore(root: url)
+        let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
+
+        let accountJSON = """
+        {
+            "name": "Alexis",
+            "identifier": "\(accountID)",
+            "team": "Wire",
+            "image": "",
+            "unreadConversationCount": 1
+        }
+        """.data(using: .utf8)!
+
+        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+
+        // when
+        let account = store.load(accountID)
+
+        // then
+        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 1, loginCredentials: nil)
+        XCTAssertEqual(account, expectedAccount)
+    }
+
+    func testThatItDecodesAccountOnDiskWithLoginCredentials() throws {
+        // given
+        let store = AccountStore(root: url)
+        let accountID = UUID(uuidString: "012B6D4F-590B-4355-AC8A-8A531F9F30EE")!
+
+        let accountJSON = """
+        {
+            "name": "Alexis",
+            "identifier": "\(accountID)",
+            "team": "Wire",
+            "image": "",
+            "unreadConversationCount": 0,
+            "loginCredentials": {
+                "emailAddress": "alexis@example.com",
+                "hasPassword": true,
+                "usesCompanyLogin": false
+            }
+        }
+        """.data(using: .utf8)!
+
+        try accountJSON.write(to: url.appendingPathComponent("Accounts/" + accountID.uuidString))
+
+        // when
+        let account = store.load(accountID)
+
+        // then
+        let expectedCredentials = LoginCredentials(emailAddress: "alexis@example.com", phoneNumber: nil, hasPassword: true, usesCompanyLogin: false)
+        let expectedAccount = Account(userName: "Alexis", userIdentifier: accountID, teamName: "Wire", imageData: Data(), teamImageData: nil, unreadConversationCount: 0, loginCredentials: expectedCredentials)
+        XCTAssertEqual(account, expectedAccount)
+    }
+
 }
