@@ -141,6 +141,9 @@ extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
         }
     }
     
+    public var environment: BackendEnvironmentProvider {
+        return BackendEnvironment(wireEnvironment: .staging)
+    }
 }
 
 
