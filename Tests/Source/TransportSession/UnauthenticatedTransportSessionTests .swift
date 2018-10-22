@@ -74,7 +74,11 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
         sessionMock = MockURLSession()
-        sut = UnauthenticatedTransportSession(baseURL: url, urlSession: sessionMock, reachability: MockReachability())
+        let customBackend = CustomBackend(backendURL: url, backendWSURL: url, blackListURL: url, frontendURL: url)
+        let environment = BackendEnvironment(customBackend: customBackend)
+        sut = UnauthenticatedTransportSession(environment: environment,
+                                              urlSession: sessionMock,
+                                              reachability: MockReachability())
     }
 
     override func tearDown() {

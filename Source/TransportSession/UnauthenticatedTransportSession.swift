@@ -25,6 +25,8 @@ public protocol UnauthenticatedTransportSessionProtocol: TearDownCapable {
 
     func enqueueRequest(withGenerator generator: ZMTransportRequestGenerator) -> EnqueueResult
     func tearDown()
+    
+    var environment: BackendEnvironmentProvider { get }
 }
 
 
@@ -71,10 +73,12 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
     private let baseURL: URL
     private var session: SessionProtocol!
+    public var environment: BackendEnvironmentProvider
     fileprivate let reachability: ReachabilityProvider
     
-    public init(baseURL: URL, urlSession: SessionProtocol? = nil, reachability: ReachabilityProvider) {
-        self.baseURL = baseURL
+    public init(environment: BackendEnvironmentProvider, urlSession: SessionProtocol? = nil, reachability: ReachabilityProvider) {
+        self.baseURL = environment.backendURL
+        self.environment = environment
         self.reachability = reachability
         super.init()
         self.session = urlSession ?? URLSession(configuration: .default, delegate: self, delegateQueue: nil)
