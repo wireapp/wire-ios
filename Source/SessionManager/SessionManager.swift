@@ -191,6 +191,7 @@ public protocol ForegroundNotificationResponder: class {
     
     fileprivate let sessionLoadingQueue : DispatchQueue = DispatchQueue(label: "sessionLoadingQueue")
     
+    let environment: BackendEnvironmentProvider
     let sharedContainerURL: URL
     let dispatchGroup: ZMSDispatchGroup?
     fileprivate var accountTokens : [UUID : [Any]] = [:]
@@ -201,6 +202,10 @@ public protocol ForegroundNotificationResponder: class {
     
     public var callKitDelegate : CallKitDelegate?
     
+    private static let runOnce: Void = {
+        BuildType.setupBuildTypes()
+    }()
+    
     /// The entry point for SessionManager; call this instead of the initializers.
     ///
     public static func create(
@@ -209,7 +214,8 @@ public protocol ForegroundNotificationResponder: class {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        blacklistDownloadInterval : TimeInterval,
+        environment: BackendEnvironmentProvider,
+        blacklistDownloadInterval: TimeInterval,
         completion: @escaping (SessionManager) -> Void
         ) {
         
@@ -220,6 +226,7 @@ public protocol ForegroundNotificationResponder: class {
                 analytics: analytics,
                 delegate: delegate,
                 application: application,
+                environment: environment,
                 blacklistDownloadInterval: blacklistDownloadInterval
             ))
             
@@ -237,11 +244,10 @@ public protocol ForegroundNotificationResponder: class {
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
-        blacklistDownloadInterval : TimeInterval
+        environment: BackendEnvironmentProvider,
+        blacklistDownloadInterval: TimeInterval
         ) {
         
-        ZMBackendEnvironment.setupEnvironments()
-        let environment = ZMBackendEnvironment(userDefaults: .standard)
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Session manager reachability")!
         let flowManager = FlowManager(mediaManager: mediaManager)
 
@@ -267,11 +273,13 @@ public protocol ForegroundNotificationResponder: class {
             reachability: reachability,
             delegate: delegate,
             application: application,
-            pushRegistry: PKPushRegistry(queue: nil)
+            pushRegistry: PKPushRegistry(queue: nil),
+            environment: environment
         )
         
         self.blacklistVerificator = ZMBlacklistVerificator(checkInterval: blacklistDownloadInterval,
                                                            version: appVersion,
+                                                           environment: environment,
                                                            working: nil,
                                                            application: application,
                                                            blacklistCallback:
@@ -308,10 +316,12 @@ public protocol ForegroundNotificationResponder: class {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         pushRegistry: PushRegistry,
-        dispatchGroup: ZMSDispatchGroup? = nil
+        dispatchGroup: ZMSDispatchGroup? = nil,
+        environment: BackendEnvironmentProvider
         ) {
 
         SessionManager.enableLogsByEnvironmentVariable()
+        self.environment = environment
         self.appVersion = appVersion
         self.application = application
         self.delegate = delegate
@@ -486,7 +496,7 @@ public protocol ForegroundNotificationResponder: class {
          - completion: called when session is loaded or when session fails to load
      */
     internal func loadSession(for account: Account?, completion: @escaping (ZMUserSession?) -> Void) {
-        guard let authenticatedAccount = account, authenticatedAccount.isAuthenticated else {
+        guard let authenticatedAccount = account, authenticatedAccount.isAuthenticated(with: environment) else {
             completion(nil)
             createUnauthenticatedSession()
             delegate?.sessionManagerDidFailToLogin(account: account, error: NSError(code: .accessTokenExpired, userInfo: account?.loginCredentials?.dictionaryRepresentation))
@@ -499,7 +509,7 @@ public protocol ForegroundNotificationResponder: class {
     public func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         
-        account.cookieStorage().deleteKeychainItems()
+        account.cookieStorage(for: environment).deleteKeychainItems()
         
         let accountID = account.userIdentifier
         self.accountManager.remove(account)
