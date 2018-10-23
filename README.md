@@ -2,7 +2,7 @@
 
 [![Wire logo](https://github.com/wireapp/wire/blob/master/assets/header-small.png?raw=true)](https://wire.com/jobs/)
 
-[![CircleCI](https://circleci.com/gh/wireapp/wire-ios-request-strategy.svg?style=shield)](https://circleci.com/gh/wireapp/wire-ios-request-strategy) [![codecov](https://codecov.io/gh/wireapp/wire-ios-request-strategy/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-request-strategy)
+[![Azure Pipelines Build Status](https://dev.azure.com/wireswiss/Wire%20iOS/_apis/build/status/Frameworks/wire-ios-request-strategy?branchName=develop)](https://dev.azure.com/wireswiss/Wire%20iOS/_build/latest?definitionId=30&branchName=develop) [![codecov](https://codecov.io/gh/wireapp/wire-ios-request-strategy/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-request-strategy)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
