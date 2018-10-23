@@ -2,7 +2,7 @@
 
 ![Wire logo](https://github.com/wireapp/wire/blob/master/assets/logo.png?raw=true)
 
-[![CircleCI](https://circleci.com/gh/wireapp/wire-ios-ziphy.svg?style=shield)](https://circleci.com/gh/wireapp/wire-ios-ziphy) [![codecov](https://codecov.io/gh/wireapp/wire-ios-ziphy/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-ziphy)
+[![Azure Pipelines Build Status](https://dev.azure.com/wireswiss/Wire%20iOS/_apis/build/status/Frameworks/wire-ios-ziphy?branchName=develop)](https://dev.azure.com/wireswiss/Wire%20iOS/_build/latest?definitionId=27&branchName=develop) [![codecov](https://codecov.io/gh/wireapp/wire-ios-ziphy/branch/develop/graph/badge.svg)](https://codecov.io/gh/wireapp/wire-ios-ziphy)
 
 This repository is part of the source code of Wire. You can find more information at [wire.com](https://wire.com) or by contacting opensource@wire.com.
 
