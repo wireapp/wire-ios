@@ -618,11 +618,11 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)setNetworkStateDelegate:(id<ZMNetworkStateDelegate>)networkStateDelegate
 {
     self.weakNetworkStateDelegate = networkStateDelegate;
-    if (!self.reachability.mayBeReachable) {
-        [networkStateDelegate didGoOffline];
+    if (self.reachability.mayBeReachable) {
+        [networkStateDelegate didReceiveData];
     }
     else {
-        [networkStateDelegate didReceiveData];
+        [networkStateDelegate didGoOffline];
     }
 }
 
