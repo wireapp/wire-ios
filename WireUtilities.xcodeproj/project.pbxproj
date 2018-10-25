@@ -138,6 +138,7 @@
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
 		EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */; };
+		EFD003562179FABC008C20D3 /* StringLengthValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */; };
 		F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BDB1D20889772002F36E8 /* TearDownCapable.swift */; };
 		F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -369,6 +370,7 @@
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
 		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
 		EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiOnlyStringTests.swift; sourceTree = "<group>"; };
+		EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLengthValidatorTests.swift; sourceTree = "<group>"; };
 		F15BDB1D20889772002F36E8 /* TearDownCapable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TearDownCapable.swift; sourceTree = "<group>"; };
 		F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148C1207BAED000F81833 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
@@ -696,6 +698,7 @@
 				F9C9A7C11CAEAFE10039E10C /* ZMEmailAddressValidatorTests.m */,
 				F9C9A7C21CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m */,
 				F9C9A7C31CAEAFE10039E10C /* ZMStringLengthValidatorTests.m */,
+				EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */,
 			);
 			name = Validation;
 			path = Source/Validation;
@@ -1085,6 +1088,7 @@
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */,
+				EFD003562179FABC008C20D3 /* StringLengthValidatorTests.swift in Sources */,
 				54C388AA1C4D5AF600A55C79 /* NSUUID+Type1Tests.swift in Sources */,
 				546E8A531B7501D0009EBA02 /* NSUUID+DataTests.m in Sources */,
 				5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */,

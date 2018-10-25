@@ -21,7 +21,7 @@ extension CharacterSet {
 }
 
 extension Unicode.Scalar {
-    static let cancelTag: UInt32 = 0xE007F
+    static let cancelTag: Unicode.Scalar = Unicode.Scalar(0xE007F)!
 
     var isEmojiComponentOrMiscSymbol: Bool {
         switch self.value {
@@ -29,7 +29,7 @@ extension Unicode.Scalar {
         0x2139,            // the info symobol
         0x2030...0x2BFF,   // Misc symbols
         0x2600...0x27BF,   // Misc symbols, Dingbats
-        Unicode.Scalar.cancelTag,
+        0xE007F,           // cancelTag
         0xFE00...0xFE0F:   // Variation Selectors
             return true
         default:
@@ -43,6 +43,29 @@ extension Unicode.Scalar {
         return (CharacterSet.symbols.contains(self) && !CharacterSet.asciiPrintableSet.contains(self)) ||
             self.isEmojiComponentOrMiscSymbol
     }
+    
+}
+
+extension Character {
+    var isEmoji: Bool {
+        for scalar in self.unicodeScalars {
+            if scalar.isEmoji {
+                return true
+            }
+        }
+
+        return false
+    }
+
+    public func contains(anyCharacterFrom characterSet: CharacterSet) -> Bool {
+        for scalar in self.unicodeScalars {
+            if characterSet.contains(scalar) {
+                return true
+            }
+        }
+        return false
+    }
+
 }
 
 extension String {
@@ -50,10 +73,8 @@ extension String {
         guard count > 0 else { return false }
 
         for char in self {
-            for scalar in char.unicodeScalars {
-                if scalar.isEmoji {
-                    return true
-                }
+            if char.isEmoji {
+                return true
             }
         }
 
@@ -67,7 +88,7 @@ extension String {
     var containsOnlyEmoji: Bool {
         guard count > 0 else { return false }
 
-        let cancelTag = Unicode.Scalar(Unicode.Scalar.cancelTag)!
+        let cancelTag = Unicode.Scalar.cancelTag
 
         for char in self {
             // some national flags are combination of black flag and characters, and ends with Cancel Tag
