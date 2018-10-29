@@ -112,6 +112,8 @@
 @class ZMMessageEditBuilder;
 @class ZMMessageHide;
 @class ZMMessageHideBuilder;
+@class ZMQuote;
+@class ZMQuoteBuilder;
 @class ZMReaction;
 @class ZMReactionBuilder;
 @class ZMText;
@@ -583,17 +585,22 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Text_content @"content"
 #define Text_link_preview @"linkPreview"
 #define Text_mentions @"mentions"
+#define Text_quote @"quote"
 @interface ZMText : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasContent_:1;
+  BOOL hasQuote_:1;
   NSString* content;
+  ZMQuote* quote;
   NSMutableArray * linkPreviewArray;
   NSMutableArray * mentionsArray;
 }
 - (BOOL) hasContent;
+- (BOOL) hasQuote;
 @property (readonly, strong) NSString* content;
 @property (readonly, strong) NSArray<ZMLinkPreview*> * linkPreview;
 @property (readonly, strong) NSArray<ZMMention*> * mentions;
+@property (readonly, strong) ZMQuote* quote;
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 - (ZMMention*)mentionsAtIndex:(NSUInteger)index;
 
@@ -648,6 +655,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMTextBuilder *)addMentions:(ZMMention*)value;
 - (ZMTextBuilder *)setMentionsArray:(NSArray<ZMMention*> *)array;
 - (ZMTextBuilder *)clearMentions;
+
+- (BOOL) hasQuote;
+- (ZMQuote*) quote;
+- (ZMTextBuilder*) setQuote:(ZMQuote*) value;
+- (ZMTextBuilder*) setQuoteBuilder:(ZMQuoteBuilder*) builderForValue;
+- (ZMTextBuilder*) mergeQuote:(ZMQuote*) value;
+- (ZMTextBuilder*) clearQuote;
 @end
 
 #define Knock_hot_knock @"hotKnock"
@@ -1328,6 +1342,66 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMMessageEditBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue;
 - (ZMMessageEditBuilder*) mergeText:(ZMText*) value;
 - (ZMMessageEditBuilder*) clearText;
+@end
+
+#define Quote_quoted_message_id @"quotedMessageId"
+#define Quote_quoted_message_sha256 @"quotedMessageSha256"
+@interface ZMQuote : PBGeneratedMessage<GeneratedMessageProtocol> {
+@private
+  BOOL hasQuotedMessageId_:1;
+  BOOL hasQuotedMessageSha256_:1;
+  NSString* quotedMessageId;
+  NSData* quotedMessageSha256;
+}
+- (BOOL) hasQuotedMessageId;
+- (BOOL) hasQuotedMessageSha256;
+@property (readonly, strong) NSString* quotedMessageId;
+@property (readonly, strong) NSData* quotedMessageSha256;
+
++ (instancetype) defaultInstance;
+- (instancetype) defaultInstance;
+
+- (BOOL) isInitialized;
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output;
+- (ZMQuoteBuilder*) builder;
++ (ZMQuoteBuilder*) builder;
++ (ZMQuoteBuilder*) builderWithPrototype:(ZMQuote*) prototype;
+- (ZMQuoteBuilder*) toBuilder;
+
++ (ZMQuote*) parseFromData:(NSData*) data;
++ (ZMQuote*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMQuote*) parseFromInputStream:(NSInputStream*) input;
++ (ZMQuote*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
++ (ZMQuote*) parseFromCodedInputStream:(PBCodedInputStream*) input;
++ (ZMQuote*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+@end
+
+@interface ZMQuoteBuilder : PBGeneratedMessageBuilder {
+@private
+  ZMQuote* resultQuote;
+}
+
+- (ZMQuote*) defaultInstance;
+
+- (ZMQuoteBuilder*) clear;
+- (ZMQuoteBuilder*) clone;
+
+- (ZMQuote*) build;
+- (ZMQuote*) buildPartial;
+
+- (ZMQuoteBuilder*) mergeFrom:(ZMQuote*) other;
+- (ZMQuoteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input;
+- (ZMQuoteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry;
+
+- (BOOL) hasQuotedMessageId;
+- (NSString*) quotedMessageId;
+- (ZMQuoteBuilder*) setQuotedMessageId:(NSString*) value;
+- (ZMQuoteBuilder*) clearQuotedMessageId;
+
+- (BOOL) hasQuotedMessageSha256;
+- (NSData*) quotedMessageSha256;
+- (ZMQuoteBuilder*) setQuotedMessageSha256:(NSData*) value;
+- (ZMQuoteBuilder*) clearQuotedMessageSha256;
 @end
 
 #define Confirmation_type @"type"
