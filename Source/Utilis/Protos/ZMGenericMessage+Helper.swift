@@ -217,6 +217,42 @@ extension ZMGenericMessage {
         return []
     }
     
+    public var content: MessageContentType? {
+        if hasEphemeral() {
+            return ephemeral.content
+        } else if hasText() {
+            return text
+        } else if hasAsset() {
+            return asset
+        } else if hasImage() {
+            return image
+        } else if hasKnock() {
+            return knock
+        } else if hasEdited() {
+            return edited
+        } else if hasHidden() {
+            return hidden
+        } else if hasCleared() {
+            return cleared
+        } else if hasDeleted() {
+            return deleted
+        } else if hasAvailability() {
+            return availability
+        } else if hasReaction() {
+            return reaction
+        } else if hasLocation() {
+            return location
+        } else if hasCalling() {
+            return  calling
+        } else if hasConfirmation() {
+            return confirmation
+        } else if hasExternal() {
+            return external
+        }
+        
+       return nil
+    }
+    
     // Accessor helpers for ephemeral images
     @objc public var imageAssetData : ZMImageAsset? {
         if hasRasterImage {
@@ -286,6 +322,22 @@ extension ZMEphemeral: MessageContentType {
     
     public func setContent(on builder: ZMGenericMessageBuilder) {
         builder.setEphemeral(self)
+    }
+    
+    public var content: MessageContentType? {
+        if hasText() {
+            return text
+        } else if hasAsset() {
+            return asset
+        } else if hasImage() {
+            return image
+        } else if hasKnock() {
+            return knock
+        } else if hasLocation() {
+            return location
+        }
+        
+        return nil
     }
     
 }

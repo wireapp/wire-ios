@@ -93,6 +93,15 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     }
 }
 
+- (NSData *)hashOfContent
+{
+    if (self.serverTimestamp == nil) {
+        return nil;
+    }
+    
+    return [self.genericMessage hashOfContentWith:self.serverTimestamp];
+}
+
 - (void)addData:(NSData *)data
 {
     if (data == nil) {
