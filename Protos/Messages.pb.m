@@ -2428,6 +2428,7 @@ static ZMEphemeral* defaultZMEphemeralInstance = nil;
 @property (strong) NSString* content;
 @property (strong) NSMutableArray<ZMLinkPreview*> * linkPreviewArray;
 @property (strong) NSMutableArray<ZMMention*> * mentionsArray;
+@property (strong) ZMQuote* quote;
 @end
 
 @implementation ZMText
@@ -2443,9 +2444,17 @@ static ZMEphemeral* defaultZMEphemeralInstance = nil;
 @dynamic linkPreview;
 @synthesize mentionsArray;
 @dynamic mentions;
+- (BOOL) hasQuote {
+  return !!hasQuote_;
+}
+- (void) setHasQuote:(BOOL) _value_ {
+  hasQuote_ = !!_value_;
+}
+@synthesize quote;
 - (instancetype) init {
   if ((self = [super init])) {
     self.content = @"";
+    self.quote = [ZMQuote defaultInstance];
   }
   return self;
 }
@@ -2493,6 +2502,11 @@ static ZMText* defaultZMTextInstance = nil;
     }
   }];
   if (!isInitmentions) return isInitmentions;
+  if (self.hasQuote) {
+    if (!self.quote.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -2505,6 +2519,9 @@ static ZMText* defaultZMTextInstance = nil;
   [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     [output writeMessage:4 value:element];
   }];
+  if (self.hasQuote) {
+    [output writeMessage:5 value:self.quote];
+  }
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -2523,6 +2540,9 @@ static ZMText* defaultZMTextInstance = nil;
   [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     size_ += computeMessageSize(4, element);
   }];
+  if (self.hasQuote) {
+    size_ += computeMessageSize(5, self.quote);
+  }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
   return size_;
@@ -2573,6 +2593,12 @@ static ZMText* defaultZMTextInstance = nil;
                      withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }];
+  if (self.hasQuote) {
+    [output appendFormat:@"%@%@ {\n", indent, @"quote"];
+    [self.quote writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -2589,6 +2615,11 @@ static ZMText* defaultZMTextInstance = nil;
     [element storeInDictionary:elementDictionary];
     [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"mentions"];
   }
+  if (self.hasQuote) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.quote storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"quote"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -2604,6 +2635,8 @@ static ZMText* defaultZMTextInstance = nil;
       (!self.hasContent || [self.content isEqual:otherMessage.content]) &&
       [self.linkPreviewArray isEqualToArray:otherMessage.linkPreviewArray] &&
       [self.mentionsArray isEqualToArray:otherMessage.mentionsArray] &&
+      self.hasQuote == otherMessage.hasQuote &&
+      (!self.hasQuote || [self.quote isEqual:otherMessage.quote]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -2617,6 +2650,9 @@ static ZMText* defaultZMTextInstance = nil;
   [self.mentionsArray enumerateObjectsUsingBlock:^(ZMMention *element, NSUInteger idx, BOOL *stop) {
     hashCode = hashCode * 31 + [element hash];
   }];
+  if (self.hasQuote) {
+    hashCode = hashCode * 31 + [self.quote hash];
+  }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
 }
@@ -2677,6 +2713,9 @@ static ZMText* defaultZMTextInstance = nil;
       [resultText.mentionsArray addObjectsFromArray:other.mentionsArray];
     }
   }
+  if (other.hasQuote) {
+    [self mergeQuote:other.quote];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -2712,6 +2751,15 @@ static ZMText* defaultZMTextInstance = nil;
         ZMMentionBuilder* subBuilder = [ZMMention builder];
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self addMentions:[subBuilder buildPartial]];
+        break;
+      }
+      case 42: {
+        ZMQuoteBuilder* subBuilder = [ZMQuote builder];
+        if (self.hasQuote) {
+          [subBuilder mergeFrom:self.quote];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setQuote:[subBuilder buildPartial]];
         break;
       }
     }
@@ -2773,6 +2821,36 @@ static ZMText* defaultZMTextInstance = nil;
 }
 - (ZMTextBuilder *)clearMentions {
   resultText.mentionsArray = nil;
+  return self;
+}
+- (BOOL) hasQuote {
+  return resultText.hasQuote;
+}
+- (ZMQuote*) quote {
+  return resultText.quote;
+}
+- (ZMTextBuilder*) setQuote:(ZMQuote*) value {
+  resultText.hasQuote = YES;
+  resultText.quote = value;
+  return self;
+}
+- (ZMTextBuilder*) setQuoteBuilder:(ZMQuoteBuilder*) builderForValue {
+  return [self setQuote:[builderForValue build]];
+}
+- (ZMTextBuilder*) mergeQuote:(ZMQuote*) value {
+  if (resultText.hasQuote &&
+      resultText.quote != [ZMQuote defaultInstance]) {
+    resultText.quote =
+      [[[ZMQuote builderWithPrototype:resultText.quote] mergeFrom:value] buildPartial];
+  } else {
+    resultText.quote = value;
+  }
+  resultText.hasQuote = YES;
+  return self;
+}
+- (ZMTextBuilder*) clearQuote {
+  resultText.hasQuote = NO;
+  resultText.quote = [ZMQuote defaultInstance];
   return self;
 }
 @end
@@ -5853,6 +5931,264 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
 - (ZMMessageEditBuilder*) clearText {
   resultMessageEdit.hasText = NO;
   resultMessageEdit.text = [ZMText defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMQuote ()
+@property (strong) NSString* quotedMessageId;
+@property (strong) NSData* quotedMessageSha256;
+@end
+
+@implementation ZMQuote
+
+- (BOOL) hasQuotedMessageId {
+  return !!hasQuotedMessageId_;
+}
+- (void) setHasQuotedMessageId:(BOOL) _value_ {
+  hasQuotedMessageId_ = !!_value_;
+}
+@synthesize quotedMessageId;
+- (BOOL) hasQuotedMessageSha256 {
+  return !!hasQuotedMessageSha256_;
+}
+- (void) setHasQuotedMessageSha256:(BOOL) _value_ {
+  hasQuotedMessageSha256_ = !!_value_;
+}
+@synthesize quotedMessageSha256;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.quotedMessageId = @"";
+    self.quotedMessageSha256 = [NSData data];
+  }
+  return self;
+}
+static ZMQuote* defaultZMQuoteInstance = nil;
++ (void) initialize {
+  if (self == [ZMQuote class]) {
+    defaultZMQuoteInstance = [[ZMQuote alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMQuoteInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMQuoteInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasQuotedMessageId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasQuotedMessageId) {
+    [output writeString:1 value:self.quotedMessageId];
+  }
+  if (self.hasQuotedMessageSha256) {
+    [output writeData:2 value:self.quotedMessageSha256];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasQuotedMessageId) {
+    size_ += computeStringSize(1, self.quotedMessageId);
+  }
+  if (self.hasQuotedMessageSha256) {
+    size_ += computeDataSize(2, self.quotedMessageSha256);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMQuote*) parseFromData:(NSData*) data {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromData:data] build];
+}
++ (ZMQuote*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMQuote*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromInputStream:input] build];
+}
++ (ZMQuote*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMQuote*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMQuote*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMQuote*)[[[ZMQuote builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMQuoteBuilder*) builder {
+  return [[ZMQuoteBuilder alloc] init];
+}
++ (ZMQuoteBuilder*) builderWithPrototype:(ZMQuote*) prototype {
+  return [[ZMQuote builder] mergeFrom:prototype];
+}
+- (ZMQuoteBuilder*) builder {
+  return [ZMQuote builder];
+}
+- (ZMQuoteBuilder*) toBuilder {
+  return [ZMQuote builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasQuotedMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"quotedMessageId", self.quotedMessageId];
+  }
+  if (self.hasQuotedMessageSha256) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"quotedMessageSha256", self.quotedMessageSha256];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasQuotedMessageId) {
+    [dictionary setObject: self.quotedMessageId forKey: @"quotedMessageId"];
+  }
+  if (self.hasQuotedMessageSha256) {
+    [dictionary setObject: self.quotedMessageSha256 forKey: @"quotedMessageSha256"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMQuote class]]) {
+    return NO;
+  }
+  ZMQuote *otherMessage = other;
+  return
+      self.hasQuotedMessageId == otherMessage.hasQuotedMessageId &&
+      (!self.hasQuotedMessageId || [self.quotedMessageId isEqual:otherMessage.quotedMessageId]) &&
+      self.hasQuotedMessageSha256 == otherMessage.hasQuotedMessageSha256 &&
+      (!self.hasQuotedMessageSha256 || [self.quotedMessageSha256 isEqual:otherMessage.quotedMessageSha256]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasQuotedMessageId) {
+    hashCode = hashCode * 31 + [self.quotedMessageId hash];
+  }
+  if (self.hasQuotedMessageSha256) {
+    hashCode = hashCode * 31 + [self.quotedMessageSha256 hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMQuoteBuilder()
+@property (strong) ZMQuote* resultQuote;
+@end
+
+@implementation ZMQuoteBuilder
+@synthesize resultQuote;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultQuote = [[ZMQuote alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultQuote;
+}
+- (ZMQuoteBuilder*) clear {
+  self.resultQuote = [[ZMQuote alloc] init];
+  return self;
+}
+- (ZMQuoteBuilder*) clone {
+  return [ZMQuote builderWithPrototype:resultQuote];
+}
+- (ZMQuote*) defaultInstance {
+  return [ZMQuote defaultInstance];
+}
+- (ZMQuote*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMQuote*) buildPartial {
+  ZMQuote* returnMe = resultQuote;
+  self.resultQuote = nil;
+  return returnMe;
+}
+- (ZMQuoteBuilder*) mergeFrom:(ZMQuote*) other {
+  if (other == [ZMQuote defaultInstance]) {
+    return self;
+  }
+  if (other.hasQuotedMessageId) {
+    [self setQuotedMessageId:other.quotedMessageId];
+  }
+  if (other.hasQuotedMessageSha256) {
+    [self setQuotedMessageSha256:other.quotedMessageSha256];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMQuoteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMQuoteBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setQuotedMessageId:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setQuotedMessageSha256:[input readData]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasQuotedMessageId {
+  return resultQuote.hasQuotedMessageId;
+}
+- (NSString*) quotedMessageId {
+  return resultQuote.quotedMessageId;
+}
+- (ZMQuoteBuilder*) setQuotedMessageId:(NSString*) value {
+  resultQuote.hasQuotedMessageId = YES;
+  resultQuote.quotedMessageId = value;
+  return self;
+}
+- (ZMQuoteBuilder*) clearQuotedMessageId {
+  resultQuote.hasQuotedMessageId = NO;
+  resultQuote.quotedMessageId = @"";
+  return self;
+}
+- (BOOL) hasQuotedMessageSha256 {
+  return resultQuote.hasQuotedMessageSha256;
+}
+- (NSData*) quotedMessageSha256 {
+  return resultQuote.quotedMessageSha256;
+}
+- (ZMQuoteBuilder*) setQuotedMessageSha256:(NSData*) value {
+  resultQuote.hasQuotedMessageSha256 = YES;
+  resultQuote.quotedMessageSha256 = value;
+  return self;
+}
+- (ZMQuoteBuilder*) clearQuotedMessageSha256 {
+  resultQuote.hasQuotedMessageSha256 = NO;
+  resultQuote.quotedMessageSha256 = [NSData data];
   return self;
 }
 @end
