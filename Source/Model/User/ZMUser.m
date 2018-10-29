@@ -522,6 +522,8 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     return color;
 }
 
+// NB: This method is called with **partial** user info and @c authoritative set to false, when the update payload
+// is received from the notification stream.
 - (void)updateWithTransportData:(NSDictionary *)transportData authoritative:(BOOL)authoritative
 {
     NSDictionary *serviceData = transportData[@"service"];
@@ -537,9 +539,11 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         }
     }
     
-    NSDictionary *ssoData = [transportData optionalDictionaryForKey:@"sso_id"];
-    self.usesCompanyLogin = nil != ssoData;
-
+    if ([transportData optionalDictionaryForKey:@"sso_id"] || authoritative) {
+        NSDictionary *ssoData = [transportData optionalDictionaryForKey:@"sso_id"];
+        self.usesCompanyLogin = nil != ssoData;
+    }
+    
     NSUUID *remoteID = [transportData[@"id"] UUID];
     if (self.remoteIdentifier == nil) {
         self.remoteIdentifier = remoteID;
@@ -559,7 +563,9 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         self.handle = handle;
     }
     
-    self.teamIdentifier = [transportData optionalUuidForKey:@"team"];
+    if ([transportData objectForKey:@"team"] || authoritative) {
+        self.teamIdentifier = [transportData optionalUuidForKey:@"team"];
+    }
     
     NSString *email = [transportData optionalStringForKey:@"email"];
     if ([transportData objectForKey:@"email"] || authoritative) {
