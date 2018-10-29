@@ -64,6 +64,12 @@ import Foundation
         add(ZMGenericMessage.message(content: metadata.asset, nonce: nonce, expiresAfter: timeout))
     }
     
+    public override var hashOfContent: Data? {
+        guard let serverTimestamp = serverTimestamp else { return nil }
+        
+        return genericAssetMessage?.hashOfContent(with: serverTimestamp)
+    }
+    
     public override func prepareForDeletion() {
         super.prepareForDeletion()
         self.dataSet.map { $0 as! ZMGenericMessageData } .forEach {
