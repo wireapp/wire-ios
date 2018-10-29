@@ -26,7 +26,7 @@ final class RegistrationRootViewControllerSnapshotTests: ZMSnapshotTestCase {
         snapshotBackgroundColor = UIColor.black.withAlphaComponent(0.5)
     }
 
-    func testForInitStatePhoneRegistration() {
+    func DISABLED_testForInitStatePhoneRegistration() {
         // Given
         let sut = RegistrationRootViewController(authenticationFlow: .registration)
         
@@ -34,7 +34,7 @@ final class RegistrationRootViewControllerSnapshotTests: ZMSnapshotTestCase {
         verify(view: sut.view)
     }
 
-    func testForInitStateLogin() {
+    func DISABLED_testForInitStateLogin() {
         // Given
         let sut = RegistrationRootViewController(authenticationFlow: .login)
 
@@ -42,7 +42,7 @@ final class RegistrationRootViewControllerSnapshotTests: ZMSnapshotTestCase {
         verify(view: sut.view)
     }
 
-    func testForInitStateOnlyLogin() {
+    func DISABLED_testForInitStateOnlyLogin() {
         // Given
         let sut = RegistrationRootViewController(authenticationFlow: .onlyLogin)
 
