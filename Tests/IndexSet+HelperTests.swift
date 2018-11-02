@@ -38,6 +38,7 @@ class IndexSet_HelperTests: XCTestCase {
         
         // then
         XCTAssertTrue(sut.contains(integersIn: IndexSet(arrayLiteral: 5, 6, 7, 8, 9)))
+        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 0, 10)))
     }
     
     func testThatItExcludesMultipleRanges() {
@@ -61,7 +62,12 @@ class IndexSet_HelperTests: XCTestCase {
         let sut = IndexSet(integersIn: range, excluding: excluded)
         
         // then
-        XCTAssertTrue(sut.contains(integersIn: IndexSet(arrayLiteral: 0, 1, 2, 3, 4, 5)))
+        XCTAssert(sut.count == 6)
+
+        XCTAssert(sut.contains(integersIn: IndexSet(arrayLiteral: 0, 1, 2, 3, 4, 5)))
+
+        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 9)))
+        XCTAssertFalse(sut.contains(integersIn: IndexSet(arrayLiteral: 10)))
     }
 
 }
