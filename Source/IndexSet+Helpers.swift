@@ -28,7 +28,7 @@ extension IndexSet {
         excluding.forEach({ excludedIndexSet.insert(integersIn: $0) })
         includedIndexSet.insert(integersIn: range)
         
-        self = includedIndexSet.symmetricDifference(excludedIndexSet)
+        self = includedIndexSet.subtracting(excludedIndexSet)
     }
     
 }
