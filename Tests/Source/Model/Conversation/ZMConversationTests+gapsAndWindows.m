@@ -219,7 +219,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"" mentions:@[]];
+    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"" mentions:@[] quote:nil];
     
     // then
     XCTAssertFalse(conversation.hasDraftMessage);
@@ -237,13 +237,13 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     // when
-    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"A" mentions:@[]];
+    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"A" mentions:@[] quote:nil];
     
     // then
     XCTAssertTrue(conversation.hasDraftMessage);
     
     // when
-    conversation.draftMessage =[[DraftMessage alloc] initWithText: @"Once upon a time" mentions:@[]];
+    conversation.draftMessage =[[DraftMessage alloc] initWithText: @"Once upon a time" mentions:@[] quote:nil];
     
     // then
     XCTAssertTrue(conversation.hasDraftMessage);

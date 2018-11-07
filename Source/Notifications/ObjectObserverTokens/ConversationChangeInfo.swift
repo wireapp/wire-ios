@@ -131,21 +131,21 @@ extension ZMConversation : ObjectInSnapshot {
     
     public override var description : String { return self.debugDescription }
     public override var debugDescription : String {
-        return "messagesChanged: \(messagesChanged)," +
-        "participantsChanged: \(participantsChanged)," +
-        "nameChanged: \(nameChanged)," +
-        "unreadCountChanged: \(unreadCountChanged)," +
-        "lastModifiedDateChanged: \(lastModifiedDateChanged)," +
-        "connectionStateChanged: \(connectionStateChanged)," +
-        "isArchivedChanged: \(isArchivedChanged)," +
-        "mutedMessageTypesChanged: \(mutedMessageTypesChanged)," +
-        "conversationListIndicatorChanged \(conversationListIndicatorChanged)," +
-        "clearedChanged \(clearedChanged)," +
-        "securityLevelChanged \(securityLevelChanged)," +
-        "teamChanged \(teamChanged)" +
-        "createdRemotelyChanged \(createdRemotelyChanged)" +
-        "destructionTimeoutChanged \(destructionTimeoutChanged)" +
-        "languageChanged \(languageChanged)"
+        return ["messagesChanged: \(messagesChanged)",
+                "participantsChanged: \(participantsChanged)",
+                "nameChanged: \(nameChanged)",
+                "unreadCountChanged: \(unreadCountChanged)",
+                "lastModifiedDateChanged: \(lastModifiedDateChanged)",
+                "connectionStateChanged: \(connectionStateChanged)",
+                "isArchivedChanged: \(isArchivedChanged)",
+                "mutedMessageTypesChanged: \(mutedMessageTypesChanged)",
+                "conversationListIndicatorChanged \(conversationListIndicatorChanged)",
+                "clearedChanged \(clearedChanged)",
+                "securityLevelChanged \(securityLevelChanged)",
+                "teamChanged \(teamChanged)",
+                "createdRemotelyChanged \(createdRemotelyChanged)",
+                "destructionTimeoutChanged \(destructionTimeoutChanged)",
+                "languageChanged \(languageChanged)"].joined(separator: ", ")
     }
     
     public required init(object: NSObject) {

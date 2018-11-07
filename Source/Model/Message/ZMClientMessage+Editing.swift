@@ -1,0 +1,46 @@
+//
+// Wire
+// Copyright (C) 2018 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
+//
+
+import Foundation
+
+extension ZMClientMessage {
+    
+    /// Apply a message edit update
+    ///
+    /// - parameter messageEdit: Message edit update
+    /// - parameter updateEvent: Update event which delivered the message edit update
+    /// - Returns: true if edit was succesfully applied
+    @objc
+    func processMessageEdit(_ messageEdit: ZMMessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
+        guard let nonce = updateEvent.messageNonce(),
+              let senderUUID = updateEvent.senderUUID(),
+              senderUUID == sender?.remoteIdentifier,
+              messageEdit.hasText()
+        else { return false }
+        
+        add(ZMGenericMessage.message(content: messageEdit.text, nonce: nonce).data())
+        updateNormalizedText()
+        
+        self.nonce = nonce
+        self.updatedTimestamp = updateEvent.timeStamp()
+        self.reactions.removeAll()
+        
+        return true
+    }
+    
+}

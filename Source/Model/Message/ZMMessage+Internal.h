@@ -60,6 +60,8 @@ extern NSString * _Nonnull const ZMMessageConfirmationKey;
 extern NSString * _Nonnull const ZMMessageCachedCategoryKey;
 extern NSString * _Nonnull const ZMMessageSystemMessageClientsKey;
 extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
+extern NSString * _Nonnull const ZMMessageRepliesKey;
+extern NSString * _Nonnull const ZMMessageQuoteKey;
 
 @interface ZMMessage : ZMManagedObject
 
@@ -94,14 +96,6 @@ extern NSString * _Nonnull const ZMMessageDeliveryStateKey;
            senderID:(NSUUID * _Nonnull)senderID
        conversation:(ZMConversation * _Nonnull)conversation
 inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
-
-/// Clears the content of a message for a ZMEditMessage
-/// Returns NO when the message was not found
-/// or if the sender of the ZMEditMessage is not the same as the sender of the original message
-+ (ZMMessage * _Nullable)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage * _Nonnull)genericEditMessage
-                                                 inConversation:(ZMConversation * _Nonnull)conversation
-                                                       senderID:(NSUUID * _Nonnull)senderID
-                                         inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 @end
 

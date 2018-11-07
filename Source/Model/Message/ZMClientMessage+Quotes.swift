@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2018 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,28 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-
-extension ZMOTRMessage {
-
-    private static let dayThreshold = 7
+extension ZMClientMessage {
     
-    @objc
-    var needsToBeConfirmed: Bool {
-        return needsToBeConfirmedAtCurrentDate()
-    }
-    
-    func needsToBeConfirmedAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
-        guard let conversation = conversation, conversation.conversationType == .oneOnOne,
-              let sender = sender, !sender.isSelfUser,
-              let serverTimestamp = serverTimestamp,
-              let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day
-        else { return false }
+    override func updateQuoteRelationships() {
+        guard let quote = genericMessage?.text?.quote else { return }
         
-        return daysElapsed <= ZMOTRMessage.dayThreshold
+        establishRelationshipsForInsertedQuote(quote)
     }
     
 }
-

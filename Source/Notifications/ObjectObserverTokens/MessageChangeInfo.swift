@@ -63,6 +63,7 @@ extension ZMClientMessage {
                               #keyPath(ZMClientMessage.linkPreviewState),
                               #keyPath(ZMClientMessage.genericMessage),
                               #keyPath(ZMMessage.reactions),
+                              #keyPath(ZMClientMessage.quote),
                               MessageKey.linkPreview.rawValue]
         return keys.union(additionalKeys)
     }
@@ -96,11 +97,11 @@ extension ZMSystemMessage {
 
     static func changeInfo(for message: ZMMessage, changes: Changes) -> MessageChangeInfo? {
         var originalChanges = changes.originalChanges
-        let clientChanges = originalChanges.removeValue(forKey: ReactionChangeInfoKey) as? [NSObject : [String : Any]]
+        let reactionChanges = originalChanges.removeValue(forKey: ReactionChangeInfoKey) as? [NSObject : [String : Any]]
         
-        if let clientChanges = clientChanges {
+        if let reactionChanges = reactionChanges {
             var reactionChangeInfos = [ReactionChangeInfo]()
-            clientChanges.forEach {
+            reactionChanges.forEach {
                 let changeInfo = ReactionChangeInfo(object: $0)
                 changeInfo.changeInfos = $1 as! [String : NSObject]
                 reactionChangeInfos.append(changeInfo)
@@ -121,6 +122,22 @@ extension ZMSystemMessage {
         self.message = object as! ZMMessage
         super.init(object: object)
     }
+    
+    public override var debugDescription: String {
+        return ["deliveryStateChanged: \(deliveryStateChanged)",
+                "reactionsChanged: \(reactionsChanged)",
+                "childMessagesChanged: \(childMessagesChanged)",
+                "quoteChanged: \(quoteChanged)",
+                "imageChanged: \(imageChanged)",
+                "fileAvailabilityChanged: \(fileAvailabilityChanged)",
+                "usersChanged: \(usersChanged)",
+                "linkPreviewChanged: \(linkPreviewChanged)",
+                "transferStateChanged: \(transferStateChanged)",
+                "senderChanged: \(senderChanged)",
+                "isObfuscatedChanged: \(isObfuscatedChanged)"
+                ].joined(separator: ", ")
+    }
+    
     public var deliveryStateChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.deliveryState))
     }
@@ -131,6 +148,10 @@ extension ZMSystemMessage {
 
     public var childMessagesChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMSystemMessage.childMessages))
+    }
+    
+    public var quoteChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMClientMessage.quote))
     }
 
     /// Whether the image data on disk changed

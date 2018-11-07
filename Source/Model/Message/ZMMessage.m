@@ -84,6 +84,8 @@ NSString * const ZMSystemMessageMessageTimerKey = @"messageTimer";
 NSString * const ZMSystemMessageRelevantForConversationStatusKey = @"relevantForConversationStatus";
 NSString * const ZMSystemMessageAllTeamUsersAddedKey = @"allTeamUsersAdded";
 NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
+NSString * const ZMMessageRepliesKey = @"replies";
+NSString * const ZMMessageQuoteKey = @"quote";
 
 
 @interface ZMMessage ()
@@ -333,6 +335,7 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
 {
     self.hiddenInConversation = self.conversation;
     self.visibleInConversation = nil;
+    self.replies = [[NSSet alloc] init];
     [self clearAllReactions];
 
     if (clearingSender) {
@@ -442,25 +445,6 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
         [self.managedObjectContext deleteObject:confirmationReceipt];
     }
 }
-
-+ (ZMMessage *)clearedMessageForRemotelyEditedMessage:(ZMGenericMessage *)genericEditMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
-{
-    if (!genericEditMessage.hasEdited) {
-        return nil;
-    }
-    NSUUID *messageID = [NSUUID uuidWithTransportString:genericEditMessage.edited.replacingMessageId];
-    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
-    
-    // Only the sender of the original message can edit it
-    if (message == nil  || message.isZombieObject || ![senderID isEqual:message.sender.remoteIdentifier]) {
-        return nil;
-    }
-
-    // We do not want to clear the sender in case of an edit, as the message will still be visible
-    [message removeMessageClearingSender:NO];
-    return message;
-}
-
 
 - (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
 {
@@ -687,10 +671,12 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
                              ZMMessageDurationKey,
                              ZMMessageChildMessagesKey,
                              ZMMessageParentMessageKey,
+                             ZMMessageRepliesKey,
+                             ZMMessageQuoteKey,
                              ZMSystemMessageMessageTimerKey,
                              ZMSystemMessageRelevantForConversationStatusKey,
                              ZMSystemMessageAllTeamUsersAddedKey,
-                             ZMSystemMessageNumberOfGuestsAddedKey
+                             ZMSystemMessageNumberOfGuestsAddedKey,
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -754,6 +740,31 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
     return nil;
 }
 
+- (NSArray<Mention *> *)mentions
+{
+    return @[];
+}
+
+- (ZMMessage *)quote
+{
+    return nil;
+}
+
+-(NSSet<ZMMessage *> *)replies
+{
+    return [NSSet set];
+}
+
+-(BOOL)hasQuote
+{
+    return NO;
+}
+
+-(BOOL)isQuotingSelf
+{
+    return NO;
+}
+
 - (void)removeMessageClearingSender:(BOOL)clearingSender
 {
     self.text = nil;
@@ -776,10 +787,13 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
     
 }
 
-- (NSArray<Mention *> *)mentions
+- (void)editText:(NSString *)text mentions:(NSArray<Mention *> *)mentions fetchLinkPreview:(BOOL)fetchLinkPreview
 {
-    return @[];
+    NOT_USED(text);
+    NOT_USED(mentions);
+    NOT_USED(fetchLinkPreview);
 }
+
 
 @end
 

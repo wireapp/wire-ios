@@ -188,6 +188,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return (unsigned long)self.internalEstimatedUnreadSelfMentionCount;
 }
 
+- (NSUInteger)estimatedUnreadSelfReplyCount
+{
+    return (unsigned long)self.internalEstimatedUnreadSelfReplyCount;
+}
+
 + (NSSet *)keyPathsForValuesAffectingEstimatedUnreadCount
 {
     return [NSSet setWithObjects: ZMConversationInternalEstimatedUnreadCountKey, ZMConversationLastReadServerTimeStampKey, nil];
@@ -346,6 +351,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationLastReadLocalTimestampKey,
             ZMConversationInternalEstimatedUnreadCountKey,
             ZMConversationInternalEstimatedUnreadSelfMentionCountKey,
+            ZMConversationInternalEstimatedUnreadSelfReplyCountKey,
             ZMConversationIsArchivedKey,
             ZMConversationMutedStatusKey,
             LocalMessageDestructionTimeoutKey,

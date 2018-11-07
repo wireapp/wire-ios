@@ -135,7 +135,7 @@ extension ZMConversation {
             if let status = mutedStatus {
                 var statusFlags = MutedMessageTypes(rawValue: status)
                 if legacyFlag != 0 {
-                    statusFlags.formUnion(.nonMentions)
+                    statusFlags.formUnion(.regular)
                 }
                 else {
                     statusFlags = MutedMessageTypes.none
@@ -144,7 +144,7 @@ extension ZMConversation {
                 self.mutedStatus = statusFlags.rawValue
             }
             else {
-                self.mutedStatus = (legacyFlag == 0) ? MutedMessageTypes.none.rawValue : MutedMessageTypes.nonMentions.rawValue
+                self.mutedStatus = (legacyFlag == 0) ? MutedMessageTypes.none.rawValue : MutedMessageTypes.regular.rawValue
             }
         }
         else if let status = mutedStatus {
@@ -296,6 +296,7 @@ extension ZMConversation {
         var lastMissedCallDate: Date? = nil
         var unreadCount: Int64 = 0
         var unreadSelfMentionCount: Int64 = 0
+        var unreadSelfReplyCount: Int64 = 0
         
         for message in messages {
             if message.isKnock {
@@ -306,8 +307,13 @@ extension ZMConversation {
                 lastMissedCallDate = message.serverTimestamp
             }
             
-            if let textMessageData = message.textMessageData, textMessageData.isMentioningSelf {
-                unreadSelfMentionCount += 1
+            if let textMessageData = message.textMessageData {
+                if textMessageData.isMentioningSelf {
+                    unreadSelfMentionCount += 1
+                }
+                if textMessageData.isQuotingSelf {
+                    unreadSelfReplyCount += 1
+                }
             }
             
             if message.shouldGenerateUnreadCount() {
@@ -319,6 +325,7 @@ extension ZMConversation {
         updateLastUnreadMissedCall(lastMissedCallDate)
         internalEstimatedUnreadCount = unreadCount
         internalEstimatedUnreadSelfMentionCount = unreadSelfMentionCount
+        internalEstimatedUnreadSelfReplyCount = unreadSelfReplyCount
     }
     
     /// Returns the first unread message in a converation. If the first unread message is child message of system message the parent message will be returned.

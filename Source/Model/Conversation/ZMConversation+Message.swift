@@ -34,11 +34,28 @@ extension ZMConversation {
     }
     
     @discardableResult @objc(appendText:mentions:fetchLinkPreview:nonce:)
-    public func append(text: String, mentions: [Mention] = [], fetchLinkPreview: Bool = true, nonce: UUID = UUID()) -> ZMConversationMessage? {
+    public func append(text: String,
+                       mentions: [Mention] = [],
+                       fetchLinkPreview: Bool = true,
+                       nonce: UUID = UUID()) -> ZMConversationMessage? {
+        
+        return append(text: text, mentions: mentions, replyingTo: nil, fetchLinkPreview: fetchLinkPreview, nonce: nonce)
+    }
+    
+    @discardableResult @objc(appendText:mentions:replyingToMessage:fetchLinkPreview:nonce:)
+    public func append(text: String,
+                       mentions: [Mention] = [],
+                       replyingTo quotedMessage: ZMConversationMessage? = nil,
+                       fetchLinkPreview: Bool = true,
+                       nonce: UUID = UUID()) -> ZMConversationMessage? {
+        
         guard !(text as NSString).zmHasOnlyWhitespaceCharacters() else { return nil }
         
-        let message = appendClientMessage(with: ZMGenericMessage.message(content: ZMText.text(with: text, mentions: mentions, linkPreviews: []), nonce: nonce, expiresAfter: messageDestructionTimeoutValue))
-        message?.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        let textContent = ZMText.text(with: text, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage as? ZMOTRMessage)
+        let clientMessage = ZMGenericMessage.message(content: textContent, nonce: nonce, expiresAfter: messageDestructionTimeoutValue)
+        let message = appendClientMessage(with: clientMessage)!
+        message.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        message.quote = quotedMessage as? ZMMessage
         
         if let managedObjectContext = managedObjectContext {
             NotificationInContext(name: ZMConversation.clearTypingNotificationName,

@@ -397,21 +397,18 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
-        let message = conversation.append(text: "Håkon") as! ZMMessage
+        let message = conversation.append(text: "Håkon") as! ZMClientMessage
         message.markAsSent()
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertEqual(message.normalizedText, "hakon")
 
         // When
-        let edited = ZMMessage.edit(message, newText: "Coração")
-        XCTAssertNotNil(edited)
+        message.textMessageData?.editText("Coração", mentions: [], fetchLinkPreview: false)
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
         // Then
-        XCTAssertNil(message.visibleInConversation)
-        XCTAssertNil(message.normalizedText)
-        XCTAssertEqual(edited?.normalizedText, "coracao")
+        XCTAssertEqual(message.normalizedText, "coracao")
 
         guard let originalMatches = search(for: "hakon", in: conversation).first?.matches,
               let editedMatches = search(for: "coracao", in: conversation).first?.matches else {
@@ -423,7 +420,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             return XCTFail("Unexpected number of edited matches")
         }
 
-        XCTAssertEqual(editedMatch, edited)
+        XCTAssertEqual(editedMatch, message)
     }
 
     func testThatItReturnsEphemeralMessagesAsSearchResults() {

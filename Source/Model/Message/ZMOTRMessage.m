@@ -162,95 +162,73 @@ NSString * const DeliveredKey = @"delivered";
 
     if (message.hasLastRead && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMConversation updateConversationWithZMLastReadFromSelfConversation:message.lastRead inContext:moc];
-    }
-    if (message.hasCleared && conversation.conversationType == ZMConversationTypeSelf) {
+    } else if (message.hasCleared && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMConversation updateConversationWithZMClearedFromSelfConversation:message.cleared inContext:moc];
-    }
-    if (message.hasHidden && conversation.conversationType == ZMConversationTypeSelf) {
+    } else if (message.hasHidden && conversation.conversationType == ZMConversationTypeSelf) {
         [ZMMessage removeMessageWithRemotelyHiddenMessage:message.hidden inManagedObjectContext:moc];
-        return nil;
-    }
-    if (message.hasDeleted) {
+    } else if (message.hasDeleted) {
         [ZMMessage removeMessageWithRemotelyDeletedMessage:message.deleted inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
-        return nil;
-    }
-    if (message.hasReaction) {
-        
+    } else if (message.hasReaction) {
         // if we don't understand the reaction received, discard it
         if (message.reaction.emoji.length > 0 && [Reaction transportReactionFrom:message.reaction.emoji] == TransportReactionNone) {
             return nil;
         }
         
         [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
-        return nil;
-    }
-    if (message.hasConfirmation) {
+    } else if (message.hasConfirmation) {
         ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc];
         NOT_USED([ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender]);
-        return nil;
-    }
-    ZMMessage *clearedMessage;
-    if (message.hasEdited) {
-        clearedMessage = [ZMMessage clearedMessageForRemotelyEditedMessage:message inConversation:conversation senderID:updateEvent.senderUUID inManagedObjectContext:moc];
-        if (clearedMessage == nil) {
+    } else if (message.hasEdited) {
+        NSUUID *editedMessageId = [NSUUID uuidWithTransportString:message.edited.replacingMessageId];
+        ZMClientMessage *editedMessage = [ZMClientMessage fetchMessageWithNonce:editedMessageId forConversation:conversation inManagedObjectContext:moc prefetchResult:prefetchResult];
+        if ([editedMessage processMessageEdit:message.edited from:updateEvent]) {
+            [editedMessage updateCategoryCache];
+            return [[MessageUpdateResult alloc] initWithMessage:editedMessage needsConfirmation:editedMessage.needsToBeConfirmed wasInserted:YES];
+        }
+    } else if ([conversation shouldAddEvent:updateEvent] && !(message.hasClientAction || message.hasCalling || message.hasAvailability)) {
+        NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
+        
+        Class messageClass = [ZMGenericMessage entityClassForGenericMessage:message];
+        ZMOTRMessage *clientMessage = [messageClass fetchMessageWithNonce:nonce
+                                                          forConversation:conversation
+                                                   inManagedObjectContext:moc
+                                                           prefetchResult:prefetchResult];
+        
+        if (clientMessage.isZombieObject) {
             return nil;
         }
-    }
-    
-    if (![conversation shouldAddEvent:updateEvent] || message.hasClientAction || message.hasCalling || message.hasAvailability) {
-        return nil;
-    }
-    
-    NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
-    
-    Class messageClass = [ZMGenericMessage entityClassForGenericMessage:message];
-    ZMOTRMessage *clientMessage = [messageClass fetchMessageWithNonce:nonce
-                                                      forConversation:conversation
-                                               inManagedObjectContext:moc
-                                                       prefetchResult:prefetchResult];
-    
-    if (clientMessage.isZombieObject) {
-        return nil;
-    }
-    
-    BOOL isNewMessage = NO;
-    if (clientMessage == nil) {
-        clientMessage = [[messageClass alloc] initWithNonce:nonce managedObjectContext:moc];
-        clientMessage.senderClientID = updateEvent.senderClientID;
         
-        if (clearedMessage != nil && [clientMessage isKindOfClass:[ZMClientMessage class]]) {
-            clientMessage.serverTimestamp = clearedMessage.serverTimestamp;
-            [(ZMClientMessage *)clientMessage setUpdatedTimestamp:updateEvent.timeStamp];
-        } else {
+        BOOL isNewMessage = NO;
+        if (clientMessage == nil) {
+            clientMessage = [[messageClass alloc] initWithNonce:nonce managedObjectContext:moc];
+            clientMessage.senderClientID = updateEvent.senderClientID;
             clientMessage.serverTimestamp = updateEvent.timeStamp;
+            isNewMessage = YES;
+        } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
+            return nil;
         }
         
-        isNewMessage = YES;
-    } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
-        return nil;
+        // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
+        [clientMessage updateWithGenericMessage:message updateEvent:updateEvent initialUpdate:isNewMessage];
+        
+        // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true.
+        // In addition the object will still have a managedObjectContext until the context is finally saved. In this
+        // case, we need to check the nonce (which would have previously been set) to avoid setting an invalid
+        // relationship between the deleted object and the conversation and / or sender
+        if (clientMessage.isZombieObject || clientMessage.nonce == nil) {
+            return nil;
+        }
+        
+        [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation];
+        [clientMessage updateQuoteRelationships];
+        [clientMessage unarchiveIfNeeded:conversation];
+        [clientMessage updateCategoryCache];
+        [conversation resortMessagesWithUpdatedMessage:clientMessage];
+        
+        return [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:clientMessage.needsToBeConfirmed wasInserted:isNewMessage];
     }
     
-    // In case of AssetMessages: If the payload does not match the sha265 digest, calling `updateWithGenericMessage:updateEvent` will delete the object.
-    [clientMessage updateWithGenericMessage:message updateEvent:updateEvent initialUpdate:isNewMessage];
-    
-    // It seems that if the object was inserted and immediately deleted, the isDeleted flag is not set to true. In addition the object will still have a managedObjectContext until the context is finally saved. In this case, we need to check the nonce (which would have previously been set) to avoid setting an invalid relationship between the deleted object and the conversation and / or sender
-    if (clientMessage.isZombieObject || clientMessage.nonce == nil) {
-        return nil;
-    }
-    
-    [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation];
-    [clientMessage unarchiveIfNeeded:conversation];
-    [clientMessage updateCategoryCache];
-    [conversation resortMessagesWithUpdatedMessage:clientMessage];
-    
-    BOOL needsConfirmation = NO;
-    if (isNewMessage && !clientMessage.sender.isSelfUser && conversation.conversationType == ZMConversationTypeOneOnOne) {
-        needsConfirmation = [self shouldConfirmMessage:clientMessage];
-    }
-    
-    
-    MessageUpdateResult *result = [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:needsConfirmation wasInserted:isNewMessage];
-    return result;
+    return nil;
 }
 
 @end

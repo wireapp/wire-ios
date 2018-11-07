@@ -30,6 +30,10 @@
 /// It is calculated by counting the unread messages which mention the self user
 @property (nonatomic) int64_t internalEstimatedUnreadSelfMentionCount;
 
+/// internalEstimatedUnreadSelfReplyCount can only be set from the syncMOC
+/// It is calculated by counting the unread messages which reply to the self user
+@property (nonatomic) int64_t internalEstimatedUnreadSelfReplyCount;
+
 /// hasUnreadUnsentMessage is set when a message expires
 /// and reset when the visible window changes
 @property (nonatomic) BOOL hasUnreadUnsentMessage;
