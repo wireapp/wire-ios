@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2018 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,25 +19,23 @@
 
 import Foundation
 
-
 extension ZMOTRMessage {
-
-    private static let dayThreshold = 7
     
     @objc
-    var needsToBeConfirmed: Bool {
-        return needsToBeConfirmedAtCurrentDate()
+    func updateQuoteRelationships() {
+        assertionFailure("Subclasses should override this method")
     }
-    
-    func needsToBeConfirmedAtCurrentDate(_ currentDate: Date = Date()) -> Bool {
-        guard let conversation = conversation, conversation.conversationType == .oneOnOne,
-              let sender = sender, !sender.isSelfUser,
-              let serverTimestamp = serverTimestamp,
-              let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day
-        else { return false }
         
-        return daysElapsed <= ZMOTRMessage.dayThreshold
+    func establishRelationshipsForInsertedQuote(_ quote: ZMQuote) {
+        
+        guard let managedObjectContext = managedObjectContext,
+              let conversation = conversation,
+              let quotedMessageId = UUID(uuidString: quote.quotedMessageId),
+              let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: managedObjectContext) else { return }
+        
+        if quotedMessage.hashOfContent == quote.quotedMessageSha256 {
+            quotedMessage.replies.insert(self)
+        }
     }
     
 }
-

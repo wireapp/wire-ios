@@ -26,16 +26,19 @@ import Foundation
     public let text: String
     /// The mentiones contained in the text.
     public let mentions: [Mention]
+    /// The quoted message, if available.
+    public let quote: ZMMessage?
     
-    public init(text: String, mentions: [Mention]) {
+    public init(text: String, mentions: [Mention], quote: ZMMessage?) {
         self.text = text
         self.mentions = mentions
+        self.quote = quote
         super.init()
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
         guard let other = object as? DraftMessage else { return false }
-        return (text, mentions) == (other.text, other.mentions)
+        return (text, mentions, quote) == (other.text, other.mentions, other.quote)
     }
 
 }
@@ -48,17 +51,22 @@ fileprivate final class StorableDraftMessage: NSObject, Codable {
     let text: String
     /// The mentiones contained in the text.
     let mentions: [StorableMention]
+    /// The quoted message, if available.
+    let quote: StorableQuote?
     
-    init(text: String, mentions: [StorableMention]) {
+    init(text: String, mentions: [StorableMention], quote: StorableQuote?) {
         self.text = text
         self.mentions = mentions
+        self.quote = quote
         super.init()
     }
     
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.
     fileprivate func draftMessage(in context: NSManagedObjectContext) -> DraftMessage {
-        return .init(text: text, mentions: mentions.compactMap { $0.mention(in: context) })
+        return .init(text: text,
+                     mentions: mentions.compactMap { $0.mention(in: context) },
+                     quote: quote?.quote(in: context))
     }
 }
 
@@ -77,6 +85,22 @@ fileprivate struct StorableMention: Codable {
         return ZMUser(remoteID: userIdentifier, createIfNeeded: false, in: context).map(papply(Mention.init, range))
     }
 
+}
+
+/// A serializable version of `ZMMessage` that conforms to `Codable` and
+/// stores the message identifier instead of a whole `ZMMessage` value.
+fileprivate struct StorableQuote: Codable {
+    
+    /// The identifier for the message being quoted.
+    let nonce: UUID?
+    
+    /// Converts the storable mention into a regular `Mention` object.
+    /// The passed in `context` is needed to fetch the user object.
+    func quote(in context: NSManagedObjectContext) -> ZMMessage? {
+        guard let nonce = nonce else { return nil }
+        return ZMMessage(nonce: nonce, managedObjectContext: context)
+    }
+    
 }
 
 // MARK: - Conversation Accessors
@@ -143,7 +167,9 @@ fileprivate extension DraftMessage {
 
     /// The storable version of the object.
     fileprivate var storable: StorableDraftMessage {
-        return .init(text: text, mentions: mentions.compactMap(\.storable))
+        return .init(text: text,
+                     mentions: mentions.compactMap(\.storable),
+                     quote: StorableQuote(nonce: quote?.nonce))
     }
 
 }

@@ -51,6 +51,7 @@ typedef NS_ENUM(int16_t, ZMConversationListIndicator) {
     ZMConversationListIndicatorInvalid = 0,
     ZMConversationListIndicatorNone,
     ZMConversationListIndicatorUnreadSelfMention,
+    ZMConversationListIndicatorUnreadSelfReply,
     ZMConversationListIndicatorUnreadMessages,
     ZMConversationListIndicatorKnock,
     ZMConversationListIndicatorMissedCall,
@@ -75,6 +76,7 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadSelfMentionCount;
+@property (nonatomic, readonly) NSUInteger estimatedUnreadSelfReplyCount;
 @property (nonatomic, readonly) ZMConversationListIndicator conversationListIndicator;
 @property (nonatomic, readonly) BOOL hasDraftMessage;
 @property (nonatomic, nullable) Team *team;

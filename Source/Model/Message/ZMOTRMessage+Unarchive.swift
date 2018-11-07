@@ -38,18 +38,19 @@ extension ZMOTRMessage {
                 return
         }
         
-        unarchiveIfCurrentUserIsMentioned(conversation)
+        unarchiveIfCurrentUserIsMentionedOrQuoted(conversation)
         
         unarchiveIfNotSilenced(conversation)
     }
     
-    private func unarchiveIfCurrentUserIsMentioned(_ conversation: ZMConversation) {
+    private func unarchiveIfCurrentUserIsMentionedOrQuoted(_ conversation: ZMConversation) {
         
         if conversation.isArchived,
             let sender = self.sender,
             !sender.isSelfUser,
             let textMessageData = self.textMessageData,
-            !conversation.mutedMessageTypes.contains(.mentions) && textMessageData.isMentioningSelf {
+            !conversation.mutedMessageTypes.contains(.mentionsAndReplies),
+            textMessageData.isMentioningSelf || textMessageData.isQuotingSelf {
             conversation.unarchive(with: self)
         }
     }

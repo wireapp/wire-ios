@@ -27,6 +27,16 @@ fileprivate extension NSRange {
 @objc
 extension ZMClientMessage: ZMTextMessageData {
     
+    @NSManaged public var quote: ZMMessage?
+    
+    public var isQuotingSelf: Bool{
+        return quote?.sender?.isSelfUser ?? false
+    }
+    
+    public var hasQuote: Bool {
+        return genericMessage?.text.hasQuote() ?? false
+    }
+    
     public var messageText: String? {
         return genericMessage?.textData?.content.removingExtremeCombiningCharacters
     }
@@ -50,6 +60,20 @@ extension ZMClientMessage: ZMTextMessageData {
             return true
         })
     }
-    
+        
+    public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
+        guard let nonce = nonce, isEditableMessage else { return }
+        
+        let editNonce = UUID()
+        add(ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: text, mentions: mentions), replacingMessageId: nonce), nonce: editNonce).data())
+        updateNormalizedText()
+        
+        self.nonce = editNonce
+        self.updatedTimestamp = Date()
+        self.reactions.removeAll()
+        self.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        self.delivered = false
+    }
+        
 }
 

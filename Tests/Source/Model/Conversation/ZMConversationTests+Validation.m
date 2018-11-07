@@ -136,7 +136,7 @@
 {
     // given
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation1.draftMessage = [[DraftMessage alloc] initWithText:@"My draft message text" mentions:@[]];
+    conversation1.draftMessage = [[DraftMessage alloc] initWithText:@"My draft message text" mentions:@[] quote:nil];
     conversation1.userDefinedName = @"My Name";
     XCTAssertTrue([self.uiMOC saveOrRollback]);
     

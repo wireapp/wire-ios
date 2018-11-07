@@ -568,13 +568,12 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
-        let message = ZMTextMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        conversation.mutableMessages.add(message)
+        let message = conversation.append(text: "hello")
         self.uiMOC.saveOrRollback()
         
         guard let user = conversation.activeParticipants.firstObject as? ZMUser else { XCTFail(); return }
         
-        _ = message.edit(user.displayName, mentions: [Mention(range: NSRange(location: 0, length: user.displayName.count), user: user)], fetchLinkPreview: false)
+        message?.textMessageData?.editText(user.displayName, mentions: [Mention(range: NSRange(location: 0, length: user.displayName.count), user: user)], fetchLinkPreview: false)
         self.uiMOC.saveOrRollback()
         
         // then

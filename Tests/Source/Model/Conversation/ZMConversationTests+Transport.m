@@ -138,7 +138,7 @@
         XCTAssertTrue(conversation.isArchived);
         XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
 
-        XCTAssertTrue(conversation.isOnlyMentions);
+        XCTAssertTrue(conversation.isOnlyMentionsAndReplies);
         XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
 
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
@@ -255,7 +255,7 @@
         XCTAssertTrue(conversation.isArchived);
         XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
         
-        XCTAssertTrue(conversation.isOnlyMentions);
+        XCTAssertTrue(conversation.isOnlyMentionsAndReplies);
         XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
         
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
@@ -295,7 +295,7 @@
         XCTAssertTrue(conversation.isArchived);
         XCTAssertEqualWithAccuracy([conversation.archivedChangedTimestamp timeIntervalSince1970], [archivedDate timeIntervalSince1970], 1.0);
         
-        XCTAssertTrue(conversation.isOnlyMentions);
+        XCTAssertTrue(conversation.isOnlyMentionsAndReplies);
         XCTAssertEqualWithAccuracy([conversation.silencedChangedTimestamp timeIntervalSince1970], [silencedDate timeIntervalSince1970], 1.0);
         
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
@@ -375,7 +375,7 @@
         
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isFullyMuted);
-        XCTAssertFalse(conversation.isOnlyMentions);
+        XCTAssertFalse(conversation.isOnlyMentionsAndReplies);
     }];
 }
 
@@ -450,7 +450,7 @@
         
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isFullyMuted);
-        XCTAssertFalse(conversation.isOnlyMentions);
+        XCTAssertFalse(conversation.isOnlyMentionsAndReplies);
     }];
 }
 
@@ -504,7 +504,7 @@
         
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isFullyMuted);
-        XCTAssertFalse(conversation.isOnlyMentions);
+        XCTAssertFalse(conversation.isOnlyMentionsAndReplies);
     }];
 }
 
@@ -552,7 +552,7 @@
         XCTAssertNil(conversation.team);
         XCTAssertFalse(conversation.isArchived);
         XCTAssertFalse(conversation.isFullyMuted);
-        XCTAssertFalse(conversation.isOnlyMentions);
+        XCTAssertFalse(conversation.isOnlyMentionsAndReplies);
     }];
 }
 

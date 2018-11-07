@@ -90,8 +90,8 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         return conversation
     }
     
-    func event(for message: String, in conversation: ZMConversation, mentions: [Mention]) -> ZMUpdateEvent {
-        let text = ZMText.text(with: message, mentions: mentions, linkPreviews: [])
+    func event(for message: String, in conversation: ZMConversation, mentions: [Mention] = [], replyingTo quotedMessage: ZMClientMessage? = nil) -> ZMUpdateEvent {
+        let text = ZMText.text(with: message, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage)
         let message = ZMGenericMessage.message(content: text, nonce: UUID())
         
         let dataString = message.data()!.base64EncodedString()
@@ -101,13 +101,13 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID())!
     }
     
-    func testThatAppendingAMentionSelfMessageInAnArchivedOnlyMentionsConversationUnarchivesIt() {
+    func testThatAppendingAMessageMentioningSelfInAnArchived_RegularMuted_ConversationUnarchivesIt() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.remoteIdentifier = UUID()
         selfUser.teamIdentifier = UUID()
         
-        let conversation = archivedConversation(with: .nonMentions)
+        let conversation = archivedConversation(with: .regular)
         
         // WHEN
         let mention = Mention(range: NSRange(location: 0, length: 9), user: selfUser)
@@ -119,10 +119,10 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         
         // THEN
         XCTAssertFalse(conversation.isArchived)
-        XCTAssertEqual(conversation.mutedMessageTypes, .nonMentions)
+        XCTAssertEqual(conversation.mutedMessageTypes, .regular)
     }
 
-    func testThatAppendingAMentionSelfMessageInAnArchivedFullyMutedConversationDoesNotUnarchiveIt() {
+    func testThatAppendingAMessageMentioningSelfInAnArchived_FullyMuted_ConversationDoesNotUnarchiveIt() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.remoteIdentifier = UUID()
@@ -143,5 +143,58 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         XCTAssertEqual(conversation.mutedMessageTypes, .all)
     }
 
+    func testThatAppendingAMessageQuotingSelfInAnArchived_RegularMuted_ConversationUnarchivesIt() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.teamIdentifier = UUID()
+        
+        let conversation = archivedConversation(with: .regular)
+        
+        // WHEN
+        let quotedMessage = conversation.append(text: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        quotedMessage.sender = selfUser
+        
+        // appending the message unarchives the conversation, so archive it again.
+        conversation.isArchived = true
+        XCTAssertTrue(conversation.isArchived)
+        
+        let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
+        
+        self.performPretendingUiMocIsSyncMoc {
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+        }
+        
+        // THEN
+        XCTAssertFalse(conversation.isArchived)
+        XCTAssertEqual(conversation.mutedMessageTypes, .regular)
+    }
+    
+    func testThatAppendingAMessageQuotingSelfInAnArchived_FullyMuted_ConversationDoesNotUnarchiveIt() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser.remoteIdentifier = UUID()
+        selfUser.teamIdentifier = UUID()
+        
+        let conversation = archivedConversation(with: .all)
+        
+        // WHEN
+        let quotedMessage = conversation.append(text: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        quotedMessage.sender = selfUser
+        
+        // appending the message unarchives the conversation, so archive it again.
+        conversation.isArchived = true
+        XCTAssertTrue(conversation.isArchived)
+        
+        let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
+        
+        self.performPretendingUiMocIsSyncMoc {
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+        }
+        
+        // THEN
+        XCTAssertTrue(conversation.isArchived)
+        XCTAssertEqual(conversation.mutedMessageTypes, .all)
+    }
 }
 

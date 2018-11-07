@@ -161,6 +161,15 @@ extension ZMText {
     }
 }
 
+// MARK: Quotes
+
+extension ZMQuote {
+    @objc public func validatingFields() -> ZMQuote? {
+        guard UUID.isValid(object: quotedMessageId) else { return nil }
+        return self
+    }
+}
+
 // MARK: Mention
 
 extension ZMMention {

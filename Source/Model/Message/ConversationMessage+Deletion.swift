@@ -68,30 +68,6 @@ extension ZMMessage {
         return message
     }
     
-    @objc public static func edit(_ message: ZMConversationMessage, newText: String, mentions: [Mention] = [], fetchLinkPreview: Bool = true) -> ZMMessage? {
-        guard let castedMessage = message as? ZMMessage else { return nil }
-        return castedMessage.edit(newText, mentions: mentions, fetchLinkPreview: fetchLinkPreview)
-    }
-        
-    func edit(_ newText: String, mentions: [Mention] = [], fetchLinkPreview: Bool) -> ZMMessage? {
-        guard isEditableMessage else { return nil }
-        guard !isZombieObject, let sender = sender , sender.isSelfUser else { return nil }
-        guard let conversation = conversation, let messageNonce = nonce else { return nil }
-        guard let newMessage = conversation.append(message: ZMMessageEdit.edit(with: ZMText.text(with: newText, mentions: mentions), replacingMessageId: messageNonce), expires: true) else { return nil }
-        
-        newMessage.updatedTimestamp = newMessage.serverTimestamp
-        newMessage.serverTimestamp = serverTimestamp
-        let oldIndex = conversation.messages.index(of: self)
-        let newIndex = conversation.messages.index(of: newMessage)
-        conversation.mutableMessages.moveObjects(at: IndexSet(integer:newIndex), to: oldIndex)
-
-        hiddenInConversation = conversation
-        visibleInConversation = nil
-        normalizedText = nil
-        newMessage.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
-        return newMessage
-    }
-    
     @objc var isEditableMessage : Bool {
         return false
     }
@@ -99,12 +75,13 @@ extension ZMMessage {
 
 extension ZMClientMessage {
     override var isEditableMessage : Bool {
-        if let genericMsg = genericMessage {
-            return (self.sender?.isSelfUser ?? false) &&
-                   (genericMsg.hasEdited() ||
-                       (genericMsg.hasText() && !isEphemeral && (deliveryState == .sent || deliveryState == .delivered)))
+        guard let genericMessage = genericMessage,
+              let sender = sender, sender.isSelfUser
+        else {
+            return false
         }
-        return false
+                
+        return genericMessage.hasEdited() || genericMessage.hasText() && !isEphemeral && (deliveryState == .sent || deliveryState == .delivered)
     }
 }
 

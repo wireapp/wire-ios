@@ -111,6 +111,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// Checks if the message can be marked unread
     var canBeMarkedUnread: Bool { get }
+    
+    var replies: Set<ZMMessage> { get }
 }
 
 public extension ZMConversationMessage {
@@ -134,6 +136,8 @@ extension ZMMessage {
 // MARK:- Conversation Message protocol implementation
 
 extension ZMMessage : ZMConversationMessage {
+    @NSManaged public var replies: Set<ZMMessage>
+    
     public var causedSecurityLevelDegradation : Bool {
         return false
     }

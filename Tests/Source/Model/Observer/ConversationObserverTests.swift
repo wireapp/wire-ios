@@ -582,7 +582,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in conversation.mutedMessageTypes = .nonMentions },
+                                                     modifier: { conversation, _ in conversation.mutedMessageTypes = .regular },
                                                      expectedChangedField: "mutedMessageTypesChanged" ,
                                                      expectedChangedKeys: ["mutedStatus"])
         

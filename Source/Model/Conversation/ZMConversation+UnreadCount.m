@@ -31,6 +31,7 @@
 #import <WireDataModel/WireDataModel-Swift.h>
 
 NSString *const ZMConversationInternalEstimatedUnreadSelfMentionCountKey = @"internalEstimatedUnreadSelfMentionCount";
+NSString *const ZMConversationInternalEstimatedUnreadSelfReplyCountKey = @"internalEstimatedUnreadSelfReplyCount";
 NSString *const ZMConversationInternalEstimatedUnreadCountKey = @"internalEstimatedUnreadCount";
 NSString *const ZMConversationLastUnreadKnockDateKey = @"lastUnreadKnockDate";
 NSString *const ZMConversationLastUnreadMissedCallDateKey = @"lastUnreadMissedCallDate";
@@ -89,6 +90,7 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 
 @dynamic internalEstimatedUnreadCount;
 @dynamic internalEstimatedUnreadSelfMentionCount;
+@dynamic internalEstimatedUnreadSelfReplyCount;
 @dynamic hasUnreadUnsentMessage;
 
 + (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
@@ -121,13 +123,13 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 + (NSPredicate *)predicateForUnreadConversation
 {
     NSPredicate *notifyAllPredicate = [NSPredicate predicateWithFormat:@"%K == %lu", ZMConversationMutedStatusKey, MutedMessageOptionValueNone];
-    NSPredicate *notifyMentionsPredicate = [NSPredicate predicateWithFormat:@"%K < %lu", ZMConversationMutedStatusKey, MutedMessageOptionValueMentions];
-    NSPredicate *unreadMentions = [NSPredicate predicateWithFormat:@"%K > 0", ZMConversationInternalEstimatedUnreadSelfMentionCountKey];
+    NSPredicate *notifyMentionsAndRepliesPredicate = [NSPredicate predicateWithFormat:@"%K < %lu", ZMConversationMutedStatusKey, MutedMessageOptionValueMentionsAndReplies];
+    NSPredicate *unreadMentionsOrReplies = [NSPredicate predicateWithFormat:@"%K > 0 OR %K > 0", ZMConversationInternalEstimatedUnreadSelfMentionCountKey, ZMConversationInternalEstimatedUnreadSelfReplyCountKey];
     NSPredicate *unreadMessages = [NSPredicate predicateWithFormat:@"%K > 0", ZMConversationInternalEstimatedUnreadCountKey];
     NSPredicate *notifyAllAndHasUnreadMessages = [NSCompoundPredicate andPredicateWithSubpredicates:@[notifyAllPredicate, unreadMessages]];
-    NSPredicate *notifyMentionsAndHasUnreadMentions = [NSCompoundPredicate andPredicateWithSubpredicates:@[notifyMentionsPredicate, unreadMentions]];
+    NSPredicate *notifyMentionsAndRepliesAndHasUnreadMentionsOrReplies = [NSCompoundPredicate andPredicateWithSubpredicates:@[notifyMentionsAndRepliesPredicate, unreadMentionsOrReplies]];
     
-    return [NSCompoundPredicate orPredicateWithSubpredicates:@[notifyAllAndHasUnreadMessages, notifyMentionsAndHasUnreadMentions]];
+    return [NSCompoundPredicate orPredicateWithSubpredicates:@[notifyAllAndHasUnreadMessages, notifyMentionsAndRepliesAndHasUnreadMentionsOrReplies]];
 }
 
 + (NSPredicate *)predicateForConversationConsideredUnreadExcludingSilenced;
@@ -156,12 +158,23 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
     [self didChangeValueForKey:ZMConversationInternalEstimatedUnreadSelfMentionCountKey];
 }
 
+- (void)setInternalEstimatedUnreadSelfReplyCount:(int64_t)internalEstimatedUnreadSelfReplyCount
+{
+    RequireString(self.managedObjectContext.zm_isSyncContext, "internalEstimatedUnreadSelfReplyCount should only be set from the sync context");
+    
+    [self willChangeValueForKey:ZMConversationInternalEstimatedUnreadSelfReplyCountKey];
+    [self setPrimitiveValue:@(internalEstimatedUnreadSelfReplyCount) forKey:ZMConversationInternalEstimatedUnreadSelfReplyCountKey];
+    [self didChangeValueForKey:ZMConversationInternalEstimatedUnreadSelfReplyCountKey];
+}
+
 - (ZMConversationListIndicator)unreadListIndicator;
 {
     if (self.hasUnreadUnsentMessage) {
         return ZMConversationListIndicatorExpiredMessage;
     } if (self.estimatedUnreadSelfMentionCount > 0) {
         return ZMConversationListIndicatorUnreadSelfMention;
+    } else if (self.estimatedUnreadSelfReplyCount > 0) {
+        return ZMConversationListIndicatorUnreadSelfReply;
     } else if (self.hasUnreadMissedCall) {
         return ZMConversationListIndicatorMissedCall;
     } else if (self.hasUnreadKnock) {

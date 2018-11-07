@@ -169,7 +169,7 @@
     conversation.remoteIdentifier = [NSUUID createUUID];
     
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
@@ -203,7 +203,7 @@
     
     NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSData *contentData = message.data;
     
     NSDictionary *data = @{ @"sender": senderClientID, @"text" : [contentData base64EncodedStringWithOptions:0] };
@@ -237,7 +237,7 @@
 
     NSString *senderClientID = [NSString createAlphanumericalString];
     NSUUID *nonce = [NSUUID createUUID];
-    ZMGenericMessage *prototype = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *prototype = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     ZMGenericMessageBuilder *builder = [ZMGenericMessage builderWithPrototype:prototype];
     [builder setMessageId:@"please-fail"];
 
@@ -352,12 +352,12 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     
-    ZMGenericMessage *modifiedMessage =     [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *modifiedMessage =     [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
     
@@ -389,13 +389,13 @@
     NSString *unknownSender = [NSString createAlphanumericalString];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message =     [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message =     [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
-    ZMGenericMessage *modifiedMessage =     [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *modifiedMessage =     [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSDictionary *data = @{ @"sender" : unknownSender, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
     
@@ -426,13 +426,13 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message =     [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:NSUUID.createUUID];
+    ZMGenericMessage *message =     [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:NSUUID.createUUID];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
     
@@ -463,14 +463,14 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:NSUUID.createUUID];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:NSUUID.createUUID];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
     ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[linkPreview]] nonce:nonce];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:modifiedText mentions:@[] linkPreviews:@[linkPreview] replyingTo:nil] nonce:nonce];
     
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
@@ -501,14 +501,14 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
     ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[linkPreview]] nonce:nonce];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[linkPreview] replyingTo:nil] nonce:nonce];
     
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
@@ -540,14 +540,14 @@
     UserClient *selfClient = [self createSelfClient];
     
     ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     [existingMessage addData:message.data];
     existingMessage.visibleInConversation = conversation;
     existingMessage.sender = self.selfUser;
     existingMessage.senderClientID = selfClient.remoteIdentifier;
     
     ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.sunet.se" permanentURL:@"http://www.sunet.se" offset:0 title:@"Test" summary:nil imageAsset:nil];
-    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[linkPreview]] nonce:nonce timeout:3600];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[linkPreview] replyingTo:nil] nonce:nonce timeout:3600];
     
     NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
     NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
@@ -579,7 +579,7 @@
     existingMessage.nonce = nonce;
     existingMessage.visibleInConversation = conversation;
     
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[]] nonce:nonce];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:self.name mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
     NSData *contentData = message.data;
     
     NSString *data = [contentData base64EncodedStringWithOptions:0];
