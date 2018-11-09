@@ -143,7 +143,7 @@ public extension ZMGenericMessage {
 
         return builder.buildAndValidate()
     }
-
+    
 }
 
 @objc
@@ -191,6 +191,19 @@ extension ZMText: EphemeralMessageContentType {
     
     public func setEphemeralContent(on builder: ZMEphemeralBuilder) {
         builder.setText(self)
+    }
+    
+    public func applyEdit(from text: ZMText) -> ZMText {
+        guard let builder = text.toBuilder() else { return self }
+        
+        // we keep always keep the quote from the original message
+        if hasQuote() {
+            builder.setQuote(self.quote)
+        } else {
+            builder.clearQuote()
+        }
+        
+        return builder.build()
     }
     
 }
