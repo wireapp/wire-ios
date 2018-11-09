@@ -90,6 +90,8 @@ public class AVSWrapper: AVSWrapperType {
 
         wcall_set_data_chan_estab_handler(handle, dataChannelEstablishedHandler)
         wcall_set_group_changed_handler(handle, groupMemberHandler, observer)
+        let timerIntervalInSeconds: Int32 = 5
+        wcall_set_network_quality_handler(handle, networkQualityHandler, timerIntervalInSeconds, observer)
         wcall_set_media_stopped_handler(handle, mediaStoppedChangeHandler)
     }
 
@@ -258,6 +260,12 @@ public class AVSWrapper: AVSWrapperType {
         AVSWrapper.withCallCenter(contextRef, conversationIdRef) {
             $0.handleMediaStopped(conversationId: $1)
         }
+    }
+
+    private let networkQualityHandler: NetworkQualityChangeHandler = { conversationIdRef, userIdRef, quality, rtt, uplinkLoss, downlinkLoss, contextRef in
+        AVSWrapper.withCallCenter(contextRef, conversationIdRef, userIdRef, quality, { (callCenter, conversationId, userId, quality) in
+            callCenter.handleNetworkQualityChange(conversationId: conversationId, userId: userId, quality: quality)
+        })
     }
 
 }
