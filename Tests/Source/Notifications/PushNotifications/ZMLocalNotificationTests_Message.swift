@@ -372,7 +372,7 @@ class ZMLocalNotificationTests_Message : ZMLocalNotificationTests {
         let note = textNotification(groupConversationWithoutName, sender: sender, quotedUser: selfUser)
         
         // Then
-        XCTAssertEqual(note?.body, "Super User replied to your message in a conversation: Hello Hello!")
+        XCTAssertEqual(note?.body, "Super User replied to you in a conversation: Hello Hello!")
     }
     
     func testThatItCreatesCorrectBodyWhenSelfIsQuoted_NoUserName_NoConversationName() {
