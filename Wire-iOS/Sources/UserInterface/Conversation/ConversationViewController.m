@@ -438,6 +438,12 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
 
 - (void)updateInputBarVisibility
 {
+    if (self.conversation.isReadOnly) {
+        [self.inputBarController.inputBar.textView resignFirstResponder];
+        [self.inputBarController dismissMentionsIfNeeded];
+        [self.inputBarController removeReplyComposingView];
+    }
+
     self.inputBarZeroHeight.active = self.conversation.isReadOnly;
     [self.view setNeedsLayout];
 }
