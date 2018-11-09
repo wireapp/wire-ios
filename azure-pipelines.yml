@@ -10,6 +10,7 @@ trigger:
   branches:
     include:
       - develop
+      - refs/tags/*
 
 jobs:
   - template: Azure/framework-pipelines.yml@wire-ios-shared-resources
