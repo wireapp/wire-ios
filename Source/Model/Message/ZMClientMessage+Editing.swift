@@ -29,11 +29,13 @@ extension ZMClientMessage {
     func processMessageEdit(_ messageEdit: ZMMessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
         guard let nonce = updateEvent.messageNonce(),
               let senderUUID = updateEvent.senderUUID(),
-              senderUUID == sender?.remoteIdentifier,
-              messageEdit.hasText()
+              let originalText = genericMessage?.textData,
+              let editedText = messageEdit.text,
+              messageEdit.hasText(),
+              senderUUID == sender?.remoteIdentifier
         else { return false }
         
-        add(ZMGenericMessage.message(content: messageEdit.text, nonce: nonce).data())
+        add(ZMGenericMessage.message(content: originalText.applyEdit(from: editedText), nonce: nonce).data())
         updateNormalizedText()
         
         self.nonce = nonce

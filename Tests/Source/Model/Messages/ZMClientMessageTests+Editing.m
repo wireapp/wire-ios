@@ -297,6 +297,35 @@
     return [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:[NSUUID createUUID]];
 }
 
+- (void)testThatItEditsMessageWithQuote
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    NSUUID *senderID = self.selfUser.remoteIdentifier;
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *quotedMessage = (id) [conversation appendMessageWithText:@"Quote"];
+    ZMMessage *message = (id) [conversation appendText:oldText mentions:@[] replyingToMessage:quotedMessage fetchLinkPreview:NO nonce:NSUUID.createUUID];
+    [self.uiMOC saveOrRollback];
+    
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:senderID newText:newText];
+    NSUUID *oldNonce = message.nonce;
+    
+    // when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualObjects(message.textMessageData.messageText, newText);
+    XCTAssertTrue(message.textMessageData.hasQuote);
+    XCTAssertNotEqualObjects(message.nonce, oldNonce);
+    XCTAssertEqualObjects(message.textMessageData.quote, quotedMessage);
+}
+
 
 - (void)checkThatItEditsMessageForSameSender:(BOOL)sameSender shouldEdit:(BOOL)shouldEdit
 {
