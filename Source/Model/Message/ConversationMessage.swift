@@ -116,7 +116,7 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var replies: Set<ZMMessage> { get }
 
     /// An in-memory identifier for tracking the message during its life cycle.
-    var objectIdentifer: String { get }
+    var objectIdentifier: String { get }
 }
 
 public extension ZMConversationMessage {
@@ -142,7 +142,7 @@ extension ZMMessage {
 extension ZMMessage : ZMConversationMessage {
     @NSManaged public var replies: Set<ZMMessage>
 
-    public var objectIdentifer: String {
+    public var objectIdentifier: String {
         return nonpersistedObjectIdentifer!
     }
     
