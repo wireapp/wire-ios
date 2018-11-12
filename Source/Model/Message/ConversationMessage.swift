@@ -111,8 +111,12 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// Checks if the message can be marked unread
     var canBeMarkedUnread: Bool { get }
-    
+
+    /// The replies quoting this message.
     var replies: Set<ZMMessage> { get }
+
+    /// An in-memory identifier for tracking the message during its life cycle.
+    var objectIdentifer: String { get }
 }
 
 public extension ZMConversationMessage {
@@ -137,6 +141,10 @@ extension ZMMessage {
 
 extension ZMMessage : ZMConversationMessage {
     @NSManaged public var replies: Set<ZMMessage>
+
+    public var objectIdentifer: String {
+        return nonpersistedObjectIdentifer!
+    }
     
     public var causedSecurityLevelDegradation : Bool {
         return false

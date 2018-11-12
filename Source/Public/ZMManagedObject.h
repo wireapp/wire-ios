@@ -42,4 +42,3 @@ extern NSString * const ZMDataPropertySuffix;
 + (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
 
 @end
-

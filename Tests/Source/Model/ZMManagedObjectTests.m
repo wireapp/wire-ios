@@ -597,10 +597,11 @@
     // given
     id mockUserSession = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
     [[[(id)mockUserSession stub] andReturn:self.uiMOC] managedObjectContext];
+    id objectIdentifier = nil;
     
     // then
     [self performIgnoringZMLogError:^{
-        XCTAssertNil([ZMManagedObject existingObjectWithNonpersistedObjectIdentifer:nil inUserSession:mockUserSession]);
+        XCTAssertNil([ZMManagedObject existingObjectWithNonpersistedObjectIdentifer:objectIdentifier inUserSession:mockUserSession]);
     }];
 }
 
