@@ -560,4 +560,36 @@
     XCTAssertEqualObjects(editedMessage.textMessageData.messageText, @"Hello");
 }
 
+- (void)testThatMessageNonPersistedIdentifierDoesNotChangeAfterEdit
+{
+    // given
+    NSString *oldText = @"Mamma mia";
+    NSString *newText = @"here we go again";
+    NSUUID *oldNonce = [NSUUID createUUID];
+
+    ZMUser *sender = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    sender.remoteIdentifier = [NSUUID createUUID];
+
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    ZMMessage *message = (id) [conversation appendMessageWithText:oldText];
+    message.sender = sender;
+    message.nonce = oldNonce;
+
+    NSString *oldIdentifier = message.nonpersistedObjectIdentifer;
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:sender.remoteIdentifier newText:newText];
+
+    // when
+    __block ZMClientMessage *newMessage;
+
+    [self performPretendingUiMocIsSyncMoc:^{
+        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+
+    // then
+    XCTAssertNotEqualObjects(oldNonce, newMessage.nonce);
+    XCTAssertEqualObjects(oldIdentifier, newMessage.nonpersistedObjectIdentifer);
+}
+
 @end
