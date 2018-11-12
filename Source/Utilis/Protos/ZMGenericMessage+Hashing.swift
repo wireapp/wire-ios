@@ -48,9 +48,7 @@ extension ZMMessageEdit: BigEndianDataConvertible {
 extension ZMText: BigEndianDataConvertible {
     
     var asBigEndianData: Data {
-        var data = Data(bytes: [0xFE, 0xFF]) // Byte order marker
-        data.append(content.data(using: .utf16BigEndian)!)
-        return data
+        return content.asBigEndianData
     }
     
 }
@@ -68,7 +66,7 @@ extension ZMLocation: BigEndianDataConvertible {
 extension ZMAsset: BigEndianDataConvertible {
     
     var asBigEndianData: Data {
-        return uploaded?.assetId.data(using: .utf16BigEndian) ?? Data()
+        return uploaded?.assetId.asBigEndianData ?? Data()
     }
 }
 
@@ -77,6 +75,16 @@ fileprivate extension Float {
     var times1000: Int {
         return Int(roundf(self * 1000.0))
     }
+}
+
+extension String: BigEndianDataConvertible {
+    
+    var asBigEndianData: Data {
+        var data = Data(bytes: [0xFE, 0xFF]) // Byte order marker
+        data.append(self.data(using: .utf16BigEndian)!)
+        return data
+    }
+    
 }
 
 extension Int: BigEndianDataConvertible {
