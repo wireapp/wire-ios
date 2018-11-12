@@ -91,14 +91,27 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForAsset1() {
         // given
         var assetMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: Data(), sha256: Data()))
-        assetMessage = assetMessage.updatedUploaded(withAssetId: "assetId1", token: nil)!
+        assetMessage = assetMessage.updatedUploaded(withAssetId: "3-2-1-38d4f5b9", token: nil)!
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
         let hash = assetMessage.hashOfContent(with: timestamp)
         
         // then
-        XCTAssertEqual(hash?.zmHexEncodedString(), "eba94f40053c5c854e95d2360a457ec47a7c783d98298476188fa74e729941a9")
+        XCTAssertEqual(hash?.zmHexEncodedString(), "bf20de149847ae999775b3cc88e5ff0c0382e9fa67b9d382b1702920b8afa1de")
+    }
+    
+    func testCorrectHashValueForAsset2() {
+        // given
+        var assetMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: Data(), sha256: Data()))
+        assetMessage = assetMessage.updatedUploaded(withAssetId: "3-3-3-82a62735", token: nil)!
+        let timestamp = Date(timeIntervalSince1970: 1540213965)
+        
+        // when
+        let hash = assetMessage.hashOfContent(with: timestamp)
+        
+        // then
+        XCTAssertEqual(hash?.zmHexEncodedString(), "2235f5b6c00d9b0917675399d0314c8401f0525457b00aa54a38998ab93b90d6")
     }
     
     // MARK: - Ephemeral
