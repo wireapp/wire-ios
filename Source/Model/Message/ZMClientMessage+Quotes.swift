@@ -21,7 +21,9 @@ import Foundation
 extension ZMClientMessage {
     
     override func updateQuoteRelationships() {
-        guard let quote = genericMessage?.text?.quote else { return }
+        guard let quote = genericMessage?.textData?.quote else {
+            return
+        }
         
         establishRelationshipsForInsertedQuote(quote)
     }
