@@ -90,6 +90,9 @@ protocol ConversationMessageCellDescription: class {
     /// Whether the cell should display an ephemeral timer in the margin given it's an ephemeral message
     var showEphemeralTimer: Bool { get set }
 
+    /// Whether the cell contains content that can be highlighted.
+    var containsHighlightableContent: Bool { get }
+
     /// The message that is displayed.
     var message: ZMConversationMessage? { get set }
 
@@ -140,6 +143,7 @@ extension ConversationMessageCellDescription {
     private let _message: AnyMutableProperty<ZMConversationMessage?>
     private let _actionController: AnyMutableProperty<ConversationCellActionController?>
     private let _topMargin: AnyMutableProperty<Float>
+    private let _containsHighlightableContent: AnyConstantProperty<Bool>
     private let _showEphemeralTimer: AnyMutableProperty<Bool>
 
     init<T: ConversationMessageCellDescription>(_ description: T) {
@@ -163,6 +167,7 @@ extension ConversationMessageCellDescription {
         _message = AnyMutableProperty(description, keyPath: \.message)
         _actionController = AnyMutableProperty(description, keyPath: \.actionController)
         _topMargin = AnyMutableProperty(description, keyPath: \.topMargin)
+        _containsHighlightableContent = AnyConstantProperty(description, keyPath: \.containsHighlightableContent)
         _showEphemeralTimer = AnyMutableProperty(description, keyPath: \.showEphemeralTimer)
     }
 
@@ -188,6 +193,10 @@ extension ConversationMessageCellDescription {
     @objc var topMargin: Float {
         get { return _topMargin.getter() }
         set { _topMargin.setter(newValue) }
+    }
+
+    @objc var containsHighlightableContent: Bool {
+        return _containsHighlightableContent.getter()
     }
     
     @objc var showEphemeralTimer: Bool {

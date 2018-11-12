@@ -44,13 +44,9 @@ class ConversationPingCellDescription: ConversationMessageCellDescription {
     var showEphemeralTimer: Bool = false
     var topMargin: Float = 0
 
-    var isFullWidth: Bool {
-        return true
-    }
-
-    var supportsActions: Bool {
-        return true
-    }
+    let isFullWidth: Bool = true
+    let supportsActions: Bool = false
+    let containsHighlightableContent: Bool = false
 
     init(message: ZMConversationMessage, sender: ZMUser) {
         let senderText = sender.isSelfUser ? "content.ping.text.you".localized : sender.displayName
