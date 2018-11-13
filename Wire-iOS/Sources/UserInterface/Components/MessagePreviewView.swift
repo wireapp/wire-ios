@@ -206,6 +206,10 @@ final class MessageThumbnailPreviewView: UIView, Themeable {
 
 extension MessageThumbnailPreviewView: ZMMessageObserver {
     func messageDidChange(_ changeInfo: MessageChangeInfo) {
+        guard !message.hasBeenDeleted else {
+            return // Deleted message won't have any content
+        }
+        
         updateForMessage()
     }
 }
