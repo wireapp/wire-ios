@@ -63,10 +63,10 @@ fileprivate final class StorableDraftMessage: NSObject, Codable {
     
     /// Converts this storable version into a regular `DraftMessage`.
     /// The passed in `context` is needed to fetch the user objects.
-    fileprivate func draftMessage(in context: NSManagedObjectContext) -> DraftMessage {
+    fileprivate func draftMessage(in context: NSManagedObjectContext, for conversation: ZMConversation) -> DraftMessage {
         return .init(text: text,
                      mentions: mentions.compactMap { $0.mention(in: context) },
-                     quote: quote?.quote(in: context))
+                     quote: quote?.quote(in: context, for: conversation))
     }
 }
 
@@ -96,9 +96,9 @@ fileprivate struct StorableQuote: Codable {
     
     /// Converts the storable mention into a regular `Mention` object.
     /// The passed in `context` is needed to fetch the user object.
-    func quote(in context: NSManagedObjectContext) -> ZMMessage? {
+    func quote(in context: NSManagedObjectContext, for conversation: ZMConversation) -> ZMMessage? {
         guard let nonce = nonce else { return nil }
-        return ZMMessage(nonce: nonce, managedObjectContext: context)
+        return ZMMessage.fetch(withNonce: nonce, for: conversation, in: context)
     }
     
 }
@@ -124,7 +124,7 @@ fileprivate struct StorableQuote: Codable {
             guard let data = draftMessageData, let context = managedObjectContext else { return nil }
             do {
                 let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: data)
-                return storable.draftMessage(in: context)
+                return storable.draftMessage(in: context, for: self)
             } catch {
                 draftMessageData = nil
                 return nil
@@ -132,7 +132,6 @@ fileprivate struct StorableQuote: Codable {
         }
 
     }
-
 }
 
 // MARK: - Storable Helper
