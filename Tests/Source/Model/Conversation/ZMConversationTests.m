@@ -775,14 +775,19 @@
 {
     // given
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMMessage *message = [[ZMMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    ZMMessage *message = (id)[conversation appendMessageWithText:@"Test"];
     
     // when
-    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"" mentions:@[] quote:message];
+    conversation.draftMessage = [[DraftMessage alloc] initWithText:@"Draft Test" mentions:@[] quote:message];
+
+    [self.uiMOC saveOrRollback];
     
     // then
-    NSUUID *draftNonce = conversation.draftMessage.quote.nonce;
+    ZMMessage *quote = conversation.draftMessage.quote;
+    NSUUID *draftNonce = quote.nonce;
     NSUUID *messageNonce = message.nonce;
+    XCTAssertNotNil(draftNonce);
+    XCTAssertNotNil(messageNonce);
     XCTAssertEqualObjects(draftNonce, messageNonce);
 }
     
