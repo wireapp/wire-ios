@@ -206,6 +206,16 @@ extension ZMText: EphemeralMessageContentType {
         return builder.build()
     }
     
+    public func updateLinkPeview(from text: ZMText) -> ZMText {
+        guard let builder = self.toBuilder() else { return self }
+        
+        if text.linkPreview.count > 0 {
+            builder.setLinkPreviewArray(text.linkPreview)
+        }
+        
+        return builder.build()
+    }
+    
 }
 
 @objc extension ZMAssetRemoteData {
