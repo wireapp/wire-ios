@@ -2112,6 +2112,26 @@ extension ZMAssetClientMessageTests {
         XCTAssertEqual(sut.transferState, .downloading)
     }
     
+    func testThatRequestingUploadingImageDownloadHasNoEffect() {
+        // given
+        let (sut, nonce) = createMessageWithNonce()
+        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 123, height: 4569)
+        let original = originalGenericMessage(nonce: nonce, image: image, preview: nil)
+        let uploaded = uploadedGenericMessage(nonce: nonce)
+        
+        // when
+        sut.update(with: original, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: false)
+        sut.transferState = .uploading
+        XCTAssertEqual(sut.transferState, .uploading)
+        
+        // when
+        sut.imageMessageData?.requestImageDownload()
+        
+        // then
+        XCTAssertEqual(sut.transferState, .uploading)
+    }
+    
     func testThatRequestingFileDoesNotResetTheTransferStateForUnavailableAssets_V3() {
         // given
         let (sut, nonce) = createMessageWithNonce()
