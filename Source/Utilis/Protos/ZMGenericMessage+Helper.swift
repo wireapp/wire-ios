@@ -209,7 +209,7 @@ extension ZMText: EphemeralMessageContentType {
     public func updateLinkPeview(from text: ZMText) -> ZMText {
         guard let builder = self.toBuilder() else { return self }
         
-        if text.linkPreview.count > 0 {
+        if let linkPreview = text.linkPreview, linkPreview.count > 0 {
             builder.setLinkPreviewArray(text.linkPreview)
         }
         
