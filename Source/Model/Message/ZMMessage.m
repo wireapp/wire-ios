@@ -439,7 +439,8 @@ NSString * const ZMMessageQuoteKey = @"quote";
         return NO;
     }];
     
-    NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
+    // TODO: Re-enable
+//    NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
     
     for (ZMClientMessage *confirmationReceipt in confirmationReceipts) {
         [self.managedObjectContext deleteObject:confirmationReceipt];
