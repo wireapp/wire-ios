@@ -21,19 +21,12 @@
 #import "ZMTimer.h"
 
 
-typedef NS_ENUM(NSUInteger, ZMTimerState) {
-    ZMTimerStateNotStarted,
-    ZMTimerStateStarted,
-    ZMTimerStateFinished
-};
-
-
 @interface ZMTimer ()
 
 @property (nonatomic, weak) id<ZMTimerClient> target;
 @property (nonatomic) NSOperationQueue *queue;
 @property (nonatomic) dispatch_source_t timer;
-@property (nonatomic) ZMTimerState state;
+@property (nonatomic, readwrite) ZMTimerState state;
 
 @end
 
@@ -62,7 +55,7 @@ typedef NS_ENUM(NSUInteger, ZMTimerState) {
 
 - (void)dealloc
 {
-    RequireString(self.state == ZMTimerStateFinished, "ZMTimer was not cleaned up correctly");
+    RequireString(self.state == ZMTimerStateFinished || self.state == ZMTimerStateNotStarted, "ZMTimer was not cleaned up correctly");
 }
 
 + (instancetype)timerWithTarget:(id<ZMTimerClient>)target;
