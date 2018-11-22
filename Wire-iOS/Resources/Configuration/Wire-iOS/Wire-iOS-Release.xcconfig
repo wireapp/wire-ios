@@ -14,11 +14,9 @@
 // 
 // You should have received a copy of the GNU General Public License
 // along with this program. If not, see http://www.gnu.org/licenses/.
-// 
+//
 
+#include "Wire-iOS-Base.xcconfig"
+#include "../Project-Release.xcconfig"
 
-WIRE_BUNDLE_DISPLAY_NAME = Wire
-SHARE_EXTENSION_BUNDLE_SUFFIX = extension-share
-SWIFT_OBJC_BRIDGING_HEADER = $(TARGET_NAME)/WireShareExtensionBridgingHeader.h
-
-APPLICATION_EXTENSION_API_ONLY = YES
+GCC_SYMBOLS_PRIVATE_EXTERN = YES

@@ -16,6 +16,5 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-#include "Wire-Share-Extension.base.xcconfig"
-#include "Release.xcconfig"
+#include "../Project-Release.xcconfig"
+#include "Share-Extension-Base.xcconfig"
