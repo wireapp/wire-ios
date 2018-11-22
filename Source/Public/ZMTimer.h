@@ -28,12 +28,17 @@
 
 @end
 
-
+typedef NS_ENUM(NSUInteger, ZMTimerState) {
+    ZMTimerStateNotStarted,
+    ZMTimerStateStarted,
+    ZMTimerStateFinished
+};
 
 @interface ZMTimer : NSObject
 
 @property (nonatomic) NSDictionary *userInfo;
 
+@property (nonatomic, readonly) ZMTimerState state;
 @property (nonatomic, readonly, weak) id<ZMTimerClient> target;
 
 + (instancetype)timerWithTarget:(id<ZMTimerClient>)target;
