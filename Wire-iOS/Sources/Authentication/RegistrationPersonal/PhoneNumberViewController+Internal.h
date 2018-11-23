@@ -16,11 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface RegistrationTextField ()
+@interface PhoneNumberViewController ()
 
-@property (nonatomic) UIEdgeInsets placeholderInsets;
-@property (nonatomic) UIEdgeInsets textInsets;
-
-- (NSRange)selectedRange;
+- (void)updateRightAccessoryForPhoneNumber:(NSString *)phoneNumber;
 
 @end

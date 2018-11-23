@@ -16,11 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface RegistrationTextField ()
+import Foundation
 
-@property (nonatomic) UIEdgeInsets placeholderInsets;
-@property (nonatomic) UIEdgeInsets textInsets;
+extension PhoneNumberViewController {
+    @objc
+    @discardableResult
+    func pastePhoneNumber(_ phoneNumber: NSString?) -> Bool {
+        guard let phoneNumber = phoneNumber else { return false }
 
-- (NSRange)selectedRange;
+        return phoneNumber.shouldPasteAsPhoneNumber(presetCountry: self.country){country, phoneNumber in
+            if let _ /*country*/ = country, let phoneNumber = phoneNumber {
 
-@end
+                self.phoneNumberField.text = phoneNumber;
+                ///TODO: update country name and county code after a phone number with prefix is pasted
+                self.updateRightAccessory(forPhoneNumber: phoneNumber)
+            }
+        }
+    }
+}

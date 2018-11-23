@@ -16,11 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface RegistrationTextField ()
+import Foundation
 
-@property (nonatomic) UIEdgeInsets placeholderInsets;
-@property (nonatomic) UIEdgeInsets textInsets;
+extension RegistrationTextField {
+    override open func paste(_ sender: Any?) {
+        var shouldPaste = true
 
-- (NSRange)selectedRange;
+        if let registrationTextFieldDelegate = delegate as? RegistrationTextFieldDelegate {
+            let pasteboard = UIPasteboard(name: .general, create: false)
+            let pastedString = pasteboard?.string
+            shouldPaste = registrationTextFieldDelegate.textField(self, shouldPasteCharactersIn: selectedRange(), replacementString: pastedString)
+        }
 
-@end
+        if shouldPaste {
+            super.paste(sender)
+        }
+    }
+}
