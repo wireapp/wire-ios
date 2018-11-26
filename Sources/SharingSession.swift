@@ -231,7 +231,7 @@ public class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init(applicationGroupIdentifier: String, accountIdentifier: UUID, hostBundleIdentifier: String) throws {
+    public convenience init(applicationGroupIdentifier: String, accountIdentifier: UUID, hostBundleIdentifier: String, environment: BackendEnvironment) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         guard !StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL) else { throw InitializationError.needsMigration }
         
@@ -260,7 +260,6 @@ public class SharingSession {
             }
         }
         
-        let environment = BackendEnvironment(userDefaults: UserDefaults.shared())
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
