@@ -200,8 +200,7 @@ extension ZMAssetClientMessage {
         // V2, we do not set the thumbnail assetId in case there is one in the protobuf, 
         // then we can access it directly for V3
         
-        if let assetData = message.assetData,
-            assetData.preview.hasRemote() && !assetData.hasUploaded() {
+        if let assetData = message.assetData, assetData.preview.hasRemote() {
             
             if !assetData.preview.remote.hasAssetId() {
                 if let thumbnailId = eventData["id"] as? String {

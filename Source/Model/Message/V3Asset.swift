@@ -165,12 +165,11 @@ extension V3Asset: AssetProxyType {
     }
 
     public func requestImageDownload() {
-        // Do not try to download the images being uploaded now.
-        guard !assetClientMessage.transferState.isOne(of: [.uploading]) else {
-            return
-        }
-        
         if isImage {
+            // Do not try to download the images being uploaded now.
+            guard !assetClientMessage.transferState.isOne(of: [.uploading]) else {
+                return
+            }
             requestFileDownload()
         } else if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
