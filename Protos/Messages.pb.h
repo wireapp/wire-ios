@@ -586,10 +586,13 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Text_link_preview @"linkPreview"
 #define Text_mentions @"mentions"
 #define Text_quote @"quote"
+#define Text_expects_read_confirmation @"expectsReadConfirmation"
 @interface ZMText : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
+  BOOL hasExpectsReadConfirmation_:1;
   BOOL hasContent_:1;
   BOOL hasQuote_:1;
+  BOOL expectsReadConfirmation_:1;
   NSString* content;
   ZMQuote* quote;
   NSMutableArray * linkPreviewArray;
@@ -597,10 +600,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 }
 - (BOOL) hasContent;
 - (BOOL) hasQuote;
+- (BOOL) hasExpectsReadConfirmation;
 @property (readonly, strong) NSString* content;
 @property (readonly, strong) NSArray<ZMLinkPreview*> * linkPreview;
 @property (readonly, strong) NSArray<ZMMention*> * mentions;
 @property (readonly, strong) ZMQuote* quote;
+- (BOOL) expectsReadConfirmation;
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 - (ZMMention*)mentionsAtIndex:(NSUInteger)index;
 
@@ -662,16 +667,26 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMTextBuilder*) setQuoteBuilder:(ZMQuoteBuilder*) builderForValue;
 - (ZMTextBuilder*) mergeQuote:(ZMQuote*) value;
 - (ZMTextBuilder*) clearQuote;
+
+- (BOOL) hasExpectsReadConfirmation;
+- (BOOL) expectsReadConfirmation;
+- (ZMTextBuilder*) setExpectsReadConfirmation:(BOOL) value;
+- (ZMTextBuilder*) clearExpectsReadConfirmation;
 @end
 
 #define Knock_hot_knock @"hotKnock"
+#define Knock_expects_read_confirmation @"expectsReadConfirmation"
 @interface ZMKnock : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasHotKnock_:1;
+  BOOL hasExpectsReadConfirmation_:1;
   BOOL hotKnock_:1;
+  BOOL expectsReadConfirmation_:1;
 }
 - (BOOL) hasHotKnock;
+- (BOOL) hasExpectsReadConfirmation;
 - (BOOL) hotKnock;
+- (BOOL) expectsReadConfirmation;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -712,6 +727,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hotKnock;
 - (ZMKnockBuilder*) setHotKnock:(BOOL) value;
 - (ZMKnockBuilder*) clearHotKnock;
+
+- (BOOL) hasExpectsReadConfirmation;
+- (BOOL) expectsReadConfirmation;
+- (ZMKnockBuilder*) setExpectsReadConfirmation:(BOOL) value;
+- (ZMKnockBuilder*) clearExpectsReadConfirmation;
 @end
 
 #define LinkPreview_url @"url"
@@ -1478,12 +1498,15 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Location_latitude @"latitude"
 #define Location_name @"name"
 #define Location_zoom @"zoom"
+#define Location_expects_read_confirmation @"expectsReadConfirmation"
 @interface ZMLocation : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
+  BOOL hasExpectsReadConfirmation_:1;
   BOOL hasLongitude_:1;
   BOOL hasLatitude_:1;
   BOOL hasZoom_:1;
   BOOL hasName_:1;
+  BOOL expectsReadConfirmation_:1;
   Float32 longitude;
   Float32 latitude;
   SInt32 zoom;
@@ -1493,10 +1516,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasLatitude;
 - (BOOL) hasName;
 - (BOOL) hasZoom;
+- (BOOL) hasExpectsReadConfirmation;
 @property (readonly) Float32 longitude;
 @property (readonly) Float32 latitude;
 @property (readonly, strong) NSString* name;
 @property (readonly) SInt32 zoom;
+- (BOOL) expectsReadConfirmation;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -1552,6 +1577,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (SInt32) zoom;
 - (ZMLocationBuilder*) setZoom:(SInt32) value;
 - (ZMLocationBuilder*) clearZoom;
+
+- (BOOL) hasExpectsReadConfirmation;
+- (BOOL) expectsReadConfirmation;
+- (ZMLocationBuilder*) setExpectsReadConfirmation:(BOOL) value;
+- (ZMLocationBuilder*) clearExpectsReadConfirmation;
 @end
 
 #define ImageAsset_tag @"tag"
@@ -1708,12 +1738,15 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Asset_not_uploaded @"notUploaded"
 #define Asset_uploaded @"uploaded"
 #define Asset_preview @"preview"
+#define Asset_expects_read_confirmation @"expectsReadConfirmation"
 @interface ZMAsset : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
+  BOOL hasExpectsReadConfirmation_:1;
   BOOL hasOriginal_:1;
   BOOL hasUploaded_:1;
   BOOL hasPreview_:1;
   BOOL hasNotUploaded_:1;
+  BOOL expectsReadConfirmation_:1;
   ZMAssetOriginal* original;
   ZMAssetRemoteData* uploaded;
   ZMAssetPreview* preview;
@@ -1723,10 +1756,12 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) hasNotUploaded;
 - (BOOL) hasUploaded;
 - (BOOL) hasPreview;
+- (BOOL) hasExpectsReadConfirmation;
 @property (readonly, strong) ZMAssetOriginal* original;
 @property (readonly) ZMAssetNotUploaded notUploaded;
 @property (readonly, strong) ZMAssetRemoteData* uploaded;
 @property (readonly, strong) ZMAssetPreview* preview;
+- (BOOL) expectsReadConfirmation;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -2288,6 +2323,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (ZMAssetBuilder*) setPreviewBuilder:(ZMAssetPreviewBuilder*) builderForValue;
 - (ZMAssetBuilder*) mergePreview:(ZMAssetPreview*) value;
 - (ZMAssetBuilder*) clearPreview;
+
+- (BOOL) hasExpectsReadConfirmation;
+- (BOOL) expectsReadConfirmation;
+- (ZMAssetBuilder*) setExpectsReadConfirmation:(BOOL) value;
+- (ZMAssetBuilder*) clearExpectsReadConfirmation;
 @end
 
 #define External_otr_key @"otrKey"
