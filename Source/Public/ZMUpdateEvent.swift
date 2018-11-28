@@ -31,42 +31,43 @@ import WireUtilities
     case download
 }
 
-@objc public enum ZMUpdateEventType : UInt {
+@objc public enum ZMUpdateEventType : UInt, CaseIterable {
     case unknown = 0
-    case conversationAssetAdd
-    case conversationConnectRequest
-    case conversationCreate
-    case conversationKnock
-    case conversationMemberJoin
-    case conversationMemberLeave
-    case conversationMemberUpdate
-    case conversationMessageAdd
-    case conversationClientMessageAdd
-    case conversationOtrMessageAdd
-    case conversationOtrAssetAdd
-    case conversationRename
-    case conversationTyping
-    case conversationCodeUpdate
-    case conversationAccessModeUpdate
-    case userConnection
-    case userNew
-    case userUpdate
-    case userPushRemove
-    case userContactJoin
-    case userClientAdd
-    case userClientRemove
-    case teamCreate
-    case teamDelete
-    case teamUpdate
-    case teamMemberJoin
-    case teamMemberLeave
-    case teamConversationCreate
-    case teamConversationDelete
-    case teamMemberUpdate
-    case conversationMessageTimerUpdate
+    case conversationAssetAdd = 1
+    case conversationConnectRequest = 2
+    case conversationCreate = 3
+    case conversationKnock = 4
+    case conversationMemberJoin = 5
+    case conversationMemberLeave = 6
+    case conversationMemberUpdate = 7
+    case conversationMessageAdd = 8
+    case conversationClientMessageAdd = 9
+    case conversationOtrMessageAdd = 10
+    case conversationOtrAssetAdd = 11
+    case conversationRename = 12
+    case conversationTyping = 13
+    case conversationCodeUpdate = 14
+    case conversationAccessModeUpdate = 15
+    case conversationMessageTimerUpdate = 31
+    case userConnection = 16
+    case userNew = 17
+    case userUpdate = 18
+    case userPushRemove = 19
+    case userContactJoin = 20
+    case userClientAdd = 21
+    case userClientRemove = 22
+    case userPropertiesSet = 32
+    case userPropertiesDelete = 33
+    case teamCreate = 23
+    case teamDelete = 24
+    case teamUpdate = 25
+    case teamMemberJoin = 26
+    case teamMemberLeave = 27
+    case teamConversationCreate = 28
+    case teamConversationDelete = 29
+    case teamMemberUpdate = 30
 
-    case _LAST  /// ->->->->->!!! Keep this at the end of this enum !!!<-<-<-<-<-
-    /// It is used to enumerate values. Hardcoding the values of this enums in tests gets very easily out of sync
+    // Current max value: userPropertiesDelete = 33
 }
 
 extension ZMUpdateEventType {
@@ -137,18 +138,15 @@ extension ZMUpdateEventType {
             return "team.member-update"
         case .conversationMessageTimerUpdate:
             return "conversation.message-timer-update"
-
-        case ._LAST:
-            return nil
+        case .userPropertiesSet:
+            return "user.properties-set"
+        case .userPropertiesDelete:
+            return "user.properties-delete"
         }
     }
 
     init(string: String) {
-        let result = (ZMUpdateEventType.unknown.rawValue...ZMUpdateEventType._LAST.rawValue)
-            .lazy
-            .compactMap { number -> ZMUpdateEventType? in
-                return ZMUpdateEventType(rawValue: number)
-            }
+        let result = ZMUpdateEventType.allCases.lazy
             .compactMap { eventType -> (ZMUpdateEventType, String)? in
                 guard let stringValue = eventType.stringValue else { return nil }
                 return (eventType, stringValue)
