@@ -26,6 +26,8 @@
 		09F028DC1B78BE2700BADDB6 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DA1B78BE2700BADDB6 /* Main.storyboard */; };
 		09F028DE1B78BE2700BADDB6 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DD1B78BE2700BADDB6 /* Images.xcassets */; };
 		09F028E11B78BE2700BADDB6 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 09F028DF1B78BE2700BADDB6 /* LaunchScreen.xib */; };
+		16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */; };
+		16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */; };
 		163FB9061F2229DF00802AF4 /* DispatchGroupContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */; };
 		163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */; };
 		163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */; };
@@ -255,6 +257,8 @@
 		09F028DD1B78BE2700BADDB6 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		09F028E01B78BE2700BADDB6 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		09F028F61B78BEBB00BADDB6 /* WireUtilities-tests-host.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "WireUtilities-tests-host.entitlements"; sourceTree = "<group>"; };
+		16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+PartitionByKeyPath.swift"; sourceTree = "<group>"; };
+		16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayPartitionByKeyPathTests.swift; sourceTree = "<group>"; };
 		163FB9051F2229DF00802AF4 /* DispatchGroupContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContext.swift; sourceTree = "<group>"; };
 		163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueue.swift; sourceTree = "<group>"; };
 		163FB90B1F25EA0B00802AF4 /* DispatchGroupContextTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupContextTests.swift; sourceTree = "<group>"; };
@@ -561,6 +565,7 @@
 				5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */,
 				5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */,
 				5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */,
+				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -764,6 +769,7 @@
 				5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */,
 				5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */,
 				5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */,
+				16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -990,6 +996,7 @@
 				D504CD332090C2F200A78DAA /* Curry.swift in Sources */,
 				877F501D1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift in Sources */,
 				3E88BE411B1F478200232589 /* ZMFunctional.m in Sources */,
+				16030DC021AEA0FE00F8032E /* Array+PartitionByKeyPath.swift in Sources */,
 				54CA31551B74F7D400B820C0 /* NSManagedObjectContext+WireUtilities.m in Sources */,
 				F9C9A7BD1CAEAF240039E10C /* ZMPropertyValidator.m in Sources */,
 				3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */,
@@ -1084,6 +1091,7 @@
 				5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */,
 				EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */,
 				F9D381AC1B70B92F00E6E4EB /* NSDate+ZMUTests.m in Sources */,
+				16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */,
 				091799761B7E2E4D00E60DD9 /* ZMMobileProvisionParserTests.m in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
 				BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */,
