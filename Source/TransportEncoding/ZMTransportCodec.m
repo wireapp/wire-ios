@@ -48,6 +48,10 @@
     if (!object) {
         return [NSData data];
     }
+    if ([object isKindOfClass:[NSString class]]) {
+        NSString *string = (NSString *)object;
+        return [string dataUsingEncoding:NSUTF8StringEncoding];
+    }
     NSError *error;
     return [NSJSONSerialization dataWithJSONObject:object options:0 error:&error];
 }
