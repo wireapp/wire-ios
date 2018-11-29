@@ -152,7 +152,9 @@ extension ClientMessageTranscoder {
                 }
             }
             
-            let updateResult = ZMOTRMessage.messageUpdateResult(from: event, in: self.managedObjectContext, prefetchResult: prefetchResult)
+            guard let updateResult = ZMOTRMessage.messageUpdateResult(from: event, in: self.managedObjectContext, prefetchResult: prefetchResult) else {
+                return
+            }
             
             updateResult.message?.markAsSent()
                         
