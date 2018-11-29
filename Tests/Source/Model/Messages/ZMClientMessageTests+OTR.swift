@@ -295,7 +295,7 @@ extension ClientMessageTests_OTR {
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = textMessage.confirmReception()
+            let confirmationMessage = textMessage.confirmDelivery()
             
             //when
             guard let payloadAndStrategy = confirmationMessage?.encryptedMessagePayloadData()
@@ -344,7 +344,7 @@ extension ClientMessageTests_OTR {
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = textMessage.confirmReception()
+            let confirmationMessage = textMessage.confirmDelivery()
             
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
@@ -371,7 +371,7 @@ extension ClientMessageTests_OTR {
             
             self.syncMOC.saveOrRollback()
             
-            let confirmationMessage = clientmessage.confirmReception()
+            let confirmationMessage = clientmessage.confirmDelivery()
 
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
@@ -394,7 +394,7 @@ extension ClientMessageTests_OTR {
             
             self.syncMOC.saveOrRollback()
             
-            let confirmationMessage = clientmessage.confirmReception()
+            let confirmationMessage = clientmessage.confirmDelivery()
 
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()

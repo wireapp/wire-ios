@@ -380,7 +380,7 @@ NSString * const ReactionsKey = @"reactions";
                             @(ZMUpdateEventTypeConversationAssetAdd),
                             @(ZMUpdateEventTypeConversationKnock),
                             ];
-    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt) {
+    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
         XCTAssertEqual([ZMMessage doesEventTypeGenerateMessage:evt], [validTypes containsObject:@(evt)]);
     }
 }
@@ -794,7 +794,7 @@ NSString * const ReactionsKey = @"reactions";
         @(ZMUpdateEventTypeConversationRename)
     ];
     
-    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt) {
+    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt) {
         XCTAssertEqual([ZMSystemMessage doesEventTypeGenerateSystemMessage:evt], [validTypes containsObject:@(evt)]);
     }
 }
@@ -919,7 +919,7 @@ NSString * const ReactionsKey = @"reactions";
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType
 {
-    for(NSUInteger evt = 0; evt < ZMUpdateEventType_LAST; ++evt)
+    for(NSUInteger evt = 0; evt <= ZMUpdateEventTypeUserPropertiesDelete; ++evt)
     {
         if( ! [ZMSystemMessage doesEventTypeGenerateSystemMessage:evt] ) {
             [self checkThatUpdateEventTypeDoesNotGenerateMessage:evt];

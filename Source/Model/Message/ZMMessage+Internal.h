@@ -170,6 +170,7 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 @property (nonatomic, readonly) BOOL isExpired;
 @property (nonatomic, readonly) NSDate * _Nullable expirationDate;
 @property (nonatomic, readonly) BOOL isObfuscated;
+@property (nonatomic, readonly) BOOL needsReadConfirmation;
 @property (nonatomic) NSString * _Nullable normalizedText;
 
 @property (nonatomic) NSSet <Reaction *> * _Nonnull reactions;
@@ -181,11 +182,6 @@ inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
 
 /// Sets a flag to mark the message as being delivered to the backend
 - (void)markAsSent;
-
-
-/// Inserts and returns a ZMConfirmation message into the conversation that is sent back to the sender
-- (ZMClientMessage * __nullable)confirmReception;
-
 
 + (instancetype _Nullable)fetchMessageWithNonce:(NSUUID * _Nullable)nonce
                       forConversation:(ZMConversation * _Nonnull)conversation

@@ -83,7 +83,7 @@ class ZMOTRMessage_SecurityDegradationTests : BaseZMClientMessageTests {
             convo.securityLevel = .secure
             self.syncMOC.saveOrRollback()
             
-            let confirmation = message.confirmReception()!
+            let confirmation = message.confirmDelivery()!
             convo.sortedAppendMessage(confirmation)
 
             // WHEN

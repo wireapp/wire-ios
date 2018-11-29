@@ -486,7 +486,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key()), nonce: nonce)
-        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "id", token: "token")
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "id", token: "token")!
         sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         // then
@@ -539,7 +539,7 @@ extension ZMAssetClientMessageTests {
         
         // when
         let originalMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key()), nonce: nonce)
-        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "id", token: "token")
+        let uploadedMessage = originalMessage.updatedUploaded(withAssetId: "id", token: "token")!
         sut.update(with: uploadedMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         let canceledMessage = ZMGenericMessage.message(content: ZMAsset.asset(withNotUploaded: .CANCELLED), nonce: nonce)
         sut.update(with: canceledMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
@@ -582,7 +582,7 @@ extension ZMAssetClientMessageTests {
         ]
         
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())
+        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload!, uuid: UUID.create())!
         // when
         let originalMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key()), nonce: nonce)
         sut.update(with: originalMessage, updateEvent: updateEvent, initialUpdate: true)
@@ -928,7 +928,7 @@ extension ZMAssetClientMessageTests {
                     "id" : uuid
                 ] as AnyObject
             ]
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
             
             // when
@@ -968,7 +968,7 @@ extension ZMAssetClientMessageTests {
                     "id" : UUID.create().uuidString
                 ] as AnyObject
             ]
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
             XCTAssertNil(sut.fileMessageData?.thumbnailAssetID)
             
             
@@ -1012,7 +1012,7 @@ extension ZMAssetClientMessageTests {
                     "id" : uuid
                 ] as AnyObject
             ]
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload as ZMTransportData, uuid: UUID.create())!
             XCTAssertNil(sutInSyncContext.fileMessageData?.thumbnailAssetID)
             
             sutInSyncContext.update(with: genericMessage, updateEvent: updateEvent, initialUpdate: true) // Append preview
@@ -1628,7 +1628,7 @@ extension ZMAssetClientMessageTests {
             ]
             
             let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)!
-            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
             
             // when
             var sut : ZMAssetClientMessage? = nil
@@ -1666,7 +1666,7 @@ extension ZMAssetClientMessageTests {
         ] as [String : Any]
         
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload)!
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)
+        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
         
         // when
         var sut: ZMAssetClientMessage!
@@ -1706,14 +1706,14 @@ extension ZMAssetClientMessageTests {
             ]
             
             let payload1 = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: firstDate)!
-            let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)
+            let updateEvent1 = ZMUpdateEvent(fromEventStreamPayload: payload1, uuid: nil)!
             let payload2 = self.payloadForMessage(in: conversation, type: EventConversationAddOTRAsset, data: dataPayload, time: secondDate)!
-            let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)
+            let updateEvent2 = ZMUpdateEvent(fromEventStreamPayload: payload2, uuid: nil)!
             
             
             // when
             let sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent1, in: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
-            sut.update(with: updateEvent2!, for: conversation)
+            sut.update(with: updateEvent2, for: conversation)
             
             // then
             XCTAssertEqual(sut.serverTimestamp, firstDate)
@@ -1840,8 +1840,7 @@ extension ZMAssetClientMessageTests {
             message.expire()
         }
         if state == .delivered {
-            let genericMessage = ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: message.nonce!), nonce: UUID.create())
-            _ = ZMMessageConfirmation.createOrUpdateMessageConfirmation(genericMessage, conversation: message.conversation!, sender: message.sender!)
+            _ = ZMMessageConfirmation(type: .delivered, message: message, sender: message.sender!, serverTimestamp: Date(), managedObjectContext: message.managedObjectContext!)
             message.managedObjectContext?.saveOrRollback()
         }
     }

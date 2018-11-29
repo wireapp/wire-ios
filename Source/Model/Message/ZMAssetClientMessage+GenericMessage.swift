@@ -43,6 +43,10 @@ extension ZMAssetClientMessage {
         return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
     }
     
+    public override var genericMessage: ZMGenericMessage? {
+        return genericAssetMessage
+    }
+    
     /// The generic asset message that is constructed by merging
     /// all generic messages from the dataset that contain an asset
     public var genericAssetMessage: ZMGenericMessage? {
@@ -158,7 +162,7 @@ extension ZMAssetClientMessage {
         return isFileMessage ? self : nil
     }
     
-    public override func update(with message: ZMGenericMessage!, updateEvent: ZMUpdateEvent!, initialUpdate: Bool) {
+    public override func update(with message: ZMGenericMessage, updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
         self.add(message)
         
         let eventData = ((updateEvent.payload["data"]) as? [String: Any]) ?? [:]

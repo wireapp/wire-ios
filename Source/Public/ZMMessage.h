@@ -80,7 +80,8 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeMessageDeletedForEveryone,
     ZMSystemMessageTypePerformedCall,
     ZMSystemMessageTypeTeamMemberLeave,
-    ZMSystemMessageTypeMessageTimerUpdate
+    ZMSystemMessageTypeMessageTimerUpdate,
+    ZMSystemMessageTypeReadReceiptSettingChanged
 };
 
 

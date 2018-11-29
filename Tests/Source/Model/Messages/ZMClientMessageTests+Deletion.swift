@@ -76,7 +76,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // expect
         let assetId = "asset-id"
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)
+        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)!
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         let observer = AssetDeletionNotificationObserver()
         
@@ -117,7 +117,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // expect
         let assetId = "asset-id"
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)
+        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)!
         sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
         
         let previewAssetId = "preview_assetId"
