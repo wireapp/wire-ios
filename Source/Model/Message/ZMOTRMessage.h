@@ -41,9 +41,9 @@ extern NSString * const DeliveredKey;
 
 - (void)updateWithGenericMessage:(ZMGenericMessage * )message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
-+ (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                                     inManagedObjectContext:(NSManagedObjectContext *)moc
-                                             prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
++ (nullable MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
+                                              inManagedObjectContext:(NSManagedObjectContext *)moc
+                                                      prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc

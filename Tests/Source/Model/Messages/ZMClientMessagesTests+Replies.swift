@@ -41,7 +41,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         // when
         var sut: ZMClientMessage! = nil
         performPretendingUiMocIsSyncMoc {
-            sut = ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message as? ZMClientMessage
+            sut = ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message as? ZMClientMessage
         }
         
         // then
@@ -61,7 +61,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         // when
         var sut: ZMClientMessage! = nil
         performPretendingUiMocIsSyncMoc {
-            sut = ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message as? ZMClientMessage
+            sut = ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message as? ZMClientMessage
         }
         
         // then
