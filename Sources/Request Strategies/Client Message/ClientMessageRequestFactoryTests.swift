@@ -64,7 +64,7 @@ extension ClientMessageRequestFactoryTests {
             let text = "Antani"
             let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
             message.sender = self.otherUser
-            let confirmationMessage = message.confirmReception()!
+            let confirmationMessage = message.confirmDelivery()!
             
             print("CLIENT ID", (message.conversation?.lastServerSyncedActiveParticipants.firstObject! as! ZMUser).remoteIdentifier!)
             print("OTHER USER", self.otherUser.remoteIdentifier!)
