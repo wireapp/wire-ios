@@ -114,7 +114,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
         
         self.performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message)
         }
         
         // THEN
@@ -135,7 +135,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let event = self.event(for: "@selfUser", in: conversation, mentions: [mention])
         
         self.performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message)
         }
         
         // THEN
@@ -162,7 +162,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
         
         self.performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message)
         }
         
         // THEN
@@ -189,7 +189,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let event = self.event(for: "Hi!", in: conversation, replyingTo: quotedMessage)
         
         self.performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil).message)
+            XCTAssertNotNil(ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)?.message)
         }
         
         // THEN

@@ -1633,7 +1633,7 @@ extension ZMAssetClientMessageTests {
             // when
             var sut : ZMAssetClientMessage? = nil
             self.performPretendingUiMocIsSyncMoc { () -> Void in
-                sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil).message as? ZMAssetClientMessage
+                sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)?.message as? ZMAssetClientMessage
             }
             
             // then
@@ -1671,7 +1671,7 @@ extension ZMAssetClientMessageTests {
         // when
         var sut: ZMAssetClientMessage!
         performPretendingUiMocIsSyncMoc {
-            sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil).message as? ZMAssetClientMessage
+            sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)?.message as? ZMAssetClientMessage
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
@@ -1712,7 +1712,7 @@ extension ZMAssetClientMessageTests {
             
             
             // when
-            let sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent1, in: self.syncMOC, prefetchResult: nil).message as! ZMAssetClientMessage
+            let sut = ZMAssetClientMessage.messageUpdateResult(from: updateEvent1, in: self.syncMOC, prefetchResult: nil)?.message as! ZMAssetClientMessage
             sut.update(with: updateEvent2, for: conversation)
             
             // then
