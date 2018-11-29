@@ -126,6 +126,48 @@ extension ClientMessageTranscoderTests {
         }
     }
     
+    func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() {
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
+            let text = "Lorem ipsum"
+            let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            if self.sut.nextRequest() == nil {
+                XCTFail()
+                return
+            }
+            
+            // THEN
+            XCTAssertTrue(message.genericMessage!.content!.expectsReadConfirmation())
+        }
+    }
+    
+    func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() {
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
+            let text = "Lorem ipsum"
+            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            if self.sut.nextRequest() == nil {
+                XCTFail()
+                return
+            }
+            
+            // THEN
+            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+        }
+    }
+    
     func testThatItGeneratesARequestToSendAClientMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             
