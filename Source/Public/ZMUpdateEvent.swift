@@ -49,6 +49,7 @@ import WireUtilities
     case conversationCodeUpdate = 14
     case conversationAccessModeUpdate = 15
     case conversationMessageTimerUpdate = 31
+    case conversationReceiptModeUpdate = 34
     case userConnection = 16
     case userNew = 17
     case userUpdate = 18
@@ -67,7 +68,7 @@ import WireUtilities
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
 
-    // Current max value: userPropertiesDelete = 33
+    // Current max value: conversationReceiptModeUpdate = 34
 }
 
 extension ZMUpdateEventType {
@@ -106,6 +107,8 @@ extension ZMUpdateEventType {
             return "conversation.code-update"
         case .conversationAccessModeUpdate:
             return "conversation.access-update"
+        case .conversationReceiptModeUpdate:
+            return "conversation.receipt-mode-update"
         case .userConnection:
             return "user.connection"
         case .userNew:
