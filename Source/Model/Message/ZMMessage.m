@@ -86,6 +86,7 @@ NSString * const ZMSystemMessageAllTeamUsersAddedKey = @"allTeamUsersAdded";
 NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
 NSString * const ZMMessageRepliesKey = @"replies";
 NSString * const ZMMessageQuoteKey = @"quote";
+NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation";
 
 
 @interface ZMMessage ()
@@ -238,10 +239,8 @@ NSString * const ZMMessageQuoteKey = @"quote";
     self.isExpired = NO;
 }
 
-- (ZMClientMessage *)confirmReception
-{
-    ZMGenericMessage *genericMessage = [ZMGenericMessage messageWithContent:[ZMConfirmation confirmWithMessageId:self.nonce type:ZMConfirmationTypeDELIVERED] nonce:NSUUID.UUID];
-    return [self.conversation appendClientMessageWithGenericMessage:genericMessage expires:NO hidden:YES];
+- (BOOL)needsReadConfirmation {
+    return NO;
 }
 
 - (void)expire;
@@ -678,6 +677,7 @@ NSString * const ZMMessageQuoteKey = @"quote";
                              ZMSystemMessageRelevantForConversationStatusKey,
                              ZMSystemMessageAllTeamUsersAddedKey,
                              ZMSystemMessageNumberOfGuestsAddedKey,
+                             ZMMessageExpectReadConfirmationKey,
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -964,6 +964,7 @@ NSString * const ZMMessageQuoteKey = @"quote";
             case ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged:
             case ZMSystemMessageTypeTeamMemberLeave:
             case ZMSystemMessageTypeMissedCall:
+            case ZMSystemMessageTypeReadReceiptSettingChanged:
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:

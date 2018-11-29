@@ -22,6 +22,8 @@
 @class UserClient;
 @class MessageUpdateResult;
 
+NS_ASSUME_NONNULL_BEGIN
+
 extern NSString * const DeliveredKey;
 
 @interface ZMOTRMessage : ZMMessage
@@ -29,21 +31,24 @@ extern NSString * const DeliveredKey;
 @property (nonatomic) BOOL delivered;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic, readonly) NSSet *missingRecipients;
-@property (nonatomic, readonly) NSString *dataSetDebugInformation;
+@property (nonatomic, readonly, nullable) NSString *dataSetDebugInformation;
+@property (nonatomic, readonly, nullable) ZMGenericMessage *genericMessage;
 
 - (void)missesRecipient:(UserClient *)recipient;
 - (void)missesRecipients:(NSSet<UserClient *> *)recipients;
 - (void)doesNotMissRecipient:(UserClient *)recipient;
 - (void)doesNotMissRecipients:(NSSet<UserClient *> *)recipients;
 
-- (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
+- (void)updateWithGenericMessage:(ZMGenericMessage * )message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
 + (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                                      inManagedObjectContext:(NSManagedObjectContext *)moc
-                                             prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult;
+                                             prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
 + (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                               inManagedObjectContext:(NSManagedObjectContext *)moc
-                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult NS_UNAVAILABLE;
+                                      prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult NS_UNAVAILABLE;
 
 @end
+
+NS_ASSUME_NONNULL_END

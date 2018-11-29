@@ -33,7 +33,7 @@ public enum AffectedKeys : Equatable {
         }
     }
     
-    func containsKey(_ key: KeyPath) -> Bool {
+    func containsKey(_ key: StringKeyPath) -> Bool {
         switch(self) {
         case let .some(keySet):
             return keySet.contains(key)
@@ -55,19 +55,19 @@ public func ==(lhs: AffectedKeys, rhs: AffectedKeys) -> Bool {
 }
 
 public struct KeySet : Sequence {
-    public typealias Key = KeyPath
-    public typealias Iterator = Set<KeyPath>.Iterator
-    fileprivate let backing: Set<KeyPath>
+    public typealias Key = StringKeyPath
+    public typealias Iterator = Set<StringKeyPath>.Iterator
+    fileprivate let backing: Set<StringKeyPath>
     
     public init() {
         backing = Set()
     }
     
     public init(_ set : NSSet) {
-        var a: [KeyPath] = []
+        var a: [StringKeyPath] = []
         for s in set {
             if let ss = s as? String {
-                a.append(KeyPath.keyPathForString(ss))
+                a.append(StringKeyPath.keyPathForString(ss))
             } else {
                 fatal("\(type(of: s)) is not a string")
             }
@@ -83,20 +83,20 @@ public struct KeySet : Sequence {
     }
     
     public init(_ a : [String]) {
-        var aa: [KeyPath] = []
+        var aa: [StringKeyPath] = []
         for s in a {
-            aa.append(KeyPath.keyPathForString(s))
+            aa.append(StringKeyPath.keyPathForString(s))
         }
-        backing = Set<KeyPath>(aa)
+        backing = Set<StringKeyPath>(aa)
     }
-    public init(key: KeyPath) {
+    public init(key: StringKeyPath) {
         self.init(Set([key]))
     }
-    public init(keyPaths: [KeyPath]) {
+    public init(keyPaths: [StringKeyPath]) {
         self.init(Set(keyPaths))
     }
     public init(key: String) {
-        self.init(Set([KeyPath.keyPathForString(key)]))
+        self.init(Set([StringKeyPath.keyPathForString(key)]))
     }
     public init(arrayLiteral elements: String...) {
         self.init(elements)
@@ -104,13 +104,13 @@ public struct KeySet : Sequence {
     init<S : Sequence>(_ seq: S) where S.Iterator.Element == Key {
         backing = Set<Key>(seq)
     }
-    public func contains(_ i : KeyPath) -> Bool {
+    public func contains(_ i : StringKeyPath) -> Bool {
         return backing.contains(i)
     }
     public func contains(_ i : String) -> Bool {
-        return backing.contains(KeyPath.keyPathForString(i))
+        return backing.contains(StringKeyPath.keyPathForString(i))
     }
-    public func makeIterator() -> Set<KeyPath>.Iterator {
+    public func makeIterator() -> Set<StringKeyPath>.Iterator {
         return backing.makeIterator()
     }
     
@@ -140,14 +140,14 @@ extension KeySet {
     public var isEmpty: Bool {
         return backing.isEmpty
     }
-    func filter(_ match: (KeyPath) -> Bool) -> KeySet {
+    func filter(_ match: (StringKeyPath) -> Bool) -> KeySet {
         return KeySet(backing.filter {match($0)})
     }
 }
 
 extension KeySet : CustomDebugStringConvertible {
     public var description: String {
-        let a = Array<KeyPath>(backing)
+        let a = Array<StringKeyPath>(backing)
         let ss = a.map { $0.rawValue }.sorted() {
             (lhs, rhs) in lhs < rhs
         }

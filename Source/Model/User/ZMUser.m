@@ -82,6 +82,7 @@ static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
 static NSString *const ExpiresAtKey = @"expiresAt";
 static NSString *const UsesCompanyLoginKey = @"usesCompanyLogin";
+NSString *const ReadReceiptsEnabledKey = @"readReceiptsEnabled";
 
 static NSString *const TeamIdentifierDataKey = @"teamIdentifier_data";
 static NSString *const TeamIdentifierKey = @"teamIdentifier";
@@ -381,7 +382,7 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 - (NSSet *)keysTrackedForLocalModifications
 {
     if(self.isSelfUser) {
-        return [super keysTrackedForLocalModifications];
+        return [[super keysTrackedForLocalModifications] setByAddingObject:ReadReceiptsEnabledKey];
     }
     else {
         return [NSSet set];
@@ -869,6 +870,30 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     [self didChangeValueForKey:EmailAddressKey];
     
     self.normalizedEmailAddress = [self.emailAddress normalizedEmailaddress];
+}
+
+- (void)setReadReceiptsEnabled:(BOOL)readReceiptsEnabled
+{
+    [self setReadReceiptsEnabled:readReceiptsEnabled synchronize:YES];
+}
+
+- (void)setReadReceiptsEnabled:(BOOL)readReceiptsEnabled synchronize:(BOOL)synchronize
+{
+    NSAssert(self.isSelfUser, @"setReadReceiptsEnabled called for non-self user");
+    [self.managedObjectContext setPersistentStoreMetadata:@(readReceiptsEnabled) forKey:ReadReceiptsEnabledKey];
+    if (synchronize) {
+        [self setLocallyModifiedKeys:[NSSet setWithObject:ReadReceiptsEnabledKey]];
+    }
+}
+
+- (BOOL)readReceiptsEnabled
+{
+    NSAssert(self.isSelfUser, @"readReceiptsEnabled called for non-self user");
+    id value = [self.managedObjectContext persistentStoreMetadataForKey:ReadReceiptsEnabledKey];
+    if (nil != value && [value respondsToSelector:@selector(boolValue)]) {
+        return [value boolValue];
+    }
+    return NO;
 }
 
 @end

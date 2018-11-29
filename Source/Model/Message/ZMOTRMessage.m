@@ -79,11 +79,14 @@ NSString * const DeliveredKey = @"delivered";
     else if (self.delivered == NO) {
         return ZMDeliveryStatePending;
     }
-    else if (self.confirmations.count == 0){
-        return ZMDeliveryStateSent;
+    else if (self.readReceipts.count > 0) {
+        return ZMDeliveryStateRead;
+    }
+    else if (self.confirmations.count > 0){
+        return ZMDeliveryStateDelivered;
     }
     else {
-        return ZMDeliveryStateDelivered;
+        return ZMDeliveryStateSent;
     }
 }
 
@@ -114,6 +117,12 @@ NSString * const DeliveredKey = @"delivered";
 {
     self.delivered = NO;
     [super resend];
+}
+
+- (ZMGenericMessage *)genericMessage
+{
+    NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
+    return nil;
 }
 
 - (void)updateWithGenericMessage:(__unused ZMGenericMessage *)message updateEvent:(__unused ZMUpdateEvent *)updateEvent initialUpdate:(__unused BOOL)initialUpdate
@@ -176,14 +185,13 @@ NSString * const DeliveredKey = @"delivered";
         
         [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
     } else if (message.hasConfirmation) {
-        ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:YES inContext:moc];
-        NOT_USED([ZMMessageConfirmation createOrUpdateMessageConfirmation:message conversation:conversation sender:sender]);
+        [ZMMessageConfirmation createMessageMessageConfirmations:message.confirmation conversation:conversation updateEvent:updateEvent];
     } else if (message.hasEdited) {
         NSUUID *editedMessageId = [NSUUID uuidWithTransportString:message.edited.replacingMessageId];
         ZMClientMessage *editedMessage = [ZMClientMessage fetchMessageWithNonce:editedMessageId forConversation:conversation inManagedObjectContext:moc prefetchResult:prefetchResult];
         if ([editedMessage processMessageEdit:message.edited from:updateEvent]) {
             [editedMessage updateCategoryCache];
-            return [[MessageUpdateResult alloc] initWithMessage:editedMessage needsConfirmation:editedMessage.needsToBeConfirmed wasInserted:YES];
+            return [[MessageUpdateResult alloc] initWithMessage:editedMessage needsConfirmation:editedMessage.needsDeliveryConfirmation wasInserted:YES];
         }
     } else if ([conversation shouldAddEvent:updateEvent] && !(message.hasClientAction || message.hasCalling || message.hasAvailability)) {
         NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
@@ -200,10 +208,15 @@ NSString * const DeliveredKey = @"delivered";
         
         BOOL isNewMessage = NO;
         if (clientMessage == nil) {
+            isNewMessage = YES;
+            
             clientMessage = [[messageClass alloc] initWithNonce:nonce managedObjectContext:moc];
             clientMessage.senderClientID = updateEvent.senderClientID;
             clientMessage.serverTimestamp = updateEvent.timeStamp;
-            isNewMessage = YES;
+            
+            if (![updateEvent.senderUUID isEqual:selfUser.remoteIdentifier] && conversation.conversationType == ZMConversationTypeGroup) {
+                clientMessage.expectsReadConfirmation = conversation.hasReadReceiptsEnabled;
+            }
         } else if (![clientMessage.senderClientID isEqualToString:updateEvent.senderClientID]) {
             return nil;
         }
@@ -225,7 +238,7 @@ NSString * const DeliveredKey = @"delivered";
         [clientMessage updateCategoryCache];
         [conversation resortMessagesWithUpdatedMessage:clientMessage];
         
-        return [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:clientMessage.needsToBeConfirmed wasInserted:isNewMessage];
+        return [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:clientMessage.needsDeliveryConfirmation wasInserted:isNewMessage];
     }
     
     return nil;

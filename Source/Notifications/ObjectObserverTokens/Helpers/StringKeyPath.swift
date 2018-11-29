@@ -21,21 +21,21 @@ import Foundation
 
 
 /// A key path (as in key-value-coding).
-public final class KeyPath : Hashable {
+public final class StringKeyPath : Hashable {
     
     public let rawValue: String
     public let count: Int
     public let hashValue: Int
     
-    static private var KeyPathCache : [String : KeyPath] = [:]
+    static private var KeyPathCache : [String : StringKeyPath] = [:]
     
-    public class func keyPathForString(_ string: String) -> KeyPath {
+    public class func keyPathForString(_ string: String) -> StringKeyPath {
         
         if let keyPath = KeyPathCache[string] {
             return keyPath
         }
         else {
-            let instance = KeyPath(string)
+            let instance = StringKeyPath(string)
             KeyPathCache[string] = instance
             return instance
         }
@@ -53,17 +53,17 @@ public final class KeyPath : Hashable {
         return 1 < count
     }
 
-    public lazy var decompose : (head: KeyPath, tail: KeyPath?)? = {
+    public lazy var decompose : (head: StringKeyPath, tail: StringKeyPath?)? = {
         if 1 <= self.count {
             if let i = self.rawValue.index(of: ".") {
                 let head = self.rawValue[..<i]
-                var tail : KeyPath?
+                var tail : StringKeyPath?
                 if i != self.rawValue.endIndex {
                     let nextIndex = self.rawValue.index(after: i)
                     let result = self.rawValue[nextIndex...]
-                    tail = KeyPath.keyPathForString(String(result))
+                    tail = StringKeyPath.keyPathForString(String(result))
                 }
-                return (KeyPath.keyPathForString(String(head)), tail)
+                return (StringKeyPath.keyPathForString(String(head)), tail)
             }
             return (self, nil)
         }
@@ -71,14 +71,14 @@ public final class KeyPath : Hashable {
     }()
 }
 
-extension KeyPath : Equatable {
+extension StringKeyPath : Equatable {
 }
-public func ==(lhs: KeyPath, rhs: KeyPath) -> Bool {
+public func ==(lhs: StringKeyPath, rhs: StringKeyPath) -> Bool {
     // We store the hash which makes comparison very cheap.
     return (lhs.hashValue == rhs.hashValue) && (lhs.rawValue == rhs.rawValue)
 }
 
-extension KeyPath : CustomDebugStringConvertible {
+extension StringKeyPath : CustomDebugStringConvertible {
     public var description: String {
         return rawValue
     }

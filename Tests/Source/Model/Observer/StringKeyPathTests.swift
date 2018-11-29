@@ -19,26 +19,26 @@
 
 import Foundation
 
-class KeyPathTests: ZMBaseManagedObjectTest {
+class StringKeyPathTests: ZMBaseManagedObjectTest {
 
     func testThatItCreatesASimpleKeyPath() {
-        let sut = KeyPath.keyPathForString("name")
+        let sut = StringKeyPath.keyPathForString("name")
         XCTAssertEqual(sut.rawValue, "name")
         XCTAssertEqual(sut.count, 1)
         XCTAssertFalse(sut.isPath)
     }
 
     func testThatItCreatesKeyPathThatIsAPath() {
-        let sut = KeyPath.keyPathForString("foo.name")
+        let sut = StringKeyPath.keyPathForString("foo.name")
         XCTAssertEqual(sut.rawValue, "foo.name")
         XCTAssertEqual(sut.count, 2)
         XCTAssertTrue(sut.isPath)
     }
     
     func testThatItDecomposesSimpleKeys() {
-        let sut = KeyPath.keyPathForString("name")
+        let sut = StringKeyPath.keyPathForString("name")
         if let (a, b) = sut.decompose {
-            XCTAssertEqual(a, KeyPath.keyPathForString("name"))
+            XCTAssertEqual(a, StringKeyPath.keyPathForString("name"))
             XCTAssertEqual(b, nil)
         } else {
             XCTFail("Did not decompose")
@@ -46,10 +46,10 @@ class KeyPathTests: ZMBaseManagedObjectTest {
     }
     
     func testThatItDecomposesKeyPaths() {
-        let sut = KeyPath.keyPathForString("foo.name")
+        let sut = StringKeyPath.keyPathForString("foo.name")
         if let (a, b) = sut.decompose {
-            XCTAssertEqual(a, KeyPath.keyPathForString("foo"))
-            XCTAssertEqual(b, KeyPath.keyPathForString("name"))
+            XCTAssertEqual(a, StringKeyPath.keyPathForString("foo"))
+            XCTAssertEqual(b, StringKeyPath.keyPathForString("name"))
         } else {
             XCTFail("Did not decompose")
         }

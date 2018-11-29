@@ -35,7 +35,6 @@ extern NSString * _Nonnull const ZMClientMessageLinkPreviewKey;
 
 /// Link Preview state
 @property (nonatomic) NSDate * _Nullable updatedTimestamp;
-@property (nonatomic, readonly) ZMGenericMessage * _Nullable genericMessage;
 
 - (void)addData:(NSData * _Nonnull)data;
 

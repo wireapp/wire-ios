@@ -27,7 +27,16 @@ public enum ZMDeliveryState : UInt {
     case pending = 1
     case sent = 2
     case delivered = 3
-    case failedToSend = 4
+    case read = 4
+    case failedToSend = 5
+}
+
+@objc
+public protocol ReadReceipt {
+    
+    var user: ZMUser { get }
+    var serverTimestamp: Date? { get }
+    
 }
 
 @objc
@@ -49,6 +58,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// messages sent from this device. In any other case, it will be
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
+    
+    /// List of recipients who have read the message.
+    var readReceipts: [ReadReceipt] { get }
     
     /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
     var textMessageData : ZMTextMessageData? { get }
@@ -141,6 +153,10 @@ extension ZMMessage {
 
 extension ZMMessage : ZMConversationMessage {
     @NSManaged public var replies: Set<ZMMessage>
+    
+    public var readReceipts: [ReadReceipt] {
+        return confirmations.filter({ $0.type == .read }).sorted(by: { a, b in  a.serverTimestamp < b.serverTimestamp })
+    }
 
     public var objectIdentifier: String {
         return nonpersistedObjectIdentifer!
