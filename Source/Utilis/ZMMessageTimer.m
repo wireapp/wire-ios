@@ -68,7 +68,17 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)startTimerForMessageIfNeeded:(ZMMessage*)message fireDate:(NSDate *)fireDate userInfo:(NSDictionary *)userInfo
 {
     if ( ![self isTimerRunningForMessage:message] ) {
-        ZMBackgroundActivity *bgActivity = [BackgroundActivityFactory.sharedInstance backgroundActivityWithName:@"MessageTimer"];
+        BackgroundActivity *bgActivity = [BackgroundActivityFactory.sharedFactory startBackgroundActivityWithName:@"MessageTimer"];
+
+        if (!bgActivity) {
+            return;
+        }
+
+        __weak ZMMessageTimer *weakSelf = self;
+        bgActivity.expirationHandler = ^{
+            [weakSelf stopTimerForMessage:message];
+        };
+
         ZMTimer *timer = [ZMTimer timerWithTarget:self];
         NSMutableDictionary *info = [NSMutableDictionary dictionaryWithDictionary:userInfo ?: @{}];
         info[@"message"] = message;
@@ -135,8 +145,11 @@ ZM_EMPTY_ASSERTING_INIT()
 
 - (void)endBackgroundActivityForTimer:(ZMTimer *)timer
 {
-    ZMBackgroundActivity *bgActivity = timer.userInfo[@"bgActivity"];
-    [bgActivity endActivity];
+    BackgroundActivity *bgActivity = timer.userInfo[@"bgActivity"];
+    
+    if (bgActivity) {
+        [BackgroundActivityFactory.sharedFactory endBackgroundActivity:bgActivity];
+    }
 }
 
 - (void)tearDown;
