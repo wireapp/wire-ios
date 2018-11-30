@@ -19,28 +19,150 @@
 import UIKit
 import WireUtilities
 
-@objcMembers open class BackgroundActivityFactory: NSObject {
-    
-    private static let _instance : BackgroundActivityFactory = BackgroundActivityFactory()
-    
-    open weak var application : UIApplication? = nil
-    open weak var mainGroupQueue : ZMSGroupQueue? = nil
-    
-    @objc open class func sharedInstance() -> BackgroundActivityFactory
-    {
-        return _instance
+/**
+ * Manages the creation and lifecycle of background tasks.
+ *
+ * To improve the behavior of the app in background contexts, this object starts and stops a single background task,
+ * and associates "tokens" to these tasks to keep track of the progress, and handles expiration automatically.
+ *
+ * When you request background activity:
+ * - if there is no active activity: we create a new UIKit background task and save a token
+ * - if there are current active activities: we reuse the active UIKit task and save a token
+ *
+ * When you end a background activity manually:
+ * - if the activity was the last in the list: we tell UIKit that the background task ended and remove the token from the list
+ * - if there are still other activities in the list: we remove the token from the list
+ *
+ * When the system sends a background time expiration warning:
+ * 1. We notify all the task tokens that they will expire soon, and give them an opportunity to clean up before the app gets suspended
+ * 2. We end the active background task and block new activities from starting
+ */
+
+@objc public final class BackgroundActivityFactory: NSObject {
+
+    /// Get the shared instance.
+    @objc(sharedFactory)
+    public static let shared: BackgroundActivityFactory = BackgroundActivityFactory()
+
+    // MARK: - Configuration
+
+    /// The activity manager to use to.
+    @objc public weak var activityManager: BackgroundActivityManager? = nil
+
+    // MARK: - State
+
+    /// Whether any tasks are active.
+    @objc public var isActive: Bool {
+        return currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskInvalid
     }
-    
-    @objc open func backgroundActivity(withName name: String) -> ZMBackgroundActivity?
-    {
-        guard let mainGroupQueue = mainGroupQueue, let application = application else { return nil }
-        return ZMBackgroundActivity.begin(withName: name, groupQueue: mainGroupQueue, application: application)
+
+    @objc var mainQueue: DispatchQueue = .main
+    private let isolationQueue = DispatchQueue(label: "BackgroundActivityFactory.IsolationQueue")
+
+    var currentBackgroundTask: UIBackgroundTaskIdentifier?
+    var activities: Set<BackgroundActivity> = []
+
+    // MARK: - Starting Background Activities
+
+    /**
+     * Starts a background activity if possible.
+     * - parameter name: The name of the task, for debugging purposes.
+     * - returns: A token representing the activity, if the background execution is available.
+     * - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
+     */
+
+    @objc(startBackgroundActivityWithName:)
+    public func startBackgroundActivity(withName name: String) -> BackgroundActivity? {
+        return startActivityIfPossible(name, nil)
     }
-    
-    @objc open func backgroundActivity(withName name: String, expirationHandler handler:@escaping (() -> Void)) -> ZMBackgroundActivity?
-    {
-        guard let mainGroupQueue = mainGroupQueue, let application = application else { return nil }
-        return ZMBackgroundActivity.begin(withName: name, groupQueue: mainGroupQueue, expirationHandler: handler, application: application)
+
+    /**
+     * Starts a background activity if possible.
+     * - parameter name: The name of the task, for debugging purposes.
+     * - parameter handler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
+     * - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
+     */
+
+    @objc(startBackgroundActivityWithName:expirationHandler:)
+    public func startBackgroundActivity(withName name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
+        return startActivityIfPossible(name, expirationHandler)
     }
-    
+
+    // MARK: - Management
+
+    /**
+     * Call this method when the app resumes from foreground.
+     */
+
+    @objc public func resume() {
+        isolationQueue.sync {
+            if currentBackgroundTask == UIBackgroundTaskInvalid {
+                currentBackgroundTask = nil
+            }
+        }
+    }
+
+    /**
+     * Ends the activity and the active background task if possible.
+     * - parameter activity: The activity to end.
+     */
+
+    @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
+        isolationQueue.sync {
+            guard isActive else {
+                return
+            }
+
+            activities.remove(activity)
+
+            if activities.isEmpty {
+                finishBackgroundTask()
+            }
+        }
+    }
+
+    // MARK: - Helpers
+
+    /// Starts the background activity of the system allows it.
+    private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
+        return isolationQueue.sync {
+            // Do not start new tasks if the background timer is running.
+            guard currentBackgroundTask != UIBackgroundTaskInvalid else { return nil }
+            guard let activityManager = activityManager else { return nil }
+
+            // Try to create the task
+            let activity = BackgroundActivity(name: name, expirationHandler: expirationHandler)
+
+            if currentBackgroundTask == nil {
+                let task = activityManager.beginBackgroundTask(withName: "BackgroundActivityFactory", expirationHandler: handleExpiration)
+                guard task != UIBackgroundTaskInvalid else { return nil }
+                currentBackgroundTask = task
+            }
+
+            activities.insert(activity)
+            return activity
+        }
+    }
+
+    /// Called when the background timer is about to expire.
+    private func handleExpiration() {
+        isolationQueue.sync {
+            activities.forEach { activity in
+                mainQueue.async { activity.expirationHandler?() }
+            }
+            activities.removeAll()
+
+            finishBackgroundTask()
+            currentBackgroundTask = UIBackgroundTaskInvalid
+        }
+    }
+
+    /// Ends the current background task.
+    private func finishBackgroundTask() {
+        if let currentBackgroundTask = self.currentBackgroundTask {
+            self.activityManager?.endBackgroundTask(currentBackgroundTask)
+            self.currentBackgroundTask = nil
+        }
+    }
+
 }

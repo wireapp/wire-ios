@@ -28,7 +28,6 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/NSError+ZMTransportSession.h>
 #import <WireTransport/NSObject+ZMTransportEncoding.h>
 #import <WireTransport/NSString+UUID.h>
-#import <WireTransport/ZMBackgroundActivity.h>
 #import <WireTransport/ZMReachability.h>
 #import <WireTransport/ZMSessionCancelTimer.h>
 #import <WireTransport/ZMTransportCodec.h>

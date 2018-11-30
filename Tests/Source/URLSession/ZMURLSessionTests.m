@@ -69,10 +69,10 @@ static NSString * const DataKey = @"data";
     self.receivedDataCount = 0;
     
     self.queue = [NSOperationQueue zm_serialQueueWithName:self.name];
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
-                                                  delegate:self
-                                             delegateQueue:self.queue
-                                                identifier:@"test-session"];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
+                                                       delegate:self
+                                                  delegateQueue:self.queue
+                                                     identifier:@"test-session"];
 
     self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example.com/"]];
     self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.example.com/"]];
@@ -493,7 +493,7 @@ willPerformHTTPRedirection:response
 
 - (void)setupMockBackgroundSession
 {    
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
     [(NSURLSession *)[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"]] configuration];
@@ -508,7 +508,7 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
@@ -645,7 +645,7 @@ willPerformHTTPRedirection:response
     [self spinMainQueueWithTimeout:0.1];
 
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"];
-    self.sut = (id) [ZMURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
 

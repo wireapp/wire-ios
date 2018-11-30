@@ -36,10 +36,10 @@ extern NSString * const ZMURLSessionVoipIdentifier;
 
 @property (nonatomic, readonly) NSString *identifier;
 
-+ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration
-                                delegate:(id<ZMURLSessionDelegate>)delegate
-                           delegateQueue:(NSOperationQueue *)queue
-                              identifier:(NSString *)identifier;
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration
+                             delegate:(id<ZMURLSessionDelegate>)delegate
+                        delegateQueue:(NSOperationQueue *)queue
+                           identifier:(NSString *)identifier;
 
 - (void)setTimeoutTimer:(ZMTimer *)timer forTask:(NSURLSessionTask *)task;
 

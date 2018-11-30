@@ -337,6 +337,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) NSUUID *userIdentifier;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) FakeReachability *reachability;
+@property (nonatomic) MockBackgroundActivityManager *activityManager;
 
 @end
 
@@ -402,7 +403,11 @@ static XCTestCase *currentTestCase;
     self.webSocketURL = [NSURL URLWithString:@"https://websocket.example.com"];
     self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host userIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
-    
+
+    self.activityManager = [[MockBackgroundActivityManager alloc] init];
+    BackgroundActivityFactory.sharedFactory.activityManager = self.activityManager;
+    BackgroundActivityFactory.sharedFactory.mainQueue = dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0);
+
     self.sut = [[ZMTransportSession alloc]
                 initWithURLSessionSwitch:self.URLSessionSwitch
                 requestScheduler:(id) self.scheduler
@@ -458,6 +463,10 @@ static XCTestCase *currentTestCase;
     self.cookieStorage = nil;
     [super tearDown];
     currentTestCase = nil;
+
+    self.activityManager = nil;
+    BackgroundActivityFactory.sharedFactory.activityManager = nil;
+    BackgroundActivityFactory.sharedFactory.mainQueue = dispatch_get_main_queue();
 }
 
 - (void)setAuthenticationCookieData;
@@ -1864,7 +1873,7 @@ static XCTestCase *currentTestCase;
         configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
     }
     
-    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:backgroundSession ? ZMURLSessionBackgroundIdentifier : @"default-session"];
+    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:backgroundSession ? ZMURLSessionBackgroundIdentifier : @"default-session"];
     if (backgroundSession) {
         XCTAssertTrue(session.isBackgroundSession);
     }
@@ -2363,7 +2372,7 @@ static XCTestCase *currentTestCase;
     
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
-    ZMURLSession *session = [ZMURLSession sessionWithConfiguration:configuration delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session"];
+    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completion handler on the main thread"];
     
     // when

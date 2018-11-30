@@ -23,19 +23,18 @@
 #import <WireTransport/WireTransport-Swift.h>
 
 #import "ZMSessionCancelTimer.h"
+#import "ZMSessionCancelTimer+Internal.h"
 #import "ZMURLSession.h"
-#import "ZMBackgroundActivity.h"
 #import "ZMTransportSession.h"
 
 const NSTimeInterval ZMSessionCancelTimerDefaultTimeout = 5;
 
-
 @interface ZMSessionCancelTimer () <ZMTimerClient>
 
 @property (nonatomic) ZMURLSession *session;
-@property (nonatomic) ZMTimer *timer;
 @property (nonatomic) NSTimeInterval timeout;
-@property (nonatomic) ZMBackgroundActivity *activity;
+@property (nonatomic, readwrite) ZMTimer *timer;
+@property (nonatomic, readwrite) BackgroundActivity *activity;
 
 @end
 
@@ -57,25 +56,53 @@ ZM_EMPTY_ASSERTING_INIT();
 
 - (void)start;
 {
-    self.activity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:NSStringFromClass(self.class)];
-    [self.timer fireAfterTimeInterval:self.timeout];
+    self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:NSStringFromClass(self.class)];
+
+    // Configure the expiration timer to cancel the tasks if the app is being suspended
+    __weak ZMSessionCancelTimer *weakSelf = self;
+    self.activity.expirationHandler = ^{
+        [weakSelf handleExpiration];
+    };
+
+    // If the app can perform background activites, start the timer, otherwise, cancel requests immediately
+    if (self.activity) {
+        [self.timer fireAfterTimeInterval:self.timeout];
+    } else {
+        [self handleExpiration];
+    }
 }
 
 - (void)cancel;
 {
     [self.timer cancel];
-    [self.activity endActivity];
+    if (self.activity) {
+        [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:self.activity];
+    }
     self.activity = nil;
 }
 
 - (void)timerDidFire:(ZMTimer *)timer
 {
     NOT_USED(timer);
-    ZMBackgroundActivity *activity = self.activity;
+    [self handleExpiration];
+}
+
+- (void)handleExpiration
+{
+    // Cancel the timer if the app is expiring
+    if (self.timer.state == ZMTimerStateStarted) {
+        [self.timer cancel];
+    }
+
+    // Cancel requests and end the background activity
+    BackgroundActivity *activity = self.activity;
     self.activity = nil;
+
     [self.session cancelAllTasksWithCompletionHandler:^{
         [ZMTransportSession notifyNewRequestsAvailable:self];
-        [activity endActivity];
+        if (activity) {
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:activity];
+        }
     }];
 }
 

@@ -88,5 +88,3 @@
 @interface FakeGroupQueue : NSObject <ZMSGroupQueue>
 
 @end
-
-
