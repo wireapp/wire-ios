@@ -78,7 +78,7 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
         }
     }
     
-    convenience init(type:MessageConfirmationType,  message: ZMMessage, sender: ZMUser, serverTimestamp: Date, managedObjectContext: NSManagedObjectContext) {
+    convenience init(type: MessageConfirmationType, message: ZMMessage, sender: ZMUser, serverTimestamp: Date, managedObjectContext: NSManagedObjectContext) {
         let entityDescription = NSEntityDescription.entity(forEntityName: ZMMessageConfirmation.entityName(), in: managedObjectContext)!
         self.init(entity: entityDescription, insertInto: managedObjectContext)
         self.message = message
