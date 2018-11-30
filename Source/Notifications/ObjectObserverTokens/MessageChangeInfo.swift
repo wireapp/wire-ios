@@ -63,6 +63,7 @@ extension ZMClientMessage {
                               #keyPath(ZMClientMessage.linkPreviewState),
                               #keyPath(ZMClientMessage.genericMessage),
                               #keyPath(ZMMessage.reactions),
+                              #keyPath(ZMMessage.confirmations),
                               #keyPath(ZMClientMessage.quote),
                               MessageKey.linkPreview.rawValue]
         return keys.union(additionalKeys)
@@ -96,18 +97,7 @@ extension ZMSystemMessage {
     static let ReactionChangeInfoKey = "reactionChanges"
 
     static func changeInfo(for message: ZMMessage, changes: Changes) -> MessageChangeInfo? {
-        var originalChanges = changes.originalChanges
-        let reactionChanges = originalChanges.removeValue(forKey: ReactionChangeInfoKey) as? [NSObject : [String : Any]]
-        
-        if let reactionChanges = reactionChanges {
-            var reactionChangeInfos = [ReactionChangeInfo]()
-            reactionChanges.forEach {
-                let changeInfo = ReactionChangeInfo(object: $0)
-                changeInfo.changeInfos = $1 as! [String : NSObject]
-                reactionChangeInfos.append(changeInfo)
-            }
-            originalChanges[ReactionChangeInfoKey] = reactionChangeInfos as NSObject?
-        }
+        let originalChanges = changes.originalChanges
         
         guard originalChanges.count > 0 || changes.changedKeys.count > 0 else { return nil }
         
@@ -126,6 +116,7 @@ extension ZMSystemMessage {
     public override var debugDescription: String {
         return ["deliveryStateChanged: \(deliveryStateChanged)",
                 "reactionsChanged: \(reactionsChanged)",
+                "confirmationsChanged: \(confirmationsChanged)",
                 "childMessagesChanged: \(childMessagesChanged)",
                 "quoteChanged: \(quoteChanged)",
                 "imageChanged: \(imageChanged)",
@@ -143,7 +134,12 @@ extension ZMSystemMessage {
     }
     
     public var reactionsChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMMessage.reactions)) || reactionChangeInfos.count != 0
+        return changedKeysContain(keys: #keyPath(ZMMessage.reactions)) ||
+               changeInfos[MessageChangeInfo.ReactionChangeInfoKey] != nil
+    }
+
+    public var confirmationsChanged : Bool {
+        return changedKeysContain(keys: #keyPath(ZMMessage.confirmations))
     }
 
     public var childMessagesChanged : Bool {
@@ -195,10 +191,6 @@ extension ZMSystemMessage {
         return changeInfos[MessageChangeInfo.UserChangeInfoKey] as? UserChangeInfo
     }
     
-    var reactionChangeInfos : [ReactionChangeInfo] {
-        return changeInfos[MessageChangeInfo.ReactionChangeInfoKey] as? [ReactionChangeInfo] ?? []
-    }
-    
     public let message : ZMMessage
     
 }
@@ -230,20 +222,4 @@ extension MessageChangeInfo {
             observer.messageDidChange(changeInfo)
         } 
     }
-}
-
-
-// MARK: - Reaction observer
-
-private let ReactionUsersKey = "users"
-
-public final class ReactionChangeInfo : ObjectChangeInfo {
-    
-    var usersChanged : Bool {
-        return changedKeysContain(keys: ReactionUsersKey)
-    }
-}
-
-@objc protocol ReactionObserver {
-    func reactionDidChange(_ reactionInfo: ReactionChangeInfo)
 }

@@ -43,6 +43,16 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         expectedChangedField: String?,
         customAffectedKeys: AffectedKeys? = nil
         ) {
+        let fields = expectedChangedField == nil ? [] : [expectedChangedField!]
+        checkThatItNotifiesTheObserverOfAChange(message, modifier: modifier, expectedChangedFields: fields, customAffectedKeys: customAffectedKeys)
+    }
+    
+    func checkThatItNotifiesTheObserverOfAChange<T: ZMMessage>(
+        _ message: T,
+        modifier: (T) -> Void,
+        expectedChangedFields: [String],
+        customAffectedKeys: AffectedKeys? = nil
+        ) {
         
         // given
         withExtendedLifetime(MessageChangeInfo.add(observer: self.messageObserver, for: message, managedObjectContext: self.uiMOC)) { () -> () in
@@ -55,7 +65,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             self.spinMainQueue(withTimeout: 0.5)
             
             // then
-            XCTAssertEqual(messageObserver.notifications.count, expectedChangedField != nil ? 1 : 0)
+            XCTAssertEqual(messageObserver.notifications.count, expectedChangedFields.isEmpty ? 0 : 1)
             
             // and when
             self.uiMOC.saveOrRollback()
@@ -71,13 +81,14 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.isObfuscatedChanged),
                 #keyPath(MessageChangeInfo.childMessagesChanged),
                 #keyPath(MessageChangeInfo.reactionsChanged),
-                #keyPath(MessageChangeInfo.transferStateChanged)
+                #keyPath(MessageChangeInfo.transferStateChanged),
+                #keyPath(MessageChangeInfo.confirmationsChanged),
             ]
 
-            guard let changedField = expectedChangedField else { return }
+            guard !expectedChangedFields.isEmpty else { return }
             guard let changes = messageObserver.notifications.first else { return }
             changes.checkForExpectedChangeFields(userInfoKeys: messageInfoKeys,
-                                                 expectedChangedFields: [changedField])
+                                                 expectedChangedFields: expectedChangedFields)
         }
     }
 
@@ -275,6 +286,22 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             message,
             modifier: { $0.mutableSetValue(forKey: #keyPath(ZMSystemMessage.childMessages)).add(otherMessage) },
             expectedChangedField: #keyPath(MessageChangeInfo.childMessagesChanged)
+        )
+    }
+
+    func testThatItNotifiesWhenUserReadsTheMessage() {
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.append(text: "foo") as! ZMClientMessage
+        uiMOC.saveOrRollback()
+        
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { _ in
+                let _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
+            },
+            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
         )
     }
 
