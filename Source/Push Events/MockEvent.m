@@ -59,7 +59,8 @@ static ZMLogLevel_t const ZMLogLevel ZM_UNUSED = ZMLogLevelWarn;
              @(ZMUpdateEventTypeConversationAssetAdd),
              @(ZMUpdateEventTypeConversationKnock),
              @(ZMUpdateEventTypeConversationOtrMessageAdd),
-             @(ZMUpdateEventTypeConversationOtrAssetAdd)
+             @(ZMUpdateEventTypeConversationOtrAssetAdd),
+             @(ZMUpdateEventTypeConversationReceiptModeUpdate)
             ];
 }
 

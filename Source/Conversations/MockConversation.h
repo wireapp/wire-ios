@@ -44,6 +44,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 
 @property (nonatomic, nullable) MockUser *creator;
 @property (nonatomic, nonnull) NSArray<NSString *> *accessMode;
+@property (nonatomic, nullable) NSNumber *receiptMode;
 @property (nonatomic, nonnull) NSString *accessRole;
 @property (nonatomic, nullable) NSString *link;
 @property (nonatomic, nonnull) NSString *identifier;
@@ -102,6 +103,7 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 - (nullable MockEvent *)addUsersByUser:(nonnull MockUser *)byUser addedUsers:(nonnull NSArray *)addedUsers;
 - (nonnull MockEvent *)removeUsersByUser:(nonnull MockUser *)byUser removedUser:(nonnull MockUser *)removedUser;
 - (nonnull MockEvent *)changeNameByUser:(nonnull MockUser *)user name:(nullable NSString *)name;
+- (nonnull MockEvent *)changeReceiptModeByUser:(nonnull MockUser *)user receiptMode:(NSInteger)receiptMode;
 - (nonnull MockEvent *)insertAssetUploadEventForUser:(nonnull MockUser *)user data:(nonnull NSData *)data disposition:(nonnull NSDictionary *)disposition dataTypeAsMIME:(nonnull NSString *)dataTypeAsMIME assetID:(nonnull NSString *)assetID;
 - (nonnull MockEvent *)connectRequestByUser:(nonnull MockUser *)byUser toUser:(nonnull MockUser *)user message:(nullable NSString *)message;
 

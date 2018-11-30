@@ -27,6 +27,27 @@ extension MockTransportSession {
         let conversations = managedObjectContext.executeFetchRequestOrAssert(request) as? [MockConversation]
         return conversations?.first
     }
+    
+    @objc(processReceiptModeUpdateForConversation:payload:)
+    public func processReceiptModeUpdate(for conversationId: String, payload: [String:  AnyHashable]) -> ZMTransportResponse {
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        guard let receiptMode = payload["receipt_mode"] as? Int else {
+            return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
+        }
+        
+        conversation.receiptMode = NSNumber(value: receiptMode)
+        
+        let responsePayload = [
+            "conversation" : conversation.identifier,
+            "type" : "conversation.receipt-mode-update",
+            "time" : NSDate().transportString(),
+            "from" : selfUser.identifier,
+            "data" : receiptMode] as ZMTransportData
+        
+        return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
+    }
 
     @objc(processAccessModeUpdateForConversation:payload:)
     public func processAccessModeUpdate(for conversationId: String, payload: [String : AnyHashable]) -> ZMTransportResponse {
