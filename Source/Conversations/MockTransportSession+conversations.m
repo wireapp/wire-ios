@@ -112,6 +112,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     else if ([request matchesWithPath:@"/conversations/*/code" method:ZMMethodDELETE]) {
         return [self processDeleteLinkForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
+    else if ([request matchesWithPath:@"/conversations/*/receipt-mode" method:ZMMethodPUT]) {
+        return [self processReceiptModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 
@@ -200,9 +203,14 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     
     NSString *newName = [payload optionalStringForKey:@"name"];
-    
-    if(newName == nil) {
+    if (newName == nil) {
         return [ZMTransportResponse responseWithPayload:@{@"error":@"no name in payload"} HTTPStatus:400 transportSessionError:nil];
+    }
+    
+    NSNumber *receiptMode = [payload optionalNumberForKey:@"receipt_mode"];
+    
+    if (receiptMode != nil) {
+        [conversation changeReceiptModeByUser:self.selfUser receiptMode:receiptMode.intValue];
     }
     
     MockEvent *event = [conversation changeNameByUser:self.selfUser name:newName];

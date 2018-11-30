@@ -52,6 +52,7 @@
 @dynamic accessRole;
 @dynamic accessMode;
 @dynamic link;
+@dynamic receiptMode;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
@@ -90,7 +91,7 @@
     return [self insertConversationIntoContext:moc withSelfUser:creator creator:creator otherUsers:otherUsers type:type];
 }
 
-- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data
+- (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id)data
 {
     NSArray *eventTypesWithPushOnInsert = @[@(ZMUpdateEventTypeConversationAssetAdd),
                                             @(ZMUpdateEventTypeConversationMessageAdd),
@@ -117,7 +118,7 @@
     event.conversation = self;
     event.from = byUser;
     event.type = [MockEvent stringFromType:type];
-    event.data = [data asTransportData];
+    event.data = data;
     
     if (event.identifier) {
         [self.mutableEvents addObject:event];
@@ -168,6 +169,10 @@
     data[@"access"] = self.accessMode;
     data[@"access_role"] = self.accessRole;
     data[@"team"] = self.team.identifier ?: [NSNull null];
+    
+    if (self.receiptMode != nil) {
+        data[@"receipt_mode"] = self.receiptMode;
+    }
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
@@ -403,6 +408,12 @@
     [self setValue:name forKey:@"name"];
     return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationRename data:@{@"name" : name}];
 
+}
+
+- (MockEvent *)changeReceiptModeByUser:(MockUser *)user receiptMode:(NSInteger)receiptMode
+{
+    self.receiptMode = @(receiptMode);
+    return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationReceiptModeUpdate data:self.receiptMode];
 }
 
 - (MockEvent *)insertAssetUploadEventForUser:(MockUser *)user data:(NSData *)data disposition:(NSDictionary *)disposition dataTypeAsMIME:(NSString *)dataTypeAsMIME assetID:(NSString *)assetID

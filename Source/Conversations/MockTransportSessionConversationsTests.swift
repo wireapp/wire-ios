@@ -39,6 +39,8 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         self.selfUser = nil
         super.tearDown()
     }
+    
+    // MARK: - AccessMode
 
     func testThatDefaultAccessModeForOneToOneConversationIsCorrect() {
         // when

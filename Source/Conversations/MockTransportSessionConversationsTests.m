@@ -759,7 +759,7 @@
     XCTAssertNotEqualObjects(lastEventPayload[@"data"][@"key"], base64Content);
 }
 
-- (void)testThatInsertingArbitraryEventWithBlock:(MockEvent *(^)(id<MockTransportSessionObjectCreation> session, MockConversation *conversation))eventBlock expectedPayloadData:(id<ZMTransportData>)expectedPayloadData
+- (void)testThatInsertingArbitraryEventWithBlock:(MockEvent *(^)(id<MockTransportSessionObjectCreation> session, MockConversation *conversation))eventBlock expectedPayloadData:(id)expectedPayloadData
 {
     // GIVEN
     __block MockUser *selfUser;
@@ -788,7 +788,7 @@
         }
         XCTAssertEqual(event.from, selfUser);
         XCTAssertEqualObjects(event.conversation, conversation);
-        XCTAssertEqualObjects(event.data, [expectedPayloadData asTransportData]);
+        XCTAssertEqualObjects(event.data, expectedPayloadData);
     }];
 }
 
@@ -801,6 +801,14 @@
         return [conversation changeNameByUser:self.sut.selfUser name:@"¡Ay caramba!"];
     } expectedPayloadData:expectedPayloadData];
 }
+
+- (void)testThatChangeReceiptModeInConversationSetsProperValues
+{
+    [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> __unused session, MockConversation *conversation) {
+        return [conversation changeReceiptModeByUser:self.sut.selfUser receiptMode:1];
+    } expectedPayloadData:@(1)];
+}
+
 
 - (void)testThatInsertClientMessageInConversationSetsProperValues
 {
@@ -950,6 +958,30 @@
     }];
 }
 
+- (void)testThatWeReturnCorrectResponseForRequestToSetReceiptMode
+{
+    // GIVEN
+    __block MockConversation *conversation;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        [session insertSelfUserWithName:@"Me Myself"];
+        conversation = [session insertGroupConversationWithSelfUser:self.sut.selfUser otherUsers:@[]];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSDictionary *payload = @{ @"receipt_mode": @(1) };
+    
+    NSString *path = [[@"/conversations/" stringByAppendingString:conversation.identifier] stringByAppendingString:@"/receipt-mode"];
+    
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    
+    // THEN
+    [self.sut.managedObjectContext performBlockAndWait:^{
+        XCTAssertEqualObjects(conversation.receiptMode, @(1));
+        XCTAssertNotNil(response);
+        XCTAssertEqual(response.HTTPStatus, 200);
+    }];
+}
 
 - (void)testThatWeCanDeleteAParticipantFromAConversation
 {
