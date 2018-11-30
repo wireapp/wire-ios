@@ -42,6 +42,8 @@ class MessagingTestBase: ZMTBaseTest {
 
     override func setUp() {
         super.setUp()
+        BackgroundActivityFactory.shared.activityManager = UIApplication.shared
+        BackgroundActivityFactory.shared.resume()
         
         self.deleteAllOtherEncryptionContexts()
         self.deleteAllFilesInCache()
@@ -61,6 +63,7 @@ class MessagingTestBase: ZMTBaseTest {
     }
     
     override func tearDown() {
+        BackgroundActivityFactory.shared.activityManager = nil
 
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
         self.syncMOC.performGroupedBlockAndWait {
