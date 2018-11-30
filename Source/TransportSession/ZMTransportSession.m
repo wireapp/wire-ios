@@ -37,7 +37,6 @@
 #import "ZMUserAgent.h"
 #import "ZMURLSession.h"
 #import "ZMURLSessionSwitch.h"
-#import "ZMBackgroundActivity.h"
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 #import "NSData+Multipart.h"
@@ -179,13 +178,13 @@ static NSInteger const DefaultMaximumRequests = 6;
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
     
     NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *foregroundSession = [ZMURLSession sessionWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:foregroundIdentifier];
+    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:foregroundIdentifier];
     
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
     NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *backgroundSession = [ZMURLSession sessionWithConfiguration:backgroundSessionConfiguration delegate:self delegateQueue:queue identifier:backgroundIdentifier];
+    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration delegate:self delegateQueue:queue identifier:backgroundIdentifier];
     NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *voipSession = [ZMURLSession sessionWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:voipIdentifier];
+    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:voipIdentifier];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     
@@ -565,7 +564,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)enterBackground;
 {
-    ZMBackgroundActivity *enterActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"ZMTransportSession.enterBackground"];
+    BackgroundActivity *enterActivity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:@"ZMTransportSession.enterBackground"];
     ZMLogInfo(@"<%@: %p> %@", self.class, self, NSStringFromSelector(_cmd));
     NSOperationQueue *queue = self.workQueue;
     ZMSDispatchGroup *group = self.workGroup;
@@ -580,10 +579,10 @@ static NSInteger const DefaultMaximumRequests = 6;
             self.requestScheduler.schedulerState = ZMTransportRequestSchedulerStateNormal; // TODO MARCO test
             [ZMTransportSession notifyNewRequestsAvailable:self]; // TODO MARCO test
             [group leave];
-            [enterActivity endActivity];
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
         }];
     } else {
-        [enterActivity endActivity];
+        [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
     }
 }
 
@@ -606,12 +605,13 @@ static NSInteger const DefaultMaximumRequests = 6;
 
 - (void)prepareForSuspendedState;
 {
-    ZMBackgroundActivity *activity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:@"enqueue access token"];
-    [self.urlSessionSwitch.currentSession countTasksWithCompletionHandler:^(NSUInteger count) {
-        if (0 < count) {
-            [self sendAccessTokenRequest];
-        }
-        [activity endActivity];
+    [[[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:@"enqueue access token"] executeBlock:^(BackgroundActivity * activity) {
+        [self.urlSessionSwitch.currentSession countTasksWithCompletionHandler:^(NSUInteger count) {
+            if (0 < count) {
+                [self sendAccessTokenRequest];
+            }
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:activity];
+        }];
     }];
 }
 

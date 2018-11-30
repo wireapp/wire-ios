@@ -28,7 +28,6 @@
 #import "ZMTransportData.h"
 #import "ZMTransportResponse.h"
 #import "ZMTransportCodec.h"
-#import "ZMBackgroundActivity.h"
 #import "NSData+Multipart.h"
 #import "ZMURLSession.h"
 #import "ZMTaskIdentifier.h"
@@ -482,9 +481,11 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
-    ZMBackgroundActivity *creationActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:NSStringFromSelector(_cmd)];
+    BackgroundActivity *creationActivity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
-    
+
+    // TODO Alexis: do not execute if creationActivity is nil
+
     for (ZMTaskCreatedHandler *handler in self.taskCreatedHandlers) {
         id<ZMSGroupQueue> queue = handler.groupQueue;
         [handlerGroup enter];
@@ -499,7 +500,9 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     }
     
     [handlerGroup notifyOnQueue:dispatch_get_main_queue() block:^{
-        [creationActivity endActivity];
+        if (creationActivity) {
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:creationActivity];
+        }
     }];
 }
 
@@ -528,7 +531,10 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     response.startOfUploadTimestamp = self.startOfUploadTimestamp;
 
-    ZMBackgroundActivity *completeActivity = [[BackgroundActivityFactory sharedInstance] backgroundActivityWithName:NSStringFromSelector(_cmd)];
+    BackgroundActivity *completeActivity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:NSStringFromSelector(_cmd)];
+
+    // TODO Alexis: do not execute if completeActivity is nil
+
     ZMSDispatchGroup *group = response.dispatchGroup;
     ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
     [group2 enter];
@@ -557,7 +563,9 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     }
     [group2 leave];
     [group2 notifyOnQueue:dispatch_get_main_queue() block:^{
-        [completeActivity endActivity];
+        if (completeActivity) {
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:completeActivity];
+        }
     }];
 }
 

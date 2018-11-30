@@ -79,17 +79,17 @@ ZM_EMPTY_ASSERTING_INIT();
     return self;
 }
 
-+ (instancetype)sessionWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier;
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier
 {
     Require(configuration != nil);
     Require(delegate != nil);
     Require(queue != nil);
-    ZMURLSession *session = [[ZMURLSession alloc] initWithDelegate:delegate identifier:identifier];
-    if(session) {
-        session->_backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:session delegateQueue:queue];
-        session->_backingSession.sessionDescription = identifier;
+    self = [self initWithDelegate:delegate identifier:identifier];
+    if(self) {
+        self.backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:queue];
+        self.backingSession.sessionDescription = identifier;
     }
-    return session;
+    return self;
 }
 
 - (void)dealloc

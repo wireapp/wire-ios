@@ -97,9 +97,9 @@ static NSHashTable *sessionCancelTimers;
     sessionCancelTimers = [NSHashTable weakObjectsHashTable];
     
     NSOperationQueue *q = [NSOperationQueue zm_serialQueueWithName:self.name];
-    ZMURLSession *sessionA = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-a"];
-    ZMURLSession *sessionB = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-b"];
-    ZMURLSession *sessionC = [ZMURLSession sessionWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier: @"session-c"];
+    ZMURLSession *sessionA = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-a"];
+    ZMURLSession *sessionB = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-b"];
+    ZMURLSession *sessionC = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier: @"session-c"];
 
     self.foregroundSession = sessionA;
     self.backgroundSession = sessionB;
