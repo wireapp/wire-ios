@@ -39,6 +39,20 @@ NSString * const IsExpiredKey = @"isExpired";
 NSString * const ReactionsKey = @"reactions";
 
 @implementation BaseZMMessageTests : ModelObjectsTests
+
+- (void)setUp
+{
+    [super setUp];
+    BackgroundActivityFactory.sharedFactory.activityManager = UIApplication.sharedApplication;
+    [BackgroundActivityFactory.sharedFactory resume];
+}
+
+- (void)tearDown
+{
+    BackgroundActivityFactory.sharedFactory.activityManager = nil;
+    [super tearDown];
+}
+
 @end
 
 @interface ZMMessageTests : BaseZMMessageTests

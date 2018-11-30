@@ -22,14 +22,10 @@ import WireTransport
 
 class ZMMessageTimerTests: BaseZMMessageTests {
     
-    let application = UIApplication.shared
-    let groupQueue = DispatchGroupQueue(queue: .main)
     var sut: ZMMessageTimer!
     
     override func setUp() {
         super.setUp()
-        BackgroundActivityFactory.sharedInstance().application = application
-        BackgroundActivityFactory.sharedInstance().mainGroupQueue = groupQueue
         sut = ZMMessageTimer(managedObjectContext: uiMOC)!
     }
     
@@ -49,7 +45,7 @@ class ZMMessageTimerTests: BaseZMMessageTests {
         // then
         let timer = sut.timer(for: message)
         XCTAssertNotNil(timer)
-        let bgActivity = timer!.userInfo["bgActivity"] as? ZMBackgroundActivity
+        let bgActivity = timer!.userInfo["bgActivity"] as? BackgroundActivity
         XCTAssertNotNil(bgActivity)
     }
     
