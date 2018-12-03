@@ -20,7 +20,7 @@
 import Foundation
 
 
-@objcMembers open class LinkPreview : NSObject {
+@objcMembers open class LinkMetadata : NSObject {
     
     public let originalURLString: String
     public let permanentURL: URL?
@@ -51,24 +51,24 @@ import Foundation
 }
 
 
-@objcMembers public class Article : LinkPreview {
+@objcMembers public class ArticleMetadata : LinkMetadata {
     public var title : String?
     public var summary : String?
 }
 
-@objcMembers public class FoursquareLocation : LinkPreview {
+@objcMembers public class FoursquareLocationMetadata : LinkMetadata {
     public var title : String?
     public var subtitle : String?
     public var latitude: Float?
     public var longitude: Float?
 }
 
-@objcMembers public class InstagramPicture : LinkPreview {
+@objcMembers public class InstagramPictureMetadata : LinkMetadata {
     public var title : String?
     public var subtitle : String?
 }
 
-@objcMembers public class TwitterStatus : LinkPreview {
+@objcMembers public class TwitterStatusMetadata : LinkMetadata {
     public var message : String?
     public var username : String?
     public var author : String?

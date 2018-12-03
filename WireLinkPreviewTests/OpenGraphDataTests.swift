@@ -80,27 +80,27 @@ class OpenGraphDataTests: XCTestCase {
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Twitter() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterData(), expectedClass: TwitterStatus.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterData(), expectedClass: TwitterStatusMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_TwitterWithImages() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterDataWithImages(), expectedClass: TwitterStatus.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.twitterDataWithImages(), expectedClass: TwitterStatusMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_TheVerge() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.vergeData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.vergeData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Foursqaure() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.foursquareData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.foursquareData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Nytimes() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.nytimesData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.nytimesData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Guardian() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.guardianData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.guardianData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Youtube() {
@@ -112,31 +112,31 @@ class OpenGraphDataTests: XCTestCase {
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Instagram() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.instagramData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.instagramData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_WashingtonPost() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.washingtonPostData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.washingtonPostData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Medium() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.mediumData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.mediumData(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_Polygon() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.polygonData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.polygonData(), expectedClass: ArticleMetadata.self)
     }
 
     func testThatItCreatesTheCorrectLinkPreview_iTunes() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.iTunesData(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.iTunesData(), expectedClass: ArticleMetadata.self)
     }
 
     func testThatItCreatesTheCorrectLinkPreview_iTunesWithoutTitle() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.iTunesDataWithoutTitle(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.iTunesDataWithoutTitle(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItCreatesTheCorrectLinkPreview_YahooSports() {
-        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.yahooSports(), expectedClass: Article.self)
+        assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.yahooSports(), expectedClass: ArticleMetadata.self)
     }
     
     func testThatItUsesTheGivenOriginalURLAndCharacterOffsetWhenCreatingALinkPreview() {
@@ -170,7 +170,7 @@ class OpenGraphDataTests: XCTestCase {
         XCTAssertEqual(sut.siteNameString, siteNameString, line: line)
     }
     
-    func assertLinkPreviewMapping(ofOpenGraphData openGraphData: OpenGraphMockData, expectedClass: AnyClass = LinkPreview.self, expectedFailure: Bool = false, line: UInt = #line) {
+    func assertLinkPreviewMapping(ofOpenGraphData openGraphData: OpenGraphMockData, expectedClass: AnyClass = LinkMetadata.self, expectedFailure: Bool = false, line: UInt = #line) {
         if let linkPreview = openGraphData.expected?.linkPreview(openGraphData.urlString, offset: 12) {
             XCTAssertFalse(expectedFailure, line: line)
             XCTAssertTrue(linkPreview.isKind(of: expectedClass), "Wrong class", line: line)

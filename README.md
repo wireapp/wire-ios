@@ -36,4 +36,4 @@ detector.downloadLinkPreviews(inText: text) { previews in
 }
 ```
 
-A call to this method will also download the images specified in the Open Graph data. The completion returns an array of `LinkPreview` objects which currently are either of type `Article` or `TwitterStatus`, while the count of elements in the array is also limited to one at for now. Note, use the delegate `LinkPreviewDetectorDelegate` to control which which detected links will have their preview generated.
+A call to this method will also download the images specified in the Open Graph data. The completion returns an array of `LinkPreview` objects which currently are either of type `ArticleMetadata` or `TwitterStatusMetadata`, while the count of elements in the array is also limited to one at for now. Note, use the delegate `LinkPreviewDetectorDelegate` to control which which detected links will have their preview generated.
