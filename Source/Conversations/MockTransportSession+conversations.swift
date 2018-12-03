@@ -44,7 +44,7 @@ extension MockTransportSession {
             "type" : "conversation.receipt-mode-update",
             "time" : NSDate().transportString(),
             "from" : selfUser.identifier,
-            "data" : receiptMode] as ZMTransportData
+            "data" : ["receipt_mode": receiptMode]] as ZMTransportData
         
         return ZMTransportResponse(payload: responsePayload, httpStatus: 200, transportSessionError: nil)
     }
