@@ -154,7 +154,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         let completionExpectation = expectation(description: "It calls the completion closure")
 
         // when
-        var result = [LinkPreview]()
+        var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
@@ -184,7 +184,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         let completionExpectation = expectation(description: "It calls the completion closure")
         
         // when
-        var result = [LinkPreview]()
+        var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
@@ -205,7 +205,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         previewDownloader.mockOpenGraphData = openGraphData
         
         // when
-        var result = [LinkPreview]()
+        var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
@@ -215,7 +215,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         waitForExpectations(timeout: 0.2, handler: nil)
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(result.first?.imageURLs.first?.absoluteString, openGraphData.imageUrls.first)
-        guard let article = result.first as? Article else { return XCTFail("Wrong preview type") }
+        guard let article = result.first as? ArticleMetadata else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(article.permanentURL?.absoluteString, openGraphData.url)
         XCTAssertEqual(article.originalURLString, "example.com")
         XCTAssertEqual(article.characterOffsetInText, 35)
@@ -230,7 +230,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         previewDownloader.mockOpenGraphData = openGraphData
         
         // when
-        var result = [LinkPreview]()
+        var result = [LinkMetadata]()
         sut.downloadLinkPreviews(inText: text) {
             result = $0
             completionExpectation.fulfill()
@@ -241,7 +241,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         XCTAssertEqual(imageDownloader.downloadImageCallCount, 1)
         XCTAssertEqual(imageDownloader.downloadImagesCallCount, 0)
 
-        guard let twitterStatus = result.first as? TwitterStatus else { return XCTFail("Wrong preview type") }
+        guard let twitterStatus = result.first as? TwitterStatusMetadata else { return XCTFail("Wrong preview type") }
         XCTAssertEqual(twitterStatus.imageURLs.count, 4)
         XCTAssertEqual(twitterStatus.imageURLs.map { $0.absoluteString }, openGraphData.imageUrls)
         XCTAssertEqual(twitterStatus.characterOffsetInText, 35)
@@ -270,7 +270,7 @@ class LinkPreviewDetectorTests: XCTestCase {
         // given
         let url = "www.soundcloud.com"
         let completionExpectation = expectation(description: "It calls the completion closure")
-        var result = [LinkPreview]()
+        var result = [LinkMetadata]()
         
         // when
         sut.downloadLinkPreviews(inText: url) {

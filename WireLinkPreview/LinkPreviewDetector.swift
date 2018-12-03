@@ -22,7 +22,7 @@ import WireUtilities
 
 public protocol LinkPreviewDetectorType {
     
-    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkPreview]) -> Void)
+    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkMetadata]) -> Void)
     
 }
 
@@ -34,7 +34,7 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     private let imageDownloader: ImageDownloaderType
     private let workerQueue: OperationQueue
     
-    public typealias DetectCompletion = ([LinkPreview]) -> Void
+    public typealias DetectCompletion = ([LinkMetadata]) -> Void
     typealias URLWithRange = (URL: URL, range: NSRange)
     
     public convenience override init() {
