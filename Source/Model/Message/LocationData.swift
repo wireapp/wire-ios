@@ -36,9 +36,4 @@ final public class LocationData: NSObject {
         self.zoomLevel = zoomLevel
         super.init()
     }
-    
-    public func zmLocation() -> ZMLocation {
-        return ZMLocation.location(withLatitude: latitude, longitude: longitude, name: name, zoomLevel: zoomLevel)
-    }
-
 }

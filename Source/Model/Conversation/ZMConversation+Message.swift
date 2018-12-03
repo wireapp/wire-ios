@@ -25,7 +25,16 @@ extension ZMConversation {
     
     @discardableResult @objc(appendLocation:nonce:)
     public func append(location: LocationData, nonce: UUID = UUID()) -> ZMConversationMessage? {
-        return appendClientMessage(with: ZMGenericMessage.message(content: location.zmLocation(), nonce: nonce, expiresAfter: messageDestructionTimeoutValue))
+        let locationContent = Location.with() {
+            $0.latitude = location.latitude
+            $0.longitude = location.longitude
+            if let name = location.name {
+                $0.name = name
+            }
+            $0.zoom = location.zoomLevel
+        }
+
+        return appendClientMessage(with: GenericMessage.message(content: locationContent, nonce: nonce, expiresAfter: messageDestructionTimeoutValue))
     }
     
     @discardableResult

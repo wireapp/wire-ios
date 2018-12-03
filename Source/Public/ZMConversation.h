@@ -32,7 +32,7 @@
 @class ZMConversationList;
 @class ZMFileMetadata;
 @class ZMLocationData;
-@class LinkPreview;
+@class LinkMetadata;
 @class Team;
 
 @protocol ZMConversationMessage;

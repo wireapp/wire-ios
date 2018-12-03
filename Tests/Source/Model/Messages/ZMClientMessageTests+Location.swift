@@ -23,15 +23,21 @@ import CoreLocation
 
 class ClientMessageTests_Location: BaseZMMessageTests {
  
-    func testThatItReturnsLocationMessageDataWhenPresent() {
+    func testThatItReturnsLocationMessageDataWhenPresent() throws {
         // given
         let (latitude, longitude): (Float, Float) = (48.53775, 9.041169)
         let (name, zoom) = ("Tuebingen, Deutschland", Int32(3))
-        let message = ZMGenericMessage.message(content: LocationData(latitude: latitude, longitude: longitude, name: name, zoomLevel: zoom).zmLocation())
+        let location = Location.with() {
+            $0.latitude = latitude
+            $0.longitude = longitude
+            $0.name = name
+            $0.zoom = zoom
+        }
+        let message = GenericMessage.message(content: location)
         
         // when
         let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        clientMessage.add(message.data())
+        clientMessage.add(try message.serializedData())
         
         // then
         let locationMessageData = clientMessage.locationMessageData

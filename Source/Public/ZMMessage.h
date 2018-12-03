@@ -23,7 +23,7 @@
 @class ZMUser;
 @class ZMConversation;
 @class UserClient;
-@class LinkPreview;
+@class LinkMetadata;
 @class Mention;
 @class ZMMessage;
 
@@ -89,7 +89,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @protocol ZMTextMessageData <NSObject>
 
 @property (nonatomic, readonly, nullable) NSString *messageText;
-@property (nonatomic, readonly, nullable) LinkPreview *linkPreview;
+@property (nonatomic, readonly, nullable) LinkMetadata *linkPreview;
 @property (nonatomic, readonly, nonnull) NSArray<Mention *> *mentions;
 @property (nonatomic, readonly, nullable) ZMMessage *quote;
 
@@ -173,17 +173,4 @@ typedef NS_ENUM(int16_t, ZMFileTransferState) {
     /// File is not available on the backend anymore.
     ZMFileTransferStateUnavailable
 };
-
-
-#pragma mark - ZMLocationMessageData
-
-@protocol ZMLocationMessageData <NSObject>
-
-@property (nonatomic, readonly) float longitude;
-@property (nonatomic, readonly) float latitude;
-
-@property (nonatomic, readonly, nullable) NSString *name; // nil if not specified
-@property (nonatomic, readonly) int32_t zoomLevel; // 0 if not specified
-
-@end
 

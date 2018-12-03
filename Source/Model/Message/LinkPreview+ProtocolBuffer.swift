@@ -20,12 +20,12 @@
 import Foundation
 import WireLinkPreview
 
-extension LinkPreview {
+extension LinkMetadata {
     
-    @objc public convenience init(protocolBuffer: ZMLinkPreview) {
+    public convenience init(protocolBuffer: LinkPreview) {
         self.init(originalURLString: protocolBuffer.url,
-                  permanentURLString: protocolBuffer.permanentURLString,
-                  resolvedURLString: protocolBuffer.permanentURLString,
+                  permanentURLString: protocolBuffer.permanentURL,
+                  resolvedURLString: protocolBuffer.permanentURL,
                   offset: Int(protocolBuffer.urlOffset))
     }
     
@@ -60,7 +60,7 @@ extension ZMLinkPreview {
     }
 }
 
-extension Article {
+extension ArticleMetadata {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
         self.init(originalURLString: protocolBuffer.url,
@@ -85,7 +85,7 @@ extension Article {
     }
 }
 
-extension TwitterStatus {
+extension TwitterStatusMetadata {
     
     public convenience init(protocolBuffer: ZMLinkPreview) {
         self.init(originalURLString: protocolBuffer.url,
