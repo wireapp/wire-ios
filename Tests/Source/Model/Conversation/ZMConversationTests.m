@@ -192,6 +192,33 @@
     XCTAssertEqual(conversation.messages.count, 1u); // new conversation system message
 }
 
+- (void)testThatItSetsReceiptModeWhenCreatingAGroupConversationInATeam
+{
+    // given
+    ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *otherUser2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.uiMOC withParticipants:@[otherUser1, otherUser2] name:@"abc" inTeam:team allowGuests:NO readReceipts:YES];
+    
+    // then
+    XCTAssertTrue(conversation.hasReadReceiptsEnabled);
+}
+
+- (void)testThatItReceiptModeIsIgnoredWhenCreatingAGroupConversationWithoutATeam
+{
+    // given
+    ZMUser *otherUser1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *otherUser2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    ZMConversation *conversation = [ZMConversation insertGroupConversationIntoManagedObjectContext:self.uiMOC withParticipants:@[otherUser1, otherUser2] name:@"abc" inTeam:nil allowGuests:NO readReceipts:YES];
+    
+    // then
+    XCTAssertFalse(conversation.hasReadReceiptsEnabled);
+}
+
 - (void)testThatItHasLocallyModifiedDataFields
 {
     XCTAssertTrue([ZMConversation isTrackingLocalModifications]);
