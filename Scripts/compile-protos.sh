@@ -9,7 +9,7 @@ cd ${CARTHAGE}/Checkouts/generic-message-proto/ios/
 cp ./../proto/messages.proto ./
 mkdir -p ./tmp
 cat ios.proto messages.proto > ./tmp/messages.proto
-protoc ./tmp/messages.proto --objc_out="${BASE_FOLDER}/Protos/" --plugin=/usr/local/bin/protoc-gen-objc
+protoc ./tmp/messages.proto --objc_out="${BASE_FOLDER}/Protos/" 
 rm -rf ./tmp
 rm messages.proto
 
@@ -18,7 +18,7 @@ cd ${CARTHAGE}/Checkouts/backend-api-protobuf/ios/
 cp ./../proto/otr.proto ./
 mkdir -p ./tmp
 cat ios.proto otr.proto > ./tmp/otr.proto
-protoc ./tmp/otr.proto --objc_out="${BASE_FOLDER}/Protos/" --plugin=/usr/local/bin/protoc-gen-objc
+protoc ./tmp/otr.proto --objc_out="${BASE_FOLDER}/Protos/" 
 rm -rf ./tmp
 rm otr.proto
 
