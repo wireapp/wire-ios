@@ -101,6 +101,8 @@
 		BFF9446620F5F79F00531BC3 /* ImageDownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageDownloadRequestStrategyTests.swift */; };
 		D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */; };
 		D5D65A072074C23D00D7F3C3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
+		F13ADE7D21B5355F00B6E736 /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F13ADE7C21B5355F00B6E736 /* SwiftProtobuf.framework */; };
+		F13ADE8021B5449400B6E736 /* SwiftProtobuf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F13ADE7C21B5355F00B6E736 /* SwiftProtobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
 		F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184014F2073BE0800E9F4CC /* ClientMessageRequestFactory.swift */; };
 		F184019D2073BE0800E9F4CC /* ClientMessageTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401522073BE0800E9F4CC /* ClientMessageTranscoder.swift */; };
@@ -215,6 +217,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				F13ADE8021B5449400B6E736 /* SwiftProtobuf.framework in CopyFiles */,
 				878B823620A1D19D007455CA /* HTMLString.framework in CopyFiles */,
 				54E03A321E93BFE10089AC69 /* WireCryptobox.framework in CopyFiles */,
 				54E03A331E93BFE10089AC69 /* WireDataModel.framework in CopyFiles */,
@@ -334,6 +337,7 @@
 		BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageDownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageDownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRequestFactoryTests.swift; sourceTree = "<group>"; };
+		F13ADE7C21B5355F00B6E736 /* SwiftProtobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftProtobuf.framework; path = Carthage/Build/iOS/SwiftProtobuf.framework; sourceTree = "<group>"; };
 		F154EDC41F447B6C00CB8184 /* WireRequestStrategyTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireRequestStrategyTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F154EDC61F447B6C00CB8184 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F154EDD21F447B6C00CB8184 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -451,6 +455,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F13ADE7D21B5355F00B6E736 /* SwiftProtobuf.framework in Frameworks */,
 				BF7D9BE71D8C353A00949267 /* Ono.framework in Frameworks */,
 				878B823520A1D092007455CA /* HTMLString.framework in Frameworks */,
 				BF7D9BEA1D8C353A00949267 /* OCMock.framework in Frameworks */,
@@ -571,6 +576,7 @@
 		166902041D7082C7000FE4AF /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F13ADE7C21B5355F00B6E736 /* SwiftProtobuf.framework */,
 				878B823320A1D080007455CA /* HTMLString.framework */,
 				54E03A201E93BFDC0089AC69 /* WireCryptobox.framework */,
 				54E03A211E93BFDC0089AC69 /* WireDataModel.framework */,

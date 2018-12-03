@@ -26,11 +26,11 @@ import WireImages
 
 final class MockLinkDetector: LinkPreviewDetectorType {
     
-    var nextResult = [LinkPreview]()
+    var nextResult = [LinkMetadata]()
     var downloadLinkPreviewsCallCount: Int = 0
     var excludedRanges: [Range<Int>] = []
     
-    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkPreview]) -> Void) {
+    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkMetadata]) -> Void) {
         downloadLinkPreviewsCallCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -95,11 +95,11 @@ extension LinkPreviewPreprocessorTests {
     
     func testThatItStoresTheOriginalImageDataInTheCacheAndSetsTheStateToDownloadedWhenItReceivesAPreviewWithImage() {
         var message : ZMClientMessage!
-        var preview: LinkPreview!
+        var preview: LinkMetadata!
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -127,7 +127,7 @@ extension LinkPreviewPreprocessorTests {
             
             // GIVEN
             let URL = "http://www.example.com"
-            self.mockDetector.nextResult = [LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
+            self.mockDetector.nextResult = [LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)]
             message = self.createMessage()
             
             // WHEN
@@ -232,12 +232,12 @@ extension LinkPreviewPreprocessorTests {
     
     func testThatItReturnsAnEphemeralMessageAfterPreProcessingAnEphemeral(){
         var message : ZMClientMessage!
-        var preview : LinkPreview!
+        var preview : LinkMetadata!
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
             let URL = "http://www.example.com"
-            preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
@@ -266,7 +266,7 @@ extension LinkPreviewPreprocessorTests {
             
             // GIVEN
             let URL = "http://www.example.com"
-            let preview = LinkPreview(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
+            let preview = LinkMetadata(originalURLString: "example.com", permanentURLString: URL, resolvedURLString: URL, offset: 0)
             preview.imageData = [.secureRandomData(length: 256)]
             preview.imageURLs = [Foundation.URL(string: "http://www.example.com/image")!]
             self.mockDetector.nextResult = [preview]
