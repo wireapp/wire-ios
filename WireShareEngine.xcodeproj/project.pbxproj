@@ -53,6 +53,7 @@
 		F125E9AC1E28D4F6006583A2 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */; };
 		F125E9AD1E28D603006583A2 /* WireMockTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */; };
+		F13ADE7F21B53D1C00B6E736 /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F13ADE7E21B53D1C00B6E736 /* SwiftProtobuf.framework */; };
 		F154EE0B1F44826400CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EE0A1F44826400CB8184 /* AppDelegate.swift */; };
 		F1DABFA21E9B8B6100AD2324 /* AuthenticationStatusProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF971E9B8B6100AD2324 /* AuthenticationStatusProvider.swift */; };
 		F1DABFA31E9B8B6100AD2324 /* Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF981E9B8B6100AD2324 /* Conversation.swift */; };
@@ -150,6 +151,7 @@
 		F10C8E4E1E9647AF00020408 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireMockTransport.framework; path = Carthage/Build/iOS/WireMockTransport.framework; sourceTree = "<group>"; };
 		F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingSessionTests.swift; sourceTree = "<group>"; };
+		F13ADE7E21B53D1C00B6E736 /* SwiftProtobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftProtobuf.framework; path = Carthage/Build/iOS/SwiftProtobuf.framework; sourceTree = "<group>"; };
 		F154EE081F44826400CB8184 /* WireShareEngineTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireShareEngineTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F154EE0A1F44826400CB8184 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F154EE161F44826400CB8184 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -194,6 +196,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F13ADE7F21B53D1C00B6E736 /* SwiftProtobuf.framework in Frameworks */,
 				878B823D20A1E19D007455CA /* HTMLString.framework in Frameworks */,
 				F125E9AC1E28D4F6006583A2 /* WireMockTransport.framework in Frameworks */,
 				CE7FBFAD1DFEF18D00E1C4C9 /* OCMock.framework in Frameworks */,
@@ -302,6 +305,7 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F13ADE7E21B53D1C00B6E736 /* SwiftProtobuf.framework */,
 				878B823B20A1E192007455CA /* HTMLString.framework */,
 				54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */,
 				F125E9AB1E28D4F6006583A2 /* WireMockTransport.framework */,
@@ -513,13 +517,14 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
