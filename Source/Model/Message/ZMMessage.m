@@ -716,7 +716,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     return self.text;
 }
 
-- (LinkPreview *)linkPreview
+- (LinkMetadata *)linkPreview
 {
     return nil;
 }

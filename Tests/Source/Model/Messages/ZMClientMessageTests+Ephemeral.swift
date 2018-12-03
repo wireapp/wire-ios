@@ -177,7 +177,7 @@ extension ZMClientMessageTests_Ephemeral {
             let timeout : TimeInterval = 10
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: timeout))
             
-            let article = Article(
+            let article = ArticleMetadata(
                 originalURLString: "www.example.com/article/original",
                 permanentURLString: "http://www.example.com/article/1",
                 resolvedURLString: "http://www.example.com/article/1",

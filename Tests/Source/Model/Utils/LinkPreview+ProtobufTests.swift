@@ -38,7 +38,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         
         // when
         let protos = builder.build()!
-        let preview = Article(protocolBuffer: protos)
+        let preview = ArticleMetadata(protocolBuffer: protos)
         
         // then
         XCTAssertEqual(preview.title, "title")
@@ -72,7 +72,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         
         // when
         let protos = builder.build()!
-        let preview = Article(protocolBuffer: protos)
+        let preview = ArticleMetadata(protocolBuffer: protos)
         
         // then
         XCTAssertEqual(preview.title, "title")
@@ -106,7 +106,7 @@ class LinkPreview_ProtobufTests: XCTestCase {
         
         // when
         let protos = builder.build()!
-        let preview = TwitterStatus(protocolBuffer: protos)
+        let preview = TwitterStatusMetadata(protocolBuffer: protos)
         
         // then
         XCTAssertEqual(preview.message, "title")

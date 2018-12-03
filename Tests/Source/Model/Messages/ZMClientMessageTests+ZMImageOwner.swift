@@ -31,7 +31,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
     func insertMessageWithLinkPreview(contentType: ContentType) -> ZMClientMessage {
         let nonce = UUID()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        let article = Article(
+        let article = ArticleMetadata(
             originalURLString: "example.com/article/original",
             permanentURLString: "http://www.example.com/article/1",
             resolvedURLString: "http://www.example.com/article/1",

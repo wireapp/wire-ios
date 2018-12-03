@@ -86,7 +86,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
     func testThatItCategorizesALinkPreviewMessage() {
         
         // GIVEN
-        let article = Article(
+        let article = ArticleMetadata(
             originalURLString: "www.example.com/article/original",
             permanentURLString: "http://www.example.com/article/1",
             resolvedURLString: "http://www.example.com/article/1",

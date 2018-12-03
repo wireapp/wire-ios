@@ -78,7 +78,7 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var fileMessageData: ZMFileMessageData? { get }
     
     /// The location message data associated with the message. If the message is not a location message, it will be nil
-    var locationMessageData: ZMLocationMessageData? { get }
+    var locationMessageData: LocationMessageData? { get }
     
     var usersReaction : Dictionary<String, [ZMUser]> { get }
     
@@ -230,7 +230,7 @@ extension ZMMessage {
         return nil
     }
     
-    @objc public var locationMessageData: ZMLocationMessageData? {
+    @objc public var locationMessageData: LocationMessageData? {
         return nil
     }
     
