@@ -19,6 +19,8 @@
 import UIKit
 import WireUtilities
 
+private let zmLog = ZMSLog(tag: "background-activity")
+
 /**
  * Manages the creation and lifecycle of background tasks.
  *
@@ -97,6 +99,7 @@ import WireUtilities
     @objc public func resume() {
         isolationQueue.sync {
             if currentBackgroundTask == UIBackgroundTaskInvalid {
+                zmLog.debug("Resume: currentBackgroundTask is invalid, setting it to nil")
                 currentBackgroundTask = nil
             }
         }
@@ -110,12 +113,18 @@ import WireUtilities
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
             guard isActive else {
+                zmLog.debug("End background activity: tasks are not active")
                 return
             }
 
-            activities.remove(activity)
-
+            if activities.remove(activity) != nil {
+                zmLog.debug("End background activity: removed \(activity), \(activities.count) others left")
+            } else {
+                zmLog.debug("End background activity: could not remove \(activity), \(activities.count) others left")
+            }
+            
             if activities.isEmpty {
+                zmLog.debug("End background activity: no activities left, finishing")
                 finishBackgroundTask()
             }
         }
@@ -127,19 +136,33 @@ import WireUtilities
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
         return isolationQueue.sync {
             // Do not start new tasks if the background timer is running.
-            guard currentBackgroundTask != UIBackgroundTaskInvalid else { return nil }
-            guard let activityManager = activityManager else { return nil }
+            guard currentBackgroundTask != UIBackgroundTaskInvalid else { 
+                zmLog.debug("Start activity: failed, currentBackgroundTask is invalid")
+                return nil         
+            }
+            guard let activityManager = activityManager else {
+                zmLog.debug("Start activity: failed, activityManager is nil")
+                return nil 
+            }
 
             // Try to create the task
             let activity = BackgroundActivity(name: name, expirationHandler: expirationHandler)
 
             if currentBackgroundTask == nil {
+                zmLog.debug("Start activity: no current background task, starting new")
                 let task = activityManager.beginBackgroundTask(withName: "BackgroundActivityFactory", expirationHandler: handleExpiration)
-                guard task != UIBackgroundTaskInvalid else { return nil }
+                guard task != UIBackgroundTaskInvalid else {
+                    zmLog.debug("Start activity: failed to begin new background task")
+                    return nil         
+                }
+                zmLog.debug("Start activity: started new background task")
                 currentBackgroundTask = task
             }
 
-            activities.insert(activity)
+            let (inserted, _) = activities.insert(activity)
+            if !inserted {
+                zmLog.debug("Start activity: could not insert activity \(activity)")
+            }
             return activity
         }
     }
@@ -147,11 +170,19 @@ import WireUtilities
     /// Called when the background timer is about to expire.
     private func handleExpiration() {
         isolationQueue.sync {
+            zmLog.debug("Handle expiration")
+            let group = DispatchGroup()
             activities.forEach { activity in
-                mainQueue.async { activity.expirationHandler?() }
+                zmLog.debug("Handle expiration: notifying \(activity)")
+                group.enter()
+                mainQueue.async { 
+                    activity.expirationHandler?()
+                    group.leave()
+                }
             }
+            zmLog.debug("Handle expiration: \(activities.count) activities notified")
             activities.removeAll()
-
+            group.wait()
             finishBackgroundTask()
             currentBackgroundTask = UIBackgroundTaskInvalid
         }
@@ -160,8 +191,15 @@ import WireUtilities
     /// Ends the current background task.
     private func finishBackgroundTask() {
         if let currentBackgroundTask = self.currentBackgroundTask {
-            self.activityManager?.endBackgroundTask(currentBackgroundTask)
+            if let activityManager = activityManager {
+                zmLog.debug("Finishing background task")
+                activityManager.endBackgroundTask(currentBackgroundTask)
+            } else {
+                zmLog.debug("Finishing background task: failed, activityManager is nil")
+            }
             self.currentBackgroundTask = nil
+        } else {
+            zmLog.debug("Finishing background task: no current background task")
         }
     }
 
