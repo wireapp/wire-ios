@@ -89,7 +89,7 @@ private let zmLog = ZMSLog(tag: "link previews")
         }
     }
     
-    func didProcessMessage(_ message: ZMClientMessage, linkPreviews: [LinkPreview]) {
+    func didProcessMessage(_ message: ZMClientMessage, linkPreviews: [LinkMetadata]) {
         objectsBeingProcessed.remove(message)
         
         if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, let mentions = message.textMessageData?.mentions, !message.isObfuscated {

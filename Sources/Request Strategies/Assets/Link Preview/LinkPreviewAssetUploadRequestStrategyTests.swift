@@ -45,7 +45,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
     }
     
     /// Creates a message that should generate request
-    func createMessage(_ text: String, linkPreviewState: ZMLinkPreviewState = .waitingToBeProcessed, linkPreview: LinkPreview, isEphemeral: Bool = false) -> ZMClientMessage {
+    func createMessage(_ text: String, linkPreviewState: ZMLinkPreviewState = .waitingToBeProcessed, linkPreview: LinkMetadata, isEphemeral: Bool = false) -> ZMClientMessage {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.remoteIdentifier = UUID.create()
         if isEphemeral {
@@ -64,8 +64,8 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         return message
     }
     
-    func createArticle() -> Article {
-        let article = Article(
+    func createArticle() -> ArticleMetadata {
+        let article = ArticleMetadata(
             originalURLString: "example.com/article",
             permanentURLString: "https://example.com/permament",
             resolvedURLString: "https://example.com/permament",
