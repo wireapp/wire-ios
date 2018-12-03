@@ -14,12 +14,14 @@ For licensing information, see the attached LICENSE file and the list of third-p
 
 This framework is part of Wire iOS SyncEngine. Additional documentation is available in the [Wire iOS wiki](https://github.com/wireapp/wire-ios/wiki).
 
-The wire-ios-protos framework contains precompiled protocol buffer definitions for objective-c / swift and some convenience methods around them.
+The wire-ios-protos framework contains precompiled protocol buffer definitions for Swift.
 
 ## How to build
 
 This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
 
-You can now open the Xcode project and build.
+You need the Swift Protocol Buffer compiler  to build the protobuf Swift files. Run `brew install swift-protobuf` to install it.
 
-You need protocol buffer objective-C installed. Follow the instructions here: https://github.com/alexeyxo/protobuf-objc
+Run `bash Scripts/compile-protos.sh` to generate the files from the protobuf definitions imported from Carthage.
+
+You can now open the Xcode project and build.
