@@ -83,6 +83,7 @@ NSString *const AvailabilityKey = @"availability";
 static NSString *const ExpiresAtKey = @"expiresAt";
 static NSString *const UsesCompanyLoginKey = @"usesCompanyLogin";
 NSString *const ReadReceiptsEnabledKey = @"readReceiptsEnabled";
+NSString *const NeedsPropertiesUpdateKey = @"needsPropertiesUpdate";
 
 static NSString *const TeamIdentifierDataKey = @"teamIdentifier_data";
 static NSString *const TeamIdentifierKey = @"teamIdentifier";
@@ -894,6 +895,25 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         return [value boolValue];
     }
     return NO;
+}
+
+- (void)setNeedsPropertiesUpdate:(BOOL)needsPropertiesUpdate
+{
+    NSAssert(self.isSelfUser, @"setNeedsPropertiesUpdate called for non-self user");
+    [self.managedObjectContext setPersistentStoreMetadata:@(needsPropertiesUpdate) forKey:NeedsPropertiesUpdateKey];
+}
+
+- (BOOL)needsPropertiesUpdate
+{
+    NSAssert(self.isSelfUser, @"needsPropertiesUpdate called for non-self user");
+    NSNumber *currentValue = [self.managedObjectContext persistentStoreMetadataForKey:NeedsPropertiesUpdateKey];
+    if (nil == currentValue) {
+        /// We need to mark the self user properties to be re-fetched to get the initial value.
+        return YES;
+    }
+    else {
+        return currentValue.boolValue;
+    }
 }
 
 @end
