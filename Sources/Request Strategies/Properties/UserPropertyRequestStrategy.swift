@@ -35,7 +35,7 @@ extension UserProperty {
     var serverName: String {
         switch self {
         case .readReceiptsEnabled:
-            return "WIRE_ENABLE_READ_RECEIPTS"
+            return "WIRE_RECEIPT_MODE"
         }
     }
     
@@ -55,35 +55,99 @@ extension UserProperty {
         self = property
     }
     
-    static func upstreamRequest(newValue: ZMTransportData, property: UserProperty) -> ZMTransportRequest {
-        let path = [UserProperty.propertiesPath, property.serverName].joined(separator: "/")
+    func upstreamRequest(newValue: ZMTransportData) -> ZMTransportRequest {
+        let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
         return ZMTransportRequest(path: path, method: .methodPUT, payload: newValue)
     }
     
-    static func downstreamRequest(for property: UserProperty) -> ZMTransportRequest {
-        let path = [UserProperty.propertiesPath, property.serverName].joined(separator: "/")
+    func downstreamRequest() -> ZMTransportRequest {
+        let path = [UserProperty.propertiesPath, self.serverName].joined(separator: "/")
         return ZMTransportRequest(getFromPath: path)
+    }
+    
+    enum UpdateType {
+        case set
+        case delete
+        
+        init(eventType: ZMUpdateEventType) {
+            switch eventType {
+            case .userPropertiesSet:
+                self = .set
+            case .userPropertiesDelete:
+                self = .delete
+            default:
+                fatal("Incompatible event type: \(eventType)")
+            }
+        }
+    }
+    
+    func parseUpdate(for selfUser: ZMUser, updateType: UpdateType, payload value: Any?) {
+        switch (self, updateType) {
+        case (.readReceiptsEnabled, .set):
+            let intValue: Int
+            if let numberValue = value as? Int {
+                intValue = numberValue
+            }
+            else if let stringValue = value as? String,
+                 let numberValue = Int(stringValue) {
+                intValue = numberValue
+            }
+            else {
+                return
+            }
+            
+            selfUser.setReadReceiptsEnabled(intValue > 0, synchronize: false)
+            
+        case (.readReceiptsEnabled, .delete):
+            selfUser.setReadReceiptsEnabled(false, synchronize: false)
+        }
+    }
+    
+    func transportValue(for selfUser: ZMUser) -> ZMTransportData {
+        switch self {
+        case .readReceiptsEnabled:
+            return (selfUser.readReceiptsEnabled ? "1" : "0") as ZMTransportData
+        }
     }
 }
 
 public class UserPropertyRequestStrategy : AbstractRequestStrategy {
     
-    var modifiedSync : ZMUpstreamModifiedObjectSync!
+    var modifiedSync: ZMUpstreamModifiedObjectSync!
+    var downstreamSync: ZMSingleRequestSync!
+    fileprivate var propertiesToFetch: Set<UserProperty> = Set()
+    fileprivate var fetchedProperty: UserProperty? = nil
 
-    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+    override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+                         applicationStatus: ApplicationStatus) {
         
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        
         let allProperties = UserProperty.allCases.map(\.propertyName)
+        
+        if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
+            initializePropertiesToFetch()
+        }
+        
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self,
                                                          entityName: ZMUser.entityName(),
                                                          update: nil,
                                                          filter: ZMUser.predicateForSelfUser(),
                                                          keysToSync: allProperties,
                                                          managedObjectContext: managedObjectContext)
+        
+        self.downstreamSync = ZMSingleRequestSync(singleRequestTranscoder: self,
+                                                  groupQueue: managedObjectContext)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return modifiedSync.nextRequest()
+        if ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate {
+            downstreamSync.readyForNextRequestIfNotBusy()
+            return downstreamSync.nextRequest()
+        }
+        else {
+            return modifiedSync.nextRequest()
+        }
     }
 }
 
@@ -106,9 +170,7 @@ extension UserPropertyRequestStrategy : ZMUpstreamTranscoder {
         
         switch property {
         case .readReceiptsEnabled:
-            let stringValue = selfUser.readReceiptsEnabled ? "true" : "false"
-            request = UserProperty.upstreamRequest(newValue: stringValue as ZMTransportData,
-                                                   property: property)
+            request = property.upstreamRequest(newValue: property.transportValue(for: selfUser))
         }
         
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
@@ -118,11 +180,17 @@ extension UserPropertyRequestStrategy : ZMUpstreamTranscoder {
         return nil
     }
     
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable : Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
+    public func updateUpdatedObject(_ managedObject: ZMManagedObject,
+                                    requestUserInfo: [AnyHashable : Any]? = nil,
+                                    response: ZMTransportResponse,
+                                    keysToParse: Set<String>) -> Bool {
         return false
     }
     
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
+    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,
+                                             request upstreamRequest: ZMUpstreamRequest,
+                                             response: ZMTransportResponse,
+                                             keysToParse keys: Set<String>) -> Bool {
         return false
     }
     
@@ -134,7 +202,9 @@ extension UserPropertyRequestStrategy : ZMUpstreamTranscoder {
         return nil // we will never insert objects
     }
     
-    public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
+    public func updateInsertedObject(_ managedObject: ZMManagedObject,
+                                     request upstreamRequest: ZMUpstreamRequest,
+                                     response: ZMTransportResponse) {
         // we will never insert objects
     }
     
@@ -155,7 +225,6 @@ extension UserPropertyRequestStrategy : ZMEventConsumer {
     static let UpdateEventKey = "key"
     static let UpdateEventValue = "value"
     
-    
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard event.type.isOne(of: [ZMUpdateEventType.userPropertiesSet, ZMUpdateEventType.userPropertiesDelete]),
@@ -165,23 +234,50 @@ extension UserPropertyRequestStrategy : ZMEventConsumer {
             }
             
             let value = event.payload[UserPropertyRequestStrategy.UpdateEventValue]
-            switch (property, event.type) {
-            case (.readReceiptsEnabled, .userPropertiesSet):
-                guard let boolValue = value as? Bool else {
-                    return
-                }
-                    
-                let user = ZMUser.selfUser(in: managedObjectContext)
-                user.setReadReceiptsEnabled(boolValue, synchronize: false)
-                
-            case (.readReceiptsEnabled, .userPropertiesDelete):
-                let user = ZMUser.selfUser(in: managedObjectContext)
-                user.setReadReceiptsEnabled(false, synchronize: false)
-                
-            default:
-                break
-            }
+            
+            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
+                                 updateType: UserProperty.UpdateType(eventType: event.type),
+                                 payload: value)
         }
     }
+}
+
+extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
+
+    fileprivate func initializePropertiesToFetch() {
+        propertiesToFetch = Set(UserProperty.allCases)
+    }
     
+    fileprivate func nextProperty() -> UserProperty? {
+        self.fetchedProperty = propertiesToFetch.removeFirst()
+        return self.fetchedProperty
+    }
+    
+    public func request(for sync: ZMSingleRequestSync) -> ZMTransportRequest? {
+        if propertiesToFetch.isEmpty {
+            initializePropertiesToFetch()
+        }
+        
+        guard let property = self.nextProperty() else {
+            return nil
+        }
+        
+        return property.downstreamRequest()
+    }
+    
+    public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
+        
+        guard let property = fetchedProperty,
+              let payload = response.payload else {
+            return
+        }
+        
+        property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .set, payload: payload)
+        
+        // In this case the sync is done.
+        if propertiesToFetch.isEmpty {
+            ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = false
+        }
+    }
+
 }
