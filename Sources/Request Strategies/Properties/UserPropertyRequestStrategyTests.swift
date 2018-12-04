@@ -18,7 +18,7 @@
 
 
 import XCTest
-import WireRequestStrategy
+@testable import WireRequestStrategy
 
 class UserPropertyRequestStrategyTests: MessagingTestBase {
     
@@ -62,17 +62,38 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsPropertiesUpdate = false
             
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "user.properties-set",
-                "key": "WIRE_ENABLE_READ_RECEIPTS",
-                "value": true] as ZMTransportData), uuid: nil)!
+                "key": "WIRE_RECEIPT_MODE",
+                "value": 1] as ZMTransportData), uuid: nil)!
             
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
             
             // then
-            XCTAssertEqual(selfUser.readReceiptsEnabled, true)
+            XCTAssertTrue(selfUser.readReceiptsEnabled)
+        }
+    }
+    
+    func testThatItUpdatesPropertyFromUpdateEvent_false() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsPropertiesUpdate = false
+            selfUser.readReceiptsEnabled = true
+            
+            let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
+                "type": "user.properties-set",
+                "key": "WIRE_RECEIPT_MODE",
+                "value": 0] as ZMTransportData), uuid: nil)!
+            
+            // when
+            self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
+            
+            // then
+            XCTAssertFalse(selfUser.readReceiptsEnabled)
         }
     }
     
@@ -81,17 +102,43 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             
             // given
             let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsPropertiesUpdate = false
             selfUser.readReceiptsEnabled = true
             
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "user.properties-delete",
-                "key": "WIRE_ENABLE_READ_RECEIPTS"] as ZMTransportData), uuid: nil)!
+                "key": "WIRE_RECEIPT_MODE"] as ZMTransportData), uuid: nil)!
                 
             // when
             self.sut.processEvents([updateEvent], liveEvents: true, prefetchResult: nil)
             
             // then
-            XCTAssertEqual(selfUser.readReceiptsEnabled, false)
+            XCTAssertFalse(selfUser.readReceiptsEnabled)
+        }
+    }
+}
+
+// MARK: - Downstream sync
+extension UserPropertyRequestStrategyTests {
+    func testThatItIsFetchingPropertyValue() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            
+            // when
+            let request = self.sut.nextRequestIfAllowed()
+            
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request!.method, .methodGET)
+            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+            
+            let response = ZMTransportResponse(payload: "1" as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+            
+            self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
+            
+            // then
+            XCTAssertFalse(selfUser.needsPropertiesUpdate)
+            XCTAssertTrue(selfUser.readReceiptsEnabled)
         }
     }
 }

@@ -41,9 +41,6 @@ public final class FetchingClientRequestStrategy : AbstractRequestStrategy, ZMEv
 
     fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
 
-    
-    fileprivate(set) var fetchAllClientsSync: ZMSingleRequestSync! = nil
-    
     fileprivate(set) var userClientsObserverToken: Any? = nil
     fileprivate(set) var userClientsSync: ZMRemoteIdentifierObjectSync!
     
