@@ -30,12 +30,6 @@
 
 #import "Wire-Swift.h"
 
-@interface ConversationMessageWindowTableViewAdapter () <ZMConversationObserver>
-
-@property (nonatomic, nullable) id conversationChangeObserver;
-
-@end
-
 @implementation ConversationMessageWindowTableViewAdapter
 
 - (instancetype)initWithTableView:(UpsideDownTableView *)tableView messageWindow:(ZMConversationMessageWindow *)messageWindow
@@ -49,15 +43,9 @@
         self.firstUnreadMessage = self.messageWindow.conversation.firstUnreadMessage;
         self.sectionControllers = [[NSMutableDictionary alloc] init];
         self.actionControllers = [[NSMutableDictionary alloc] init];
-        self.conversationChangeObserver = [ConversationChangeInfo addObserver:self forConversation:messageWindow.conversation];
     }
     
     return self;
-}
-
-- (void)dealloc
-{
-    self.conversationChangeObserver = nil;
 }
 
 - (void)stopAudioPlayerForDeletedMessages:(NSSet *)deletedMessages
@@ -148,11 +136,6 @@
             self.expandingWindow = NO;
         });
     }
-}
-
-- (void)conversationDidChange:(ConversationChangeInfo *)changeInfo
-{
-    [self reconfigureVisibleSections];
 }
 
 @end
