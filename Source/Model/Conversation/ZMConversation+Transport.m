@@ -113,7 +113,14 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     
     NSNumber *receiptMode = [transportData optionalNumberForKey:ConversationInfoReceiptMode];
     if (nil != receiptMode) {
-        self.hasReadReceiptsEnabled = receiptMode.intValue > 0;
+        BOOL enabled = receiptMode.intValue > 0;
+        BOOL receiptModeChanged = !self.hasReadReceiptsEnabled && enabled;
+        self.hasReadReceiptsEnabled = enabled;
+        
+        // We only want insert a system message if this is an existing conversation (non empty)
+        if (receiptModeChanged && self.messages.count > 0) {
+            [self appendMessageReceiptModeIsOnMessageWithTimestamp:serverTimeStamp];
+        }
     }
     
     self.accessModeStrings = [transportData optionalArrayForKey:ConversationInfoAccessModeKey];

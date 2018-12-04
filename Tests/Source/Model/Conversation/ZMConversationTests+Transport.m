@@ -665,6 +665,72 @@
     }];
 }
 
+- (void)testThatItDoesntInsertReadReceiptSystemMessageTransportDataWithReceiptModeForNewConversation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        
+        NSUUID *user1UUID = [NSUUID createUUID];
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation
+                                                      conversationType:ZMConvTypeGroup
+                                                         activeUserIDs:@[user1UUID]
+                                                            isArchived:NO
+                                                           archivedRef:nil
+                                                            isSilenced:NO
+                                                           silencedRef:nil
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
+                                                                teamID:nil
+                                                            accessMode:@[]
+                                                            accessRole:@"team"
+                                                           receiptMode:1];
+        
+        // when
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
+        
+        // then
+        XCTAssertEqual(conversation.messages.count, 0);
+    }];
+}
+
+- (void)testThatItInsertReadReceiptSystemMessageTransportDataWithReceiptModeForExistingConversation
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
+        NSDate *serverTimestamp = [NSDate date];
+        NSUUID *uuid = NSUUID.createUUID;
+        conversation.remoteIdentifier = uuid;
+        [conversation appendMessageWithText:@"hello"];
+        
+        NSUUID *user1UUID = [NSUUID createUUID];
+        
+        NSDictionary *payload = [self payloadForMetaDataOfConversation:conversation
+                                                      conversationType:ZMConvTypeGroup
+                                                         activeUserIDs:@[user1UUID]
+                                                            isArchived:NO
+                                                           archivedRef:nil
+                                                            isSilenced:NO
+                                                           silencedRef:nil
+                                                        silencedStatus:@(MutedMessageOptionValueAll)
+                                                                teamID:nil
+                                                            accessMode:@[]
+                                                            accessRole:@"team"
+                                                           receiptMode:1];
+        
+        // when
+        [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
+        
+        // then
+        ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.messages.firstObject;
+        XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeReadReceiptsOn);
+    }];
+}
+
 - (void)testThatUpdatingFromTransportDataDoesNotSetAnyLocalModifiedKey
 {
     [self.syncMOC performGroupedBlockAndWait:^{
