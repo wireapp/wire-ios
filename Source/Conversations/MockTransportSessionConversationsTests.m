@@ -806,7 +806,7 @@
 {
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> __unused session, MockConversation *conversation) {
         return [conversation changeReceiptModeByUser:self.sut.selfUser receiptMode:1];
-    } expectedPayloadData:@(1)];
+    } expectedPayloadData:@{ @"receipt_mode": @(1) }];
 }
 
 

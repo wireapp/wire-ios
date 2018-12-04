@@ -413,7 +413,7 @@
 - (MockEvent *)changeReceiptModeByUser:(MockUser *)user receiptMode:(NSInteger)receiptMode
 {
     self.receiptMode = @(receiptMode);
-    return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationReceiptModeUpdate data:self.receiptMode];
+    return [self eventIfNeededByUser:user type:ZMUpdateEventTypeConversationReceiptModeUpdate data:@{@"receipt_mode": self.receiptMode }];
 }
 
 - (MockEvent *)insertAssetUploadEventForUser:(MockUser *)user data:(NSData *)data disposition:(NSDictionary *)disposition dataTypeAsMIME:(NSString *)dataTypeAsMIME assetID:(NSString *)assetID
