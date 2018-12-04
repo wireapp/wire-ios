@@ -55,7 +55,9 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Whether any tasks are active.
     @objc public var isActive: Bool {
-        return currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskInvalid
+        return isolationQueue.sync {
+            return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskInvalid
+        }
     }
 
     @objc var mainQueue: DispatchQueue = .main
@@ -112,8 +114,8 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
-            guard isActive else {
-                zmLog.debug("End background activity: tasks are not active")
+            guard self.currentBackgroundTask != UIBackgroundTaskInvalid else {
+                zmLog.debug("End background activity: current background task is invalid")
                 return
             }
 
@@ -167,22 +169,17 @@ private let zmLog = ZMSLog(tag: "background-activity")
         }
     }
 
-    /// Called when the background timer is about to expire.
+    /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
+        zmLog.debug("Handle expiration")
+        let activities = isolationQueue.sync {
+            return self.activities
+        }
+        activities.forEach { activity in
+            zmLog.debug("Handle expiration: notifying \(activity)")
+            activity.expirationHandler?()
+        }
         isolationQueue.sync {
-            zmLog.debug("Handle expiration")
-            let group = DispatchGroup()
-            activities.forEach { activity in
-                zmLog.debug("Handle expiration: notifying \(activity)")
-                group.enter()
-                mainQueue.async { 
-                    activity.expirationHandler?()
-                    group.leave()
-                }
-            }
-            zmLog.debug("Handle expiration: \(activities.count) activities notified")
-            activities.removeAll()
-            group.wait()
             finishBackgroundTask()
             currentBackgroundTask = UIBackgroundTaskInvalid
         }
