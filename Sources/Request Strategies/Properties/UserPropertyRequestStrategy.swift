@@ -266,18 +266,20 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
     }
     
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
-        
-        guard let property = fetchedProperty,
-              let payload = response.payload else {
-            return
-        }
-        
-        property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .set, payload: payload)
-        
-        // In this case the sync is done.
+        // No more properties left: the sync is done.
         if propertiesToFetch.isEmpty {
             ZMUser.selfUser(in: managedObjectContext).needsPropertiesUpdate = false
         }
+        
+        guard let property = fetchedProperty else {
+            return
+        }
+        
+        if response.result == .permanentError {
+            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .delete, payload: nil)
+        }
+        else if response.result == .success, let payload = response.payload {
+            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .set, payload: payload)
+        }
     }
-
 }

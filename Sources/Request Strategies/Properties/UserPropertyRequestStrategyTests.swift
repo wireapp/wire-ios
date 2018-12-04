@@ -141,4 +141,26 @@ extension UserPropertyRequestStrategyTests {
             XCTAssertTrue(selfUser.readReceiptsEnabled)
         }
     }
+    
+    func testThatItIsFetchingPropertyValue_404() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            
+            // when
+            let request = self.sut.nextRequestIfAllowed()
+            
+            XCTAssertNotNil(request)
+            XCTAssertEqual(request!.method, .methodGET)
+            XCTAssertEqual(request!.path, "properties/WIRE_RECEIPT_MODE")
+            
+            let response = ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+            
+            self.sut.didReceive(response, forSingleRequest: self.sut.downstreamSync)
+            
+            // then
+            XCTAssertFalse(selfUser.needsPropertiesUpdate)
+            XCTAssertFalse(selfUser.readReceiptsEnabled)
+        }
+    }
 }
