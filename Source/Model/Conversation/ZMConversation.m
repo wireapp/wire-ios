@@ -1011,7 +1011,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:[NSUUID UUID] managedObjectContext:self.managedObjectContext];
     systemMessage.systemMessageType = ZMSystemMessageTypeNewConversation;
-    systemMessage.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     systemMessage.sender = self.creator;
     systemMessage.text = self.userDefinedName;
     systemMessage.users = self.activeParticipants.set;
@@ -1026,6 +1025,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     systemMessage.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
     
     [self sortedAppendMessage:systemMessage];
+    
+    if (self.hasReadReceiptsEnabled) {
+        [self appendMessageReceiptModeIsOnMessageWithTimestamp:[NSDate dateWithTimeIntervalSinceReferenceDate:1]];
+    }
 }
 
 - (NSUInteger)sortedAppendMessage:(ZMMessage *)message;

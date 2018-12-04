@@ -44,4 +44,34 @@ extension ZMConversation {
         return confirmationMessages
     }
     
+    @discardableResult @objc
+    public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
+        let (message, _) = appendSystemMessage(
+            type: enabled ? .readReceiptsEnabled : .readReceiptsDisabled,
+            sender: user,
+            users: [],
+            clients: nil,
+            timestamp: timestamp
+        )
+        
+        if isArchived && mutedMessageTypes == .none {
+            isArchived = false
+        }
+        
+        return message
+    }
+    
+    @discardableResult @objc
+    public func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
+        let (message, _) = appendSystemMessage(
+            type: .readReceiptsOn,
+            sender: creator,
+            users: [],
+            clients: nil,
+            timestamp: timestamp
+        )
+        
+        return message
+    }
+    
 }
