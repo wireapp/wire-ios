@@ -69,6 +69,8 @@ extension SessionManager: PKPushRegistryDelegate {
         guard type == .voIP else { return completion() }
         
         log.debug("Received push payload: \(payload.dictionaryPayload)")
+        // We were given some time to run, resume background task creation.
+        BackgroundActivityFactory.shared.resume()
         notificationsTracker?.registerReceivedPush()
         
         guard let accountId = payload.dictionaryPayload.accountId(),
@@ -116,6 +118,8 @@ extension SessionManager: PKPushRegistryDelegate {
                                        didReceive response: UNNotificationResponse,
                                        withCompletionHandler completionHandler: @escaping () -> Void)
     {
+        // Resume background task creation.
+        BackgroundActivityFactory.shared.resume()
         // route to user session
         handleNotification(with: response.notification.userInfo) { userSession in
             userSession.userNotificationCenter(center, didReceive: response, withCompletionHandler: completionHandler)
