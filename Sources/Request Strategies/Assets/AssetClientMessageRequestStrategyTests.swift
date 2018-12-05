@@ -84,15 +84,17 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         previewAssetId: Bool = false,
         uploadState: AssetUploadState = .uploadingFullAsset,
         transferState: ZMFileTransferState = .uploading,
+        conversation: ZMConversation? = nil,
         line: UInt = #line
         ) -> ZMAssetClientMessage {
 
+        let targetConversation = conversation ?? groupConversation!
         let message: ZMAssetClientMessage!
         if isImage {
-            message = self.groupConversation.append(imageFromData: imageData) as? ZMAssetClientMessage
+            message = targetConversation.append(imageFromData: imageData) as? ZMAssetClientMessage
         } else {
             let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-            message = self.groupConversation.append(file: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
+            message = targetConversation.append(file: ZMFileMetadata(fileURL: url, thumbnail: nil)) as? ZMAssetClientMessage
         }
 
         if isImage {
@@ -118,13 +120,13 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             let previewMessage = ZMGenericMessage.message(
                 content: ZMAsset.asset(withOriginal: nil, preview: previewAsset),
                 nonce: message.nonce!,
-                expiresAfter: groupConversation.messageDestructionTimeoutValue
+                expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
 
             message.add(previewMessage)
             XCTAssertTrue(message.genericAssetMessage!.assetData!.hasPreview(), line: line)
             XCTAssertEqual(message.genericAssetMessage!.assetData!.preview.remote.hasAssetId(), previewAssetId, line: line)
-            XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeoutValue != 0, line: line)
+            XCTAssertEqual(message.isEphemeral, targetConversation.messageDestructionTimeoutValue != 0, line: line)
         }
 
         if uploaded {
@@ -132,7 +134,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             var uploaded = ZMGenericMessage.message(
                 content: ZMAsset.asset(withUploadedOTRKey: otr, sha256: sha),
                 nonce: message.nonce!,
-                expiresAfter: groupConversation.messageDestructionTimeoutValue
+                expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
             if assetId {
                 uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
@@ -396,6 +398,49 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             
             self.createMessage(isImage: false, uploaded: true, assetId: true, uploadState: .uploadingThumbnail, transferState: .uploaded)
             XCTAssertNil(self.sut.nextRequest())
+        }
+    }
+    
+    func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
+            
+            // WHEN
+            XCTAssertNotNil(self.sut.nextRequest())
+            
+            // THEN
+            XCTAssertTrue(message.genericMessage!.content!.expectsReadConfirmation())
+        }
+    }
+    
+    func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
+            
+            // WHEN
+            XCTAssertNotNil(self.sut.nextRequest())
+            
+            // THEN
+            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+        }
+    }
+    
+    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreDisabled() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
+            message.add(message.genericMessage!.setExpectsReadConfirmation(true)!)
+            
+            // WHEN
+            XCTAssertNotNil(self.sut.nextRequest())
+            
+            // THEN
+            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
         }
     }
 
