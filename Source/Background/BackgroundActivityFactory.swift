@@ -114,7 +114,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
-            guard self.currentBackgroundTask != UIBackgroundTaskInvalid else {
+            guard currentBackgroundTask != UIBackgroundTaskInvalid else {
                 zmLog.debug("End background activity: current background task is invalid")
                 return
             }
@@ -157,12 +157,14 @@ private let zmLog = ZMSLog(tag: "background-activity")
                     zmLog.debug("Start activity: failed to begin new background task")
                     return nil         
                 }
-                zmLog.debug("Start activity: started new background task")
+                zmLog.debug("Start activity: started new background task: \(task)")
                 currentBackgroundTask = task
             }
 
             let (inserted, _) = activities.insert(activity)
-            if !inserted {
+            if inserted {
+                zmLog.debug("Start activity: started \(activity)")
+            } else {
                 zmLog.debug("Start activity: could not insert activity \(activity)")
             }
             return activity
@@ -189,7 +191,9 @@ private let zmLog = ZMSLog(tag: "background-activity")
     private func finishBackgroundTask() {
         if let currentBackgroundTask = self.currentBackgroundTask {
             if let activityManager = activityManager {
-                zmLog.debug("Finishing background task")
+                zmLog.debug("Finishing background task: \(currentBackgroundTask)")
+                // We might get killed pretty soon, let's flush the logs
+                ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)
             } else {
                 zmLog.debug("Finishing background task: failed, activityManager is nil")
