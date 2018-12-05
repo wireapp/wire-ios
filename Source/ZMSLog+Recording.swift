@@ -26,10 +26,11 @@ extension ZMSLog {
     @objc public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {
             if recordingToken == nil {
-                recordingToken = self.nonLockingAddHook(logHook: { (level, tag, message) -> (Void) in
+                recordingToken = self.nonLockingAddEntryHook(logHook: { (level, tag, entry) -> (Void) in
                     guard isInternal || level != .error else { return }
                     let tagString = tag.flatMap { "[\($0)] "} ?? ""
-                    ZMSLog.appendToCurrentLog("\(currentDate): [\(level.rawValue)] \(tagString)\(message)\n")
+                    let date = dateFormatter.string(from: entry.timestamp)
+                    ZMSLog.appendToCurrentLog("\(date): [\(level.rawValue)] \(tagString)\(entry.text)\n")
                 })
             }
         }
@@ -48,11 +49,7 @@ extension ZMSLog {
             self.removeLogHook(token: token)
         }
     }
-    
-    private static var currentDate: String {
-        return dateFormatter.string(from: Date())
-    }
-    
+
     private static var dateFormatter: DateFormatter {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"
