@@ -29,11 +29,14 @@ import UIKit
     /// End the background task.
     func endBackgroundTask(_ task: UIBackgroundTaskIdentifier)
     
+    // Make sure to only access this from main thread!
     var backgroundTimeRemaining: TimeInterval { get }
     var applicationState: UIApplication.State { get }
 }
 
 extension BackgroundActivityManager {
+    /// Returns application state and background time remaining
+    /// This code should be called from main queue only!
     var stateDescription: String {
         if applicationState == .background {
             // Sometimes time remaining is very large even if we run in background

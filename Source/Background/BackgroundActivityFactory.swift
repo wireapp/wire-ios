@@ -113,18 +113,21 @@ private let zmLog = ZMSLog(tag: "background-activity")
      */
 
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
+        DispatchQueue.main.async {
+            guard let activityManager = self.activityManager else {
+                zmLog.debug("End activity [\(activity)]: failed, activityManager is nil")
+                return
+            }
+            zmLog.debug("End background activity: removing \(activity).\(activityManager.stateDescription)")
+        }
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskInvalid else {
                 zmLog.debug("End background activity: current background task is invalid")
                 return
             }
-            guard let activityManager = activityManager else {
-                zmLog.debug("End activity [\(activity)]: failed, activityManager is nil")
-                return
-            }
 
             if activities.remove(activity) != nil {
-                zmLog.debug("End background activity: removed \(activity), \(activities.count) others left. \(activityManager.stateDescription)")
+                zmLog.debug("End background activity: removed \(activity), \(activities.count) others left.")
             } else {
                 zmLog.debug("End background activity: could not remove \(activity), \(activities.count) others left")
             }
@@ -140,13 +143,19 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Starts the background activity of the system allows it.
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
+        DispatchQueue.main.async {
+            guard let activityManager = self.activityManager else {
+                zmLog.debug("Start activity [\(name)]: failed, activityManager is nil")
+                return
+            }
+            zmLog.debug("Start activity [\(name)]: \(activityManager.stateDescription)")
+        }
         return isolationQueue.sync {
             guard let activityManager = activityManager else {
                 zmLog.debug("Start activity [\(name)]: failed, activityManager is nil")
                 return nil 
             }
             
-            zmLog.debug("Start activity [\(name)]: \(activityManager.stateDescription))")
             // Do not start new tasks if the background timer is running.
             guard currentBackgroundTask != UIBackgroundTaskInvalid else { 
                 zmLog.debug("Start activity [\(name)]: failed, currentBackgroundTask is invalid")
@@ -179,7 +188,12 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
-        zmLog.debug("Handle expiration")
+        guard let activityManager = self.activityManager else {
+            zmLog.debug("Handle expiration: failed, activityManager is nil")
+            return
+        }
+        
+        zmLog.debug("Handle expiration: \(activityManager.description)")
         let activities = isolationQueue.sync {
             return self.activities
         }
