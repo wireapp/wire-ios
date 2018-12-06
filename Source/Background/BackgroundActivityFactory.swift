@@ -118,7 +118,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
                 zmLog.debug("End activity [\(activity)]: failed, activityManager is nil")
                 return
             }
-            zmLog.debug("End background activity: removing \(activity).\(activityManager.stateDescription)")
+            zmLog.debug("End background activity: removing \(activity). \(activityManager.stateDescription)")
         }
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskInvalid else {
@@ -209,6 +209,8 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Ends the current background task.
     private func finishBackgroundTask() {
+        // No need to keep any activities after finishing
+        activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
             if let activityManager = activityManager {
                 zmLog.debug("Finishing background task: \(currentBackgroundTask)")

@@ -118,9 +118,9 @@ class BackgroundActivityFactoryTests: XCTestCase {
         // THEN
         waitForExpectations(timeout: 0.5, handler: nil)
         XCTAssertFalse(factory.isActive)
+        XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
-    }
-
+    }    
 }
 
 // MARK: - Helpers
