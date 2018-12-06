@@ -28,6 +28,34 @@ import UIKit
 
     /// End the background task.
     func endBackgroundTask(_ task: UIBackgroundTaskIdentifier)
+    
+    var backgroundTimeRemaining: TimeInterval { get }
+    var applicationState: UIApplication.State { get }
+}
+
+extension BackgroundActivityManager {
+    var stateDescription: String {
+        if applicationState == .background {
+            // Sometimes time remaining is very large even if we run in background
+            let time = backgroundTimeRemaining > 100000 ? "No Limit" : String(format: "%.2f", backgroundTimeRemaining)
+            return "App state: \(applicationState), time remaining: \(time)"
+        } else {
+            return "App state: \(applicationState)"
+        }
+    }
+}
+
+extension UIApplication.State: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        switch self {
+        case .active:
+            return "active"
+        case .background:
+            return "background"
+        case .inactive:
+            return "inactive"
+        }
+    }
 }
 
 extension UIApplication: BackgroundActivityManager {}

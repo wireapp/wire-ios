@@ -22,6 +22,9 @@ import UIKit
  * A token that represents an active background task.
  */
 
+fileprivate var activityCounter = 0 
+fileprivate let activityCounterQueue = DispatchQueue(label: "wire-transport.background-activity-counter")
+
 @objc public class BackgroundActivity: NSObject {
 
     /// The name of the task, used for debugging purposes.
@@ -33,6 +36,10 @@ import UIKit
     init(name: String, expirationHandler: (() -> Void)?) {
         self.name = name
         self.expirationHandler = expirationHandler
+        // Increment counter with overflow (used in .description)
+        activityCounterQueue.sync {
+            activityCounter &+= 1
+        }
     }
 
     // MARK: - Execution
@@ -76,5 +83,9 @@ import UIKit
 
         return ObjectIdentifier(self) == ObjectIdentifier(otherActivity)
     }
-
+    
+    override public var description: String {
+        let counter = activityCounterQueue.sync { return activityCounter }
+        return "<BackgroundActivity: \(name) [\(counter)]>"
+    }
 }
