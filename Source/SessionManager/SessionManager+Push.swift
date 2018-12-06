@@ -33,6 +33,16 @@ protocol PushRegistry {
 
 extension PKPushRegistry: PushRegistry {}
 
+extension PKPushPayload {
+    fileprivate var stringIdentifier: String {
+        if let data = dictionaryPayload["data"] as? [AnyHashable : Any], let innerData = data["data"] as? [AnyHashable : Any], let id = innerData["id"] {
+            return "Payload: data.id = \(id)"
+        } else {
+            return self.description
+        } 
+    }
+}
+
 
 // MARK: - PKPushRegistryDelegate
 
@@ -75,7 +85,7 @@ extension SessionManager: PKPushRegistryDelegate {
         
         guard let accountId = payload.dictionaryPayload.accountId(),
               let account = self.accountManager.account(with: accountId),
-              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "Process PushKit payload", expirationHandler: { [weak self] in
+              let activity = BackgroundActivityFactory.shared.startBackgroundActivity(withName: "Process PushKit payload [\(payload.stringIdentifier)]", expirationHandler: { [weak self] in
                 log.debug("Processing push payload expired")
                 self?.notificationsTracker?.registerProcessingExpired()
               }) else {
