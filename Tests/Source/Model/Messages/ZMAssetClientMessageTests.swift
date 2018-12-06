@@ -294,6 +294,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
         XCTAssertEqual(sut.uploadState.rawValue, AssetUploadState.uploadingFailed.rawValue)
+        XCTAssertTrue(sut.genericAssetMessage!.assetData!.hasNotUploaded())
         XCTAssertTrue(sut.isExpired)
     }
 
@@ -310,6 +311,7 @@ extension ZMAssetClientMessageTests {
         XCTAssertFalse(sut.delivered)
         XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
         XCTAssertEqual(sut.uploadState.rawValue, AssetUploadState.uploadingFailed.rawValue)
+        XCTAssertTrue(sut.genericAssetMessage!.assetData!.hasNotUploaded())
         XCTAssertTrue(sut.isExpired)
     }
     
@@ -327,6 +329,7 @@ extension ZMAssetClientMessageTests {
             XCTAssertFalse(sut.delivered)
             XCTAssertEqual(sut.transferState.rawValue, ZMFileTransferState.failedUpload.rawValue)
             XCTAssertEqual(sut.uploadState, .uploadingFailed)
+            XCTAssertFalse(sut.genericAssetMessage!.assetData!.hasNotUploaded())
             XCTAssertTrue(sut.isExpired)
         }
     }
