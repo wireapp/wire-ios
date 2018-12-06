@@ -214,9 +214,12 @@ import Foundation
         self.transferState = .failedUpload
         
         // When we expire an asset message because the conversation degraded we do not want to send
-        // a `NOT UPLOADED` message. In all other cases we do want to sent a `NOT UPLOADED` 
-        // message to let the reveicers know we stopped uploading.
-        if self.uploadState == .uploadingPlaceholder {
+        // a `NOT UPLOADED` message. In all other cases we do want to sent a `NOT UPLOADED` message
+        // to let the receivers know we stopped uploading, except for images for which we don't send
+        // placeholders.
+        if isImage {
+            self.uploadState = .uploadingFailed
+        } else if self.uploadState == .uploadingPlaceholder {
             self.uploadState = .done
         } else {
             self.didFailToUploadFileData()
