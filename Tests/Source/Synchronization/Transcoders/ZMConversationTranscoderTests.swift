@@ -367,6 +367,8 @@ extension ZMConversationTranscoderTests_Swift : ZMSyncStateDelegate {
 
 extension ZMConversationTranscoderTests_Swift {
     
+    // MARK: Receipt Mode
+    
     func receiptModeUpdateEvent(enabled: Bool) -> ZMUpdateEvent {
         let payload = [
             "from": self.user.remoteIdentifier!.transportString(),
@@ -409,6 +411,7 @@ extension ZMConversationTranscoderTests_Swift {
     func testThatItInsertsSystemMessageDisabled_WhenReceivingReceiptModeUpdateEvent() {
         self.syncMOC.performAndWait {
             // GIVEN
+            conversation.hasReadReceiptsEnabled = true
             let event = receiptModeUpdateEvent(enabled: false)
             
             // WHEN
@@ -419,6 +422,22 @@ extension ZMConversationTranscoderTests_Swift {
             XCTAssertEqual(message.systemMessageType, .readReceiptsDisabled)
         }
     }
+    
+    func testThatItDoesntInsertsSystemMessage_WhenReceivingReceiptModeUpdateEventWhichHasAlreadybeenApplied() {
+        self.syncMOC.performAndWait {
+            // GIVEN
+            conversation.hasReadReceiptsEnabled = true
+            let event = receiptModeUpdateEvent(enabled: true)
+            
+            // WHEN
+            self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
+            
+            // THEN
+            XCTAssertEqual(self.conversation?.messages.count, 0)
+        }
+    }
+    
+    // MARK: Access Mode
     
     func testThatItHandlesAccessModeUpdateEvent() {
         self.syncMOC.performAndWait {
@@ -450,6 +469,8 @@ extension ZMConversationTranscoderTests_Swift {
             XCTAssertEqual(self.conversation.accessRole, newAccessRole)
         }
     }
+    
+    // MARK: Message Timer
     
     func testThatItHandlesMessageTimerUpdateEvent_Value() {
         syncMOC.performGroupedBlockAndWait {
