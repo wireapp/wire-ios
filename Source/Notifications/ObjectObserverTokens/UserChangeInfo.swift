@@ -42,7 +42,9 @@ extension ZMUser : ObjectInSnapshot {
             #keyPath(ZMUser.clients),
             #keyPath(ZMUser.handle),
             #keyPath(ZMUser.team),
-            #keyPath(ZMUser.availability)
+            #keyPath(ZMUser.availability),
+            #keyPath(ZMUser.readReceiptsEnabled),
+            #keyPath(ZMUser.readReceiptsEnabledChangedRemotely),
         ]
     }
 
@@ -131,6 +133,14 @@ extension ZMUser : ObjectInSnapshot {
         return changedKeys.contains(#keyPath(ZMUser.availability))
     }
 
+    public var readReceiptsEnabledChanged : Bool {
+        return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabled))
+    }
+    
+    public var readReceiptsEnabledChangedRemotelyChanged : Bool {
+        return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabledChangedRemotely))
+    }
+    
     public let user: UserType
     open var userClientChangeInfos : [UserClientChangeInfo] {
         return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []
@@ -197,8 +207,3 @@ extension UserChangeInfo {
         return nil
     }
 }
-
-
-
-
-

@@ -84,6 +84,7 @@ static NSString *const ExpiresAtKey = @"expiresAt";
 static NSString *const UsesCompanyLoginKey = @"usesCompanyLogin";
 NSString *const ReadReceiptsEnabledKey = @"readReceiptsEnabled";
 NSString *const NeedsPropertiesUpdateKey = @"needsPropertiesUpdate";
+NSString *const ReadReceiptsEnabledChangedRemotelyKey = @"readReceiptsEnabledChangedRemotely";
 
 static NSString *const TeamIdentifierDataKey = @"teamIdentifier_data";
 static NSString *const TeamIdentifierKey = @"teamIdentifier";
@@ -383,7 +384,7 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 - (NSSet *)keysTrackedForLocalModifications
 {
     if(self.isSelfUser) {
-        return [[super keysTrackedForLocalModifications] setByAddingObject:ReadReceiptsEnabledKey];
+        return [super keysTrackedForLocalModifications];
     }
     else {
         return [NSSet set];
@@ -419,7 +420,9 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                                            ProviderIdentifierKey,
                                            ExpiresAtKey,
                                            TeamIdentifierDataKey,
-                                           UsesCompanyLoginKey
+                                           UsesCompanyLoginKey,
+                                           NeedsPropertiesUpdateKey,
+                                           ReadReceiptsEnabledChangedRemotelyKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -849,6 +852,10 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 
 @implementation ZMUser (Editable)
 
+@dynamic readReceiptsEnabled;
+@dynamic needsPropertiesUpdate;
+@dynamic readReceiptsEnabledChangedRemotely;
+
 - (void)setHandle:(NSString *)aHandle {
     [self willChangeValueForKey:HandleKey];
     [self setPrimitiveValue:[aHandle copy] forKey:HandleKey];
@@ -871,49 +878,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
     [self didChangeValueForKey:EmailAddressKey];
     
     self.normalizedEmailAddress = [self.emailAddress normalizedEmailaddress];
-}
-
-- (void)setReadReceiptsEnabled:(BOOL)readReceiptsEnabled
-{
-    [self setReadReceiptsEnabled:readReceiptsEnabled synchronize:YES];
-}
-
-- (void)setReadReceiptsEnabled:(BOOL)readReceiptsEnabled synchronize:(BOOL)synchronize
-{
-    NSAssert(self.isSelfUser, @"setReadReceiptsEnabled called for non-self user");
-    [self.managedObjectContext setPersistentStoreMetadata:@(readReceiptsEnabled) forKey:ReadReceiptsEnabledKey];
-    if (synchronize) {
-        [self setLocallyModifiedKeys:[NSSet setWithObject:ReadReceiptsEnabledKey]];
-    }
-}
-
-- (BOOL)readReceiptsEnabled
-{
-    NSAssert(self.isSelfUser, @"readReceiptsEnabled called for non-self user");
-    id value = [self.managedObjectContext persistentStoreMetadataForKey:ReadReceiptsEnabledKey];
-    if (nil != value && [value respondsToSelector:@selector(boolValue)]) {
-        return [value boolValue];
-    }
-    return NO;
-}
-
-- (void)setNeedsPropertiesUpdate:(BOOL)needsPropertiesUpdate
-{
-    NSAssert(self.isSelfUser, @"setNeedsPropertiesUpdate called for non-self user");
-    [self.managedObjectContext setPersistentStoreMetadata:@(needsPropertiesUpdate) forKey:NeedsPropertiesUpdateKey];
-}
-
-- (BOOL)needsPropertiesUpdate
-{
-    NSAssert(self.isSelfUser, @"needsPropertiesUpdate called for non-self user");
-    NSNumber *currentValue = [self.managedObjectContext persistentStoreMetadataForKey:NeedsPropertiesUpdateKey];
-    if (nil == currentValue) {
-        /// We need to mark the self user properties to be re-fetched to get the initial value.
-        return YES;
-    }
-    else {
-        return currentValue.boolValue;
-    }
 }
 
 @end

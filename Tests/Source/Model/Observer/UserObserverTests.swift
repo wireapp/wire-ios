@@ -26,7 +26,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
     
     let UserClientsKey = "clients"
     
-    enum UserInfoChangeKey: String {
+    enum UserInfoChangeKey: String, CaseIterable {
         case Name = "nameChanged"
         case AccentColor = "accentColorValueChanged"
         case ImageMediumData = "imageMediumDataChanged"
@@ -37,20 +37,11 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case Handle = "handleChanged"
         case Teams = "teamsChanged"
         case Availability = "availabilityChanged"
+        case ReadReceiptsEnabled = "readReceiptsEnabledChanged"
+        case ReadReceiptsEnabledChangedRemotely = "readReceiptsEnabledChangedRemotelyChanged"
     }
     
-    let userInfoChangeKeys: [UserInfoChangeKey] = [
-        .Name,
-        .AccentColor,
-        .ImageMediumData,
-        .ImageSmallProfileData,
-        .ProfileInfo,
-        .ConnectionState,
-        .TrustLevel,
-        .Teams,
-        .Handle,
-        .Availability
-    ]
+    let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
     
     var userObserver : UserObserver!
     
@@ -229,7 +220,6 @@ extension UserObserverTests {
         self.setPhoneNumber("+99-32312423423", on: user)
         uiMOC.saveOrRollback()
 
-        
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: { self.setPhoneNumber("+99-0000", on: $0) },
@@ -520,5 +510,30 @@ extension UserObserverTests {
                                                      modifier : { $0.updateAvailability(.away) },
                                                      expectedChangedField: .Availability)
     }
+    
+    func testThatItNotifiesTheObserverOfReadReceiptsEnabledChanged() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.readReceiptsEnabled = false
+        uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.readReceiptsEnabled = true },
+                                                     expectedChangedField: .ReadReceiptsEnabled)
+    }
+    
+    func testThatItNotifiesTheObserverOfReadReceiptsEnabledChangedRemotelyChanged() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.readReceiptsEnabledChangedRemotely = false
+        uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.readReceiptsEnabledChangedRemotely = true },
+                                                     expectedChangedField: .ReadReceiptsEnabledChangedRemotely)
+    }
+    
 }
 

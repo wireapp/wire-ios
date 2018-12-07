@@ -441,7 +441,7 @@ extension ZMManagedObject {
     private func fireNewUnreadMessagesNotifications(unreadMessages: [Notification.Name : Set<ZMMessage>]){
         unreadMessages.forEach{ (notificationName, messages) in
             guard messages.count > 0 else { return }
-            guard let changeInfo = ObjectChangeInfo.changeInfoforNewMessageNotification(with: notificationName, changedMessages: messages) else {
+            guard let changeInfo = ObjectChangeInfo.changeInfoForNewMessageNotification(with: notificationName, changedMessages: messages) else {
                 zmLog.warn("Did you forget to add the mapping for that?")
                 return
             }
