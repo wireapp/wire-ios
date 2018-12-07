@@ -74,6 +74,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             
             // then
             XCTAssertTrue(selfUser.readReceiptsEnabled)
+            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
     
@@ -94,6 +95,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             
             // then
             XCTAssertFalse(selfUser.readReceiptsEnabled)
+            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
     
@@ -114,6 +116,7 @@ class UserPropertyRequestStrategyTests: MessagingTestBase {
             
             // then
             XCTAssertFalse(selfUser.readReceiptsEnabled)
+            XCTAssertTrue(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
 }
@@ -139,6 +142,7 @@ extension UserPropertyRequestStrategyTests {
             // then
             XCTAssertFalse(selfUser.needsPropertiesUpdate)
             XCTAssertTrue(selfUser.readReceiptsEnabled)
+            XCTAssertFalse(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
     
@@ -161,6 +165,7 @@ extension UserPropertyRequestStrategyTests {
             // then
             XCTAssertFalse(selfUser.needsPropertiesUpdate)
             XCTAssertFalse(selfUser.readReceiptsEnabled)
+            XCTAssertFalse(selfUser.readReceiptsEnabledChangedRemotely)
         }
     }
 }
