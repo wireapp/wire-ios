@@ -84,8 +84,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nonatomic) ZMAccentColor accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;
-- (void)setReadReceiptsEnabled:(BOOL)readReceiptsEnabled synchronize:(BOOL)synchronize;
 @property (nonatomic) BOOL needsPropertiesUpdate;
+@property (nonatomic) BOOL readReceiptsEnabledChangedRemotely;
 @end
 
 

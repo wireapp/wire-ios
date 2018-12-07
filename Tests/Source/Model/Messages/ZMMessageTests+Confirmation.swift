@@ -89,12 +89,12 @@ extension ZMMessageTests_Confirmation {
         let conversation = createConversation(in: uiMOC)
         conversation.conversationType = .oneOnOne
         
-        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
-        
         // insert message which expects read confirmation
         let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
         message.genericMessage?.setExpectsReadConfirmation(true)?.data().apply(message.add)
 
+        // when
+        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         // then
         XCTAssertTrue(message.needsReadConfirmation)
     }

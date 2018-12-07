@@ -57,23 +57,23 @@ public class SnapshotCenter {
     
     func createSnapshot(for object: NSManagedObject) -> Snapshot {
         let attributes = Array(object.entity.attributesByName.keys)
-        let relationShips = object.entity.relationshipsByName
+        let relationships = object.entity.relationshipsByName
         
         let attributesDict = attributes.mapToDictionaryWithOptionalValue{object.primitiveValue(forKey: $0) as? NSObject}
-        let toManyRelationshipsDict : [String : Int] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
+        let toManyRelationshipsDict : [String : Int] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
             guard relationShipDescription.isToMany else { return nil }
             return (object.primitiveValue(forKey: key) as? Countable)?.count
         })
 
-        let toOneRelationShipsDict : [String : Bool] = relationShips.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationShipDescription) in
-            guard !relationShipDescription.isToMany else { return nil }
+        let toOneRelationshipsDict : [String : Bool] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationshipDescription) in
+            guard !relationshipDescription.isToMany else { return nil }
             return object.primitiveValue(forKey: key) != nil
         })
 
         return Snapshot(
             attributes: attributesDict,
             toManyRelationships: toManyRelationshipsDict,
-            toOneRelationships: toOneRelationShipsDict
+            toOneRelationships: toOneRelationshipsDict
         )
     }
     

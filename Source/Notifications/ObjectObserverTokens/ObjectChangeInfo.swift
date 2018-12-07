@@ -69,7 +69,7 @@ extension ObjectChangeInfo {
         }
     }
     
-    static func changeInfoforNewMessageNotification(with name: Notification.Name, changedMessages messages: Set<ZMMessage>) -> ObjectChangeInfo? {
+    static func changeInfoForNewMessageNotification(with name: Notification.Name, changedMessages messages: Set<ZMMessage>) -> ObjectChangeInfo? {
         switch name {
         case Notification.Name.NewUnreadUnsentMessage:
             return NewUnreadUnsentMessageChangeInfo(messages: Array(messages) as [ZMConversationMessage])
