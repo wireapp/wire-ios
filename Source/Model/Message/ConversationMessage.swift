@@ -61,6 +61,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// List of recipients who have read the message.
     var readReceipts: [ReadReceipt] { get }
+
+    /// Whether the message expects read confirmations.
+    var needsReadConfirmation: Bool { get }
     
     /// The textMessageData of the message which also contains potential link previews. If the message has no text, it will be nil
     var textMessageData : ZMTextMessageData? { get }
