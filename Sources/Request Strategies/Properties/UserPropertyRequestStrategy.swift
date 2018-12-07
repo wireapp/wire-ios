@@ -65,7 +65,14 @@ extension UserProperty {
         return ZMTransportRequest(getFromPath: path)
     }
     
-    enum UpdateType {
+    typealias  UpdateType = (source: UpdateSource, method: UpdateMethod)
+    
+    enum UpdateSource {
+        case slowSync
+        case notificationStream
+    }
+    
+    enum UpdateMethod {
         case set
         case delete
         
@@ -82,7 +89,7 @@ extension UserProperty {
     }
     
     func parseUpdate(for selfUser: ZMUser, updateType: UpdateType, payload value: Any?) {
-        switch (self, updateType) {
+        switch (self, updateType.method) {
         case (.readReceiptsEnabled, .set):
             let intValue: Int
             if let numberValue = value as? Int {
@@ -96,10 +103,15 @@ extension UserProperty {
                 return
             }
             
-            selfUser.setReadReceiptsEnabled(intValue > 0, synchronize: false)
-            
+            selfUser.readReceiptsEnabled = intValue > 0
+            if updateType.source == .notificationStream {
+                selfUser.readReceiptsEnabledChangedRemotely = true
+            }
         case (.readReceiptsEnabled, .delete):
-            selfUser.setReadReceiptsEnabled(false, synchronize: false)
+            selfUser.readReceiptsEnabled = false
+            if updateType.source == .notificationStream {
+                selfUser.readReceiptsEnabledChangedRemotely = true
+            }
         }
     }
     
@@ -236,7 +248,7 @@ extension UserPropertyRequestStrategy : ZMEventConsumer {
             let value = event.payload[UserPropertyRequestStrategy.UpdateEventValue]
             
             property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
-                                 updateType: UserProperty.UpdateType(eventType: event.type),
+                                 updateType: (.notificationStream, .init(eventType: event.type)),
                                  payload: value)
         }
     }
@@ -276,10 +288,14 @@ extension UserPropertyRequestStrategy: ZMSingleRequestTranscoder {
         }
         
         if response.result == .permanentError {
-            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .delete, payload: nil)
+            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
+                                 updateType: (.slowSync, .delete),
+                                 payload: nil)
         }
         else if response.result == .success, let payload = response.payload {
-            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext), updateType: .set, payload: payload)
+            property.parseUpdate(for: ZMUser.selfUser(in: managedObjectContext),
+                                 updateType: (.slowSync, .set),
+                                 payload: payload)
         }
     }
 }
