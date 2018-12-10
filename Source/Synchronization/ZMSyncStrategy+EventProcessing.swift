@@ -40,10 +40,10 @@ extension ZMSyncStrategy: ZMUpdateEventConsumer {
             let prefetchResult = syncMOC.executeFetchRequestBatchOrAssert(fetchRequest)
             
             Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
-            
-            for eventConsumer in self.eventConsumers {
-                autoreleasepool {
-                    eventConsumer.processEvents(decryptedUpdateEvents, liveEvents: true, prefetchResult: prefetchResult)
+        
+            for event in decryptedUpdateEvents {
+                for eventConsumer in self.eventConsumers {
+                    eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
             }
             
