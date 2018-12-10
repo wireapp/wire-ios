@@ -25,13 +25,6 @@
 #import "ColorScheme.h"
 #import "Wire-Swift.h"
 
-static NSSet<NSNumber *> *phoneWidths(void) {
-    return [phoneSizes() mapWithBlock:^NSNumber *(NSValue *boxedSize) {
-        return @(boxedSize.CGSizeValue.width);
-    }].set;
-}
-
-
 @interface ZMSnapshotTestCase ()
 @property (nonatomic) NSURL *documentsDirectory;
 @end
@@ -165,7 +158,7 @@ static NSSet<NSNumber *> *phoneWidths(void) {
 {
     UIView *container = [[UIView alloc] initWithFrame:view.bounds];
     container.backgroundColor = self.snapshotBackgroundColor;
-    
+
     [container addSubview:view];
     [view autoPinEdgesToSuperviewEdgesWithInsets:UIEdgeInsetsZero];
     return container;
@@ -235,14 +228,6 @@ static NSSet<NSNumber *> *phoneWidths(void) {
     }
     
     return NO;
-}
-
-- (void)verifyViewInAllPhoneWidths:(UIView *)view extraLayoutPass:(BOOL)extraLayoutPass file:(const char[])file line:(NSUInteger)line
-{
-    [self assertAmbigousLayout:view file:file line:line];
-    for (NSNumber *value in phoneWidths()) {
-        [self verifyView:view extraLayoutPass:extraLayoutPass width:value.floatValue file:file line:line];
-    }
 }
 
 - (void)verifyViewInAllTabletWidths:(UIView *)view extraLayoutPass:(BOOL)extraLayoutPass file:(const char[])file line:(NSUInteger)line
