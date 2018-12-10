@@ -326,6 +326,37 @@
     XCTAssertEqualObjects(message.textMessageData.quote, quotedMessage);
 }
 
+- (void)testThatReadExpectationIsKeptAfterEdit
+{
+    // given
+    NSString *oldText = @"Hallo";
+    NSString *newText = @"Hello";
+    NSUUID *senderID = self.selfUser.remoteIdentifier;
+    
+    self.selfUser.readReceiptsEnabled = YES;
+    
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+    conversation.conversationType = ZMConversationTypeOneOnOne;
+    
+    ZMClientMessage *message = (id) [conversation appendText:oldText mentions:@[] replyingToMessage:nil fetchLinkPreview:NO nonce:NSUUID.createUUID];
+    [message addData:[message.genericMessage setExpectsReadConfirmation:YES].data];
+    [self.uiMOC saveOrRollback];
+    
+    ZMUpdateEvent *updateEvent = [self createMessageEditUpdateEventWithOldNonce:message.nonce newNonce:[NSUUID createUUID] conversationID:conversation.remoteIdentifier senderID:senderID newText:newText];
+    NSUUID *oldNonce = message.nonce;
+    
+    // when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualObjects(message.textMessageData.messageText, newText);
+    XCTAssertNotEqualObjects(message.nonce, oldNonce);
+    XCTAssertTrue(message.needsReadConfirmation);
+}
 
 - (void)checkThatItEditsMessageForSameSender:(BOOL)sameSender shouldEdit:(BOOL)shouldEdit
 {

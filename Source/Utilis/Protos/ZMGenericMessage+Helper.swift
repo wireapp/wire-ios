@@ -146,7 +146,7 @@ public extension ZMGenericMessage {
         return builder.buildAndValidate()
     }
     
-    public func setExpectsReadConfirmation(_ value: Bool) -> ZMGenericMessage? {
+    @objc public func setExpectsReadConfirmation(_ value: Bool) -> ZMGenericMessage? {
         guard let builder = toBuilder() else { return nil }
         
         if hasEphemeral(), let content = ephemeral?.updateExpectsReadConfirmation(value) {
@@ -222,7 +222,10 @@ extension ZMText: EphemeralMessageContentType {
     public func applyEdit(from text: ZMText) -> ZMText {
         guard let builder = text.toBuilder() else { return self }
         
-        // we keep always keep the quote from the original message
+        // Transfer read receipt expectation
+        builder.setExpectsReadConfirmation(expectsReadConfirmation())
+        
+        // We always keep the quote from the original message
         if hasQuote() {
             builder.setQuote(self.quote)
         } else {
