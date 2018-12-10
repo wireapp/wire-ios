@@ -74,14 +74,16 @@ extension ZMMessage {
 }
 
 extension ZMClientMessage {
+    static let editableStates: Set<ZMDeliveryState> = Set([.sent, .delivered, .read])
+
     override var isEditableMessage : Bool {
         guard let genericMessage = genericMessage,
               let sender = sender, sender.isSelfUser
         else {
             return false
         }
-                
-        return genericMessage.hasEdited() || genericMessage.hasText() && !isEphemeral && (deliveryState == .sent || deliveryState == .delivered)
+        
+        return genericMessage.hasEdited() || genericMessage.hasText() && !isEphemeral && deliveryState.isOne(of: ZMClientMessage.editableStates)
     }
 }
 
