@@ -1981,6 +1981,26 @@
     XCTAssertEqualObjects(conversation.lastEditableMessage, message);
 }
 
+- (void)testThatItReturnsMessageIfLastMessageIsTextRead
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    
+    // when
+    ZMMessage *message = (id)[conversation appendMessageWithText:@"Test Message"];
+    message.sender = self.selfUser;
+    [message markAsSent];
+
+    ZMMessageConfirmation *confirmation = [[ZMMessageConfirmation alloc] initWithContext:self.uiMOC];
+    confirmation.type = MessageConfirmationTypeRead;
+    
+    [[message mutableSetValueForKey:@"confirmations"] addObject:confirmation];
+    
+    XCTAssertEqual(message.deliveryState, ZMDeliveryStateRead);
+    
+    // then
+    XCTAssertEqualObjects(conversation.lastEditableMessage, message);
+}
 @end
 
 @implementation ZMConversationTests (Participants)
