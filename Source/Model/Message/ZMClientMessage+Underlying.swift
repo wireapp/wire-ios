@@ -35,9 +35,10 @@ extension ZMClientMessage {
     }
     
     public override var locationMessageData: LocationMessageData? {
-        if underlyingMessage?.locationData != nil {
+        switch underlyingMessage?.content {
+        case .location(_)?:
             return self
-        } else { 
+        default:
             return nil
         }
     }

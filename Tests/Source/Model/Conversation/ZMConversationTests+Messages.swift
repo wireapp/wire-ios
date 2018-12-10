@@ -387,10 +387,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssert(fileMessage.fileMessageData!.isPass)
     }
 
-
-    func testThatWeCanInsertALocationMessage()
-    {
-        // given
+    func locationData() -> LocationData {
         let latitude = Float(48.53775)
         let longitude = Float(9.041169)
         let zoomLevel = Int32(16)
@@ -399,6 +396,18 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
                                         longitude: longitude,
                                         name: name,
                                         zoomLevel: zoomLevel)
+
+        return locationData
+    }
+    
+    func testThatWeCanInsertALocationMessage()
+    {
+        // given
+        let latitude = Float(48.53775)
+        let longitude = Float(9.041169)
+        let zoomLevel = Int32(16)
+        let name = "天津市 နေပြည်တော် Test"
+        let locationData = self.locationData()
         
         // when
         self.syncMOC.performGroupedBlockAndWait {
@@ -418,6 +427,22 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             XCTAssertEqual(locationMessageData.zoomLevel, zoomLevel)
             XCTAssertEqual(locationMessageData.name, name)
         }
+    }
+    
+    func testThatLocationMessageHasNoImage() {
+        // given
+        let locationData = self.locationData()
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.messageDestructionTimeout = .local(.fiveMinutes)
+        conversation.remoteIdentifier = UUID()
+        // when
+        let message = conversation.append(location: locationData) as! ZMClientMessage
+        
+        // then
+        XCTAssertNil(message.underlyingMessage?.imageAssetData)
+        XCTAssertNotNil(message.underlyingMessage?.locationData)
+        XCTAssertNotNil(message.expirationDate)
     }
     
     func testThatWeCanInsertAVideoMessage()
