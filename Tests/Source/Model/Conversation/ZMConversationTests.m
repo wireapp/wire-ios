@@ -933,6 +933,42 @@
     XCTAssertEqualObjects(firstMessage.serverTimestamp, serverDate);
 }
 
+- (void)testThatItUpdatesExpectsReadConfirmationWithMessageServerTimestamp_PlaintextMessage
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.hasReadReceiptsEnabled = YES;
+    ZMOTRMessage *firstMessage = (id)[conversation appendMessageWithText:@"Test Message"];
+    
+    // then
+    XCTAssertEqualObjects(conversation.lastModifiedDate, firstMessage.serverTimestamp);
+    
+    NSDate *serverDate = [firstMessage.serverTimestamp dateByAddingTimeInterval:0.2];
+    // when
+    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
+    
+    // then
+    XCTAssertTrue(firstMessage.expectsReadConfirmation);
+}
+
+- (void)testThatItDoesNotUpdatesExpectsReadConfirmationWithMessageServerTimestampIfNotNeeded_PlaintextMessage
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.hasReadReceiptsEnabled = NO;
+    ZMOTRMessage *firstMessage = (id)[conversation appendMessageWithText:@"Test Message"];
+    
+    // then
+    XCTAssertEqualObjects(conversation.lastModifiedDate, firstMessage.serverTimestamp);
+    
+    NSDate *serverDate = [firstMessage.serverTimestamp dateByAddingTimeInterval:-0.2];
+    // when
+    [firstMessage updateWithPostPayload:@{@"time": serverDate, @"data": @{@"nonce": firstMessage.nonce}, @"type": @"conversation.message-add"} updatedKeys:[NSSet set]];
+    
+    // then
+    XCTAssertFalse(firstMessage.expectsReadConfirmation);
+}
+
 - (void)testThatAppendingNewConversationSystemMessageTwiceDoesNotCreateTwoSystemMessage;
 {
     //given

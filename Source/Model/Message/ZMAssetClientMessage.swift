@@ -278,6 +278,7 @@ import Foundation
         if shouldUpdate {
             if let serverTimestamp = (payload as NSDictionary).date(forKey: "time") {
                 self.serverTimestamp = serverTimestamp
+                self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
             }
             conversation?.resortMessages(withUpdatedMessage: self)
             conversation?.updateTimestampsAfterUpdatingMessage(self)
