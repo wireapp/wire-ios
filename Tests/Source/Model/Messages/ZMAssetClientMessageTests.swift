@@ -1159,6 +1159,40 @@ extension ZMAssetClientMessageTests {
         }
     }
     
+    func testThatItDoesSetExpectsReadConfirmationWhenPostingFullAsset_MessageIsImage_HasReceiptsEnabled() {
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            self.syncConversation.hasReadReceiptsEnabled = true
+            let message = self.appendImageMessage(to: self.syncConversation)
+            let emptyDict = [String: String]()
+            let payload: [AnyHashable: Any] = ["deleted": emptyDict, "missing": emptyDict, "redundant": emptyDict, "time": Date().transportString()]
+            message.uploadState = .uploadingFullAsset
+            
+            // when
+            message.update(withPostPayload: payload, updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
+            
+            // then
+            XCTAssertTrue(message.expectsReadConfirmation)
+        }
+    }
+    
+    func testThatItDoesNotSetExpectsReadConfirmationWhenPostingFullAsset_MessageIsImage_HasReceiptsDisabled() {
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            self.syncConversation.hasReadReceiptsEnabled = false
+            let message = self.appendImageMessage(to: self.syncConversation)
+            let emptyDict = [String: String]()
+            let payload: [AnyHashable: Any] = ["deleted": emptyDict, "missing": emptyDict, "redundant": emptyDict, "time": Date().transportString()]
+            message.uploadState = .uploadingFullAsset
+            
+            // when
+            message.update(withPostPayload: payload, updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
+            
+            // then
+            XCTAssertFalse(message.expectsReadConfirmation)
+        }
+    }
+    
 }
 
 
