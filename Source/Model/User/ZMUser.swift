@@ -322,7 +322,6 @@ extension ZMUser {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .preview) else { return }
         
         localSmallProfileRemoteIdentifier = nil
-        moc.enqueueDelayedSave()
         
         NotificationInContext(name: .userDidRequestPreviewAsset,
                               context: moc.notificationContext,
@@ -333,7 +332,6 @@ extension ZMUser {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .complete) else { return }
         
         localMediumRemoteIdentifier = nil
-        moc.enqueueDelayedSave()
         
         NotificationInContext(name: .userDidRequestCompleteAsset,
                               context: moc.notificationContext,
