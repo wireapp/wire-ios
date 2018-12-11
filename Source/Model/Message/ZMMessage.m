@@ -336,7 +336,8 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     self.visibleInConversation = nil;
     self.replies = [[NSSet alloc] init];
     [self clearAllReactions];
-
+    [self clearConfirmations];
+    
     if (clearingSender) {
         self.sender = nil;
         self.senderClientID = nil;

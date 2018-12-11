@@ -280,6 +280,77 @@ extension ZMMessageTests_Confirmation {
         XCTAssertEqual(conversation.hiddenMessages.count, 0)
     }
 
+    func testThatItDeletesConfirmationsForDeletedMessage() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .group
+        conversation.hasReadReceiptsEnabled = true
+        
+        let remoteUser = ZMUser.insertNewObject(in: self.uiMOC)
+        remoteUser.remoteIdentifier = .create()
+        
+        let textMessage = insertMessage(conversation, fromSender: selfUser)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        
+        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        // when
+        textMessage.message!.hideForSelfUser()
+        uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(textMessage.message!.confirmations.count, 0)
+        XCTAssertNil(confirmation.managedObjectContext)
+    }
+    
+    func testThatItDeletesConfirmationsForDeletedForEveryoneMessage() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .group
+        conversation.hasReadReceiptsEnabled = true
+        
+        let remoteUser = ZMUser.insertNewObject(in: self.uiMOC)
+        remoteUser.remoteIdentifier = .create()
+        
+        let textMessage = insertMessage(conversation, fromSender: selfUser)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        
+        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        // when
+        textMessage.message!.deleteForEveryone()
+        uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(textMessage.message!.confirmations.count, 0)
+        XCTAssertNil(confirmation.managedObjectContext)
+    }
+    
+    func testThatItKeepsConfirmationsForObfuscatedMessage() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        conversation.remoteIdentifier = .create()
+        conversation.conversationType = .group
+        conversation.hasReadReceiptsEnabled = true
+        
+        let remoteUser = ZMUser.insertNewObject(in: self.uiMOC)
+        remoteUser.remoteIdentifier = .create()
+        
+        let textMessage = insertMessage(conversation, fromSender: selfUser)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        
+        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        // when
+        textMessage.message!.obfuscate()
+        uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        XCTAssertNotNil(confirmation.managedObjectContext)
+    }
 }
 
 // MARK: - Receiving confirmation messages
