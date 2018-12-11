@@ -32,7 +32,7 @@ extension ZMMessage {
     
     static func appendReaction(_ unicodeValue: String?, toMessage message: ZMConversationMessage) -> ZMClientMessage? {
         guard let message = message as? ZMMessage, let context = message.managedObjectContext, let messageID = message.nonce else { return nil }
-        guard message.deliveryState == ZMDeliveryState.sent || message.deliveryState == ZMDeliveryState.delivered else { return nil }
+        guard message.deliveryState.isOne(of: .sent, .delivered, .read) else { return nil }
         
         let emoji = unicodeValue ?? ""
         let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: emoji, messageID: messageID))    
