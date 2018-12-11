@@ -38,6 +38,14 @@ extension ZMClientMessage {
         switch underlyingMessage?.content {
         case .location(_)?:
             return self
+        case .ephemeral(let data)?:
+            switch data.content {
+            case .location(_)?:
+                return self
+            default:
+                return nil
+            }
+            
         default:
             return nil
         }
