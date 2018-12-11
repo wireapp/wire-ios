@@ -83,9 +83,16 @@ extension ZMMessage {
     }
 
     @objc public func clearAllReactions() {
+        let oldReactions = self.reactions
         reactions.removeAll()
         guard let moc = managedObjectContext else { return }
-        reactions.forEach(moc.delete)
+        oldReactions.forEach(moc.delete)
     }
     
+    @objc public func clearConfirmations() {
+        let oldConfirmations = self.confirmations
+        mutableSetValue(forKey: ZMMessageConfirmationKey).removeAllObjects()
+        guard let moc = managedObjectContext else { return }
+        oldConfirmations.forEach(moc.delete)
+    }
 }
