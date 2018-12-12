@@ -24,6 +24,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
+@protocol BackendEnvironmentProvider;
 @class ZMWebSocket;
 @class ZMAccessToken;
 
@@ -33,20 +34,20 @@ NS_ASSUME_NONNULL_BEGIN
 /// a new instance needs to be created.
 @interface ZMPushChannelConnection : NSObject
 
-- (instancetype)initWithURL:(NSURL *)URL
-                            consumer:(id<ZMPushChannelConsumer>)consumer
-                               queue:(id<ZMSGroupQueue>)queue
-                         accessToken:(ZMAccessToken *)accessToken
-                            clientID:(NSString *)clientID
-                     userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment
+                           consumer:(id<ZMPushChannelConsumer>)consumer
+                              queue:(id<ZMSGroupQueue>)queue
+                        accessToken:(ZMAccessToken *)accessToken
+                           clientID:(NSString *)clientID
+                    userAgentString:(NSString *)userAgentString;
 
-- (instancetype)initWithURL:(NSURL *)URL
-                            consumer:(id<ZMPushChannelConsumer>)consumer
-                               queue:(id<ZMSGroupQueue>)queue
-                           webSocket:(nullable ZMWebSocket *)webSocket
-                         accessToken:(ZMAccessToken *)accessToken
-                            clientID:(nullable NSString *)clientID
-                     userAgentString:(NSString *)userAgentString NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment
+                           consumer:(id<ZMPushChannelConsumer>)consumer
+                              queue:(id<ZMSGroupQueue>)queue
+                          webSocket:(nullable ZMWebSocket *)webSocket
+                        accessToken:(ZMAccessToken *)accessToken
+                           clientID:(nullable NSString *)clientID
+                    userAgentString:(NSString *)userAgentString NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readonly, weak) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic, readonly) BOOL isOpen;

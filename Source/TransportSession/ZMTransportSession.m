@@ -61,6 +61,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (atomic) BOOL firstRequestFired;
 @property (nonatomic) NSURL *baseURL;
 @property (nonatomic) NSURL *websocketURL;
+@property (nonatomic) id<BackendEnvironmentProvider> environment;
 @property (nonatomic) NSOperationQueue *workQueue;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) BOOL tornDown;
@@ -98,12 +99,11 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithBaseURL:nil
-                    websocketURL:nil
-                   cookieStorage:nil
-                    reachability:nil
-              initialAccessToken:nil
-      applicationGroupIdentifier:nil];
+    return [self initWithEnvironment:nil
+                       cookieStorage:nil
+                        reachability:nil
+                  initialAccessToken:nil
+          applicationGroupIdentifier:nil];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -166,12 +166,11 @@ static NSInteger const DefaultMaximumRequests = 6;
     return [NSString stringWithFormat:@"%@-%@", prefix, userIdentifier.transportString];
 }
 
-- (instancetype)initWithBaseURL:(NSURL *)baseURL
-                   websocketURL:(NSURL *)websocketURL
-                  cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                   reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-             initialAccessToken:(ZMAccessToken *)initialAccessToken
-     applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
+- (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
+                      cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                       reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
+                 initialAccessToken:(ZMAccessToken *)initialAccessToken
+         applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
 {
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
@@ -199,8 +198,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                              reachability:reachability
                                     queue:queue
                                     group:group
-                                  baseURL:baseURL
-                             websocketURL:websocketURL
+                             environment:environment
                             cookieStorage:cookieStorage
                        initialAccessToken:initialAccessToken];
 }
@@ -210,8 +208,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                             reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
-                                 baseURL:(NSURL *)baseURL
-                            websocketURL:(NSURL *)websocketURL
+                             environment:(id<BackendEnvironmentProvider>)environment
                            cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                       initialAccessToken:(ZMAccessToken *)initialAccessToken
 {
@@ -220,8 +217,7 @@ static NSInteger const DefaultMaximumRequests = 6;
                              reachability:reachability
                                     queue:queue
                                     group:group
-                                  baseURL:baseURL
-                             websocketURL:websocketURL
+                             environment:environment
                          pushChannelClass:nil
                             cookieStorage:cookieStorage
                        initialAccessToken:initialAccessToken];
@@ -233,16 +229,16 @@ static NSInteger const DefaultMaximumRequests = 6;
                             reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
-                                 baseURL:(NSURL *)baseURL
-                            websocketURL:(NSURL *)websocketURL
+                             environment:(id<BackendEnvironmentProvider>)environment
                         pushChannelClass:(Class)pushChannelClass
                            cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                       initialAccessToken:(ZMAccessToken *)initialAccessToken
 {
     self = [super init];
     if (self) {
-        self.baseURL = baseURL;
-        self.websocketURL = websocketURL;
+        self.environment = environment;
+        self.baseURL = environment.backendURL;
+        self.websocketURL = environment.backendWSURL;
         self.numberOfRequestsInProgress = [[ZMAtomicInteger alloc] initWithInteger:0];
         
         self.workQueue = queue;
@@ -267,16 +263,14 @@ static NSInteger const DefaultMaximumRequests = 6;
         if (pushChannelClass == nil) {
             pushChannelClass = ZMTransportPushChannel.class;
         }
-        self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] URL:self.websocketURL];
-        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:baseURL
+        self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] environment:environment];
+        self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
                                                                   cookieStorage:self.cookieStorage
                                                                        delegate:self
                                                                           queue:queue
                                                                           group:group
                                                                         backoff:nil
-                                                             initialAccessToken:initialAccessToken
-
-                                   ];
+                                                             initialAccessToken:initialAccessToken];
         ZM_WEAK(self);
         self.requestLoopDetection = [[RequestLoopDetection alloc] initWithTriggerCallback:^(NSString * _Nonnull path) {
             ZM_STRONG(self);

@@ -149,6 +149,7 @@
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F118CBBF1F432F25004DCF96 /* ZMTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */; };
 		F1A522F62040264D009414E7 /* ZMUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */; };
+		F1D1280221C020470090045E /* MockEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D1280121C020470090045E /* MockEnvironment.swift */; };
 		F91EAAC81D8860380010ACBE /* Collections+ZMSafeTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */; };
 		F9331C671CB3D47E00139ECC /* ZMUpdateEventTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9331C661CB3D47E00139ECC /* ZMUpdateEventTests.m */; };
 		F9C4317E1CD7ADF300A8542F /* ZMKeychainTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C4317D1CD7ADF300A8542F /* ZMKeychainTests.m */; };
@@ -369,6 +370,7 @@
 		EF1A09A51FF6BEE300F89634 /* testing.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = testing.modulemap; sourceTree = "<group>"; };
 		F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTransportSessionTests.swift; sourceTree = "<group>"; };
 		F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEvent.swift; sourceTree = "<group>"; };
+		F1D1280121C020470090045E /* MockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEnvironment.swift; sourceTree = "<group>"; };
 		F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Collections+ZMSafeTypes.swift"; sourceTree = "<group>"; };
 		F9331C661CB3D47E00139ECC /* ZMUpdateEventTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpdateEventTests.m; sourceTree = "<group>"; };
 		F9C4317D1CD7ADF300A8542F /* ZMKeychainTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMKeychainTests.m; sourceTree = "<group>"; };
@@ -789,6 +791,7 @@
 			children = (
 				5E2C354821A5BE7B0034F1EE /* ZMMockURLSession.swift */,
 				5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */,
+				F1D1280121C020470090045E /* MockEnvironment.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1049,6 +1052,7 @@
 				5499FFCA1B31C66D00835C8B /* ZMPushChannelConnection.m in Sources */,
 				54CA15BD1B32F2C1008D3787 /* NSObject+ZMTransportEncoding.m in Sources */,
 				54CA15AD1B32F2C1008D3787 /* ZMExponentialBackoff.m in Sources */,
+				F1D1280221C020470090045E /* MockEnvironment.swift in Sources */,
 				8756C44A2178C97A00627F1F /* BackendEnvironment.swift in Sources */,
 				54B4D9E11E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift in Sources */,
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,

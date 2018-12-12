@@ -23,7 +23,7 @@
 
 #import "ZMPushChannelConnection+WebSocket.h"
 #import "ZMAccessToken.h"
-
+#import "WireTransport_ios_tests-Swift.h"
 
 
 @interface ZMPushChannelConnectionTests : ZMTBaseTest <ZMPushChannelConsumer>
@@ -35,6 +35,7 @@
 @property (nonatomic) id webSocketMock;
 @property (nonatomic) ZMAccessToken *accessToken;
 @property (nonatomic) NSString *clientID;
+@property (nonatomic) MockEnvironment *environment;
 
 @end
 
@@ -75,9 +76,11 @@
     self.webSocketMock = [OCMockObject niceMockForClass:[ZMWebSocket class]];
     self.accessToken = [[ZMAccessToken alloc] initWithToken:@"ffsdfsdf" type:@"TATA" expiresInSeconds:1000000];
     self.clientID = @"12do34l90as23a";
+    self.environment = [[MockEnvironment alloc] init];
+    self.environment.backendWSURL = [NSURL URLWithString:@"127.0.0.1"];
     
     [self verifyMockLater:self.webSocketMock];
-    self.sut = [[ZMPushChannelConnection alloc] initWithURL:[NSURL URLWithString:@"127.0.0.1"]
+    self.sut = [[ZMPushChannelConnection alloc] initWithEnvironment:self.environment
                                                    consumer:self
                                                       queue:self.fakeSyncContext
                                                   webSocket:self.webSocketMock
@@ -190,8 +193,9 @@
     [self.sut close];
     self.sut = nil;
     WaitForAllGroupsToBeEmpty(0.5);
+    NSURL *baseURL = self.environment.backendWSURL;
     
-    NSURL *expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"https://some.funcky.socket.example.com/?client=%@", self.clientID]];
+    NSURL *expectedURL = [NSURL URLWithString:[NSString stringWithFormat:@"%@/await?client=%@", baseURL.absoluteString, self.clientID]];
     NSDictionary *expectedHeaders = self.accessToken.httpHeaders;
     id webSocketMock = [OCMockObject niceMockForClass:ZMWebSocket.class];
     [[[[webSocketMock stub] classMethod] andReturn:webSocketMock] alloc];
@@ -200,7 +204,7 @@
     // when
     id userAgent = nil;
     
-    self.sut = [[ZMPushChannelConnection alloc] initWithURL:expectedURL
+    self.sut = [[ZMPushChannelConnection alloc] initWithEnvironment:self.environment
                                                    consumer:self
                                                       queue:self.fakeSyncContext
                                                 accessToken:self.accessToken
