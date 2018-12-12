@@ -266,8 +266,7 @@ public class SharingSession {
         let reachability = ZMReachability(serverNames: serverNames, group: reachabilityGroup)
         
         let transportSession =  ZMTransportSession(
-            baseURL: environment.backendURL,
-            websocketURL: environment.backendWSURL,
+            environment: environment,
             cookieStorage: cookieStorage,
             reachability: reachability,
             initialAccessToken: ZMAccessToken(),
