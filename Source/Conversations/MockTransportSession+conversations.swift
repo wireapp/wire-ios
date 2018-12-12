@@ -36,6 +36,9 @@ extension MockTransportSession {
         guard let receiptMode = payload["receipt_mode"] as? Int else {
             return ZMTransportResponse(payload: nil, httpStatus: 400, transportSessionError: nil)
         }
+        guard receiptMode != conversation.receiptMode?.intValue else {
+            return ZMTransportResponse(payload: nil, httpStatus: 204, transportSessionError: nil)
+        }
         
         conversation.receiptMode = NSNumber(value: receiptMode)
         
