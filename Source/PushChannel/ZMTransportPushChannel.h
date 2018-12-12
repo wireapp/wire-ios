@@ -26,6 +26,7 @@
 @protocol ZMPushChannelConsumer;
 @protocol ZMSGroupQueue;
 @protocol ZMReachabilityObserver;
+@protocol BackendEnvironmentProvider;
 
 /// This class is responsible for opening and closing the push channel connection to the backend.
 @interface ZMTransportPushChannel : NSObject <ZMReachabilityObserver, ZMPushChannel>
@@ -34,8 +35,8 @@
 @property (nonatomic) ZMAccessToken *accessToken;
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL pushChannelClass:(Class)pushChannelClass NS_DESIGNATED_INITIALIZER;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment pushChannelClass:(Class)pushChannelClass NS_DESIGNATED_INITIALIZER;
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 - (void)closeAndRemoveConsumer;

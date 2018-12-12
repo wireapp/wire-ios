@@ -25,6 +25,7 @@
 #import "ZMAccessToken.h"
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
+#import <WireTransport/WireTransport-Swift.h>
 
 static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
@@ -48,15 +49,15 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithURL:nil consumer:nil queue:nil accessToken:nil clientID:nil userAgentString:nil];
+    return [self initWithEnvironment:nil consumer:nil queue:nil accessToken:nil clientID:nil userAgentString:nil];
 }
 
-- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 {
-    return [self initWithURL:URL consumer:consumer queue:queue webSocket:nil accessToken:accessToken clientID:clientID userAgentString:userAgentString];
+    return [self initWithEnvironment:environment consumer:consumer queue:queue webSocket:nil accessToken:accessToken clientID:clientID userAgentString:userAgentString];
 }
 
-- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 {
     VerifyReturnNil(consumer != nil);
     VerifyReturnNil(queue != nil);
@@ -66,7 +67,8 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         self.consumerQueue = queue;
         self.webSocketQueue = dispatch_queue_create("ZMPushChannel.websocket", 0);
         self.webSocketGroup = queue.dispatchGroup;
-        
+
+        NSURL *URL = [environment.backendWSURL URLByAppendingPathComponent:@"/await"];
         if (URL != nil && clientID != nil) {
             NSURLComponents *components = [NSURLComponents componentsWithURL:URL resolvingAgainstBaseURL:NO];
             components.queryItems = @[[NSURLQueryItem queryItemWithName:@"client" value:clientID]];

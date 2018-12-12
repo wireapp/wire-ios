@@ -33,7 +33,7 @@
 
 @interface FakePushChannelConnection : NSObject
 
-- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 
 @property (nonatomic) NSURL *URL;
 @property (nonatomic, weak) id<ZMSGroupQueue> queue;
@@ -61,7 +61,6 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 @interface ZMTransportPushChannelTests : ZMTBaseTest
 
 @property (nonatomic, copy) NSString *userAgentString;
-@property (nonatomic) NSURL *pushChannelURL;
 @property (nonatomic) ZMAccessToken *accessToken;
 @property (nonatomic) NSString *clientID;
 
@@ -70,6 +69,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 @property (nonatomic) ZMTransportPushChannel<ZMPushChannelConsumer> *sut;
 @property (nonatomic) FakeReachability* reachability;
 @property (nonatomic) FakeGroupQueue *fakeGroup;
+@property (nonatomic) MockEnvironment *environment;
 
 @end
 
@@ -84,7 +84,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     self.userAgentString = @"pushChannel/1234";
     self.clientID = @"kasd8923jas0p";
     self.accessToken = [OCMockObject niceMockForClass:ZMAccessToken.class];
-    self.pushChannelURL = [NSURL URLWithString:@"https://pushchannel.example.com/foo"];
+    self.environment = [[MockEnvironment alloc] init];
     self.reachability = [[FakeReachability alloc] init];
     self.reachability.mayBeReachable = YES;
     self.fakeGroup = [[FakeGroupQueue alloc] init];
@@ -92,7 +92,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     self.scheduler = [OCMockObject niceMockForClass:ZMTransportRequestScheduler.class];
     [[[self.scheduler stub] andCall:@selector(schedulerPerformGroupedBlock:) onObject:self] performGroupedBlock:OCMOCK_ANY];
     [self verifyMockLater:self.scheduler];
-    self.sut = (id) [[ZMTransportPushChannel alloc] initWithScheduler:self.scheduler userAgentString:self.userAgentString URL:self.pushChannelURL pushChannelClass:FakePushChannelConnection.class];
+    self.sut = (id) [[ZMTransportPushChannel alloc] initWithScheduler:self.scheduler userAgentString:self.userAgentString environment:self.environment pushChannelClass:FakePushChannelConnection.class];
     self.sut.keepOpen = YES;
 }
 
@@ -103,6 +103,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     self.sut = nil;
     self.scheduler = nil;
     self.fakeGroup = nil;
+    self.environment = nil;
     [super tearDown];
 }
 
@@ -177,8 +178,7 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
     // then
     XCTAssertNotNil(currentFakePushChannelConnection);
     XCTAssertEqualObjects(currentFakePushChannelConnection.userAgentString, self.userAgentString);
-    NSURL *pushChannelURL = [self.pushChannelURL URLByAppendingPathComponent:@"/await"];
-    XCTAssertEqualObjects(currentFakePushChannelConnection.URL, pushChannelURL);
+    XCTAssertEqualObjects(currentFakePushChannelConnection.URL, self.environment.backendWSURL);
     XCTAssertEqualObjects(currentFakePushChannelConnection.accessToken, self.accessToken);
     XCTAssertEqualObjects(currentFakePushChannelConnection.clientID, self.clientID);
     XCTAssertEqual(currentFakePushChannelConnection.consumer, self.sut);
@@ -657,11 +657,11 @@ static FakePushChannelConnection *currentFakePushChannelConnection;
 
 @implementation FakePushChannelConnection
 
-- (instancetype)initWithURL:(NSURL *)URL consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 {
     self = [super init];
     if (self) {
-        self.URL = URL;
+        self.URL = environment.backendWSURL;
         self.consumer = consumer;
         self.queue = queue;
         self.accessToken = accessToken;

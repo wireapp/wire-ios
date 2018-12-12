@@ -49,6 +49,7 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
     var cookieStorage: ZMPersistentCookieStorage!
     var reachability: FakeReachability!
     var sut: ZMTransportSession!
+    var environment: MockEnvironment!
     
     override func setUp() {
         super.setUp()
@@ -59,7 +60,8 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
         cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier)
         reachability = FakeReachability()
-        sut = ZMTransportSession(baseURL: baseURL, websocketURL: baseURL, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier)
+        environment = MockEnvironment()
+        sut = ZMTransportSession(environment: environment, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier)
     }
     
     override func tearDown() {

@@ -39,8 +39,7 @@
                             reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
                                    group:(ZMSDispatchGroup *)group
-                                 baseURL:(NSURL *)baseURL
-                            websocketURL:(NSURL *)websocketURL
+                             environment:(id<BackendEnvironmentProvider>)environment
                         pushChannelClass:(Class)pushChannelClass
                            cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                       initialAccessToken:(ZMAccessToken *)initialAccessToken NS_DESIGNATED_INITIALIZER;

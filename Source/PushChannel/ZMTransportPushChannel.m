@@ -24,6 +24,7 @@
 #import "ZMTransportSession+internal.h"
 #import "ZMPushChannelConnection.h"
 #import "ZMTLogging.h"
+#import <WireTransport/WireTransport-Swift.h>
 
 #include <stdatomic.h>
 
@@ -33,7 +34,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 @property (nonatomic) ZMTransportRequestScheduler *scheduler;
 @property (nonatomic) Class pushChannelClass;
-@property (nonatomic) NSURL *url;
+@property (nonatomic) id <BackendEnvironmentProvider> environment;
 @property (nonatomic) NSString *userAgentString;
 @property (nonatomic, weak) id<ZMPushChannelConsumer> consumer;
 @property (nonatomic, weak) id<ZMSGroupQueue> consumerQueue;
@@ -87,17 +88,17 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 ZM_EMPTY_ASSERTING_INIT();
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment;
 {
-    return [self initWithScheduler:scheduler userAgentString:userAgentString URL:URL pushChannelClass:nil];
+    return [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment pushChannelClass:nil];
 }
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL pushChannelClass:(Class)pushChannelClass;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment pushChannelClass:(Class)pushChannelClass;
 {
     self = [super init];
     if (self) {
         self.scheduler = scheduler;
-        self.url = [URL URLByAppendingPathComponent:@"/await"];
+        self.environment = environment;
         self.userAgentString = userAgentString;
         self.pushChannelClass = pushChannelClass ?: ZMPushChannelConnection.class;
     }
@@ -161,7 +162,7 @@ ZM_EMPTY_ASSERTING_INIT();
 {
     if (!self.pushChannel.isOpen && self.shouldBeOpen) {
         ZMLogInfo(@"Opening push channel");
-        self.pushChannel = [[self.pushChannelClass alloc] initWithURL:self.url consumer:self queue:self.scheduler accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
+        self.pushChannel = [[self.pushChannelClass alloc] initWithEnvironment:self.environment consumer:self queue:self.scheduler accessToken:self.accessToken clientID:self.clientID userAgentString:self.userAgentString];
     }
 }
 

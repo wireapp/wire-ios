@@ -208,7 +208,7 @@ static NSString *JSONContentType = @"application/json";
 
 @interface FakePushChannel : NSObject <ZMPushChannel>
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id<BackendEnvironmentProvider>)environment;
 
 - (void)setPushChannelConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
@@ -239,13 +239,13 @@ static FakePushChannel *currentFakePushChannel;
 
 @implementation FakePushChannel
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString URL:(NSURL *)URL;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id<BackendEnvironmentProvider>)environment;
 {
     self = [super init];
     if (self) {
         self.scheduler = scheduler;
         self.userAgentString = userAgentString;
-        self.URL = URL;
+        self.URL = environment.backendWSURL;
     }
     currentFakePushChannel = self;
     return self;
@@ -323,8 +323,6 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) ZMURLSession *URLSession;
 @property (nonatomic) id dataTask;
 @property (nonatomic) ZMTransportSession *sut;
-@property (nonatomic) NSURL *baseURL;
-@property (nonatomic) NSURL *webSocketURL;
 @property (nonatomic) NSString *dummyPath;
 @property (nonatomic) NSDictionary *dummyTokenPayload;
 @property (nonatomic) NSOperationQueue *queue;
@@ -338,6 +336,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) MockBackgroundActivityManager *activityManager;
+@property (nonatomic) MockEnvironment *environment;
 
 @end
 
@@ -399,9 +398,10 @@ static XCTestCase *currentTestCase;
     [[(id)self.URLSessionSwitch stub] tearDown];
     [self verifyMockLater:self.URLSessionSwitch];
     
-    self.baseURL = [NSURL URLWithString:@"https://base.example.com"];
-    self.webSocketURL = [NSURL URLWithString:@"https://websocket.example.com"];
-    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.baseURL.host userIdentifier:self.userIdentifier];
+    self.environment = [[MockEnvironment alloc] init];
+    self.environment.backendURL = [NSURL URLWithString:@"https://base.example.com"];
+    self.environment.backendWSURL = [NSURL URLWithString:@"https://websocket.example.com"];
+    self.cookieStorage = [ZMPersistentCookieStorage storageForServerName:self.environment.backendURL.host userIdentifier:self.userIdentifier];
     self.reachability = [[FakeReachability alloc] init];
 
     self.activityManager = [[MockBackgroundActivityManager alloc] init];
@@ -414,8 +414,7 @@ static XCTestCase *currentTestCase;
                 reachability:self.reachability
                 queue:self.queue
                 group:self.dispatchGroup
-                baseURL:self.baseURL
-                websocketURL:self.webSocketURL
+                environment:self.environment
                 pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil];
@@ -446,8 +445,7 @@ static XCTestCase *currentTestCase;
     [self.sut tearDown];
 
     self.sut = nil;
-    self.baseURL = nil;
-    self.webSocketURL = nil;
+    self.environment = nil;
     self.dummyPath = nil;
     self.dummyTokenPayload = nil;
     self.queue = nil;
@@ -547,6 +545,8 @@ static XCTestCase *currentTestCase;
     // given
     NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
     NSURL *url2 = [NSURL URLWithString:@"https://test2.example.com"];
+    self.environment.backendURL = url;
+    self.environment.backendWSURL = url2;
     [[(id) self.URLSessionSwitch stub] tearDown];
     [self.sut tearDown];
     self.sut = [[ZMTransportSession alloc]
@@ -555,8 +555,7 @@ static XCTestCase *currentTestCase;
                 reachability:self.reachability
                 queue:self.queue
                 group:self.dispatchGroup
-                baseURL:url
-                websocketURL:url2
+                environment:self.environment
                 pushChannelClass:nil
                 cookieStorage:self.cookieStorage
                 initialAccessToken:nil];
@@ -761,6 +760,8 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
+    self.environment.backendURL = url;
+    self.environment.backendWSURL = url;
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
@@ -772,8 +773,7 @@ static XCTestCase *currentTestCase;
                                reachability:self.reachability
                                queue:self.queue
                                group:self.dispatchGroup
-                               baseURL:url
-                               websocketURL:url
+                               environment:self.environment
                                pushChannelClass:nil
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil];
@@ -800,6 +800,8 @@ static XCTestCase *currentTestCase;
 {
     // given
     NSURL *url = [NSURL URLWithString:@"https://test1.example.com"];
+    self.environment.backendURL = url;
+    self.environment.backendWSURL = url;
     ZMURLSession *foregroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *backgroundSession = [OCMockObject niceMockForClass:ZMURLSession.class];
     ZMURLSession *voipSession = [OCMockObject niceMockForClass:ZMURLSession.class];
@@ -811,8 +813,7 @@ static XCTestCase *currentTestCase;
                                reachability:self.reachability
                                queue:self.queue
                                group:self.dispatchGroup
-                               baseURL:url
-                               websocketURL:url
+                               environment:self.environment
                                pushChannelClass:nil
                                cookieStorage:self.cookieStorage
                                initialAccessToken:nil];
@@ -1656,7 +1657,7 @@ static XCTestCase *currentTestCase;
 - (void)testThatItCreatesAPushChannelInstance;
 {
     XCTAssertNotNil(currentFakePushChannel);
-    XCTAssertEqualObjects(currentFakePushChannel.URL, self.webSocketURL);
+    XCTAssertEqualObjects(currentFakePushChannel.URL, self.environment.backendWSURL);
     XCTAssertEqualObjects(currentFakePushChannel.userAgentString, [ZMUserAgent userAgentValue]);
     XCTAssertEqualObjects(currentFakePushChannel.scheduler, self.scheduler);
 }
