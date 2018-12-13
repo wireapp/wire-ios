@@ -259,7 +259,7 @@ extension ZMMessage {
     
     
     @objc public var canBeDeleted : Bool {
-        return deliveryState == .delivered || deliveryState == .sent || deliveryState == .failedToSend
+        return deliveryState == .delivered || deliveryState == .sent || deliveryState == .failedToSend || deliveryState == .read
     }
     
     @objc public var hasBeenDeleted: Bool {
