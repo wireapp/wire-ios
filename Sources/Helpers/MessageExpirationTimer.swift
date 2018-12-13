@@ -41,8 +41,7 @@ public class MessageExpirationTimer: ZMMessageTimer, ZMContextChangeTracker {
     }
     
     private func timerFired(for message: ZMMessage) {
-        guard message.deliveryState != .delivered &&
-            message.deliveryState != .sent else {
+        guard message.deliveryState != .delivered && message.deliveryState != .sent && message.deliveryState != .read else {
                 return
         }
         message.expire()
