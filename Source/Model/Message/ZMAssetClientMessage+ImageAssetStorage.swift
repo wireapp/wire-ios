@@ -48,10 +48,6 @@ extension ZMAssetClientMessage: ImageAssetStorage {
                                                                       encrypted: false)
     }
 
-    @objc public func isPublic(for format: ZMImageFormat) -> Bool {
-        return false
-    }
-
     @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
@@ -157,24 +153,6 @@ extension ZMAssetClientMessage: ImageAssetStorage {
         return self.asset?.requiredImageFormats ?? NSOrderedSet()
     }
     
-    @objc public func isInline(for format: ZMImageFormat) -> Bool {
-        switch format {
-        case .preview:
-            return true
-        default:
-            return false
-        }
-    }
-
-    @objc public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
-        switch format {
-        case .medium:
-            return true
-        default:
-            return false
-        }
-    }
-
     @objc public func processingDidFinish() {
         guard let moc = self.managedObjectContext else { return }
         moc.zm_fileAssetCache.deleteAssetData(self,

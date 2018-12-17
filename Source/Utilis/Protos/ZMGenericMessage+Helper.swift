@@ -511,19 +511,6 @@ public extension ZMNewOtrMessage {
     
 }
 
-public extension ZMOtrAssetMeta {
-    
-    @objc public static func otrAssetMeta(withSender sender: UserClient, nativePush: Bool, inline: Bool, recipients: [ZMUserEntry]) -> ZMOtrAssetMeta {
-        let builder = ZMOtrAssetMeta.builder()!
-        builder.setNativePush(nativePush)
-        builder.setIsInline(inline)
-        builder.setSender(sender.clientId)
-        builder.setRecipientsArray(recipients)
-        return builder.build()
-    }
-    
-}
-
 @objc
 extension ZMAsset: EphemeralMessageContentType {
     
