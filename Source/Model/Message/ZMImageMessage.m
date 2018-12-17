@@ -213,45 +213,6 @@
     return nil;
 }
 
-- (BOOL)isInlineForFormat:(ZMImageFormat)format
-{
-    switch (format) {
-        case ZMImageFormatPreview:
-            return YES;
-            
-        case ZMImageFormatMedium:
-            return NO;
-            
-        case ZMImageFormatOriginal:
-        case ZMImageFormatProfile:
-        case ZMImageFormatInvalid:
-            RequireString(NO, "Invalid image format in ZMMessage: %ld", (long)format);
-            return NO;
-    }
-}
-
-- (BOOL)isPublicForFormat:(ZMImageFormat __unused)format
-{
-    return NO;
-}
-
-- (BOOL)isUsingNativePushForFormat:(ZMImageFormat)format
-{
-    switch (format) {
-        case ZMImageFormatMedium:
-            return YES;
-            
-        case ZMImageFormatPreview:
-        case ZMImageFormatProfile:
-            return NO;
-            
-        case ZMImageFormatOriginal:
-        case ZMImageFormatInvalid:
-            RequireString(NO, "Invalid image format: %ld", (long)format);
-            return NO;
-    }
-}
-
 - (void)setImageData:(NSData *)imageData forFormat:(ZMImageFormat)format properties:(ZMIImageProperties * __unused)properties;
 {
     if (imageData == nil) {

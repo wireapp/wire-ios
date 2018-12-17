@@ -139,6 +139,12 @@ extension ZMGenericMessage {
                 messageData = self.encryptedMessageDataWithExternalDataBlob(recipients, context: context)
             }
         }
+        
+        // reset all failed sessions
+        for recipient in recipients {
+            recipient.clients.forEach({ $0.failedToEstablishSession = false })
+        }
+        
         return messageData
     }
 
@@ -218,22 +224,6 @@ extension ZMGenericMessage {
         return (recipientUsers, strategy)
     }
     
-    
-    /// Returns a message with recipients and a strategy to handle missing clients
-    fileprivate func otrMessage(_ selfClient: UserClient,
-                            conversation: ZMConversation,
-                            externalData: Data?,
-                            sessionDirectory: EncryptionSessionsDirectory) -> (message: ZMNewOtrMessage, strategy: MissingClientsStrategy) {
-
-        let (recipientUsers, strategy) = recipientUsersForMessage(in: conversation, selfUser: selfClient.user!)
-        let recipients = self.recipientsWithEncryptedData(selfClient, recipients: recipientUsers, sessionDirectory: sessionDirectory)
-
-        let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
-        let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: recipients, blob: externalData)
-        
-        return (message: message, strategy: strategy)
-    }
-    
     /// Returns a message with recipients
     fileprivate func otrMessage(_ selfClient: UserClient,
                                 recipients: Set<ZMUser>,
@@ -260,18 +250,16 @@ extension ZMGenericMessage {
                         return nil
                     }
                     
-                    let corruptedClient = client.failedToEstablishSession
-                    client.failedToEstablishSession = false
-                    
                     let hasSessionWithClient = sessionDirectory.hasSession(for: clientRemoteIdentifier)
+                    
                     if !hasSessionWithClient {
-                        // if the session is corrupted, will send a special payload
-                        if corruptedClient {
+                        // if the session is corrupted, we will send a special payload
+                        if client.failedToEstablishSession {
                             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
                             return ZMClientEntry.entry(withClient: client, data: data)
                         }
                         else {
-                            // does not have session, will need to fetch prekey and create client
+                            // if we do not have a session, we need to fetch a prekey and create a new session
                             return nil
                         }
                     }

@@ -626,39 +626,7 @@ extension ZMAssetClientMessageTests {
         }
         
     }
-    
-    func testThatItAddsAnUploadedGenericMessageToTheDataSet() {
-        self.syncMOC.performAndWait {
-            // given
-            let selfClient = UserClient.insertNewObject(in: self.syncMOC)
-            selfClient.remoteIdentifier = self.name
-            selfClient.user = .selfUser(in: self.syncMOC)
-            self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: "PersistedClientId")
-            XCTAssertNotNil(ZMUser.selfUser(in: self.syncMOC).selfClient())
-            
-            let user2 = ZMUser.insertNewObject(in:self.syncMOC)
-            user2.remoteIdentifier = UUID.create()
-            let user2Client = UserClient.insertNewObject(in: self.syncMOC)
-            user2Client.remoteIdentifier = UUID.create().transportString()
-            
-            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
-            conversation.conversationType = .group
-            conversation.internalAddParticipants(Set([user2]))
-            
-            let sut = appendFileMessage(to: syncConversation)!
-            
-            // when
-            sut.add(ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: sut.nonce!))
-            
-            // then
-            XCTAssertNotNil(sut)
-            let encryptedUpstreamMetaData = sut.encryptedMessagePayloadForDataType(.fullAsset)
-            XCTAssertNotNil(encryptedUpstreamMetaData)
-            self.syncMOC.setPersistentStoreMetadata(nil as String?, key: "PersistedClientId")
-        }
-    }
-
-    
+        
     func testThatItSetsTheCorrectStateWhen_RequestFileDownload_IsBeingCalled() {
         // given
         let sut = ZMAssetClientMessage(nonce: .create(), managedObjectContext: uiMOC)
@@ -1274,19 +1242,6 @@ extension ZMAssetClientMessageTests {
         XCTAssertNil(sut.imageAssetStorage.originalImageData())
     }
 
-    func testThatIsPublicForFormatReturnsNoForAllFormats() {
-        // given
-        let formats = [ZMImageFormat.medium, ZMImageFormat.invalid, ZMImageFormat.original, ZMImageFormat.preview, ZMImageFormat.profile]
-        
-        // when
-        let sut = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
-
-        // then
-        for format in formats {
-            XCTAssertFalse(sut.imageAssetStorage.isPublic(for: format))
-        }
-    }
-
     func testThatEncryptedDataForFormatReturnsValuesFromEncryptedFile() {
         // given
         let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: true, storeProcessed: true)
@@ -1390,32 +1345,6 @@ extension ZMAssetClientMessageTests {
         // then
         XCTAssertEqual(message.imageAssetStorage.requiredImageFormats(), expected);
 
-    }
-    
-    func testThatItReturnsTheRightValueForInlineForFormat() {
-        
-        // given
-        let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
-
-        // then
-        XCTAssertFalse(message.imageAssetStorage.isInline(for:.medium));
-        XCTAssertTrue(message.imageAssetStorage.isInline(for: .preview));
-        XCTAssertFalse(message.imageAssetStorage.isInline(for: .original));
-        XCTAssertFalse(message.imageAssetStorage.isInline(for: .profile));
-        XCTAssertFalse(message.imageAssetStorage.isInline(for:.invalid));
-    }
-
-    func testThatItReturnsTheRightValueForUsingNativePushForFormat() {
-        
-        // given
-        let message = self.createAssetClientMessageWithSampleImageAndEncryptionKeys(false, storeEncrypted: false, storeProcessed: false)
-        
-        // then
-        XCTAssertTrue(message.imageAssetStorage.isUsingNativePush(for: .medium));
-        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .preview));
-        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .original));
-        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .profile));
-        XCTAssertFalse(message.imageAssetStorage.isUsingNativePush(for: .invalid));
     }
     
     func testThatItClearsOnlyTheOriginalImageFormat() {

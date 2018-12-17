@@ -120,19 +120,7 @@ extension ZMClientMessage: ZMImageOwner {
         guard let originalImageData = self.originalImageData() else { return CGSize.zero }
         return ZMImagePreprocessor.sizeOfPrerotatedImage(with: originalImageData)
     }
-    
-    @objc public func isInline(for format: ZMImageFormat) -> Bool {
-        return false
-    }
-    
-    @objc public func isPublic(for format: ZMImageFormat) -> Bool {
-        return false
-    }
-    
-    @objc public func isUsingNativePush(for format: ZMImageFormat) -> Bool {
-        return false
-    }
-    
+        
     @objc public func processingDidFinish() {
         self.linkPreviewState = .processed
         guard let moc = self.managedObjectContext else { return }
