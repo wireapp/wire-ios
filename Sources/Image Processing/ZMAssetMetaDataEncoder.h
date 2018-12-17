@@ -24,17 +24,6 @@
 
 @interface ZMAssetMetaDataEncoder : NSObject
 
-+ ( NSDictionary * __nonnull )contentDispositionForImageOwner:(id<ZMImageOwner> __nonnull)imageOwner
-                                                       format:(ZMImageFormat)format
-                                               conversationID:(NSUUID * __nonnull)convID
-                                                correlationID:(NSUUID * __nonnull)correlationID;
-
-
-+ ( NSDictionary * __nonnull )createAssetDataWithID:(NSUUID * __nonnull)identifier
-                                         imageOwner:(id<ZMImageOwner> __nonnull)imageOwner
-                                             format:(ZMImageFormat)format
-                                      correlationID:(NSUUID * __nonnull)correlationID;
-
 + (NSString * __nullable )contentTypeForImageData:(NSData * __nonnull)imageData;
 
 @end

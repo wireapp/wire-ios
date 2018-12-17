@@ -7,10 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		096960261B663EEC006DF53B /* NSData+ZMAdditions.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB12B1B5FAD5A00712DF9 /* NSData+ZMAdditions.h */; };
-		096960271B663EEC006DF53B /* NSData+ZMAdditions.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB12C1B5FAD5A00712DF9 /* NSData+ZMAdditions.m */; };
-		096960281B663EEC006DF53B /* NSObject+ZMTransportEncoding.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB12D1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.h */; };
-		096960291B663EEC006DF53B /* NSObject+ZMTransportEncoding.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB12E1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.m */; };
 		0969602B1B663EF0006DF53B /* ZMAssetMetaDataEncoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1311B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		0969602C1B663EF0006DF53B /* ZMAssetMetaDataEncoder.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB1321B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.m */; };
 		0969602D1B663EF0006DF53B /* ZMAssetsPreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB1331B5FAD5A00712DF9 /* ZMAssetsPreprocessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -29,7 +25,6 @@
 		09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */; };
 		09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */; };
 		09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */; };
-		09B977CA1B66A08A00A30B38 /* NSDataZMMessageDigestTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977C81B66A08A00A30B38 /* NSDataZMMessageDigestTests.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */; };
 		5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -132,10 +127,6 @@
 		0969600C1B663E7B006DF53B /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096960161B663E7C006DF53B /* WireImages-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireImages-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		096AD6FF1B67FBDB00E007A8 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
-		098CB12B1B5FAD5A00712DF9 /* NSData+ZMAdditions.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSData+ZMAdditions.h"; sourceTree = "<group>"; };
-		098CB12C1B5FAD5A00712DF9 /* NSData+ZMAdditions.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSData+ZMAdditions.m"; sourceTree = "<group>"; };
-		098CB12D1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSObject+ZMTransportEncoding.h"; sourceTree = "<group>"; };
-		098CB12E1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSObject+ZMTransportEncoding.m"; sourceTree = "<group>"; };
 		098CB1311B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetMetaDataEncoder.h; sourceTree = "<group>"; };
 		098CB1321B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAssetMetaDataEncoder.m; sourceTree = "<group>"; };
 		098CB1331B5FAD5A00712DF9 /* ZMAssetsPreprocessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetsPreprocessor.h; sourceTree = "<group>"; };
@@ -157,7 +148,6 @@
 		09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageDownsampleOperationTests.m; sourceTree = "<group>"; };
 		09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSOperationQueue+Helpers.h"; sourceTree = "<group>"; };
 		09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSOperationQueue+Helpers.m"; sourceTree = "<group>"; };
-		09B977C81B66A08A00A30B38 /* NSDataZMMessageDigestTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSDataZMMessageDigestTests.m; sourceTree = "<group>"; };
 		09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageOwner.swift; sourceTree = "<group>"; };
 		09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMImageOwner.m; sourceTree = "<group>"; };
 		5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMIImageProperties.h; sourceTree = "<group>"; };
@@ -287,22 +277,10 @@
 		098CB1281B5FAD5A00712DF9 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
-				098CB1291B5FAD5A00712DF9 /* Helpers */,
 				098CB1301B5FAD5A00712DF9 /* Image Processing */,
 				098CB13C1B5FAD5A00712DF9 /* WireImages.h */,
 			);
 			path = Sources;
-			sourceTree = "<group>";
-		};
-		098CB1291B5FAD5A00712DF9 /* Helpers */ = {
-			isa = PBXGroup;
-			children = (
-				098CB12B1B5FAD5A00712DF9 /* NSData+ZMAdditions.h */,
-				098CB12C1B5FAD5A00712DF9 /* NSData+ZMAdditions.m */,
-				098CB12D1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.h */,
-				098CB12E1B5FAD5A00712DF9 /* NSObject+ZMTransportEncoding.m */,
-			);
-			path = Helpers;
 			sourceTree = "<group>";
 		};
 		098CB1301B5FAD5A00712DF9 /* Image Processing */ = {
@@ -346,7 +324,6 @@
 				09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */,
 				09B977421B669CEC00A30B38 /* NSOperationQueue+Helpers.h */,
 				09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */,
-				09B977C81B66A08A00A30B38 /* NSDataZMMessageDigestTests.m */,
 				87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */,
 				87B91C081E5C7E5D00A5EC11 /* Resources */,
 			);
@@ -467,11 +444,9 @@
 				0969602B1B663EF0006DF53B /* ZMAssetMetaDataEncoder.h in Headers */,
 				096960331B663EF0006DF53B /* ZMImageOwner.h in Headers */,
 				0969602F1B663EF0006DF53B /* ZMImageDownsampleOperation.h in Headers */,
-				096960261B663EEC006DF53B /* NSData+ZMAdditions.h in Headers */,
 				0969602D1B663EF0006DF53B /* ZMAssetsPreprocessor.h in Headers */,
 				096960361B663EFC006DF53B /* WireImages.h in Headers */,
 				096960341B663EF0006DF53B /* ZMImagePreprocessor.h in Headers */,
-				096960281B663EEC006DF53B /* NSObject+ZMTransportEncoding.h in Headers */,
 				5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */,
 				096960311B663EF0006DF53B /* ZMImageLoadOperation.h in Headers */,
 			);
@@ -655,9 +630,7 @@
 				5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */,
 				096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */,
 				096960321B663EF0006DF53B /* ZMImageLoadOperation.m in Sources */,
-				096960271B663EEC006DF53B /* NSData+ZMAdditions.m in Sources */,
 				0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */,
-				096960291B663EEC006DF53B /* NSObject+ZMTransportEncoding.m in Sources */,
 				09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -668,7 +641,6 @@
 			files = (
 				09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */,
 				87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */,
-				09B977CA1B66A08A00A30B38 /* NSDataZMMessageDigestTests.m in Sources */,
 				09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */,
 				09B976CB1B6693D700A30B38 /* ZMImagePreprocessorTests.m in Sources */,
 				09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */,
