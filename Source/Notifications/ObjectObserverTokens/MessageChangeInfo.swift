@@ -125,7 +125,8 @@ extension ZMSystemMessage {
                 "linkPreviewChanged: \(linkPreviewChanged)",
                 "transferStateChanged: \(transferStateChanged)",
                 "senderChanged: \(senderChanged)",
-                "isObfuscatedChanged: \(isObfuscatedChanged)"
+                "isObfuscatedChanged: \(isObfuscatedChanged)",
+                "genericMessageChanged: \(genericMessageChanged)"
                 ].joined(separator: ", ")
     }
     
@@ -142,6 +143,10 @@ extension ZMSystemMessage {
         return changedKeysContain(keys: #keyPath(ZMMessage.confirmations))
     }
 
+    public var genericMessageChanged : Bool {
+        return changedKeysContain(keys: #keyPath(ZMClientMessage.genericMessage))
+    }
+    
     public var childMessagesChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMSystemMessage.childMessages))
     }

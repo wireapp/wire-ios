@@ -83,6 +83,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.reactionsChanged),
                 #keyPath(MessageChangeInfo.transferStateChanged),
                 #keyPath(MessageChangeInfo.confirmationsChanged),
+                #keyPath(MessageChangeInfo.genericMessageChanged)
             ]
 
             guard !expectedChangedFields.isEmpty else { return }
@@ -162,7 +163,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
             modifier: { $0.add(updateGenericMessage.data()) },
-            expectedChangedField: #keyPath(MessageChangeInfo.linkPreviewChanged)
+            expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.genericMessageChanged)]
         )
     }
     
@@ -303,6 +304,23 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             },
             expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
         )
+    }
+    
+    func testThatItNotifiesConversationWhenMessageGenericDataIsChanged() {
+        
+        let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
+        let nonce = UUID.create()
+        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "foo"), nonce: nonce).data())
+        let update = ZMGenericMessage.message(content: ZMText.text(with: "bar"), nonce: nonce)
+        uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            clientMessage,
+            modifier: { $0.add(update.data()) },
+            expectedChangedFields: [ #keyPath(MessageChangeInfo.genericMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
+        )
+
     }
 
 }
