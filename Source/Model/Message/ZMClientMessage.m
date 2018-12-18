@@ -190,7 +190,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 + (NSSet *)keyPathsForValuesAffectingGenericMessage
 {
-    return [NSSet setWithObject:ClientMessageDataSetKey];
+    return [NSSet setWithObjects:ClientMessageDataSetKey, [ClientMessageDataSetKey stringByAppendingString:@".data"], nil];
 }
 
 - (void)updateWithGenericMessage:(ZMGenericMessage *)message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate
