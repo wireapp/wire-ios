@@ -59,6 +59,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// ZMDeliveryStateDelivered
     var deliveryState: ZMDeliveryState { get }
     
+    /// True if the message has been successfully sent to the server
+    var isSent: Bool { get }
+    
     /// List of recipients who have read the message.
     var readReceipts: [ReadReceipt] { get }
 
@@ -237,14 +240,12 @@ extension ZMMessage {
         return nil
     }
     
+    @objc public var isSent: Bool {
+        return true
+    }
+    
     @objc public var deliveryState : ZMDeliveryState {
-        if self.confirmations.count > 0 {
-            return .delivered
-        }
-        if self.isExpired {
-            return .failedToSend
-        }
-        return .pending
+        return .delivered
     }
     
     @objc public var usersReaction : Dictionary<String, [ZMUser]> {
@@ -259,7 +260,7 @@ extension ZMMessage {
     
     
     @objc public var canBeDeleted : Bool {
-        return deliveryState == .delivered || deliveryState == .sent || deliveryState == .failedToSend || deliveryState == .read
+        return deliveryState != .pending
     }
     
     @objc public var hasBeenDeleted: Bool {

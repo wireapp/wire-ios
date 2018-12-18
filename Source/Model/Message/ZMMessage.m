@@ -773,11 +773,6 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     [super removeMessageClearingSender:clearingSender];
 }
 
-- (ZMDeliveryState)deliveryState
-{
-    return ZMDeliveryStateDelivered;
-}
-
 - (void)fetchLinkPreviewImageDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler
 {
     NOT_USED(queue);
@@ -915,12 +910,6 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     [conversation updateTimestampsAfterUpdatingMessage:message];
     
     return message;
-}
-
-- (ZMDeliveryState)deliveryState
-{
-    // SystemMessages are either from the BE or inserted on device
-    return ZMDeliveryStateDelivered;
 }
 
 - (NSDictionary<NSString *,NSArray<ZMUser *> *> *)usersReaction

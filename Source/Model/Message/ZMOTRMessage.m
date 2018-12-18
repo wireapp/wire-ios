@@ -90,6 +90,11 @@ NSString * const DeliveredKey = @"delivered";
     }
 }
 
+- (BOOL)isSent
+{
+    return self.delivered;
+}
+
 + (NSSet *)keyPathsForValuesAffectingDeliveryState;
 {
     return [[ZMMessage keyPathsForValuesAffectingValueForKey:ZMMessageDeliveryStateKey] setByAddingObject:DeliveredKey];
