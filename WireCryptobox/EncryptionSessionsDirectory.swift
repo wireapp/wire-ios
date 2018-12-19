@@ -228,7 +228,7 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
-        zmLog.debug("Create session from prekey \(base64PreKeyString) for client: \(identifier)")
+        zmLog.debug("Create session for client: \(identifier)")
         
         try result.throwIfError()
 
@@ -237,7 +237,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                         requiresSave: true,
                                         cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[identifier] = session
-        session.dumpSessionContent()
     }
     
     public func createClientSessionAndReturnPlaintext(for identifier: EncryptionSessionIdentifier, prekeyMessage: Data) throws -> Data {
@@ -253,8 +252,8 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                            &cbsession.ptr,
                                            &plainTextBacking)
         }
-        zmLog.debug("Create session for client \(identifier) from prekey message: \(prekeyMessage.base64Dump)")
-        
+        zmLog.debug("Create session for client \(identifier) from prekey message")
+
         try result.throwIfError()
 
         let plainText = Data.moveFromCBoxVector(plainTextBacking)!
@@ -263,7 +262,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                         requiresSave: true,
                                         cryptoboxPath: self.generatingContext!.path)
         self.pendingSessionsCache[identifier] = session
-        session.dumpSessionContent()
         return plainText
     }
     
@@ -302,7 +300,6 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
                                             cryptoboxPath: self.generatingContext!.path)
             self.pendingSessionsCache[identifier] = session
             zmLog.debug("Loaded session for client \(identifier)")
-            session.dumpSessionContent()
             return session
         default:
             fatalError("Error in loading from cbox: \(result)")
@@ -471,7 +468,6 @@ class EncryptionSession {
             let result = cbox_session_save(cryptobox.ptr, self.implementation.ptr)
             switch(result) {
             case CBOX_SUCCESS:
-                self.dumpSessionContent()
                 return
             default:
                 fatal("Can't save session: error \(result)")
@@ -531,9 +527,8 @@ extension EncryptionSession {
     fileprivate func decrypt(_ cypher: Data) throws -> Data {
         var vectorBacking : OpaquePointer? = nil
 
-        zmLog.ifDebug {
-            zmLog.debug("Decrypting with session \(self.id): \(cypher.base64Dump)")
-        }
+        zmLog.debug("Decrypting with session \(self.id)")
+
         let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
                          cypherPointer,
@@ -563,11 +558,7 @@ extension EncryptionSession {
         try result.throwIfError()
 
         self.hasChanges = true
-        let data = Data.moveFromCBoxVector(vectorBacking)!
-        zmLog.ifDebug {
-            zmLog.debug("Encrypted with session \(self.id) to cypher text:\(data.base64Dump)")
-        }
-        return data
+        return Data.moveFromCBoxVector(vectorBacking)!
     }
 }
 
