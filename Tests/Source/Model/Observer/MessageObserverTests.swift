@@ -306,6 +306,21 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         )
     }
     
+    func testThatItNotifiesWhenUserReadsTheMessage_Asset() {
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.append(imageFromData: verySmallJPEGData())  as! ZMAssetClientMessage
+        uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { _ in
+                let _ = ZMMessageConfirmation(type: .read, message: message, sender: ZMUser.selfUser(in: uiMOC), serverTimestamp: Date(), managedObjectContext: uiMOC)
+        },
+            expectedChangedFields: [#keyPath(MessageChangeInfo.confirmationsChanged), #keyPath(MessageChangeInfo.deliveryStateChanged)]
+        )
+    }
+    
     func testThatItNotifiesConversationWhenMessageGenericDataIsChanged() {
         
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
