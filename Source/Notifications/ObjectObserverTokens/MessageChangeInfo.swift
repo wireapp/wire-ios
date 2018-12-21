@@ -50,7 +50,8 @@ extension ZMAssetClientMessage {
                               #keyPath(ZMAssetClientMessage.hasDownloadedImage),
                               #keyPath(ZMAssetClientMessage.hasDownloadedFile),
                               #keyPath(ZMAssetClientMessage.progress),
-                              #keyPath(ZMMessage.reactions)]
+                              #keyPath(ZMMessage.reactions),
+                              #keyPath(ZMMessage.confirmations)]
         return keys.union(additionalKeys)
     }
 }
