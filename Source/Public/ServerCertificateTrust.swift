@@ -18,13 +18,24 @@
 
 import Foundation
 
-public class MockEnvironment: NSObject, BackendEnvironmentProvider {
-    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return true
+class ServerCertificateTrust: NSObject, BackendTrustProvider {
+    let trustData: [TrustData]
+    
+    init(trustData: [TrustData]) {
+        self.trustData = trustData
     }
     
-    public var backendURL: URL = URL(string: "http://example.com")!
-    public var backendWSURL: URL = URL(string: "http://example.com")!
-    public var blackListURL: URL = URL(string: "https://clientblacklist.wire.com/prod/ios")!
-    public var frontendURL: URL = URL(string: "http://example.com")!    
+    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        guard let host = host else { return false }
+        let pinnedKeys = trustData
+            .filter { trustData in
+                trustData.matches(host: host)
+            }
+            .map { trustData in
+                trustData.certificateKey
+            }
+            
+        return verifyServerTrustWithPinnedKeys(trust, pinnedKeys)
+    }
+
 }
