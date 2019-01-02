@@ -27,30 +27,17 @@ public extension FileManager {
     @objc(sharedContainerDirectoryForAppGroupIdentifier:)
     public static func sharedContainerDirectory(for appGroupIdentifier: String) -> URL {
         let fm = FileManager.default
-        var sharedContainerURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
+        let sharedContainerURL = fm.containerURL(forSecurityApplicationGroupIdentifier: appGroupIdentifier)
         
-        if (nil == sharedContainerURL) {
-            // Seems like the shared container is not available. This could happen for series of reasons:
-            // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
-            // 2. App is running on simulator and there is no correct provisioning profile on the system
-            // 3. Bug with signing
-            //
-            // The app should allow not having a shared container in cases 1 and 2; in case 3 the app should crash
-            
-            let deploymentEnvironment = ZMDeploymentEnvironment().environmentType()
-            if (TARGET_OS_SIMULATOR == 0 && (deploymentEnvironment == .appStore || deploymentEnvironment == .internal)) {
-                require(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
-            }
-            else {
-                sharedContainerURL = fm.urls(for: .applicationSupportDirectory, in: .userDomainMask).first
-                zmLog.error("ERROR: self.databaseDirectoryURL == nil and deploymentEnvironment = \(deploymentEnvironment)")
-                zmLog.error("================================WARNING================================")
-                zmLog.error("Wire is going to use APPLICATION SUPPORT directory to host the database")
-                zmLog.error("================================WARNING================================")
-            }
-        }
+        // Seems like the shared container is not available. This could happen for series of reasons:
+        // 1. The app is compiled with with incorrect provisioning profile (for example with 3rd parties)
+        // 2. App is running on simulator and there is no correct provisioning profile on the system
+        // 3. Bug with signing
+        //
+        // The app should not allow to run in all those cases.
         
-        require(nil != sharedContainerURL)
+        require(nil != sharedContainerURL, "Unable to create shared container url using app group identifier: \(appGroupIdentifier)")
+    
         return sharedContainerURL!
     }
     
