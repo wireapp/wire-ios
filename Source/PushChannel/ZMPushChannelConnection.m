@@ -80,7 +80,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
             if (0 < userAgentString.length) {
                 headers[@"User-Agent"] = [userAgentString copy];
             }
-            webSocket = [[ZMWebSocket alloc] initWithConsumer:self queue:self.webSocketQueue group:self.webSocketGroup url:URL trustProvider:environment additionalHeaderFields:headers];
+            webSocket = [[ZMWebSocket alloc] initWithConsumer:self queue:self.webSocketQueue group:self.webSocketGroup url:URL additionalHeaderFields:headers];
         }
         self.webSocket = webSocket;
         self.pingInterval = 40;

@@ -37,7 +37,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 @interface ZMWebSocket ()
 
 @property (nonatomic) NSURL *URL;
-@property (nonatomic) id<BackendTrustProvider> trustProvider;
 @property (nonatomic) NSMutableArray *dataPendingTransmission;
 @property (nonatomic, weak) id<ZMWebSocketConsumer> consumer;
 @property (atomic) dispatch_queue_t consumerQueue;
@@ -60,14 +59,13 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 - (instancetype)init
 {
     @throw [NSException exceptionWithName:NSInvalidArgumentException reason:@"You should not use -init" userInfo:nil];
-    return [self initWithConsumer:nil queue:nil group:nil networkSocket:nil networkSocketQueue:nil url:nil trustProvider:nil additionalHeaderFields:nil];
+    return [self initWithConsumer:nil queue:nil group:nil networkSocket:nil networkSocketQueue:nil url:nil additionalHeaderFields:nil];
 }
 
 - (instancetype)initWithConsumer:(id<ZMWebSocketConsumer>)consumer
                            queue:(dispatch_queue_t)queue
                            group:(ZMSDispatchGroup *)group
                              url:(NSURL *)url
-                   trustProvider:(id<BackendTrustProvider>)trustProvider
           additionalHeaderFields:(NSDictionary *)additionalHeaderFields;
 {
     return [self initWithConsumer:consumer
@@ -76,7 +74,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
                     networkSocket:nil
                networkSocketQueue:nil
                               url:url
-                    trustProvider:trustProvider
            additionalHeaderFields:additionalHeaderFields];
 }
 
@@ -86,7 +83,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
                    networkSocket:(NetworkSocket *)networkSocket
               networkSocketQueue:(dispatch_queue_t)networkSocketQueue
                              url:(NSURL *)url
-                   trustProvider:(id<BackendTrustProvider>)trustProvider
           additionalHeaderFields:(NSDictionary *)additionalHeaderFields;
 {
     VerifyReturnNil(consumer != nil);
@@ -94,7 +90,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
     self = [super init];
     if (self) {
         self.URL = url;
-        self.trustProvider = trustProvider;
         self.consumer = consumer;
         self.consumerQueue = queue;
         self.consumerGroup = group;
@@ -104,7 +99,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
         
         if (networkSocket == nil) {
             networkSocket = [[NetworkSocket alloc] initWithUrl:url
-                                                 trustProvider:self.trustProvider
                                                       delegate:self
                                                          queue:self.networkSocketQueue
                                                  callbackQueue:self.consumerQueue

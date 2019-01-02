@@ -26,7 +26,6 @@
 #import "ZMURLSession+Internal.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "Fakes.h"
-#import "WireTransport_ios_tests-Swift.h"
 
 @interface ZMURLSessionTests : ZMTBaseTest <ZMURLSessionDelegate, ZMTimerClient>
 
@@ -43,8 +42,6 @@
 @property (nonatomic) NSMutableArray *finishedBackgroundSessions;
 @property (nonatomic) NSMutableArray *completedTasks;
 @property (nonatomic) NSMutableArray *firedTimers;
-@property (nonatomic) MockCertificateTrust *trustProvider;
-
 
 @end
 
@@ -70,11 +67,9 @@ static NSString * const DataKey = @"data";
     self.firedTimers = [NSMutableArray array];
     self.finishedBackgroundSessions = [NSMutableArray array];
     self.receivedDataCount = 0;
-    self.trustProvider = [[MockCertificateTrust alloc] init];
-
+    
     self.queue = [NSOperationQueue zm_serialQueueWithName:self.name];
     self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:NSURLSessionConfiguration.defaultSessionConfiguration
-                                                  trustProvider:self.trustProvider
                                                        delegate:self
                                                   delegateQueue:self.queue
                                                      identifier:@"test-session"];
@@ -95,7 +90,6 @@ static NSString * const DataKey = @"data";
     self.firedTimers = nil;
     [self.sut tearDown];
     self.sut = nil;
-    self.trustProvider = nil;
     [super tearDown];
 }
 
@@ -499,7 +493,7 @@ willPerformHTTPRedirection:response
 
 - (void)setupMockBackgroundSession
 {    
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
     [(NSURLSession *)[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"]] configuration];
@@ -514,7 +508,7 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
@@ -651,7 +645,7 @@ willPerformHTTPRedirection:response
     [self spinMainQueueWithTimeout:0.1];
 
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"];
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
 

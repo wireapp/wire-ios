@@ -19,10 +19,6 @@
 import Foundation
 
 public class MockEnvironment: NSObject, BackendEnvironmentProvider {
-    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return true
-    }
-    
     public var backendURL: URL = URL(string: "http://example.com")!
     public var backendWSURL: URL = URL(string: "http://example.com")!
     public var blackListURL: URL = URL(string: "https://clientblacklist.wire.com/prod/ios")!
