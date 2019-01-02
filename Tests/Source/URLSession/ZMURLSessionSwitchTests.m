@@ -20,10 +20,12 @@
 @import XCTest;
 @import WireSystem;
 @import WireUtilities;
+@import WireTransport;
 
 #import "ZMURLSessionSwitch.h"
 #import "ZMURLSession.h"
 #import "ZMSessionCancelTimer.h"
+#import "WireTransport_ios_tests-Swift.h"
 
 
 
@@ -96,10 +98,12 @@ static NSHashTable *sessionCancelTimers;
     [super setUp];
     sessionCancelTimers = [NSHashTable weakObjectsHashTable];
     
+    MockCertificateTrust *trustProvider = [[MockCertificateTrust alloc] init];
+    
     NSOperationQueue *q = [NSOperationQueue zm_serialQueueWithName:self.name];
-    ZMURLSession *sessionA = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-a"];
-    ZMURLSession *sessionB = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier:@"session-b"];
-    ZMURLSession *sessionC = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] delegate:(id) self delegateQueue:q identifier: @"session-c"];
+    ZMURLSession *sessionA = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] trustProvider:trustProvider delegate:(id) self delegateQueue:q identifier:@"session-a"];
+    ZMURLSession *sessionB = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] trustProvider:trustProvider delegate:(id) self delegateQueue:q identifier:@"session-b"];
+    ZMURLSession *sessionC = [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration defaultSessionConfiguration] trustProvider:trustProvider delegate:(id) self delegateQueue:q identifier: @"session-c"];
 
     self.foregroundSession = sessionA;
     self.backgroundSession = sessionB;

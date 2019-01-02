@@ -18,13 +18,18 @@
 
 import Foundation
 
-public class MockEnvironment: NSObject, BackendEnvironmentProvider {
-    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return true
-    }
+class BackendEndpoints: NSObject, BackendEndpointsProvider, Decodable {
+    let backendURL: URL
+    let backendWSURL: URL
+    let blackListURL: URL
+    let frontendURL: URL
     
-    public var backendURL: URL = URL(string: "http://example.com")!
-    public var backendWSURL: URL = URL(string: "http://example.com")!
-    public var blackListURL: URL = URL(string: "https://clientblacklist.wire.com/prod/ios")!
-    public var frontendURL: URL = URL(string: "http://example.com")!    
+    init(backendURL: URL, backendWSURL: URL, blackListURL: URL, frontendURL: URL) {
+        self.backendURL   = backendURL
+        self.backendWSURL = backendWSURL
+        self.blackListURL = blackListURL
+        self.frontendURL  = frontendURL
+        super.init()
+    }
+
 }

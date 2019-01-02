@@ -18,17 +18,7 @@
 
 import Foundation
 
-// Swift migration notice: this protocol conforms to NSObjectProtocol only to be usable from Obj-C.
-@objc public protocol BackendEnvironmentProvider: NSObjectProtocol {
-    /// Backend base URL.
-    var backendURL: URL { get }
-    /// URL for SSL WebSocket connection.
-    var backendWSURL: URL { get }
-    /// URL for version blacklist file.
-    var blackListURL: URL { get }
-    /// Frontent URL, used to open the necessary web resources, like password reset.
-    var frontendURL: URL { get }
-}
+let log = ZMSLog(tag: "backend-environment")
 
 @objc public enum EnvironmentType: Int {
     case production
@@ -61,28 +51,63 @@ import Foundation
     }
 }
 
-// Swift migration notice: this class conforms to NSObject only to be usable from Obj-C.
-@objcMembers
-public class BackendEnvironment: NSObject, BackendEnvironmentProvider, Decodable {
+public class BackendEnvironment: NSObject {
+    let endpoints: BackendEndpointsProvider
+    let certificateTrust: BackendTrustProvider
+    
+    init(endpoints: BackendEndpointsProvider, certificateTrust: BackendTrustProvider) {
+        self.endpoints = endpoints
+        self.certificateTrust = certificateTrust
+    }
+    
+    // Will try to deserialize backend environment from .json files inside configurationBundle.
+    public static func from(environmentType: EnvironmentType, configurationBundle: Bundle) -> BackendEnvironment? {        
+        struct SerializedData: Decodable {
+            let endpoints: BackendEndpoints
+            let pinnedKeys: [TrustData]?
+        }
 
-    public let backendURL: URL
-    public let backendWSURL: URL
-    public let blackListURL: URL
-    public let frontendURL: URL
-
-    public init(backendURL: URL, backendWSURL: URL, blackListURL: URL, frontendURL: URL) {
-        self.backendURL   = backendURL
-        self.backendWSURL = backendWSURL
-        self.blackListURL = blackListURL
-        self.frontendURL  = frontendURL
-
-        super.init()
+        guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
+            log.error("Could not find \(environmentType.stringValue).json inside bundle \(configurationBundle)")
+            return nil 
+        }
+        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { 
+            log.error("Could not read \(environmentType.stringValue).json")
+            return nil 
+        }
+        let decoder = JSONDecoder()
+        decoder.keyDecodingStrategy = .convertFromSnakeCase
+        do {
+            let backendData = try decoder.decode(SerializedData.self, from: data)
+            let pinnedKeys = backendData.pinnedKeys ?? []
+            let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
+            return BackendEnvironment(endpoints: backendData.endpoints, certificateTrust: certificateTrust) 
+        } catch {
+            log.error("Could decode information from \(environmentType.stringValue).json")
+            return nil
+        }
     }
 
-    // Will try to deserialize backend environment from .json files inside configurationBundle.
-    public static func from(environmentType: EnvironmentType, configurationBundle: Bundle) -> Self? {
-        guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else { return nil }
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { return nil }
-        return try? JSONDecoder().decode(self, from: data)
+}
+
+extension BackendEnvironment: BackendEnvironmentProvider {
+    public var backendURL: URL {
+        return endpoints.backendURL
+    }
+    
+    public var backendWSURL: URL {
+        return endpoints.backendWSURL
+    }
+    
+    public var blackListURL: URL {
+        return endpoints.blackListURL
+    }
+    
+    public var frontendURL: URL {
+        return endpoints.frontendURL
+    }
+    
+    public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        return certificateTrust.verifyServerTrust(trust: trust, host: host)
     }
 }
