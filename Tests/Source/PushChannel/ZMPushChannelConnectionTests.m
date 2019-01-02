@@ -199,7 +199,7 @@
     NSDictionary *expectedHeaders = self.accessToken.httpHeaders;
     id webSocketMock = [OCMockObject niceMockForClass:ZMWebSocket.class];
     [[[[webSocketMock stub] classMethod] andReturn:webSocketMock] alloc];
-    (void) [[[webSocketMock expect] andReturn:nil] initWithConsumer:OCMOCK_ANY queue:OCMOCK_ANY group:self.fakeSyncContext.dispatchGroup url:expectedURL trustProvider:OCMOCK_ANY additionalHeaderFields:expectedHeaders];
+    (void) [[[webSocketMock expect] andReturn:nil] initWithConsumer:OCMOCK_ANY queue:OCMOCK_ANY group:self.fakeSyncContext.dispatchGroup url:expectedURL additionalHeaderFields:expectedHeaders];
 
     // when
     id userAgent = nil;

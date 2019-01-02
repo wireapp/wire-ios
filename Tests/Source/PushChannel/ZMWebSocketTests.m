@@ -23,7 +23,6 @@
 @import WireTransport;
 
 #import "ZMWebSocket.h"
-#import "WireTransport_ios_tests-Swift.h"
 
 
 @interface ZMWebSocketTests : ZMTBaseTest <ZMWebSocketConsumer>
@@ -39,7 +38,6 @@
 @property (nonatomic) NSHTTPURLResponse *closeResponse;
 @property (nonatomic) NSError *closeError;
 @property (nonatomic) dispatch_queue_t queue;
-@property (nonatomic) MockCertificateTrust *trustProvider;
 
 @end
 
@@ -82,7 +80,6 @@
     self.networkSocketMock = [OCMockObject niceMockForClass:NetworkSocket.class];
     [self verifyMockLater:self.networkSocketMock];
     self.queue = dispatch_get_main_queue();
-    self.trustProvider = [[MockCertificateTrust alloc] init];
     self.URL = [NSURL URLWithString:@"wss://echo.websocket.org"];
     self.sut = (id)[[ZMWebSocket alloc] initWithConsumer:self
                                                    queue:self.queue
@@ -90,7 +87,6 @@
                                            networkSocket:self.networkSocketMock
                                       networkSocketQueue:nil
                                                      url:self.URL
-                                           trustProvider:self.trustProvider
                                   additionalHeaderFields:nil];
     self.receivedData = [NSMutableArray array];
     self.receivedText = [NSMutableArray array];
@@ -250,7 +246,6 @@
                                            networkSocket:self.networkSocketMock
                                       networkSocketQueue:nil
                                                      url:self.URL
-                                           trustProvider:self.trustProvider
                                   additionalHeaderFields:extraHeaders];
     __block NSData *sentData;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Did receive data."];

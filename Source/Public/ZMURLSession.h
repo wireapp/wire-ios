@@ -27,7 +27,6 @@ NS_ASSUME_NONNULL_BEGIN
 @class ZMTimer;
 @class ZMURLSession;
 @protocol ZMURLSessionDelegate;
-@protocol BackendTrustProvider;
 
 extern NSString * const ZMURLSessionBackgroundIdentifier;
 extern NSString * const ZMURLSessionForegroundIdentifier;
@@ -38,7 +37,6 @@ extern NSString * const ZMURLSessionVoipIdentifier;
 @property (nonatomic, readonly) NSString *identifier;
 
 - (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration
-                        trustProvider:(id<BackendTrustProvider>)trustProvider
                              delegate:(id<ZMURLSessionDelegate>)delegate
                         delegateQueue:(NSOperationQueue *)queue
                            identifier:(NSString *)identifier;

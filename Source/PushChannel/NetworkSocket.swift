@@ -62,7 +62,6 @@ import Foundation
     
     // MARK: - Public API
     public let url: URL
-    public let trustProvider: BackendTrustProvider
     public let queue: DispatchQueue
     public let callbackQueue: DispatchQueue
     public let group: ZMSDispatchGroup
@@ -71,9 +70,8 @@ import Foundation
     
     private let queueMarkerKey = DispatchSpecificKey<Void>()
     
-    public init(url: URL, trustProvider: BackendTrustProvider, delegate: NetworkSocketDelegate?, queue: DispatchQueue, callbackQueue: DispatchQueue, group: ZMSDispatchGroup) {
+    public init(url: URL, delegate: NetworkSocketDelegate?, queue: DispatchQueue, callbackQueue: DispatchQueue, group: ZMSDispatchGroup) {
         self.url = url
-        self.trustProvider = trustProvider
         self.delegate = delegate
         self.queue = queue
         self.callbackQueue = callbackQueue
@@ -248,7 +246,7 @@ import Foundation
         
         let peerTrust = peerTrustValue as! SecTrust
         
-        self.trusted = self.trustProvider.verifyServerTrust(trust: peerTrust, host: url.host)
+        self.trusted = verifyServerTrust(peerTrust, url.host)
         if !self.trusted {
             self.close()
         }
