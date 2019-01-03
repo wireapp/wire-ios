@@ -238,12 +238,4 @@ public class ShareViewController<D: ShareDestination, S: Shareable>: UIViewContr
     @objc func keyboardFrameDidChange(notification: Notification) {
         updatePopoverFrame()
     }
-
-    func updatePopoverFrame() {
-        if let popoverPresenter = self.popoverPresentationController?.presentingViewController as? PopoverPresenter {
-            popoverPresenter.updatePopoverSourceRect()
-        }
-        
-        popoverPresentationController?.containerView?.setNeedsLayout()
-    }
 }
