@@ -141,8 +141,6 @@ extension ConversationNotificationOptionsViewController: UICollectionViewDelegat
         userSession.performChanges {
             self.conversation.mutedMessageTypes = types
         }
-        
-        self.dismisser?.dismiss(viewController: self, completion: nil)
     }
     
     // MARK: Layout
