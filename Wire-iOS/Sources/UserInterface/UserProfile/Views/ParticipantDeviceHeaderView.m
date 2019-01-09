@@ -20,7 +20,6 @@
 #import "ParticipantDeviceHeaderView.h"
 #import "ParticipantDeviceHeaderView+Internal.h"
 @import PureLayout;
-#import "WebLinkTextView.h"
 #import "WireExtensionComponents.h"
 #import "NSAttributedString+Wire.h"
 #import "Wire-Swift.h"
@@ -57,6 +56,8 @@
 - (void)createViews
 {
     self.textView = [[WebLinkTextView alloc] init];
+    [self.textView setTextContainerInset:UIEdgeInsetsMake(0, - 4, 0, 0)];
+
     self.textView.textContainer.maximumNumberOfLines = 0;
     self.textView.delegate = self;
     self.textView.linkTextAttributes = @{};
@@ -67,13 +68,6 @@
 - (void)setShowUnencryptedLabel:(BOOL)showUnencryptedLabel
 {
     self.textView.attributedText = [self attributedExplanationTextForUserName:self.userName showUnencryptedLabel:showUnencryptedLabel];
-}
-
-- (void)layoutSubviews
-{
-    [super layoutSubviews];
-    [self.textView setNeedsUpdateConstraints];
-    [self.textView updateConstraintsIfNeeded];
 }
 
 - (void)setupConstraints
