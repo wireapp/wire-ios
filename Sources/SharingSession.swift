@@ -367,7 +367,10 @@ public class SharingSession {
             forName: contextWasMergedNotification,
             object: nil,
             queue: .main,
-            using: { [weak self] note in self?.saveNotificationPersistence.add(note) }
+            using: { [weak self] note in
+                self?.saveNotificationPersistence.add(note)
+                DarwinNotification.shareExtDidSaveNote.post()
+            }
         )
     }
 
