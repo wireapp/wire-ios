@@ -21,6 +21,7 @@
 @import WireTesting;
 @import WireSystem;
 @import WireTransport;
+#import "WireTransport_ios_tests-Swift.h"
 
 
 @interface ZMNetworkSocketTest : ZMTBaseTest <NetworkSocketDelegate>
@@ -30,6 +31,7 @@
 @property (nonatomic) NSInteger openCounter;
 @property (nonatomic) NSInteger closeCounter;
 @property (nonatomic) dispatch_queue_t queue;
+@property (nonatomic) MockCertificateTrust *trustProvider;
 
 @end
 
@@ -43,6 +45,7 @@
     self.closeCounter = 0;
     self.dataRead = [NSMutableData dataWithCapacity:16 * 1024];
     self.queue = dispatch_get_main_queue();
+    self.trustProvider = [[MockCertificateTrust alloc] init];
 }
 
 - (void)tearDown
@@ -50,6 +53,7 @@
     [self.sut close];
     WaitForAllGroupsToBeEmpty(0.5);
     self.queue = nil;
+    self.trustProvider = nil;
     if(self.sut != nil) {
         XCTAssertEqual(self.closeCounter, 1);
     }
@@ -60,6 +64,7 @@
 - (BOOL)checkThatWeCanRetrieveHTTPSURL:(NSURL *)url ZM_MUST_USE_RETURN
 {
     self.sut = [[NetworkSocket alloc] initWithUrl:url
+                                    trustProvider:self.trustProvider
                                          delegate:self
                                             queue:self.queue
                                     callbackQueue:self.queue
@@ -129,6 +134,7 @@
     NSURL *url = [NSURL URLWithString:@"https://127.0.0.1:38973/this-does-not-exist"];
     [self performIgnoringZMLogError:^{
         self.sut = [[NetworkSocket alloc] initWithUrl:url
+                                        trustProvider:self.trustProvider
                                              delegate:self
                                                 queue:self.queue
                                         callbackQueue:self.queue
@@ -167,6 +173,7 @@
 {
     // GIVEN
     self.sut = [[NetworkSocket alloc] initWithUrl:[NSURL URLWithString:@"https://www.apple.com/"]
+                                    trustProvider:self.trustProvider
                                          delegate:self
                                             queue:self.queue
                                     callbackQueue:self.queue

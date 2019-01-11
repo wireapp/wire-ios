@@ -65,6 +65,12 @@ private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable 
     
 }
 
+class MockCertificateTrust: NSObject, BackendTrustProvider {
+    func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
+        return true
+    }
+}
+
 final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
 
     private var sut: UnauthenticatedTransportSession!
@@ -74,7 +80,9 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
     override func setUp() {
         super.setUp()
         sessionMock = MockURLSession()
-        let environment = BackendEnvironment(backendURL: url, backendWSURL: url, blackListURL: url, frontendURL: url)
+        let endpoints = BackendEndpoints(backendURL: url, backendWSURL: url, blackListURL: url, frontendURL: url)
+        let trust = MockCertificateTrust()
+        let environment = BackendEnvironment(endpoints: endpoints, certificateTrust: trust)
         sut = UnauthenticatedTransportSession(environment: environment,
                                               urlSession: sessionMock,
                                               reachability: MockReachability())

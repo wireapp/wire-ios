@@ -21,6 +21,7 @@
 
 @protocol ZMWebSocketConsumer;
 @protocol ZMSGroupQueue;
+@protocol BackendTrustProvider;
 @class NetworkSocket;
 
 extern NSString * const ZMWebSocketErrorDomain;
@@ -36,6 +37,7 @@ typedef NS_ENUM(NSInteger, ZMWebSocketErrorCode) {
                            queue:(dispatch_queue_t)queue
                            group:(ZMSDispatchGroup *)group
                              url:(NSURL *)url
+                   trustProvider:(id<BackendTrustProvider>)trustProvider
           additionalHeaderFields:(NSDictionary *)additionalHeaderFields;
 
 - (instancetype)initWithConsumer:(id<ZMWebSocketConsumer>)consumer
@@ -44,6 +46,7 @@ typedef NS_ENUM(NSInteger, ZMWebSocketErrorCode) {
                    networkSocket:(NetworkSocket *)networkSocket
               networkSocketQueue:(dispatch_queue_t)queue
                              url:(NSURL *)url
+                   trustProvider:(id<BackendTrustProvider>)trustProvider
           additionalHeaderFields:(NSDictionary *)additionalHeaderFields NS_DESIGNATED_INITIALIZER;
 
 @property (nonatomic, readonly, weak) id<ZMWebSocketConsumer> consumer;
