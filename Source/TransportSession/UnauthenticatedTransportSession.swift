@@ -163,7 +163,8 @@ extension UnauthenticatedTransportSession: URLSessionDelegate {
     public func urlSession(_ session: URLSession, didReceive challenge: URLAuthenticationChallenge, completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
         let protectionSpace = challenge.protectionSpace
         if protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust {
-            guard verifyServerTrust(protectionSpace.serverTrust, protectionSpace.host) else { return completionHandler(.cancelAuthenticationChallenge, nil) }
+            // It's safe to force-unwrap protectionSpace.serverTrust because according to docs it has to be present with this authentication method
+            guard environment.verifyServerTrust(trust: protectionSpace.serverTrust!, host: protectionSpace.host) else { return completionHandler(.cancelAuthenticationChallenge, nil) }
         }
         completionHandler(.performDefaultHandling, challenge.proposedCredential)
     }

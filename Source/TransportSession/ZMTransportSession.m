@@ -177,13 +177,13 @@ static NSInteger const DefaultMaximumRequests = 6;
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
     
     NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] delegate:self delegateQueue:queue identifier:foregroundIdentifier];
+    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:foregroundIdentifier];
     
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
     NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration delegate:self delegateQueue:queue identifier:backgroundIdentifier];
+    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration trustProvider:environment delegate:self delegateQueue:queue identifier:backgroundIdentifier];
     NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] delegate:self delegateQueue:queue identifier:voipIdentifier];
+    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:voipIdentifier];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     

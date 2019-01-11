@@ -23,12 +23,12 @@ import WireTransport
     @objc var cancellationHandler: (() -> Void)? = nil
 
     @objc static func createMockSession() -> ZMMockURLSession {
-        return ZMMockURLSession(configuration: .ephemeral, delegate: ZMMockURLSessionDelegate(), delegateQueue: OperationQueue(), identifier: "ZMMockURLSession")
+        return ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: ZMMockURLSessionDelegate(), delegateQueue: OperationQueue(), identifier: "ZMMockURLSession")
     }
 
     @objc(createMockSessionWithDelegate:)
     static func createMockSession(delegate: ZMURLSessionDelegate) -> ZMMockURLSession {
-        return ZMMockURLSession(configuration: .ephemeral, delegate: delegate, delegateQueue: OperationQueue(), identifier: "ZMMockURLSession")
+        return ZMMockURLSession(configuration: .ephemeral, trustProvider: MockEnvironment(), delegate: delegate, delegateQueue: OperationQueue(), identifier: "ZMMockURLSession")
     }
 
     override func cancelAllTasks(completionHandler handler: @escaping () -> Void) {

@@ -49,6 +49,8 @@ NSString * const ZMURLSessionVoipIdentifier = @"voip-session";
 @property (nonatomic, weak) id<ZMURLSessionDelegate> delegate;
 @property (nonatomic, readwrite) NSString *identifier;
 
+@property (nonatomic, strong) id<BackendTrustProvider> trustProvider;
+
 @property (nonatomic) NSURLSession *backingSession;
 @property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
 
@@ -79,7 +81,8 @@ ZM_EMPTY_ASSERTING_INIT();
     return self;
 }
 
-- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration trustProvider:(id<BackendTrustProvider>)trustProvider
+ delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier
 {
     Require(configuration != nil);
     Require(delegate != nil);
@@ -88,6 +91,7 @@ ZM_EMPTY_ASSERTING_INIT();
     if(self) {
         self.backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:queue];
         self.backingSession.sessionDescription = identifier;
+        self.trustProvider = trustProvider;
     }
     return self;
 }
@@ -289,7 +293,7 @@ ZM_EMPTY_ASSERTING_INIT();
     Check(URLSession == self.backingSession);
     NSURLProtectionSpace *protectionSpace = challenge.protectionSpace;
     if ([protectionSpace.authenticationMethod isEqualToString:NSURLAuthenticationMethodServerTrust]) {
-        BOOL const didTrust = verifyServerTrust(protectionSpace.serverTrust, protectionSpace.host);
+        BOOL const didTrust = [self.trustProvider verifyServerTrustWithTrust:protectionSpace.serverTrust host:protectionSpace.host];
         if (! didTrust) {
             ZMLogDebug(@"Not trusting the server.");
             completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
