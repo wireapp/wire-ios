@@ -142,7 +142,7 @@ extension MockTransportSession : UnauthenticatedTransportSessionProtocol {
     }
     
     public var environment: BackendEnvironmentProvider {
-        return BackendEnvironment(backendURL: URL(string: "http://example.com")!, backendWSURL: URL(string: "http://example.com")!, blackListURL: URL(string: "http://example.com")!, frontendURL: URL(string: "http://example.com")!)
+        return MockEnvironment()
     }
 }
 
