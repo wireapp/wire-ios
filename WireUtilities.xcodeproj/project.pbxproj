@@ -132,6 +132,8 @@
 		D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */; };
 		D56A2D4A207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */; };
 		D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */; };
+		EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */; };
+		EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */; };
 		EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */; };
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
@@ -363,6 +365,8 @@
 		D53DB9A0203ED6DC00655CB4 /* ResultTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTests.swift; sourceTree = "<group>"; };
 		D56A2D49207E408C00DB59F5 /* NSManagedObjectContext+SwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+SwiftTests.swift"; sourceTree = "<group>"; };
 		D5D65A12207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+PerformGrouped.swift"; sourceTree = "<group>"; };
+		EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenter.swift; sourceTree = "<group>"; };
+		EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DarwinNotificationCenterTests.swift; sourceTree = "<group>"; };
 		EECE48C61FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FixedWidthInteger_RandomTests.swift; sourceTree = "<group>"; };
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
@@ -552,6 +556,7 @@
 				5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */,
 				5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */,
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
+				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -752,6 +757,7 @@
 				5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */,
 				5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */,
 				16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */,
+				EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1036,6 +1042,7 @@
 				D53DB99F203ED59C00655CB4 /* Result.swift in Sources */,
 				8735AE6F2035E3BC00DCE66E /* StringLengthValidator.swift in Sources */,
 				F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */,
+				EE1E354221E7739400F1144B /* DarwinNotificationCenter.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1061,6 +1068,7 @@
 				EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */,
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
 				BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */,
+				EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */,
 				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
