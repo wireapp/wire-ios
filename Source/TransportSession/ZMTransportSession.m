@@ -737,6 +737,15 @@ static NSInteger const DefaultMaximumRequests = 6;
     }
 }
 
+- (void)URLSession:(ZMURLSession *)URLSession didDetectUnsafeConnectionToHost:(NSString *)host
+{
+    NOT_USED(URLSession);
+    
+    ZMLogDebug(@"Detected unsafe connection to %@", host);    
+    [self.requestScheduler setSchedulerState:ZMTransportRequestSchedulerStateOffline];
+    [self.weakNetworkStateDelegate didGoOffline];
+}
+
 @end
 
 

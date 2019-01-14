@@ -313,7 +313,6 @@ ZM_EMPTY_ASSERTING_INIT();
     }
     
     if ((errorCode == 0) ||
-        (errorCode == NSURLErrorCancelled) ||
         (errorCode == NSURLErrorTimedOut))
     {
         if (httpStatusCode == UnauthorizedStatusCode) {

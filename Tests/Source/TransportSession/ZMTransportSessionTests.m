@@ -1451,6 +1451,41 @@ static XCTestCase *currentTestCase;
     XCTAssertEqualObjects(self.scheduler.processedResponses.firstObject, expected);
 }
 
+
+@end
+
+
+@implementation ZMTransportSessionTests (UnsafeConnection)
+
+- (void)testThatItTakesSchedulerOfflineWhenItDetectsAnUnsafeConnection
+{
+    // given
+    XCTAssertEqual(self.scheduler.schedulerState, ZMTransportRequestSchedulerStateNormal);
+    
+    // when
+    [self.sut URLSession:self.URLSession didDetectUnsafeConnectionToHost:@"wire.com"];
+    
+    // then
+    XCTAssertEqual(self.scheduler.schedulerState, ZMTransportRequestSchedulerStateOffline);
+}
+
+- (void)testThatItCallsDidGoOfflineWhenItDetectsAnUnsafeConnection
+{
+    // given
+    id observer = [OCMockObject mockForProtocol:@protocol(ZMNetworkStateDelegate)];
+    [[observer expect] didReceiveData];
+    self.sut.networkStateDelegate = observer;
+    
+    // expect
+    [[observer expect] didGoOffline];
+    
+    // when
+    [self.sut URLSession:self.URLSession didDetectUnsafeConnectionToHost:@"wire.com"];
+    
+    // then
+    [observer verify];
+}
+
 @end
 
 

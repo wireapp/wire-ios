@@ -81,6 +81,8 @@ didReceiveResponse:(NSURLResponse *)response
 
 - (void)URLSessionDidReceiveData:(ZMURLSession *)URLSession;
 
+- (void)URLSession:(ZMURLSession *)URLSession didDetectUnsafeConnectionToHost:(NSString *)host;
+
 - (void)URLSession:(ZMURLSession *)URLSession
    taskDidComplete:(NSURLSessionTask *)task
   transportRequest:(ZMTransportRequest *)transportRequest

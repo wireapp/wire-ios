@@ -15,6 +15,7 @@
 		09CC4AC11B7CE44900201C63 /* ZMTaskIdentifierMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 09CC4AC01B7CE44900201C63 /* ZMTaskIdentifierMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */; };
 		160C31231E5B28A10012E4BC /* ZMPushChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 160C31221E5B28A10012E4BC /* ZMPushChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */; };
 		16B685961EC0C2F80055BEA3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16B685951EC0C2F80055BEA3 /* Security.framework */; };
 		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
@@ -224,6 +225,7 @@
 		09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTransport.xcconfig; sourceTree = "<group>"; };
 		09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
 		160C31221E5B28A10012E4BC /* ZMPushChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPushChannel.h; sourceTree = "<group>"; };
+		1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLAuthenticationChallengeSender.swift; sourceTree = "<group>"; };
 		16B685951EC0C2F80055BEA3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -808,6 +810,7 @@
 				5E2C354821A5BE7B0034F1EE /* ZMMockURLSession.swift */,
 				5E2C352421A567240034F1EE /* MockBackgroundActivityManager.swift */,
 				F1D1280121C020470090045E /* MockEnvironment.swift */,
+				1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1146,6 +1149,7 @@
 				546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */,
 				5E2C352821A56FD50034F1EE /* BackgroundActivityFactoryTests.swift in Sources */,
 				546E89EB1B33015000DD1042 /* ZMNetworkSocketTest.m in Sources */,
+				1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */,
 				546E89EF1B33015000DD1042 /* ZMTransportPushChannelTests.m in Sources */,
 				5431AC011DB4C8330040343C /* RequestLoopDetectionTests.swift in Sources */,
 				546E89F91B33015000DD1042 /* ZMTransportRequestTests.m in Sources */,
