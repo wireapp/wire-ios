@@ -51,6 +51,10 @@ import WireTransport
     func urlSessionDidReceiveData(_ URLSession: ZMURLSession) {
         // no-op
     }
+    
+    func urlSession(_ URLSession: ZMURLSession, didDetectUnsafeConnectionToHost host: String) {
+        // no-op
+    }
 
     func urlSession(_ URLSession: ZMURLSession, taskDidComplete task: URLSessionTask, transportRequest: ZMTransportRequest, responseData: Data) {
         // no-op

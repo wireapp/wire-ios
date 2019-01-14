@@ -65,9 +65,13 @@ private class MockReachability: NSObject, ReachabilityProvider, TearDownCapable 
     
 }
 
+@objcMembers
 class MockCertificateTrust: NSObject, BackendTrustProvider {
+    
+    var isTrustingServer: Bool = true
+    
     func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
-        return true
+        return isTrustingServer
     }
 }
 

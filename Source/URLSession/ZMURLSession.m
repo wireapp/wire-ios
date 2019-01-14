@@ -296,6 +296,7 @@ ZM_EMPTY_ASSERTING_INIT();
         BOOL const didTrust = [self.trustProvider verifyServerTrustWithTrust:protectionSpace.serverTrust host:protectionSpace.host];
         if (! didTrust) {
             ZMLogDebug(@"Not trusting the server.");
+            [self.delegate URLSession:self didDetectUnsafeConnectionToHost:protectionSpace.host];
             completionHandler(NSURLSessionAuthChallengeCancelAuthenticationChallenge, nil);
             return;
         }
