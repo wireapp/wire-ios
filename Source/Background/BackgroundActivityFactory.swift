@@ -113,13 +113,6 @@ private let zmLog = ZMSLog(tag: "background-activity")
      */
 
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
-        DispatchQueue.main.async {
-            guard let activityManager = self.activityManager else {
-                zmLog.debug("End activity [\(activity)]: failed, activityManager is nil")
-                return
-            }
-            zmLog.debug("End background activity: removing \(activity). \(activityManager.stateDescription)")
-        }
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskInvalid else {
                 zmLog.debug("End background activity: current background task is invalid")
@@ -143,13 +136,6 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Starts the background activity of the system allows it.
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
-        DispatchQueue.main.async {
-            guard let activityManager = self.activityManager else {
-                zmLog.debug("Start activity [\(name)]: failed, activityManager is nil")
-                return
-            }
-            zmLog.debug("Start activity [\(name)]: \(activityManager.stateDescription)")
-        }
         return isolationQueue.sync {
             guard let activityManager = activityManager else {
                 zmLog.debug("Start activity [\(name)]: failed, activityManager is nil")
@@ -193,7 +179,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
             return
         }
         
-        zmLog.debug("Handle expiration: \(activityManager.description)")
+        zmLog.debug("Handle expiration: \(activityManager.stateDescription)")
         let activities = isolationQueue.sync {
             return self.activities
         }
