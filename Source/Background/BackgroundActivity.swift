@@ -29,6 +29,8 @@ fileprivate let activityCounterQueue = DispatchQueue(label: "wire-transport.back
 
     /// The name of the task, used for debugging purposes.
     @objc public let name: String
+    /// Globally unique index of background activity
+    public let index: Int
 
     /// The block of code called from the main thead when the background timer is about to expire.
     @objc public var expirationHandler: (() -> Void)?
@@ -37,8 +39,9 @@ fileprivate let activityCounterQueue = DispatchQueue(label: "wire-transport.back
         self.name = name
         self.expirationHandler = expirationHandler
         // Increment counter with overflow (used in .description)
-        activityCounterQueue.sync {
+        self.index = activityCounterQueue.sync {
             activityCounter &+= 1
+            return activityCounter
         }
     }
 
@@ -85,7 +88,6 @@ fileprivate let activityCounterQueue = DispatchQueue(label: "wire-transport.back
     }
     
     override public var description: String {
-        let counter = activityCounterQueue.sync { return activityCounter }
-        return "<BackgroundActivity: \(name) [\(counter)]>"
+        return "<BackgroundActivity: \(name) [\(index)]>"
     }
 }
