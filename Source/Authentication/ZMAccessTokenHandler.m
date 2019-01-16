@@ -34,6 +34,7 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMExponentialBackoff.h"
 #import "ZMTLogging.h"
+#import <WireTransport/WireTransport-Swift.h>
 
 
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
@@ -61,6 +62,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
 @property (nonatomic) ZMExponentialBackoff *backoff;
 @property (nonatomic) NSOperationQueue *workQueue;
 @property (nonatomic) ZMSDispatchGroup *group;
+@property (nonatomic) BackgroundActivity *activity;
 
 @end
 
@@ -187,6 +189,7 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
         return;
     }
 
+    self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:@"Network request: POST /access"];
     NSURL *URL = [NSURL URLWithString:@"/access" relativeToURL:self.baseURL];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
     [ZMUserAgent setUserAgentOnRequest:request];
@@ -232,6 +235,9 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     }
     
     [self updateBackoffWithResponse:response];
+    if (self.activity) {
+        [BackgroundActivityFactory.sharedFactory endBackgroundActivity:self.activity];
+    }
 }
 
 - (void)updateBackoffWithResponse:(ZMTransportResponse *)response;

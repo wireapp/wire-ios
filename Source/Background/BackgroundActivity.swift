@@ -88,6 +88,6 @@ fileprivate let activityCounterQueue = DispatchQueue(label: "wire-transport.back
     }
     
     override public var description: String {
-        return "<BackgroundActivity: \(name) [\(index)]>"
+        return "<BackgroundActivity [\(index)]: \(name)>"
     }
 }

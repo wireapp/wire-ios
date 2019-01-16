@@ -379,7 +379,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     //
     // N.B.: This part of the method needs to be thread safe!
     //
-    
+    [request startBackgroundActivity];
     RequireString(request.hasRequiredPayload, "Payload vs. method");
     
     ZM_WEAK(self);
@@ -573,10 +573,14 @@ static NSInteger const DefaultMaximumRequests = 6;
             self.requestScheduler.schedulerState = ZMTransportRequestSchedulerStateNormal; // TODO MARCO test
             [ZMTransportSession notifyNewRequestsAvailable:self]; // TODO MARCO test
             [group leave];
-            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
+            if (enterActivity) {
+                [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
+            }
         }];
     } else {
-        [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
+        if (enterActivity) {
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:enterActivity];
+        }
     }
 }
 
