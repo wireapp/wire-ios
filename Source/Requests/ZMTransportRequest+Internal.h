@@ -40,4 +40,6 @@
 @property (nonatomic, readonly, copy) NSString *descriptionWithMethodAndPath;
 @property (nonatomic, readonly) float progress;
 
+- (void)startBackgroundActivity;
+
 @end

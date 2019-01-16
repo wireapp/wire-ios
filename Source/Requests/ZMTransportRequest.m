@@ -152,6 +152,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 @property (nonatomic) ZMTransportRequestSessionType transportSessionType;
 @property (nonatomic) float progress;
 @property (nonatomic) NSMutableDictionary <NSString *, NSString *> *additionalHeaderFields;
+@property (nonatomic) BackgroundActivity *activity;
 
 @end
 
@@ -481,7 +482,6 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 {
     ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
-    BackgroundActivity *creationActivity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:NSStringFromSelector(_cmd)];
     ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
 
     // TODO Alexis: do not execute if creationActivity is nil
@@ -497,15 +497,8 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
                 [handlerGroup leave];
             }];
         }
-    }
-    
-    [handlerGroup notifyOnQueue:dispatch_get_main_queue() block:^{
-        if (creationActivity) {
-            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:creationActivity];
-        }
-    }];
+    }    
 }
-
 
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler;
 {
@@ -530,10 +523,6 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
 - (void)completeWithResponse:(ZMTransportResponse *)response
 {
     response.startOfUploadTimestamp = self.startOfUploadTimestamp;
-
-    BackgroundActivity *completeActivity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:NSStringFromSelector(_cmd)];
-
-    // TODO Alexis: do not execute if completeActivity is nil
 
     ZMSDispatchGroup *group = response.dispatchGroup;
     ZMSDispatchGroup *group2 = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest"];
@@ -563,8 +552,8 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     }
     [group2 leave];
     [group2 notifyOnQueue:dispatch_get_main_queue() block:^{
-        if (completeActivity) {
-            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:completeActivity];
+        if (self.activity) {
+            [[BackgroundActivityFactory sharedFactory] endBackgroundActivity:self.activity];
         }
     }];
 }
@@ -722,6 +711,15 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     
     RequireString(false, "Invalid HTTP method: %lu", (unsigned long) method);
     return @"GET";
+}
+
+- (void)startBackgroundActivity 
+{
+    if (self.activity != nil) {
+        return;
+    }
+    NSString *activityName = [NSString stringWithFormat:@"Network request: %@ %@", self.methodAsString, self.path];
+    self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:activityName];
 }
 
 @end
