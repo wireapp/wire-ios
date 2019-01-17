@@ -231,7 +231,7 @@ public extension ZMConversation {
     }
 
     @discardableResult @objc public func appendMessageTimerUpdateMessage(fromUser user: ZMUser, timer: Double, timestamp: Date) -> ZMSystemMessage {
-        let (message, _) = appendSystemMessage(
+        let message = appendSystemMessage(
             type: .messageTimerUpdate,
             sender: user,
             users: [user],

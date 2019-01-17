@@ -292,7 +292,6 @@ extension ClientMessageTests_OTR {
             }
         }
     }
-    
 }
 
 // MARK: - Delivery
@@ -485,5 +484,37 @@ extension ClientMessageTests_OTR {
             string = string + string
         }
         return string
+    }
+}
+
+extension DatabaseBaseTest {
+    
+    func createSelfUser(in moc: NSManagedObjectContext) -> (ZMUser, ZMConversation) {
+        let selfUser = ZMUser.selfUser(in: moc)
+        selfUser.remoteIdentifier = UUID()
+
+        let conversation = ZMConversation(remoteID: selfUser.remoteIdentifier,
+                                          createIfNeeded: true,
+                                          in: moc)!
+        moc.saveOrRollback()
+        return (selfUser, conversation)
+    }
+    
+    func createSelfClient(on moc: NSManagedObjectContext) -> UserClient {
+        let selfUser = ZMUser.selfUser(in: moc)
+        
+        let selfClient = UserClient.insertNewObject(in: moc)
+        selfClient.remoteIdentifier = NSString.createAlphanumerical()
+        selfClient.user = selfUser
+        
+        moc.setPersistentStoreMetadata(selfClient.remoteIdentifier, key: ZMPersistedClientIdKey)
+        
+        let payload = ["id": selfClient.remoteIdentifier!,
+                       "type": "permanent",
+                       "time": Date().transportString()] as [String: AnyObject]
+        let _ = UserClient.createOrUpdateSelfUserClient(payload, context:moc)
+        
+        moc.saveOrRollback()
+        return selfClient
     }
 }

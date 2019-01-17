@@ -118,7 +118,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
         self.hasReadReceiptsEnabled = enabled;
         
         // We only want insert a system message if this is an existing conversation (non empty)
-        if (receiptModeChanged && self.messages.count > 0) {
+        if (receiptModeChanged && self.recentMessages.count > 0) {
             [self appendMessageReceiptModeIsOnMessageWithTimestamp:[NSDate date]];
         }
     }

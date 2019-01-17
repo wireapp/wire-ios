@@ -139,18 +139,7 @@ extension ZMClientMessage: ZMImageOwner {
     }
     
     @objc public var linkPreviewImageCacheKey: String? {
-        
-        if self.linkPreviewImageData != nil {
-            return self.nonce?.uuidString
-        }
-        
-        guard let linkPreview = self.firstZMLinkPreview else { return nil }
-        if linkPreview.article.hasImage() {
-            return linkPreview.article.image.uploaded.assetId
-        } else if linkPreview.hasImage() {
-            return linkPreview.image.uploaded.assetId
-        }
-        return nil
+        return self.nonce?.uuidString
     }
     
     @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {

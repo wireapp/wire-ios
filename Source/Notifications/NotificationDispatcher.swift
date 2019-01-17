@@ -120,9 +120,7 @@ extension ZMManagedObject {
     
     fileprivate var tornDown = false
     private let affectingKeysStore : DependencyKeyStore
-    private var messageWindowObserverCenter : MessageWindowObserverCenter {
-        return managedObjectContext.messageWindowObserverCenter
-    }
+
     fileprivate var conversationListObserverCenter : ConversationListObserverCenter {
         return managedObjectContext.conversationListObserverCenter
     }
@@ -133,7 +131,6 @@ extension ZMManagedObject {
     private var changeInfoConsumers = [UnownedNSObject]()
     private var allChangeInfoConsumers : [ChangeInfoConsumer] {
         var consumers = changeInfoConsumers.compactMap{$0.unbox as? ChangeInfoConsumer}
-        consumers.append(messageWindowObserverCenter)
         consumers.append(searchUserObserverCenter)
         consumers.append(conversationListObserverCenter)
         return consumers

@@ -33,7 +33,6 @@ NSString * const DeliveredKey = @"delivered";
 
 @implementation ZMOTRMessage
 
-@dynamic delivered;
 @dynamic dataSet;
 @dynamic missingRecipients;
 
@@ -241,11 +240,10 @@ NSString * const DeliveredKey = @"delivered";
         [clientMessage updateQuoteRelationships];
         [clientMessage unarchiveIfNeeded:conversation];
         [clientMessage updateCategoryCache];
-        [conversation resortMessagesWithUpdatedMessage:clientMessage];
         
         return [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:clientMessage.needsDeliveryConfirmation wasInserted:isNewMessage];
     }
-    
+
     return nil;
 }
 

@@ -191,9 +191,9 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
+            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let data = self.verySmallJPEGData()
-            let message = self.conversation.append(imageFromData: data) as! ZMAssetClientMessage
+            let message = self.syncConversation.append(imageFromData: data) as! ZMAssetClientMessage
             
             self.syncMOC.saveOrRollback()
             
@@ -334,7 +334,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
     func appendPreviewImageMessage() -> ZMAssetClientMessage {
         let imageData = verySmallJPEGData()
         let message = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        conversation.sortedAppendMessage(message)
+        conversation.append(message)
         
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         let properties = ZMIImageProperties(size:imageSize, length:UInt(imageData.count), mimeType:"image/jpeg")
@@ -445,8 +445,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         spinMainQueue(withTimeout: 0.5)
         
         // then
-        guard let deleteMessage = conversation.hiddenMessages.firstObject as? ZMClientMessage
-            else { return XCTFail()}
+        guard let deleteMessage = conversation.hiddenMessages.first(where: { $0 is ZMClientMessage }) as? ZMClientMessage else { return XCTFail()}
         
         guard let genericMessage = deleteMessage.genericMessage, genericMessage.hasDeleted()
             else {return XCTFail()}

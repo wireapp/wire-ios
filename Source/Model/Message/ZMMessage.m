@@ -130,6 +130,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
 @dynamic confirmations;
 @dynamic isObfuscated;
 @dynamic normalizedText;
+@dynamic delivered;
 
 - (instancetype)initWithNonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
@@ -496,10 +497,6 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     
     [self.conversation updateServerModified:timestamp];
     [self.conversation updateTimestampsAfterUpdatingMessage:self];
-    
-    if (updatedTimestamp) {
-        [self.conversation resortMessagesWithUpdatedMessage:self];
-    }
 }
 
 - (NSString *)shortDebugDescription;
@@ -519,13 +516,21 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
             ];
 }
 
-+ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce forConversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc
++ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
+                      forConversation:(ZMConversation *)conversation
+               inManagedObjectContext:(NSManagedObjectContext *)moc
 {
-    return [self fetchMessageWithNonce:nonce forConversation:conversation inManagedObjectContext:moc prefetchResult:nil];
+    return [self fetchMessageWithNonce:nonce
+                       forConversation:conversation
+                inManagedObjectContext:moc
+                        prefetchResult:nil];
 }
 
 
-+ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce forConversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
++ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
+                      forConversation:(ZMConversation *)conversation
+               inManagedObjectContext:(NSManagedObjectContext *)moc
+                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
 {
     NSSet <ZMMessage *>* prefetchedMessages = prefetchResult.messagesByNonce[nonce];
     
@@ -543,9 +548,9 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     BOOL checkedAllHiddenMessages = NO;
     BOOL checkedAllVisibleMessage = NO;
 
-    if (![conversation hasFaultForRelationshipNamed:ZMConversationMessagesKey]) {
+    if (![conversation hasFaultForRelationshipNamed:ZMConversationAllMessagesKey]) {
         checkedAllVisibleMessage = YES;
-        for (ZMMessage *message in conversation.messages) {
+        for (ZMMessage *message in conversation.allMessages) {
             if (message.isFault) {
                 checkedAllVisibleMessage = NO;
             } else if ([message.entity isKindOfEntity:entity] && [noncePredicate evaluateWithObject:message]) {
@@ -678,6 +683,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
                              ZMSystemMessageRelevantForConversationStatusKey,
                              ZMSystemMessageAllTeamUsersAddedKey,
                              ZMSystemMessageNumberOfGuestsAddedKey,
+                             DeliveredKey,
                              ZMMessageExpectReadConfirmationKey,
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
@@ -906,7 +912,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     [message updateNewConversationSystemMessageIfNeededWithUsers:usersSet
                                                          context:moc
                                                     conversation:conversation];
-        
+    [conversation updateMessageFetcher];
     [conversation updateTimestampsAfterUpdatingMessage:message];
     
     return message;

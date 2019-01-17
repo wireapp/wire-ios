@@ -35,7 +35,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
 
             // then
-            guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+            guard let message = conversation.recentMessages.last as? ZMSystemMessage else {
                 return XCTFail("No system message")
             }
 
@@ -60,7 +60,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             let second = conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(100))
 
             // then
-            guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+            guard let message = conversation.recentMessages.last as? ZMSystemMessage else {
                 return XCTFail("No system message")
             }
 
@@ -93,7 +93,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             }
 
             // then
-            guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+            guard let message = conversation.recentMessages.last as? ZMSystemMessage else {
                 return XCTFail("No system message")
             }
 
@@ -127,10 +127,10 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             let second = conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(100))
 
             // then
-            XCTAssertEqual(conversation.messages.count, 3)
-            XCTAssertEqual(conversation.messages[0] as? ZMSystemMessage , first)
-            XCTAssertEqual(conversation.messages[1] as? ZMMessage, intermediate)
-            XCTAssertEqual(conversation.messages[2] as? ZMSystemMessage, second)
+            XCTAssertEqual(conversation.recentMessages.count, 3)
+            XCTAssertEqual(conversation.recentMessages[0] as? ZMSystemMessage , first)
+            XCTAssertEqual(conversation.recentMessages[1], intermediate)
+            XCTAssertEqual(conversation.recentMessages[2] as? ZMSystemMessage, second)
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -148,9 +148,9 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             let second = conversation.appendMissedCallMessage(fromUser: secondUser, at: timestamp.addingTimeInterval(100))
 
             // then
-            XCTAssertEqual(conversation.messages.count, 2)
-            XCTAssertEqual(conversation.messages[0] as? ZMSystemMessage , first)
-            XCTAssertEqual(conversation.messages[1] as? ZMSystemMessage, second)
+            XCTAssertEqual(conversation.recentMessages.count, 2)
+            XCTAssertEqual(conversation.recentMessages[0] as? ZMSystemMessage , first)
+            XCTAssertEqual(conversation.recentMessages[1] as? ZMSystemMessage, second)
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -167,7 +167,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         conversation.appendPerformedCallMessage(with: 42, caller: user)
 
         // then
-        guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+        guard let message = conversation.recentMessages.last as? ZMSystemMessage else {
             return XCTFail("No system message")
         }
 
@@ -188,7 +188,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         // then
-        guard let message = conversation.messages.lastObject as? ZMSystemMessage else {
+        guard let message = conversation.recentMessages.last as? ZMSystemMessage else {
             return XCTFail("No system message")
         }
 
@@ -215,10 +215,10 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         let second = conversation.appendPerformedCallMessage(with: 42, caller: user)
 
         // then
-        XCTAssertEqual(conversation.messages.count, 3)
-        XCTAssertEqual(conversation.messages[0] as? ZMSystemMessage , first)
-        XCTAssertEqual(conversation.messages[1] as? ZMMessage, intermediate)
-        XCTAssertEqual(conversation.messages[2] as? ZMSystemMessage, second)
+        XCTAssertEqual(conversation.recentMessages.count, 3)
+        XCTAssertEqual(conversation.recentMessages[0] as? ZMSystemMessage , first)
+        XCTAssertEqual(conversation.recentMessages[1], intermediate)
+        XCTAssertEqual(conversation.recentMessages[2] as? ZMSystemMessage, second)
     }
 
     func testThatItDoesNotUpdatePreviousPerformedCallMessageWhenCallerIsDifferent() {
@@ -231,9 +231,9 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         let second = conversation.appendPerformedCallMessage(with: 42, caller: secondUser)
 
         // then
-        XCTAssertEqual(conversation.messages.count, 2)
-        XCTAssertEqual(conversation.messages[0] as? ZMSystemMessage , first)
-        XCTAssertEqual(conversation.messages[1] as? ZMSystemMessage, second)
+        XCTAssertEqual(conversation.recentMessages.count, 2)
+        XCTAssertEqual(conversation.recentMessages[0] as? ZMSystemMessage , first)
+        XCTAssertEqual(conversation.recentMessages[1] as? ZMSystemMessage, second)
     }
 
 }

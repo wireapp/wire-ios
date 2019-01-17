@@ -28,7 +28,6 @@ extern NSString * const DeliveredKey;
 
 @interface ZMOTRMessage : ZMMessage
 
-@property (nonatomic) BOOL delivered;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic, readonly) NSSet *missingRecipients;
 @property (nonatomic, readonly, nullable) NSString *dataSetDebugInformation;

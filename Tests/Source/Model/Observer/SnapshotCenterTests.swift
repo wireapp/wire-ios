@@ -80,7 +80,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                            "mutedStatus": 0 as Optional<NSObject>]
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
-                                           "messages": 0]
+                                           "allMessages": 0]
         
         expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
@@ -136,7 +136,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                          "mutedStatus": (MutedMessageOptionValue.all.rawValue) as Optional<NSObject>]
         let expectedToManyRelationships = ["hiddenMessages": 0,
                                            "lastServerSyncedActiveParticipants": 0,
-                                           "messages": 1]
+                                           "allMessages": 1]
         
         let expectedToOneRelationships = ["team": false,
                                           "connection": false,
@@ -189,7 +189,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         // then
         XCTAssertEqual(changedKeys, Set(conv.entity.attributesByName.keys).union(["hiddenMessages",
                                                                                   "lastServerSyncedActiveParticipants",
-                                                                                  "messages"]))
+                                                                                  "allMessages"]))
     }
 
 }

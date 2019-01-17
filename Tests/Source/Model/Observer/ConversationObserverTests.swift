@@ -290,7 +290,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                         _ = conversation.append(text: "foo")
             },
                                                      expectedChangedFields: ["messagesChanged", "lastModifiedDateChanged"],
-                                                     expectedChangedKeys: ["messages", "lastModifiedDate"])
+                                                     expectedChangedKeys: ["allMessages", "lastModifiedDate"])
     }
     
     func testThatItNotifiesTheObserverOfAnAddedParticipant()
@@ -629,7 +629,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         guard let changes = observer.notifications.first else { return XCTFail() }
         changes.checkForExpectedChangeFields(userInfoKeys: conversationInfoKeys,
                                      expectedChangedFields: ["conversationListIndicatorChanged", "messagesChanged", "unreadCountChanged"])
-        XCTAssertEqual(changes.changedKeys, Set(["messages", "conversationListIndicator", "estimatedUnreadCount"]))
+        XCTAssertEqual(changes.changedKeys, Set(["allMessages", "conversationListIndicator", "estimatedUnreadCount"]))
     }
     
     func testThatItNotifiesTheObserverOfAChangedClearedTimeStamp()
@@ -675,7 +675,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
                                                         conversation.internalAddParticipants(Set(arrayLiteral: user))
         },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged"],
-                                                     expectedChangedKeys: ["displayName", "messages", "lastServerSyncedActiveParticipants", "securityLevel"])
+                                                     expectedChangedKeys: ["displayName", "allMessages", "lastServerSyncedActiveParticipants", "securityLevel"])
     
     }
     
@@ -699,7 +699,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
 
         },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged"],
-                                                     expectedChangedKeys: ["securityLevel", "messages"])
+                                                     expectedChangedKeys: ["securityLevel", "allMessages"])
         
     }
     

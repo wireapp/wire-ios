@@ -42,8 +42,11 @@
     ZMConversation *conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     
     ZMClientMessage *message1 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    message1.serverTimestamp = [NSDate date];
     ZMClientMessage *message2 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    message2.serverTimestamp = [NSDate date];
     ZMClientMessage *message3 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
+    message3.serverTimestamp = [NSDate date];
     
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -111,9 +114,9 @@
         ZMConversation *c2Conversation2 = (id) [self.syncMOC existingObjectWithID:conversation2.objectID error:&error];
         XCTAssertEqualObjects(c2Conversation2.objectID, conversation2.objectID, @"Failed to read in 2nd context: %@", error);
         
-        NSOrderedSet *c2Messages1 = c2Conversation1.messages;
+        NSArray *c2Messages1 = c2Conversation1.recentMessages;
         XCTAssertEqual(c2Messages1.count, (NSUInteger) 2);
-        NSOrderedSet *c2Messages2 = c2Conversation2.messages;
+        NSArray *c2Messages2 = c2Conversation2.recentMessages;
         XCTAssertEqual(c2Messages2.count, (NSUInteger) 1);
         ZMTextMessage *c2Message1 = c2Messages1[0];
         ZMTextMessage *c2Message2 = c2Messages1[1];

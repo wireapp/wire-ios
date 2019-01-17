@@ -51,8 +51,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNil(firstMessage.normalizedText)
         XCTAssertNil(otherMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 41)
-        XCTAssertEqual(otherConversation.messages.count, 41)
+        XCTAssertEqual(conversation.recentMessages.count, 41)
+        XCTAssertEqual(otherConversation.recentMessages.count, 41)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -84,8 +84,8 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
         XCTAssertNotNil(otherMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 41)
-        XCTAssertEqual(otherConversation.messages.count, 41)
+        XCTAssertEqual(conversation.recentMessages.count, 41)
+        XCTAssertEqual(otherConversation.recentMessages.count, 41)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -119,7 +119,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertNil(firstMessage.normalizedText)
         XCTAssertNil(secondMessage.normalizedText)
         XCTAssertNil(lastMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 403)
+        XCTAssertEqual(conversation.allMessages.count, 403)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -155,7 +155,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssert(uiMOC.saveOrRollback())
         XCTAssertNotNil(firstMessage.normalizedText)
         XCTAssertNotNil(secondMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 2)
+        XCTAssertEqual(conversation.recentMessages.count, 2)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -200,7 +200,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertNotNil(firstMessage.normalizedText)
         XCTAssertNotNil(secondMessage.normalizedText)
         XCTAssertNotNil(lastMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 403)
+        XCTAssertEqual(conversation.allMessages.count, 403)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -236,7 +236,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertNotNil(firstMessage.normalizedText)
         XCTAssertNotNil(secondMessage.normalizedText)
         XCTAssertNotNil(lastMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 5)
+        XCTAssertEqual(conversation.recentMessages.count, 5)
 
         // When
         let delegate = MockTextSearchQueryDelegate()
@@ -281,7 +281,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertNil(firstMessage.normalizedText)
         XCTAssertNil(secondMessage.normalizedText)
         XCTAssertNotNil(lastMessage.normalizedText)
-        XCTAssertEqual(conversation.messages.count, 403)
+        XCTAssertEqual(conversation.allMessages.count, 403)
 
         // When
         let results = search(for: "in the conversation", in: conversation)
@@ -439,7 +439,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertNotNil(message.normalizedText)
         XCTAssertNotNil(otherMessage.normalizedText)
         XCTAssertEqual(ephemeralMessage.normalizedText, "this is a timed message in the conversation")
-        XCTAssertEqual(conversation.messages.count, 3)
+        XCTAssertEqual(conversation.recentMessages.count, 3)
 
         // When
         guard let ephemeralMatches = search(for: "timed", in: conversation).first?.matches,

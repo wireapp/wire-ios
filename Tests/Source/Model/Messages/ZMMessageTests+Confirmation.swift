@@ -156,8 +156,8 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         
         // then
-        XCTAssertEqual(conversation.messages.count, 1, file: file, line: line)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message, file: file, line: line)
+        XCTAssertEqual(conversation.recentMessages.count, 1, file: file, line: line)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMClientMessage, sut.message, file: file, line: line)
         XCTAssertEqual(shouldSendConfirmation, sut.needsConfirmation, file: file, line: line)
     }
     
@@ -195,8 +195,8 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMClientMessage, sut.message)
+        XCTAssertEqual(conversation.recentMessages.count, 1)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMClientMessage, sut.message)
         XCTAssertFalse(sut.needsConfirmation)
     }
     
@@ -265,7 +265,7 @@ extension ZMMessageTests_Confirmation {
         let _ = sut.message?.confirmDelivery()
         // then
         XCTAssertTrue(sut.needsConfirmation)
-        guard let hiddenMessage = conversation.hiddenMessages.lastObject as? ZMClientMessage else {
+        guard let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage else {
             XCTFail("Did not insert confirmation message.")
             return
         }

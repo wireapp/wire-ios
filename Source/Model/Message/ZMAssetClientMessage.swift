@@ -280,7 +280,6 @@ import Foundation
                 self.serverTimestamp = serverTimestamp
                 self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
             }
-            conversation?.resortMessages(withUpdatedMessage: self)
             conversation?.updateTimestampsAfterUpdatingMessage(self)
         }
         

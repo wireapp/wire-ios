@@ -1768,7 +1768,7 @@ extension ZMAssetClientMessageTests {
     func checkThatFileMessageCanBeDeleted(_ canBeDeleted: Bool, _ state: ZMDeliveryState, line: UInt = #line) {
         syncMOC.performAndWait {
             // given
-            let sut = appendFileMessage(to: conversation)!
+            let sut = appendFileMessage(to: syncConversation)!
             XCTAssertNotNil(sut.fileMessageData, line: line)
             XCTAssertTrue(self.syncMOC.saveOrRollback(), line: line)
             

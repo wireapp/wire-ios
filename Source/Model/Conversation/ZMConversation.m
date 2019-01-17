@@ -52,7 +52,7 @@ NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessa
 NSString *const ZMConversationIsArchivedKey = @"internalIsArchived";
 NSString *const ZMConversationIsSelfAnActiveMemberKey = @"isSelfAnActiveMember";
 NSString *const ZMConversationMutedStatusKey = @"mutedStatus";
-NSString *const ZMConversationMessagesKey = @"messages";
+NSString *const ZMConversationAllMessagesKey = @"allMessages";
 NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
 NSString *const ZMConversationLastServerSyncedActiveParticipantsKey = @"lastServerSyncedActiveParticipants";
 NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
@@ -129,6 +129,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @property (nonatomic) NSDate *archivedChangedTimestamp;
 @property (nonatomic) NSDate *silencedChangedTimestamp;
 
+@property (nonatomic) id _recentMessagesFetcher;
+
 @end
 
 /// Declaration of properties implemented (automatically) by Core Data
@@ -147,7 +149,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @implementation ZMConversation
 
 @dynamic userDefinedName;
-@dynamic messages;
+@dynamic allMessages;
 @dynamic lastModifiedDate;
 @dynamic creator;
 @dynamic normalizedUserDefinedName;
@@ -164,6 +166,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @synthesize lastReadTimestampSaveDelay;
 @synthesize lastReadTimestampUpdateCounter;
 @synthesize unreadTimeStamps;
+@synthesize _recentMessagesFetcher;
 
 - (BOOL)isArchived
 {
@@ -256,6 +259,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 }
 
+- (void)willTurnIntoFault
+{
+    [super willTurnIntoFault];
+    self._recentMessagesFetcher = nil;
+}
 
 -(NSOrderedSet *)activeParticipants
 {
@@ -343,7 +351,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             VoiceChannelKey,
             ZMConversationHasUnreadMissedCallKey,
             ZMConversationHasUnreadUnsentMessageKey,
-            ZMConversationMessagesKey,
+            ZMConversationAllMessagesKey,
             ZMConversationHiddenMessagesKey,
             ZMConversationLastServerTimeStampKey,
             SecurityLevelKey,
@@ -589,7 +597,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (ZMMessage *)lastEditableMessage;
 {
     __block ZMMessage *result;
-    [self.messages enumerateObjectsWithOptions:NSEnumerationReverse
+    [self.recentMessages enumerateObjectsWithOptions:NSEnumerationReverse
                                     usingBlock:^(ZMMessage *message, NSUInteger ZM_UNUSED idx, BOOL *stop) {
                                             if ([message isEditableMessage]) {
                                                 result = message;
@@ -601,7 +609,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingFirstUnreadMessage
 {
-    return [NSSet setWithObjects:ZMConversationMessagesKey, ZMConversationLastReadServerTimeStampKey, nil];
+    return [NSSet setWithObjects:ZMConversationAllMessagesKey, ZMConversationLastReadServerTimeStampKey, nil];
 }
 
 - (NSSet<NSString *> *)filterUpdatedLocallyModifiedKeys:(NSSet<NSString *> *)updatedKeys
@@ -624,7 +632,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (BOOL)canMarkAsUnread
 {
-    if (self.messages.count == 0) {
+    if (self.recentMessages.count == 0) {
         return NO;
     }
     
@@ -641,14 +649,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMMessage *)lastMessageCanBeMarkedUnread
 {
-    NSUInteger lastMessageIndexCanBeMarkedUnread = [self.messages.reversedOrderedSet indexOfObjectPassingTest:^BOOL(id<ZMConversationMessage> message, NSUInteger idx, BOOL *stop) {
+    NSUInteger lastMessageIndexCanBeMarkedUnread = [self.recentMessages indexOfObjectWithOptions:NSEnumerationReverse
+                                                                                     passingTest:^BOOL(ZMMessage *message, NSUInteger idx, BOOL *stop) {
         NOT_USED(idx);
         NOT_USED(stop);
         return message.canBeMarkedUnread;
     }];
     
     if (lastMessageIndexCanBeMarkedUnread != NSNotFound) {
-        return self.messages[self.messages.count - lastMessageIndexCanBeMarkedUnread - 1];
+        return self.recentMessages[self.recentMessages.count - lastMessageIndexCanBeMarkedUnread - 1];
     }
     else {
         return nil;
@@ -689,9 +698,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return @"Conversation";
 }
 
-- (NSMutableOrderedSet *)mutableMessages;
+- (NSMutableSet<ZMMessage *> *)mutableMessages;
 {
-    return [self mutableOrderedSetValueForKey:ZMConversationMessagesKey];
+    return [self mutableSetValueForKey:ZMConversationAllMessagesKey];
 }
 
 + (ZMConversationList *)conversationsIncludingArchivedInContext:(NSManagedObjectContext *)moc;
@@ -719,37 +728,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return moc.conversationListDirectory.pendingConnectionConversations;
 }
 
-- (void)sortMessages
-{
-    NSOrderedSet *sorted = [NSOrderedSet orderedSetWithArray:[self.messages sortedArrayUsingDescriptors:[ZMMessage defaultSortDescriptors]]];
-    // Be sure not to "dirty" the relationship, unless we need to:
-    if (! [self.messages isEqualToOrderedSet:sorted]) {
-        [self setValue:sorted forKey:ZMConversationMessagesKey];
-    }
-    // sortMessages is called when processing downloaded events (e.g. after slow sync) which can be unordered
-    // after sorting messages we also need to recalculate the unread properties
-    [self calculateLastUnreadMessages];
-}
-
-- (void)resortMessagesWithUpdatedMessage:(ZMMessage *)message
-{
-    if (message.visibleInConversation == nil) {
-        ZMLogWarn(@"Attempt to resort message not visible in conversation");
-        return;
-    }
-    
-    [self.mutableMessages removeObject:message];
-    [self sortedAppendMessage:message];
-    [self calculateLastUnreadMessages];
-}
-
 - (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
 {
     ZMConversation *existingConversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.managedObjectContext];
     if ((existingConversation != nil) && ![existingConversation isEqual:self]) {
         Require(self.remoteIdentifier == nil);
-        [self.mutableMessages addObjectsFromArray:existingConversation.messages.array];
-        [self sortMessages];
+        [self.mutableMessages unionSet:existingConversation.allMessages];
         // Just to be on the safe side, force update:
         self.needsToBeUpdatedFromBackend = YES;
         // This is a duplicate. Delete the other one
@@ -970,7 +954,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if(hidden) {
         message.hiddenInConversation = self;
     } else {
-        [self sortedAppendMessage:message];
+        [self appendMessage:message];
         [self unarchiveIfNeeded];
         [message updateCategoryCache];
         [message prepareToSend];
@@ -990,7 +974,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     
     [message setExpirationDate];
-    [self sortedAppendMessage:message];
+    [self appendMessage:message];
+
     [self unarchiveIfNeeded];
     [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:imageData];
     [message updateCategoryCache];
@@ -1001,7 +986,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (void)appendNewConversationSystemMessageIfNeeded;
 {
-    ZMMessage *firstMessage = self.messages.firstObject;
+    ZMMessage *firstMessage = self.recentMessages.firstObject;
     if ([firstMessage isKindOfClass:[ZMSystemMessage class]]) {
         ZMSystemMessage *systemMessage = (ZMSystemMessage *)firstMessage;
         if (systemMessage.systemMessageType == ZMSystemMessageTypeNewConversation) {
@@ -1022,73 +1007,36 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // the new conversation message should be displayed first,
     // additionally the use of reference date is to ensure proper transition for older clients so the message is the very
     // first message in conversation
-    systemMessage.serverTimestamp = [NSDate dateWithTimeIntervalSinceReferenceDate:0];
+    systemMessage.serverTimestamp = [ZMConversation newConversationMessageTimestamp];
     
-    [self sortedAppendMessage:systemMessage];
+    [self appendMessage:systemMessage];
     
     if (self.hasReadReceiptsEnabled) {
         [self appendMessageReceiptModeIsOnMessageWithTimestamp:[NSDate dateWithTimeIntervalSinceReferenceDate:1]];
     }
 }
 
-- (NSUInteger)sortedAppendMessage:(ZMMessage *)message;
++ (NSDate *)newConversationMessageTimestamp
+{
+    return [NSDate dateWithTimeIntervalSinceReferenceDate:0];
+}
+
+- (void)appendMessage:(ZMMessage *)message;
 {
     Require(message != nil);
     [message updateNormalizedText];
-
-    // This is more efficient than adding to mutableMessages and re-sorting all of them.
-    NSUInteger index = self.messages.count;
-    ZMMessage * const currentLastMessage = self.messages.lastObject;
-    Require(currentLastMessage != message);
-    if (currentLastMessage == nil) {
-        [self.mutableMessages addObject:message];
-    } else {
-        if ([currentLastMessage compare:message] == NSOrderedAscending) {
-            [self.mutableMessages addObject:message];
-        } else {
-            NSUInteger idx = [self.messages.array indexOfObject:message inSortedRange:NSMakeRange(0, self.messages.count) options:NSBinarySearchingInsertionIndex | NSBinarySearchingLastEqual usingComparator:^(ZMMessage *msg1, ZMMessage *msg2) {
-                return [msg1 compare:msg2];
-            }];
-            [self.mutableMessages insertObject:message atIndex:idx];
-            index = idx;
-        }
-    }
+    message.visibleInConversation = self;
+    
+    [self addAllMessagesObject:message];
+    [self updateMessageFetcher];
     
     [self updateTimestampsAfterInsertingMessage:message];
-    
-    return index;
 }
 
 - (void)unarchiveIfNeeded
 {
     if (self.isArchived) {
         self.isArchived = NO;
-    }
-}
-
-- (void)deleteOlderMessages
-{
-    if ( self.messages.count == 0 || self.clearedTimeStamp == nil) {
-        return;
-    }
-    
-    // If messages are not sorted beforehand, we might delete messages we were supposed to keep
-    [self sortMessages];
-    
-    NSMutableArray *messagesToDelete = [NSMutableArray array];
-    [self.messages enumerateObjectsUsingBlock:^(ZMSystemMessage *message, NSUInteger __unused idx, BOOL *stop) {
-        NOT_USED(stop);
-        // cleared event can be an invisible event that is not a message
-        // therefore we should stop when we reach a message that is older than the clearedTimestamp
-        if ([message.serverTimestamp compare:self.clearedTimeStamp] == NSOrderedDescending) {
-            *stop = YES;
-            return;
-        }
-        [messagesToDelete addObject:message];
-    }];
-    
-    for (ZMMessage *message in messagesToDelete) {
-        [self.managedObjectContext deleteObject:message];
     }
 }
 
@@ -1292,7 +1240,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     for(NSManagedObject *obj in registeredObjects) {
         if(!obj.isFault && [obj isKindOfClass:ZMConversation.class]) {
             ZMConversation *conversation = (ZMConversation *)obj;
-            [messagesToKeep addObjectsFromArray:[conversation messagesNotToRefreshBecauseNeededForSorting].allObjects];
+            [messagesToKeep addObjectsFromArray:[conversation messagesNotToRefresh].allObjects];
             
             if(conversation.shouldNotBeRefreshed) {
                 [conversationsToKeep addObject:conversation];
@@ -1325,15 +1273,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 }
 
-
-- (NSSet *)messagesNotToRefreshBecauseNeededForSorting
+- (NSSet *)messagesNotToRefresh
 {
     NSMutableSet *messagesToKeep = [NSMutableSet set];
     
     const static NSUInteger NumberOfMessagesToKeep = 3;
     
-    if (![self hasFaultForRelationshipNamed:ZMConversationMessagesKey]) {
-        const NSUInteger length = self.messages.count;
+    if (![self hasFaultForRelationshipNamed:ZMConversationAllMessagesKey]) {
+        const NSUInteger length = self.recentMessages.count;
         
         if (length == 0) {
             return [NSSet set];
@@ -1343,7 +1290,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         const NSUInteger endIndex = length - 1;
         
         for (NSUInteger index = startIndex; index <= endIndex; index++) {
-            [messagesToKeep addObject:self.messages[index]];
+            [messagesToKeep addObject:self.recentMessages[index]];
         }
     }
     

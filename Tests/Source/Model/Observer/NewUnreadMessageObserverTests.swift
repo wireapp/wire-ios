@@ -81,16 +81,11 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         msg1.serverTimestamp = Date()
         msg1.visibleInConversation = conversation
-        performPretendingUiMocIsSyncMoc {
-            conversation.resortMessages(withUpdatedMessage: msg1)
-        }
         
         let msg2 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         msg2.serverTimestamp = Date()
         msg2.visibleInConversation = conversation
-        performPretendingUiMocIsSyncMoc {
-            conversation.resortMessages(withUpdatedMessage: msg2)
-        }
+
         self.uiMOC.saveOrRollback()
         
         // then

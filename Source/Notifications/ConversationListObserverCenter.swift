@@ -107,7 +107,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         guard let conversation = changes.message.conversation, changes.genericMessageChanged else { return }
         
         let changeInfo = ConversationChangeInfo(object: conversation)
-        changeInfo.changedKeys.insert(#keyPath(ZMConversation.messages))
+        changeInfo.changedKeys.insert(#keyPath(ZMConversation.allMessages))
         conversationDidChange(changeInfo)
     }
     
