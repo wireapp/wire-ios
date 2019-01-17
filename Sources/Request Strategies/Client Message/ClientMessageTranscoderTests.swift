@@ -83,7 +83,7 @@ extension ClientMessageTranscoderTests {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
             
             // THEN
-            XCTAssertEqual((self.groupConversation.messages.lastObject as? ZMConversationMessage)?.textMessageData?.messageText, text)
+            XCTAssertEqual(self.groupConversation.recentMessages.last?.textMessageData?.messageText, text)
         }
     }
     
@@ -98,7 +98,7 @@ extension ClientMessageTranscoderTests {
             self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
             
             // THEN
-            XCTAssertEqual((self.groupConversation.messages.lastObject as? ZMClientMessage)?.textMessageData?.messageText, text)
+            XCTAssertEqual((self.groupConversation.recentMessages.last as? ZMClientMessage)?.textMessageData?.messageText, text)
         }
     }
     

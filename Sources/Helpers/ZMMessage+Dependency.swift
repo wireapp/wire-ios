@@ -90,30 +90,26 @@ extension ZMMessage {
         // so we iterate backwards and we ignore everything until we find this one
         var selfMessageFound = false
 
-        conversation.messages
-            .enumerateObjects(options: NSEnumerationOptions.reverse) { (obj, _, stop) in
-                guard let previousMessage = obj as? ZMMessage else { return }
+        for previousMessage in conversation.recentMessages.reversed() {
+            if let currentTimestamp = self.serverTimestamp,
+                let previousTimestamp = previousMessage.serverTimestamp {
                 
-                if let currentTimestamp = self.serverTimestamp,
-                    let previousTimestamp = previousMessage.serverTimestamp {
-                    
-                    // to old?
-                    let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
-                    if tooOld {
-                        stop.pointee = true
-                        return
-                    }
+                // to old?
+                let tooOld = currentTimestamp.timeIntervalSince(previousTimestamp) > MaxDelayToConsiderForBlockingObject
+                if tooOld {
+                    break
                 }
-                
-                let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce
-                if sameMessage {
-                    selfMessageFound = true
-                }
-                
-                if selfMessageFound && !sameMessage && previousMessage.shouldBlockFurtherMessages {
-                    blockingMessage = previousMessage
-                    stop.pointee = true
-                }
+            }
+            
+            let sameMessage = previousMessage === self || previousMessage.nonce == self.nonce
+            if sameMessage {
+                selfMessageFound = true
+            }
+            
+            if selfMessageFound && !sameMessage && previousMessage.shouldBlockFurtherMessages {
+                blockingMessage = previousMessage
+                break
+            }
         }
         return blockingMessage
     }
