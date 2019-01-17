@@ -119,7 +119,7 @@ class DependentObjectsTests: ZMTBaseTest {
         
         // WHEN
         self.sut.enumerateAndRemoveObjects(for: self.conversation1!) {
-            ($0 as? ZMClientMessage) == self.messageA!
+            $0 == self.messageA!
         }
         
         // THEN

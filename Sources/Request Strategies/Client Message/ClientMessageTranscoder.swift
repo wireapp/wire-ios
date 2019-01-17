@@ -137,7 +137,7 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
 extension ClientMessageTranscoder {
 
     public var hasPendingMessages: Bool {
-        return self.messageExpirationTimer.hasMessageTimersRunning || self.upstreamObjectSync.hasCurrentlyRunningRequests;
+        return self.messageExpirationTimer.hasMessageTimersRunning || self.upstreamObjectSync.hasCurrentlyRunningRequests
     }
     
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
@@ -174,6 +174,8 @@ extension ClientMessageTranscoder {
         default:
             break
         }
+        
+        managedObjectContext.processPendingChanges()
     }
     
     fileprivate func deleteOldEphemeralMessages() {

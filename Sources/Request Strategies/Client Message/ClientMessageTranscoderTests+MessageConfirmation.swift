@@ -125,7 +125,7 @@ extension ClientMessageTranscoderTests {
             self.syncMOC.saveOrRollback()
             
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.messages.lastObject as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
             // WHEN
@@ -153,7 +153,7 @@ extension ClientMessageTranscoderTests {
             
             // find confirmation
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.messages.lastObject as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
             guard originalMessage.textMessageData?.messageText == text else { return XCTFail("wrong message?") }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
@@ -182,7 +182,7 @@ extension ClientMessageTranscoderTests {
             
             // find confirmation
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.messages.lastObject as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
             guard originalMessage.textMessageData?.messageText == text else { return XCTFail("wrong message?") }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
@@ -281,13 +281,10 @@ extension ClientMessageTranscoderTests {
     
     /// Last confirmation message in the one to one conversation
     var lastConfirmationMessage: ZMClientMessage? {
-        for message in self.oneToOneConversation.hiddenMessages.array.reversed() {
-            guard let clientMessage = message as? ZMClientMessage else { continue }
-            if clientMessage.genericMessage!.hasConfirmation() {
-                return clientMessage
-            }
-        }
-        return nil
+        return self.oneToOneConversation.hiddenMessages.first(where: {
+            guard let clientMessage = $0 as? ZMClientMessage else { return false }
+            return clientMessage.genericMessage!.hasConfirmation()
+        }) as? ZMClientMessage
     }
 }
 
