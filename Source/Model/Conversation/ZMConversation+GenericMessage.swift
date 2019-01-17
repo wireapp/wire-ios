@@ -38,7 +38,7 @@ extension ZMConversation {
             if hidden {
                 message.hiddenInConversation = self
             } else {
-                sortedAppendMessage(message)
+                append(message)
                 unarchiveIfNeeded()
                 message.updateCategoryCache()
                 message.prepareToSend()

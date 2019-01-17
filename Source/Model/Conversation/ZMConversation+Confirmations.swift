@@ -46,7 +46,7 @@ extension ZMConversation {
     
     @discardableResult @objc
     public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
-        let (message, _) = appendSystemMessage(
+        let message = appendSystemMessage(
             type: enabled ? .readReceiptsEnabled : .readReceiptsDisabled,
             sender: user,
             users: [],
@@ -63,7 +63,7 @@ extension ZMConversation {
     
     @discardableResult @objc
     public func appendMessageReceiptModeIsOnMessage(timestamp: Date) -> ZMSystemMessage {
-        let (message, _) = appendSystemMessage(
+        let message = appendSystemMessage(
             type: .readReceiptsOn,
             sender: creator,
             users: [],

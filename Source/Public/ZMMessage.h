@@ -98,7 +98,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 /// Returns true if the link preview will have an image
 @property (nonatomic, readonly) BOOL linkPreviewHasImage;
 
-/// Unique identifier for imageData. Returns nil there's not imageData associated with the message.
+/// Unique identifier for link preview image.
 @property (nonatomic, readonly, nullable) NSString *linkPreviewImageCacheKey;
 
 /// Detect if user replies to a message sent from himself

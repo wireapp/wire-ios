@@ -693,7 +693,7 @@
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
-        XCTAssertEqual(conversation.messages.count, 0);
+        XCTAssertEqual(conversation.allMessages.count, 0);
     }];
 }
 
@@ -726,7 +726,7 @@
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
-        ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.messages.lastObject;
+        ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.recentMessages.lastObject;
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeReadReceiptsOn);
     }];
 }

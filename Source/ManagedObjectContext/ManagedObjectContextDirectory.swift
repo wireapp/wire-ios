@@ -82,7 +82,7 @@ extension ManagedObjectContextDirectory {
             ZMUser.selfUser(in: moc)
             dispatchGroup.apply(moc.add)
         }
-        moc.mergePolicy = ZMSyncMergePolicy(merge: .rollbackMergePolicyType)
+        moc.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
         return moc
     }
     
@@ -99,7 +99,7 @@ extension ManagedObjectContextDirectory {
             moc.setupLocalCachedSessionAndSelfUser()
             moc.setupUserKeyStore(accountDirectory: accountDirectory, applicationContainer: applicationContainer)
             moc.undoManager = nil
-            moc.mergePolicy = ZMSyncMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
+            moc.mergePolicy = NSMergePolicy(merge: .mergeByPropertyObjectTrumpMergePolicyType)
             dispatchGroup.apply(moc.add)
         }
         
@@ -123,7 +123,7 @@ extension ManagedObjectContextDirectory {
             moc.configure(with: persistentStoreCoordinator)
             moc.setupLocalCachedSessionAndSelfUser()
             moc.undoManager = nil
-            moc.mergePolicy = ZMSyncMergePolicy(merge: .rollbackMergePolicyType)
+            moc.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
             dispatchGroup.apply(moc.add)
         }
         return moc

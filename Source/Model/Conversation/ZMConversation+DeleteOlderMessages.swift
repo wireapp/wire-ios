@@ -16,16 +16,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+
 import Foundation
 
 extension ZMConversation {
+    @objc public func deleteOlderMessages() {
+        
+        guard let managedObjectContext = self.managedObjectContext,
+              let clearedTimeStamp = self.clearedTimeStamp,
+              managedObjectContext.zm_isSyncContext else {
+            return
+        }
+        
+        let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
+        fetchRequest.predicate = NSPredicate(format: "%K <= %@", #keyPath(ZMMessage.serverTimestamp), clearedTimeStamp as CVarArg)
+        
+        let result = try! managedObjectContext.fetch(fetchRequest) as! [ZMMessage]
 
-    /// Appends a "message invalid" system message
-    @objc public func appendInvalidSystemMessage(at date: Date, sender: ZMUser) -> ZMSystemMessage {
-        return appendSystemMessage(type: .invalid,
-                                 sender: sender,
-                                 users: nil,
-                                 clients: nil,
-                                 timestamp: date)
+        for element in result {
+            managedObjectContext.delete(element)
+        }
+
     }
 }

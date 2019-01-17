@@ -38,7 +38,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             // then
             XCTAssertEqual(message.textMessageData?.messageText, messageText)
             XCTAssertEqual(message.conversation, conversation)
-            XCTAssertTrue(conversation.messages.contains(message))
+            XCTAssertTrue(conversation.recentMessages.contains(message as! ZMMessage))
             XCTAssertEqual(selfUser, message.sender)
         }
     }
@@ -102,7 +102,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             systemMessage.serverTimestamp = lastModified.addingTimeInterval(100)
     
             // when
-            conversation.sortedAppendMessage(systemMessage)
+            conversation.append(systemMessage)
     
             // then
             XCTAssertEqual(conversation.lastModifiedDate, lastModified)
@@ -141,7 +141,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(message.nonce)
         XCTAssertTrue(message.imageMessageData!.originalSize.equalTo(CGSize(width: 1900, height: 1500)))
         XCTAssertEqual(message.conversation, conversation)
-        XCTAssertTrue(conversation.messages.contains(message))
+        XCTAssertTrue(conversation.recentMessages.contains(message))
         XCTAssertNotNil(message.nonce)
         
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
@@ -165,7 +165,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(message.nonce)
         XCTAssertTrue(message.imageMessageData!.originalSize.equalTo(CGSize(width: 1900, height: 1500)))
         XCTAssertEqual(message.conversation, conversation)
-        XCTAssertTrue(conversation.messages.contains(message))
+        XCTAssertTrue(conversation.recentMessages.contains(message))
         XCTAssertNotNil(message.nonce)
         
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
@@ -230,7 +230,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(message.nonce)
         XCTAssertTrue(message.imageMessageData!.originalSize.equalTo(CGSize(width: 1900, height: 1500)))
         XCTAssertEqual(message.conversation, conversation)
-        XCTAssertTrue(conversation.messages.contains(message))
+        XCTAssertTrue(conversation.recentMessages.contains(message))
         XCTAssertNotNil(message.nonce)
         XCTAssertEqual(message.originalImageData()!.count, imageData.count)
     }
@@ -292,26 +292,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
     }
     
-    func testThatLastClearedUpdatesInSelfConversationDontExpire()
-    {
-        
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            conversation.remoteIdentifier = UUID()
-            conversation.clearedTimeStamp = Date()
-            
-            // when
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: conversation) else {
-                XCTFail()
-                return
-            }
-            
-            // then
-            XCTAssertNil(message.expirationDate)
-        }
-    }
-
     func testThatWeCanInsertAFileMessage()
     {
         // given
@@ -328,8 +308,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let fileMessage = conversation.append(file: fileMetaData) as! ZMAssetClientMessage
     
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
+        XCTAssertEqual(conversation.recentMessages.count, 1)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMAssetClientMessage, fileMessage)
     
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
@@ -365,8 +345,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let fileMessage = conversation.append(file: fileMetaData) as! ZMAssetClientMessage
 
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
+        XCTAssertEqual(conversation.recentMessages.count, 1)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMAssetClientMessage, fileMessage)
 
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
@@ -415,8 +395,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
             conversation.remoteIdentifier = UUID()
             let message = conversation.append(location: locationData) as! ZMMessage
         
-            XCTAssertEqual(conversation.messages.count, 1)
-            XCTAssertEqual(conversation.messages.firstObject as? ZMMessage, message)
+            XCTAssertEqual(conversation.recentMessages.count, 1)
+            XCTAssertEqual(conversation.recentMessages.first, message)
     
             guard let locationMessageData = message.locationMessageData else {
                 XCTFail()
@@ -472,8 +452,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
     
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
+        XCTAssertEqual(conversation.recentMessages.count, 1)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMAssetClientMessage, fileMessage)
     
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
@@ -523,8 +503,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let fileMessage = conversation.append(file: audioMetadata) as! ZMAssetClientMessage
         
         // then
-        XCTAssertEqual(conversation.messages.count, 1)
-        XCTAssertEqual(conversation.messages.firstObject as? ZMAssetClientMessage, fileMessage)
+        XCTAssertEqual(conversation.recentMessages.count, 1)
+        XCTAssertEqual(conversation.recentMessages.first as? ZMAssetClientMessage, fileMessage)
         
         XCTAssertNotNil(fileMessage)
         XCTAssertNotNil(fileMessage.nonce)
@@ -546,5 +526,63 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         }
         XCTAssertFalse(fileMessageData.isVideo)
         XCTAssertTrue(fileMessageData.isAudio)
+    }
+    
+    func testThatItDoesNotFetchMessageWhenMissing() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        
+        // WHEN
+        let lastMessage = conversation.lastMessageSent(by: selfUser)
+        
+        // THEN
+        XCTAssertEqual(lastMessage, nil)
+    }
+    
+    func testThatItFetchesMessageForUser() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        
+        let message = conversation.append(text: "Test Message") as! ZMMessage
+        
+        // WHEN
+        let lastMessage = conversation.lastMessageSent(by: selfUser)
+        
+        // THEN
+        XCTAssertEqual(lastMessage, message)
+    }
+    
+    func testThatItFetchesLastMessageForUser() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        
+        let _ = conversation.append(text: "Test Message") as! ZMMessage
+        let message2 = conversation.append(text: "Test Message 2") as! ZMMessage
+        
+        // WHEN
+        let lastMessage = conversation.lastMessageSent(by: selfUser)
+        
+        // THEN
+        XCTAssertEqual(lastMessage, message2)
+    }
+    
+    func testThatItIgnoreMessagesFromOtherUsers() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        
+        let message1 = conversation.append(text: "Test Message") as! ZMMessage
+        message1.sender = self.createUser()
+        
+        self.uiMOC.processPendingChanges()
+        
+        // WHEN
+        let lastMessage = conversation.lastMessageSent(by: selfUser)
+        
+        // THEN
+        XCTAssertEqual(lastMessage, nil)
     }
 }

@@ -129,7 +129,7 @@
     // then
     XCTAssertTrue([self.uiMOC saveOrRollback]);
     XCTAssertEqualObjects(conversation2.userDefinedName, veryLongName);
-    XCTAssertEqual(conversation2.messages.count, 1u);
+    XCTAssertEqual(conversation2.recentMessages.count, 1u);
 }
 
 - (void)testThatItValidatesNilValuesAsValid

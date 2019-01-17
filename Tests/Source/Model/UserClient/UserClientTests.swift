@@ -220,7 +220,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
             selfClient.trustClient(otherClient1)
             
             conversation.securityLevel = ZMConversationSecurityLevel.notSecure
-            XCTAssertEqual(conversation.messages.count, 1)
+            XCTAssertEqual(conversation.recentMessages.count, 1)
 
             let otherClient2 = UserClient.insertNewObject(in: self.syncMOC)
             otherClient2.remoteIdentifier = UUID.create().transportString()
@@ -235,8 +235,8 @@ class UserClientTests: ZMBaseManagedObjectTest {
             // then
             XCTAssertTrue(otherClient2.isZombieObject)
             XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevel.secure)
-            XCTAssertEqual(conversation.messages.count, 2)
-            if let message = conversation.messages.lastObject as? ZMSystemMessage {
+            XCTAssertEqual(conversation.recentMessages.count, 2)
+            if let message = conversation.recentMessages.last as? ZMSystemMessage {
                 XCTAssertEqual(message.systemMessageType, ZMSystemMessageType.conversationIsSecure)
                 XCTAssertEqual(message.users, Set(arrayLiteral: otherUser))
             } else {

@@ -386,11 +386,19 @@ extension ZMClientMessageTests_Ephemeral {
         spinMainQueue(withTimeout: 0.5)
         
         // then
-        guard let deleteMessage = conversation.hiddenMessages.firstObject as? ZMClientMessage
+        guard let clientMessage = conversation.hiddenMessages.first(where: {
+            if let clientMessage = $0 as? ZMClientMessage,
+            let genericMessage = clientMessage.genericMessage,
+                genericMessage.hasDeleted() {
+                return true
+            }
+            else {
+                return false
+            }
+        }) as? ZMClientMessage
         else { return XCTFail()}
 
-        guard let genericMessage = deleteMessage.genericMessage, genericMessage.hasDeleted()
-        else {return XCTFail()}
+        let deleteMessage = clientMessage.genericMessage
 
         XCTAssertNotEqual(deleteMessage, message)
         XCTAssertNotNil(message.sender)
@@ -405,10 +413,15 @@ extension ZMClientMessageTests_Ephemeral {
 
     
     func hasDeleteMessage(for message: ZMMessage) -> Bool {
-        guard let deleteMessage = (conversation.hiddenMessages.firstObject as? ZMClientMessage)?.genericMessage,
-            deleteMessage.hasDeleted(), deleteMessage.deleted.messageId == message.nonce!.transportString()
-            else { return false }
-        return true
+         for enumeratedMessage in conversation.hiddenMessages {
+            if let clientMessage = enumeratedMessage as? ZMClientMessage,
+                let genericMessage = clientMessage.genericMessage,
+                genericMessage.hasDeleted(),
+                genericMessage.deleted.messageId == message.nonce!.transportString()  {
+                    return true
+            }
+        }
+        return false
     }
     
     func insertEphemeralMessage() -> ZMMessage {

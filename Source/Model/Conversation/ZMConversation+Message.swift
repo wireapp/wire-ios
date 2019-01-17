@@ -107,7 +107,7 @@ extension ZMConversation {
         
         message.sender = ZMUser.selfUser(in: managedObjectContext)
         
-        sortedAppendMessage(message)
+        append(message)
         unarchiveIfNeeded()
         
         managedObjectContext.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: data)

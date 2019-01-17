@@ -94,14 +94,16 @@ extension ZMConversation {
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
     @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         
-        let (systemMessage, index) = self.appendSystemMessage(type: .potentialGap,
+        let systemMessage = self.appendSystemMessage(type: .potentialGap,
                                                               sender: ZMUser.selfUser(in: self.managedObjectContext!),
                                                               users: users,
                                                               clients: nil,
                                                               timestamp: timestamp)
         systemMessage.needsUpdatingUsers = true
-        if index > 1,
-            let previousMessage = self.messages[Int(index - 1)] as? ZMSystemMessage,
+        
+        if let index = self.recentMessages.index(of: systemMessage),
+            index > 1,
+            let previousMessage = self.recentMessages[Int(index - 1)] as? ZMSystemMessage,
             previousMessage.systemMessageType == .potentialGap
         {
             // In case the message before the new system message was also a system message of
@@ -260,7 +262,7 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
         
-        self.messages.enumerateObjects(options: .reverse) { (msg, idx, stop) in
+        NSOrderedSet(array: recentMessages).enumerateObjects(options: .reverse) { (msg, idx, stop) in
             guard idx <= 2 else {
                 stop.initialize(to: true)
                 return
@@ -348,7 +350,7 @@ extension ZMConversation {
                                          timestamp: Date,
                                          duration: TimeInterval? = nil,
                                          messageTimer: Double? = nil,
-                                         relevantForStatus: Bool = true) -> (message: ZMSystemMessage, insertionIndex: UInt) {
+                                         relevantForStatus: Bool = true) -> ZMSystemMessage {
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: managedObjectContext!)
         systemMessage.systemMessageType = type
         systemMessage.sender = sender
@@ -366,35 +368,29 @@ extension ZMConversation {
         
         systemMessage.relevantForConversationStatus = relevantForStatus
         
-        let index = self.sortedAppendMessage(systemMessage)
+        self.append(systemMessage)
         
-        return (message: systemMessage, insertionIndex: index)
+        return systemMessage
     }
-    
-
     
     /// Returns a timestamp that is shortly (as short as possible) before the given message,
     /// or the last modified date if the message is nil
     fileprivate func timestamp(before: ZMMessage?) -> Date? {
         guard let timestamp = before?.serverTimestamp ?? self.lastModifiedDate else { return nil }
-        // this feels a bit hackish, but should work. If two messages are less than 1 milliseconds apart
-        // then in this case one of them will be out of order
-        return timestamp.addingTimeInterval(-0.01)
+        return timestamp.previousNearestTimestamp
     }
     
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
     /// or the last modified date if the message is nil
     fileprivate func timestamp(after: ZMMessage?) -> Date? {
         guard let timestamp = after?.serverTimestamp ?? self.lastModifiedDate else { return nil }
-        // this feels a bit hackish, but should work. If two messages are less than 1 milliseconds apart
-        // then in this case one of them will be out of order
-        return timestamp.addingTimeInterval(0.01)
+        return timestamp.nextNearestTimestamp
     }
     
     // Returns a timestamp that is shortly (as short as possible) after the last message in the conversation,
     // or current time if there's no last message
     fileprivate func timestampAfterLastMessage() -> Date {
-        return timestamp(after: self.messages.lastObject as? ZMMessage) ?? Date()
+        return timestamp(after: recentMessages.last) ?? Date()
     }
 }
 
@@ -461,5 +457,23 @@ extension ZMMessage {
     fileprivate var isConversationNotVerifiedSystemMessage : Bool {
         guard let system = self as? ZMSystemMessage else { return false }
         return system.systemMessageType == .ignoredClient
+    }
+}
+
+extension Date {
+    var nextNearestTimestamp: Date {
+        return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
+    }
+    var previousNearestTimestamp: Date {
+        return Date(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
+    }
+}
+
+extension NSDate {
+    @objc var nextNearestTimestamp: NSDate {
+        return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextUp)
+    }
+    @objc var previousNearestTimestamp: NSDate {
+        return NSDate(timeIntervalSinceReferenceDate: timeIntervalSinceReferenceDate.nextDown)
     }
 }

@@ -29,7 +29,6 @@
     for (NSUInteger idx = 0; idx < count; idx++) {
         ZMMessage *message = [[ZMMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.managedObjectContext];
         message.serverTimestamp = [self.lastServerTimeStamp dateByAddingTimeInterval:5];
-        [self resortMessagesWithUpdatedMessage:message];
         self.lastServerTimeStamp = message.serverTimestamp;
     }
 }

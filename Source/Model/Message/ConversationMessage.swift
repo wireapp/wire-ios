@@ -137,6 +137,25 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var objectIdentifier: String { get }
 }
 
+public extension Equatable where Self : ZMConversationMessage { }
+
+public func ==(lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
+    return lhs.isEqual(rhs)
+}
+
+public func ==(lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool {
+    switch (lhs, rhs) {
+    case (nil, nil):
+        return true
+    case (_, nil):
+        return false
+    case (nil, _):
+        return false
+    case (_, _):
+        return lhs!.isEqual(rhs!)
+    }
+}
+
 public extension ZMConversationMessage {
     var messageIsRelevantForConversationStatus: Bool {
         return (self as? ZMSystemMessage)?.relevantForConversationStatus ?? true
