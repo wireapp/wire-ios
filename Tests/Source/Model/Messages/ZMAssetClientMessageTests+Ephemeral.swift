@@ -23,9 +23,9 @@ class ZMAssetClientMessageTests_Ephemeral : BaseZMAssetClientMessageTests {
     
     override func setUp() {
         super.setUp()
-        deletionTimer.isTesting = true
+        deletionTimer?.isTesting = true
         syncMOC.performGroupedBlockAndWait {
-            self.obfuscationTimer.isTesting = true
+            self.obfuscationTimer?.isTesting = true
         }
     }
     
@@ -43,11 +43,11 @@ class ZMAssetClientMessageTests_Ephemeral : BaseZMAssetClientMessageTests {
         super.tearDown()
     }
     
-    var obfuscationTimer : ZMMessageDestructionTimer {
+    var obfuscationTimer : ZMMessageDestructionTimer? {
         return syncMOC.zm_messageObfuscationTimer
     }
     
-    var deletionTimer : ZMMessageDestructionTimer {
+    var deletionTimer : ZMMessageDestructionTimer? {
         return uiMOC.zm_messageDeletionTimer
     }
 }
@@ -127,8 +127,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
             
             // then
             XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
-            XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 1)
-            XCTAssertTrue(self.obfuscationTimer.isTimerRunning(for: message))
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
+            XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
         }
     }
     
@@ -151,8 +151,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
             
             // then
             XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
-            XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 1)
-            XCTAssertTrue(self.obfuscationTimer.isTimerRunning(for: message))
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
+            XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
         }
     }
     
@@ -168,7 +168,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             
             // then
             XCTAssertEqual(message.uploadState, AssetUploadState.uploadingPlaceholder)
-            XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 0)
         }
     }
     
@@ -183,7 +183,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             
             // then
             XCTAssertEqual(message.uploadState, .uploadingFullAsset)
-            XCTAssertEqual(self.obfuscationTimer.runningTimersCount, 0)
+            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 0)
         }
     }
     
@@ -226,7 +226,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
             
             // check a timer was started
-            oldTimer = self.obfuscationTimer.timer(for: message)
+            oldTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertNotNil(oldTimer)
         }
         
@@ -237,7 +237,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         // then a new timer was created
         self.syncMOC.performGroupedBlockAndWait {
-            let newTimer = self.obfuscationTimer.timer(for: message)
+            let newTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertNotEqual(oldTimer, newTimer)
         }
     }
@@ -258,7 +258,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
             
             // check a timer was started
-            oldTimer = self.obfuscationTimer.timer(for: message)
+            oldTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertNotNil(oldTimer)
         }
         
@@ -269,7 +269,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         // then no new timer created
         self.syncMOC.performGroupedBlockAndWait {
-            let newTimer = self.obfuscationTimer.timer(for: message)
+            let newTimer = self.obfuscationTimer?.timer(for: message)
             XCTAssertEqual(oldTimer, newTimer)
         }
     }
@@ -298,8 +298,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertTrue(message.startSelfDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 1)
-        XCTAssertTrue(self.deletionTimer.isTimerRunning(for: message))
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 1)
+        XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), true)
     }
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser(){
@@ -327,8 +327,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertTrue(message.startSelfDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 1)
-        XCTAssertTrue(self.deletionTimer.isTimerRunning(for: message))
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 1)
+        XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), true)
     }
     
     func appendPreviewImageMessage() -> ZMAssetClientMessage {
@@ -364,8 +364,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertFalse(message.startSelfDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 0)
-        XCTAssertFalse(self.deletionTimer.isTimerRunning(for: message))
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 0)
+        XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), false)
     }
     
     func testThatItDoesNotStartATimerIfTheMessageIsAMessageOfTheOtherUser_NotUploadedYet(){
@@ -384,8 +384,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertFalse(message.startSelfDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 0)
-        XCTAssertFalse(self.deletionTimer.isTimerRunning(for: message))
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 0)
+        XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), false)
     }
     
     func testThatItStartsATimerIfTheMessageIsAMessageOfTheOtherUser_UploadCancelled(){
@@ -405,8 +405,8 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertTrue(message.startSelfDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 1)
-        XCTAssertTrue(self.deletionTimer.isTimerRunning(for: message))
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 1)
+        XCTAssertEqual(self.deletionTimer?.isTimerRunning(for: message), true)
     }
     
     func testThatItDoesNotStartATimerForAMessageOfTheSelfuser(){
@@ -422,7 +422,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         XCTAssertFalse(message.startDestructionIfNeeded())
         
         // then
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 0)
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 0)
     }
     
     func testThatItCreatesADeleteForAllMessageWhenTheTimerFires(){
@@ -440,7 +440,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         // when
         XCTAssertTrue(message.startDestructionIfNeeded())
-        XCTAssertEqual(self.deletionTimer.runningTimersCount, 1)
+        XCTAssertEqual(self.deletionTimer?.runningTimersCount, 1)
         
         spinMainQueue(withTimeout: 0.5)
         
@@ -475,7 +475,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         // check a timer was started
         XCTAssertTrue(message.startDestructionIfNeeded())
-        oldTimer = self.deletionTimer.timer(for: message)
+        oldTimer = self.deletionTimer?.timer(for: message)
         XCTAssertNotNil(oldTimer)
         
         // when timer extended by 5 seconds
@@ -485,7 +485,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         _ = wait(withTimeout: 0.5, verificationBlock: { return false })
         
         // then a new timer was created
-        let newTimer = self.deletionTimer.timer(for: message)
+        let newTimer = self.deletionTimer?.timer(for: message)
         XCTAssertNotEqual(oldTimer, newTimer)
     }
     
@@ -507,7 +507,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         // check a timer was started
         XCTAssertTrue(message.startDestructionIfNeeded())
-        oldTimer = self.deletionTimer.timer(for: message)
+        oldTimer = self.deletionTimer?.timer(for: message)
         XCTAssertNotNil(oldTimer)
         
         // when timer "extended" by 5 seconds earlier
@@ -517,7 +517,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         _ = wait(withTimeout: 0.5, verificationBlock: { return false })
         
         // then a new timer was created
-        let newTimer = self.deletionTimer.timer(for: message)
+        let newTimer = self.deletionTimer?.timer(for: message)
         XCTAssertEqual(oldTimer, newTimer)
     }
 }

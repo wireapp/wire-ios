@@ -78,8 +78,18 @@
     if ([self respondsToSelector:selector]) {
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
+    
+    [self setupTimers];
 
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
+}
+
+- (void)setupTimers 
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC zm_createMessageObfuscationTimer];
+    }];
+    [self.uiMOC zm_createMessageDeletionTimer];
 }
 
 - (void)tearDown;

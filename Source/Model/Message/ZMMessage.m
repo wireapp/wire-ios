@@ -1070,14 +1070,22 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     if (isSelfUser && self.managedObjectContext.zm_isSyncContext) {
         self.destructionDate = [NSDate dateWithTimeIntervalSinceNow:self.deletionTimeout];
         ZMMessageDestructionTimer *timer = self.managedObjectContext.zm_messageObfuscationTimer;
-        [timer startObfuscationTimerWithMessage:self timeout:self.deletionTimeout];
-        return YES;
+        if (timer != nil) { 
+            [timer startObfuscationTimerWithMessage:self timeout:self.deletionTimeout];
+            return YES;
+        } else {
+            return NO;
+        }
     }
     else if (!isSelfUser && self.managedObjectContext.zm_isUserInterfaceContext){
         ZMMessageDestructionTimer *timer = self.managedObjectContext.zm_messageDeletionTimer;
-        NSTimeInterval matchedTimeInterval = [timer startDeletionTimerWithMessage:self timeout:self.deletionTimeout];
-        self.destructionDate = [NSDate dateWithTimeIntervalSinceNow:matchedTimeInterval];
-        return YES;
+        if (timer != nil) { 
+            NSTimeInterval matchedTimeInterval = [timer startDeletionTimerWithMessage:self timeout:self.deletionTimeout];
+            self.destructionDate = [NSDate dateWithTimeIntervalSinceNow:matchedTimeInterval];
+            return YES;
+        } else {
+            return NO;
+        }
     }
     return NO;
 }
