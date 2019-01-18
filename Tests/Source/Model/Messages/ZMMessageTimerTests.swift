@@ -35,8 +35,9 @@ class ZMMessageTimerTests: BaseZMMessageTests {
         super.tearDown()
     }
     
-    func testThatItCreatesTheBackgroundActivityWhenTimerStarted() {
+    func testThatItDoesNotCreateBackgroundActivityWhenTimerStarted() {
         // given
+        XCTAssertFalse(BackgroundActivityFactory.shared.isActive)
         let message = createClientTextMessage(withText: "hello")
         
         // when
@@ -45,8 +46,8 @@ class ZMMessageTimerTests: BaseZMMessageTests {
         // then
         let timer = sut.timer(for: message)
         XCTAssertNotNil(timer)
-        let bgActivity = timer!.userInfo["bgActivity"] as? BackgroundActivity
-        XCTAssertNotNil(bgActivity)
+        
+        XCTAssertFalse(BackgroundActivityFactory.shared.isActive)
     }
     
     func testThatItRemovesTheInternalTimerAfterTimerFired() {

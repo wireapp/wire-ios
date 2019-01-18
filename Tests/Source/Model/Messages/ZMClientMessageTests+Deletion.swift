@@ -473,8 +473,8 @@ extension ZMClientMessageTests_Deletion {
         conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1000))
         let sut = conversation.append(text: "foo") as! ZMClientMessage
         sut.sender = user1
-        _ = uiMOC.zm_messageDeletionTimer.startDeletionTimer(message: sut, timeout: 1000)
-        XCTAssertTrue(uiMOC.zm_messageDeletionTimer.isTimerRunning(for: sut))
+        _ = uiMOC.zm_messageDeletionTimer?.startDeletionTimer(message: sut, timeout: 1000)
+        XCTAssertEqual(uiMOC.zm_messageDeletionTimer?.isTimerRunning(for: sut), true)
         XCTAssertTrue(sut.isEphemeral)
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -489,7 +489,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertFalse(uiMOC.zm_messageDeletionTimer.isTimerRunning(for: sut))
+        XCTAssertEqual(uiMOC.zm_messageDeletionTimer?.isTimerRunning(for: sut), false)
         
         // teardown
         uiMOC.zm_teardownMessageDeletionTimer()

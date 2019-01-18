@@ -25,30 +25,38 @@ private let log = ZMSLog(tag: "ephemeral")
 
 public extension NSManagedObjectContext {
     
-    @objc public var zm_messageDeletionTimer : ZMMessageDestructionTimer {
+    @objc public var zm_messageDeletionTimer : ZMMessageDestructionTimer? {
         if !zm_isUserInterfaceContext {
             preconditionFailure("MessageDeletionTimerKey should be started only on the uiContext")
         }
-        if let timer = userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer {
-            return timer
-        }
-        let timer = ZMMessageDestructionTimer(managedObjectContext: self)
-        userInfo[MessageDeletionTimerKey] = timer
-        log.debug("creating deletion timer")
-        return timer
+
+        return userInfo[MessageDeletionTimerKey] as? ZMMessageDestructionTimer
     }
     
-    @objc public var zm_messageObfuscationTimer : ZMMessageDestructionTimer {
+    @objc public var zm_messageObfuscationTimer : ZMMessageDestructionTimer? {
         if !zm_isSyncContext {
             preconditionFailure("MessageObfuscationTimer should be started only on the syncContext")
         }
-        if let timer = userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer {
-            return timer
+        
+        return userInfo[MessageObfuscationTimerKey] as? ZMMessageDestructionTimer
+    }
+    
+    @objc public func zm_createMessageObfuscationTimer() {
+        if !zm_isSyncContext {
+            preconditionFailure("MessageObfuscationTimer should be started only on the syncContext")
         }
-        let timer = ZMMessageDestructionTimer(managedObjectContext: self)
-        userInfo[MessageObfuscationTimerKey] = timer
+
+        userInfo[MessageObfuscationTimerKey] = ZMMessageDestructionTimer(managedObjectContext: self)
         log.debug("creating obfuscation timer")
-        return timer
+    }
+    
+    @objc public func zm_createMessageDeletionTimer() {        
+        if !zm_isUserInterfaceContext {
+            preconditionFailure("MessageDeletionTimer should be started only on the uiContext")
+        }
+
+        userInfo[MessageDeletionTimerKey] = ZMMessageDestructionTimer(managedObjectContext: self)
+        log.debug("creating deletion timer")
     }
     
     /// Tears down zm_messageObfuscationTimer and zm_messageDeletionTimer
