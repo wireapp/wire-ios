@@ -47,7 +47,7 @@ class MemberTests: BaseTeamTests {
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
 
         // then
-        XCTAssertEqual(user.permissions, .member)
+        XCTAssertEqual(user.teamRole.permissions, .member)
     }
 
     func testThatItReturnsIfAUserIsMemberOfATeam() {
@@ -104,7 +104,7 @@ class MemberTests: BaseTeamTests {
         XCTAssertTrue(user.isTeamMember)
         XCTAssertEqual(user.team, team)
         XCTAssertTrue(user.hasTeam)
-        XCTAssertEqual(user.permissions, .member)
+        XCTAssertEqual(user.teamRole.permissions, .member)
     }
 
     func testThatItReturnsExistingMemberOfAUserInATeam() {
@@ -174,14 +174,14 @@ extension MemberTests {
 
             let payload: [String: Any] = [
                 "user": user.remoteIdentifier!.transportString(),
-                "permissions": ["self": 33, "copy": 0]
+                "permissions": ["self": 17, "copy": 0]
             ]
 
             // when
             member.updatePermissions(with: payload)
 
             // then
-            XCTAssertEqual(member.permissions, [.createConversation, .removeConversationMember])
+            XCTAssertEqual(member.permissions, [.createConversation, .addRemoveConversationMember])
         }
     }
 

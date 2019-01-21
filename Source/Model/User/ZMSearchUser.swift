@@ -191,6 +191,12 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user.isTeamMember
     }
     
+    public var teamRole: TeamRole {
+        guard let user = user else { return .none }
+        
+        return user.teamRole
+    }
+    
     public var isServiceUser: Bool {
         return providerIdentifier != nil
     }

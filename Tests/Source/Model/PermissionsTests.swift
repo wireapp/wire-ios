@@ -28,8 +28,8 @@ class PermissionsTests: BaseZMClientMessageTests {
         .deleteConversation,
         .addTeamMember,
         .removeTeamMember,
-        .addConversationMember,
-        .removeConversationMember,
+        .addRemoveConversationMember,
+        .modifyConversationMetaData,
         .getMemberPermissions,
         .getTeamConversations,
         .getBilling,
@@ -41,15 +41,15 @@ class PermissionsTests: BaseZMClientMessageTests {
 
     func testThatDefaultValueDoesNotHaveAnyPermissions() {
         // given
-        let sut = Permissions(rawValue: 0)
+        let sut = Permissions.none
 
         // then
         XCTAssertFalse(sut.contains(.createConversation))
         XCTAssertFalse(sut.contains(.deleteConversation))
         XCTAssertFalse(sut.contains(.addTeamMember))
         XCTAssertFalse(sut.contains(.removeTeamMember))
-        XCTAssertFalse(sut.contains(.addConversationMember))
-        XCTAssertFalse(sut.contains(.removeConversationMember))
+        XCTAssertFalse(sut.contains(.addRemoveConversationMember))
+        XCTAssertFalse(sut.contains(.modifyConversationMetaData))
         XCTAssertFalse(sut.contains(.getMemberPermissions))
         XCTAssertFalse(sut.contains(.getTeamConversations))
         XCTAssertFalse(sut.contains(.getBilling))
@@ -60,7 +60,18 @@ class PermissionsTests: BaseZMClientMessageTests {
     }
 
     func testMemberPermissions() {
-        XCTAssertEqual(Permissions.member, [.createConversation, .deleteConversation, .addConversationMember, .removeConversationMember, .getMemberPermissions, .getTeamConversations])
+        XCTAssertEqual(Permissions.member, [.createConversation, .deleteConversation, .addRemoveConversationMember, .modifyConversationMetaData, .getMemberPermissions, .getTeamConversations])
+    }
+
+    func testPartnerPermissions() {
+        // given
+        let permissions: Permissions = [
+            .createConversation,
+            .getTeamConversations
+        ]
+
+        // then
+        XCTAssertEqual(Permissions.collaborator, permissions)
     }
 
     func testAdminPermissions() {
@@ -68,8 +79,8 @@ class PermissionsTests: BaseZMClientMessageTests {
         let adminPermissions: Permissions = [
             .createConversation,
             .deleteConversation,
-            .addConversationMember,
-            .removeConversationMember,
+            .addRemoveConversationMember,
+            .modifyConversationMetaData,
             .getMemberPermissions,
             .getTeamConversations,
             .addTeamMember,
@@ -90,32 +101,65 @@ class PermissionsTests: BaseZMClientMessageTests {
 
     func testThatItCreatesPermissionsFromPayload() {
         XCTAssertEqual(Permissions(rawValue: 5), [.createConversation, .addTeamMember])
+        XCTAssertEqual(Permissions(rawValue: 0x401), .collaborator)
         XCTAssertEqual(Permissions(rawValue: 1587), .member)
         XCTAssertEqual(Permissions(rawValue: 5951), .admin)
         XCTAssertEqual(Permissions(rawValue: 8191), .owner)
     }
 
     func testThatItCreatesEmptyPermissionsFromEmptyPayload() {
-        XCTAssertEqual(Permissions(rawValue: 0), [])
+        XCTAssertEqual(Permissions.none, [])
     }
 
-    // MARK: - Objective-C Interoperability
+    // MARK: - TeamRole (Objective-C Interoperability)
 
     func testThatItCreatesTheCorrectSwiftPermissions() {
-        XCTAssertEqual(PermissionsObjC.member.permissions, .member)
-        XCTAssertEqual(PermissionsObjC.admin.permissions, .admin)
-        XCTAssertEqual(PermissionsObjC.owner.permissions, .owner)
+        XCTAssertEqual(TeamRole.collaborator.permissions, .collaborator)
+        XCTAssertEqual(TeamRole.member.permissions, .member)
+        XCTAssertEqual(TeamRole.admin.permissions, .admin)
+        XCTAssertEqual(TeamRole.owner.permissions, .owner)
     }
 
-    func testThatItSetsObjectiveCPermissions() {
+    func testThatItSetsTeamRolePermissions() {
         // given
         let member = Member.insertNewObject(in: uiMOC)
 
         // when
-        member.setPermissionsObjC(.admin)
+        member.setTeamRole(.admin)
 
         // then
         XCTAssertEqual(member.permissions, .admin)
     }
 
+    func testTeamRoleIsARelationships() {
+        XCTAssert(TeamRole.none.isA(role: .none))
+        XCTAssertFalse(TeamRole.none.isA(role: .collaborator))
+        XCTAssertFalse(TeamRole.none.isA(role: .member))
+        XCTAssertFalse(TeamRole.none.isA(role: .admin))
+        XCTAssertFalse(TeamRole.none.isA(role: .owner))
+        
+        XCTAssert(TeamRole.collaborator.isA(role: .none))
+        XCTAssert(TeamRole.collaborator.isA(role: .collaborator))
+        XCTAssertFalse(TeamRole.collaborator.isA(role: .member))
+        XCTAssertFalse(TeamRole.collaborator.isA(role: .admin))
+        XCTAssertFalse(TeamRole.collaborator.isA(role: .owner))
+        
+        XCTAssert(TeamRole.member.isA(role: .none))
+        XCTAssert(TeamRole.member.isA(role: .collaborator))
+        XCTAssert(TeamRole.member.isA(role: .member))
+        XCTAssertFalse(TeamRole.member.isA(role: .admin))
+        XCTAssertFalse(TeamRole.member.isA(role: .owner))
+        
+        XCTAssert(TeamRole.admin.isA(role: .none))
+        XCTAssert(TeamRole.admin.isA(role: .collaborator))
+        XCTAssert(TeamRole.admin.isA(role: .member))
+        XCTAssert(TeamRole.admin.isA(role: .admin))
+        XCTAssertFalse(TeamRole.admin.isA(role: .owner))
+        
+        XCTAssert(TeamRole.owner.isA(role: .none))
+        XCTAssert(TeamRole.owner.isA(role: .collaborator))
+        XCTAssert(TeamRole.owner.isA(role: .member))
+        XCTAssert(TeamRole.owner.isA(role: .admin))
+        XCTAssert(TeamRole.owner.isA(role: .owner))
+    }
 }
