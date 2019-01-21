@@ -940,11 +940,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
 {
-    VerifyReturnNil(genericMessage != nil);
-
     ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:[NSUUID uuidWithTransportString:genericMessage.messageId]
                                                  managedObjectContext:self.managedObjectContext];
     [message addData:genericMessage.data];
+    
+    return [self appendMessage:message expires:expires hidden:hidden];
+}
+
+- (ZMClientMessage *)appendMessage:(ZMClientMessage *)message expires:(BOOL)expires hidden:(BOOL)hidden
+{
     message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
     
     if (expires) {

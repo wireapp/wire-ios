@@ -153,6 +153,9 @@ NS_ASSUME_NONNULL_END
 /// @param genericMessage the generic message that should be appended
 - (nullable ZMClientMessage *)appendClientMessageWithGenericMessage:(nonnull ZMGenericMessage *)genericMessage;
 
+/// Appends a new message to the conversation.
+/// @param client message that should be appended
+- (nonnull ZMClientMessage *)appendMessage:(nonnull ZMClientMessage *)clientMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (nullable ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(nonnull NSUUID *)nonce imageData:(nonnull NSData *)imageData;
 
