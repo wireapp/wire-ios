@@ -21,30 +21,26 @@
 
 
 static NSString * const IdentifierKey = @"identifier";
-static NSString * const SessionIdentifierKey = @"sessionIdentifier";
-
 
 @interface ZMTaskIdentifier ()
 
 @property (nonatomic, readwrite) NSUInteger identifier;
-@property (nonatomic, readwrite) NSString *sessionIdentifier;
 
 @end
 
 
 @implementation ZMTaskIdentifier
 
-+ (instancetype)identifierWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
++ (instancetype)identifierWithIdentifier:(NSUInteger)identifier;
 {
-    return [[self alloc] initWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
+    return [[self alloc] initWithIdentifier:identifier];
 }
 
-- (instancetype)initWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
+- (instancetype)initWithIdentifier:(NSUInteger)identifier;
 {
     self = [super init];
     if (self) {
         self.identifier = identifier;
-        self.sessionIdentifier = sessionIdentifier;
     }
     return self;
 }
@@ -76,8 +72,7 @@ static NSString * const SessionIdentifierKey = @"sessionIdentifier";
         return NO;
     }
     ZMTaskIdentifier *otherIdentifier = (ZMTaskIdentifier *)other;
-    return self.identifier == otherIdentifier.identifier &&
-           [self.sessionIdentifier isEqualToString:otherIdentifier.sessionIdentifier];
+    return self.identifier == otherIdentifier.identifier;
 }
 
 #pragma mark - NSCoding
@@ -86,22 +81,20 @@ static NSString * const SessionIdentifierKey = @"sessionIdentifier";
     self = [super init];
     if (self) {
         self.identifier = [[decoder decodeObjectForKey:IdentifierKey] unsignedIntegerValue];
-        self.sessionIdentifier = [decoder decodeObjectForKey:SessionIdentifierKey];
     }
     return self;
 }
 
 - (void)encodeWithCoder:(NSCoder *)coder {
     [coder encodeObject:@(self.identifier) forKey:IdentifierKey];
-    [coder encodeObject:self.sessionIdentifier forKey:SessionIdentifierKey];
 }
 
 #pragma mark - Description
 
 - (NSString *)description
 {
-    return [NSString stringWithFormat:@"<%@: %p> identifier: %lu, session identifier: %@",
-            self.class, self, (unsigned long)self.identifier, self.sessionIdentifier];
+    return [NSString stringWithFormat:@"<%@: %p> identifier: %lu",
+            self.class, self, (unsigned long)self.identifier];
 }
 
 @end

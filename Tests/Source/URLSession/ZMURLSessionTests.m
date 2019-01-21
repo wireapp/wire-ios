@@ -24,7 +24,6 @@
 @import OCMock;
 
 #import "ZMURLSession+Internal.h"
-#import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "Fakes.h"
 #import "WireTransport_ios_tests-Swift.h"
 
@@ -526,49 +525,6 @@ willPerformHTTPRedirection:response
 
 @implementation ZMURLSessionTests (TaskGeneration)
 
-- (void)setupMockBackgroundSession
-{    
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
-    self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
-    
-    [(NSURLSession *)[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"]] configuration];
-    
-    [(id) self.sut.backingSession verify];
-}
-
-- (void)setupBackgroundSession;
-{
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"];
-    [self.sut tearDown];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-    
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-    
-    self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example.com/"]];
-    self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.example.com/"]];
-    self.taskA = [self.sut taskWithRequest:self.URLRequestA bodyData:nil transportRequest:nil];
-    self.taskB = [self.sut taskWithRequest:self.URLRequestB bodyData:nil transportRequest:nil];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-}
-
-- (void)testThatItDetectsAForegroundSession;
-{
-    XCTAssertFalse(self.sut.isBackgroundSession);
-}
-
-- (void)testThatItDetectsABackgroundSession;
-{
-    // given
-    [self setupBackgroundSession];
-    
-    // then
-    XCTAssertTrue(self.sut.isBackgroundSession);
-}
-
 - (void)testThatItCreatesADataTask;
 {
     // given
@@ -582,24 +538,6 @@ willPerformHTTPRedirection:response
     XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
     XCTAssertTrue([task isKindOfClass:NSURLSessionDataTask.class]);
     XCTAssertEqualObjects(task.originalRequest, request);
-}
-
-- (void)testThatItCreatesADownloadTaskForBackgroundSession;
-{
-    [self performIgnoringZMLogError:^{
-        // given
-        [self setupBackgroundSession];
-        NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
-        
-        // when
-        NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:nil];
-        
-        // then
-        XCTAssertNotNil(task);
-        XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
-        XCTAssertTrue([task isKindOfClass:NSURLSessionDownloadTask.class]);
-        XCTAssertEqualObjects(task.originalRequest, request);
-    }];
 }
 
 - (void)testThatItCreatesAnUploadTask;
@@ -616,100 +554,6 @@ willPerformHTTPRedirection:response
     XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
     XCTAssertTrue([task isKindOfClass:NSURLSessionUploadTask.class]);
     XCTAssertEqualObjects(task.originalRequest, request);
-}
-
-- (void)testThatItCreatesATemporaryFileForABackgroundRequest
-{
-    // given
-    [self setupMockBackgroundSession];
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
-    NSData *bodyData = [NSData dataWithBytes:(uint8_t[]){1, 2, 3} length:3];
-    
-    self.sut.temporaryFiles = [OCMockObject mockForClass:ZMTemporaryFileListForBackgroundRequests.class];
-    
-    // expect
-    NSURL *fileURL = [NSURL fileURLWithPath:@"foo"];
-    [[[(id)self.sut.temporaryFiles expect] andReturn:fileURL] temporaryFileWithBodyData:bodyData];
-    [[[(id)self.sut.temporaryFiles expect] ignoringNonObjectArgs] setTemporaryFile:fileURL forTaskIdentifier:1];
-    
-    // when
-    [self.sut taskWithRequest:request bodyData:bodyData transportRequest:nil];
-    
-    // then
-    [(id)self.sut.temporaryFiles verify];
-}
-
-- (void)testThatItDeletesATemporaryFileForABackgroundRequest
-{
-    // given
-    [self setupMockBackgroundSession];
-    
-    NSUInteger taskID = 4u;
-    NSURL *fileURL = [NSURL fileURLWithPath:@"foo"];
-    NSURLSessionTask *mockTask = [OCMockObject niceMockForClass:FakeDataTask.class];
-    [[[(id)mockTask stub] andReturnValue:OCMOCK_VALUE(taskID)] taskIdentifier];
-    
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://baz.example.com/1/"]];
-    NSData *bodyData = [NSData dataWithBytes:(uint8_t[]){1, 2, 3} length:3];
-
-    self.sut.temporaryFiles = [OCMockObject mockForClass:ZMTemporaryFileListForBackgroundRequests.class];
-    [[[(id)self.sut.backingSession expect] andReturn:mockTask] uploadTaskWithRequest:OCMOCK_ANY fromFile:fileURL];
-    
-    // expect
-    [[[(id)self.sut.temporaryFiles expect] andReturn:fileURL] temporaryFileWithBodyData:bodyData];
-    [[[(id)self.sut.temporaryFiles expect] ignoringNonObjectArgs] setTemporaryFile:fileURL forTaskIdentifier:1];
-    
-    // when
-    NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:bodyData transportRequest:nil];
-    
-    // expect
-    [[(id)self.sut.temporaryFiles expect] deleteFileForTaskID:task.taskIdentifier];
-    
-    // when
-    [self.sut URLSession:self.sut.backingSession task:task didCompleteWithError:nil];
-    
-    // then
-    [(id)self.sut.temporaryFiles verify];
-}
-
-- (void)testThatItCreatesAnUploadTasksForRequestsWithFileURL
-{
-    // given
-    [self.sut tearDown];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-
-    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"];
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-
-    NSString *path = @"https://baz.example.com/1/";
-    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
-    NSString *contentType = @"multipart/mixed; boundary=frontier";
-    ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];
-    WaitForAllGroupsToBeEmpty(0.5);
-    [self spinMainQueueWithTimeout:0.1];
-
-    // when
-    NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:transportRequest];
-    
-    // then
-    XCTAssertTrue([task isKindOfClass:NSURLSessionUploadTask.class]);
-    XCTAssertEqualObjects(task.originalRequest, request);
-    XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
-    WaitForAllGroupsToBeEmpty(0.5);
-}
-
-- (NSURL *)uniqueFileURL
-{
-    NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
-    NSString *fileName = [NSUUID.createUUID.transportString stringByAppendingPathExtension:@"txt"];
-    NSURL *fileURL = [NSURL fileURLWithPath:[documents stringByAppendingPathComponent:fileName]];
-    NSError *error = nil;
-    XCTAssertTrue([@"🔒" writeToURL:fileURL atomically:YES encoding:NSUTF8StringEncoding error:&error]);
-    XCTAssertNil(error);
-    return fileURL;
 }
 
 @end

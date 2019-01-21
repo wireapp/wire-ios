@@ -43,8 +43,6 @@
 @end
 @interface ZMTransportRequestTests (Payload)
 @end
-@interface ZMTransportRequestTests (TimeoutOverride)
-@end
 @interface ZMTransportRequestTests (Debugging)
 @end
 
@@ -143,7 +141,6 @@
     XCTAssertNil(request.contentDisposition);
     XCTAssertNil(request.binaryData);
     XCTAssertEqualObjects(fileURL, request.fileUploadURL);
-    XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
     XCTAssertTrue(request.shouldFailInsteadOfRetry);
 }
 
@@ -259,7 +256,7 @@
     // given
     XCTestExpectation *expectation = [self expectationWithDescription:@"Task created handler called"];
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
-    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
+    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2];
     
     ZMTaskCreatedHandler *handler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
         XCTAssertEqualObjects(identifier, expectedIdentifier);
@@ -269,7 +266,7 @@
     [transportRequest addTaskCreatedHandler:handler];
     
     // when
-    [transportRequest callTaskCreationHandlersWithIdentifier:2 sessionIdentifier:@"test-session"];
+    [transportRequest callTaskCreationHandlersWithIdentifier:2];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -282,7 +279,7 @@
     XCTestExpectation *secondExpectation = [self expectationWithDescription:@"Second task created handler called"];;
     
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
-    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2 sessionIdentifier:@"test-session"];
+    ZMTaskIdentifier *expectedIdentifier = [ZMTaskIdentifier identifierWithIdentifier:2];
     
     ZMTaskCreatedHandler *firstHandler = [ZMTaskCreatedHandler handlerOnGroupQueue:self.fakeSyncContext block:^(ZMTaskIdentifier *identifier) {
         XCTAssertEqualObjects(identifier, expectedIdentifier);
@@ -298,7 +295,7 @@
     [transportRequest addTaskCreatedHandler:secondHandler];
     
     // when
-    [transportRequest callTaskCreationHandlersWithIdentifier:2 sessionIdentifier:@"test-session"];
+    [transportRequest callTaskCreationHandlersWithIdentifier:2];
     
     // then
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
@@ -310,7 +307,7 @@
     ZMTransportRequest *transportRequest = [ZMTransportRequest requestWithPath:@"/something" method:ZMMethodPUT payload:@{}];
     
     // when
-    XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithIdentifier:0 sessionIdentifier:@""]);
+    XCTAssertNoThrow([transportRequest callTaskCreationHandlersWithIdentifier:0]);
 }
 
 - (void)testThatItSetsStartOfUploadTimestamp
@@ -571,45 +568,6 @@
     // when
     XCTAssertNoThrow([transportRequest updateProgress:1.0f]);
 }
-
-
-- (void)testThatARequestShouldBeExecutedOnlyOnForegroundSessionByDefault
-{
-    // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
-    
-    // then
-    XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
-    XCTAssertFalse(request.shouldUseVoipSession);
-}
-
-- (void)testThatARequestShouldUseOnlyBackgroundSessionWhenForced
-{
-    // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
-
-    // when
-    [request forceToBackgroundSession];
-    
-    // then
-    XCTAssertTrue(request.shouldUseOnlyBackgroundSession);
-    XCTAssertFalse(request.shouldUseVoipSession);
-}
-
-- (void)testThatARequestShouldUseOnlyVoipSessionWhenForced
-{
-    // given
-    ZMTransportRequest *request = [ZMTransportRequest requestGetFromPath:@"Foo"];
-    
-    // when
-    [request forceToVoipSession];
-    
-    // then
-    XCTAssertTrue(request.shouldUseVoipSession);
-    XCTAssertFalse(request.shouldUseOnlyBackgroundSession);
-
-}
-
 
 @end
 
@@ -920,55 +878,6 @@
 }
 
 @end
-
-
-@implementation ZMTransportRequestTests (TimeoutOverride)
-
-- (void)testThatItSetsTheTimeoutOverrideWhenTheApplicationisInTheBackgroundAndTheRequestDoesNotEnforceTheBackgroundSession;
-{
-    [self checkThatItDoesSetTheTimeoutInterval:YES applicationInBackground:YES usingBackgroundSession:NO];
-}
-
-- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisInTheBackgroundAndTheRequestDoesEnforceTheBackgroundSession;
-{
-    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:YES usingBackgroundSession:YES];
-}
-
-- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisNotInTheBackgroundAndTheRequestDoesNotEnforceTheBackgroundSession;
-{
-    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:NO usingBackgroundSession:NO];
-}
-
-- (void)testThatItDoesNotSetTheTimeoutOverrideWhenTheApplicationisNotInTheBackgroundAndTheRequestDoesEnforceTheBackgroundSession;
-{
-    [self checkThatItDoesSetTheTimeoutInterval:NO applicationInBackground:NO usingBackgroundSession:YES];
-}
-
-- (void)checkThatItDoesSetTheTimeoutInterval:(BOOL)shouldSetInterval
-                     applicationInBackground:(BOOL)backgrounded
-                      usingBackgroundSession:(BOOL)usingBackgroundSession
-{
-    // given
-    ZMTransportRequest *sut = [[ZMTransportRequest alloc] initWithPath:@"/foo" method:ZMMethodPOST payload:nil];
-    if (usingBackgroundSession) {
-        [sut forceToBackgroundSession];
-    }
-    
-    NSMutableURLRequest *request = [[NSMutableURLRequest alloc] init];
-    
-    // when
-    [sut setTimeoutIntervalOnRequestIfNeeded:request applicationIsBackgrounded:backgrounded usingBackgroundSession:usingBackgroundSession];
-    
-    // then
-    if (shouldSetInterval) {
-        XCTAssertEqual(request.timeoutInterval, 25);
-    } else {
-        XCTAssertEqual(request.timeoutInterval, 60);
-    }
-}
-
-@end
-
 
 @implementation ZMTransportRequestTests (Debugging)
 

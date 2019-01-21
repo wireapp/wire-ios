@@ -29,7 +29,6 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/NSObject+ZMTransportEncoding.h>
 #import <WireTransport/NSString+UUID.h>
 #import <WireTransport/ZMReachability.h>
-#import <WireTransport/ZMSessionCancelTimer.h>
 #import <WireTransport/ZMTransportCodec.h>
 #import <WireTransport/ZMTransportData.h>
 #import <WireTransport/ZMTransportRequest.h>
@@ -39,7 +38,6 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/ZMTransportSession.h>
 #import <WireTransport/ZMTaskIdentifierMap.h>
 #import <WireTransport/ZMURLSession.h>
-#import <WireTransport/ZMURLSessionSwitch.h>
 #import <WireTransport/ZMUserAgent.h>
 #import <WireTransport/ZMPersistentCookieStorage.h>
 #import <WireTransport/Collections+ZMTSafeTypes.h>

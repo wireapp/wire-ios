@@ -34,7 +34,7 @@
 
 @interface ZMTransportSession ()
 
-- (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
+- (instancetype)initWithURLSession:(ZMURLSession *)URLSession
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
                             reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue

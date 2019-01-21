@@ -124,16 +124,12 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic) BOOL shouldFailInsteadOfRetry;
 @property (nonatomic) BOOL doesNotFollowRedirects;
 
-/// If true, the request should only be sent through background session
-@property (nonatomic, readonly) BOOL shouldUseOnlyBackgroundSession;
-@property (nonatomic, readonly) BOOL shouldUseVoipSession;
-
 @property (nonatomic, readonly, copy, nullable) NSDictionary *contentDisposition; ///< C.f. <https://tools.ietf.org/html/rfc2183>
 
 - (void)addTaskCreatedHandler:(ZMTaskCreatedHandler *)taskCreatedHandler NS_SWIFT_NAME(add(_:));
 - (void)addCompletionHandler:(ZMCompletionHandler *)completionHandler NS_SWIFT_NAME(add(_:));
 - (void)addProgressHandler:(ZMTaskProgressHandler *)progressHandler NS_SWIFT_NAME(add(_:));
-- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
+- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier;
 - (void)completeWithResponse:(ZMTransportResponse *)response;
 - (void)updateProgress:(float)progress;
 - (BOOL)isEqualToRequest:(ZMTransportRequest *)request;
@@ -142,12 +138,6 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 - (void)expireAtDate:(NSDate *)date;
 
 - (BOOL)hasRequiredPayload;
-
-/// If this is called, the request is going to be executed only on a background session
-- (void)forceToBackgroundSession;
-
-/// If this is called, the request is going to be executed on the voip session only
-- (void)forceToVoipSession;
 
 @property (nonatomic, readonly) ZMTransportAccept acceptedResponseMediaTypes; ///< C.f. RFC 7231 section 5.3.2 <http://tools.ietf.org/html/rfc7231#section-5.3.2>
 
