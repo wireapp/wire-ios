@@ -61,10 +61,13 @@ extension ZMConversation {
         guard !(text as NSString).zmHasOnlyWhitespaceCharacters() else { return nil }
         
         let textContent = ZMText.text(with: text, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage as? ZMOTRMessage)
-        let clientMessage = ZMGenericMessage.message(content: textContent, nonce: nonce, expiresAfter: messageDestructionTimeoutValue)
-        let message = appendClientMessage(with: clientMessage)!
-        message.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
-        message.quote = quotedMessage as? ZMMessage
+        let genericMessage = ZMGenericMessage.message(content: textContent, nonce: nonce, expiresAfter: messageDestructionTimeoutValue)
+        let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: managedObjectContext!)
+        clientMessage.add(genericMessage.data())
+        clientMessage.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        clientMessage.quote = quotedMessage as? ZMMessage
+        
+        append(clientMessage, expires: true, hidden: false)
         
         if let managedObjectContext = managedObjectContext {
             NotificationInContext(name: ZMConversation.clearTypingNotificationName,
@@ -72,7 +75,7 @@ extension ZMConversation {
                                   object: self).post()
         }
         
-        return message
+        return clientMessage
     }
     
     @discardableResult @objc(appendImageAtURL:nonce:)
