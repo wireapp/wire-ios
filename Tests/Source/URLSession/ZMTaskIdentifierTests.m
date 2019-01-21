@@ -31,17 +31,16 @@
 
 - (void)testThatItCreatesAnIdentifier {
     // given
-    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
+    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46];
     
     // then
     XCTAssertEqual(sut.identifier, 46lu);
-    XCTAssertEqual(sut.sessionIdentifier, @"foreground-session");
 }
 
 - (void)testThatTwoEqualTaskIdentifierObjectsAreConsideredEqual {
     // given
-    ZMTaskIdentifier *first = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
-    ZMTaskIdentifier *second = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
+    ZMTaskIdentifier *first = [ZMTaskIdentifier identifierWithIdentifier:46];
+    ZMTaskIdentifier *second = [ZMTaskIdentifier identifierWithIdentifier:46];
     
     // then
     XCTAssertEqualObjects(first, second);
@@ -49,9 +48,9 @@
 
 - (void)testThatTwoDifferentTaskIdentifierObjectsAreNotConsideredEqual {
     // given
-    ZMTaskIdentifier *first = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
-    ZMTaskIdentifier *second = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"background-session"];
-    ZMTaskIdentifier *third = [ZMTaskIdentifier identifierWithIdentifier:12 sessionIdentifier:@"foreground-session"];
+    ZMTaskIdentifier *first = [ZMTaskIdentifier identifierWithIdentifier:46];
+    ZMTaskIdentifier *second = [ZMTaskIdentifier identifierWithIdentifier:100];
+    ZMTaskIdentifier *third = [ZMTaskIdentifier identifierWithIdentifier:12];
     
     // then
     XCTAssertNotEqualObjects(first, second);
@@ -61,7 +60,7 @@
 
 - (void)testThatItCanBeSerializedAndDeserializedFromAndToNSData {
     // given
-    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
+    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46];
     XCTAssertNotNil(sut);
     
     // when
@@ -76,7 +75,7 @@
 
 - (void)testThatItCanBeInitializedFromDataAndReturnsTheCorrectData {
     // given
-    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:42 sessionIdentifier:@"foreground-session"];
+    ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:42];
     XCTAssertNotNil(sut);
     
     // when
