@@ -280,8 +280,7 @@ public class SharingSession {
             environment: environment,
             cookieStorage: cookieStorage,
             reachability: reachability,
-            initialAccessToken: ZMAccessToken(),
-            applicationGroupIdentifier: applicationGroupIdentifier
+            initialAccessToken: ZMAccessToken()
         )
         
         try self.init(
