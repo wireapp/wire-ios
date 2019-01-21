@@ -87,7 +87,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
             // when
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
             let member = Member.getOrCreateMember(for: selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = Permissions(rawValue: 0)
+            member.permissions = Permissions.none
             self.conversation.team = self.team
             
             // then
@@ -134,7 +134,7 @@ class ZMConversationTests_Teams: BaseTeamTests {
             // when
             let selfUser = ZMUser.selfUser(in: self.uiMOC)
             let member = Member.getOrCreateMember(for: selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = Permissions(rawValue: 0)
+            member.permissions = Permissions.none
             self.conversation.team = self.team
             
             // then

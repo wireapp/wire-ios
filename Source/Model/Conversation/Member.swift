@@ -25,8 +25,12 @@
     @NSManaged private var permissionsRawValue: Int64
 
     public var permissions: Permissions {
-        get { return Permissions(rawValue: permissionsRawValue) }
-        set { permissionsRawValue = newValue.rawValue }
+        get {
+            return Permissions(rawValue: permissionsRawValue)            
+        }
+        set {
+            permissionsRawValue = newValue.rawValue            
+        }
     }
 
     public override static func entityName() -> String {
