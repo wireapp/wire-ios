@@ -556,4 +556,44 @@ willPerformHTTPRedirection:response
     XCTAssertEqualObjects(task.originalRequest, request);
 }
 
+- (void)testThatItCreatesAnUploadTasksForRequestsWithFileURL
+{
+    // given
+    [self.sut tearDown];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:@"identifier"];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
+    NSString *path = @"https://baz.example.com/1/";
+    NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:path]];
+    NSString *contentType = @"multipart/mixed; boundary=frontier";
+    ZMTransportRequest *transportRequest = [ZMTransportRequest uploadRequestWithFileURL:self.uniqueFileURL path:path contentType:contentType];
+    WaitForAllGroupsToBeEmpty(0.5);
+    [self spinMainQueueWithTimeout:0.1];
+
+    // when
+    NSURLSessionTask *task = [self.sut taskWithRequest:request bodyData:nil transportRequest:transportRequest];
+    
+    // then
+    XCTAssertTrue([task isKindOfClass:NSURLSessionUploadTask.class]);
+    XCTAssertEqualObjects(task.originalRequest, request);
+    XCTAssertEqual(task.state, NSURLSessionTaskStateSuspended);
+    WaitForAllGroupsToBeEmpty(0.5);
+}
+
+- (NSURL *)uniqueFileURL
+{
+    NSString *documents = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES).firstObject;
+    NSString *fileName = [NSUUID.createUUID.transportString stringByAppendingPathExtension:@"txt"];
+    NSURL *fileURL = [NSURL fileURLWithPath:[documents stringByAppendingPathComponent:fileName]];
+    NSError *error = nil;
+    XCTAssertTrue([@"🔒" writeToURL:fileURL atomically:YES encoding:NSUTF8StringEncoding error:&error]);
+    XCTAssertNil(error);
+    return fileURL;
+}
+
 @end
