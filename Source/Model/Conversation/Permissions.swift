@@ -17,6 +17,7 @@
 //
 
 
+/// An optionSet indicates a user's permissions
 public struct Permissions: OptionSet {
 
     public let rawValue: Int64
