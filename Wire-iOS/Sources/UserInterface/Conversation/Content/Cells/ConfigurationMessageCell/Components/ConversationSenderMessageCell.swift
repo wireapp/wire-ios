@@ -25,8 +25,12 @@ class ConversationSenderMessageCell: UIView, ConversationMessageCell {
         let message: ZMConversationMessage
         let indicatorIcon: UIImage?
     }
+    
+    weak var delegate: ConversationMessageCellDelegate? = nil
+    weak var message: ZMConversationMessage? = nil
 
     var isSelected: Bool = false
+    
     private let senderView = SenderCellComponent()
     private let indicatorImageView = UIImageView()
 
