@@ -26,15 +26,8 @@ final class GroupDetailsViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     
     override func setUp() {
         super.setUp()
-        
-        // Note, we explicitly don't add participants. Why? The participants
-        // list in the group details requires the shared user session, which
-        // isn't configured in these tests. As such, the participants list
-        // is missing from these snapshots.
-        // TODO: include participants list.
-        groupConversation = ZMConversation.insertNewObject(in: uiMOC)
-        groupConversation.remoteIdentifier = UUID.create()
-        groupConversation.conversationType = .group
+
+        groupConversation = createGroupConversation()
         groupConversation.userDefinedName = "iOS Team"
     }
     
@@ -88,7 +81,6 @@ final class GroupDetailsViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     }
 
     func testForActionMenu() {
-        // TODO: the menu is missing "mark unread" option at top
         teamTest {
             sut = GroupDetailsViewController(conversation: groupConversation)
             sut.detailsView(GroupDetailsFooterView(), performAction: .more)
@@ -97,7 +89,6 @@ final class GroupDetailsViewControllerSnapshotTests: CoreDataSnapshotTestCase {
     }
     
     func testForActionMenu_NonTeam() {
-        // TODO: the menu is missing "mark unread" option at top
         nonTeamTest {
             sut = GroupDetailsViewController(conversation: groupConversation)
             sut.detailsView(GroupDetailsFooterView(), performAction: .more)
