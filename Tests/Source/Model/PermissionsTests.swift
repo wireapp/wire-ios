@@ -71,7 +71,7 @@ class PermissionsTests: BaseZMClientMessageTests {
         ]
 
         // then
-        XCTAssertEqual(Permissions.collaborator, permissions)
+        XCTAssertEqual(Permissions.partner, permissions)
     }
 
     func testAdminPermissions() {
@@ -101,7 +101,7 @@ class PermissionsTests: BaseZMClientMessageTests {
 
     func testThatItCreatesPermissionsFromPayload() {
         XCTAssertEqual(Permissions(rawValue: 5), [.createConversation, .addTeamMember])
-        XCTAssertEqual(Permissions(rawValue: 0x401), .collaborator)
+        XCTAssertEqual(Permissions(rawValue: 0x401), .partner)
         XCTAssertEqual(Permissions(rawValue: 1587), .member)
         XCTAssertEqual(Permissions(rawValue: 5951), .admin)
         XCTAssertEqual(Permissions(rawValue: 8191), .owner)
@@ -114,7 +114,7 @@ class PermissionsTests: BaseZMClientMessageTests {
     // MARK: - TeamRole (Objective-C Interoperability)
 
     func testThatItCreatesTheCorrectSwiftPermissions() {
-        XCTAssertEqual(TeamRole.collaborator.permissions, .collaborator)
+        XCTAssertEqual(TeamRole.partner.permissions, .partner)
         XCTAssertEqual(TeamRole.member.permissions, .member)
         XCTAssertEqual(TeamRole.admin.permissions, .admin)
         XCTAssertEqual(TeamRole.owner.permissions, .owner)
@@ -133,31 +133,31 @@ class PermissionsTests: BaseZMClientMessageTests {
 
     func testTeamRoleIsARelationships() {
         XCTAssert(TeamRole.none.isA(role: .none))
-        XCTAssertFalse(TeamRole.none.isA(role: .collaborator))
+        XCTAssertFalse(TeamRole.none.isA(role: .partner))
         XCTAssertFalse(TeamRole.none.isA(role: .member))
         XCTAssertFalse(TeamRole.none.isA(role: .admin))
         XCTAssertFalse(TeamRole.none.isA(role: .owner))
         
-        XCTAssert(TeamRole.collaborator.isA(role: .none))
-        XCTAssert(TeamRole.collaborator.isA(role: .collaborator))
-        XCTAssertFalse(TeamRole.collaborator.isA(role: .member))
-        XCTAssertFalse(TeamRole.collaborator.isA(role: .admin))
-        XCTAssertFalse(TeamRole.collaborator.isA(role: .owner))
+        XCTAssert(TeamRole.partner.isA(role: .none))
+        XCTAssert(TeamRole.partner.isA(role: .partner))
+        XCTAssertFalse(TeamRole.partner.isA(role: .member))
+        XCTAssertFalse(TeamRole.partner.isA(role: .admin))
+        XCTAssertFalse(TeamRole.partner.isA(role: .owner))
         
         XCTAssert(TeamRole.member.isA(role: .none))
-        XCTAssert(TeamRole.member.isA(role: .collaborator))
+        XCTAssert(TeamRole.member.isA(role: .partner))
         XCTAssert(TeamRole.member.isA(role: .member))
         XCTAssertFalse(TeamRole.member.isA(role: .admin))
         XCTAssertFalse(TeamRole.member.isA(role: .owner))
         
         XCTAssert(TeamRole.admin.isA(role: .none))
-        XCTAssert(TeamRole.admin.isA(role: .collaborator))
+        XCTAssert(TeamRole.admin.isA(role: .partner))
         XCTAssert(TeamRole.admin.isA(role: .member))
         XCTAssert(TeamRole.admin.isA(role: .admin))
         XCTAssertFalse(TeamRole.admin.isA(role: .owner))
         
         XCTAssert(TeamRole.owner.isA(role: .none))
-        XCTAssert(TeamRole.owner.isA(role: .collaborator))
+        XCTAssert(TeamRole.owner.isA(role: .partner))
         XCTAssert(TeamRole.owner.isA(role: .member))
         XCTAssert(TeamRole.owner.isA(role: .admin))
         XCTAssert(TeamRole.owner.isA(role: .owner))
