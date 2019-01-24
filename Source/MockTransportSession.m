@@ -377,7 +377,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     static NSUInteger taskCounter = 0;
     taskCounter++;
     self.taskIdentifierMapping[@(taskCounter)] = request;
-    [request callTaskCreationHandlersWithIdentifier:taskCounter];
+    [request callTaskCreationHandlersWithIdentifier:taskCounter sessionIdentifier:@"mock-session-identifier"];
     
     if (request && request.expirationDate != nil && self.doNotRespondToRequests == YES) {
         
