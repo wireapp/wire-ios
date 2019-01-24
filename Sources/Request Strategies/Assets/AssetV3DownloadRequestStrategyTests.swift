@@ -560,7 +560,7 @@ extension AssetV3DownloadRequestStrategyTests {
             // GIVEN the task has been created
             guard let request = self.sut.nextRequest() else { return XCTFail("No request created") }
             
-            request.callTaskCreationHandlers(withIdentifier: 42)
+            request.callTaskCreationHandlers(withIdentifier: 42, sessionIdentifier: self.name)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout:0.5))

@@ -110,6 +110,9 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         else { fatal("no missing clients found") }
         
         let request = requestsFactory.fetchMissingClientKeysRequest(missing)
+        if let delegate = applicationStatus?.deliveryConfirmation, delegate.needsToSyncMessages {
+            request?.transportRequest.forceToVoipSession()
+        }
         return request
     }
     

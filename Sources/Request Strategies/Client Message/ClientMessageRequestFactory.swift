@@ -51,6 +51,7 @@ public final class ClientMessageRequestFactory: NSObject {
     public func requestToGetAsset(_ assetId: String, inConversation conversationId: UUID) -> ZMTransportRequest {
         let path = "/" + ["conversations", conversationId.transportString(), "otr", "assets", assetId].joined(separator: "/")
         let request = ZMTransportRequest.imageGet(fromPath: path)
+        request.forceToBackgroundSession()
         return request
     }
 }
@@ -63,6 +64,7 @@ extension ClientMessageRequestFactory {
         
         let request = ZMTransportRequest(getFromPath: path)
         request.addContentDebugInformation("Downloading file (Asset)\n\(String(describing: message.dataSetDebugInformation))")
+        request.forceToBackgroundSession()
         return request
     }
 }
