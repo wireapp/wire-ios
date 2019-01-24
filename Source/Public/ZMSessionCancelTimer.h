@@ -17,15 +17,30 @@
 // 
 
 
-#import "ZMURLSession.h"
-@class ZMTemporaryFileListForBackgroundRequests;
+#import <Foundation/Foundation.h>
+
+NS_ASSUME_NONNULL_BEGIN
+
+@class ZMURLSession;
 
 
-@interface ZMURLSession (Tests)
 
-@property (nonatomic) NSURLSession *backingSession;
-@property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
+extern const NSTimeInterval ZMSessionCancelTimerDefaultTimeout;
 
-- (void)setRequest:(ZMTransportRequest *)request forTask:(NSURLSessionTask *)task;
+
+
+/// Responsible for cancelling tasks in a session after a given timeout.
+/// Also creates a "background task" with
+///     -[UIApplication beginBackgroundTaskWithName:expirationHandler:]
+/// and
+///     -[UIApplication endBackgroundTask:]
+@interface ZMSessionCancelTimer : NSObject
+
+- (instancetype)initWithURLSession:(ZMURLSession *)session timeout:(NSTimeInterval)timeout;
+
+- (void)start;
+- (void)cancel;
 
 @end
+
+NS_ASSUME_NONNULL_END

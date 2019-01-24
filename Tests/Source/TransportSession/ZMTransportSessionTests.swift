@@ -40,3 +40,74 @@ import WireTesting
     public func tearDown() { }
 }
 
+class ZMTransportSessionTests_Initialization: ZMTBaseTest {
+    var userIdentifier: UUID!
+    var containerIdentifier: String!
+    var serverName: String!
+    var baseURL: URL!
+    var websocketURL: URL!
+    var cookieStorage: ZMPersistentCookieStorage!
+    var reachability: FakeReachability!
+    var sut: ZMTransportSession!
+    var environment: MockEnvironment!
+    
+    override func setUp() {
+        super.setUp()
+        userIdentifier = UUID()
+        containerIdentifier = "some.bundle.id"
+        serverName = "https://example.com"
+        baseURL = URL(string: serverName)!
+        websocketURL = URL(string: serverName)!.appendingPathComponent("websocket")
+        cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier)
+        reachability = FakeReachability()
+        environment = MockEnvironment()
+        sut = ZMTransportSession(environment: environment, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier)
+    }
+    
+    override func tearDown() {
+        userIdentifier = nil
+        containerIdentifier = nil
+        serverName = nil
+        baseURL = nil
+        websocketURL = nil
+        cookieStorage = nil
+        reachability = nil
+        sut.tearDown()
+        sut = nil
+        super.tearDown()
+    }
+    
+    func check(identifier: String?, contains items: [String], file: StaticString = #file, line: UInt = #line) {
+        guard let identifier = identifier else { XCTFail("identifier should not be nil", file: file, line: line); return }
+        for item in items {
+            XCTAssert(identifier.contains(item), "[\(identifier)] should contain [\(item)]", file: file, line: line)
+        }
+    }
+    
+    func testThatBackgorundSessionIsBackground() {
+        XCTAssertTrue(sut.urlSessionSwitch.backgroundSession.isBackgroundSession)
+        XCTAssertFalse(sut.urlSessionSwitch.foregroundSession.isBackgroundSession)
+    }
+    
+    func testThatItConfiguresSessionsCorrectly() {
+        // given
+        let userID = userIdentifier.transportString()
+        let voipSession = sut.urlSessionSwitch.voipSession
+        let foregroundSession = sut.urlSessionSwitch.foregroundSession
+        let backgroundSession = sut.urlSessionSwitch.backgroundSession
+
+        // then
+        check(identifier: voipSession.identifier, contains: [ZMURLSessionVoipIdentifier, userID])
+        
+        check(identifier: foregroundSession.identifier, contains: [ZMURLSessionForegroundIdentifier, userID])
+        
+        check(identifier: backgroundSession.identifier, contains: [ZMURLSessionBackgroundIdentifier, userID])
+        let backgroundConfiguration = backgroundSession.configuration
+        check(identifier: backgroundConfiguration.identifier, contains: [userID])
+        XCTAssertEqual(backgroundConfiguration.sharedContainerIdentifier, containerIdentifier)
+        
+        XCTAssertEqual(Set<String>([voipSession.identifier, foregroundSession.identifier, backgroundSession.identifier]).count, 3, "All identifiers should be unique")
+    }
+    
+}
+

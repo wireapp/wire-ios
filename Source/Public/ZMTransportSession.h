@@ -38,6 +38,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol ZMPushChannel;
 @protocol ReachabilityProvider;
 @protocol BackendEnvironmentProvider;
+@class ZMURLSessionSwitch;
 @class ZMTransportRequest;
 
 typedef ZMTransportRequest* _Nullable (^ZMTransportRequestGenerator)(void);
@@ -72,14 +73,15 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 @property (nonatomic, readonly) NSOperationQueue *workQueue;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
-@property (nonatomic, readonly) ZMURLSession *session;
+@property (nonatomic, readonly) ZMURLSessionSwitch *urlSessionSwitch;
 @property (nonatomic, copy) void (^requestLoopDetectionCallback)(NSString*);
 @property (nonatomic, readonly) id<ReachabilityProvider, TearDownCapable> reachability;
 
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
                       cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-                 initialAccessToken:(nullable ZMAccessToken *)initialAccessToken;
+                 initialAccessToken:(nullable ZMAccessToken *)initialAccessToken
+         applicationGroupIdentifier:(nullable NSString *)applicationGroupIdentifier;
 
 - (void)tearDown;
 
@@ -95,6 +97,20 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 - (void)setNetworkStateDelegate:(nullable id<ZMNetworkStateDelegate>)delegate;
 
 + (void)notifyNewRequestsAvailable:(id<NSObject>)sender;
+
+/**
+ *   This method should be called from inside @c application(application:handleEventsForBackgroundURLSession identifier:completionHandler:)
+ *   and passed the identifier and completionHandler to store after recreating the background session with the given identifier.
+ *   We need to store the handler to call it as soon as the background download completed (in @c URLSessionDidFinishEventsForBackgroundURLSession(session:))
+ */
+- (void)addCompletionHandlerForBackgroundSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler;
+
+/**
+ *   Asynchronically gets all current @c NSURLSessionTasks for the background session and calls the completionHandler
+ *   with them as parameter, can be used to check if a request that is expected to be registered with the
+ *   background session indeed is, e.g. after the app has been terminated
+ */
+- (void)getBackgroundTasksWithCompletionHandler:(void (^)(NSArray <NSURLSessionTask *>*))completionHandler;
 
 @end
 

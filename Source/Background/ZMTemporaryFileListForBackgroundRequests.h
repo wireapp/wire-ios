@@ -17,15 +17,12 @@
 // 
 
 
-#import "ZMURLSession.h"
-@class ZMTemporaryFileListForBackgroundRequests;
+#import <Foundation/Foundation.h>
 
+@interface ZMTemporaryFileListForBackgroundRequests : NSObject
 
-@interface ZMURLSession (Tests)
-
-@property (nonatomic) NSURLSession *backingSession;
-@property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
-
-- (void)setRequest:(ZMTransportRequest *)request forTask:(NSURLSessionTask *)task;
+- (NSURL *)temporaryFileWithBodyData:(NSData *)bodyData;
+- (void)setTemporaryFile:(NSURL *)fileURL forTaskIdentifier:(NSUInteger)taskId;
+- (void)deleteFileForTaskID:(NSUInteger)taskId;
 
 @end

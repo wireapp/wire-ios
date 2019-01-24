@@ -42,6 +42,13 @@ static BOOL hasUTJSONSupport(void)
     return (&UTTypeIsDynamic != NULL);
 }
 
+
+typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
+    ZMTransportRequestSessionTypeUseDefaultSession,
+    ZMTransportRequestSessionTypeUseBackgroundSessionOnly,
+    ZMTransportRequestSessionTypeUseVoipSessionOnly,
+};
+
 @interface ZMCompletionHandler ()
 
 
@@ -142,6 +149,7 @@ static BOOL hasUTJSONSupport(void)
 @property (nonatomic) BOOL shouldCompress;
 @property (nonatomic) NSURL *fileUploadURL;
 @property (nonatomic) NSDate *startOfUploadTimestamp;
+@property (nonatomic) ZMTransportRequestSessionType transportSessionType;
 @property (nonatomic) float progress;
 @property (nonatomic) NSMutableDictionary <NSString *, NSString *> *additionalHeaderFields;
 @property (nonatomic) BackgroundActivity *activity;
@@ -217,6 +225,7 @@ static BOOL hasUTJSONSupport(void)
                                                 contentDisposition:nil];
     request.fileUploadURL = url;
     request.shouldFailInsteadOfRetry = YES;
+    [request forceToBackgroundSession];
     return request;
 }
 
@@ -381,6 +390,19 @@ static BOOL hasUTJSONSupport(void)
     }];
 }
 
+- (void)setTimeoutIntervalOnRequestIfNeeded:(NSMutableURLRequest *)request
+                  applicationIsBackgrounded:(BOOL)inBackground
+                     usingBackgroundSession:(BOOL)usingBackgroundSession
+{
+    // We only want to override the timeout for requests using
+    // the foregroundsession while we are running in the background
+    if (! inBackground || usingBackgroundSession) {
+        return;
+    }
+    
+    request.timeoutInterval = ZMTransportRequestReducedExpirationInterval;
+}
+
 - (void)setContentDispositionOnHTTPRequest:(NSMutableURLRequest *)URLRequest;
 {
     if (self.contentDisposition == nil) {
@@ -456,9 +478,9 @@ static BOOL hasUTJSONSupport(void)
     }
 }
 
-- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier;
+- (void)callTaskCreationHandlersWithIdentifier:(NSUInteger)identifier sessionIdentifier:(NSString *)sessionIdentifier;
 {
-    ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier];
+    ZMTaskIdentifier *taskIdentifier = [ZMTaskIdentifier identifierWithIdentifier:identifier sessionIdentifier:sessionIdentifier];
     NSString *label = [NSString stringWithFormat:@"Task created handler of REQ %@ %@ -> %@ ", self.methodAsString, self.path, taskIdentifier];
     ZMSDispatchGroup *handlerGroup = [ZMSDispatchGroup groupWithLabel:@"ZMTransportRequest task creation handler"];
 
@@ -556,6 +578,28 @@ static BOOL hasUTJSONSupport(void)
             }];
         }
     }
+}
+
+
+- (BOOL)shouldUseOnlyBackgroundSession
+{
+    return self.transportSessionType == ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
+}
+
+- (BOOL)shouldUseVoipSession
+{
+    return self.transportSessionType == ZMTransportRequestSessionTypeUseVoipSessionOnly;
+}
+
+
+- (void)forceToBackgroundSession
+{
+    self.transportSessionType = ZMTransportRequestSessionTypeUseBackgroundSessionOnly;
+}
+
+- (void)forceToVoipSession;
+{
+    self.transportSessionType = ZMTransportRequestSessionTypeUseVoipSessionOnly;
 }
 
 - (NSString *)completionHandlerDescription;

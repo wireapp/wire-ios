@@ -24,6 +24,7 @@
 #import "NSError+ZMTransportSession.h"
 #import "ZMTaskIdentifierMap.h"
 #import "ZMServerTrust.h"
+#import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTLogging.h"
 #import "ZMTransportResponse.h"
@@ -35,6 +36,9 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK_LOW_LEVEL;
 
 
 static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 2;
+NSString * const ZMURLSessionBackgroundIdentifier = @"background-session";
+NSString * const ZMURLSessionForegroundIdentifier = @"foreground-session";
+NSString * const ZMURLSessionVoipIdentifier = @"voip-session";
 
 @interface ZMURLSession ()
 
@@ -48,6 +52,7 @@ static NSUInteger const ZMTransportDecreasedProgressCancellationLeeway = 1024 * 
 @property (nonatomic, strong) id<BackendTrustProvider> trustProvider;
 
 @property (nonatomic) NSURLSession *backingSession;
+@property (nonatomic) ZMTemporaryFileListForBackgroundRequests *temporaryFiles;
 
 @property (nonatomic) BOOL tornDown;
 @end
@@ -71,6 +76,7 @@ ZM_EMPTY_ASSERTING_INIT();
         _taskIdentifierToRequest = [[ZMTaskIdentifierMap alloc] init];
         _taskIdentifierToData = [[ZMTaskIdentifierMap alloc] init];
         self.identifier = identifier;
+        self.temporaryFiles = [[ZMTemporaryFileListForBackgroundRequests alloc] init];
     }
     return self;
 }
@@ -157,6 +163,7 @@ ZM_EMPTY_ASSERTING_INIT();
     [self.taskIdentifierToRequest removeObjectForTaskIdentifier:task.taskIdentifier];
     [self.taskIdentifierToTimeoutTimer removeObjectForTaskIdentifier:task.taskIdentifier];
     [self.taskIdentifierToData removeObjectForTaskIdentifier:task.taskIdentifier];
+    [self.temporaryFiles deleteFileForTaskID:task.taskIdentifier];
 }
 
 - (NSString *)description;
@@ -465,6 +472,11 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
 
 @implementation ZMURLSession (TaskGeneration)
 
+- (BOOL)isBackgroundSession;
+{
+    return [self.identifier hasPrefix:ZMURLSessionBackgroundIdentifier];
+}
+
 - (NSURLSessionTask *)taskWithRequest:(NSURLRequest *)request bodyData:(NSData *)bodyData transportRequest:(ZMTransportRequest *)transportRequest;
 {
     NSURLSessionTask *task;
@@ -474,16 +486,35 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
         return nil;
     }
     
-    if (bodyData != nil) {
-        task = [self.backingSession uploadTaskWithRequest:request fromData:bodyData];
-    } else {
-        task = [self.backingSession dataTaskWithRequest:request];
+    if (nil != transportRequest.fileUploadURL) {
+        RequireString(self.isBackgroundSession, "File uploads need to set 'forceToBackgroundSession' on the request");
+        task = [self.backingSession uploadTaskWithRequest:request fromFile:transportRequest.fileUploadURL];
+        ZMLogDebug(@"Created file upload task: %@, url: %@", task, transportRequest.fileUploadURL);
     }
+    else if (self.isBackgroundSession) {
+         if (bodyData != nil) {
+            NSURL *fileURL = [self.temporaryFiles temporaryFileWithBodyData:bodyData];
+            VerifyReturnNil(fileURL != nil);
+            task = [self.backingSession uploadTaskWithRequest:request fromFile:fileURL];
+            [self.temporaryFiles setTemporaryFile:fileURL forTaskIdentifier:task.taskIdentifier];
+        } else {
+            task = [self.backingSession downloadTaskWithRequest:request];
+        }
+        ZMLogDebug(@"Created background task: %@ %@ %@", task, task.originalRequest.HTTPMethod, task.originalRequest.URL);
+    }
+    else {
+        if (bodyData != nil) {
+            task = [self.backingSession uploadTaskWithRequest:request fromData:bodyData];
+        } else {
+            task = [self.backingSession dataTaskWithRequest:request];
+        }
+    }
+    
     if (transportRequest != nil) {
         [self setRequest:transportRequest forTask:task];
     }
     
-    [transportRequest callTaskCreationHandlersWithIdentifier:task.taskIdentifier];
+    [transportRequest callTaskCreationHandlersWithIdentifier:task.taskIdentifier sessionIdentifier:self.identifier];
     return task;
 }
 
