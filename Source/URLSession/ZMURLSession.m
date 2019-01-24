@@ -474,10 +474,7 @@ totalBytesExpectedToSend:(int64_t)totalBytesExpectedToSend
         return nil;
     }
     
-    if (nil != transportRequest.fileUploadURL) {
-        task = [self.backingSession uploadTaskWithRequest:request fromFile:transportRequest.fileUploadURL];
-        ZMLogDebug(@"Created file upload task: %@, url: %@", task, transportRequest.fileUploadURL);
-    } else if (bodyData != nil) {
+    if (bodyData != nil) {
         task = [self.backingSession uploadTaskWithRequest:request fromData:bodyData];
     } else {
         task = [self.backingSession dataTaskWithRequest:request];
