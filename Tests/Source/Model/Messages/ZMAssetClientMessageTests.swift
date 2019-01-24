@@ -1069,7 +1069,7 @@ extension ZMAssetClientMessageTests {
         let sut = ZMAssetClientMessage(nonce: .create(), managedObjectContext: uiMOC)
         
         // when
-        let identifier = ZMTaskIdentifier(identifier: 42)
+        let identifier = ZMTaskIdentifier(identifier: 42, sessionIdentifier: "foo")
         sut.associatedTaskIdentifier = identifier
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         self.uiMOC.refresh(sut, mergeChanges: false)
