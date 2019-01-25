@@ -36,6 +36,7 @@ extension ZMSyncStrategy: ZMUpdateEventConsumer {
         eventDecoder.processEvents(updateEvents) { [weak self] (decryptedUpdateEvents) in
             guard let `self` = self else { return }
             
+            let date = Date()
             let fetchRequest = prefetchRequest(updateEvents: decryptedUpdateEvents)
             let prefetchResult = syncMOC.executeFetchRequestBatchOrAssert(fetchRequest)
             
@@ -45,11 +46,15 @@ extension ZMSyncStrategy: ZMUpdateEventConsumer {
                 for eventConsumer in self.eventConsumers {
                     eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
                 }
+                self.eventProcessingTracker?.registerEventProcessed()
             }
-            
             localNotificationDispatcher?.processEvents(decryptedUpdateEvents, liveEvents: true, prefetchResult: nil)
             syncMOC.saveOrRollback()
+            
+            Logging.eventProcessing.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker?.debugDescription ?? "")")
+            
         }
+        
     }
     
     @objc(prefetchRequestForUpdateEvents:)
