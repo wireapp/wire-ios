@@ -517,6 +517,56 @@
     XCTAssertEqualObjects(clearedList.firstObject, c1);
 }
 
+- (void)testThatClearingConversationDoesNotClearOtherConversations
+{
+    // GIVEN
+    ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    c1.conversationType = ZMConversationTypeOneOnOne;
+    c1.lastModifiedDate = [NSDate date];
+    ZMMessage *message1 = (id)[c1 appendMessageWithText:@"message 1"];
+    message1.serverTimestamp = [NSDate date];
+    c1.lastServerTimeStamp = message1.serverTimestamp;
+
+    ZMConversation *c2 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    c2.conversationType = ZMConversationTypeOneOnOne;
+    c2.lastModifiedDate = [NSDate date];
+    ZMMessage *message2 = (id)[c2 appendMessageWithText:@"message 2"];
+    message2.serverTimestamp = [NSDate date];
+    c2.lastServerTimeStamp = message2.serverTimestamp;
+
+    NSSet *conversations = [NSSet setWithArray:@[c1, c2]];
+    ZMConversationList *activeList = [ZMConversation conversationsExcludingArchivedInContext:self.uiMOC];
+    ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
+    ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
+
+    XCTAssertTrue([c1.recentMessages containsObject:message1]);
+    XCTAssertTrue([c2.recentMessages containsObject:message2]);
+
+    XCTAssertEqual(activeList.count, 2u);
+    XCTAssertEqualObjects(activeList.set, conversations);
+    XCTAssertEqual(archivedList.count, 0u);
+    XCTAssertEqual(clearedList.count, 0u);
+
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+
+    // when
+    [self performPretendingUiMocIsSyncMoc:^{
+        [c1 clearMessageHistory];
+    }];
+
+    XCTAssertTrue([self.uiMOC saveOrRollback]);
+
+    // then
+    XCTAssertFalse([c1.recentMessages containsObject:message1]);
+    XCTAssertTrue([c2.recentMessages containsObject:message2]);
+
+    XCTAssertEqual(activeList.count, 1u);
+    XCTAssertEqual(archivedList.count, 0u);
+    XCTAssertEqual(clearedList.count, 1u);
+    XCTAssertEqualObjects(clearedList.firstObject, c1);
+
+}
+
 - (void)testThatAddingMessageToClearedConversationMovesItToActiveConversationsList
 {
     // given
