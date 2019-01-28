@@ -29,7 +29,11 @@ extension ZMConversation {
         }
         
         let fetchRequest = NSFetchRequest<NSFetchRequestResult>(entityName: ZMMessage.entityName())
-        fetchRequest.predicate = NSPredicate(format: "%K <= %@", #keyPath(ZMMessage.serverTimestamp), clearedTimeStamp as CVarArg)
+        fetchRequest.predicate = NSPredicate(format: "(%K == %@ OR %K == %@) AND %K <= %@",
+                                             ZMMessageConversationKey, self,
+                                             ZMMessageHiddenInConversationKey, self,
+                                             #keyPath(ZMMessage.serverTimestamp),
+                                             clearedTimeStamp as CVarArg)
         
         let result = try! managedObjectContext.fetch(fetchRequest) as! [ZMMessage]
 
