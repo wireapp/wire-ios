@@ -325,7 +325,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     NSString *key = [self remoteIdentifierDataKey];
     NSData *data = uuid.data;
     for (NSManagedObject *mo in moc.registeredObjects) {
-        if ((mo.entity == entity) && [data isEqual:[mo valueForKey:key]]) {
+        if (!mo.isFault && mo.entity == entity && [data isEqual:[mo valueForKey:key]]) {
             return (id) mo;
         }
     }
