@@ -29,6 +29,7 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "78.1.0", block: DuplicatedEntityRemoval.removeDuplicated),
         PersistedDataPatch(version: "81.2.1", block: InvalidClientsRemoval.removeInvalid),
         PersistedDataPatch(version: "103.0.2", block: InvalidGenericMessageDataRemoval.removeInvalid),
+        PersistedDataPatch(version: "145.0.3", block: InvalidConversationRemoval.removeInvalid)
     ]
 
 }
