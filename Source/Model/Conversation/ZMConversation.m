@@ -1232,19 +1232,16 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (void)refreshObjectsThatAreNotNeededInSyncContext:(NSManagedObjectContext *)managedObjectContext;
 {
-
-    NSMutableArray *messagesToKeep = [NSMutableArray array];
     NSMutableArray *conversationsToKeep = [NSMutableArray array];
     NSMutableSet *usersToKeep = [NSMutableSet set];
     
     // make sure that the Set is not mutated while being enumerated
     NSSet *registeredObjects = managedObjectContext.registeredObjects;
     
-    // gather messages to keep
+    // gather objects to keep
     for(NSManagedObject *obj in registeredObjects) {
         if(!obj.isFault && [obj isKindOfClass:ZMConversation.class]) {
             ZMConversation *conversation = (ZMConversation *)obj;
-            [messagesToKeep addObjectsFromArray:[conversation messagesNotToRefresh].allObjects];
             
             if(conversation.shouldNotBeRefreshed) {
                 [conversationsToKeep addObject:conversation];
@@ -1264,41 +1261,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             
             const BOOL isOfTypeToBeRefreshed = isUser || isMessage || isConversation;
             
-            if((isMessage && [messagesToKeep indexOfObjectIdenticalTo:obj] != NSNotFound) ||
-               (isConversation && [conversationsToKeep indexOfObjectIdenticalTo:obj] != NSNotFound) ||
-               (isUser && [usersToKeep.allObjects indexOfObjectIdenticalTo:obj] != NSNotFound) ||
-               !isOfTypeToBeRefreshed
-            )
-            {
+            if ((isConversation && [conversationsToKeep indexOfObjectIdenticalTo:obj] != NSNotFound) ||
+                (isUser && [usersToKeep.allObjects indexOfObjectIdenticalTo:obj] != NSNotFound) ||
+                !isOfTypeToBeRefreshed) {
                 continue;
             }
             [managedObjectContext refreshObject:obj mergeChanges:obj.hasChanges];
         }
     }
-}
-
-- (NSSet *)messagesNotToRefresh
-{
-    NSMutableSet *messagesToKeep = [NSMutableSet set];
-    
-    const static NSUInteger NumberOfMessagesToKeep = 3;
-    
-    if (![self hasFaultForRelationshipNamed:ZMConversationAllMessagesKey]) {
-        const NSUInteger length = self.recentMessages.count;
-        
-        if (length == 0) {
-            return [NSSet set];
-        }
-        
-        const NSUInteger startIndex = length > NumberOfMessagesToKeep ? length - NumberOfMessagesToKeep : 0;
-        const NSUInteger endIndex = length - 1;
-        
-        for (NSUInteger index = startIndex; index <= endIndex; index++) {
-            [messagesToKeep addObject:self.recentMessages[index]];
-        }
-    }
-    
-    return messagesToKeep;
 }
 
 - (BOOL)shouldNotBeRefreshed
