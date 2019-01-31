@@ -111,13 +111,13 @@ class UnregisteredUserTests: XCTestCase {
         assertNormalizationValue(normalizedEmail, "john.doe@gmail.com")
     }
 
-    func testThatItReturnsCompletedWhenUserIsComplete() {
+    func testThatItReturnsCompletedWhenUserIsComplete_Phone() {
         // GIVEN
         let user = UnregisteredUser()
 
         // WHEN
         user.name = "Mario"
-        user.credentials = .phone(number: "+49123456789")
+        user.credentials = .phone("+49123456789")
         user.verificationCode = "123456"
         user.accentColorValue = .softPink
         user.acceptedTermsOfService = true
@@ -125,6 +125,31 @@ class UnregisteredUserTests: XCTestCase {
 
         // THEN
         XCTAssertTrue(user.isComplete)
+        XCTAssertFalse(user.needsPassword)
+    }
+
+    func testThatItReturnsCompletedWhenUserIsComplete_Email() {
+        // GIVEN
+        let user = UnregisteredUser()
+
+        // WHEN
+        user.name = "Mario"
+        user.credentials = .email("alexis@example.com")
+        user.verificationCode = "123456"
+        user.accentColorValue = .softPink
+        user.acceptedTermsOfService = true
+        user.marketingConsent = false
+
+        // WHEN: we check if the user needs a password
+        XCTAssertFalse(user.isComplete)
+        XCTAssertTrue(user.needsPassword)
+
+        // WHEN: we provide the password
+        user.password = "12345678"
+
+        // THEN
+        XCTAssertTrue(user.isComplete)
+        XCTAssertFalse(user.needsPassword)
     }
 
 }

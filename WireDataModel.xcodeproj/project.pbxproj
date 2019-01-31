@@ -120,6 +120,7 @@
 		54FB03AF1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */; };
 		5E0FB2012051493700FD9867 /* Set+Filter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB2002051493700FD9867 /* Set+Filter.swift */; };
 		5E0FB215205176B400FD9867 /* Set+ServiceUser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */; };
+		5E36B45E21CA5BBA00B7063B /* UnverifiedCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */; };
 		5E454C60210638E300DB4501 /* PushTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13A89D22106293000AB40CB /* PushTokenTests.swift */; };
 		5E67168E2174B9AF00522E61 /* LoginCredentials.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E67168D2174B9AF00522E61 /* LoginCredentials.swift */; };
 		5E771F382080BB0000575629 /* PBMessage+Validation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E771F372080BB0000575629 /* PBMessage+Validation.swift */; };
@@ -651,6 +652,7 @@
 		54FB03AE1E41FC86000E13DC /* NSManagedObjectContext+Patches.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSManagedObjectContext+Patches.swift"; sourceTree = "<group>"; };
 		5E0FB2002051493700FD9867 /* Set+Filter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+Filter.swift"; sourceTree = "<group>"; };
 		5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Set+ServiceUser.swift"; sourceTree = "<group>"; };
+		5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UnverifiedCredentials.swift; sourceTree = "<group>"; };
 		5E67168D2174B9AF00522E61 /* LoginCredentials.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginCredentials.swift; sourceTree = "<group>"; };
 		5E771F372080BB0000575629 /* PBMessage+Validation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PBMessage+Validation.swift"; sourceTree = "<group>"; };
 		5E771F392080C40B00575629 /* PBMessageValidationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PBMessageValidationTests.swift; sourceTree = "<group>"; };
@@ -1516,6 +1518,7 @@
 				EF18C7E51F9E4F8A0085A832 /* ZMUser+Filename.swift */,
 				5E0FB214205176B400FD9867 /* Set+ServiceUser.swift */,
 				5EFE9C052125CD3F007932A6 /* UnregisteredUser.swift */,
+				5E36B45D21CA5BBA00B7063B /* UnverifiedCredentials.swift */,
 			);
 			path = User;
 			sourceTree = "<group>";
@@ -2444,6 +2447,7 @@
 				F929C1751E41EBE20018ADA4 /* PersonName.swift in Sources */,
 				F9A706B61CAEE01D00C2F5FE /* UserClientChangeInfo.swift in Sources */,
 				BF989D0A1E8A6A120052BF8F /* SearchUserAsset.swift in Sources */,
+				5E36B45E21CA5BBA00B7063B /* UnverifiedCredentials.swift in Sources */,
 				F9B71F091CB264DF001DB03F /* ZMConversationList.m in Sources */,
 				5EFE9C0A2126BF9D007932A6 /* ZMPropertyNormalizationResult.m in Sources */,
 				F9A706941CAEE01D00C2F5FE /* UserClient+Protobuf.swift in Sources */,
