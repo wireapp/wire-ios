@@ -1234,18 +1234,26 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     NSMutableArray *conversationsToKeep = [NSMutableArray array];
     NSMutableSet *usersToKeep = [NSMutableSet set];
+    NSMutableSet *messagesToKeep = [NSMutableSet set];
     
     // make sure that the Set is not mutated while being enumerated
     NSSet *registeredObjects = managedObjectContext.registeredObjects;
     
     // gather objects to keep
     for(NSManagedObject *obj in registeredObjects) {
-        if(!obj.isFault && [obj isKindOfClass:ZMConversation.class]) {
-            ZMConversation *conversation = (ZMConversation *)obj;
-            
-            if(conversation.shouldNotBeRefreshed) {
-                [conversationsToKeep addObject:conversation];
-                [usersToKeep unionSet:conversation.lastServerSyncedActiveParticipants.set];
+        if (!obj.isFault) {
+            if ([obj isKindOfClass:ZMConversation.class]) {
+                ZMConversation *conversation = (ZMConversation *)obj;
+                
+                if(conversation.shouldNotBeRefreshed) {
+                    [conversationsToKeep addObject:conversation];
+                    [usersToKeep unionSet:conversation.lastServerSyncedActiveParticipants.set];
+                }
+            } else if ([obj isKindOfClass:ZMOTRMessage.class]) {
+                ZMOTRMessage *message = (ZMOTRMessage *)obj;
+                if (![message hasFaultForRelationshipNamed:ZMMessageMissingRecipientsKey] && !message.missingRecipients.isEmpty) {
+                    [messagesToKeep addObject:obj];
+                }
             }
         }
     }
@@ -1263,6 +1271,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             
             if ((isConversation && [conversationsToKeep indexOfObjectIdenticalTo:obj] != NSNotFound) ||
                 (isUser && [usersToKeep.allObjects indexOfObjectIdenticalTo:obj] != NSNotFound) ||
+                (isMessage && [messagesToKeep.allObjects indexOfObjectIdenticalTo:obj] != NSNotFound) ||
                 !isOfTypeToBeRefreshed) {
                 continue;
             }
