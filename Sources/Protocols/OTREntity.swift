@@ -84,8 +84,7 @@ extension OTREntity {
             return conversation
         }
     
-        let activeParticipants = conversation.activeParticipants.set as! Set<ZMUser>
-        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: activeParticipants)
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.activeParticipants)
     }
     
     /// Which objects this message depends on when sending it to a list recipients
