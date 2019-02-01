@@ -71,7 +71,8 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (readonly, nonatomic) ZMConversationType conversationType;
 @property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *allMessages;
-@property (readonly, nonatomic, nonnull) NSOrderedSet<ZMUser *> *activeParticipants;
+@property (readonly, nonatomic, nonnull) NSSet<ZMUser *> *activeParticipants;
+@property (readonly, nonatomic, nonnull) NSArray<ZMUser *> *sortedActiveParticipants;
 @property (readonly, nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
 @property (nonatomic, readonly) NSUInteger estimatedUnreadCount;

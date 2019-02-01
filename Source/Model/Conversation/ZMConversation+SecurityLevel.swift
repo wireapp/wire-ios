@@ -400,7 +400,7 @@ extension ZMConversation {
     /// Returns true if all participants are connected to the self user and all participants are trusted
     @objc public var allUsersTrusted : Bool {
         guard self.lastServerSyncedActiveParticipants.count > 0, self.isSelfAnActiveMember else { return false }
-        let hasOnlyTrustedUsers = (self.activeParticipants.array as! [ZMUser]).first { !$0.trusted() } == nil
+        let hasOnlyTrustedUsers = self.activeParticipants.first { !$0.trusted() } == nil
         return hasOnlyTrustedUsers && !self.containsUnconnectedOrExternalParticipant
     }
     
@@ -424,12 +424,12 @@ extension ZMConversation {
     }
     
     fileprivate var allParticipantsHaveClients : Bool {
-        return (self.activeParticipants.array as! [ZMUser]).first { $0.clients.count == 0 } == nil
+        return self.activeParticipants.first { $0.clients.count == 0 } == nil
     }
     
     /// If true the conversation might still be trusted / ignored
     @objc public var hasUntrustedClients : Bool {
-        return (self.activeParticipants.array as! [ZMUser]).first { $0.untrusted() } != nil
+        return self.activeParticipants.first { $0.untrusted() } != nil
     }
 }
 

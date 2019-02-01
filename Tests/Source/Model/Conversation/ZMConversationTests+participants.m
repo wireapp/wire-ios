@@ -300,9 +300,9 @@
     [conversation internalAddParticipants:[NSSet setWithObjects:user1, user2, user3, user4, nil]];
     [self.uiMOC saveOrRollback];
     
-    NSOrderedSet *expectedSet = [NSOrderedSet orderedSetWithArray:@[user2, user1, user4, selfUser, user3]];
+    NSArray *expected = @[user2, user1, user4, selfUser, user3];
     
-    XCTAssertEqualObjects(conversation.activeParticipants, expectedSet);
+    XCTAssertEqualObjects(conversation.sortedActiveParticipants, expected);
 }
 
 @end

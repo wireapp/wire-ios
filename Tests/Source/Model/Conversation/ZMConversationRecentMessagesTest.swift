@@ -87,7 +87,7 @@ public class ZMConversationRecentMessagesTest: ZMBaseManagedObjectTest {
         let conversationID = conversation.objectID
         var syncConversation: ZMConversation!
         syncMOC.performGroupedBlockAndWait {
-            syncConversation = self.syncMOC.object(with: conversationID) as! ZMConversation
+            syncConversation = self.syncMOC.object(with: conversationID) as? ZMConversation
         }
         // WHEN & THEN
         verifyUpdatedMessages(from: conversation, to: syncConversation)
