@@ -77,15 +77,14 @@ private var zmLog = ZMSLog(tag: "DisplayNameGenerator")
     }
     
     private func displayNames(for conversation: ZMConversation) -> [NSManagedObjectID : String] {
-        let givenNames : [String] = conversation.activeParticipants.array.compactMap{
-            guard let user = $0 as? ZMUser else { return nil }
+        let participants = conversation.sortedActiveParticipants
+        let givenNames : [String] = participants.compactMap { user in
             let personName = self.personName(for: user)
             return personName.givenName
         }
         let countedGivenName = NSCountedSet(array: givenNames)
         var map = [NSManagedObjectID : String]()
-        conversation.activeParticipants.forEach { user in
-            guard let user = user as? ZMUser else { return }
+        participants.forEach { user in
             let personName = self.personName(for: user)
             if countedGivenName.count(for: personName.givenName) == 1
                 || conversation.conversationType == .oneOnOne

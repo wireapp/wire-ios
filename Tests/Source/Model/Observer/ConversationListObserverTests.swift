@@ -571,7 +571,7 @@ class ConversationListObserverTests : NotificationDispatcherTestBase {
         let message = conversation.append(text: "hello")
         self.uiMOC.saveOrRollback()
         
-        guard let user = conversation.activeParticipants.firstObject as? ZMUser else { XCTFail(); return }
+        guard let user = conversation.activeParticipants.first else { XCTFail(); return }
         
         message?.textMessageData?.editText(user.displayName, mentions: [Mention(range: NSRange(location: 0, length: user.displayName.count), user: user)], fetchLinkPreview: false)
         self.uiMOC.saveOrRollback()

@@ -123,7 +123,7 @@ NSString * const EventNewConnection = @"user.contact-join";
     NSDictionary *selfStateDict = [self userDictionaryState:[joinedUsers containsObject:selfUser] isSendingVideo:[videoSendingUsers containsObject:selfUser]];
     
     NSMutableArray *otherStates = [NSMutableArray array];
-    NSOrderedSet *otherUUIDs = [conversation.activeParticipants mapWithBlock:^id(ZMUser *user) {
+    NSArray *otherUUIDs = [conversation.sortedActiveParticipants mapWithBlock:^id(ZMUser *user) {
         if (user.remoteIdentifier != nil) {
             NSDictionary *otherStateDict = [self userDictionaryState:[joinedUsers containsObject:user] isSendingVideo:[videoSendingUsers containsObject:user]];
             [otherStates addObject:otherStateDict];
@@ -133,7 +133,7 @@ NSString * const EventNewConnection = @"user.contact-join";
         return user.remoteIdentifier.transportString;
     }];
     
-    NSMutableDictionary *participantsDict = [NSMutableDictionary dictionaryWithObjects:otherStates forKeys:otherUUIDs.array];
+    NSMutableDictionary *participantsDict = [NSMutableDictionary dictionaryWithObjects:otherStates forKeys:otherUUIDs];
     participantsDict[selfUser.remoteIdentifier.transportString] = selfStateDict;
     
     NSMutableDictionary *payload = [NSMutableDictionary dictionary];
