@@ -1114,6 +1114,9 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
                               ZMMessageDestructionDateKey,          // If it has a destructionDate, the timer did not fire in time
                               ZMMessageSenderKey,                   // As soon as the message is deleted, we would delete the sender
                               ZMMessageIsObfuscatedKey];            // If the message is obfuscated, we don't need to obfuscate it again
+    
+    // We add a sort descriptor to force core data to scan the table using the destructionDate index.
+    fetchRequest.sortDescriptors = @[[NSSortDescriptor sortDescriptorWithKey:ZMMessageDestructionDateKey ascending:NO]];
     return fetchRequest;
 }
 
