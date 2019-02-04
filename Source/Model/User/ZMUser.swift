@@ -321,8 +321,6 @@ extension ZMUser {
     @objc public func requestPreviewProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .preview) else { return }
         
-        localSmallProfileRemoteIdentifier = nil
-        
         NotificationInContext(name: .userDidRequestPreviewAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
@@ -330,8 +328,6 @@ extension ZMUser {
     
     @objc public func requestCompleteProfileImage() {
         guard let moc = self.managedObjectContext, moc.zm_isUserInterfaceContext, !moc.zm_userImageCache.hasUserImage(self, size: .complete) else { return }
-        
-        localMediumRemoteIdentifier = nil
         
         NotificationInContext(name: .userDidRequestCompleteAsset,
                               context: moc.notificationContext,
