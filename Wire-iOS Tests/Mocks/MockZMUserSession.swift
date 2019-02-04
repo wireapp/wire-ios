@@ -17,13 +17,16 @@
 //
 
 import Foundation
+@testable import Wire
 
-@objc public protocol MessageActionResponder: NSObjectProtocol {
-    /// perform an action for the message
-    ///
-    /// - Parameters:
-    ///   - action: a kind of MessageAction
-    ///   - message: the ZMConversationMessage to perform the action
-    ///   - view: the source view which perfroms the action
-    func perform(action: MessageAction, for message: ZMConversationMessage!, view: UIView)
+final class MockZMUserSession: NSObject, ZMUserSessionInterface {
+    func performChanges(_ block: @escaping () -> Swift.Void) {
+        block()
+    }
+
+    func enqueueChanges(_ block: @escaping () -> Swift.Void) {
+        block()
+    }
+
+    var isNotificationContentHidden: Bool = false
 }
