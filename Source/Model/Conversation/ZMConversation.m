@@ -116,8 +116,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @property (nonatomic) ZMConversationType conversationType;
 @property (nonatomic, readonly) ZMConversationType internalConversationType;
 
-@property (nonatomic) NSMutableOrderedSet *unreadTimeStamps;
-
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
 @property (nonatomic) int64_t lastReadTimestampUpdateCounter;
 @property (nonatomic) BOOL internalIsArchived;
@@ -165,7 +163,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @synthesize pendingLastReadServerTimestamp;
 @synthesize lastReadTimestampSaveDelay;
 @synthesize lastReadTimestampUpdateCounter;
-@synthesize unreadTimeStamps;
 @synthesize _recentMessagesFetcher;
 
 - (BOOL)isArchived
