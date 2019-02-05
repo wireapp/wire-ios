@@ -156,12 +156,6 @@ public func ==(lhs: ZMConversationMessage?, rhs: ZMConversationMessage?) -> Bool
     }
 }
 
-public extension ZMConversationMessage {
-    var messageIsRelevantForConversationStatus: Bool {
-        return (self as? ZMSystemMessage)?.relevantForConversationStatus ?? true
-    }
-}
-
 // MARK:- Conversation managed properties
 extension ZMMessage {
     

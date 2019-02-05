@@ -126,10 +126,6 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
 @property (nonatomic) int64_t lastReadTimestampUpdateCounter;
 
-/// unreadTimeStamps is created on didAwakeFromFetch:
-/// updated when messages are inserted and the lastReadServerTimeStamp changes
-@property (nonatomic, nullable) NSMutableOrderedSet *unreadTimeStamps;
-
 /**
     Appends the given message in the conversation.
  

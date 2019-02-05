@@ -378,7 +378,7 @@ extension ZMConversation {
                                              ZMMessageServerTimestampKey, timestamp as NSDate)
         fetchRequest.sortDescriptors = ZMMessage.defaultSortDescriptors()
         
-        return managedObjectContext.fetchOrAssert(request: fetchRequest).filter(\.messageIsRelevantForConversationStatus)
+        return managedObjectContext.fetchOrAssert(request: fetchRequest).filter({ $0.shouldGenerateUnreadCount() })
     }
     
 }
