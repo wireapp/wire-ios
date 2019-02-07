@@ -167,7 +167,7 @@ extension V3Asset: AssetProxyType {
     public func requestImageDownload() {
         if isImage {
             // Do not try to download the images being uploaded now.
-            guard !assetClientMessage.transferState.isOne(of: [.uploading]) else {
+            guard assetClientMessage.uploadState == .done else {
                 return
             }
             requestFileDownload()
