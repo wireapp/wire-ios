@@ -374,11 +374,11 @@ extension AuthenticationCoordinator {
     /// Signs the current user out with a warning.
     private func signOut(warn: Bool) {
         if warn {
-            let signOutAction = AuthenticationCoordinatorAlertAction(title: "general.ok".localized, coordinatorActions: [.showLoadingView, .signOut(warn: false)])
+            let signOutAction = AuthenticationCoordinatorAlertAction(title: "general.ok".localized, coordinatorActions: [.showLoadingView, .signOut(warn: false)], style: .destructive)
 
             let alertModel = AuthenticationCoordinatorAlert(title: "self.settings.account_details.log_out.alert.title".localized,
                                                             message: "self.settings.account_details.log_out.alert.message".localized,
-                                                            actions: [signOutAction, .cancelDestructiveAction])
+                                                            actions: [.cancel, signOutAction])
 
             presentAlert(for: alertModel)
         } else {
@@ -453,7 +453,7 @@ extension AuthenticationCoordinator {
             let newStep = AuthenticationFlowStep.createCredentials(unregisteredUser, newType)
             stateController.transition(to: newStep, mode: .replace)
         case .provideCredentials:
-            let newStep = AuthenticationFlowStep.provideCredentials(newType)
+            let newStep = AuthenticationFlowStep.provideCredentials(newType, nil)
             stateController.transition(to: newStep, mode: .replace)
         default:
             log.warn("The current step does not support credential type switching")
