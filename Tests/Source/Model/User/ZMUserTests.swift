@@ -614,45 +614,6 @@ extension ZMUserTests {
     }
 }
 
-// MARK: - Account deletion
-
-extension ZMUserTests {
-    
-    func testThatUserIsRemovedFromAllConversationsWhenAccountIsDeleted() {
-        // given
-        let sut = createUser(in: uiMOC)
-        let conversation1 = createConversation(in: uiMOC)
-        conversation1.conversationType = .group
-        conversation1.mutableLastServerSyncedActiveParticipants.add(sut)
-        
-        let conversation2 = createConversation(in: uiMOC)
-        conversation2.conversationType = .group
-        conversation2.mutableLastServerSyncedActiveParticipants.add(sut)
-        
-        // when
-        sut.markAccountAsDeleted(at: Date())
-        
-        // then
-        XCTAssertFalse(conversation1.lastServerSyncedActiveParticipants.contains(sut))
-        XCTAssertFalse(conversation2.lastServerSyncedActiveParticipants.contains(sut))
-    }
-    
-    func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {
-        // given
-        let team = createTeam(in: uiMOC)
-        let sut = createTeamMember(in: uiMOC, for: team)
-        let teamOneToOneConversation = ZMConversation.fetchOrCreateTeamConversation(in: uiMOC, withParticipant: sut, team: team)!
-        teamOneToOneConversation.teamRemoteIdentifier = team.remoteIdentifier
-        
-        // when
-        sut.markAccountAsDeleted(at: Date())
-        
-        // then
-        XCTAssertTrue(teamOneToOneConversation.lastServerSyncedActiveParticipants.contains(sut))
-    }
-    
-}
-
 // MARK: - Self user tests
 extension ZMUserTests {
     func testThatItIsPossibleToSetReadReceiptsEnabled() {

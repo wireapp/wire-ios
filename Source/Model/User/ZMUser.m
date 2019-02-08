@@ -70,7 +70,6 @@ static NSString *const HandleKey = @"handle";
 static NSString *const ImageMediumDataKey = @"imageMediumData";
 static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 static NSString *const SystemMessagesKey = @"systemMessages";
-static NSString *const isAccountDeletedKey = @"isAccountDeleted";
 static NSString *const ShowingUserAddedKey = @"showingUserAdded";
 static NSString *const ShowingUserRemovedKey = @"showingUserRemoved";
 NSString *const UserClientsKey = @"clients";
@@ -423,8 +422,7 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
                                            TeamIdentifierDataKey,
                                            UsesCompanyLoginKey,
                                            NeedsPropertiesUpdateKey,
-                                           ReadReceiptsEnabledChangedRemotelyKey,
-                                           isAccountDeletedKey
+                                           ReadReceiptsEnabledChangedRemotelyKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -544,11 +542,6 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         if (providerIdentifier != nil) {
             self.providerIdentifier = providerIdentifier;
         }
-    }
-    
-    NSNumber *deleted = [transportData optionalNumberForKey:@"deleted"];
-    if (deleted != nil && deleted.boolValue && !self.isAccountDeleted) {
-        [self markAccountAsDeletedAt:[NSDate date]];
     }
     
     if ([transportData optionalDictionaryForKey:@"sso_id"] || authoritative) {

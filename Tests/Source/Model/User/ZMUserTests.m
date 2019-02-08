@@ -361,24 +361,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
 }
 
-- (void)testThatItUpdatesAccountDeletionStatusOnAnExistingUser
-{
-    // given
-    NSUUID *uuid = [NSUUID createUUID];
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user.remoteIdentifier = uuid;
-    XCTAssertFalse(user.isAccountDeleted);
-    
-    NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    payload[@"deleted"] = @YES;
-    
-    // when
-    [user updateWithTransportData:payload authoritative:NO];
-    
-    // then
-    XCTAssertTrue(user.isAccountDeleted);
-}
-
 - (void)testThatItUpdatesExpirationAnExistingUser
 {
     // given
