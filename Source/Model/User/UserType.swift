@@ -55,6 +55,9 @@ public protocol UserType: NSObjectProtocol {
     /// Is YES if we can send a connection request to this user.
     var isConnected: Bool { get }
     
+    /// Wheater the account of the user is deleted
+    var isAccountDeleted: Bool { get }
+    
     var accentColorValue: ZMAccentColor { get }
     
     /// Message text if there's a pending connection request
