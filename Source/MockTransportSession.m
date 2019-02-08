@@ -913,6 +913,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.managedObjectContext deleteObject:conversation];
 }
 
+- (void)deleteAccountForUser:(nonnull MockUser *)user
+{
+    user.isAccountDeleted = YES;
+}
+
 @end
 
 @implementation MockTransportSession (PushEvents)
@@ -1014,19 +1019,18 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 
 - (NSArray *)pushEventsForUpdatedUsers:(NSSet *)updated includeEventsForUserThatInitiatedChanges:(BOOL)includeEventsForUserThatInitiatedChanges
 {
-    if(!includeEventsForUserThatInitiatedChanges) {
+    if (!includeEventsForUserThatInitiatedChanges) {
         return @[];
     }
 
     NSMutableArray *pushEvents = [NSMutableArray array];
     
-    for(NSManagedObject* mo in updated) {
-        if([mo isKindOfClass:MockUser.class]) {
+    for (NSManagedObject* mo in updated) {
+        if ([mo isKindOfClass:MockUser.class]) {
             MockUser *user = (MockUser *)mo;
-            NSDictionary *userPayload = user.changePushPayload;
-            if (userPayload != nil) {
-                [userPayload description];
-                [pushEvents addObject:[MockPushEvent eventWithPayload:@{@"type" : @"user.update", @"user" : userPayload} uuid:[NSUUID timeBasedUUID] isTransient:NO isSilent:NO]];
+            MockPushEvent *event = user.mockPushEventForChangedValues;
+            if (event != nil) {
+                [pushEvents addObject:event];
             }
         }
     }

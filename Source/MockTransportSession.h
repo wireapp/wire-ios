@@ -176,6 +176,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)deleteTeam:(nonnull MockTeam *)team;
 - (MockConversation *)insertTeamConversationToTeam:(MockTeam *)team withUsers:(NSArray<MockUser *> *)users creator:(MockUser *)creator;
 - (void)deleteConversation:(nonnull MockConversation *)conversation;
+- (void)deleteAccountForUser:(nonnull MockUser *)user;
 
 /// Support for services
 - (MockService *)insertServiceWithName:(NSString *)name

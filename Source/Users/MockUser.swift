@@ -35,6 +35,7 @@ import Foundation
     @NSManaged public var previewProfileAssetIdentifier: String?
     
     @NSManaged public var isEmailValidated: Bool
+    @NSManaged public var isAccountDeleted: Bool
     
     @NSManaged public var connectionsFrom: NSOrderedSet
     @NSManaged public var connectionsTo: NSOrderedSet
@@ -157,23 +158,37 @@ extension MockUser {
     
     var data: [String : Any?] {
         precondition(self.accentID != 0, "Accent ID is not set")
-        let pictureData = pictures.map(with: #selector(getter: transportData)) ?? []
-        var payload : [String : Any?] = [
-            "accent_id" : accentID,
-            "name" : name,
-            "id" : identifier,
-            "handle" : handle,
-            "picture" : pictureData.array,
-            "assets" : assetData
-        ]
-
-        if let providerIdentifier = self.providerIdentifier,
-           let serviceIdentifier = self.serviceIdentifier {
-            payload["service"] = ["provider": providerIdentifier,
-                                  "id" : serviceIdentifier]
+        
+        if isAccountDeleted {
+            let payload : [String : Any?] = [
+                "accent_id" : 0,
+                "name" : "default",
+                "id" : identifier,
+                "deleted" : true,
+                "picture" : [],
+                "assets" : []
+            ]
+            
+            return payload
+        } else {
+            let pictureData = pictures.map(with: #selector(getter: transportData)) ?? []
+            var payload : [String : Any?] = [
+                "accent_id" : accentID,
+                "name" : name,
+                "id" : identifier,
+                "handle" : handle,
+                "picture" : pictureData.array,
+                "assets" : assetData
+            ]
+            
+            if let providerIdentifier = self.providerIdentifier,
+                let serviceIdentifier = self.serviceIdentifier {
+                payload["service"] = ["provider": providerIdentifier,
+                                      "id" : serviceIdentifier]
+            }
+            
+            return payload
         }
-
-        return payload
     }
     
     var assetData: [[String : Any]]? {
@@ -184,7 +199,23 @@ extension MockUser {
         ]
     }
     
-    @objc public var changePushPayload: [String : Any]? {
+    @objc
+    public var mockPushEventForChangedValues: MockPushEvent? {
+        
+        let changedValues = self.changedValues()
+        
+        if changedValues.keys.contains(#keyPath(MockUser.isAccountDeleted)) {
+            let payload = ["type": "user.delete", "id": identifier, "time": Date().transportString()] as ZMTransportData
+            return MockPushEvent(with: payload, uuid: UUID.timeBasedUUID() as UUID, isTransient: false, isSilent: false)
+        } else if let userPayload = userPayloadForChangedValues {
+            let payload = ["type": "user.update", "user": userPayload] as ZMTransportData
+            return MockPushEvent(with: payload, uuid: UUID.timeBasedUUID() as UUID, isTransient: false, isSilent: false)
+        }
+        
+        return nil
+    }
+    
+    fileprivate var userPayloadForChangedValues: [String : Any]? {
         var payload = [String : Any]()
         let regularProperties = Set(arrayLiteral: #keyPath(MockUser.name), #keyPath(MockUser.email), #keyPath(MockUser.phone))
         let assetIds = Set(arrayLiteral: #keyPath(MockUser.previewProfileAssetIdentifier), #keyPath(MockUser.completeProfileAssetIdentifier))
