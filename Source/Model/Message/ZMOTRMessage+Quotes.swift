@@ -23,11 +23,6 @@ private var log = ZMSLog(tag: "event-processing")
 
 extension ZMOTRMessage {
     
-    @objc
-    func updateQuoteRelationships() {
-        assertionFailure("Subclasses should override this method")
-    }
-        
     func establishRelationshipsForInsertedQuote(_ quote: ZMQuote) {
         
         guard let managedObjectContext = managedObjectContext,

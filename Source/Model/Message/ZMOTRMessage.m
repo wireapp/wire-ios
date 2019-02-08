@@ -237,7 +237,6 @@ NSString * const DeliveredKey = @"delivered";
         }
         
         [clientMessage updateWithUpdateEvent:updateEvent forConversation:conversation];
-        [clientMessage updateQuoteRelationships];
         [clientMessage unarchiveIfNeeded:conversation];
         [clientMessage updateCategoryCache];
         
