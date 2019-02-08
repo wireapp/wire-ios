@@ -546,6 +546,11 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
         }
     }
     
+    NSNumber *deleted = [transportData optionalNumberForKey:@"deleted"];
+    if (deleted != nil && deleted.boolValue && !self.isAccountDeleted) {
+        [self markAccountAsDeletedAt:[NSDate date]];
+    }
+    
     if ([transportData optionalDictionaryForKey:@"sso_id"] || authoritative) {
         NSDictionary *ssoData = [transportData optionalDictionaryForKey:@"sso_id"];
         self.usesCompanyLogin = nil != ssoData;

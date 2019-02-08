@@ -260,7 +260,7 @@
 		F118CB931F41D528004DCF96 /* ZMTestSession.h in Headers */ = {isa = PBXBuildFile; fileRef = F94A2C501F2B20480011ED42 /* ZMTestSession.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F11F3E891FA32463007B6D3D /* InvalidClientsRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11F3E881FA32463007B6D3D /* InvalidClientsRemoval.swift */; };
 		F11F3E8B1FA32AA0007B6D3D /* InvalidClientsRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F11F3E8A1FA32AA0007B6D3D /* InvalidClientsRemovalTests.swift */; };
-		F125BAD71EE9849B0018C2F8 /* ZMConversation+Teams.swift in Sources */ = {isa = PBXBuildFile; fileRef = F125BAD61EE9849B0018C2F8 /* ZMConversation+Teams.swift */; };
+		F125BAD71EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift in Sources */ = {isa = PBXBuildFile; fileRef = F125BAD61EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift */; };
 		F12BD0B01E4DCEC40012ADBA /* ZMMessage+Insert.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12BD0AF1E4DCEC40012ADBA /* ZMMessage+Insert.swift */; };
 		F137EEBE212C14300043FDEB /* ZMConversation+Services.swift in Sources */ = {isa = PBXBuildFile; fileRef = F137EEBD212C14300043FDEB /* ZMConversation+Services.swift */; };
 		F13A89D1210628F700AB40CB /* PushToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = F13A89D0210628F600AB40CB /* PushToken.swift */; };
@@ -813,7 +813,7 @@
 		EFD0B02C21087DC80065EBF3 /* ZMConversation+Language.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Language.swift"; sourceTree = "<group>"; };
 		F11F3E881FA32463007B6D3D /* InvalidClientsRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidClientsRemoval.swift; sourceTree = "<group>"; };
 		F11F3E8A1FA32AA0007B6D3D /* InvalidClientsRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidClientsRemovalTests.swift; sourceTree = "<group>"; };
-		F125BAD61EE9849B0018C2F8 /* ZMConversation+Teams.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Teams.swift"; sourceTree = "<group>"; };
+		F125BAD61EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+SystemMessages.swift"; sourceTree = "<group>"; };
 		F12BD0AF1E4DCEC40012ADBA /* ZMMessage+Insert.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Insert.swift"; sourceTree = "<group>"; };
 		F137EEBD212C14300043FDEB /* ZMConversation+Services.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Services.swift"; sourceTree = "<group>"; };
 		F13A89D0210628F600AB40CB /* PushToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PushToken.swift; sourceTree = "<group>"; };
@@ -1420,7 +1420,7 @@
 				BF2ADF621E28CF1E00E81B1E /* SharedObjectStore.swift */,
 				544E8C121E2F825700F9B8B8 /* ZMConversation+SecurityLevel.swift */,
 				547E66481F7503A5008CB1FA /* ZMConversation+Notifications.swift */,
-				F125BAD61EE9849B0018C2F8 /* ZMConversation+Teams.swift */,
+				F125BAD61EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift */,
 				1626344A20D935C0000D4063 /* ZMConversation+Timestamps.swift */,
 				F137EEBD212C14300043FDEB /* ZMConversation+Services.swift */,
 				F9B71F181CB264EF001DB03F /* ZMConversation+Transport.h */,
@@ -2492,7 +2492,7 @@
 				F963E9761D9C002000098AD3 /* ZMGenericMessage+Assets.swift in Sources */,
 				D5FA30CF2063F8EC00716618 /* Version.swift in Sources */,
 				F9DBA5201E28EA8B00BE23C0 /* DependencyKeyStore.swift in Sources */,
-				F125BAD71EE9849B0018C2F8 /* ZMConversation+Teams.swift in Sources */,
+				F125BAD71EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift in Sources */,
 				16030DC721AF056100F8032E /* ZMMessage+Confirmations.swift in Sources */,
 				54F84CFD1F9950B300ABD7D5 /* DuplicatedEntityRemoval.swift in Sources */,
 				87C1C25F207F7DA80083BF6B /* InvalidGenericMessageDataRemoval.swift in Sources */,
