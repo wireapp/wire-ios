@@ -195,6 +195,7 @@ fileprivate extension String {
 }
 
 extension ZMUser {
+    
     @objc static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     @objc static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
     
@@ -217,6 +218,9 @@ extension ZMUser {
     @NSManaged var systemMessages: Set<ZMSystemMessage>
     
     @NSManaged var expiresAt: Date?
+    
+    /// `accountIsDeleted` is true if this account has been deleted on the backend
+    @NSManaged public internal(set) var isAccountDeleted: Bool
     
     @NSManaged public var usesCompanyLogin: Bool
     
