@@ -222,6 +222,12 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
     
+    public var isAccountDeleted: Bool {
+        guard let user = user else { return false }
+        
+        return user.isAccountDeleted
+    }
+    
     public var accentColorValue: ZMAccentColor {
         get {
             if let user = user {

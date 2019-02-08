@@ -20,6 +20,7 @@
 import Foundation
 
 extension ZMConversation {
+    
     public func appendTeamMemberRemovedSystemMessage(user: ZMUser, at timestamp: Date) {
         appendSystemMessage(type: .teamMemberLeave,
                             sender: user,
@@ -27,4 +28,13 @@ extension ZMConversation {
                             clients: nil,
                             timestamp: timestamp)
     }
+    
+    public func appendParticipantRemovedSystemMessage(user: ZMUser, sender: ZMUser? = nil, at timestamp: Date) {
+        appendSystemMessage(type: .participantsRemoved,
+                            sender: sender ?? user,
+                            users: [user],
+                            clients: nil,
+                            timestamp: timestamp)
+    }
+    
 }
