@@ -279,6 +279,47 @@
     XCTAssertGreaterThan([data stringForKey:@"handle"].length, 5u);
 }
 
+- (void)testCreatingAndRequestingDeletedUser;
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    
+    __block MockConnection *connection1;
+    __block NSString *user1ID;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Foo"];
+        user1 = [session insertUserWithName:@"Bar"];
+        user1.email = @"barfooz@example.com";
+        user1.accentID = 7;
+        user1.phone = @"+4954334535345345345";
+        [session addProfilePictureToUser:user1];
+        [user1.managedObjectContext obtainPermanentIDsForObjects:@[user1] error:NULL];
+        user1ID = user1.identifier;
+        
+        connection1 = [session insertConnectionWithSelfUser:selfUser toUser:user1];
+        connection1.status = @"accepted";
+        connection1.lastUpdate = [NSDate dateWithTimeIntervalSince1970:1399920861.091];
+        
+        [session deleteAccountForUser:user1];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/users/" stringByAppendingPathComponent:user1ID];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    XCTAssertEqualObjects([response.payload.asTransportData optionalNumberForKey:@"deleted"], @YES);
+    XCTAssertEqualObjects([response.payload.asTransportData optionalStringForKey:@"name"], @"default");
+}
 
 - (void)testCreatingAndRequestingConnectedUser;
 {
