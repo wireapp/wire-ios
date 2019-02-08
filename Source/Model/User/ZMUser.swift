@@ -195,7 +195,6 @@ fileprivate extension String {
 }
 
 extension ZMUser {
-    
     @objc static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
     @objc static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
     
@@ -218,9 +217,6 @@ extension ZMUser {
     @NSManaged var systemMessages: Set<ZMSystemMessage>
     
     @NSManaged var expiresAt: Date?
-    
-    /// `accountIsDeleted` is true if this account has been deleted on the backend
-    @NSManaged public internal(set) var isAccountDeleted: Bool
     
     @NSManaged public var usesCompanyLogin: Bool
     
@@ -336,31 +332,6 @@ extension ZMUser {
         NotificationInContext(name: .userDidRequestCompleteAsset,
                               context: moc.notificationContext,
                               object: self.objectID).post()
-    }
-    
-    /// Mark the user's account as having been deleted. This will also remove the user from any conversations he/she
-    /// is still a participant of.
-    @objc public func markAccountAsDeleted(at timestamp: Date) {
-        isAccountDeleted = true
-        removeFromAllConversations(at: timestamp)
-    }
-    
-    /// Remove user from all group conversations he is a participant of
-    fileprivate func removeFromAllConversations(at timestamp: Date) {
-        let allGroupConversations: [ZMConversation] = lastServerSyncedActiveConversations.compactMap {
-            guard let conversation = $0 as? ZMConversation, conversation.conversationType == .group else { return nil}
-            return conversation
-        }
-        
-        allGroupConversations.forEach { conversation in
-            if isTeamMember && conversation.team == team {
-                conversation.appendTeamMemberRemovedSystemMessage(user: self, at: timestamp)
-            } else {
-                conversation.appendParticipantRemovedSystemMessage(user: self, at: timestamp)
-            }
-            
-            conversation.internalRemoveParticipants(Set(arrayLiteral: self), sender: self)
-        }
     }
 }
 
