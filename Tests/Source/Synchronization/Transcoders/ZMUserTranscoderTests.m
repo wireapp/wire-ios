@@ -559,9 +559,7 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
     XCTAssertTrue(user.needsToBeUpdatedFromBackend);
     NSDictionary *payload = [self samplePayloadForUserID:user.remoteIdentifier];
     
-    ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-    (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-    (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
+    ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
     
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -587,9 +585,7 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
         payload[@"user"][@"name"] = finalName;
         payload[@"user"][@"email"] = finalEmail;
         
-        ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
+        ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
         
         // when
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
@@ -597,6 +593,28 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
         // then
         XCTAssertEqualObjects(finalName, user.name);
         XCTAssertEqualObjects(finalEmail, user.emailAddress);
+    }];
+}
+
+- (void)testThatItProcessEventOfTypeZMUpdateEventUserDelete
+{
+    // given
+    [self.syncMOC performGroupedBlockAndWait:^{
+        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
+        user.name = @"Lucky Luke";
+        user.emailAddress = @"lucky@luke.example.com";
+        user.remoteIdentifier = [NSUUID createUUID];
+        
+        NSDictionary *payload = @{ @"type" : @"user.delete",
+                                   @"id" : user.remoteIdentifier.transportString,
+                                   @"time": [NSDate date].transportString };
+        ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
+        
+        // when
+        [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
+        
+        // then
+        XCTAssertTrue(user.isAccountDeleted);
     }];
 }
 
@@ -656,9 +674,7 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
         NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
         payload[@"user"][@"name"] = @"Name";
 
-        ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
+        ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
 
         // when
         [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
@@ -702,9 +718,7 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
                                         },
                                     ];
     
-    ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-    (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-    (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
+    ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
     
     // when
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -727,41 +741,12 @@ static NSString *const USER_PATH_WITH_QUERY = @"/users?ids=";
                                   @"user" : @"baz"
                                   };
         
-        ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
+        ZMUpdateEvent *event = [[ZMUpdateEvent alloc] initWithUuid:[NSUUID createUUID] payload:payload transient:NO decrypted:YES source:ZMUpdateEventSourceWebSocket];
         
         // when
         [self performIgnoringZMLogError:^{
             [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
         }];
-    }];
-}
-
-- (void)testThatItDoesNotProcessUpdateEventWrongType
-{
-    // given
-    [self.syncMOC performGroupedBlockAndWait:^{
-        NSString *initialName = @"Mario";
-        NSString *initialEmail = @"mario@mario.example.com";
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-        user.name = initialName;
-        user.emailAddress = initialEmail;
-        user.remoteIdentifier = [NSUUID createUUID];
-        
-        NSMutableDictionary *payload = [self samplePayloadForUserID:user.remoteIdentifier];
-        payload[@"type"] = @"user.foobarx";
-        
-        ZMUpdateEvent *event = [OCMockObject mockForClass:[ZMUpdateEvent class]];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturnValue:OCMOCK_VALUE(ZMUpdateEventTypeUserUpdate)] type];
-        (void)[(ZMUpdateEvent *)[[(id)event stub] andReturn:payload] payload];
-        
-        // when
-        [self.sut processEvents:@[event] liveEvents:YES prefetchResult:nil];
-        
-        // then
-        XCTAssertEqualObjects(initialName, user.name);
-        XCTAssertEqualObjects(initialEmail, user.emailAddress);
     }];
 }
 
