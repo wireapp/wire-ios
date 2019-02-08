@@ -53,6 +53,7 @@ import WireUtilities
     case userConnection = 16
     case userNew = 17
     case userUpdate = 18
+    case userDelete = 35
     case userPushRemove = 19
     case userContactJoin = 20
     case userClientAdd = 21
@@ -68,7 +69,7 @@ import WireUtilities
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
 
-    // Current max value: conversationReceiptModeUpdate = 34
+    // Current max value: conversationReceiptModeUpdate = 35
 }
 
 extension ZMUpdateEventType {
@@ -115,6 +116,8 @@ extension ZMUpdateEventType {
             return "user.new"
         case .userUpdate:
             return "user.update"
+        case .userDelete:
+            return "user.delete"
         case .userPushRemove:
             return "user.push-remove"
         case .userContactJoin:

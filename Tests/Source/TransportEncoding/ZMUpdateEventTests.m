@@ -54,6 +54,7 @@
              @"user.new" : @(ZMUpdateEventTypeUserNew),
              @"user.push-remove" : @(ZMUpdateEventTypeUserPushRemove),
              @"user.update" : @(ZMUpdateEventTypeUserUpdate),
+             @"user.delete" : @(ZMUpdateEventTypeUserDelete),
              @"user.contact-join" : @(ZMUpdateEventTypeUserContactJoin),
              @"user.client-add" : @(ZMUpdateEventTypeUserClientAdd),
              @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
