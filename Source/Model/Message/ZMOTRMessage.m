@@ -147,6 +147,8 @@ NSString * const DeliveredKey = @"delivered";
         message = nil;
     }
 
+    ZMLogWithLevelAndTag(ZMLogLevelDebug, @"event-processing", @"processing:\n%@", [message debugDescription]);
+    
     ZMConversation *conversation = [self.class conversationForUpdateEvent:updateEvent inContext:moc prefetchResult:prefetchResult];
     VerifyReturnNil(conversation != nil);
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
