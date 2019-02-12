@@ -24,12 +24,32 @@ class ZMMessageTests_ShouldGenerateUnreadCount: BaseZMClientMessageTests {
     
     func testThatNewConversationSystemMessage_fromOtherGeneratesUnreadCount() {
         // given
+        let conversation = createConversation(in: uiMOC)
+        conversation.lastServerTimeStamp = Date()
+        
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
         systemMessage.systemMessageType = .newConversation
         systemMessage.sender = user1
+        systemMessage.visibleInConversation = conversation
         
         // then
+        XCTAssertTrue(conversation.hasBeenModifiedSinceSlowSync)
         XCTAssertTrue(systemMessage.shouldGenerateUnreadCount())
+    }
+    
+    func testThatNewConversationSystemMessage_fromOtherDoesntGenerateUnreadCount_WhenNotModifiedSinceSlowSync() {
+        // given
+        let conversation = createConversation(in: uiMOC)
+        conversation.lastServerTimeStamp = Date(timeIntervalSince1970: 0)
+        
+        let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        systemMessage.systemMessageType = .newConversation
+        systemMessage.sender = user1
+        systemMessage.visibleInConversation = conversation
+        
+        // then
+        XCTAssertFalse(conversation.hasBeenModifiedSinceSlowSync)
+        XCTAssertFalse(systemMessage.shouldGenerateUnreadCount())
     }
     
     func testThatNewConversationSystemMessage_fromSelfDoesntGenerateUnreadCount() {

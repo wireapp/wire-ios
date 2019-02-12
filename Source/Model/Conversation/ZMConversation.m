@@ -937,6 +937,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [ZMConversation conversationWithRemoteID:selfUserID createIfNeeded:NO inContext:managedObjectContext];
 }
 
+- (BOOL)hasBeenModifiedSinceSlowSync {
+    return self.lastServerTimeStamp != nil && self.lastServerTimeStamp.timeIntervalSince1970 != 0;
+}
+
 - (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage
 {
     return [self appendClientMessageWithGenericMessage:genericMessage expires:YES hidden:NO];

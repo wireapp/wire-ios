@@ -1030,7 +1030,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
             return [self.users containsObject:selfUser] && !self.sender.isSelfUser;
         }
         case ZMSystemMessageTypeNewConversation:
-            return !self.sender.isSelfUser;
+            return !self.sender.isSelfUser && self.conversation.hasBeenModifiedSinceSlowSync;
         case ZMSystemMessageTypeMissedCall:
             return self.relevantForConversationStatus;
         default:
