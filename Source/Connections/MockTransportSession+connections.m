@@ -60,11 +60,11 @@
     }
     
     NSDictionary *changedFields = [sessionRequest.payload asDictionary];
-    if(changedFields == nil) {
+    if (changedFields == nil) {
         return [self errorResponseWithCode:400 reason:@"missing fields"];
     }
     
-    for(NSString *key in changedFields.allKeys) {
+    for (NSString *key in changedFields.allKeys) {
         if([key isEqualToString:@"status"]) {
             ZMTConnectionStatus oldStatus = [MockConnection statusFromString:connection.status];
             connection.status = changedFields[key];
@@ -92,6 +92,8 @@
             }
         }
     }
+    
+    connection.lastUpdate = [NSDate date];
     
     return [ZMTransportResponse responseWithPayload:connection.transportData HTTPStatus:200 transportSessionError:nil];
 }
