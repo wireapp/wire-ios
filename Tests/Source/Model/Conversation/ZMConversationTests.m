@@ -869,20 +869,6 @@
     XCTAssertFalse(firstMessage.expectsReadConfirmation);
 }
 
-- (void)testThatAppendingNewConversationSystemMessageTwiceDoesNotCreateTwoSystemMessage;
-{
-    //given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    [conversation appendNewConversationSystemMessageIfNeeded];
-    XCTAssertEqual(conversation.recentMessages.count, 1u);
-    
-    //when
-    [conversation appendNewConversationSystemMessageIfNeeded];
-    
-    //then
-    XCTAssertEqual(conversation.recentMessages.count, 1u);
-}
-
 @end // general
 
 

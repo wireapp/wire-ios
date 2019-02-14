@@ -22,23 +22,3 @@ public extension ZMSystemMessage {
     @NSManaged public var numberOfGuestsAdded: Int16  // Only filled for .newConversation
     @NSManaged public var allTeamUsersAdded: Bool     // Only filled for .newConversation
 }
-
-extension ZMSystemMessage {
-
-    @objc(updateNewConversationSystemMessageIfNeededWithUsers:context:conversation:)
-    func updateNewConversationSystemMessagePropertiesIfNeeded(
-        users: Set<ZMUser>,
-        context: NSManagedObjectContext,
-        conversation: ZMConversation
-        ) {
-        guard systemMessageType == .newConversation else { return }
-        guard let team = ZMUser.selfUser(in: context).team else { return }
-        
-        let members = team.members.compactMap { $0.user }
-        let guests = users.filter { $0.isGuest(in: conversation) }
-
-        allTeamUsersAdded = users.isSuperset(of: members)
-        numberOfGuestsAdded = Int16(guests.count)
-    }
-
-}
