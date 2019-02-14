@@ -106,10 +106,6 @@ NS_ASSUME_NONNULL_END
 
 @property (nonatomic) BOOL internalIsArchived;
 
-/// Returns true if the conversation have been changed since it was created by the slow sync or if it was
-/// created from an update event.
-@property (nonatomic) BOOL hasBeenModifiedSinceSlowSync;
-
 @property (nonatomic, nullable) NSDate *pendingLastReadServerTimestamp;
 @property (nonatomic, nullable) NSDate *lastServerTimeStamp;
 @property (nonatomic, nullable) NSDate *lastReadServerTimeStamp;
@@ -158,11 +154,6 @@ NS_ASSUME_NONNULL_END
 - (nonnull ZMClientMessage *)appendMessage:(nonnull ZMClientMessage *)clientMessage expires:(BOOL)expires hidden:(BOOL)hidden;
 
 - (nullable ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(nonnull NSUUID *)nonce imageData:(nonnull NSData *)imageData;
-
-
-- (void)appendNewConversationSystemMessageIfNeeded;
-
-+ (nonnull NSDate *)newConversationMessageTimestamp;
 
 @property (nonatomic, nullable) id _recentMessagesFetcher;
 

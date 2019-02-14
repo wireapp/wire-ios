@@ -800,10 +800,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     conversation.team = team;
 
     [conversation internalAddParticipants:[NSSet setWithObject:participant]];
+    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date]];
 
     // We need to check if we should add a 'secure' system message in case all participants are trusted
     [conversation increaseSecurityLevelIfNeededAfterTrustingClients:participant.clients];
-    [conversation appendNewConversationSystemMessageIfNeeded];
+    
     return conversation;
 }
 
@@ -903,9 +904,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         [allClients unionSet:user.clients];
     }
     
+    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date]];
+    
     // We need to check if we should add a 'secure' system message in case all participants are trusted
     [conversation increaseSecurityLevelIfNeededAfterTrustingClients:allClients];
-    [conversation appendNewConversationSystemMessageIfNeeded];
+    
     return conversation;
 }
 
@@ -935,10 +938,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     NSUUID *selfUserID = [ZMConversation selfConversationIdentifierInContext:managedObjectContext];
     return [ZMConversation conversationWithRemoteID:selfUserID createIfNeeded:NO inContext:managedObjectContext];
-}
-
-- (BOOL)hasBeenModifiedSinceSlowSync {
-    return self.lastServerTimeStamp != nil && self.lastServerTimeStamp.timeIntervalSince1970 != 0;
 }
 
 - (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage
@@ -994,43 +993,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     [message prepareToSend];
     
     return message;
-}
-
-- (void)appendNewConversationSystemMessageIfNeeded;
-{
-    ZMMessage *firstMessage = self.recentMessages.firstObject;
-    if ([firstMessage isKindOfClass:[ZMSystemMessage class]]) {
-        ZMSystemMessage *systemMessage = (ZMSystemMessage *)firstMessage;
-        if (systemMessage.systemMessageType == ZMSystemMessageTypeNewConversation) {
-            return;
-        }
-    }
-    
-    ZMSystemMessage *systemMessage = [[ZMSystemMessage alloc] initWithNonce:[NSUUID UUID] managedObjectContext:self.managedObjectContext];
-    systemMessage.systemMessageType = ZMSystemMessageTypeNewConversation;
-    systemMessage.sender = self.creator;
-    systemMessage.text = self.userDefinedName;
-    systemMessage.users = self.activeParticipants;
-    
-    [systemMessage updateNewConversationSystemMessageIfNeededWithUsers:self.activeParticipants
-                                                               context:self.managedObjectContext
-                                                          conversation:self];
-
-    // the new conversation message should be displayed first,
-    // additionally the use of reference date is to ensure proper transition for older clients so the message is the very
-    // first message in conversation
-    systemMessage.serverTimestamp = [ZMConversation newConversationMessageTimestamp];
-    
-    [self appendMessage:systemMessage];
-    
-    if (self.hasReadReceiptsEnabled) {
-        [self appendMessageReceiptModeIsOnMessageWithTimestamp:[NSDate dateWithTimeIntervalSinceReferenceDate:1]];
-    }
-}
-
-+ (NSDate *)newConversationMessageTimestamp
-{
-    return [NSDate dateWithTimeIntervalSinceReferenceDate:0];
 }
 
 - (void)appendMessage:(ZMMessage *)message;

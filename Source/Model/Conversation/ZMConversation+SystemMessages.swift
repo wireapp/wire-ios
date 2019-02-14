@@ -37,4 +37,29 @@ extension ZMConversation {
                             timestamp: timestamp)
     }
     
+    @objc(appendNewConversationSystemMessageAtTimestamp:)
+    public func appendNewConversationSystemMessage(at timestamp: Date) {
+        let systemMessage = appendSystemMessage(type: .newConversation,
+                                                sender: creator,
+                                                users: activeParticipants,
+                                                clients: nil,
+                                                timestamp: timestamp)
+        
+        systemMessage.text = userDefinedName
+        
+        // Fill out team specific properties if the conversation was created in the self user team
+        if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
+            
+            let members = selfUserTeam.members.compactMap { $0.user }
+            let guests = activeParticipants.filter { $0.isGuest(in: self) }
+            
+            systemMessage.allTeamUsersAdded = activeParticipants.isSuperset(of: members)
+            systemMessage.numberOfGuestsAdded = Int16(guests.count)
+        }
+        
+        if hasReadReceiptsEnabled {
+            appendMessageReceiptModeIsOnMessage(timestamp: timestamp.nextNearestTimestamp)
+        }
+    }
+    
 }

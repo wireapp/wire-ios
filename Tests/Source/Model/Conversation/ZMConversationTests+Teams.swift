@@ -217,23 +217,22 @@ extension ConversationTests_Teams {
         let otherMember = Member.insertNewObject(in: uiMOC)
         otherMember.team = team
         otherMember.user = otherUser
-        let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team)
-        conversation?.lastModifiedDate = Date(timeIntervalSinceNow: -100)
-        let timestamp = Date(timeIntervalSinceNow: -20)
+        let conversation = ZMConversation.insertGroupConversation(into: uiMOC, withParticipants: [otherUser], in: team)!
+        let previousLastModifiedDate = conversation.lastModifiedDate!
+        let timestamp = Date(timeIntervalSinceNow: 100)
         
         // when
-        conversation?.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
+        conversation.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
         
         // then
-        guard let message = conversation?.recentMessages.last as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
+        guard let message = conversation.recentMessages.last as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
         
         XCTAssertEqual(message.systemMessageType, .teamMemberLeave)
         XCTAssertEqual(message.sender, otherUser)
         XCTAssertEqual(message.users, [otherUser])
         XCTAssertEqual(message.serverTimestamp, timestamp)
         XCTAssertFalse(message.shouldGenerateUnreadCount())
-        guard let lastModified = conversation?.lastModifiedDate else { XCTFail("Conversation should have last modified date"); return }
-        XCTAssertNotEqual(lastModified.timeIntervalSince1970, timestamp.timeIntervalSince1970, accuracy: 0.1, "Message should not change lastModifiedDate")
+        XCTAssertEqual(conversation.lastModifiedDate, previousLastModifiedDate, "Message should not change lastModifiedDate")
     }
 }
 
