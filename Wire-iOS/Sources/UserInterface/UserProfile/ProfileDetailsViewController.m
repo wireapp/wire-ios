@@ -209,48 +209,6 @@ typedef NS_ENUM(NSUInteger, ProfileViewContentMode) {
     return buttonText;
 }
 
-- (ZetaIconType)iconTypeForUserAction:(ProfileUserAction)userAction
-{
-    switch (userAction) {
-        case ProfileUserActionAddPeople:
-            return ZetaIconTypeCreateConversation;
-            break;
-            
-        case ProfileUserActionPresentMenu:
-            return ZetaIconTypeEllipsis;
-            break;
-            
-        case ProfileUserActionUnblock:
-            return ZetaIconTypeBlock;
-            break;
-            
-        case ProfileUserActionBlock:
-            return ZetaIconTypeBlock;
-            break;
-            
-        case ProfileUserActionRemovePeople:
-            return ZetaIconTypeMinus;
-            break;
-            
-        case ProfileUserActionCancelConnectionRequest:
-            return ZetaIconTypeUndo;
-            break;
-            
-        case ProfileUserActionOpenConversation:
-            return ZetaIconTypeConversation;
-            break;
-            
-        case ProfileUserActionSendConnectionRequest:
-        case ProfileUserActionAcceptConnectionRequest:
-            return ZetaIconTypePlus;
-            break;
-            
-        default:
-            return ZetaIconTypeNone;
-            break;
-    }
-}
-
 #pragma mark - Actions
 
 - (void)performLeftButtonAction:(id)sender
@@ -261,47 +219,6 @@ typedef NS_ENUM(NSUInteger, ProfileViewContentMode) {
 - (void)performRightButtonAction:(id)sender
 {
     [self performUserAction:[self rightButtonAction]];
-}
-
-- (void)performUserAction:(ProfileUserAction)action
-{
-    switch (action) {
-        case ProfileUserActionAddPeople:
-            [self presentAddParticipantsViewController];
-            break;
-            
-        case ProfileUserActionPresentMenu:
-            [self presentMenuSheetController];
-            break;
-            
-        case ProfileUserActionUnblock:
-            [self unblockUser];
-            break;
-            
-        case ProfileUserActionOpenConversation:
-            [self openOneToOneConversation];
-            break;
-            
-        case ProfileUserActionRemovePeople:
-            [self presentRemoveDialogueForParticipant:[self fullUser]
-                                     fromConversation:self.conversation
-                                            dismisser:self.viewControllerDismisser];
-            break;
-            
-        case ProfileUserActionAcceptConnectionRequest:
-            [self bringUpConnectionRequestSheet];
-            break;
-            
-        case ProfileUserActionSendConnectionRequest:
-            [self sendConnectionRequest];
-            break;
-            
-        case ProfileUserActionCancelConnectionRequest:
-            [self bringUpCancelConnectionRequestSheet];
-            break;
-        default:
-            break;
-    }
 }
 
 - (void)presentAddParticipantsViewController
