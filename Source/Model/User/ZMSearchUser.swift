@@ -153,7 +153,6 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?
-
     
     public var name: String? {
         get {
@@ -262,6 +261,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         } else {
             return internalCompleteImageData
         }
+    }
+    
+    public var extendedMetadata: [[String : String]]? {
+        return user?.extendedMetadata
     }
     
     public override func isEqual(_ object: Any?) -> Bool {

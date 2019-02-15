@@ -51,6 +51,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nullable, nonatomic) NSData *imageSmallProfileData;
 
 @property (nullable, nonatomic) NSString *managedBy;
+@property (nullable, nonatomic) NSArray<NSDictionary<NSString *, NSString *> *> *extendedMetadata;
 
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
