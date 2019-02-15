@@ -122,11 +122,45 @@ extension ProfileDetailsViewController {
 
     // MARK: - action menu
 
+    @objc(performUserAction:)
+    func perform(action: ProfileUserAction) {
+        switch action {
+            case .addPeople:
+                presentAddParticipantsViewController()
+            case .presentMenu:
+                presentMenuSheetController()
+            case .unblock:
+                unblockUser()
+            case .openConversation:
+                openOneToOneConversation()
+            case .removePeople:
+                presentRemoveUserMenuSheetController()
+            case .acceptConnectionRequest:
+                bringUpConnectionRequestSheet()
+            case .sendConnectionRequest:
+                sendConnectionRequest()
+            case .cancelConnectionRequest:
+                bringUpCancelConnectionRequestSheet()
+            case .none,
+                 .block:
+                break
+        }
+    }
+
     @objc func presentMenuSheetController() {
         actionsController = ConversationActionController(conversation: conversation, target: self)
         actionsController.presentMenu(from: footerView, showConverationNameInMenuTitle: false)
     }
-    
+
+    @objc func presentRemoveUserMenuSheetController() {
+        actionsController = RemoveUserActionController(conversation: conversation,
+                                                       participant: fullUser(),
+                                                       dismisser: viewControllerDismisser,
+                                                       target: self)
+
+        actionsController.presentMenu(from: footerView, showConverationNameInMenuTitle: false)
+    }
+
     // MARK: - Bottom labels
     
     func createReadReceiptsEnabledLabel() {
@@ -205,6 +239,31 @@ extension ProfileDetailsViewController {
             return .presentMenu
         } else {
             return .none
+        }
+    }
+
+    @objc(iconTypeForUserAction:)
+    func iconType(for userAction: ProfileUserAction) -> ZetaIconType {
+        switch userAction {
+            case .addPeople:
+                return .createConversation
+            case .presentMenu:
+                return .ellipsis
+            case .unblock:
+                return .block
+            case .block:
+                return .block
+            case .removePeople:
+                return .ellipsis
+            case .cancelConnectionRequest:
+                return .undo
+            case .openConversation:
+                return .conversation
+            case .sendConnectionRequest,
+                 .acceptConnectionRequest:
+                return .plus
+            default:
+                return .none
         }
     }
 }
