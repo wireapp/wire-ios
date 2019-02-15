@@ -111,6 +111,11 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     [self checkUserAttributeForKey:@"mediumRemoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"localMediumRemoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"localSmallProfileRemoteIdentifier" value:[NSUUID createUUID]];
+    
+    [self checkUserAttributeForKey:@"extendedMetadata" value:@[
+                                                               @{@"name": @"Title", @"value": @"Software Engineer"},
+                                                               @{@"name": @"Department", @"value": @"iOS Team"}
+                                                               ]];
 }
 
 - (NSMutableDictionary *)samplePayloadForUserID:(NSUUID *)userID
@@ -1266,7 +1271,8 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
                                             @"name",
                                             @"phoneNumber",
                                             @"availability",
-                                            @"readReceiptsEnabled"]];
+                                            @"readReceiptsEnabled",
+                                            @"extendedMetadata"]];
     
     // when
     ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
