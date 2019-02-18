@@ -73,6 +73,8 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 @property (nonatomic, readonly, nullable) NSString *imageSmallProfileIdentifier;
 @property (nonatomic, readonly, nullable) NSString *imageMediumIdentifier;
 
+@property (nonatomic, readonly) BOOL managedByWire;
+
 @property (nonatomic, readonly) BOOL isTeamMember;
 
 /// Request a refresh of the user data from the backend.

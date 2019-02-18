@@ -44,6 +44,8 @@ static NSString *const ValidPhoneCode = @"123456";
 static NSString *const ShortPhoneCode = @"1";
 static NSString *const LongPhoneCode = @"123456789012345678901234567890";
 static NSString *const ValidEmail = @"foo77@example.com";
+static NSString *const ManagedByWire = @"wire";
+static NSString *const ManagedByScim = @"scim";
 
 
 static NSString *const MediumRemoteIdentifierDataKey = @"mediumRemoteIdentifier_data";
@@ -105,7 +107,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
     [self checkUserAttributeForKey:@"name" value:@"Foo Bar"];
     [self checkUserAttributeForKey:@"handle" value:@"foo_bar"];
-    [self checkUserAttributeForKey:@"managedBy" value:@"wire"];
+    [self checkUserAttributeForKey:@"managedBy" value:ManagedByWire];
     [self checkUserAttributeForKey:@"phoneNumber" value:@"+123456789"];
     [self checkUserAttributeForKey:@"remoteIdentifier" value:[NSUUID createUUID]];
     [self checkUserAttributeForKey:@"mediumRemoteIdentifier" value:[NSUUID createUUID]];
@@ -128,7 +130,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
               @"phone" : @"000-000-45789",
               @"accent_id" : @3,
               @"picture" : @[],
-              @"managed_by" : @"wire"
+              @"managed_by" : ManagedByWire
               } mutableCopy];
 }
 
@@ -364,7 +366,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
-    XCTAssertEqualObjects(user.managedBy, payload[@"managed_by"]);
+    XCTAssertEqual([self managedByString:user], payload[@"managed_by"]);
     XCTAssertNil(user.expiresAt);
     XCTAssertEqual(user.accentColorValue, ZMAccentColorBrightYellow);
 }
@@ -422,7 +424,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
-    XCTAssertEqualObjects(user.managedBy, payload[@"managed_by"]);
+    XCTAssertEqualObjects([self managedByString:user], payload[@"managed_by"]);
 }
 
 
@@ -444,7 +446,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.emailAddress, payload[@"email"]);
     XCTAssertEqualObjects(user.phoneNumber, payload[@"phone"]);
     XCTAssertEqualObjects(user.handle, payload[@"handle"]);
-    XCTAssertEqualObjects(user.managedBy, payload[@"managed_by"]);
+    XCTAssertEqualObjects([self managedByString:user], payload[@"managed_by"]);
 }
 
 
@@ -844,13 +846,13 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = uuid;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    [payload setObject:@"wire" forKey:@"managed_by"];
+    [payload setObject:ManagedByWire forKey:@"managed_by"];
     
     // when
     [user updateWithTransportData:payload authoritative:NO];
     
     // then
-    XCTAssertEqual(user.managedBy, @"wire");
+    XCTAssertEqual([self managedByString:user], ManagedByWire);
 }
 
 - (void)testThatItSetsManagedByAsScim
@@ -861,13 +863,13 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = uuid;
     
     NSMutableDictionary *payload = [self samplePayloadForUserID:uuid];
-    [payload setObject:@"scim" forKey:@"managed_by"];
+    [payload setObject:ManagedByScim forKey:@"managed_by"];
     
     // when
     [user updateWithTransportData:payload authoritative:NO];
     
     // then
-    XCTAssertEqual(user.managedBy, @"scim");
+    XCTAssertEqual([self managedByString:user], ManagedByScim);
 }
 
 - (void)testThatItSetsPhoneToNilIfItIsNull
@@ -977,7 +979,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     NSString *email = @"jj@arc.example.com";
     NSString *phone = @"+33 11111111111";
     NSString *handle = @"st_jean";
-    NSString *managedBy = @"wire";
     
     NSUUID *uuid = [NSUUID createUUID];
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -985,7 +986,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.emailAddress =  email;
     user.name = name;
     user.handle = handle;
-    user.managedBy = managedBy;
     user.phoneNumber = phone;
     
     NSDictionary *payload = @{
@@ -1002,7 +1002,6 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(email, user.emailAddress);
     XCTAssertEqualObjects(phone, user.phoneNumber);
     XCTAssertEqualObjects(handle, user.handle);
-    XCTAssertEqualObjects(managedBy, user.managedBy);
 }
 
 - (void)testThatOnInvalidJsonDataTheUserIsMarkedAsComplete
@@ -1329,6 +1328,11 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
         // THEN
         XCTAssertTrue(user.needsToBeUpdatedFromBackend);
     }];
+}
+
+
+-(NSString *)managedByString:(ZMUser *)user {
+    return user.managedByWire ? ManagedByWire : ManagedByScim;
 }
 
 @end
