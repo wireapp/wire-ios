@@ -200,6 +200,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return providerIdentifier != nil
     }
     
+    public var managedByWire: Bool {
+        return user?.managedByWire ?? false
+    }
+    
     public var isPendingApprovalByOtherUser: Bool {
         if let user = user {
             return user.isPendingApprovalByOtherUser
