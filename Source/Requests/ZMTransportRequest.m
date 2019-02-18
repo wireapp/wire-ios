@@ -718,6 +718,10 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
     if (self.activity != nil) {
         return;
     }
+    // Requests on background sessions will happen on their own, no need to keep the app running
+    if (self.shouldUseOnlyBackgroundSession) {
+        return;
+    }
     NSString *activityName = [NSString stringWithFormat:@"Network request: %@ %@", self.methodAsString, self.path];
     self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:activityName];
 }
