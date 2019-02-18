@@ -29,12 +29,11 @@
 @class ZMTaskIdentifierMap;
 @class ZMReachability;
 @class ZMAccessToken;
-
-
+@protocol URLSessionsDirectory;
 
 @interface ZMTransportSession ()
 
-- (instancetype)initWithURLSessionSwitch:(ZMURLSessionSwitch *)URLSessionSwitch
+- (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
                         requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
                             reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                                    queue:(NSOperationQueue *)queue
