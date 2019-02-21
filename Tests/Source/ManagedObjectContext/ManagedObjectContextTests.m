@@ -24,8 +24,8 @@
 #import "NSManagedObjectContext+tests.h"
 #import "MockEntity.h"
 #import "MockModelObjectContextFactory.h"
-
-
+#import "WireDataModelTests-Swift.h"
+@import WireTransport;
 
 @interface ManagedObjectContextTests : ZMBaseManagedObjectTest
 
@@ -343,6 +343,40 @@
     [[NSNotificationCenter defaultCenter] removeObserver:token];
     
     XCTAssertEqualObjects([events componentsJoinedByString:@" "], @"A B C save");
+}
+    
+- (void)testThatItStartsABackgroundTaskOnDelayedSave
+{
+    // given
+    MockBackgroundActivityManager *manager = [[MockBackgroundActivityManager alloc] init];
+    BackgroundActivityFactory.sharedFactory.activityManager = manager;
+    XCTAssertEqual(manager.startedTasks.count, 0);
+    
+    NSManagedObjectContext *sut = self.alternativeTestMOC;
+    MockEntity *mo = [MockEntity insertNewObjectInManagedObjectContext:sut];
+    NSError *error;
+    XCTAssert([sut save:&error], @"Failed to save: %@", error);
+    
+    XCTestExpectation *expectation = [self expectationWithDescription :@"Did save"];
+    id token = [[NSNotificationCenter defaultCenter] addObserverForName:NSManagedObjectContextDidSaveNotification object:sut queue:[NSOperationQueue mainQueue] usingBlock:^(NSNotification *note) {
+        NOT_USED(note);
+        [expectation fulfill];
+    }];
+    
+    // when
+    [sut performGroupedBlock:^{
+        mo.field2 = @"A";
+        [sut enqueueDelayedSave];
+    }];
+    
+    // then
+    WaitForAllGroupsToBeEmpty(0.5);
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+    
+    XCTAssertEqualObjects(manager.startedTasks, @[@"Delayed save"]);;
+    XCTAssertEqualObjects(manager.endedTasks, @[@(1)]);
+
+    [[NSNotificationCenter defaultCenter] removeObserver:token];
 }
 
 @end
