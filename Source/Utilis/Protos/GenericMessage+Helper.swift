@@ -21,6 +21,7 @@ import WireProtos
 
 public protocol MessageCapable {
     func setContent(on message: inout GenericMessage)
+    var expectsReadConfirmation: Bool { get set }
 }
 
 public protocol EphemeralMessageCapable: MessageCapable {
@@ -80,6 +81,38 @@ extension GenericMessage {
 }
 
 extension Ephemeral: MessageCapable {
+    public var expectsReadConfirmation: Bool {
+        get {
+            guard let content = content else { return false }
+            switch content {
+            case let .text(value):
+                return value.expectsReadConfirmation
+            case .image:
+                return false
+            case let .knock(value):
+                return value.expectsReadConfirmation
+            case let .asset(value):
+                return value.expectsReadConfirmation
+            case let .location(value):
+                return value.expectsReadConfirmation
+            }
+        }
+        set {
+            guard let content = content else { return }
+            switch content {
+            case .text:
+                text.expectsReadConfirmation = newValue
+            case .image:
+                break
+            case .knock:
+                knock.expectsReadConfirmation = newValue
+            case .asset:
+                knock.expectsReadConfirmation = newValue
+            case .location:
+                location.expectsReadConfirmation = newValue
+            }
+        }
+    }
     
     public static func ephemeral(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) -> Ephemeral {
         return Ephemeral.with() { 
