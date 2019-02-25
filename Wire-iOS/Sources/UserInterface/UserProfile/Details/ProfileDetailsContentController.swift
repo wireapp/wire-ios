@@ -53,7 +53,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     let viewer: GenericUser
     
     /// The conversation where the profile details will be displayed.
-    let conversation: ZMConversation
+    let conversation: ZMConversation?
         
     // MARK: - Accessing the Content
     
@@ -78,7 +78,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
      * - parameter conversation: The conversation where the profile details will be displayed.
      */
     
-    init(user: GenericUser, viewer: GenericUser, conversation: ZMConversation) {
+    init(user: GenericUser, viewer: GenericUser, conversation: ZMConversation?) {
         self.user = user
         self.viewer = viewer
         self.conversation = conversation
@@ -103,8 +103,8 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     
     /// Updates the content for the current configuration.
     private func updateContent() {
-        switch conversation.conversationType {
-        case .group:
+        switch conversation?.conversationType {
+        case .group?:
             let _extendedMetadata: [[String: String]]? = useDefaultData ? defaultData : user.extendedMetadata
             if let extendedMetadata = _extendedMetadata, viewerCanAccessExtendedMetadata, !extendedMetadata.isEmpty {
                 // If there is extended metadata and the user is allowed to see it, display it.
@@ -114,7 +114,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
                 contents = []
             }
             
-        case .oneOnOne:
+        case .oneOnOne?:
             let readReceiptsEnabled = viewer.readReceiptsEnabled
             let _extendedMetadata: [[String: String]]? = useDefaultData ? defaultData : user.extendedMetadata
             if let extendedMetadata = _extendedMetadata, viewerCanAccessExtendedMetadata, !extendedMetadata.isEmpty {
@@ -151,20 +151,26 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
             return 0
         }
     }
-    
-    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        let header = SectionTableHeader()
+
         switch contents[section] {
         case .extendedMetadata:
-            return "profile.extended_metadata.header".localized
+            header.titleLabel.text = "profile.extended_metadata.header".localized(uppercased: true)
+            header.accessibilityIdentifier = "InformationHeader"
         case .readReceiptsStatus(let enabled):
+            header.accessibilityIdentifier = "ReadReceiptsStatusHeader"
             if enabled {
-                return "profile.read_receipts_enabled_memo.header".localized
+                header.titleLabel.text = "profile.read_receipts_enabled_memo.header".localized(uppercased: true)
             } else {
-                return "profile.read_receipts_disabled_memo.header".localized
+                header.titleLabel.text = "profile.read_receipts_disabled_memo.header".localized(uppercased: true)
             }
         }
+
+        return header
     }
-    
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch contents[indexPath.section] {
         case .extendedMetadata(let fields):
@@ -172,29 +178,28 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
             let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
             cell.propertyName = field["key"]
             cell.propertyValue = field["value"]
+            cell.showSeparator = indexPath.row < fields.count - 1
             return cell
 
         case .readReceiptsStatus:
             fatalError("We do not create cells for the readReceiptsStatus section.")
         }
     }
-    
-    func tableView(_ tableView: UITableView, titleForFooterInSection section: Int) -> String? {
+
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch contents[section] {
         case .extendedMetadata:
             return nil
         case .readReceiptsStatus:
-            return "profile.read_receipts_memo.body".localized
+            let footer = SectionTableFooter()
+            footer.titleLabel.text = "profile.read_receipts_memo.body".localized
+            footer.accessibilityIdentifier = "ReadReceiptsStatusFooter"
+            return footer
         }
     }
-    
-    func tableView(_ tableView: UITableView, willDisplayFooterView view: UIView, forSection section: Int) {
-        switch contents[section] {
-        case .extendedMetadata:
-            view.accessibilityIdentifier = "InformationFooter"
-        case .readReceiptsStatus:
-            view.accessibilityIdentifier = "ReadReceiptsStatusFooter"
-        }
+
+    func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
+        return false
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -212,7 +217,7 @@ extension ProfileDetailsContentController {
     var useDefaultData: Bool {
         // Set this to true to use the sample extended fields instead of the data
         // saved in the user model.
-        return false
+        return AutomationHelper.sharedHelper.shouldUseMockRichProfile
     }
     
     var defaultData: [[String: String]] {
