@@ -26,6 +26,7 @@ class BaseTeamTests: ZMConversationTestsBase {
     @discardableResult func createTeamAndMember(for user: ZMUser, with permissions: Permissions? = nil) -> (Team, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.team = .insertNewObject(in: uiMOC)
+        member.team?.remoteIdentifier = .create()
         member.user = user
         if let permissions = permissions {
             member.permissions = permissions

@@ -275,4 +275,60 @@ class TeamTests: BaseTeamTests {
         XCTAssertEqual(result, [membership])
     }
     
+    func testThatItAllowsSeeingCompanyInformationBetweenTwoSameTeamUsers() {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        
+        // we add actual team members as well
+        let (user1, _) = createUserAndAddMember(to: team)
+        let (user2, _) = createUserAndAddMember(to: team)
+        
+        user1.name = "Abacus Allison"
+        user2.name = "Zygfried Watson"
+        
+        // when
+        let user1CanSeeUser2 = user1.canAccessCompanyInformation(of: user2)
+        let user2CanSeeUser1 = user2.canAccessCompanyInformation(of: user1)
+        
+        // then
+        XCTAssertTrue(user1CanSeeUser2)
+        XCTAssertTrue(user2CanSeeUser1)
+    }
+    
+    func testThatItDoesNotAllowSeeingCompanyInformationBetweenMemberAndGuest() {
+        // given
+        let (team, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        
+        // we add actual team members as well
+        let (user1, _) = createUserAndAddMember(to: team)
+        
+        // when
+        let guest = ZMUser.insertNewObject(in: uiMOC)
+        let guestCanSeeUser1 = guest.canAccessCompanyInformation(of: user1)
+        let user1CanSeeGuest = user1.canAccessCompanyInformation(of: guest)
+        
+        // then
+        XCTAssertFalse(guestCanSeeUser1)
+        XCTAssertFalse(user1CanSeeGuest)
+    }
+
+    func testThatItDoesNotAllowSeeingCompanyInformationBetweenMembersFromDifferentTeams() {
+        // given
+        let (team1, _) = createTeamAndMember(for: .selfUser(in: uiMOC), with: .member)
+        let (team2, _) = createTeamAndMember(for: ZMUser.insert(in: uiMOC, name: "User 2"), with: .member)
+        
+        // we add actual team members as well
+        let (user1, _) = createUserAndAddMember(to: team1)
+        let (user2, _) = createUserAndAddMember(to: team2)
+
+        // when
+        let user1CanSeeUser2 = user1.canAccessCompanyInformation(of: user2)
+        let user2CanSeeUser1 = user2.canAccessCompanyInformation(of: user1)
+
+        // then
+        XCTAssertFalse(user1CanSeeUser2)
+        XCTAssertFalse(user2CanSeeUser1)
+    }
+
+    
 }

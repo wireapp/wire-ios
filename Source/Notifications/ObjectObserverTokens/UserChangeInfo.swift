@@ -45,6 +45,7 @@ extension ZMUser : ObjectInSnapshot {
             #keyPath(ZMUser.availability),
             #keyPath(ZMUser.readReceiptsEnabled),
             #keyPath(ZMUser.readReceiptsEnabledChangedRemotely),
+            #keyPath(ZMUser.extendedMetadata)
         ]
     }
 
@@ -139,6 +140,10 @@ extension ZMUser : ObjectInSnapshot {
     
     public var readReceiptsEnabledChangedRemotelyChanged : Bool {
         return changedKeys.contains(#keyPath(ZMUser.readReceiptsEnabledChangedRemotely))
+    }
+    
+    public var extendedMetadataChanged: Bool {
+        return changedKeys.contains(#keyPath(ZMUser.extendedMetadata))
     }
     
     public let user: UserType
