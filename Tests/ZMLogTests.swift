@@ -386,29 +386,6 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token2)
     }
 
-    func testThatLogHookIsCalledWithDeprecatedAPI() {
-        // GIVEN
-        let tag = "Network"
-        let level = ZMLogLevel_t.warn
-        let message = "PANIC!"
-
-        let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addHook { (_level, _tag, _message) in
-            XCTAssertEqual(level, _level)
-            XCTAssertEqual(tag, _tag)
-            XCTAssertEqual(_message, message)
-            expectation.fulfill()
-        }
-
-        // WHEN
-        ZMSLog(tag: tag).warn(message)
-
-        // THEN
-        self.waitForExpectations(timeout: 0.5)
-
-        // AFTER
-        ZMSLog.removeLogHook(token: token)
-    }
 }
 
 extension ZMLogTests {

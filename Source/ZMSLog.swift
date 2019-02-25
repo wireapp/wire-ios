@@ -21,7 +21,8 @@ import Foundation
 import os.log
 
 /// Represents an entry to be logged.
-@objc public class ZMSLogEntry: NSObject {
+@objcMembers
+public class ZMSLogEntry: NSObject {
     public let text: String
     public let timestamp: Date
 
@@ -146,20 +147,6 @@ extension ZMSLog {
         self.logHooks.forEach { (_, hook) in
             hook(level, tag, entry)
         }
-    }
-
-    // MARK: - Normal Hooks
-
-    /// Adds a log hook
-    @available(*, deprecated, renamed: "addEntryHook")
-    @objc static public func addHook(logHook: @escaping LogHook) -> LogHookToken {
-        return addEntryHook { logHook($0, $1, $2.text) }
-    }
-    
-    /// Adds a log hook without locking
-    @available(*, deprecated, renamed: "nonLockingAddEntryHook")
-    @objc static public func nonLockingAddHook(logHook: @escaping LogHook) -> LogHookToken {
-        return nonLockingAddEntryHook { logHook($0, $1, $2.text) }
     }
 
     // MARK: - Rich Hooks
