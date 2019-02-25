@@ -1,2 +1,2 @@
-github "wireapp/ocmock" "v3.4"
-github "wireapp/wire-ios-system" "24.0.0"
+github "wireapp/ocmock" "v3.4.3"
+github "wireapp/wire-ios-system" "26.0.0"
