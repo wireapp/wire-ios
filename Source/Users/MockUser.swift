@@ -51,6 +51,7 @@ import Foundation
     @NSManaged public var providerIdentifier: String?
 
     @NSManaged public var serviceIdentifier: String?
+    @NSManaged public var richProfile: NSArray?
 
     override public func awakeFromInsert() {
         if accentID == 0 {
@@ -73,6 +74,22 @@ extension MockUser {
     }
 }
 
+// MARK: - Rich Profile
+
+extension MockUser {
+    public func appendRichInfo(type: String, value: String) {
+        let updatedValues: NSMutableArray
+        if let values = self.richProfile {
+            updatedValues = NSMutableArray(array: values)
+        } else {
+            updatedValues = NSMutableArray()
+        }
+        let value = ["type" : type, "value" : value]
+        updatedValues.add(value)
+        richProfile = updatedValues
+    }
+}
+
 // MARK: - Broadcasting
 extension MockUser {
     
@@ -86,7 +103,7 @@ extension MockUser {
         let connectedToUsers : [MockUser] = self.connectionsTo.compactMap(acceptedUsers)
         let connectedFromUsers : [MockUser] = self.connectionsFrom.compactMap(acceptedUsers)
 
-        let teamMembers = self.memberships?.first?.team.members.map({ $0.user }) ?? []
+        let teamMembers = currentTeamMembers ?? []
         
         var users = Set<MockUser>()
         users.formUnion(connectedToUsers)
@@ -95,6 +112,11 @@ extension MockUser {
         users.formUnion([self])
         
         return users
+    }
+    
+    // Nil if user is not part of a team
+    public var currentTeamMembers : [MockUser]? {
+        return self.memberships?.first?.team.members.compactMap({ $0.user })
     }
     
 }

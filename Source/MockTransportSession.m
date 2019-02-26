@@ -525,23 +525,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
-
-
-
-- (MockUser *)fetchUserWithIdentifier:(NSString *)userID;
-{
-    NSFetchRequest *request = [MockUser sortedFetchRequest];
-    request.predicate = [NSPredicate predicateWithFormat:@"identifier == %@", userID.lowercaseString];
-    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
-    
-    if (users.count == 0) {
-        return nil;
-    }
-    
-    return users[0];
-}
-
-
 - (MockConnection *)fetchConnectionFrom:(MockUser *)user to:(MockUser *)otherUser;
 {
     NSFetchRequest *request = [MockConnection sortedFetchRequest];
