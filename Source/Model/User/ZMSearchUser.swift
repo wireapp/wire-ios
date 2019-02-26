@@ -133,7 +133,6 @@ extension NSManagedObjectContext
 
 @objc
 public class ZMSearchUser: NSObject, UserType, UserConnectionType {
-    
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
@@ -300,8 +299,18 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
     
-    public var extendedMetadata: [[String : String]]? {
-        return user?.extendedMetadata
+    public var needsRichProfileUpdate: Bool {
+        get {
+            return user?.needsRichProfileUpdate ?? false
+        }
+        set {
+            user?.needsRichProfileUpdate = newValue
+        }
+    }
+
+    
+    public var richProfile: [UserRichProfileField] {
+        return user?.richProfile ?? []
     }
     
     public func canAccessCompanyInformation(of otherUser: UserType) -> Bool {

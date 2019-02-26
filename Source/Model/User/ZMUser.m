@@ -93,6 +93,9 @@ static NSString *const TeamIdentifierKey = @"teamIdentifier";
 static NSString *const ManagedByKey = @"managedBy";
 static NSString *const ExtendedMetadataKey = @"extendedMetadata";
 
+static NSString *const RichProfileKey = @"richProfile";
+static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
+
 @interface ZMBoxedSelfUser : NSObject
 
 @property (nonatomic, weak) ZMUser *selfUser;
@@ -389,7 +392,6 @@ static NSString *const ExtendedMetadataKey = @"extendedMetadata";
 @dynamic showingUserAdded;
 @dynamic showingUserRemoved;
 @dynamic createdTeams;
-@dynamic extendedMetadata;
 
 - (NSSet *)keysTrackedForLocalModifications
 {
@@ -434,7 +436,9 @@ static NSString *const ExtendedMetadataKey = @"extendedMetadata";
                                            NeedsPropertiesUpdateKey,
                                            ReadReceiptsEnabledChangedRemotelyKey,
                                            isAccountDeletedKey,
-                                           ManagedByKey
+                                           ManagedByKey,
+                                           RichProfileKey,
+                                           NeedsRichProfileUpdateKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -877,6 +881,7 @@ static NSString *const ExtendedMetadataKey = @"extendedMetadata";
 @dynamic readReceiptsEnabled;
 @dynamic needsPropertiesUpdate;
 @dynamic readReceiptsEnabledChangedRemotely;
+@dynamic needsRichProfileUpdate;
 
 - (void)setHandle:(NSString *)aHandle {
     [self willChangeValueForKey:HandleKey];

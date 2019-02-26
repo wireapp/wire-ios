@@ -100,7 +100,10 @@ public protocol UserType: NSObjectProtocol {
     var readReceiptsEnabled: Bool { get }
     
     /// The extended metadata for this user, provided by SCIM.
-    var extendedMetadata: [[String: String]]? { get }
+    var richProfile: [UserRichProfileField] { get }
+    
+    /// Used to trigger rich profile download from backend
+    var needsRichProfileUpdate: Bool { get set }
     
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()
