@@ -76,6 +76,24 @@ class ProfileViewControllerTests: ZMSnapshotTestCase {
         self.verify(view: sut.view)
     }
 
+
+    func testForIncomingRequest() {
+        // GIVEN
+        mockUser.isConnected = false
+        mockUser.canBeConnected = true
+        mockUser.isPendingApprovalBySelfUser = true
+
+        let conversation = MockConversation.groupConversation()
+        conversation.activeParticipants = [selfUser, mockUser]
+
+        // WHEN
+        sut = ProfileViewController(user: mockUser, viewer: selfUser,
+                                    conversation: conversation.convertToRegularConversation(), context: .groupConversation)
+
+        // THEN
+        verify(view: sut.view)
+    }
+
     func testForWrapInNavigationController() {
         sut = ProfileViewController(user: mockUser, viewer: selfUser, context: .deviceList)
         let navWrapperController = sut.wrapInNavigationController()
