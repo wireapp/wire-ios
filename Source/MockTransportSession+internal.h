@@ -28,8 +28,6 @@
 @property (nonatomic, readonly) NSMutableArray<MockPushEvent *>* generatedPushEvents;
 @property (nonatomic) MockUser* selfUser;
 
-- (MockConversation *)fetchConversationWithIdentifier:(NSString *)conversationID;
-- (MockUser *)fetchUserWithIdentifier:(NSString *)userID;
 - (MockConnection *)fetchConnectionFrom:(MockUser *)userID to:(MockUser *)otherUserID;
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
 - (MockEvent *)eventIfNeededByUser:(MockUser *)byUser type:(ZMUpdateEventType)type data:(id<ZMTransportData>)data;

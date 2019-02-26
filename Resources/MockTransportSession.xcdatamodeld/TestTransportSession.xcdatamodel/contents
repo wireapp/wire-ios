@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14315.18" systemVersion="17G4015" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14315.18" systemVersion="18D109" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -110,6 +110,7 @@
         <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="previewProfileAssetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="providerIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="richProfile" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="serviceIdentifier" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="activeConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="activeUsers" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient" syncable="YES"/>
@@ -150,7 +151,7 @@
         <element name="PreKey" positionX="0" positionY="0" width="128" height="105"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="180"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="405"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="420"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>

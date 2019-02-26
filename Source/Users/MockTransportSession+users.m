@@ -49,7 +49,10 @@
 /// handles /users/
 - (ZMTransportResponse *)processUsersRequest:(ZMTransportRequest *)request;
 {
-    if ([request matchesWithPath:@"/users/*" method:ZMMethodGET]) {
+    if ([request matchesWithPath:@"/users/*/rich_info" method:ZMMethodGET]) {
+        return [self processRichProfileFetchForUser:[request RESTComponentAtIndex:1]];
+    }
+    else if ([request matchesWithPath:@"/users/*" method:ZMMethodGET]) {
         return [self processUserIDRequest:[request RESTComponentAtIndex:1]];
     }
     else if ([request matchesWithPath:@"/users" method:ZMMethodGET]) {
