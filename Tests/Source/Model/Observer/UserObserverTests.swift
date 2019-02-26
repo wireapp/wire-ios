@@ -20,8 +20,6 @@
 import Foundation
 @testable import WireDataModel
 
-
-
 class UserObserverTests : NotificationDispatcherTestBase {
     
     let UserClientsKey = "clients"
@@ -39,7 +37,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case Availability = "availabilityChanged"
         case ReadReceiptsEnabled = "readReceiptsEnabledChanged"
         case ReadReceiptsEnabledChangedRemotely = "readReceiptsEnabledChangedRemotelyChanged"
-        case ExtendedMetadata = "extendedMetadataChanged"
+        case RichProfile = "richProfileChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -536,42 +534,14 @@ extension UserObserverTests {
                                                      expectedChangedField: .ReadReceiptsEnabledChangedRemotely)
     }
     
-    func testThatItNotifiesAChangeInExtendedMetadata_FromNil() {
+    func testThatItNotifiesTheObserverOfRichProfileChanged() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
-        user.extendedMetadata = nil
-        uiMOC.saveOrRollback()
+        let richProfile = [UserRichProfileField(type: "type", value: "value")]
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.extendedMetadata = [["name": "Role", "value": "Software Engineer"]] },
-                                                     expectedChangedField: .ExtendedMetadata)
+                                                     modifier: { $0.richProfile = richProfile },
+                                                     expectedChangedField: .RichProfile)
     }
-    
-    func testThatItNotifiesAChangeInExtendedMetadata_ToNil() {
-        // given
-        let user = ZMUser.selfUser(in: uiMOC)
-        user.extendedMetadata = [["name": "Role", "value": "Software Engineer"]]
-        uiMOC.saveOrRollback()
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.extendedMetadata = nil },
-                                                     expectedChangedField: .ExtendedMetadata)
-    }
-
-    func testThatItNotifiesAChangeInExtendedMetadata_NewData() {
-        // given
-        let user = ZMUser.selfUser(in: uiMOC)
-        user.extendedMetadata = [["name": "Role", "value": "Software Engineer"]]
-        uiMOC.saveOrRollback()
-        
-        // when
-        self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.extendedMetadata = [["name": "Role", "value": "Software Engineer 2"]] },
-                                                     expectedChangedField: .ExtendedMetadata)
-    }
-
-    
 }
-

@@ -93,7 +93,7 @@ public class SnapshotCenter {
         
         var changedKeys = Set<String>()
         snapshot.attributes.forEach{
-            let currentValue = object.value(forKey: $0) as? NSObject
+            let currentValue = object.primitiveValue(forKey: $0) as? NSObject
             if currentValue != $1  {
                 changedKeys.insert($0)
             }

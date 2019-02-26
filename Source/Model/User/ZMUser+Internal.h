@@ -50,8 +50,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nullable, nonatomic) NSData *imageMediumData;
 @property (nullable, nonatomic) NSData *imageSmallProfileData;
 
-@property (nullable, nonatomic) NSArray<NSDictionary<NSString *, NSString *> *> *extendedMetadata;
-
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
 + (nullable instancetype)userWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
@@ -88,6 +86,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 - (void)setHandle:(NSString * __nullable)handle;
 @property (nonatomic) BOOL needsPropertiesUpdate;
 @property (nonatomic) BOOL readReceiptsEnabledChangedRemotely;
+@property (nonatomic) BOOL needsRichProfileUpdate;
+
 @end
 
 
