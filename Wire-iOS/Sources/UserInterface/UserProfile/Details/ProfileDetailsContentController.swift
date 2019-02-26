@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 
 /**
  * An object that receives notifications from a profile details content controller.
@@ -39,8 +40,8 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
      */
     
     enum Content: Equatable {
-        /// Display extended user metadata from SCIM.
-        case extendedMetadata([[String: String]])
+        /// Display rich profile data from SCIM.
+        case richProfile([UserRichProfileField])
         
         /// Display the status of read receipts for a 1:1 conversation.
         case readReceiptsStatus(enabled: Bool)
@@ -85,12 +86,15 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
         super.init()
         configureObservers()
         updateContent()
+        ZMUserSession.shared()?.performChanges {
+            (user as! ZMUser).needsRichProfileUpdate = true
+        }
     }
     
     // MARK: - Calculating the Content
     
-    /// Whether the viewer can access the extended metadata of the displayed user.
-    var viewerCanAccessExtendedMetadata: Bool {
+    /// Whether the viewer can access the rich profile data of the displayed user.
+    var viewerCanAccessRichProfile: Bool {
         return viewer.canAccessCompanyInformation(of: user)
     }
     
@@ -105,23 +109,23 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     private func updateContent() {
         switch conversation?.conversationType {
         case .group?:
-            let _extendedMetadata: [[String: String]]? = useDefaultData ? defaultData : user.extendedMetadata
-            if let extendedMetadata = _extendedMetadata, viewerCanAccessExtendedMetadata, !extendedMetadata.isEmpty {
-                // If there is extended metadata and the user is allowed to see it, display it.
-                contents = [.extendedMetadata(extendedMetadata)]
+            let richProfile = user.richProfile
+            if viewerCanAccessRichProfile, !richProfile.isEmpty {
+                // If there is rich profile data and the user is allowed to see it, display it.
+                contents = [.richProfile(richProfile)]
             } else {
-                // If there is no extended metadata, show nothing.
+                // If there is no rich profile data, show nothing.
                 contents = []
             }
 
         case .oneOnOne?:
             let readReceiptsEnabled = viewer.readReceiptsEnabled
-            let _extendedMetadata: [[String: String]]? = useDefaultData ? defaultData : user.extendedMetadata
-            if let extendedMetadata = _extendedMetadata, viewerCanAccessExtendedMetadata, !extendedMetadata.isEmpty {
-                // If there is extended metadata and the user is allowed to see it, display it and the read receipts status.
-                contents = [.extendedMetadata(extendedMetadata), .readReceiptsStatus(enabled: readReceiptsEnabled)]
+            let richProfile = user.richProfile
+            if viewerCanAccessRichProfile, !richProfile.isEmpty {
+                // If there is rich profile data and the user is allowed to see it, display it and the read receipts status.
+                contents = [.richProfile(richProfile), .readReceiptsStatus(enabled: readReceiptsEnabled)]
             } else {
-                // If there is no extended metadata, show the read receipts.
+                // If there is no rich profile data, show the read receipts.
                 contents = [.readReceiptsStatus(enabled: readReceiptsEnabled)]
             }
 
@@ -133,7 +137,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     }
 
     func userDidChange(_ changeInfo: UserChangeInfo) {
-        guard changeInfo.readReceiptsEnabledChanged || changeInfo.extendedMetadataChanged else { return }
+        guard changeInfo.readReceiptsEnabledChanged || changeInfo.richProfileChanged else { return }
         updateContent()
     }
     
@@ -145,7 +149,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         switch contents[section] {
-        case .extendedMetadata(let fields):
+        case .richProfile(let fields):
             return fields.count
         case .readReceiptsStatus:
             return 0
@@ -156,7 +160,8 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
         let header = SectionTableHeader()
 
         switch contents[section] {
-        case .extendedMetadata:
+
+        case .richProfile:
             header.titleLabel.text = "profile.extended_metadata.header".localized(uppercased: true)
             header.accessibilityIdentifier = "InformationHeader"
         case .readReceiptsStatus(let enabled):
@@ -173,11 +178,11 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         switch contents[indexPath.section] {
-        case .extendedMetadata(let fields):
+        case .richProfile(let fields):
             let field = fields[indexPath.row]
             let cell = tableView.dequeueReusableCell(withIdentifier: userPropertyCellID) as? UserPropertyCell ?? UserPropertyCell(style: .default, reuseIdentifier: userPropertyCellID)
-            cell.propertyName = field["key"]
-            cell.propertyValue = field["value"]
+            cell.propertyName = field.type
+            cell.propertyValue = field.value
             cell.showSeparator = indexPath.row < fields.count - 1
             return cell
 
@@ -188,7 +193,7 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
 
     func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
         switch contents[section] {
-        case .extendedMetadata:
+        case .richProfile:
             return nil
         case .readReceiptsStatus:
             let footer = SectionTableFooter()
@@ -204,37 +209,6 @@ class ProfileDetailsContentController: NSObject, UITableViewDataSource, UITableV
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-    
-}
-
-// NOTE: The following data is a set of sample fields that are required to create
-// builds manually for QA, as we don't have backend support yet. This will be removed
-// in a subsequent PR, when we have proper support from the BE.
-
-extension ProfileDetailsContentController {
-    
-    var useDefaultData: Bool {
-        // Set this to true to use the sample extended fields instead of the data
-        // saved in the user model.
-        return AutomationHelper.sharedHelper.shouldUseMockRichProfile
-    }
-    
-    var defaultData: [[String: String]] {
-        return [
-        ["key": "Title", "value": "Chief Design Officer"],
-        ["key": "Entity", "value": "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA"],
-        ["key": "Email", "value": "user@acme.com"],
-        ["key": "Phone", "value": "01234567890"],
-        ["key": "Personal Page", "value": "https://acme.com/chief_design_officer"],
-        ["key": "Favorite Quote", "value": "Monads are just giant burritos 🌯"],
-        ["key": "Title2", "value": "Chief Design Officer"],
-        ["key": "Entity2", "value": "ACME/OBS/EQUANT/CSO/IBO/OEC/SERVICE OP/CS MGT/CSM EEMEA"],
-        ["key": "Email2", "value": "user@acme.com"],
-        ["key": "Phone2", "value": "01234567890"],
-        ["key": "Personal Page2", "value": "https://acme.com/chief_design_officer"],
-        ["key": "Favorite Quote2", "value": "Monads are just giant burritos 🌯"],
-        ]
     }
     
 }
