@@ -305,4 +305,8 @@ static id<UserType> mockSelfUser = nil;
     return [self canAddUserToConversation:conversation];
 }
 
+@synthesize richProfile;
+
+@synthesize needsRichProfileUpdate;
+
 @end
