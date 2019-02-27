@@ -24,7 +24,7 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         let userId = "1234"
         
         // when
-        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich_info", method: .methodGET)
+        let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET)
         
         // then
         XCTAssertEqual(response?.httpStatus, 404)
@@ -39,7 +39,7 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich_info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -62,7 +62,7 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich_info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 200)
@@ -93,7 +93,7 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         }
         
         // when
-        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich_info", method: .methodGET) else { XCTFail(); return }
+        guard let response = self.response(forPayload: nil, path: "/users/\(userId)/rich-info", method: .methodGET) else { XCTFail(); return }
         
         // then
         XCTAssertEqual(response.httpStatus, 403)
