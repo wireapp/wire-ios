@@ -53,7 +53,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
             guard let request = self.sut.nextRequest() else { XCTFail(); return }
             
             // then
-            XCTAssertEqual(request.path, "/users/\(userID)/rich_info")
+            XCTAssertEqual(request.path, "/users/\(userID)/rich-info")
             XCTAssertEqual(request.method, .methodGET)
         }
     }
