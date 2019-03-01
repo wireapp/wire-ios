@@ -213,7 +213,7 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     }
     
     public var managedByWire: Bool {
-        return user?.managedByWire ?? false
+        return user?.managedByWire != false
     }
     
     public var isPendingApprovalByOtherUser: Bool {
