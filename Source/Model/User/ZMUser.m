@@ -260,7 +260,7 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 }
 
 - (BOOL) managedByWire {
-    return [self.managedBy isEqualToString:@"wire"];
+    return self.managedBy == nil || [self.managedBy isEqualToString:@"wire"];
 }
 
 - (NSString *)displayName;
