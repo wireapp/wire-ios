@@ -18,10 +18,13 @@
 
 import Foundation
 
-extension ConversationListViewController {
+extension CountryCodeTableViewController {
     @objc
-    func createSettingsViewController() -> UIViewController {
-        let selfProfileViewController = SelfProfileViewController()
-        return selfProfileViewController.wrapInNavigationController(navigationControllerClass: ClearBackgroundNavigationController.self)
+    func updateStatusBar() {
+        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(false)
+    }
+
+    open override var preferredStatusBarStyle: UIStatusBarStyle {
+        return .default
     }
 }
