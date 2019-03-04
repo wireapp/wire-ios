@@ -35,17 +35,10 @@ extern NSString * _Nonnull StringFromImageFormat(ZMImageFormat format);
 
 @protocol ZMImageOwner <NSObject>
 
-- (void)setImageData:(nonnull NSData *)imageData forFormat:(ZMImageFormat)format properties:(nullable ZMIImageProperties *)properties;
-- (nullable NSData *)imageDataForFormat:(ZMImageFormat)format;
-
 /// The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
 - (nonnull NSOrderedSet *)requiredImageFormats;
 
 - (nullable NSData *)originalImageData;
-- (CGSize)originalImageSize;
-
-/// Notifies that the processing was competed
-- (void)processingDidFinish;
 
 @end
 
