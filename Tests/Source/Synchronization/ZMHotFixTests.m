@@ -400,32 +400,28 @@
 
         uploadedImageMessage = (id)[conversation appendImageFromData:self.mediumJPEGData nonce:NSUUID.createUUID];
         [uploadedImageMessage markAsSent];
-        uploadedImageMessage.uploadState = AssetUploadStateDone;
+        [uploadedImageMessage updateTransferState:AssetTransferStateUploaded synchronize:NO];
         uploadedImageMessage.assetId = NSUUID.createUUID;
         XCTAssertTrue(uploadedImageMessage.delivered);
-        XCTAssertTrue(uploadedImageMessage.hasDownloadedImage);
-        XCTAssertEqual(uploadedImageMessage.uploadState, AssetUploadStateDone);
+        XCTAssertTrue(uploadedImageMessage.hasDownloadedFile);
 
         notUploadedImageMessage = (id)[conversation appendImageFromData:self.mediumJPEGData nonce:NSUUID.createUUID];
-        notUploadedImageMessage.uploadState = AssetUploadStateUploadingFullAsset;
+        [notUploadedImageMessage updateTransferState:AssetTransferStateUploading synchronize:NO];
         XCTAssertFalse(notUploadedImageMessage.delivered);
-        XCTAssertTrue(notUploadedImageMessage.hasDownloadedImage);
-        XCTAssertEqual(notUploadedImageMessage.uploadState, AssetUploadStateUploadingFullAsset);
+        XCTAssertTrue(notUploadedImageMessage.hasDownloadedFile);
 
         uploadedFileMessage = (id)[conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:self.testVideoFileURL thumbnail:self.verySmallJPEGData]];
         [uploadedFileMessage markAsSent];
-        uploadedFileMessage.uploadState = AssetUploadStateDone;
+        [uploadedFileMessage updateTransferState:AssetTransferStateUploaded synchronize:NO];
         uploadedFileMessage.assetId = NSUUID.createUUID;
         XCTAssertTrue(uploadedFileMessage.delivered);
-        XCTAssertTrue(uploadedFileMessage.hasDownloadedImage);
-        XCTAssertEqual(uploadedFileMessage.uploadState, AssetUploadStateDone);
+        XCTAssertTrue(uploadedFileMessage.hasDownloadedFile);
 
         notUploadedFileMessage = (id)[conversation appendMessageWithFileMetadata:[[ZMVideoMetadata alloc] initWithFileURL:self.testVideoFileURL thumbnail:self.verySmallJPEGData]];
         [notUploadedFileMessage markAsSent];
-        notUploadedFileMessage.uploadState = AssetUploadStateDone;
+        [notUploadedFileMessage updateTransferState:AssetTransferStateUploading synchronize:NO];
         XCTAssertTrue(notUploadedFileMessage.delivered);
-        XCTAssertTrue(notUploadedFileMessage.hasDownloadedImage);
-        XCTAssertEqual(notUploadedFileMessage.uploadState, AssetUploadStateDone);
+        XCTAssertTrue(notUploadedFileMessage.hasDownloadedFile);
 
         XCTAssertTrue([self.syncMOC saveOrRollback]);
     }];
@@ -444,20 +440,20 @@
 
         // then
         XCTAssertTrue(uploadedImageMessage.delivered);
-        XCTAssertTrue(uploadedImageMessage.hasDownloadedImage);
-        XCTAssertEqual(uploadedImageMessage.uploadState, AssetUploadStateDone);
+        XCTAssertTrue(uploadedImageMessage.hasDownloadedFile);
+        XCTAssertEqual(uploadedImageMessage.transferState, AssetTransferStateUploaded);
 
         XCTAssertFalse(notUploadedImageMessage.delivered);
-        XCTAssertTrue(notUploadedImageMessage.hasDownloadedImage);
-        XCTAssertEqual(notUploadedImageMessage.uploadState, AssetUploadStateUploadingFailed);
+        XCTAssertTrue(notUploadedImageMessage.hasDownloadedFile);
+        XCTAssertEqual(notUploadedImageMessage.transferState, AssetTransferStateUploadingFailed);
 
         XCTAssertTrue(uploadedFileMessage.delivered);
-        XCTAssertTrue(uploadedFileMessage.hasDownloadedImage);
-        XCTAssertEqual(uploadedFileMessage.uploadState, AssetUploadStateDone);
+        XCTAssertTrue(uploadedFileMessage.hasDownloadedFile);
+        XCTAssertEqual(uploadedFileMessage.transferState, AssetTransferStateUploaded);
 
         XCTAssertTrue(notUploadedFileMessage.delivered);
-        XCTAssertTrue(notUploadedFileMessage.hasDownloadedImage);
-        XCTAssertEqual(notUploadedFileMessage.uploadState, AssetUploadStateUploadingFailed);
+        XCTAssertTrue(notUploadedFileMessage.hasDownloadedFile);
+        XCTAssertEqual(notUploadedFileMessage.transferState, AssetTransferStateUploadingFailed);
     }];
 }
 
