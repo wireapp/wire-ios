@@ -63,8 +63,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let message = conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        
-        // TODO: We should replace this manual update with inserting a v3 asset as soon as we have sending support
         let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
         
         guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
@@ -73,18 +71,10 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         }
         
         message.add(uploadedWithId)
-        message.fileMessageData?.transferState = .downloading
-        
-        prepareDownload(of: message)
-        return (message, assetId, token)
-    }
-    
-    func prepareDownload(of message: ZMAssetClientMessage) {
+        message.updateTransferState(.uploaded, synchronize: false)
         syncMOC.saveOrRollback()
         
-        sut.contextChangeTrackers.forEach { tracker in
-            tracker.objectsDidChange(Set(arrayLiteral: message))
-        }
+        return (message, assetId, token)
     }
     
     func createPreview(with nonce: UUID, otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (genericMessage: ZMGenericMessage, meta: PreviewMeta) {
@@ -129,19 +119,10 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             
             // GIVEN
             let (message, _, _) = self.createMessage(in: self.conversation)!
-            let (previewGenericMessage, previewMeta) = self.createPreview(with: message.nonce!)
+            let (previewGenericMessage, _) = self.createPreview(with: message.nonce!)
             
             message.add(previewGenericMessage)
-            self.prepareDownload(of: message)
-            
-            guard let asset = message.genericAssetMessage?.assetData else { return XCTFail() }
-            XCTAssertTrue(asset.hasPreview())
-            XCTAssertTrue(asset.preview.hasRemote())
-            XCTAssertTrue(asset.preview.remote.hasAssetId())
-            XCTAssertEqual(asset.preview.remote.assetId, previewMeta.assetId)
-            XCTAssertFalse(message.hasDownloadedImage)
-            XCTAssertEqual(message.version, 3)
-            XCTAssertNotNil(message.fileMessageData)
+            XCTAssertFalse(message.hasDownloadedPreview)
             
             // THEN
             XCTAssertNil(self.sut.nextRequest())
@@ -157,16 +138,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
             message.add(preview.genericMessage)
-            self.prepareDownload(of: message)
-            
-            guard let asset = message.genericAssetMessage?.assetData else { return XCTFail() }
-            XCTAssertTrue(asset.hasPreview())
-            XCTAssertTrue(asset.preview.hasRemote())
-            XCTAssertTrue(asset.preview.remote.hasAssetId())
-            XCTAssertEqual(asset.preview.remote.assetId, previewMeta.assetId)
-            XCTAssertFalse(message.hasDownloadedImage)
-            XCTAssertEqual(message.version, 3)
-            XCTAssertNotNil(message.fileMessageData)
+            XCTAssertFalse(message.hasDownloadedPreview)
             
             // WHEN
             message.fileMessageData?.requestImagePreviewDownload()
@@ -190,9 +162,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             message = self.createMessage(in: self.conversation)!.message
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
-            
             message.add(preview.genericMessage)
-            self.prepareDownload(of: message)
             
             // WHEN
             message.fileMessageData?.requestImagePreviewDownload()
@@ -232,14 +202,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
             
             message.add(previewGenericMessage)
-            self.prepareDownload(of: message)
             message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            XCTAssertTrue(message.hasDownloadedImage)
+            XCTAssertTrue(message.hasDownloadedFile)
             XCTAssertNil(self.sut.nextRequest())
         }
     }
@@ -256,7 +225,6 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             let (previewGenericMessage, _) = self.createPreview(with: message.nonce!, otr: key, sha: sha)
         
             message.add(previewGenericMessage)
-            self.prepareDownload(of: message)
         }
         
         // WHEN

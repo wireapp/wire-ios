@@ -212,7 +212,6 @@ extension ClientMessageTranscoder {
         }
         
         self.messageExpirationTimer.stop(for: message)
-        message.removeExpirationDate()
         message.markAsSent()
         message.update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: keys)
         _ = message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
