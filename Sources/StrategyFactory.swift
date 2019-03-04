@@ -65,8 +65,7 @@ class StrategyFactory {
 
             // Assets V3
             createAssetClientMessageRequestStrategy(),
-            createAssetV3ImageUploadRequestStrategy(),
-            createAssetV3FileUploadRequestStrategy()
+            createAssetV3UploadRequestStrategy()
         ]
     }
 
@@ -100,12 +99,8 @@ class StrategyFactory {
 
     // MARK: - Asset V3
 
-    private func createAssetV3FileUploadRequestStrategy() -> AssetV3FileUploadRequestStrategy {
-         return AssetV3FileUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
-    }
-
-    private func createAssetV3ImageUploadRequestStrategy() -> AssetV3ImageUploadRequestStrategy {
-        return AssetV3ImageUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+    private func createAssetV3UploadRequestStrategy() -> AssetV3UploadRequestStrategy {
+         return AssetV3UploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createAssetClientMessageRequestStrategy() -> AssetClientMessageRequestStrategy {
