@@ -184,7 +184,7 @@ class ProtobufUtilitiesTests: XCTestCase {
             withSize: 128,
             mimeType: "image/jpg",
             remoteData: .remoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
-            imageMetaData: .imageMetaData(withWidth: 123, height: 420)
+            imageMetadata: .imageMetaData(withWidth: 123, height: 420)
         )
 
         let sut = ZMGenericMessage.message(
@@ -212,7 +212,7 @@ class ProtobufUtilitiesTests: XCTestCase {
             withSize: 128,
             mimeType: "image/jpg",
             remoteData: .remoteData(withOTRKey: otr, sha256: sha, assetId: nil, assetToken: nil),
-            imageMetaData: .imageMetaData(withWidth: 123, height: 420)
+            imageMetadata: .imageMetaData(withWidth: 123, height: 420)
         )
 
         let sut = ZMGenericMessage.message(

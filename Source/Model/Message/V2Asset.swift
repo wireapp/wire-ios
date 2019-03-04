@@ -48,32 +48,30 @@ extension String {
     
     fileprivate let assetClientMessage: ZMAssetClientMessage
     fileprivate let moc: NSManagedObjectContext
-    fileprivate let assetStorage: ImageAssetStorage
 
     public init?(with message: ZMAssetClientMessage) {
         guard message.version < 3 else { return nil }
-        let storage = message.imageAssetStorage
         assetClientMessage = message
-        assetStorage = storage
         moc = message.managedObjectContext!
     }
 
     public var imageMessageData: ZMImageMessageData? {
-        guard nil != assetStorage.mediumGenericMessage || nil != assetStorage.previewGenericMessage else { return nil }
+        guard assetClientMessage.mediumGenericMessage != nil || assetClientMessage.previewGenericMessage != nil else { return nil }
+        
         return self
     }
 
     // MARK: - ZMImageMessageData
 
     public var mediumData: Data? {
-        if assetStorage.mediumGenericMessage?.imageAssetData?.width > 0 {
-            return assetClientMessage.imageAssetStorage.imageData(for: .medium, encrypted: false)
+        if assetClientMessage.mediumGenericMessage?.imageAssetData?.width > 0 {
+            return imageData(for: .medium, encrypted: false)
         }
         return nil
     }
 
     public var imageData: Data? {
-        return mediumData ?? assetStorage.imageData(for: .original, encrypted: false)
+        return mediumData ?? imageData(for: .original, encrypted: false)
     }
 
     public var imageDataIdentifier: String? {
@@ -85,7 +83,7 @@ extension String {
     }
 
     public var previewData: Data? {
-        if nil != assetClientMessage.fileMessageData, assetClientMessage.hasDownloadedImage {
+        if assetClientMessage.hasDownloadedPreview {
             // File preview data
             return imageData(for: .original) ?? imageData(for: .medium)
         }
@@ -94,17 +92,16 @@ extension String {
     }
 
     public var isAnimatedGIF: Bool {
-        return assetStorage.mediumGenericMessage?.imageAssetData?.mimeType.isGIF ?? false
+        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType.isGIF ?? false
     }
 
     public var imageType: String? {
-        return assetStorage.mediumGenericMessage?.imageAssetData?.mimeType ??
-               assetStorage.previewGenericMessage?.imageAssetData?.mimeType
+        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
     }
 
     public var originalSize: CGSize {
-        let genericMessage = assetStorage.mediumGenericMessage ?? assetStorage.previewGenericMessage
-        guard let asset = genericMessage?.imageAssetData, asset.originalWidth > 0 else { return assetStorage.preprocessedSize }
+        let genericMessage = assetClientMessage.mediumGenericMessage
+        guard let asset = genericMessage?.imageAssetData, asset.originalWidth > 0 else { return assetClientMessage.preprocessedSize }
         let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
         if size != .zero {
             return size
@@ -128,14 +125,17 @@ extension String {
 
 extension V2Asset: AssetProxyType {
 
-    public var hasDownloadedImage: Bool {
-        guard assetClientMessage.imageMessageData != nil || assetClientMessage.fileMessageData != nil else { return false }
+    public var hasDownloadedPreview: Bool {
+        guard assetClientMessage.fileMessageData != nil else { return false }
         return hasImageData(for: .medium) || hasImageData(for: .original)
     }
 
     public var hasDownloadedFile: Bool {
-        guard assetClientMessage.fileMessageData != nil else { return false }
-        return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+        if assetClientMessage.imageMessageData != nil {
+            return hasImageData(for: .medium) || hasImageData(for: .original)
+        } else {
+            return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, encrypted: false)
+        }
     }
 
     public var fileURL: URL? {
@@ -144,7 +144,7 @@ extension V2Asset: AssetProxyType {
 
     public func imageData(for format: ZMImageFormat, encrypted: Bool) -> Data? {
         if format != .original {
-            let message = format == .medium ? assetStorage.mediumGenericMessage : assetStorage.previewGenericMessage
+            let message = format == .medium ? assetClientMessage.mediumGenericMessage : assetClientMessage.previewGenericMessage
             guard message?.imageAssetData?.size > 0 else { return nil }
             if encrypted && message?.imageAssetData?.otrKey.count == 0 {
                 return nil
@@ -155,73 +155,20 @@ extension V2Asset: AssetProxyType {
     }
 
     public func requestFileDownload() {
-        guard assetClientMessage.fileMessageData != nil else { return }
-        assetClientMessage.transferState = hasDownloadedFile ? .downloaded : .downloading
-    }
-
-    public func requestImageDownload() {
+        guard assetClientMessage.fileMessageData != nil || assetClientMessage.imageMessageData != nil else { return }
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
-        NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
-    }
-
-    public var requiredImageFormats: NSOrderedSet {
-        if nil != assetClientMessage.fileMessageData {
-            return NSOrderedSet(object: ZMImageFormat.medium.rawValue)
-        } else if nil != imageMessageData {
-            return NSOrderedSet(array: [ZMImageFormat.medium.rawValue,  ZMImageFormat.preview.rawValue])
-        } else {
-            return NSOrderedSet()
-        }
-    }
-
-    public func processAddedImage(format: ZMImageFormat, properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
-        switch format {
-        case .medium: processAddedMediumImage(properties: properties, keys: keys)
-        case .preview: processAddedPreviewImage(properties: properties, keys: keys)
-        default: fatal("Unexpected format in -processAddedImage: \(format)")
-        }
-    }
-
-    func processAddedMediumImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
-        let nonce = assetClientMessage.nonce!
-        let imageAsset = ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium)
-        let mediumUpdate = ZMGenericMessage.message(content: imageAsset, nonce: nonce, expiresAfter: assetClientMessage.deletionTimeout)
-
-        assetClientMessage.add(mediumUpdate)
-
-        if let preview = assetStorage.genericMessage(for: .preview), preview.imageAssetData?.size > 0 { // if the preview is there, update it with the medium size
-            let previewImageAsset = ZMImageAsset(mediumProperties: imageProperties(from: mediumUpdate),
-                                                 processedProperties: imageProperties(from: preview),
-                                                 encryptionKeys: encryptionKeys(from: preview),
-                                                 format: .preview)
-            
-            let previewUpdate = ZMGenericMessage.message(content: previewImageAsset, nonce: nonce, expiresAfter: assetClientMessage.deletionTimeout)
-            assetClientMessage.add(previewUpdate)
-        }
-    }
-
-    func processAddedPreviewImage(properties: ZMIImageProperties, keys: ZMImageAssetEncryptionKeys) {
-        let medium = assetStorage.genericMessage(for: .medium)
-        let previewImageAsset = ZMImageAsset(mediumProperties: medium.map(imageProperties)!, processedProperties: properties, encryptionKeys: keys, format: .preview)
-        let previewUpdate = ZMGenericMessage.message(content: previewImageAsset, nonce: assetClientMessage.nonce!, expiresAfter: assetClientMessage.deletionTimeout)
         
-        assetClientMessage.add(previewUpdate)
-    }
-
-    func imageProperties(from message: ZMGenericMessage) -> ZMIImageProperties {
-        return ZMIImageProperties(
-            size: CGSize(width: Int(message.imageAssetData?.width ?? 0), height: Int(message.imageAssetData?.height ?? 0)),
-            length: UInt(message.imageAssetData?.size ?? 0),
-            mimeType: message.imageAssetData?.mimeType ?? ""
-        )
-    }
-
-    func encryptionKeys(from message: ZMGenericMessage) -> ZMImageAssetEncryptionKeys {
-        let assetData = message.imageAssetData!
-        if assetData.hasSha256() == true {
-            return ZMImageAssetEncryptionKeys(otrKey: assetData.otrKey, sha256: assetData.sha256)
+        if assetClientMessage.imageMessageData != nil {
+            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
         } else {
-            return ZMImageAssetEncryptionKeys(otrKey: assetData.otrKey, macKey: assetData.macKey, mac: assetData.mac)
+            NotificationInContext(name: ZMAssetClientMessage.assetDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
+        }
+    }
+
+    public func requestPreviewDownload() {
+        guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
+        if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
+            NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
         }
     }
 

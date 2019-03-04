@@ -158,7 +158,6 @@ extension ZMClientMessageTests_Ephemeral {
             
             let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: self.syncConversation.messageDestructionTimeoutValue)
             message.add(uploaded)
-            message.setImageData(imageData, for: .medium, properties: nil)
             
             // when
             message.markAsSent()

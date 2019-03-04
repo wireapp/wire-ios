@@ -123,7 +123,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         let previewAssetId = "preview_assetId"
         let remote = ZMAssetRemoteData.remoteData(withOTRKey: .init(), sha256: .init(), assetId: previewAssetId, assetToken: nil)
         let image = ZMAssetImageMetaData.imageMetaData(withWidth: 1024, height: 1024)
-        let preview = ZMAssetPreview.preview(withSize: 256, mimeType: "image/png", remoteData: remote, imageMetaData: image)
+        let preview = ZMAssetPreview.preview(withSize: 256, mimeType: "image/png", remoteData: remote, imageMetadata: image)
         let asset = ZMAsset.asset(withOriginal: nil, preview: preview)
         let genericMessage = ZMGenericMessage.message(content: asset, nonce: sut.nonce!)
         sut.update(with: genericMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)

@@ -28,7 +28,7 @@ class ZMGenericMessageTests_Obfuscation : ZMBaseManagedObjectTest {
         let imageMetaDataBuilder = imageMetaData.toBuilder()!
         imageMetaDataBuilder.setTag("bar")
         
-        let preview = ZMAssetPreview.preview(withSize: 2000, mimeType: "video", remoteData: remoteData, imageMetaData: imageMetaDataBuilder.build())
+        let preview = ZMAssetPreview.preview(withSize: 2000, mimeType: "video", remoteData: remoteData, imageMetadata: imageMetaDataBuilder.build())
         let asset  = ZMAsset.asset(withOriginal: original, preview: preview)
         return asset
     }

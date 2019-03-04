@@ -43,7 +43,7 @@
 @property (nonatomic, readonly, nullable) NSString *imageDataIdentifier; /// This can be used as a cache key for @c -imageData
 
 @property (nonatomic, readonly) BOOL isAnimatedGIF; // If it is GIF and has more than 1 frame
-@property (nonatomic, readonly) BOOL isDownloaded; // If it is GIF and has more than 1 frame
+@property (nonatomic, readonly) BOOL isDownloaded; // If the image has been downloaded and cached locally
 @property (nonatomic, readonly, nullable) NSString *imageType; // UTI e.g. kUTTypeGIF
 @property (nonatomic, readonly) CGSize originalSize;
 
@@ -52,7 +52,7 @@
 /// Request the download of the image if not already present.
 /// The download will be executed asynchronously. The caller can be notified by observing the message window.
 /// This method can safely be called multiple times, even if the content is already available locally
-- (void)requestImageDownload;
+- (void)requestFileDownload;
 
 @end
 
@@ -156,23 +156,3 @@ typedef NS_ENUM(int16_t, ZMLinkPreviewState) {
     /// Link preview assets have been uploaded
     ZMLinkPreviewStateUploaded
 };
-
-typedef NS_ENUM(int16_t, ZMFileTransferState) {
-    /// Initial file state when sender is initiating the transfer to BE.
-    ZMFileTransferStateUploading,
-    /// File is uploaded to the backend. Sender and receiver are able to open the file.
-    ZMFileTransferStateUploaded,
-    /// File is being downloaded from the backend to the client.
-    ZMFileTransferStateDownloading,
-    /// File is downloaded to the client, it is possible to open it.
-    ZMFileTransferStateDownloaded,
-    /// File was failed to upload to backend.
-    ZMFileTransferStateFailedUpload,
-    /// File upload was cancelled by the sender.
-    ZMFileTransferStateCancelledUpload,
-    /// File is on backend, but it was failed to download to the client.
-    ZMFileTransferStateFailedDownload,
-    /// File is not available on the backend anymore.
-    ZMFileTransferStateUnavailable
-};
-

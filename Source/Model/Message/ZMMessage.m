@@ -238,6 +238,7 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
 - (void)markAsSent
 {
     self.isExpired = NO;
+    [self removeExpirationDate];
 }
 
 - (BOOL)needsReadConfirmation {
