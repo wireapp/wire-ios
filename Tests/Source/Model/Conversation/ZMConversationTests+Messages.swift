@@ -146,7 +146,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
         XCTAssertNotNil(expectedData)
-        XCTAssertEqual(message.originalImageData(), expectedData)
+        XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
         XCTAssertEqual(selfUser, message.sender)
     }
     
@@ -170,7 +170,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         
         let expectedData = try! (try! Data(contentsOf: imageFileURL)).wr_removingImageMetadata()
         XCTAssertNotNil(expectedData)
-        XCTAssertEqual(message.originalImageData(), expectedData)
+        XCTAssertEqual(message.imageMessageData?.imageData, expectedData)
     }
 
     func testThatNoMessageIsInsertedWhenTheImageFileURLIsNotAFileURL()
@@ -232,7 +232,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertEqual(message.conversation, conversation)
         XCTAssertTrue(conversation.recentMessages.contains(message))
         XCTAssertNotNil(message.nonce)
-        XCTAssertEqual(message.originalImageData()!.count, imageData.count)
+        XCTAssertEqual(message.imageMessageData?.imageData?.count, imageData.count)
     }
 
     func testThatItIsSafeToPassInMutableDataWhenCreatingAnImageMessage()
@@ -251,7 +251,7 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         
         // then
         imageData.append(contentsOf: [1,2])
-        XCTAssertEqual(message.originalImageData()!.count, originalImageData.count)
+        XCTAssertEqual(message.imageMessageData?.imageData?.count, originalImageData.count)
     }
     
     func testThatNoMessageIsInsertedWhenTheImageDataIsNotAnImage()
@@ -316,9 +316,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(fileMessage.fileMessageData)
         XCTAssertNotNil(fileMessage.genericAssetMessage)
         XCTAssertNil(fileMessage.assetId)
-        XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage)
-        XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage)
-        XCTAssertEqual(fileMessage.uploadState, .uploadingPlaceholder)
         XCTAssertFalse(fileMessage.delivered)
         XCTAssertTrue(fileMessage.hasDownloadedFile)
         XCTAssertEqual(fileMessage.size, UInt64(size))
@@ -353,9 +350,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(fileMessage.fileMessageData)
         XCTAssertNotNil(fileMessage.genericAssetMessage)
         XCTAssertNil(fileMessage.assetId)
-        XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage)
-        XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage)
-        XCTAssertEqual(fileMessage.uploadState, .uploadingPlaceholder)
         XCTAssertFalse(fileMessage.delivered)
         XCTAssertTrue(fileMessage.hasDownloadedFile)
         XCTAssertEqual(fileMessage.size, UInt64(size))
@@ -460,9 +454,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(fileMessage.fileMessageData)
         XCTAssertNotNil(fileMessage.genericAssetMessage)
         XCTAssertNil(fileMessage.assetId)
-        XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage)
-        XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage)
-        XCTAssertEqual(fileMessage.uploadState, .uploadingPlaceholder)
         XCTAssertFalse(fileMessage.delivered)
         XCTAssertTrue(fileMessage.hasDownloadedFile)
         XCTAssertEqual(fileMessage.size, UInt64(videoData.count))
@@ -511,9 +502,6 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertNotNil(fileMessage.fileMessageData)
         XCTAssertNotNil(fileMessage.genericAssetMessage)
         XCTAssertNil(fileMessage.assetId)
-        XCTAssertNil(fileMessage.imageAssetStorage.previewGenericMessage)
-        XCTAssertNil(fileMessage.imageAssetStorage.mediumGenericMessage)
-        XCTAssertEqual(fileMessage.uploadState, .uploadingPlaceholder)
         XCTAssertFalse(fileMessage.delivered)
         XCTAssertTrue(fileMessage.hasDownloadedFile)
         XCTAssertEqual(fileMessage.size, UInt64(videoData.count))

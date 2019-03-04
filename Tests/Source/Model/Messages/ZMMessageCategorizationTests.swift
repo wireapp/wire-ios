@@ -111,53 +111,23 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         // THEN
         XCTAssertEqual(message.categorization, MessageCategory.image)
     }
-    
-    func testThatItCategorizesAnImageMessage_WithoutMediumData() {
+
+    func testThatItCategorizesAnImageMessage_WithoutData() {
         
         // GIVEN
-        let imageData = verySmallJPEGData()
-        let messageNonce = UUID.create()
-        let message = ZMAssetClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
-        let properties = ZMIImageProperties(size:imageSize, length:UInt(imageData.count), mimeType:"image/jpeg")
-        let keys = ZMImageAssetEncryptionKeys(otrKey: Data.randomEncryptionKey(), macKey: Data.zmRandomSHA256Key(), mac: Data.zmRandomSHA256Key())
-        let imageMessage = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: messageNonce, expiresAfter: message.deletionTimeout)
-        message.add(imageMessage)
-        message.updateCategoryCache()
+        let message = self.conversation.append(imageFromData: self.verySmallJPEGData())!
+        uiMOC.zm_fileAssetCache.deleteAssetData(message, format: .original, encrypted: false)
         
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.image, MessageCategory.excludedFromCollection])
     }
 
-    func testThatItUpdatesCachedCategoryAfterSettingFullImageData() {
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let conversation = ZMConversation(remoteID: .create(), createIfNeeded: true, in: self.syncMOC)!
-            let data = self.data(forResource: "animated", extension: "gif")!
-            conversation.append(imageFromData: data)
-
-            let message = conversation.recentMessages.last as! ZMAssetClientMessage
-            let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-
-            XCTAssertEqual(message.cachedCategory, [MessageCategory.GIF, MessageCategory.image])
-
-            // WHEN
-            message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
-
-            // THEN
-            XCTAssertEqual(message.cachedCategory, [MessageCategory.image, MessageCategory.GIF])
-        }
-    }
-
     func testThatItCategorizesAGifImageMessage() {
-        
+
         // GIVEN
         let data = self.data(forResource: "animated", extension: "gif")!
         let message = conversation.append(imageFromData: data) as! ZMAssetClientMessage
-        let testProperties = ZMIImageProperties(size: CGSize(width: 33, height: 55), length: UInt(10), mimeType: "image/gif")
-        message.imageAssetStorage.setImageData(data, for: .medium, properties: testProperties)
-        
-        
+
         // THEN
         XCTAssertEqual(message.categorization, [MessageCategory.image, MessageCategory.GIF])
     }
@@ -184,7 +154,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         
         // GIVEN
         let message = self.conversation.append(file: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!)) as! ZMAssetClientMessage
-        message.transferState = .failedUpload
+        message.transferState = .uploadingFailed
         message.updateCategoryCache()
         
         // THEN
@@ -195,7 +165,7 @@ class ZMMessageCategorizationTests : ZMBaseManagedObjectTest {
         
         // GIVEN
         let message = self.conversation.append(file: ZMFileMetadata(fileURL: self.fileURL(forResource: "Lorem Ipsum", extension: "txt")!)) as! ZMAssetClientMessage
-        message.transferState = .cancelledUpload
+        message.transferState = .uploadingCancelled
         message.updateCategoryCache()
         
         // THEN

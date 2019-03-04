@@ -122,6 +122,46 @@ public extension ZMGenericMessage {
 
         return builder.buildAndValidate()
     }
+        
+    public func updatedAsset(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMGenericMessage? {
+        return updatedAsset(withAsset: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha256))
+    }
+    
+    public func updatedAsset(withAsset asset: ZMAsset) -> ZMGenericMessage? {
+        let builder = toBuilder()!
+        
+        if hasEphemeral() {
+            let ephemeralBuilder = ephemeral.toBuilder()!
+            asset.setEphemeralContent(on: ephemeralBuilder)
+            builder.setEphemeral(ephemeralBuilder)
+        } else {
+            asset.setContent(on: builder)
+        }
+        
+        return builder.buildAndValidate()
+    }
+    
+    public func updatedAssetOriginal(withImageProperties imageProperties: ZMIImageProperties) -> ZMGenericMessage? {
+        return updatedAsset(withAsset: ZMAsset.asset(originalWithImageSize: imageProperties.size, mimeType: imageProperties.mimeType, size: UInt64(imageProperties.length)))
+    }
+    
+    public func updatedAssetPreview(withImageProperties imageProperties: ZMIImageProperties) -> ZMGenericMessage? {
+        let imageMetadata = ZMAssetImageMetaData.imageMetaData(withWidth: Int32(imageProperties.size.width), height: Int32(imageProperties.size.height))
+        let preview = ZMAssetPreview.preview(withSize: UInt64(imageProperties.length), mimeType: imageProperties.mimeType ?? "", remoteData: nil, imageMetadata: imageMetadata)
+        let asset = ZMAsset.asset(withOriginal: nil, preview: preview)
+        
+        return updatedAsset(withAsset: asset)
+    }
+    
+    public func updatedAssetPreview(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMGenericMessage? {
+        guard let asset = assetData else { return nil }
+        
+        let previewBuilder = asset.preview.toBuilder()!
+        let remotedata = ZMAssetRemoteData.remoteData(withOTRKey: otrKey, sha256: sha256)
+        previewBuilder.setRemote(remotedata)
+        
+        return updatedAsset(withAsset: ZMAsset.asset(withOriginal: nil, preview: previewBuilder.build()!))
+    }
 
     @objc public func updatedPreview(withAssetId assetId: String, token: String?) -> ZMGenericMessage? {
         guard let asset = assetData, let preview = asset.preview, let remote = preview.remote, preview.hasRemote() else { return nil }

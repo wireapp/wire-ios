@@ -114,12 +114,16 @@ import Foundation
 
 @objc public extension ZMAssetPreview {
     
-    public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData, imageMetaData: ZMAssetImageMetaData) -> ZMAssetPreview {
+    public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData?, imageMetadata: ZMAssetImageMetaData) -> ZMAssetPreview {
         let builder = ZMAssetPreview.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
-        builder.setRemote(remoteData)
-        builder.setImage(imageMetaData)
+        builder.setImage(imageMetadata)
+        
+        if let remoteData = remoteData {
+            builder.setRemote(remoteData)
+        }
+        
         return builder.build()
     }
     

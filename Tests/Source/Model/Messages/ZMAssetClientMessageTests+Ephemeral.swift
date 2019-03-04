@@ -76,7 +76,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
         let imageMetaDataBuilder = imageMetaData.toBuilder()!
         imageMetaDataBuilder.setTag("bar")
         
-        let preview = ZMAssetPreview.preview(withSize: 2000, mimeType: "video", remoteData: remoteData, imageMetaData: imageMetaDataBuilder.build())
+        let preview = ZMAssetPreview.preview(withSize: 2000, mimeType: "video", remoteData: remoteData, imageMetadata: imageMetaDataBuilder.build())
         let asset  = ZMAsset.asset(withOriginal: original, preview: preview)
         return asset
     }
@@ -120,93 +120,13 @@ extension ZMAssetClientMessageTests_Ephemeral {
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
             let fileMetadata = self.addFile()
             let message = self.syncConversation.append(file: fileMetadata) as! ZMAssetClientMessage
-            message.uploadState = .uploadingFullAsset
             
             // when
-            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
+            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.transferState)]))
             
             // then
-            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
             XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
             XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
-        }
-    }
-    
-    func testThatItStartsTheTimerForImageAssetMessageWhenTheAssetIsUploaded(){
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            let message = self.syncConversation.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
-            message.uploadState = .uploadingFullAsset
-            
-            // when
-            let emptyDict = [String: String]()
-            let time = Date().transportString()
-            let payload: [AnyHashable: Any] = ["deleted": emptyDict, "missing": emptyDict, "redundant": emptyDict, "time": time]
-
-            message.update(
-                withPostPayload: payload,
-                updatedKeys: [#keyPath(ZMAssetClientMessage.uploadState)]
-            )
-            
-            // then
-            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingFullAsset)
-            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 1)
-            XCTAssertEqual(self.obfuscationTimer?.isTimerRunning(for: message), true)
-        }
-    }
-    
-    func testThatItDoesNotStartTheTimerForMultipartMessagesWhenTheAssetWasNotUploaded(){
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            let fileMetadata = self.addFile()
-            let message = self.syncConversation.append(file: fileMetadata) as! ZMAssetClientMessage
-            
-            // when
-            message.update(withPostPayload: [:], updatedKeys: Set())
-            
-            // then
-            XCTAssertEqual(message.uploadState, AssetUploadState.uploadingPlaceholder)
-            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 0)
-        }
-    }
-    
-    func testThatItDoesNotStartTheTimerForImageAssetMessageWhenTheAssetWasNotUploaded(){
-        self.syncMOC.performGroupedBlockAndWait {
-            // given
-            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            let message = self.syncConversation.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
-            
-            // when
-            message.update(withPostPayload: [:], updatedKeys: Set())
-            
-            // then
-            XCTAssertEqual(message.uploadState, .uploadingFullAsset)
-            XCTAssertEqual(self.obfuscationTimer?.runningTimersCount, 0)
-        }
-    }
-    
-    func testThatTheEphemeralMessageHasImageProperties() {
-        
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            let data = self.verySmallJPEGData()
-            let message = self.syncConversation.append(imageFromData: data) as! ZMAssetClientMessage
-            
-            self.syncMOC.saveOrRollback()
-            
-            // WHEN
-            let size = CGSize(width: 368, height: 520)
-            let properties = ZMIImageProperties(size: size, length: 1024, mimeType: "image/jpg")
-            message.imageAssetStorage.setImageData(data, for: .medium, properties: properties)
-            self.syncMOC.saveOrRollback()
-            
-            // THEN
-            XCTAssertEqual(message.mimeType, "image/jpg")
-            XCTAssertEqual(message.size, 1024)
-            XCTAssertEqual(message.imageMessageData?.originalSize, size)
         }
     }
     
@@ -222,8 +142,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             // send file
             let fileMetadata = self.addFile()
             message = self.syncConversation.append(file: fileMetadata) as? ZMAssetClientMessage
-            message.uploadState = .uploadingFullAsset
-            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
+            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.transferState)]))
             
             // check a timer was started
             oldTimer = self.obfuscationTimer?.timer(for: message)
@@ -254,8 +173,7 @@ extension ZMAssetClientMessageTests_Ephemeral {
             // send file
             let fileMetadata = self.addFile()
             message = self.syncConversation.append(file: fileMetadata) as? ZMAssetClientMessage
-            message.uploadState = .uploadingFullAsset
-            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.uploadState)]))
+            message.update(withPostPayload: [:], updatedKeys: Set([#keyPath(ZMAssetClientMessage.transferState)]))
             
             // check a timer was started
             oldTimer = self.obfuscationTimer?.timer(for: message)
@@ -321,7 +239,6 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key()), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
         message.add(uploaded)
-        message.setImageData(imageData, for: .medium, properties: nil)
         
         // when
         XCTAssertTrue(message.startSelfDestructionIfNeeded())
@@ -357,8 +274,6 @@ extension ZMAssetClientMessageTests_Ephemeral {
         
         let message = appendPreviewImageMessage()
         message.sender = sender
-        XCTAssertNil(message.imageAssetStorage.mediumGenericMessage)
-        XCTAssertNotNil(message.imageAssetStorage.previewGenericMessage)
 
         // when
         XCTAssertFalse(message.startSelfDestructionIfNeeded())

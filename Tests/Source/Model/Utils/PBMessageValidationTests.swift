@@ -381,7 +381,7 @@ class ModelValidationTests: XCTestCase {
             let preview = ZMAssetPreview.preview(withSize: 1000,
                                                  mimeType: "image/png",
                                                  remoteData: assetRemoteData(id: assetId, token: assetToken),
-                                                 imageMetaData: metaBuilder.build())
+                                                 imageMetadata: metaBuilder.build())
 
             builder.setPreview(preview)
 

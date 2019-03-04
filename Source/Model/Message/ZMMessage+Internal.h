@@ -258,6 +258,8 @@ extern NSString *  _Nonnull const ZMMessageServerTimestampKey;
 @property (nonatomic) CGSize originalSize;
 @property (nonatomic) NSData * _Nullable originalImageData;
 
+- (NSData * _Nullable)imageDataForFormat:(ZMImageFormat)format;
+
 @end
 
 

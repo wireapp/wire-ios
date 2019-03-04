@@ -47,7 +47,7 @@ extension ZMAssetClientMessage {
         let additionalKeys = [#keyPath(ZMAssetClientMessage.transferState),
                               MessageKey.previewGenericMessage.rawValue,
                               MessageKey.mediumGenericMessage.rawValue,
-                              #keyPath(ZMAssetClientMessage.hasDownloadedImage),
+                              #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMAssetClientMessage.hasDownloadedFile),
                               #keyPath(ZMAssetClientMessage.progress),
                               #keyPath(ZMMessage.reactions),
@@ -60,7 +60,7 @@ extension ZMClientMessage {
     
     public class override var observableKeys : Set<String> {
         let keys = super.observableKeys
-        let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedImage),
+        let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMClientMessage.linkPreviewState),
                               #keyPath(ZMClientMessage.genericMessage),
                               #keyPath(ZMMessage.reactions),
@@ -160,7 +160,8 @@ extension ZMSystemMessage {
     public var imageChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMImageMessage.mediumData),
                                   #keyPath(ZMImageMessage.mediumRemoteIdentifier),
-                                  #keyPath(ZMAssetClientMessage.hasDownloadedImage),
+                                  #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
+                                  #keyPath(ZMAssetClientMessage.hasDownloadedFile),
                                   MessageKey.previewGenericMessage.rawValue,
                                   MessageKey.mediumGenericMessage.rawValue)
     }

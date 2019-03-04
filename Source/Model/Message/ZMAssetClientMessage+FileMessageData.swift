@@ -29,7 +29,10 @@ import Foundation
     var size: UInt64 { get }
     
     /// File transfer state
-    var transferState: ZMFileTransferState { get set }
+    var transferState: AssetTransferState { get }
+    
+    /// Download state (.downloaded, downloading, ...)
+    var downloadState: AssetDownloadState { get }
     
     /// File name as was sent
     var filename: String? { get }
@@ -283,38 +286,20 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public func requestImagePreviewDownload() {
-        asset?.requestImageDownload()
+        asset?.requestPreviewDownload()
     }
 }
 
 extension ZMAssetClientMessage {
     
-    private func setAndSyncNotUploaded(_ notUploaded: ZMAssetNotUploaded) {
-        guard genericAssetMessage?.assetData?.hasNotUploaded() == false,
-              let messageID = nonce
-        else {
-            return // already canceled or not yet sent
-        }
-        
-        let notUploadedMessage = ZMGenericMessage.message(content: ZMAsset.asset(withNotUploaded: notUploaded), nonce: messageID, expiresAfter: deletionTimeout)
-        self.add(notUploadedMessage)
-        self.uploadState = .uploadingFailed
-    }
-    
-    public func didFailToUploadFileData() {
-        self.setAndSyncNotUploaded(.FAILED)
-    }
-    
     public func cancelTransfer() {
         
-        switch self.transferState {
+        switch transferState {
         case .uploading:
-            self.setAndSyncNotUploaded(.CANCELLED)
-            self.transferState = .cancelledUpload
-            self.progress = 0
-            self.expire()
-        case .downloading:
-            self.transferState = .uploaded
+            expire()
+            updateTransferState(.uploadingCancelled, synchronize: false)
+            progress = 0
+        case .uploaded:
             self.progress = 0
             self.obtainPermanentObjectID()
             self.managedObjectContext?.saveOrRollback()
@@ -325,13 +310,12 @@ extension ZMAssetClientMessage {
                 userInfo: [:]
                 ).post()
         default:
-            return
+            break
         }
     }
 
     /// Turn temporary object ID into permanet
-    private func obtainPermanentObjectID()
-    {
+    private func obtainPermanentObjectID() {
         if self.objectID.isTemporaryID {
             try! self.managedObjectContext!.obtainPermanentIDs(for: [self])
         }

@@ -62,13 +62,6 @@ extension ZMAssetClientMessage {
     
     public func add(_ genericMessage: ZMGenericMessage) {
         _ = self.mergeWithExistingData(data: genericMessage.data())
-        
-        if (self.mediumGenericMessage?.imageAssetData?.otrKey.count ?? 0) > 0
-            && (self.previewGenericMessage?.imageAssetData?.width ?? 0) > 0
-            && self.deliveryState == .pending
-        {
-            self.uploadState = .uploadingPlaceholder
-        }
     }
     
     func mergeWithExistingData(data: Data) -> ZMGenericMessageData? {
@@ -164,59 +157,21 @@ extension ZMAssetClientMessage {
     
     public override func update(with message: ZMGenericMessage, updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
         self.add(message)
+        self.version = 3 // We assume received assets are V3 since backend no longer supports sending V2 assets.
         
-        let eventData = ((updateEvent.payload["data"]) as? [String: Any]) ?? [:]
-        
-        if let imageAssetData = message.imageAssetData {
-            if imageAssetData.tag == "medium", let uuid = eventData["id"] as? String {
-                self.assetId = UUID(uuidString: uuid)
-            }
-            
-            if let inlinedDataString = eventData["data"] as? String,
-                let inlinedData = Data(base64Encoded: inlinedDataString)
-            {
-                _ = self.updateMessage(imageData: inlinedData, for: .preview)
-                return
-            }
-        }
-        
-        if let assetData = message.assetData, assetData.hasUploaded()
-        {
-            if assetData.uploaded.hasAssetId() { // V3, we directly access the protobuf for the assetId
-                self.version = 3
-                self.transferState = .uploaded
-            } else if let assetId = (eventData["id"] as? String).flatMap({ UUID(uuidString: $0) })  { // V2
-                self.assetId = assetId
-                self.transferState = .uploaded
+        if let assetData = message.assetData, assetData.hasUploaded() {
+            if assetData.uploaded.hasAssetId() {
+                self.updateTransferState(.uploaded, synchronize: false)
             }
         }
         
         if let assetData = message.assetData, assetData.hasNotUploaded(), self.transferState != .uploaded {
             switch assetData.notUploaded {
             case .CANCELLED:
-                self.transferState = .cancelledUpload
                 self.managedObjectContext?.delete(self)
             case .FAILED:
-                self.transferState = .failedUpload
+                self.updateTransferState(.uploadingFailed, synchronize: false)
             }
-        }
-        
-        // V2, we do not set the thumbnail assetId in case there is one in the protobuf, 
-        // then we can access it directly for V3
-        
-        if let assetData = message.assetData, assetData.preview.hasRemote() {
-            
-            if !assetData.preview.remote.hasAssetId() {
-                if let thumbnailId = eventData["id"] as? String {
-                    self.fileMessageData?.thumbnailAssetID = thumbnailId
-                }
-            } else {
-                self.version = 3
-            }
-        }
-        
-        if let assetData = message.assetData, assetData.original.hasRasterImage {
-            self.version = 3
         }
     }
 }
