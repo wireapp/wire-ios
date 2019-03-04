@@ -122,11 +122,3 @@ extension ZMMessage : BlockingMessage {
         return self.deliveryState == .pending && !self.isExpired
     }
 }
-
-extension ZMAssetClientMessage {
-    
-    override var shouldBlockFurtherMessages : Bool {
-        // only block until preview is uploaded
-        return self.uploadState == .uploadingPlaceholder && self.deliveryState == .pending && !self.isExpired
-    }
-}
