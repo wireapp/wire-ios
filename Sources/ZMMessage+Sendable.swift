@@ -44,17 +44,9 @@ extension ZMMessage: Sendable {
             if clientMessage.linkPreviewState != .done {
                 return false
             }
-        } else if let assetMessage = self as? ZMAssetClientMessage {
-            if assetMessage.uploadState != .done {
-                return false
-            }
         }
-
-        return sentOrDelivered
-    }
-
-    private var sentOrDelivered: Bool {
-        return deliveryState == .sent || deliveryState == .delivered
+        
+        return delivered
     }
     
     public var deliveryProgress: Float? {
