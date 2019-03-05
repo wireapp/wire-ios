@@ -212,6 +212,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.readReceiptsEnabled ?? false
     }
     
+    public var activeConversations: Set<ZMConversation> {
+        return user?.activeConversations ?? Set()
+    }
+    
     public var managedByWire: Bool {
         return user?.managedByWire != false
     }

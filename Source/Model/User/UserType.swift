@@ -105,6 +105,9 @@ public protocol UserType: NSObjectProtocol {
     /// Used to trigger rich profile download from backend
     var needsRichProfileUpdate: Bool { get set }
     
+    /// Conversations the user is a currently a participant of
+    var activeConversations: Set<ZMConversation> { get }
+    
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()
     

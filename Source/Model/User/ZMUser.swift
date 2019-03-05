@@ -52,6 +52,20 @@ extension ZMUser: UserType {
         return imageMediumData
     }
     
+    public var activeConversations: Set<ZMConversation> {
+        if isSelfUser {
+            guard let managedObjectContext = managedObjectContext else { return Set() }
+            
+            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.predicate = ZMConversation.predicateForConversationsWhereSelfUserIsActive()
+            var result = Set(managedObjectContext.fetchOrAssert(request: fetchRequest))
+            result.remove(ZMConversation.selfConversation(in: managedObjectContext))
+            return result
+        } else {
+            return lastServerSyncedActiveConversations.set as? Set<ZMConversation> ?? Set()
+        }
+    }
+    
 }
 
 public struct AssetKey {

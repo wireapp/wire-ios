@@ -653,6 +653,32 @@ extension ZMUserTests {
     
 }
 
+// MARK: - Active conversations
+
+extension ZMUserTests {
+    
+    func testActiveConversationsForSelfUser() {
+        // given
+        let sut = ZMUser.selfUser(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.isSelfAnActiveMember = true
+        
+        // then
+        XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
+    }
+    
+    func testActiveConversationsForOtherUser() {
+        // given
+        let sut = ZMUser.insertNewObject(in: uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.mutableLastServerSyncedActiveParticipants.add(sut)
+        
+        // then
+        XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
+    }
+    
+}
+
 // MARK: - Self user tests
 extension ZMUserTests {
     func testThatItIsPossibleToSetReadReceiptsEnabled() {
