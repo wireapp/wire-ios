@@ -57,6 +57,10 @@ extension ZMConversation {
             notTeamMemberPredicate
             ])
     }
+    
+    class func predicateForConversationsWhereSelfUserIsActive() -> NSPredicate {
+        return .init(format: "%K == YES", ZMConversationIsSelfAnActiveMemberKey)
+    }
 
     @objc(predicateForConversationsInTeam:)
     class func predicateForConversations(in team: Team?) -> NSPredicate {
