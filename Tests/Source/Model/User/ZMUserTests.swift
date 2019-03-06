@@ -362,48 +362,6 @@ extension ZMUserTests {
         XCTAssertEqual(users, [user1])
     }
 
-    func testThatThePredicateUsesTheNormalizedQueryToMatchHandlesWhenSearchingWithLeadingAtSymbol() {
-        // Given
-        let user1 = ZMUser.insert(in: uiMOC, name: "Teapot", handle: "vanessa", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connectionStatus: .accepted)
-        let users = [user1, user2] as NSArray
-
-        // When
-        let predicate = ZMUser.predicateForConnectedUsers(withSearch: "@João")
-        let result = users.filtered(using: predicate) as! [ZMUser]
-
-        // Then
-        XCTAssertEqual(result.count, 1)
-        XCTAssertEqual(result, [user2])
-    }
-
-    func testThatItStripsWhiteSpaceBeforeSearching() {
-        // Given
-        let user1 = ZMUser.insert(in: uiMOC, name: "Vanessa", handle: "abc", connectionStatus: .accepted)
-        let user2 = ZMUser.insert(in: uiMOC, name: "Norman", handle: "joao", connectionStatus: .accepted)
-        let users = [user1, user2] as NSArray
-
-        do {
-            // When
-            let predicate = ZMUser.predicateForConnectedUsers(withSearch: "  vÂńĖß   ")
-            let result = users.filtered(using: predicate) as! [ZMUser]
-
-            // Then
-            XCTAssertEqual(result.count, 1)
-            XCTAssertEqual(result, [user1])
-        }
-
-        do {
-            // When
-            let predicate = ZMUser.predicateForConnectedUsers(withSearch: "  @JOÃO   ")
-            let result = users.filtered(using: predicate) as! [ZMUser]
-
-            // Then
-            XCTAssertEqual(result.count, 1)
-            XCTAssertEqual(result, [user2])
-        }
-    }
-
     func testPredicateFilteringConnectedUsersByHandlePrefix() {
         // Given
         let user1 = ZMUser.insert(in: self.uiMOC, name: "Some body", handle: "alonghandle", connectionStatus: .accepted)

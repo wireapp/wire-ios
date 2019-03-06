@@ -21,6 +21,8 @@
 
     @NSManaged public var team: Team?
     @NSManaged public var user: ZMUser?
+    @NSManaged public var createdBy: ZMUser?
+    @NSManaged public var createdAt: Date?
     @NSManaged public var remoteIdentifier_data : Data?
     @NSManaged private var permissionsRawValue: Int64
 
@@ -75,7 +77,7 @@
 
 
 fileprivate enum ResponseKey: String {
-    case user, permissions
+    case user, permissions, createdBy = "created_by", createdAt = "created_at"
 
     enum Permissions: String {
         case `self`, copy
@@ -90,8 +92,15 @@ extension Member {
         guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init),
             let user = ZMUser.fetchAndMerge(with: id, createIfNeeded: true, in: context) else { return nil }
 
+        
+        let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
+        let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
         let member = getOrCreateMember(for: user, in: team, context: context)
+        
         member.updatePermissions(with: payload)
+        member.createdAt = createdAt
+        member.createdBy = createdBy.flatMap({ ZMUser.fetchAndMerge(with: $0, createIfNeeded: true, in: context) })
+        
         return member
     }
 

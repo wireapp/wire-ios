@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireUtilities
 
 extension ZMUser {
     
@@ -55,12 +56,9 @@ extension ZMUser {
             allPredicates.append([predicateForUsers(withConnectionStatuses: statuses)])
         }
         
-        let normalizedQuery = query.normalizedAndTrimmed()
-        
-        if !normalizedQuery.isEmpty {
-            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName) : "%K MATCHES %@"], matchingSearch: normalizedQuery)
-            let normalizedHandle = normalizedQuery.strippingLeadingAtSign()
-            let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), normalizedHandle)
+        if !query.isEmpty {
+            let namePredicate = NSPredicate(formatDictionary: [#keyPath(ZMUser.normalizedName) : "%K MATCHES %@"], matchingSearch: query)
+            let handlePredicate = NSPredicate(format: "%K BEGINSWITH %@", #keyPath(ZMUser.handle), query.strippingLeadingAtSign())
             allPredicates.append([namePredicate, handlePredicate].compactMap {$0})
         }
         
@@ -77,18 +75,4 @@ extension ZMUser {
     public static func predicateForUsersToUpdateRichProfile() -> NSPredicate {
         return NSPredicate(format: "(%K == YES)", #keyPath(ZMUser.needsRichProfileUpdate))
     }
-}
-
-fileprivate extension String {
-    
-    func normalizedAndTrimmed() -> String {
-        guard let normalized = self.normalizedForSearch() as String? else { return "" }
-        return normalized.trimmingCharacters(in: .whitespaces)
-    }
-    
-    func strippingLeadingAtSign() -> String {
-        guard hasPrefix("@") else { return self }
-        return String(dropFirst())
-    }
-    
 }
