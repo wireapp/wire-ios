@@ -25,6 +25,8 @@
 		168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */; };
 		16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */; };
 		16A5FE05215A770000AEEBBD /* IndexSet+HelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */; };
+		16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */; };
+		16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */; };
 		16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */; };
 		16EB9B361CE0D5A000883FCF /* NSString+MIMEType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */; };
 		16EB9B381CE0D7D800883FCF /* NSString+MIMETypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */; };
@@ -252,6 +254,8 @@
 		168B158B1F25F67600AB3C44 /* DispatchGroupQueueTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DispatchGroupQueueTests.swift; sourceTree = "<group>"; };
 		16A5FDF6215A746B00AEEBBD /* IndexSet+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+Helpers.swift"; sourceTree = "<group>"; };
 		16A5FE04215A770000AEEBBD /* IndexSet+HelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "IndexSet+HelperTests.swift"; sourceTree = "<group>"; };
+		16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Stripping.swift"; sourceTree = "<group>"; };
+		16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+StrippingTests.swift"; sourceTree = "<group>"; };
 		16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUnregisteringNotificationCenterToken.swift; sourceTree = "<group>"; };
 		16EB9B351CE0D5A000883FCF /* NSString+MIMEType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMEType.swift"; sourceTree = "<group>"; };
 		16EB9B371CE0D7D800883FCF /* NSString+MIMETypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSString+MIMETypeTests.swift"; sourceTree = "<group>"; };
@@ -557,6 +561,7 @@
 				5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */,
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
+				16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -758,6 +763,7 @@
 				5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */,
 				16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */,
 				EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */,
+				16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -999,6 +1005,7 @@
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
 				D5D65A13207631A100D7F3C3 /* NSManagedObjectContext+PerformGrouped.swift in Sources */,
 				87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */,
+				16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */,
 				F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */,
 				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
@@ -1069,6 +1076,7 @@
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
 				BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */,
 				EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */,
+				16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */,
 				D504CD3B2090D00500A78DAA /* FlipTests.swift in Sources */,
 				546E8A4C1B74FF8F009EBA02 /* NSData+ZMAdditionsTests.m in Sources */,
 				872633E81D929C28008B69D8 /* OptionalComparisonTests.swift in Sources */,
