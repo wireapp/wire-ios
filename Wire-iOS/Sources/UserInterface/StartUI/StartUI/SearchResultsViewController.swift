@@ -249,6 +249,7 @@ extension UIViewController {
         
         if ZMUser.selfUser().teamRole == .partner {
             options.insert(.excludeNonActiveTeamMembers)
+            options.remove(.directory)
         } else {
             options.insert(.excludeNonActivePartners)
         }
