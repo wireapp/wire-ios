@@ -346,7 +346,7 @@ struct CacheAsset: Asset {
         case .file:
             return false
         case .image, .thumbnail:
-            return true
+            return owner.genericMessage?.assetData?.original.mimeType.isGIF == false
         }
     }
     
@@ -379,18 +379,20 @@ struct CacheAsset: Asset {
     }
     
     var hasEncrypted: Bool {
-        if needsPreprocessing {
-            return cache.hasDataOnDisk(owner, format: .medium, encrypted: true)
-        } else {
+        switch type {
+        case .file:
             return cache.hasDataOnDisk(owner, encrypted: true)
+        case .image, .thumbnail:
+            return cache.hasDataOnDisk(owner, format: .medium, encrypted: true)
         }
     }
     
     var encrypted: Data? {
-        if needsPreprocessing {
-            return cache.assetData(owner, format: .medium, encrypted: true)
-        } else {
+        switch type {
+        case .file:
             return cache.assetData(owner, encrypted: true)
+        case .image, .thumbnail:
+            return cache.assetData(owner, format: .medium, encrypted: true)
         }
     }
     
@@ -457,6 +459,11 @@ struct CacheAsset: Asset {
                 updatedGenericMessage = genericMessage.updatedAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)!
             }
         case .image:
+            if !needsPreprocessing, let original = original {
+                // Even if we don't do any preprocessing on an image we still need to copy it to .medium
+                cache.storeAssetData(owner, format: .medium, encrypted: false, data: original)
+            }
+            
             if let keys = cache.encryptImageAndComputeSHA256Digest(owner, format: .medium) {
                 updatedGenericMessage = genericMessage.updatedAsset(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)!
             }

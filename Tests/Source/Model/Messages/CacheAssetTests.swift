@@ -33,6 +33,11 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         return WireDataModel.CacheAsset(owner: message, type: .image, cache: uiMOC.zm_fileAssetCache)
     }
     
+    func gifAsset() -> WireDataModel.CacheAsset {
+        let message = appendImageMessage(to: conversation, imageData: data(forResource: "animated", extension: "gif"))
+        return WireDataModel.CacheAsset(owner: message, type: .image, cache: uiMOC.zm_fileAssetCache)
+    }
+    
     func thumbnailAsset() -> WireDataModel.CacheAsset {
         let message = appendFileMessage(to: conversation)!
         let asset = WireDataModel.CacheAsset(owner: message, type: .thumbnail, cache: uiMOC.zm_fileAssetCache)
@@ -69,6 +74,14 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     }
     
     // MARK: - Image processing
+    
+    func testThatNeedsProcessingIsNotNeededForGIFs() {
+        // given
+        let gifAsset = self.gifAsset()
+        
+        // then
+        XCTAssertFalse(gifAsset.needsPreprocessing)
+    }
     
     func testThatNeedsProcessingIsOnlyNeededForImageTypes() {
         // given
@@ -112,6 +125,18 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         // given
         let sut = self.imageAsset()
         sut.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 100, height: 100), length: 123, mimeType: "image/jpeg"))
+        
+        // when
+        sut.encrypt()
+        
+        // then
+        XCTAssertTrue(sut.hasEncrypted)
+        XCTAssertNotNil(sut.encrypted)
+    }
+    
+    func testThatEncryptStoresTheEncryptedGIF() {
+        // given
+        let sut = self.gifAsset()
         
         // when
         sut.encrypt()
