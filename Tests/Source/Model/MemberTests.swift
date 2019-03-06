@@ -165,23 +165,29 @@ class MemberTests: BaseTeamTests {
 extension MemberTests {
 
     func testThatItUpdatesAMemberWithResponsePayload() {
-        self.performPretendingUiMocIsSyncMoc {
+        syncMOC.performAndWait {
             // given
-            let user = ZMUser.insertNewObject(in: self.uiMOC)
+            let user = ZMUser.insertNewObject(in: self.syncMOC)
             user.remoteIdentifier = .create()
-            let team = Team.insertNewObject(in: self.uiMOC)
-            let member = Member.getOrCreateMember(for: user, in: team, context: self.uiMOC)
+            let team = Team.insertNewObject(in: self.syncMOC)
+            let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
+            let createdAt = Date(timeIntervalSince1970: 0)
+            let createdByUUID = UUID()
 
             let payload: [String: Any] = [
                 "user": user.remoteIdentifier!.transportString(),
-                "permissions": ["self": 17, "copy": 0]
+                "permissions": ["self": 17, "copy": 0],
+                "created_at": createdAt.transportString(),
+                "created_by": createdByUUID.transportString()
             ]
 
             // when
-            member.updatePermissions(with: payload)
+            Member.createOrUpdate(with: payload, in: team, context: self.syncMOC)
 
             // then
             XCTAssertEqual(member.permissions, [.createConversation, .addRemoveConversationMember])
+            XCTAssertEqual(member.createdAt, createdAt)
+            XCTAssertEqual(member.createdBy?.remoteIdentifier, createdByUUID)
         }
     }
 
@@ -219,10 +225,14 @@ extension MemberTests {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
             let userId = UUID.create()
+            let createdAt = Date(timeIntervalSince1970: 0)
+            let createdByUUID = UUID()
 
             let payload: [String: Any] = [
                 "user": userId.transportString(),
-                "permissions": ["self": 5951, "copy": 0]
+                "permissions": ["self": 5951, "copy": 0],
+                "created_at": createdAt.transportString(),
+                "created_by": createdByUUID.transportString()
             ]
 
             // when
@@ -232,6 +242,8 @@ extension MemberTests {
             XCTAssertEqual(member.user?.remoteIdentifier, userId)
             XCTAssertEqual(member.permissions, .admin)
             XCTAssertEqual(member.team, team)
+            XCTAssertEqual(member.createdAt, createdAt)
+            XCTAssertEqual(member.createdBy?.remoteIdentifier, createdByUUID)
         }
     }
     

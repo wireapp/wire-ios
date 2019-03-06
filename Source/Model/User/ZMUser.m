@@ -83,6 +83,7 @@ static NSString *const ProviderIdentifierKey = @"providerIdentifier";
 NSString *const AvailabilityKey = @"availability";
 static NSString *const ExpiresAtKey = @"expiresAt";
 static NSString *const UsesCompanyLoginKey = @"usesCompanyLogin";
+static NSString *const CreatedTeamMembersKey = @"createdTeamMembers";
 NSString *const ReadReceiptsEnabledKey = @"readReceiptsEnabled";
 NSString *const NeedsPropertiesUpdateKey = @"needsPropertiesUpdate";
 NSString *const ReadReceiptsEnabledChangedRemotelyKey = @"readReceiptsEnabledChangedRemotely";
@@ -438,7 +439,8 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
                                            isAccountDeletedKey,
                                            ManagedByKey,
                                            RichProfileKey,
-                                           NeedsRichProfileUpdateKey
+                                           NeedsRichProfileUpdateKey,
+                                           CreatedTeamMembersKey
                                            ]];
         keys = [ignoredKeys copy];
     });
