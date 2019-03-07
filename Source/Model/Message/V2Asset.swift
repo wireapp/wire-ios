@@ -100,14 +100,15 @@ extension String {
     }
 
     public var originalSize: CGSize {
-        let genericMessage = assetClientMessage.mediumGenericMessage
-        guard let asset = genericMessage?.imageAssetData, asset.originalWidth > 0 else { return assetClientMessage.preprocessedSize }
+        guard let asset = assetClientMessage.mediumGenericMessage?.imageAssetData else  { return .zero }
         let size = CGSize(width: Int(asset.originalWidth), height: Int(asset.originalHeight))
+        
         if size != .zero {
             return size
         }
-
+        
         return assetClientMessage.preprocessedSize
+        
     }
 
     // MARK: - Helper
