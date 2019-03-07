@@ -120,8 +120,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     public var originalSize: CGSize {
         guard nil != assetClientMessage.fileMessageData, isImage else { return .zero }
         guard let asset = assetClientMessage.genericAssetMessage?.assetData else { return .zero }
-        guard asset.original.hasRasterImage, asset.original.image.width > 0 else { return assetClientMessage.preprocessedSize }
         let size = CGSize(width: Int(asset.original.image.width), height: Int(asset.original.image.height))
+        
         if size != .zero {
             return size
         }

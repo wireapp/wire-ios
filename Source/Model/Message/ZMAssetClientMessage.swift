@@ -33,14 +33,14 @@ import Foundation
     {
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
         
-        // We update the size once the preprocessing is done
         // mimeType is assigned first, to make sure UI can handle animated GIF file correctly
         let mimeType = ZMAssetMetaDataEncoder.contentType(forImageData: imageData) ?? ""
-        let asset = ZMAsset.asset(originalWithImageSize: CGSize.zero, mimeType: mimeType, size: UInt64(imageData.count))
+        // We update the size again when the the preprocessing is done
+        let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
+        let asset = ZMAsset.asset(originalWithImageSize: imageSize, mimeType: mimeType, size: UInt64(imageData.count))
         let message = ZMGenericMessage.message(content: asset, nonce: nonce, expiresAfter: timeout)
         
         add(message)
-        preprocessedSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
         transferState = .uploading
         version = 3
     }
