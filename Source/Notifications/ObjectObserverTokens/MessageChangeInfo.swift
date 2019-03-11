@@ -49,6 +49,7 @@ extension ZMAssetClientMessage {
                               MessageKey.mediumGenericMessage.rawValue,
                               #keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMAssetClientMessage.hasDownloadedFile),
+                              #keyPath(ZMAssetClientMessage.isDownloading),
                               #keyPath(ZMAssetClientMessage.progress),
                               #keyPath(ZMMessage.reactions),
                               #keyPath(ZMMessage.confirmations)]
