@@ -76,7 +76,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         managedObjectContext.performGroupedBlock { [weak self] in
             guard let `self` = self else { return }
             guard let object = try? self.managedObjectContext.existingObject(with: objectID) else { return }
-            guard let message = object as? ZMAssetClientMessage else { return }
+            guard let message = object as? ZMAssetClientMessage, !message.hasDownloadedFile else { return }
             message.isDownloading = true
             self.assetDownstreamObjectSync.whiteListObject(message)
             RequestAvailableNotification.notifyNewRequestsAvailable(self)
