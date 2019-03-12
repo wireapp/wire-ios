@@ -95,6 +95,49 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         contextDirectory.uiContext.zm_fileAssetCache.deleteAssetData(message)
         contextDirectory.syncContext.zm_fileAssetCache.deleteAssetData(message)
     }
+    
+    func testThatItMarksMessageAsDownloading_WhenRequestingFileDownload() {
+        
+        var assetMessage: ZMAssetClientMessage!
+        syncMOC.performGroupedBlockAndWait {
+            
+            // Given
+            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            assetMessage = message
+            
+            // When
+            message.requestFileDownload()
+        }
+        
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        syncMOC.performGroupedBlockAndWait {
+            // Then
+            XCTAssertTrue(assetMessage.isDownloading)
+        }
+    }
+    
+    func testThatItDoesNotMarksMessageAsDownloading_WhenRequestingFileDownloadIfFileIsAlreadyDownloaded() {
+        
+        var assetMessage: ZMAssetClientMessage!
+        syncMOC.performGroupedBlockAndWait {
+            
+            // Given
+            guard let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data())
+            assetMessage = message
+            
+            // When
+            message.requestFileDownload()
+        }
+        
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        syncMOC.performGroupedBlockAndWait {
+            // Then
+            XCTAssertFalse(assetMessage.isDownloading)
+        }
+    }
 
     func testThatItGeneratesARequestToTheV3EndpointIfTheProtobufContainsAnAssetID_V3() {
         
