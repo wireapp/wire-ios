@@ -129,6 +129,10 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
                                       context: self.managedObjectContext.notificationContext,
                                       object: uiMessage,
                                       userInfo: userInfo).post()
+                
+                NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
+                                                                changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+                                                                uiContext: uiMOC)
             }
             else {
                 NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName,
