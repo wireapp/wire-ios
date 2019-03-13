@@ -59,7 +59,7 @@ platform :ios do
                 sh "mkdir -p debug/Payload"
                 sh "mkdir -p #{build.artifact_path(with_filename: false)}"
                 sh "cp -r DerivedData/Build/Products/Debug-iphonesimulator/*.app debug/Payload/"
-                sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa -quiet Payload/"
+                sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
             build_app(
@@ -238,7 +238,7 @@ class Build
         if for_simulator 
             suffix = "simulator" 
         else 
-            suffix = "device" + (debug_build ? "debug" : "release")
+            suffix = "device/" + (debug_build ? "debug" : "release")
         end
 
         case @build_type
