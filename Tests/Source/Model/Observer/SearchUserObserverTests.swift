@@ -83,9 +83,9 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, managedObjectContext: self.uiMOC)
         
         // when
-        user.smallProfileRemoteIdentifier = UUID.create()
-        user.imageSmallProfileData = self.verySmallJPEGData()
-        self.uiMOC.saveOrRollback()
+        user.previewProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: verySmallJPEGData(), size: .preview)
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5)) 
         
         // then
         XCTAssertEqual(testObserver.receivedChangeInfo.count, 1)

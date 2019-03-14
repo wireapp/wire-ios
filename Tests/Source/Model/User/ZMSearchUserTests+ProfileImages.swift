@@ -61,8 +61,8 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         let imageData = verySmallJPEGData()
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.smallProfileRemoteIdentifier = UUID.create()
-        user.imageSmallProfileData = imageData
+        user.previewProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: imageData, size: .preview)
         uiMOC.saveOrRollback()
         
         // when
@@ -77,8 +77,8 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         let imageData = verySmallJPEGData()
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.mediumRemoteIdentifier = UUID.create()
-        user.imageMediumData = imageData
+        user.completeProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: imageData, size: .complete)
         uiMOC.saveOrRollback()
         
         // when
@@ -117,8 +117,8 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         let imageData = verySmallJPEGData()
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.smallProfileRemoteIdentifier = UUID.create()
-        user.imageSmallProfileData = imageData
+        user.previewProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: imageData, size: .preview)
         uiMOC.saveOrRollback()
         
         // given
@@ -134,8 +134,8 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         let imageData = verySmallJPEGData()
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.mediumRemoteIdentifier = UUID.create()
-        user.imageMediumData = imageData
+        user.completeProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: imageData, size: .complete)
         uiMOC.saveOrRollback()
         
         // given

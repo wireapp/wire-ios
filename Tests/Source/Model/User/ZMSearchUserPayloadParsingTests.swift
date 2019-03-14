@@ -80,11 +80,7 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         let searchUser = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
         
         // then
-        if case .asset(preview: let previewAssetKey, complete: _)? = searchUser.assetKeys {
-            XCTAssertEqual(previewAssetKey, assetKey)
-        } else {
-            XCTFail()
-        }
+        XCTAssertEqual(searchUser.assetKeys?.preview, assetKey)
     }
     
     func testThatItParsesService_IgnoresOtherImageIdentifier() throws {
@@ -106,7 +102,6 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         
         // then
         XCTAssertNil(searchUser.assetKeys)
-//        XCTAssertNil(ZMSearchUser.searchUserToMediumAssetIDCache().object(forKey: uuid as NSUUID))
     }
     
     

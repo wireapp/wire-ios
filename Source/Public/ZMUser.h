@@ -69,9 +69,6 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 
 @property (nonatomic, readonly, nullable) NSData *imageMediumData;
 @property (nonatomic, readonly, nullable) NSData *imageSmallProfileData;
-/// This is a unique string that will change only when the @c imageSmallProfileData changes
-@property (nonatomic, readonly, nullable) NSString *imageSmallProfileIdentifier;
-@property (nonatomic, readonly, nullable) NSString *imageMediumIdentifier;
 
 @property (nonatomic, readonly) BOOL managedByWire;
 

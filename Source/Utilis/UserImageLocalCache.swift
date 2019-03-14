@@ -30,15 +30,6 @@ extension ZMUser {
         return (userRemoteId + "-" + suffix)
     }
     
-    @objc public func legacyImageCacheKey(for size: ProfileImageSize) -> String? {
-        switch size {
-        case .preview:
-            return cacheIdentifier(suffix: smallProfileRemoteIdentifier?.transportString())
-        case .complete:
-            return cacheIdentifier(suffix: mediumRemoteIdentifier?.transportString())
-        }
-    }
-    
     @objc public func imageCacheKey(for size: ProfileImageSize) -> String? {
         switch size {
         case .preview:
@@ -48,24 +39,6 @@ extension ZMUser {
         }
     }
     
-    fileprivate func resolvedCacheKey(for size: ProfileImageSize) -> String? {
-        switch size {
-        case .preview:
-            return smallProfileImageCacheKey
-        case .complete:
-            return mediumProfileImageCacheKey
-        }
-    }
-    
-    /// Cache keys for all large user images
-    fileprivate var largeCacheKeys: [String] {
-        return [legacyImageCacheKey(for: .complete), imageCacheKey(for: .complete)].compactMap{ $0 }
-    }
-    
-    /// Cache keys for all small user images
-    fileprivate var smallCacheKeys: [String] {
-        return [legacyImageCacheKey(for: .preview), imageCacheKey(for: .preview)].compactMap{ $0 }
-    }
 }
 
 // MARK: NSManagedObjectContext
@@ -119,18 +92,9 @@ extension NSManagedObjectContext
         super.init()
     }
     
-    /// Stores image in cache and removes legacy copy if it was there, returns true if the data was stored
-    private func setImage(inCache cache: PINCache, legacyCacheKey: String?, cacheKey: String?, data: Data) -> Bool {
-        let resolvedCacheKey: String?
-        if let cacheKey = cacheKey {
-            resolvedCacheKey = cacheKey
-            if let legacyCacheKey = legacyCacheKey {
-                cache.removeObject(forKey: legacyCacheKey)
-            }
-        } else {
-            resolvedCacheKey = legacyCacheKey
-        }
-        if let resolvedCacheKey = resolvedCacheKey {
+    /// Stores image in cache and returns true if the data was stored
+    private func setImage(inCache cache: PINCache, cacheKey: String?, data: Data) -> Bool {
+        if let resolvedCacheKey = cacheKey {
             cache.setObject(data as NSCoding, forKey: resolvedCacheKey)
             return true
         }
@@ -139,31 +103,28 @@ extension NSManagedObjectContext
     
     /// Removes all images for user
     open func removeAllUserImages(_ user: ZMUser) {
-        user.largeCacheKeys.forEach(largeUserImageCache.removeObject)
-        user.smallCacheKeys.forEach(smallUserImageCache.removeObject)
+        user.imageCacheKey(for: .complete).apply(largeUserImageCache.removeObject)
+        user.imageCacheKey(for: .preview).apply(smallUserImageCache.removeObject)
     }
     
     open func setUserImage(_ user: ZMUser, imageData: Data, size: ProfileImageSize) {
-        let legacyKey = user.legacyImageCacheKey(for: size)
         let key = user.imageCacheKey(for: size)
         switch size {
         case .preview:
-            let stored = setImage(inCache: smallUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
+            let stored = setImage(inCache: smallUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache keys: V3[\(String(describing: key))] V2[\(String(describing: legacyKey))]")
-                usersWithChangedSmallImage.append(user.objectID)
+                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache key: \(String(describing: key))")
             }
         case .complete:
-            let stored = setImage(inCache: largeUserImageCache, legacyCacheKey: legacyKey, cacheKey: key, data: imageData)
+            let stored = setImage(inCache: largeUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache keys: V3[\(String(describing: key))] V2[\(String(describing: legacyKey))]")
-                usersWithChangedLargeImage.append(user.objectID)
+                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache key: \(String(describing: key))")
             }
         }
     }
     
     open func userImage(_ user: ZMUser, size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void) {
-        guard let cacheKey = user.resolvedCacheKey(for: size) else { return completion(nil) }
+        guard let cacheKey = user.imageCacheKey(for: size) else { return completion(nil) }
         
         queue.async {
             switch size {
@@ -176,7 +137,7 @@ extension NSManagedObjectContext
     }
     
     open func userImage(_ user: ZMUser, size: ProfileImageSize) -> Data? {
-        guard let cacheKey = user.resolvedCacheKey(for: size) else { return nil }
+        guard let cacheKey = user.imageCacheKey(for: size) else { return nil }
         let data: Data?
         switch size {
         case .preview:
@@ -192,7 +153,7 @@ extension NSManagedObjectContext
     }
     
     open func hasUserImage(_ user: ZMUser, size: ProfileImageSize) -> Bool {
-        guard let cacheKey = user.resolvedCacheKey(for: size) else { return false }
+        guard let cacheKey = user.imageCacheKey(for: size) else { return false }
         
         switch size {
         case .preview:
@@ -202,9 +163,6 @@ extension NSManagedObjectContext
         }
     }
     
-    var usersWithChangedSmallImage : [NSManagedObjectID] = []
-    var usersWithChangedLargeImage : [NSManagedObjectID] = []
-
 }
 
 public extension UserImageLocalCache {

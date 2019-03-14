@@ -87,7 +87,7 @@ extension ZMUserTests {
             
             // WHEN
             user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewId, completeIdentifier: completeId)
-            user.updateAssetData(with: payload, hasLegacyImages:false, authoritative: true)
+            user.updateAssetData(with: payload, authoritative: true)
             
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
@@ -106,7 +106,7 @@ extension ZMUserTests {
             
             // WHEN
             user.updateAndSyncProfileAssetIdentifiers(previewIdentifier: previewId, completeIdentifier: completeId)
-            user.updateAssetData(with: payload, hasLegacyImages:false, authoritative: true)
+            user.updateAssetData(with: payload, authoritative: true)
             
             // THEN
             XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
@@ -122,7 +122,7 @@ extension ZMUserTests {
             user?.completeProfileAssetIdentifier = "other"
             
             // WHEN
-            user?.updateAssetData(with: NSArray(), hasLegacyImages:false, authoritative: true)
+            user?.updateAssetData(with: NSArray(), authoritative: true)
             
             // THEN
             XCTAssertNil(user?.previewProfileAssetIdentifier)
@@ -136,22 +136,22 @@ extension ZMUserTests {
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.previewProfileAssetIdentifier = "123"
             user?.completeProfileAssetIdentifier = "456"
-            user?.imageSmallProfileData = "some".data(using: .utf8)
-            user?.imageMediumData = "other".data(using: .utf8)
-            XCTAssertNotNil(user?.imageMediumData)
-            XCTAssertNotNil(user?.imageSmallProfileData)
+            user?.setImage(data: "some".data(using: .utf8), size: .preview)
+            user?.setImage(data: "other".data(using: .utf8), size: .complete)
+            XCTAssertNotNil(user?.imageData(for: .preview))
+            XCTAssertNotNil(user?.imageData(for: .complete))
             let previewId = "some"
             let completeId = "other"
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
             
             // WHEN
-            user?.updateAssetData(with: payload, hasLegacyImages:false, authoritative: true)
+            user?.updateAssetData(with: payload, authoritative: true)
             
             // THEN
             XCTAssertEqual(user?.previewProfileAssetIdentifier, previewId)
-            XCTAssertNil(user?.imageSmallProfileData)
+            XCTAssertNil(user?.imageData(for: .preview))
             XCTAssertEqual(user?.completeProfileAssetIdentifier, completeId)
-            XCTAssertNil(user?.imageMediumData)
+            XCTAssertNil(user?.imageData(for: .complete))
         }
     }
     
@@ -165,20 +165,20 @@ extension ZMUserTests {
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.previewProfileAssetIdentifier = previewId
             user?.completeProfileAssetIdentifier = completeId
-            user?.imageSmallProfileData = previewData
-            user?.imageMediumData = completeData
-            XCTAssertNotNil(user?.imageMediumData)
-            XCTAssertNotNil(user?.imageSmallProfileData)
+            user?.setImage(data: previewData, size: .preview)
+            user?.setImage(data: completeData, size: .complete)
+            XCTAssertNotNil(user?.imageData(for: .preview))
+            XCTAssertNotNil(user?.imageData(for: .complete))
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
             
             // WHEN
-            user?.updateAssetData(with: payload, hasLegacyImages:false, authoritative: true)
+            user?.updateAssetData(with: payload, authoritative: true)
             
             // THEN
             XCTAssertEqual(user?.previewProfileAssetIdentifier, previewId)
-            XCTAssertEqual(user?.imageSmallProfileData, previewData)
             XCTAssertEqual(user?.completeProfileAssetIdentifier, completeId)
-            XCTAssertEqual(user?.imageMediumData, completeData)
+            XCTAssertEqual(user?.imageData(for: .preview), previewData)
+            XCTAssertEqual(user?.imageData(for: .complete), completeData)
         }
     }
 
@@ -192,7 +192,6 @@ extension ZMUserTests {
             let predicate = ZMUser.previewImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.previewProfileAssetIdentifier = "some identifier"
-            user?.imageSmallProfileData = nil
             
             // THEN
             XCTAssert(predicate.evaluate(with: user))
@@ -205,23 +204,10 @@ extension ZMUserTests {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.completeProfileAssetIdentifier = "some identifier"
-            user?.imageMediumData = nil
+            user?.setImage(data: nil, size: .complete)
             
             // THEN
             XCTAssert(predicate.evaluate(with: user))
-        }
-    }
-    
-    func testThatPreviewImageDownloadFilterDoesNotPickUpUsersWithoutAssetId() {
-        syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let predicate = ZMUser.previewImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = nil
-            user?.imageSmallProfileData = "foo".data(using: .utf8)
-            
-            // THEN
-            XCTAssertFalse(predicate.evaluate(with: user))
         }
     }
     
@@ -231,7 +217,7 @@ extension ZMUserTests {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.completeProfileAssetIdentifier = nil
-            user?.imageMediumData = "foo".data(using: .utf8)
+            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -244,7 +230,7 @@ extension ZMUserTests {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.previewProfileAssetIdentifier = "1234"
-            user?.imageSmallProfileData = "foo".data(using: .utf8)
+            user?.setImage(data: "foo".data(using: .utf8), size: .preview)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -257,7 +243,7 @@ extension ZMUserTests {
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
             user?.completeProfileAssetIdentifier = "1234"
-            user?.imageMediumData = "foo".data(using: .utf8)
+            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
