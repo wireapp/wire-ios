@@ -96,11 +96,11 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     open var imageMediumDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserType.completeImageData)) || changedKeysContain(keys: #keyPath(ZMUser.imageMediumData))
+        return changedKeysContain(keys: #keyPath(UserType.completeImageData))
     }
 
     open var imageSmallProfileDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserType.previewImageData)) || changedKeysContain(keys: #keyPath(ZMUser.imageSmallProfileData))
+        return changedKeysContain(keys: #keyPath(UserType.previewImageData))
     }
 
     open var profileInformationChanged : Bool {

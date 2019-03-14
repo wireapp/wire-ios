@@ -147,14 +147,14 @@ extension UserObserverTests {
         // given
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.mediumRemoteIdentifier = UUID.create()
-        user.imageMediumData = self.verySmallJPEGData()
+        user.completeProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: verySmallJPEGData(), size: .complete)
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.imageMediumData = Data() },
+                                                     modifier: { $0.setImage(data: Data(), size: .complete) },
                                                      expectedChangedField: .ImageMediumData)
     }
     
@@ -163,13 +163,13 @@ extension UserObserverTests {
         // given
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.remoteIdentifier = UUID.create()
-        user.smallProfileRemoteIdentifier = UUID.create()
-        user.imageSmallProfileData = self.verySmallJPEGData()
+        user.previewProfileAssetIdentifier = UUID.create().transportString()
+        user.setImage(data: verySmallJPEGData(), size: .preview)
         uiMOC.saveOrRollback()
 
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { $0.imageSmallProfileData = Data() },
+                                                     modifier: { $0.setImage(data: Data(), size: .preview) },
                                                      expectedChangedField: .ImageSmallProfileData)
     }
     

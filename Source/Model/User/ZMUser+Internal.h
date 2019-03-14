@@ -47,8 +47,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nonnull, nonatomic, readonly) NSString *normalizedName;
 @property (nonnull, nonatomic, readonly) NSString *normalizedEmailAddress;
 
-@property (nullable, nonatomic) NSData *imageMediumData;
-@property (nullable, nonatomic) NSData *imageSmallProfileData;
+@property (nullable, nonatomic, readonly) NSData *imageMediumData;
+@property (nullable, nonatomic, readonly) NSData *imageSmallProfileData;
 
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
@@ -94,17 +94,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 @interface ZMUser (ImageData)
 
-@property (nullable, nonatomic) NSUUID *mediumRemoteIdentifier; ///< The remote identifier of the medium image for the receiver
-@property (nullable, nonatomic) NSUUID *smallProfileRemoteIdentifier; ///< The remote identifier of the small profile image for the receiver
-@property (nullable, nonatomic) NSUUID *localMediumRemoteIdentifier; ///< The remote identifier of the local "medium" image
-@property (nullable, nonatomic) NSUUID *localSmallProfileRemoteIdentifier; ///< The remote identifier of the local "small profile" image
-
-+ (nonnull NSPredicate *)predicateForMediumImageNeedingToBeUpdatedFromBackend;
-+ (nonnull NSPredicate *)predicateForSmallImageNeedingToBeUpdatedFromBackend;
 + (nonnull NSPredicate *)predicateForSelfUser;
 + (nonnull NSPredicate *)predicateForUsersOtherThanSelf;
-+ (nonnull NSPredicate *)predicateForMediumImageDownloadFilter;
-+ (nonnull NSPredicate *)predicateForSmallImageDownloadFilter;
 
 @end
 

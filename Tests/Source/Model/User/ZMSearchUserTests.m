@@ -156,8 +156,8 @@
     user.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     user.connection.status = ZMConnectionStatusAccepted;
     user.remoteIdentifier = [NSUUID createUUID];
-    user.imageMediumData = [@"image medium data" dataUsingEncoding:NSUTF8StringEncoding];
-    user.imageSmallProfileData = [@"image small profile data" dataUsingEncoding:NSUTF8StringEncoding];
+    [user setImageData:[@"image medium data" dataUsingEncoding:NSUTF8StringEncoding] size:ProfileImageSizeComplete];
+    [user setImageData:[@"image small profile data" dataUsingEncoding:NSUTF8StringEncoding] size:ProfileImageSizePreview];
     [self.uiMOC saveOrRollback];
     
    

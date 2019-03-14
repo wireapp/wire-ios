@@ -269,7 +269,7 @@ extension ZMManagedObject {
         
         self.snapshotCenter.createSnapshots(for: insertedObjects)
         
-        let allUpdated = updatedObjects.union(refreshedObjects).union(usersWithChangedImages())
+        let allUpdated = updatedObjects.union(refreshedObjects)
         self.extractChanges(from: allUpdated)
         self.extractChangesCausedByInsertionOrDeletion(of: insertedObjects)
         self.extractChangesCausedByInsertionOrDeletion(of: deletedObjects)
@@ -317,32 +317,6 @@ extension ZMManagedObject {
     func updateExisting(name: Notification.Name, newSet: [ZMMessage]) {
         let existingUnreadUnsent = self.unreadMessages[name]
         self.unreadMessages[name] = existingUnreadUnsent?.union(newSet) ?? Set(newSet)
-    }
-    
-    /// Gets additional user changes from userImageCache
-    func usersWithChangedImages() -> Set<ZMManagedObject> {
-        let largeImageChanges = self.managedObjectContext.zm_userImageCache?.usersWithChangedLargeImage
-        let largeImageUsers = self.extractUsersWithImageChange(objectIDs: largeImageChanges,
-                                                          changedKey: "imageMediumData")
-        let smallImageChanges = self.managedObjectContext.zm_userImageCache?.usersWithChangedSmallImage
-        let smallImageUsers = self.extractUsersWithImageChange(objectIDs: smallImageChanges,
-                                                          changedKey: "imageSmallProfileData")
-        self.managedObjectContext.zm_userImageCache?.usersWithChangedLargeImage = []
-        self.managedObjectContext.zm_userImageCache?.usersWithChangedSmallImage = []
-        return smallImageUsers.union(largeImageUsers)
-    }
-    
-    func extractUsersWithImageChange(objectIDs: [NSManagedObjectID]?, changedKey: String) -> Set<ZMUser> {
-        guard let objectIDs = objectIDs else { return Set() }
-        var users = Set<ZMUser>()
-        objectIDs.forEach { objectID in
-            guard let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser else { return }
-            var newValue = userChanges[user] ?? Set()
-            newValue.insert(changedKey)
-            userChanges[user] = newValue
-            users.insert(user)
-        }
-        return users
     }
     
     /// Extracts changes from the updated objects

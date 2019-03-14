@@ -55,7 +55,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest, ZMManagedObjectContextP
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "Bernd"
         user.remoteIdentifier = UUID()
-        user.imageSmallProfileData = verySmallJPEGData()
+        user.setImage(data: verySmallJPEGData(), size: .preview)
         let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: "", accentColor: .undefined, remoteIdentifier: UUID(), user: user)
         
         // when
@@ -91,7 +91,7 @@ class SearchUserSnapshotTests : ZMBaseManagedObjectTest, ZMManagedObjectContextP
         }
         
         // when
-        user.smallProfileRemoteIdentifier = UUID()
+        user.previewProfileAssetIdentifier = "123"
         uiMOC.zm_userImageCache.setUserImage(user, imageData: verySmallJPEGData(), size: .preview)
 
         sut.updateAndNotify()

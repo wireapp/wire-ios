@@ -19,7 +19,6 @@
 
 public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     case none
-    case legacyId(UUID)
     case assetKey(String)
 
     public init(nilLiteral: ()) {
@@ -29,58 +28,17 @@ public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     public var hashValue: Int {
         switch self {
         case .none: return 0
-        case .legacyId(let id): return id.hashValue
         case .assetKey(let key): return key.hashValue
         }
     }
 
-    public func objcCompatibilityValue() -> SearchUserAssetObjC? {
-        return SearchUserAssetObjC(asset: self)
-    }
 }
 
 
 public func ==(lhs: SearchUserAsset, rhs: SearchUserAsset) -> Bool {
     switch (lhs, rhs) {
     case (.none, .none): return true
-    case (.legacyId(let leftId), .legacyId(let rightId)): return leftId == rightId
     case (.assetKey(let leftKey), .assetKey(let rightKey)): return leftKey == rightKey
     default: return false
-    }
-}
-
-
-@objcMembers public class SearchUserAssetObjC: NSObject {
-    public let internalAsset: SearchUserAsset
-
-    @objc public var legacyID: UUID? {
-        get {
-            switch internalAsset {
-            case .legacyId(let id): return id
-            default: return nil
-            }
-        }
-    }
-
-    @objc public var assetKey: String? {
-        get {
-            switch internalAsset {
-            case .assetKey(let key): return key
-            default: return nil
-            }
-        }
-    }
-
-    public init(legacyId: UUID) {
-        internalAsset = .legacyId(legacyId)
-    }
-
-    public init(assetKey: String) {
-        internalAsset = .assetKey(assetKey)
-    }
-
-    fileprivate init?(asset: SearchUserAsset) {
-        if .none == asset { return nil }
-        internalAsset = asset
     }
 }

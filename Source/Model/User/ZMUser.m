@@ -57,18 +57,8 @@ static NSString *const ConnectionKey = @"connection";
 static NSString *const EmailAddressKey = @"emailAddress";
 static NSString *const PhoneNumberKey = @"phoneNumber";
 static NSString *const LastServerSyncedActiveConversationsKey = @"lastServerSyncedActiveConversations";
-static NSString *const LocalMediumRemoteIdentifierDataKey = @"localMediumRemoteIdentifier_data";
-static NSString *const LocalMediumRemoteIdentifierKey = @"localMediumRemoteIdentifier";
-static NSString *const LocalSmallProfileRemoteIdentifierKey = @"localSmallProfileRemoteIdentifier";
-static NSString *const LocalSmallProfileRemoteIdentifierDataKey = @"localSmallProfileRemoteIdentifier_data";
-static NSString *const MediumRemoteIdentifierDataKey = @"mediumRemoteIdentifier_data";
-static NSString *const MediumRemoteIdentifierKey = @"mediumRemoteIdentifier";
-static NSString *const SmallProfileRemoteIdentifierDataKey = @"smallProfileRemoteIdentifier_data";
-static NSString *const SmallProfileRemoteIdentifierKey = @"smallProfileRemoteIdentifier";
 static NSString *const NameKey = @"name";
 static NSString *const HandleKey = @"handle";
-static NSString *const ImageMediumDataKey = @"imageMediumData";
-static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 static NSString *const SystemMessagesKey = @"systemMessages";
 static NSString *const isAccountDeletedKey = @"isAccountDeleted";
 static NSString *const ShowingUserAddedKey = @"showingUserAdded";
@@ -148,8 +138,6 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic) ZMAccentColor accentColorValue;
 @property (nonatomic, copy) NSString *emailAddress;
-@property (nonatomic, copy) NSData *imageMediumData;
-@property (nonatomic, copy) NSData *imageSmallProfileData;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
 @property (nullable, nonatomic) NSString *managedBy;
@@ -196,8 +184,6 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 
 @dynamic accentColorValue;
 @dynamic emailAddress;
-@dynamic imageMediumData;
-@dynamic imageSmallProfileData;
 @dynamic name;
 @dynamic normalizedEmailAddress;
 @dynamic normalizedName;
@@ -223,41 +209,19 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
     return [self imageDataforSize:ProfileImageSizeComplete];
 }
 
-- (void)setImageMediumData:(NSData *)imageMediumData
-{
-    [self setImageData:imageMediumData size:ProfileImageSizeComplete];
-}
-
 - (NSData *)imageSmallProfileData
 {
     return [self imageDataforSize:ProfileImageSizePreview];
 }
 
-- (void)setImageSmallProfileData:(NSData *)imageSmallProfileData
-{
-    [self setImageData:imageSmallProfileData size:ProfileImageSizePreview];
-}
-
 - (NSString *)smallProfileImageCacheKey
 {
-    return [self imageCacheKeyFor:ProfileImageSizePreview] ?: [self legacyImageCacheKeyFor:ProfileImageSizePreview];
+    return [self imageCacheKeyFor:ProfileImageSizePreview];
 }
 
 - (NSString *)mediumProfileImageCacheKey
 {
-    return [self imageCacheKeyFor:ProfileImageSizeComplete] ?: [self legacyImageCacheKeyFor:ProfileImageSizeComplete];
-}
-
-- (NSString *)imageMediumIdentifier;
-{
-    NSUUID *uuid = self.localMediumRemoteIdentifier;
-    return uuid.UUIDString ?: @"";
-}
-
-- (NSString *)imageSmallProfileIdentifier;
-{
-    NSUUID *uuid = self.localSmallProfileRemoteIdentifier;
-    return uuid.UUIDString ?: @"";
+    return [self imageCacheKeyFor:ProfileImageSizeComplete];
 }
 
 - (BOOL) managedByWire {
@@ -417,8 +381,6 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
                                            ConnectionKey,
                                            ConversationsCreatedKey,
                                            LastServerSyncedActiveConversationsKey,
-                                           LocalMediumRemoteIdentifierDataKey,
-                                           LocalSmallProfileRemoteIdentifierDataKey,
                                            NormalizedEmailAddressKey,
                                            SystemMessagesKey,
                                            UserClientsKey,
@@ -620,14 +582,8 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
         self.expiresAt = expiryDate;
     }
     
-    BOOL hasLocalModificationsForLegacyImages = [self hasLocalModificationsForKeys:[NSSet setWithArray:@[ImageMediumDataKey, ImageSmallProfileDataKey, SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey]]];
-    NSArray *picture = [transportData optionalArrayForKey:@"picture"];
-    if ((picture != nil || authoritative) && !hasLocalModificationsForLegacyImages) {
-        [self updateImageWithTransportData:picture];
-    }
-    
     NSArray *assets = [transportData optionalArrayForKey:@"assets"];
-    [self updateAssetDataWith:assets hasLegacyImages:(picture.count > 0 || hasLocalModificationsForLegacyImages) authoritative:authoritative];
+    [self updateAssetDataWith:assets authoritative:authoritative];
     
     // We intentionally ignore the preview data.
     //
@@ -652,54 +608,16 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
     }
 }
 
-- (void)updateImageWithTransportData:(NSArray *)transportData;
-{
-    if (transportData.count == 0) {
-        self.mediumRemoteIdentifier = nil;
-        self.smallProfileRemoteIdentifier = nil;
-        self.imageMediumData = nil;
-        self.imageSmallProfileData = nil;
-        return;
-    }
-    
-    for (NSDictionary *picture in transportData) {
-        if (! [picture isKindOfClass:[NSDictionary class]]) {
-            ZMLogError(@"Invalid picture data in user info.");
-            continue;
-        }
-        NSDictionary *info = [picture dictionaryForKey:@"info"];
-        if ([[info stringForKey:@"tag"] isEqualToString:@"medium"]) {
-            self.mediumRemoteIdentifier = [picture uuidForKey:@"id"];
-        }
-        else if ([[info stringForKey:@"tag"] isEqualToString:@"smallProfile"]) {
-            self.smallProfileRemoteIdentifier = [picture uuidForKey:@"id"];
-        }
-    }
-}
-
-- (NSDictionary *)pictureDataWithTag:(NSString *)tag inTransportData:(NSDictionary *)transportData
-{
-    NSArray *pictures = [transportData optionalArrayForKey:@"picture"];
-    if (pictures == nil) {
-        return nil;
-    }
-    for (NSDictionary *pictureData in [pictures asDictionaries]) {
-        if ([[[pictureData dictionaryForKey:@"info"] stringForKey:@"tag"] isEqualToString:tag]) {
-            return pictureData;
-        }
-    }
-    return nil;
-}
-
 + (NSPredicate *)predicateForObjectsThatNeedToBeUpdatedUpstream;
 {
     NSPredicate *basePredicate = [super predicateForObjectsThatNeedToBeUpdatedUpstream];
     NSPredicate *needsToBeUpdated = [NSPredicate predicateWithFormat:@"needsToBeUpdatedFromBackend == 0"];
-    NSPredicate *nilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K == nil && %K == nil", SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
-    NSPredicate *notNilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K != nil && %K != nil", SmallProfileRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
-    NSPredicate *assetV3RemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K != nil && %K != nil", ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey];
-
-    NSPredicate *remoteIdentifiers = [NSCompoundPredicate orPredicateWithSubpredicates:@[nilRemoteIdentifiers, notNilRemoteIdentifiers, assetV3RemoteIdentifiers]];
+    NSPredicate *nilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K == nil && %K == nil", ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey];
+    NSPredicate *notNilRemoteIdentifiers = [NSPredicate predicateWithFormat:@"%K != nil && %K != nil", ZMUser.previewProfileAssetIdentifierKey, ZMUser.completeProfileAssetIdentifierKey];
+    
+    // We don't want update the user when when we are in processing of updating profile images (only have one of the identifiers)
+    NSPredicate *remoteIdentifiers = [NSCompoundPredicate orPredicateWithSubpredicates:@[nilRemoteIdentifiers, notNilRemoteIdentifiers]];
+    
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[basePredicate, needsToBeUpdated, remoteIdentifiers]];
 }
 
@@ -1045,56 +963,6 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 
 @implementation ZMUser (ImageData)
 
-- (NSUUID *)mediumRemoteIdentifier;
-{
-    return [self transientUUIDForKey:@"mediumRemoteIdentifier"];
-}
-
-- (void)setMediumRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"mediumRemoteIdentifier"];
-}
-
-- (NSUUID *)smallProfileRemoteIdentifier;
-{
-    return [self transientUUIDForKey:@"smallProfileRemoteIdentifier"];
-}
-
-- (void)setSmallProfileRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"smallProfileRemoteIdentifier"];
-}
-
-- (NSUUID *)localMediumRemoteIdentifier;
-{
-    return [self transientUUIDForKey:@"localMediumRemoteIdentifier"];
-}
-
-- (void)setLocalMediumRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"localMediumRemoteIdentifier"];
-}
-
-- (NSUUID *)localSmallProfileRemoteIdentifier;
-{
-    return [self transientUUIDForKey:@"localSmallProfileRemoteIdentifier"];
-}
-
-- (void)setLocalSmallProfileRemoteIdentifier:(NSUUID *)remoteIdentifier;
-{
-    [self setTransientUUID:remoteIdentifier forKey:@"localSmallProfileRemoteIdentifier"];
-}
-
-+ (NSPredicate *)predicateForMediumImageNeedingToBeUpdatedFromBackend;
-{
-    return [NSPredicate predicateWithFormat:@"(%K != nil) && (%K == nil)", MediumRemoteIdentifierDataKey, ZMUser.completeProfileAssetIdentifierKey];
-}
-
-+ (NSPredicate *)predicateForSmallImageNeedingToBeUpdatedFromBackend;
-{
-    return [NSPredicate predicateWithFormat:@"(%K != nil) && (%K == nil)", SmallProfileRemoteIdentifierDataKey, ZMUser.previewProfileAssetIdentifierKey];
-}
-
 + (NSPredicate *)predicateForUsersOtherThanSelf
 {
     return [NSPredicate predicateWithFormat:@"isSelfUser != YES"];
@@ -1103,30 +971,6 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 + (NSPredicate *)predicateForSelfUser
 {
     return [NSPredicate predicateWithFormat:@"isSelfUser == YES"];
-}
-
-+ (NSPredicate *)predicateForMediumImageDownloadFilter
-{
-    NSPredicate *localIdIsOld = [NSPredicate predicateWithFormat:@"%K != %K", LocalMediumRemoteIdentifierDataKey, MediumRemoteIdentifierDataKey];
-    NSPredicate *selfLocalIdIsOld = [NSCompoundPredicate andPredicateWithSubpredicates:@[[self predicateForSelfUser], localIdIsOld]];
-    NSPredicate *imageNotInCache = [NSPredicate predicateWithBlock:^BOOL(ZMUser * _Nonnull user, NSDictionary<NSString *,id> * _Nullable bindings) {
-        NOT_USED(bindings);
-        return ! user.isSelfUser && user.imageMediumData == nil;
-    }];
-    
-    return [NSCompoundPredicate orPredicateWithSubpredicates:@[selfLocalIdIsOld, imageNotInCache]];
-}
-+ (NSPredicate *)predicateForSmallImageDownloadFilter
-{
-    NSPredicate *localIdIsOld = [NSPredicate predicateWithFormat:@"%K != %K", LocalSmallProfileRemoteIdentifierDataKey,
-                                 SmallProfileRemoteIdentifierDataKey];
-    NSPredicate *selfLocalIdIsOld = [NSCompoundPredicate andPredicateWithSubpredicates:@[[self predicateForSelfUser], localIdIsOld]];
-    NSPredicate *imageNotInCache = [NSPredicate predicateWithBlock:^BOOL(ZMUser * _Nonnull user, NSDictionary<NSString *,id> * _Nullable bindings) {
-        NOT_USED(bindings);
-        return ! user.isSelfUser && user.imageSmallProfileData == nil;
-    }];
-    
-    return [NSCompoundPredicate orPredicateWithSubpredicates:@[selfLocalIdIsOld, imageNotInCache]];
 }
 
 @end

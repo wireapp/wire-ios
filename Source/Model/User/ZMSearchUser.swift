@@ -49,16 +49,14 @@ fileprivate enum AssetType: String {
     case image
 }
 
-/// Either we have assetKeys (Strings) or old style legacy UUIDs.
-public enum SearchUserAssetKeys {
-    case asset(preview: String?, complete: String?)
-    case legacy(small: UUID?, medium: UUID?)
+public struct SearchUserAssetKeys {
     
+    public let preview: String?
+    public let complete: String?
+        
     init?(payload: [String: Any]) {
-        // V3
         if let assetsPayload = payload[ResponseKey.assets.rawValue] as? [[String : Any]], assetsPayload.count > 0 {
-            var smallKey: String?, completeKey: String?
-            
+            var previewKey: String?, completeKey: String?
             
             for asset in assetsPayload {
                 guard let size = (asset[ResponseKey.assetSize.rawValue] as? String).flatMap(AssetSize.init),
@@ -67,33 +65,14 @@ public enum SearchUserAssetKeys {
                     type == .image else { continue }
                 
                 switch size {
-                case .preview: smallKey = key
+                case .preview: previewKey = key
                 case .complete: completeKey = key
                 }
             }
             
-            if nil != smallKey || nil != completeKey {
-                self = .asset(preview: smallKey, complete: completeKey)
-                return
-            }
-        }
-            // Legacy
-        else if let pictures = payload[ResponseKey.pictures.rawValue] as? [[String : Any]] {
-            var smallId: UUID?, mediumId: UUID?
-            
-            for pictureData in pictures {
-                guard let info = (pictureData[ResponseKey.pictureInfo.rawValue] as? [String : Any]),
-                    let tag = (info[ResponseKey.pictureTag.rawValue] as? String).flatMap(ImageTag.init),
-                    let uuid = (pictureData[ResponseKey.id.rawValue] as? String).flatMap(UUID.init) else { continue }
-                
-                switch tag {
-                case .smallProfile: smallId = uuid
-                case .medium: mediumId = uuid
-                }
-            }
-            
-            if smallId != nil || mediumId != nil {
-                self = .legacy(small: smallId, medium: mediumId)
+            if nil != previewKey || nil != completeKey {
+                preview = previewKey
+                complete = completeKey
                 return
             }
         }
