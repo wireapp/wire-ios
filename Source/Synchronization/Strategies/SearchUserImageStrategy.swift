@@ -116,16 +116,9 @@ public class SearchUserImageStrategy : AbstractRequestStrategy {
         return nil
     }
     
-    func request(for asset: SearchUserAssetKeys, size: ProfileImageSize, user: UUID) -> ZMTransportRequest? {
-        switch asset {
-        case .asset(preview: let previewKey, complete: let completeKey):
-            if let key = size == .preview ? previewKey : completeKey {
-                return UserImageStrategy.requestForFetchingV3Asset(with: key)
-            }
-        case .legacy(small: let previewUUID, medium: let completeUUID):
-            if let uuid = size == .preview ? previewUUID : completeUUID {
-                return UserImageStrategy.requestForFetchingAsset(with: uuid, forUserWith: user)
-            }
+    func request(for assetKeys: SearchUserAssetKeys, size: ProfileImageSize, user: UUID) -> ZMTransportRequest? {
+        if let key = size == .preview ? assetKeys.preview : assetKeys.complete {
+            return ZMTransportRequest(getFromPath: "/assets/v3/\(key)")
         }
         return nil
     }
