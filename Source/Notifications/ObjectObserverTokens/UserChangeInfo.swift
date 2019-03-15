@@ -33,6 +33,8 @@ extension ZMUser : ObjectInSnapshot {
             #keyPath(ZMUser.accentColorValue),
             #keyPath(ZMUser.imageMediumData),
             #keyPath(ZMUser.imageSmallProfileData),
+            #keyPath(ZMUser.previewProfileAssetIdentifier),
+            #keyPath(ZMUser.completeProfileAssetIdentifier),
             #keyPath(ZMUser.emailAddress),
             #keyPath(ZMUser.phoneNumber),
             #keyPath(ZMUser.canBeConnected),
@@ -96,11 +98,11 @@ extension ZMUser : ObjectInSnapshot {
     }
 
     open var imageMediumDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserType.completeImageData))
+        return changedKeysContain(keys: #keyPath(UserType.completeImageData), #keyPath(ZMUser.completeProfileAssetIdentifier))
     }
 
     open var imageSmallProfileDataChanged : Bool {
-        return changedKeysContain(keys: #keyPath(UserType.previewImageData))
+        return changedKeysContain(keys: #keyPath(UserType.previewImageData), #keyPath(ZMUser.previewProfileAssetIdentifier))
     }
 
     open var profileInformationChanged : Bool {
