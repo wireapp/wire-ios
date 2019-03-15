@@ -53,10 +53,10 @@ public class ZMSLogEntry: NSObject {
 
     /// Tag to use for this logging facility
     fileprivate let tag: String
-    
+
     /// FileHandle instance used for updating the log
     fileprivate static var updatingHandle: FileHandle?
-    
+
     /// Log observers
     fileprivate static var logHooks : [UUID : LogEntryHook] = [:]
     
@@ -222,18 +222,18 @@ extension ZMSLog {
 extension ZMSLog {
     
     @objc static public var previousLog: Data? {
-        guard let previousLogPath = previousLogPath?.path else { return nil }
+        guard let previousLogPath = self.previousLogPath else { return nil }
         return readFile(at: previousLogPath)
     }
     
     @objc static public var currentLog: Data? {
-        guard let currentLogPath = currentLogPath?.path else { return nil }
+        guard let currentLogPath = self.currentLogPath else { return nil }
         return readFile(at: currentLogPath)
     }
-    
-    static private func readFile(at path: String) -> Data? {
-        let handle = FileHandle(forReadingAtPath: path)
-        return handle?.readDataToEndOfFile()
+
+    static private func readFile(at url: URL) -> Data? {
+        guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+        return handle.readDataToEndOfFile()
     }
     
     @objc static public var previousLogPath: URL? {
@@ -279,31 +279,37 @@ extension ZMSLog {
         }
         return paths
     }
-    
+
     static private func closeHandle() {
         updatingHandle?.closeFile()
         updatingHandle = nil
     }
-    
+
     static public func appendToCurrentLog(_ string: String) {
-        guard let currentLogPath = currentLogPath?.path,
-            let data = string.data(using: .utf8) else { return }
-        
+        guard let currentLogURL = self.currentLogPath else { return }
+        let currentLogPath = currentLogURL.path
+
         logQueue.async {
-            
+
             let manager = FileManager.default
-            
+
             if !manager.fileExists(atPath: currentLogPath) {
                 manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
             }
-            
+
             if updatingHandle == nil {
                 updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
                 updatingHandle?.seekToEndOfFile()
             }
-            
-            updatingHandle?.write(data)
-            updatingHandle?.synchronizeFile()
+
+            let data = Data(string.utf8)
+
+            do {
+                try updatingHandle?.wr_write(data)
+                try updatingHandle?.wr_synchronizeFile()
+            } catch {
+                updatingHandle = nil
+            }
         }
     }
 }

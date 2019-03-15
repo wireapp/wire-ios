@@ -40,6 +40,8 @@
 		54FF9F121C48F67300B29ACE /* ZMSTimePoint.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */; };
 		54FF9F141C4906C700B29ACE /* ZMTimePointTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */; };
 		54FF9F161C4914D100B29ACE /* ZMSTestDetectionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */; };
+		5E8AA201223BC8CE005F5E07 /* NSFileHandle+SafeOperations.h in Headers */ = {isa = PBXBuildFile; fileRef = 5E8AA1FF223BC8CE005F5E07 /* NSFileHandle+SafeOperations.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5E8AA202223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m in Sources */ = {isa = PBXBuildFile; fileRef = 5E8AA200223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m */; };
 		8701221620F64171001E6342 /* Cache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221520F64171001E6342 /* Cache.swift */; };
 		8701221920F641BE001E6342 /* CacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8701221720F641A4001E6342 /* CacheTests.swift */; };
 		D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */ = {isa = PBXBuildFile; fileRef = D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */; };
@@ -104,6 +106,8 @@
 		54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTimePoint.m; sourceTree = "<group>"; };
 		54FF9F131C4906C700B29ACE /* ZMTimePointTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimePointTests.m; sourceTree = "<group>"; };
 		54FF9F151C4914D100B29ACE /* ZMSTestDetectionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMSTestDetectionTests.m; sourceTree = "<group>"; };
+		5E8AA1FF223BC8CE005F5E07 /* NSFileHandle+SafeOperations.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSFileHandle+SafeOperations.h"; sourceTree = "<group>"; };
+		5E8AA200223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "NSFileHandle+SafeOperations.m"; sourceTree = "<group>"; };
 		8701221520F64171001E6342 /* Cache.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Cache.swift; sourceTree = "<group>"; };
 		8701221720F641A4001E6342 /* CacheTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CacheTests.swift; sourceTree = "<group>"; };
 		D59F3A1A206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DispatchQueue+ZMSDispatchGroup.swift"; sourceTree = "<group>"; };
@@ -191,6 +195,8 @@
 				54FF9F101C48F67300B29ACE /* ZMSTimePoint.m */,
 				16962EDB20221F970069D88D /* ZMSLogNotifications.h */,
 				16962EDC20221F970069D88D /* ZMSLogNotifications.m */,
+				5E8AA1FF223BC8CE005F5E07 /* NSFileHandle+SafeOperations.h */,
+				5E8AA200223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -246,6 +252,7 @@
 				5473E7CA1B31A95A00C6A937 /* WireSystem.h in Headers */,
 				16962EDD20221F970069D88D /* ZMSLogNotifications.h in Headers */,
 				54F9BC4D1C48F55900BC09DB /* ZMSTestDetection.h in Headers */,
+				5E8AA201223BC8CE005F5E07 /* NSFileHandle+SafeOperations.h in Headers */,
 				54180BD81F459DCF0020D2BD /* MemoryReferenceDebugger.h in Headers */,
 				54F249C81BB9242900040600 /* ZMSDispatchGroup.h in Headers */,
 				54F5148C1B7377CA00FACDAA /* ZMSGroupQueue.h in Headers */,
@@ -384,6 +391,7 @@
 				54D5736A1DBFBAFA00D6C2C4 /* ZMSLog+Recording.swift in Sources */,
 				5442AB7F1CA29CC000BC099C /* ZMSAsserts.swift in Sources */,
 				D59F3A1B206A448F0023474F /* DispatchQueue+ZMSDispatchGroup.swift in Sources */,
+				5E8AA202223BC8CE005F5E07 /* NSFileHandle+SafeOperations.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
