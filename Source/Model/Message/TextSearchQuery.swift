@@ -128,7 +128,7 @@ private let zmLog = ZMSLog(tag: "text search")
 
 /// This class should be used to perform a text search for messages in a conversation.
 /// Each instance can only be used to perform a search once. A running instance can be cancelled.
-@objcMembers public class TextSearchQuery: NSObject {
+public class TextSearchQuery: NSObject {
 
     private let uiMOC: NSManagedObjectContext
     private let syncMOC: NSManagedObjectContext
@@ -153,6 +153,10 @@ private let zmLog = ZMSLog(tag: "text search")
     private var indexedMessageCount = 0
     private var notIndexedMessageCount = 0
 
+    public class func isValid(query: String) -> Bool {
+        return !query.isEmpty
+    }
+
     /// Creates a new `TextSearchQuery` object.
     /// - parameter conversation: The conversation in which the search should be performed. Needs to belong to the UI context.
     /// - parameter query: The query string which will be searched for in the messages of the conversation.
@@ -165,7 +169,7 @@ private let zmLog = ZMSLog(tag: "text search")
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
         ) {
 
-        guard query.count > 1 else { return nil }
+        guard TextSearchQuery.isValid(query: query) else { return nil }
         guard let uiMOC = conversation.managedObjectContext, let syncMOC = uiMOC.zm_sync else {
             fatal("NSManagedObjectContexts not accessible.")
         }
@@ -179,7 +183,7 @@ private let zmLog = ZMSLog(tag: "text search")
         self.conversation = conversation
         self.conversationRemoteIdentifier = conversation.remoteIdentifier!
         self.originalQuery = query
-        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter { $0.count > 1 }
+        self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter(TextSearchQuery.isValid)
         self.delegate = delegate
         self.fetchConfiguration = configuration
     }
