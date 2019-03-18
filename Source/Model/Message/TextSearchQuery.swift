@@ -154,7 +154,7 @@ public class TextSearchQuery: NSObject {
     private var notIndexedMessageCount = 0
 
     public class func isValid(query: String) -> Bool {
-        return !query.isEmpty
+        return query.count >= 2
     }
 
     /// Creates a new `TextSearchQuery` object.

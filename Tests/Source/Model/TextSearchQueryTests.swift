@@ -358,18 +358,18 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         verifyThatItFindsMessage(withText: "This is a test message", whenSearchingFor: "this conversation", shouldFind: false)
     }
 
-    func testThatItDoesNotCreateASearchQueryWithQuerySmallerThanOneCharacters() {
+    func testThatItDoesNotCreateASearchQueryWithQuerySmallerThanTwoCharacters() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
 
         // Then
         XCTAssertNil(TextSearchQuery(conversation: conversation, query: "", delegate: MockTextSearchQueryDelegate()))
-        XCTAssertNotNil(TextSearchQuery(conversation: conversation, query: "a", delegate: MockTextSearchQueryDelegate()))
+        XCTAssertNil(TextSearchQuery(conversation: conversation, query: "a", delegate: MockTextSearchQueryDelegate()))
         XCTAssertNotNil(TextSearchQuery(conversation: conversation, query: "ab", delegate: MockTextSearchQueryDelegate()))
     }
 
-    func testThatItReturnsResultsWithOnlyOneCharacterSearchTerms() {
+    func testThatItDoesNotReturnsAnyResultsWithOnlyOneCharacterSearchTerms() {
         // Given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = .create()
@@ -390,7 +390,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         let result = delegate.fetchedResults.first!
         XCTAssertFalse(result.hasMore)
 
-        XCTAssertFalse(result.matches.isEmpty, "Expected to find a match")
+        XCTAssertTrue(result.matches.isEmpty, "Expected to not find a match")
     }
 
     func testThatItUpdatesTheNormalizedTextWhenEditingAMessage() {
