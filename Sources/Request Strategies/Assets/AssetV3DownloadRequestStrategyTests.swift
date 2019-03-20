@@ -351,30 +351,32 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
 
-    func testThatItSendsTheNotificationIfSuccessfulDownloadAndDecryption_V3() {
-        
-        // EXPECT
-        var token: Any? = nil
-        let expectation = self.expectation(description: "Notification fired")
-        token = NotificationInContext.addObserver(name: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName,
-                                                  context: self.uiMOC.notificationContext,
-                                                  object: nil)
-        { note in
-            XCTAssertNotNil(note.userInfo[AssetDownloadRequestStrategyNotification.downloadStartTimestampKey] as? Date)
-            expectation.fulfill()
-        }
+    func testThatItSendsNonCoreDataChangeNotification_AfterSuccessfullyDownloadingAsset() {
         
         // GIVEN
         let plainTextData = Data.secureRandomData(length: 500)
         let key = Data.randomEncryptionKey()
         let encryptedData = plainTextData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
+        var message: ZMAssetClientMessage!
         
         self.syncMOC.performGroupedBlockAndWait {
-            let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!
+            message = self.createFileMessageWithAssetId(in: self.conversation, otrKey: key, sha: sha)!.message
             message.requestFileDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // EXPECT
+        var token: Any? = nil
+        let expectation = self.expectation(description: "Notification fired")
+        token = NotificationInContext.addObserver(name: .NonCoreDataChangeInManagedObject,
+                                                  context: self.uiMOC.notificationContext,
+                                                  object: nil)
+        { note in
+            
+            XCTAssertEqual(note.changedKeys, [#keyPath(ZMAssetClientMessage.hasDownloadedFile)])
+            expectation.fulfill()
+        }
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
@@ -529,41 +531,6 @@ extension AssetV3DownloadRequestStrategyTests {
         }
     }
     
-    func testThatItSendsTheNotificationIfCannotDownload_V3() {
-        // EXPECT
-        var token: Any? = nil
-        let expectation = self.expectation(description: "Notification fired")
-        token = NotificationInContext.addObserver(name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName,
-                                                  context: self.uiMOC.notificationContext,
-                                                  object: nil)
-        { note in
-            XCTAssertNotNil(note.userInfo[AssetDownloadRequestStrategyNotification.downloadStartTimestampKey] as? Date)
-            expectation.fulfill()
-        }
-        
-        self.syncMOC.performGroupedBlockAndWait {
-            // GIVEN
-            let (message, _, _) = self.createFileMessageWithAssetId(in: self.conversation)!
-            message.requestFileDownload()
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.nextRequest() else { return XCTFail("No message")}
-            
-            request.markStartOfUploadTimestamp()
-            let response = ZMTransportResponse(payload: [] as ZMTransportData, httpStatus: 404, transportSessionError: .none)
-            
-            // WHEN
-            request.complete(with: response)
-        }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // THEN
-        withExtendedLifetime(token) { () -> () in
-            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-        }
-    }
 }
 
 // MARK : - Download Cancellation
