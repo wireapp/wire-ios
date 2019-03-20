@@ -20,12 +20,6 @@
 import WireImages
 import WireTransport
 
-public struct AssetDownloadRequestStrategyNotification {
-    public static let downloadFinishedNotificationName = Notification.Name("AssetDownloadRequestStrategyDownloadFinishedNotificationName")
-    public static let downloadStartTimestampKey = "downloadRequestStartTimestamp"
-    public static let downloadFailedNotificationName = Notification.Name("AssetDownloadRequestStrategyDownloadFailedNotificationName")
-}
-
 @objcMembers public final class AssetV2DownloadRequestStrategy: AbstractRequestStrategy, ZMDownstreamTranscoder, ZMContextChangeTrackerSource {
     
     fileprivate var assetDownstreamObjectSync: ZMDownstreamObjectSyncWithWhitelist!
@@ -120,28 +114,13 @@ public struct AssetDownloadRequestStrategyNotification {
                 encryptionKey: asset.uploaded.otrKey,
                 sha256Digest: asset.uploaded.sha256
             )
-        }
-        
-        let messageObjectId = assetClientMessage.objectID
-        let uiManagedObjectContext = self.managedObjectContext.zm_userInterface
-        self.managedObjectContext.saveOrRollback() // I have to force this, or message could not have been merged to UI context when I call the next block
-        uiManagedObjectContext?.performGroupedBlock({ () -> Void in
-            let uiMessage = (try? uiManagedObjectContext!.existingObject(with: messageObjectId)) as? ZMAssetClientMessage
             
-            let userInfo: [String: Any] = [AssetDownloadRequestStrategyNotification.downloadStartTimestampKey: response.startOfUploadTimestamp ?? Date()]
             if downloadSuccess {
-                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFinishedNotificationName,
-                                      context: self.managedObjectContext.notificationContext,
-                                      object: uiMessage,
-                                      userInfo: userInfo).post()
+                NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
+                                                                changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
+                                                                uiContext: self.managedObjectContext.zm_userInterface!)
             }
-            else {
-                NotificationInContext(name: AssetDownloadRequestStrategyNotification.downloadFailedNotificationName,
-                                      context: self.managedObjectContext.notificationContext,
-                                      object: uiMessage,
-                                      userInfo: userInfo).post()
-            }
-        })
+        }
     }
     
     // MARK: - ZMContextChangeTrackerSource
