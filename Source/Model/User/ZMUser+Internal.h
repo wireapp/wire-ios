@@ -56,7 +56,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 + (nullable instancetype)userWithEmailAddress:(nonnull NSString *)emailAddress inContext:(nonnull NSManagedObjectContext *)context;
 + (nullable instancetype)userWithPhoneNumber:(nonnull NSString *)phoneNumber inContext:(nonnull NSManagedObjectContext *)context;
 
-+ (nonnull NSOrderedSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSOrderedSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
++ (nonnull NSSet <ZMUser *> *)usersWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
 + (ZMAccentColor)accentColorFromPayloadValue:(nullable NSNumber *)payloadValue;
 

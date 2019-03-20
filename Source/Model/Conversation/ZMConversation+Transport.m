@@ -137,32 +137,40 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 - (void)updateMembersWithPayload:(NSDictionary *)members
 {
     NSArray *usersInfos = [members arrayForKey:ConversationInfoOthersKey];
-    NSMutableOrderedSet<ZMUser *> *users = [NSMutableOrderedSet orderedSet];
-    NSMutableOrderedSet<ZMUser *> *lastSyncedUsers = [NSMutableOrderedSet orderedSet];
+    NSSet<ZMUser *> *lastSyncedUsers = [NSSet set];
     
     if (self.mutableLastServerSyncedActiveParticipants != nil) {
-        lastSyncedUsers = self.mutableLastServerSyncedActiveParticipants;
+        lastSyncedUsers = self.mutableLastServerSyncedActiveParticipants.set;
     }
     
-    for (NSDictionary *userDict in [usersInfos asDictionaries]) {
+    NSSet<NSUUID *> *participantUUIDs = [NSSet setWithArray:[usersInfos.asDictionaries mapWithBlock:^id(NSDictionary *userDict) {
+        return [userDict uuidForKey:ConversationInfoIDKey];
+    }]];
+    
+    NSMutableSet<ZMUser *> *participants = [[ZMUser usersWithRemoteIDs:participantUUIDs inContext:self.managedObjectContext] mutableCopy];
+    
+    if (participants.count != participantUUIDs.count) {
         
-        NSUUID *userId = [userDict uuidForKey:ConversationInfoIDKey];
-        if (userId == nil) {
-            continue;
+        // All users didn't exist so we need create the missing users
+        
+        NSSet<NSUUID *> *fetchedUUIDs = [NSSet setWithArray:[participants.allObjects mapWithBlock:^id(ZMUser *user) { return user.remoteIdentifier; }]];
+        NSMutableSet<NSUUID *> *missingUUIDs = [participantUUIDs mutableCopy];
+        [missingUUIDs minusSet:fetchedUUIDs];
+                
+        for (NSUUID *userId in missingUUIDs) {
+            [participants addObject:[ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext]];
         }
-        
-        [users addObject:[ZMUser userWithRemoteID:userId createIfNeeded:YES inContext:self.managedObjectContext]];
     }
     
-    NSMutableOrderedSet<ZMUser *> *addedUsers = [users mutableCopy];
-    [addedUsers minusOrderedSet:lastSyncedUsers];
-    NSMutableOrderedSet<ZMUser *> *removedUsers = [lastSyncedUsers mutableCopy];
-    [removedUsers minusOrderedSet:users];
+    NSMutableSet<ZMUser *> *addedParticipants = [participants mutableCopy];
+    [addedParticipants minusSet:lastSyncedUsers];
+    NSMutableSet<ZMUser *> *removedParticipants = [lastSyncedUsers mutableCopy];
+    [removedParticipants minusSet:participants];
     
-    ZMLogDebug(@"updateMembersWithPayload (%@) added = %lu removed = %lu", self.remoteIdentifier.transportString, (unsigned long)addedUsers.count, (unsigned long)removedUsers.count);
+    ZMLogDebug(@"updateMembersWithPayload (%@) added = %lu removed = %lu", self.remoteIdentifier.transportString, (unsigned long)addedParticipants.count, (unsigned long)removedParticipants.count);
     
-    [self internalAddParticipants:addedUsers.set];
-    [self internalRemoveParticipants:removedUsers.set sender:[ZMUser selfUserInContext:self.managedObjectContext]];
+    [self internalAddParticipants:addedParticipants];
+    [self internalRemoveParticipants:removedParticipants sender:[ZMUser selfUserInContext:self.managedObjectContext]];
 }
 
 - (void)updateTeamWithIdentifier:(NSUUID *)teamId

@@ -473,7 +473,7 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
     }
 }
 
-+ (NSOrderedSet <ZMUser *> *)usersWithRemoteIDs:(NSOrderedSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
++ (NSSet <ZMUser *> *)usersWithRemoteIDs:(NSSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
 {
     return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
 }
