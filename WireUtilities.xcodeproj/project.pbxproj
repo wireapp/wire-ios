@@ -91,6 +91,8 @@
 		5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */; };
 		5E4BC1C6218C830500A8682E /* String+Spaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1C5218C830500A8682E /* String+Spaces.swift */; };
 		5E7C6CC1214AA1A2004C30B5 /* AtomicIntegerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */; };
+		5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */; };
+		5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */; };
 		5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
 		870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */; };
@@ -328,6 +330,8 @@
 		5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPropertyTests.swift; sourceTree = "<group>"; };
 		5E4BC1C5218C830500A8682E /* String+Spaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Spaces.swift"; sourceTree = "<group>"; };
 		5E7C6CBF214AA197004C30B5 /* AtomicIntegerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AtomicIntegerTests.swift; sourceTree = "<group>"; };
+		5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Array+SafeIndex.swift"; sourceTree = "<group>"; };
+		5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArraySafeIndexTests.swift; sourceTree = "<group>"; };
 		5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAtomicInteger.h; sourceTree = "<group>"; };
 		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
 		870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Data+ZMSCrypto.swift"; sourceTree = "<group>"; };
@@ -562,6 +566,7 @@
 				16030DBF21AEA0FE00F8032E /* Array+PartitionByKeyPath.swift */,
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
 				16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */,
+				5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -764,6 +769,7 @@
 				16030DC121AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift */,
 				EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */,
 				16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */,
+				5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1022,6 +1028,7 @@
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				D504CD352090C2F800A78DAA /* Papply.swift in Sources */,
 				54CA313F1B74F36B00B820C0 /* UnownedObject.swift in Sources */,
+				5E9EA4C122423E0300D401B2 /* Array+SafeIndex.swift in Sources */,
 				3E88BE551B1F478200232589 /* ZMTimer.m in Sources */,
 				54181A501F594E4100155ABC /* FileManager+Move.swift in Sources */,
 				09F027CB1B721D7300BADDB6 /* NSUserDefaults+SharedUserDefaults.m in Sources */,
@@ -1109,6 +1116,7 @@
 				D504CD392090CCE400A78DAA /* CurryingTests.swift in Sources */,
 				163FB90C1F25EA0B00802AF4 /* DispatchGroupContextTests.swift in Sources */,
 				EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */,
+				5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */,
 				546E8A5C1B7503C6009EBA02 /* FunctionalTests.swift in Sources */,
 				09F027D01B721DA300BADDB6 /* NSUserDefaults+SharedUserDefaultsTests.m in Sources */,
 			);
