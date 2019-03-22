@@ -138,7 +138,7 @@ class OpenGraphDataTests: XCTestCase {
     func testThatItCreatesTheCorrectLinkPreview_YahooSports() {
         assertLinkPreviewMapping(ofOpenGraphData: OpenGraphMockDataProvider.yahooSports(), expectedClass: ArticleMetadata.self)
     }
-    
+
     func testThatItUsesTheGivenOriginalURLAndCharacterOffsetWhenCreatingALinkPreview() {
         // given
         let data = OpenGraphMockDataProvider.foursquareData().expected

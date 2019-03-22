@@ -356,6 +356,47 @@ class OpenGraphMockDataProvider: NSObject {
         )
     }
 
+    static func soundCloudTrack() -> OpenGraphMockData {
+        let expected = OpenGraphData(
+            title: "Bridgit Mendler - Atlantis feat. Kaiydo",
+            type: "music.song",
+            url: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo",
+            resolvedURL: "https://soundcloud.com/bridgitmendler/bridgit-mendler-atlantis-feat-kaiydo",
+            imageUrls: ["https://i1.sndcdn.com/artworks-000178472656-9nxuid-t500x500.jpg"],
+            siteName: "SoundCloud",
+            description: "\"Atlantis\" by Bridgit Mendler feat. @Kaiydo The official music video for \"Atlantis\" is out now! Watch here: http://smarturl.it/AtlantisMusicVideo"
+        )
+
+        return OpenGraphMockData(
+            head: fixtureWithName("soundcloud_track_head"),
+            expected: expected,
+            urlString: expected.url,
+            urlVersion: nil
+        )
+    }
+
+    static func soundCloudPlaylist() -> OpenGraphMockData {
+        let expected = OpenGraphData(
+            title: "Artists To Watch 2019",
+            type: "music.playlist",
+            url: "https://soundcloud.com/playback/sets/2019-artists-to-watch",
+            resolvedURL: "https://soundcloud.com/playback/sets/2019-artists-to-watch",
+            imageUrls: ["https://i1.sndcdn.com/artworks-000454250598-idv5gc-t500x500.jpg"],
+            siteName: "SoundCloud",
+            description: "Listen to Artists To Watch 2019 by Playback #np on #SoundCloud"
+        )
+
+        return OpenGraphMockData(
+            head: fixtureWithName("soundcloud_playlist_head"),
+            expected: expected,
+            urlString: expected.url,
+            urlVersion: nil
+        )
+    }
+
+
+
+
     // MARK: - Helper
     
     private static func fixtureWithName(_ name: String) -> String {

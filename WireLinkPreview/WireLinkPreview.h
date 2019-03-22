@@ -24,7 +24,3 @@ FOUNDATION_EXPORT double ZMCLinkPreviewVersionNumber;
 
 //! Project version string for ZMCLinkPreview.
 FOUNDATION_EXPORT const unsigned char ZMCLinkPreviewVersionString[];
-
-// In this header, you should import all the public headers of your framework using statements like #import <ZMCLinkPreview/PublicHeader.h>
-
-
