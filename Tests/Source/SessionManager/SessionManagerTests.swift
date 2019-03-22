@@ -1052,7 +1052,7 @@ extension SessionManagerTests {
     }
 }
 
-class MockSessionManagerURLHandlerDelegate: NSObject, SessionManagerURLHandlerDelegate  {
+final class MockSessionManagerURLHandlerDelegate: NSObject, SessionManagerURLHandlerDelegate  {
 
     var allowedAction: URLAction?
 
