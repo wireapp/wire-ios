@@ -65,6 +65,7 @@ extension ZMConversation {
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: managedObjectContext!)
         clientMessage.add(genericMessage.data())
         clientMessage.linkPreviewState = fetchLinkPreview ? .waitingToBeProcessed : .done
+        clientMessage.needsLinkAttachmentsUpdate = fetchLinkPreview
         clientMessage.quote = quotedMessage as? ZMMessage
         
         append(clientMessage, expires: true, hidden: false)

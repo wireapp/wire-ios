@@ -44,13 +44,17 @@ import WireLinkPreview
     }
     
     public var linkPreview: LinkMetadata? {
-        
         guard let linkPreview = self.firstZMLinkPreview else { return nil }
         if linkPreview.hasTweet() {
             return TwitterStatusMetadata(protocolBuffer: linkPreview)
         } else {
             return ArticleMetadata(protocolBuffer: linkPreview)
         }
+    }
+
+    /// Returns the first link attachment that we need to embed in the UI.
+    public var mainLinkAttachment: LinkAttachment? {
+        return linkAttachments?.first
     }
     
     var firstZMLinkPreview: ZMLinkPreview? {
@@ -141,7 +145,7 @@ extension ZMClientMessage: ZMImageOwner {
     @objc public var linkPreviewImageCacheKey: String? {
         return self.nonce?.uuidString
     }
-    
+
     @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
         guard format == .medium else { return }
         guard let linkPreview = self.firstZMLinkPreview else { return }
