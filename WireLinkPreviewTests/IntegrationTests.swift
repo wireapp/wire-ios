@@ -110,7 +110,19 @@ class IntegrationTests: XCTestCase {
         let mockData = OpenGraphMockDataProvider.yahooSports()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
-    
+
+    func testThatItParsesSampleSoundCloudTrackData() {
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.song", siteNameString: "SoundCloud", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let mockData = OpenGraphMockDataProvider.soundCloudTrack()
+        assertThatItCanParseSampleData(mockData, expected: expectation)
+    }
+
+    func testThatItParsesSampleSoundCloudSetData() {
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.playlist", siteNameString: "SoundCloud", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let mockData = OpenGraphMockDataProvider.soundCloudPlaylist()
+        assertThatItCanParseSampleData(mockData, expected: expectation)
+    }
+
     struct OpenGraphDataExpectation {
         let numberOfImages: Int
         let type: String?

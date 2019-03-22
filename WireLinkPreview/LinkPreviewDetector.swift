@@ -22,20 +22,19 @@ import WireUtilities
 
 public protocol LinkPreviewDetectorType {
     
-    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkMetadata]) -> Void)
+    func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void)
     
 }
 
 public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     
     private let blacklist = PreviewBlacklist()
-    private let linkDetector : NSDataDetector? = try? NSDataDetector(types: NSTextCheckingResult.CheckingType.link.rawValue)
+    private let linkDetector : NSDataDetector? = NSDataDetector.linkDetector
     private let previewDownloader: PreviewDownloaderType
     private let imageDownloader: ImageDownloaderType
     private let workerQueue: OperationQueue
     
     public typealias DetectCompletion = ([LinkMetadata]) -> Void
-    typealias URLWithRange = (URL: URL, range: NSRange)
     
     public convenience override init() {
         let workerQueue = OperationQueue()
@@ -52,28 +51,6 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
         self.imageDownloader = imageDownloader
         super.init()
     }
-    
-    func containsLink(inText text: String) -> Bool {
-        return !containedLinks(inText: text, excluding: []).isEmpty
-    }
-    
-    /// Return URLs found in text together with their range in within the text
-    /// parameter text: text in which to search for URLs
-    /// parameter excluding: ranges (UTF-16) within the text which should we excluded from the search.
-    func containedLinks(inText text: String, excluding: [Range<Int>] = []) -> [URLWithRange] {
-        
-        let wholeTextRange = Range<Int>(text.startIndex.encodedOffset...text.endIndex.encodedOffset)
-        let validRangeIndexSet = IndexSet(integersIn: wholeTextRange, excluding: excluding)
-        
-        let range = NSRange(location: 0, length: text.utf16.count)
-        guard let matches = linkDetector?.matches(in: text, options: [], range: range) else { return [] }
-        return matches.compactMap {
-            guard let url = $0.url,
-                  let range = Range<Int>($0.range),
-                  validRangeIndexSet.contains(integersIn: range) else { return nil }
-            return (url, $0.range)
-        }
-    }
 
     /**
      Downloads the link preview data, including their images, for links contained in the text.
@@ -89,11 +66,11 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      - parameter exluding:   Ranges in the text which should be skipped when searching for links.
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
-    public func downloadLinkPreviews(inText text: String, excluding: [Range<Int>] = [], completion : @escaping DetectCompletion) {
-        guard let (url, range) = containedLinks(inText: text, excluding: excluding).first, !blacklist.isBlacklisted(url) else { return completion([]) }
+    public func downloadLinkPreviews(inText text: String, excluding: [NSRange] = [], completion : @escaping DetectCompletion) {
+        guard let (url, range) = linkDetector?.detectLinksAndRanges(in: text, excluding: excluding).first, !blacklist.isBlacklisted(url) else { return completion([]) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
-            guard let `self` = self else { return }
-            let originalURLString = (text as NSString).substring(with: range)
+            guard let `self` = self, let substringRange = Range<String.Index>(range, in: text) else { return }
+            let originalURLString = String(text[substringRange])
             guard let data = openGraphData else { return completion([]) }
 
             let linkPreview = data.linkPreview(originalURLString, offset: range.location)

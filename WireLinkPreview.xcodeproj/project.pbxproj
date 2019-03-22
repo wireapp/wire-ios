@@ -20,6 +20,16 @@
 		5E2BEC59214BA4A600E65B53 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC57214BA4A600E65B53 /* Main.storyboard */; };
 		5E2BEC5B214BA4A700E65B53 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */; };
 		5E2BEC5E214BA4A700E65B53 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5E2BEC5C214BA4A700E65B53 /* LaunchScreen.storyboard */; };
+		5E9EA4B72241426A00D401B2 /* NSDataDetector+Links.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */; };
+		5E9EA4BD2241445F00D401B2 /* LinkAttachmentTypes.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */; };
+		5E9EA4BF22414FE100D401B2 /* LinkAttachmentDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4BE22414FE100D401B2 /* LinkAttachmentDetector.swift */; };
+		5E9EA4C62242503F00D401B2 /* NSDataDetector+LinkAttachments.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C52242503E00D401B2 /* NSDataDetector+LinkAttachments.swift */; };
+		5E9EA4C8224257C100D401B2 /* NSDataDetectorLinksTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C7224257C100D401B2 /* NSDataDetectorLinksTests.swift */; };
+		5E9EA4CA22425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C922425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift */; };
+		5E9EA4CC2242732F00D401B2 /* LinkAttachmentTypesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CB2242732F00D401B2 /* LinkAttachmentTypesTests.swift */; };
+		5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */; };
+		5E9EA4D022427BBB00D401B2 /* soundcloud_track_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */; };
+		5E9EA4D222427E0300D401B2 /* soundcloud_playlist_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
 		BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */; };
@@ -113,6 +123,16 @@
 		5E2BEC5A214BA4A700E65B53 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		5E2BEC5D214BA4A700E65B53 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		5E2BEC5F214BA4A700E65B53 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDataDetector+Links.swift"; sourceTree = "<group>"; };
+		5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentTypes.swift; sourceTree = "<group>"; };
+		5E9EA4BE22414FE100D401B2 /* LinkAttachmentDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentDetector.swift; sourceTree = "<group>"; };
+		5E9EA4C52242503E00D401B2 /* NSDataDetector+LinkAttachments.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSDataDetector+LinkAttachments.swift"; sourceTree = "<group>"; };
+		5E9EA4C7224257C100D401B2 /* NSDataDetectorLinksTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSDataDetectorLinksTests.swift; sourceTree = "<group>"; };
+		5E9EA4C922425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NSDataDetectorAttachmentTests.swift; sourceTree = "<group>"; };
+		5E9EA4CB2242732F00D401B2 /* LinkAttachmentTypesTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentTypesTests.swift; sourceTree = "<group>"; };
+		5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentDetectorTests.swift; sourceTree = "<group>"; };
+		5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_track_head.txt; sourceTree = "<group>"; };
+		5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_playlist_head.txt; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = guardian_head.txt; path = WireLinkPreviewTests/guardian_head.txt; sourceTree = SOURCE_ROOT; };
@@ -284,6 +304,8 @@
 				BF21CC7C1E925A9E00A874F5 /* youtube_head.txt */,
 				F1202A751FA0830000296B4B /* crash.txt */,
 				87B48ECA20A088F700DBAD9D /* crash_emoji.txt */,
+				5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */,
+				5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */,
 			);
 			name = Fixtures;
 			sourceTree = "<group>";
@@ -327,18 +349,22 @@
 		BFF0578C1D25434D004A2C29 /* WireLinkPreview */ = {
 			isa = PBXGroup;
 			children = (
-				BF4F2B2C1E925AC9000B22D1 /* ImageDownloader.swift */,
-				BF4F2B2D1E925AC9000B22D1 /* Info.plist */,
+				BF4F2B381E925AC9000B22D1 /* WireLinkPreview.h */,
 				BF4F2B2E1E925AC9000B22D1 /* LinkPreviewDetector.swift */,
+				5E9EA4BE22414FE100D401B2 /* LinkAttachmentDetector.swift */,
 				BF4F2B2F1E925AC9000B22D1 /* LinkPreviewTypes.swift */,
-				BF4F2B301E925AC9000B22D1 /* MetaStreamContainer.swift */,
+				5E9EA4BC2241445F00D401B2 /* LinkAttachmentTypes.swift */,
 				BF4F2B311E925AC9000B22D1 /* OpenGraphData.swift */,
 				BF4F2B321E925AC9000B22D1 /* OpenGraphDataTypes.swift */,
-				BF4F2B331E925AC9000B22D1 /* OpenGraphScanner.swift */,
+				BF4F2B2C1E925AC9000B22D1 /* ImageDownloader.swift */,
 				BF4F2B341E925AC9000B22D1 /* PreviewBlacklist.swift */,
+				BF4F2B331E925AC9000B22D1 /* OpenGraphScanner.swift */,
 				BF4F2B351E925AC9000B22D1 /* PreviewDownloader.swift */,
+				BF4F2B301E925AC9000B22D1 /* MetaStreamContainer.swift */,
 				BF4F2B371E925AC9000B22D1 /* URLSessionProtocols.swift */,
-				BF4F2B381E925AC9000B22D1 /* WireLinkPreview.h */,
+				5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */,
+				5E9EA4C52242503E00D401B2 /* NSDataDetector+LinkAttachments.swift */,
+				BF4F2B2D1E925AC9000B22D1 /* Info.plist */,
 			);
 			path = WireLinkPreview;
 			sourceTree = "<group>";
@@ -349,6 +375,10 @@
 				BF4F2B4C1E925AFE000B22D1 /* ImageDownloaderTests.swift */,
 				BF4F2B4D1E925AFE000B22D1 /* IntegrationTests.swift */,
 				BF4F2B4E1E925AFE000B22D1 /* LinkPreviewDetectorTests.swift */,
+				5E9EA4C7224257C100D401B2 /* NSDataDetectorLinksTests.swift */,
+				5E9EA4C922425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift */,
+				5E9EA4CB2242732F00D401B2 /* LinkAttachmentTypesTests.swift */,
+				5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */,
 				BF4F2B4F1E925AFE000B22D1 /* MetaStreamContainerTests.swift */,
 				BF4F2B501E925AFE000B22D1 /* OpenGraphDataTests.swift */,
 				BF4F2B511E925AFE000B22D1 /* OpenGraphScannerTests.swift */,
@@ -510,6 +540,8 @@
 				BF21CC901E925AA300A874F5 /* itunes_head.txt in Resources */,
 				BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */,
 				BF21CC971E925AA300A874F5 /* verge_head.txt in Resources */,
+				5E9EA4D222427E0300D401B2 /* soundcloud_playlist_head.txt in Resources */,
+				5E9EA4D022427BBB00D401B2 /* soundcloud_track_head.txt in Resources */,
 				BF21CC931E925AA300A874F5 /* nytimes_head.txt in Resources */,
 				BF21CC9C1E925AA300A874F5 /* youtube_head.txt in Resources */,
 				BF21CC921E925AA300A874F5 /* medium_head.txt in Resources */,
@@ -538,13 +570,17 @@
 				BF4F2B3F1E925AC9000B22D1 /* OpenGraphDataTypes.swift in Sources */,
 				BF4F2B401E925AC9000B22D1 /* OpenGraphScanner.swift in Sources */,
 				BF4F2B3C1E925AC9000B22D1 /* LinkPreviewTypes.swift in Sources */,
+				5E9EA4B72241426A00D401B2 /* NSDataDetector+Links.swift in Sources */,
 				BF4F2B3B1E925AC9000B22D1 /* LinkPreviewDetector.swift in Sources */,
+				5E9EA4BD2241445F00D401B2 /* LinkAttachmentTypes.swift in Sources */,
+				5E9EA4BF22414FE100D401B2 /* LinkAttachmentDetector.swift in Sources */,
 				BF4F2B411E925AC9000B22D1 /* PreviewBlacklist.swift in Sources */,
 				BF4F2B3D1E925AC9000B22D1 /* MetaStreamContainer.swift in Sources */,
 				BF4F2B441E925AC9000B22D1 /* URLSessionProtocols.swift in Sources */,
 				BF4F2B391E925AC9000B22D1 /* ImageDownloader.swift in Sources */,
 				BF4F2B421E925AC9000B22D1 /* PreviewDownloader.swift in Sources */,
 				BF4F2B3E1E925AC9000B22D1 /* OpenGraphData.swift in Sources */,
+				5E9EA4C62242503F00D401B2 /* NSDataDetector+LinkAttachments.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -552,9 +588,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */,
 				BF4F2B571E925AFE000B22D1 /* IntegrationTests.swift in Sources */,
 				BF4F2B5B1E925AFE000B22D1 /* OpenGraphScannerTests.swift in Sources */,
+				5E9EA4CC2242732F00D401B2 /* LinkAttachmentTypesTests.swift in Sources */,
 				BF4F2B5E1E925AFE000B22D1 /* StringXMLEntityParserTests.swift in Sources */,
+				5E9EA4C8224257C100D401B2 /* NSDataDetectorLinksTests.swift in Sources */,
 				BF4F2B5D1E925AFE000B22D1 /* PreviewDownloaderTests.swift in Sources */,
 				BF4F2B591E925AFE000B22D1 /* MetaStreamContainerTests.swift in Sources */,
 				BF4F2B4B1E925AE8000B22D1 /* URLMocks.swift in Sources */,
@@ -564,6 +603,7 @@
 				BF4F2B561E925AFE000B22D1 /* ImageDownloaderTests.swift in Sources */,
 				BF4F2B5C1E925AFE000B22D1 /* PreviewBlackListTests.swift in Sources */,
 				BF4F2B581E925AFE000B22D1 /* LinkPreviewDetectorTests.swift in Sources */,
+				5E9EA4CA22425C4E00D401B2 /* NSDataDetectorAttachmentTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
