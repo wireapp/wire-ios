@@ -28,6 +28,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
     fileprivate let requestFactory: ClientMessageRequestFactory
     private(set) fileprivate var upstreamObjectSync: ZMUpstreamInsertedObjectSync!
     fileprivate let messageExpirationTimer: MessageExpirationTimer
+    fileprivate let linkAttachmentsPreprocessor: LinkAttachmentsPreprocessor
     fileprivate weak var localNotificationDispatcher: PushMessageHandler!
     
     public init(in moc:NSManagedObjectContext,
@@ -37,6 +38,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
         self.localNotificationDispatcher = localNotificationDispatcher
         self.requestFactory = ClientMessageRequestFactory()
         self.messageExpirationTimer = MessageExpirationTimer(moc: moc, entityNames: [ZMClientMessage.entityName(), ZMAssetClientMessage.entityName()], localNotificationDispatcher: localNotificationDispatcher)
+        self.linkAttachmentsPreprocessor = LinkAttachmentsPreprocessor(linkAttachmentDetector: LinkAttachmentDetectorHelper.defaultDetector(), managedObjectContext: moc)
         
         super.init(withManagedObjectContext: moc, applicationStatus: applicationStatus)
         
@@ -65,7 +67,7 @@ public class ClientMessageTranscoder: AbstractRequestStrategy {
 extension ClientMessageTranscoder: ZMContextChangeTrackerSource {
     
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.upstreamObjectSync, self.messageExpirationTimer]
+        return [self.upstreamObjectSync, self.messageExpirationTimer, self.linkAttachmentsPreprocessor]
     }
 }
 

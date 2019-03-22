@@ -22,81 +22,43 @@ import WireLinkPreview
 import WireDataModel
 import WireUtilities
 
-private let zmLog = ZMSLog(tag: "link previews")
-
-@objcMembers public final class LinkPreviewPreprocessor : NSObject, ZMContextChangeTracker {
+@objcMembers public final class LinkPreviewPreprocessor : LinkPreprocessor<LinkMetadata> {
         
-    /// List of objects currently being processed
-    fileprivate var objectsBeingProcessed = Set<ZMClientMessage>()
     fileprivate let linkPreviewDetector: LinkPreviewDetectorType
 
-    let managedObjectContext : NSManagedObjectContext
-    
     public init(linkPreviewDetector: LinkPreviewDetectorType, managedObjectContext: NSManagedObjectContext) {
         self.linkPreviewDetector = linkPreviewDetector
-        self.managedObjectContext = managedObjectContext
-        super.init()
+        let log = ZMSLog(tag: "link previews")
+        super.init(managedObjectContext: managedObjectContext, zmLog: log)
     }
 
-    public func objectsDidChange(_ objects: Set<NSManagedObject>) {
-        processObjects(objects)
-    }
-    
-    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+    public override func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
         let predicate = NSPredicate(format: "%K == %d", ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewState.waitingToBeProcessed.rawValue)
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }
-    
-    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
-        processObjects(objects)
-    }
-    
-    func processObjects(_ objects: Set<NSObject>) {
-        objects
-            .compactMap(linkPreviewsToPreprocess)
-            .filter(!objectsBeingProcessed.contains)
-            .forEach(processMessage)
-    }
-    
-    func linkPreviewsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
+
+    override func objectsToPreprocess(_ object: NSObject) -> ZMClientMessage? {
         guard let message = object as? ZMClientMessage else { return nil }
         return message.linkPreviewState == .waitingToBeProcessed ? message : nil
     }
-    
-    func processMessage(_ message: ZMClientMessage) {
-        objectsBeingProcessed.insert(message)
-        
-        if let textMessageData = (message as ZMConversationMessage).textMessageData,
-           let messageText = textMessageData.messageText {
-            zmLog.debug("fetching previews for: \(message.nonce?.uuidString ?? "nil")")
-            
-            // We DONT want to generate link previews inside a mentions
-            let mentionRanges = textMessageData.mentions.compactMap{ Range<Int>($0.range) }
-            
-            // We DONT want to generate link previews for markdown links such as
-            // [click me!](www.example.com).
-            let markdownRanges = markdownLinkRanges(in: messageText)
-            
-            linkPreviewDetector.downloadLinkPreviews(inText: messageText, excluding: mentionRanges + markdownRanges) { [weak self] linkPreviews in
 
-                self?.managedObjectContext.performGroupedBlock {
-                    zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
-                    self?.didProcessMessage(message, linkPreviews: linkPreviews)
-                }
+    override func processLinks(in message: ZMClientMessage, text: String, excluding excludedRanges: [NSRange]) {
+        linkPreviewDetector.downloadLinkPreviews(inText: text, excluding: excludedRanges) { [weak self] linkPreviews in
+            self?.managedObjectContext.performGroupedBlock {
+                self?.zmLog.debug("\(linkPreviews.count) previews for: \(message.nonce?.uuidString ?? "nil")\n\(linkPreviews)")
+                self?.didProcessMessage(message, result: linkPreviews)
             }
-        } else {
-            didProcessMessage(message, linkPreviews: [])
         }
     }
-    
-    func didProcessMessage(_ message: ZMClientMessage, linkPreviews: [LinkMetadata]) {
-        objectsBeingProcessed.remove(message)
-        
+
+    override func didProcessMessage(_ message: ZMClientMessage, result linkPreviews: [LinkMetadata]) {
+        finishProcessing(message)
+
         if let preview = linkPreviews.first, let messageText = message.textMessageData?.messageText, let mentions = message.textMessageData?.mentions, !message.isObfuscated {
             let updatedText = ZMText.text(with: messageText, mentions: mentions, linkPreviews: [preview.protocolBuffer])
             let updatedMessage = ZMGenericMessage.message(content: updatedText, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
             message.add(updatedMessage.data())
-            
+
             if let imageData = preview.imageData.first {
                 zmLog.debug("image in linkPreview (need to upload), setting state to .downloaded for: \(message.nonce?.uuidString ?? "nil")")
                 managedObjectContext.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: imageData)
@@ -109,17 +71,10 @@ private let zmLog = ZMSLog(tag: "link previews")
             zmLog.debug("no linkpreview or obfuscated message, setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .done
         }
-        
-        // The change processor is called as a response to a context save, 
+
+        // The change processor is called as a response to a context save,
         // which is why we need to enque a save maually here
         managedObjectContext.enqueueDelayedSave()
     }
-    
-    fileprivate func markdownLinkRanges(in text: String) -> [Range<Int>] {
-        guard let regex = try? NSRegularExpression(pattern: "\\[.+\\]\\((.+)\\)", options: []) else { return [] }
-        
-        let wholeRange = NSMakeRange(0, (text as NSString).length)
-        
-        return regex.matches(in: text, options: [], range: wholeRange).compactMap {  Range<Int>($0.range(at: 0)) }
-    }
+
 }
