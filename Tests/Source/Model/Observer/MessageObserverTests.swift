@@ -16,14 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 @testable import WireDataModel
 
-
 class MessageObserverTests : NotificationDispatcherTestBase {
-    
-    
     
     var messageObserver : MessageObserver!
     
@@ -83,7 +79,8 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.reactionsChanged),
                 #keyPath(MessageChangeInfo.transferStateChanged),
                 #keyPath(MessageChangeInfo.confirmationsChanged),
-                #keyPath(MessageChangeInfo.genericMessageChanged)
+                #keyPath(MessageChangeInfo.genericMessageChanged),
+                #keyPath(MessageChangeInfo.linkAttachmentsChanged)
             ]
 
             guard !expectedChangedFields.isEmpty else { return }
@@ -336,6 +333,26 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             expectedChangedFields: [ #keyPath(MessageChangeInfo.genericMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
         )
 
+    }
+
+    func testThatItNotifiesWhenLinkAttachmentIsAdded() {
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = conversation.append(text: "foo") as! ZMClientMessage
+        uiMOC.saveOrRollback()
+
+        let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",
+                                        permalink: URL(string: "https://www.youtube.com/watch?v=hyTNGkBSjyo")!,
+                                        thumbnails: [URL(string: "https://i.ytimg.com/vi/hyTNGkBSjyo/hqdefault.jpg")!],
+                                        originalRange: NSRange(location: 20, length: 43))
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            message,
+            modifier: { _ in
+                return message.linkAttachments = [attachment]
+            },
+            expectedChangedFields: [#keyPath(MessageChangeInfo.linkAttachmentsChanged)]
+        )
     }
 
 }

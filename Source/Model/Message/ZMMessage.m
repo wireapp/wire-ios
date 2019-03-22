@@ -87,6 +87,8 @@ NSString * const ZMSystemMessageNumberOfGuestsAddedKey = @"numberOfGuestsAdded";
 NSString * const ZMMessageRepliesKey = @"replies";
 NSString * const ZMMessageQuoteKey = @"quote";
 NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation";
+NSString * const ZMMessageLinkAttachmentsKey = @"linkAttachments";
+NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachmentsUpdate";
 
 
 @interface ZMMessage ()
@@ -628,6 +630,11 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     return [NSCompoundPredicate andPredicateWithSubpredicates:@[conversationPredicate, noncePredicate]];
 }
 
++ (NSPredicate *)predicateForMessagesThatNeedToUpdateLinkAttachments
+{
+    return [NSPredicate predicateWithFormat:@"(%K == YES)", ZMMessageNeedsLinkAttachmentsUpdateKey];
+}
+
 @end
 
 
@@ -687,6 +694,8 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
                              ZMSystemMessageNumberOfGuestsAddedKey,
                              DeliveredKey,
                              ZMMessageExpectReadConfirmationKey,
+                             ZMMessageLinkAttachmentsKey,
+                             ZMMessageNeedsLinkAttachmentsUpdateKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -798,7 +807,6 @@ NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation"
     NOT_USED(mentions);
     NOT_USED(fetchLinkPreview);
 }
-
 
 @end
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.64.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14460.32" systemVersion="18D109" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.69.0">
     <entity name="AddressBookEntry" representedClassName=".AddressBookEntry" syncable="YES">
         <attribute name="cachedName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="localIdentifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
@@ -10,6 +10,7 @@
         <attribute name="assetId_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="associatedTaskIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="associatedTaskIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
+        <attribute name="isDownloading" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="preprocessedSize" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="preprocessedSize_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="progress" optional="YES" attributeType="Float" defaultValueString="0.0" usesScalarValueType="NO" syncable="YES"/>
@@ -97,10 +98,12 @@
     </entity>
     <entity name="KnockMessage" representedClassName="ZMKnockMessage" parentEntity="Message" syncable="YES"/>
     <entity name="Member" representedClassName=".Member" syncable="YES">
+        <attribute name="createdAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="permissionsRawValue" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
+        <relationship name="createdBy" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeamMembers" inverseEntity="User" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="members" inverseEntity="Team" syncable="YES"/>
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="membership" inverseEntity="User" syncable="YES"/>
     </entity>
@@ -112,7 +115,9 @@
         <attribute name="expirationDate" optional="YES" attributeType="Date" usesScalarValueType="NO" indexed="YES" versionHashModifier="add index" syncable="YES"/>
         <attribute name="isExpired" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isObfuscated" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="linkAttachments" optional="YES" attributeType="Transformable" customClassName="NSArray" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" syncable="YES"/>
+        <attribute name="needsLinkAttachmentsUpdate" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="nonce" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="nonce_data" optional="YES" attributeType="Binary" indexed="YES" versionHashModifier="add_index1" syncable="YES"/>
@@ -195,16 +200,8 @@
         <attribute name="emailAddress" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="expiresAt" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="imageMediumData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
-        <attribute name="imageSmallProfileData" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
         <attribute name="isAccountDeleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="localMediumRemoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
-        <attribute name="localMediumRemoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
-        <attribute name="localSmallProfileRemoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
-        <attribute name="localSmallProfileRemoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="managedBy" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="mediumRemoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
-        <attribute name="mediumRemoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="needsPropertiesUpdate" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO" syncable="YES"/>
@@ -221,8 +218,6 @@
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary" indexed="YES" syncable="YES"/>
         <attribute name="richProfile" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="serviceIdentifier" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="smallProfileRemoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
-        <attribute name="smallProfileRemoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="teamIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="teamIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="usesCompanyLogin" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
@@ -230,6 +225,7 @@
         <relationship name="clients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="user" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="to" inverseEntity="Connection" syncable="YES"/>
         <relationship name="conversationsCreated" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation" syncable="YES"/>
+        <relationship name="createdTeamMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="createdBy" inverseEntity="Member" syncable="YES"/>
         <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team" syncable="YES"/>
         <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member" syncable="YES"/>
@@ -277,15 +273,15 @@
         <element name="GenericMessageData" positionX="18" positionY="162" width="128" height="90"/>
         <element name="ImageMessage" positionX="0" positionY="0" width="128" height="165"/>
         <element name="KnockMessage" positionX="0" positionY="0" width="128" height="45"/>
-        <element name="Member" positionX="18" positionY="162" width="128" height="135"/>
-        <element name="Message" positionX="0" positionY="0" width="128" height="375"/>
+        <element name="Member" positionX="18" positionY="162" width="128" height="165"/>
+        <element name="Message" positionX="0" positionY="0" width="128" height="405"/>
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="105"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="105"/>
         <element name="Session" positionX="9" positionY="153" width="128" height="60"/>
         <element name="SystemMessage" positionX="0" positionY="0" width="128" height="255"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
         <element name="TextMessage" positionX="-153" positionY="-117" width="128" height="60"/>
-        <element name="User" positionX="-434" positionY="-72" width="128" height="765"/>
+        <element name="User" positionX="-434" positionY="-72" width="128" height="630"/>
         <element name="UserClient" positionX="9" positionY="153" width="128" height="465"/>
     </elements>
 </model>
