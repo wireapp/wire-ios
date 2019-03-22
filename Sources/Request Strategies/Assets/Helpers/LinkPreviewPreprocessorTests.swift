@@ -28,9 +28,9 @@ final class MockLinkDetector: LinkPreviewDetectorType {
     
     var nextResult = [LinkMetadata]()
     var downloadLinkPreviewsCallCount: Int = 0
-    var excludedRanges: [Range<Int>] = []
+    var excludedRanges: [NSRange] = []
     
-    func downloadLinkPreviews(inText text: String, excluding: [Range<Int>], completion: @escaping ([LinkMetadata]) -> Void) {
+    func downloadLinkPreviews(inText text: String, excluding: [NSRange], completion: @escaping ([LinkMetadata]) -> Void) {
         downloadLinkPreviewsCallCount += 1
         excludedRanges = excluding
         completion(nextResult)
@@ -193,7 +193,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.processMessage(message)
             
             // THEN
-            XCTAssertEqual(self.mockDetector.excludedRanges, [Range<Int>(NSMakeRange(0, 20))!])
+            XCTAssertEqual(self.mockDetector.excludedRanges, [NSRange(location: 0, length: 20)])
         }
     }
     
@@ -207,7 +207,7 @@ extension LinkPreviewPreprocessorTests {
             self.sut.processMessage(message)
             
             // THEN
-            XCTAssertEqual(self.mockDetector.excludedRanges, [Range<Int>(NSMakeRange(0, 28))!])
+            XCTAssertEqual(self.mockDetector.excludedRanges, [NSRange(location: 0, length: 28)])
         }
     }
     
