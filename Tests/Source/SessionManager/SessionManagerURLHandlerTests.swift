@@ -164,6 +164,20 @@ final class SessionManagerURLHandlerTests: MessagingTest {
         XCTAssertEqual(action, URLAction.openConversation(id: uuid, conversation: nil))
     }
 
+    func testThatItChangesTheActionToWarningWhenTheSessionNotFindTheConverationID() {
+        // given
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let url = URL(string: "wire://conversation/\(uuidString)")!
+
+        // when
+        var action = URLAction(url: url)
+        action?.setUserSession(userSession: mockUserSession)
+
+        // then
+        XCTAssertEqual(action, URLAction.warnInvalidDeepLink(error: .invalidConversationLink))
+    }
+
+
     func testThatItParsesOpenUserProfileLink() {
         // given
         let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
@@ -176,6 +190,19 @@ final class SessionManagerURLHandlerTests: MessagingTest {
 
         // then
         XCTAssertEqual(action, URLAction.openUserProfile(id: uuid, user: nil))
+    }
+
+    func testThatItChangesTheActionToWarningWhenTheSessionNotFindTheUserID() {
+        // given
+        let uuidString = "fc43d637-6cc2-4d03-9185-2563c73d6ef2"
+        let url = URL(string: "wire://user/\(uuidString)")!
+
+        // when
+        var action = URLAction(url: url)
+        action?.setUserSession(userSession: mockUserSession)
+
+        // then
+        XCTAssertEqual(action, URLAction.warnInvalidDeepLink(error: .invalidUserLink))
     }
 
     func testThatItDiscardsInvalidOpenUserProfileLink() {
