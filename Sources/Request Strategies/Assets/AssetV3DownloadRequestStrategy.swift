@@ -39,7 +39,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version == 3 else { return false }
             
-            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading
+            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message.genericMessage?.assetData?.hasUploaded() == true
         }
         
         assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
