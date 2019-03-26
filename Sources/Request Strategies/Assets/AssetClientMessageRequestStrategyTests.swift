@@ -164,6 +164,28 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestIfThereIsNoMatchingMessage() {
         XCTAssertNil(sut.nextRequest())
     }
+    
+    func testThatItDoesNotCreateARequestForAnImageMessageUploadedByOtherUser() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let message = self.createMessage(uploaded: true)
+            message.sender = self.otherUser
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
+    
+    func testThatItDoesNotCreateARequestForAnImageMessageWhichIsExpired() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let message = self.createMessage(uploaded: true)
+            message.expire()
+            
+            // THEN
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
 
     func testThatItDoesNotCreateARequestForAnImageMessageWithoutUploaded() {
         self.syncMOC.performGroupedBlockAndWait {

@@ -42,7 +42,7 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
             transcoder: self,
             entityName: ZMAssetClientMessage.entityName(),
             update: AssetClientMessageRequestStrategy.updatePredicate,
-            filter: nil,
+            filter: AssetClientMessageRequestStrategy.updateFilter,
             keysToSync: [#keyPath(ZMAssetClientMessage.transferState)],
             managedObjectContext: managedObjectContext
         )
@@ -61,7 +61,15 @@ public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, Z
     }
     
     static var updatePredicate: NSPredicate {
-        return NSPredicate(format: "delivered == NO && version == 3 && transferState == \(AssetTransferState.uploaded.rawValue)")
+        return NSPredicate(format: "delivered == NO && isExpired == NO && version == 3 && transferState == \(AssetTransferState.uploaded.rawValue)")
+    }
+    
+    static var updateFilter: NSPredicate {
+        return NSPredicate { object, _ in
+            guard let message = object as? ZMMessage, let sender = message.sender  else { return false }
+                        
+            return sender.isSelfUser
+        }
     }
 
 }
