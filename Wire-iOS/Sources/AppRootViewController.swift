@@ -572,7 +572,8 @@ public extension SessionManager {
 
 extension AppRootViewController: SessionManagerURLHandlerDelegate {
 
-    private func presentAlert(title: String, message: String) {
+    private func presentAlert(title: String,
+                      message: String) {
         let alert = UIAlertController(title: title,
                                       message: message,
                                       cancelButtonTitle: "general.ok".localized)
@@ -600,8 +601,8 @@ extension AppRootViewController: SessionManagerURLHandlerDelegate {
                 presentAlert(title: "url_action.invalid_conversation.title".localized,
                              message: "url_action.invalid_conversation.message".localized)
             case .notLoggedIn:
-                ///TODO: alert for this case
-                break
+                presentAlert(title: "url_action.authorization_required.title".localized,
+                             message: "url_action.authorization_required.message".localized)
             }
         case .connectBot:
             guard let _ = ZMUser.selfUser().team else {
