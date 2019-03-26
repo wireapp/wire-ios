@@ -198,6 +198,26 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             XCTAssert(request.needsAuthentication)
         }
     }
+    
+    func testThatItGeneratesNoRequestsIfITheProtobufDoesNotContainUploaded() {
+        
+        syncMOC.performGroupedBlockAndWait {
+            
+            // Given
+            let message = self.conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+            message.updateTransferState(.uploaded, synchronize: false)
+            self.deleteDownloadedFileFor(message: message)
+            self.syncMOC.saveOrRollback()
+            message.requestFileDownload()
+        }
+        
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        syncMOC.performGroupedBlockAndWait {
+            // Then
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
 
     func testThatItGeneratesNoRequestsIfMessageIsUploading_V3() {
         self.syncMOC.performGroupedBlockAndWait {
