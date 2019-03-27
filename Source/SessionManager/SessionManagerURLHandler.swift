@@ -95,7 +95,9 @@ extension URLComponents {
 extension URLAction {
     init?(url: URL, validatingIn defaults: UserDefaults = .shared()) {
         guard let components = URLComponents(string: url.absoluteString),
-            let host = components.host else {
+            let host = components.host,
+            let scheme = components.scheme,
+            scheme.starts(with: "wire") == true else {
             return nil
         }
         
@@ -128,7 +130,8 @@ extension URLAction {
                 let provider = components.query(for: "provider"),
                 let serviceUUID = UUID(uuidString: service),
                 let providerUUID = UUID(uuidString: provider) else {
-                    return nil
+                    self = .warnInvalidDeepLink(error: .malformedLink)
+                    return
             }
             self = .connectBot(serviceUser: ServiceUserData(provider: providerUUID, service: serviceUUID))
 
@@ -136,7 +139,8 @@ extension URLAction {
             let pathComponents = url.pathComponents
 
             guard url.pathComponents.count >= 2 else {
-                return nil
+                self = .warnInvalidCompanyLogin(error: .invalidLink)
+                return
             }
 
             switch pathComponents[1] {
@@ -177,11 +181,13 @@ extension URLAction {
                 let error = CompanyLoginError(label: label)
                 self = .companyLoginFailure(error: error)
             default:
-                return nil
+                self = .warnInvalidCompanyLogin(error: .invalidLink)
+                return
             }
 
         default:
-            return nil
+            self = .warnInvalidDeepLink(error: .malformedLink)
+            return
         }
     }
     
