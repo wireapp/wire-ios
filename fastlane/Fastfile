@@ -88,7 +88,7 @@ platform :ios do
 
         sh "cp ../Configuration/Appfile ."
         deliver(
-            ipa: build.filename,
+            ipa: "#{build.artifact_path(with_filename: true)}.ipa",
             submit_for_review: false,
             automatic_release: false,
             force: true, # Skip HTML report verification
