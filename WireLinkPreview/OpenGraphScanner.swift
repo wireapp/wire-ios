@@ -16,9 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
-import Ono
-import HTMLString
+import Foundation
 
 final class OpenGraphScanner: NSObject {
     
@@ -27,9 +25,10 @@ final class OpenGraphScanner: NSObject {
     let xmlString: String
     var contentsByProperty = [OpenGraphPropertyType: String]()
     var images = [String]()
+    var pageTitle: String?
     var completion: ParserCompletion
     var originalURL: URL
-    
+
     init(_ xmlString: String, url: URL, completion: @escaping ParserCompletion) {
         self.xmlString = xmlString
         self.completion = completion
@@ -38,34 +37,62 @@ final class OpenGraphScanner: NSObject {
     }
     
     func parse() {
-        guard let document = try? ONOXMLDocument.htmlDocument(with: xmlString, encoding: String.Encoding.utf8.rawValue) else { return }
-        parseXML(document)
-        createObjectAndComplete(document)
+        // 1. Parse the document
+        guard let document = HTMLDocument(xmlString: xmlString) else { return completion(nil) }
+        defer { HTMLDocument.free(document) }
+
+        // 2. Find the head
+        guard let headElement = findHead(in: document) else { return completion(nil) }
+
+        // 3. Go through the attributes
+        for headChild in headElement.children {
+            if headChild.tagName == "title" {
+                pageTitle = headChild.content?.stringValue(removingEntities: true)
+            } else if headChild.tagName == "meta" {
+                parseOpenGraphMetadata(headChild)
+            }
+        }
+
+        // 4. Finish parsing
+        createObjectAndComplete()
     }
 
-    private func parseXML(_ xmlDocument: ONOXMLDocument) {
-        xmlDocument.enumerateElements(withXPath: "//meta", using: { [weak self] (element, _, _) in
-            guard let `self` = self,
-                let property = element?[OpenGraphAttribute.property.rawValue] as? String,
-                let content = element?[OpenGraphAttribute.content.rawValue] as? String,
-                let type = OpenGraphPropertyType(rawValue: property) else { return }
+    // MARK: - Parsing
 
-            self.addProperty(type, value: content)
-        })
-    }
-    
-    private func addProperty(_ property: OpenGraphPropertyType, value: String) {
-        let content = value.removingHTMLEntities
-        if property == .image {
-            images.append(content)
+    /// Returns the first head element in the document.
+    private func findHead(in document: HTMLDocument) -> HTMLElement? {
+        guard let rootElement = document.rootElement else { return nil }
+
+        if rootElement.tagName == "head" {
+            return rootElement
         } else {
-            contentsByProperty[property] = content
+            return rootElement.children.first(where: { $0.tagName == "head" })
         }
     }
 
-    private func createObjectAndComplete(_ xmlDocument: ONOXMLDocument) {
+    /// Attempts to extract the OpenGraph metadata from an HTML element.
+    private func parseOpenGraphMetadata(_ element: HTMLElement) {
+        if let rawProperty = element[attribute: OpenGraphAttribute.property]?.stringValue(removingEntities: false),
+            let property = OpenGraphPropertyType(rawValue: rawProperty),
+            let content = element[attribute: OpenGraphAttribute.content]?.stringValue(removingEntities: true)
+        {
+            addProperty(property, value: content)
+        }
+    }
+
+    private func addProperty(_ property: OpenGraphPropertyType, value: String) {
+        if property == .image {
+            images.append(value)
+        } else {
+            contentsByProperty[property] = value
+        }
+    }
+
+    // MARK: - Post-Processing
+
+    private func createObjectAndComplete() {
         insertMissingUrlIfNeeded()
-        insertMissingTitleIfNeeded(xmlDocument)
+        insertMissingTitleIfNeeded()
         let data = OpenGraphData(propertyMapping: contentsByProperty, resolvedURL: originalURL, images: images)
         completion(data)
     }
@@ -75,12 +102,9 @@ final class OpenGraphScanner: NSObject {
         contentsByProperty[.url] = originalURL.absoluteString
     }
 
-    private func insertMissingTitleIfNeeded(_ xmlDocument: ONOXMLDocument) {
+    private func insertMissingTitleIfNeeded() {
         guard !contentsByProperty.keys.contains(.title) else { return }
-        xmlDocument.enumerateElements(withXPath: "//title", using: { [weak self] (element, _, stop) in
-            guard let `self` = self, let value = element?.stringValue() else { return }
-            self.addProperty(.title, value: value)
-            stop?.pointee = ObjCBool(true)
-        })
+        pageTitle.map { addProperty(.title, value: $0) }
     }
+
 }

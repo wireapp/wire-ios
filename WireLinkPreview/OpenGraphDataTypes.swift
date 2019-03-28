@@ -19,9 +19,9 @@
 
 import Foundation
 
-enum OpenGraphAttribute: String {
-    case property = "property"
-    case content = "content"
+enum OpenGraphAttribute {
+    static let property = "property"
+    static let content = "content"
 }
 
 enum OpenGraphXMLNode: String {
