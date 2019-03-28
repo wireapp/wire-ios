@@ -8,11 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		16A5FE18215A87F500AEEBBD /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE11215A87B600AEEBBD /* HTMLString.framework */; };
-		16A5FE19215A87F500AEEBBD /* Ono.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE13215A87B600AEEBBD /* Ono.framework */; };
 		16A5FE1A215A87F500AEEBBD /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE10215A87B600AEEBBD /* WireSystem.framework */; };
 		16A5FE1B215A87F500AEEBBD /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16A5FE12215A87B600AEEBBD /* WireUtilities.framework */; };
 		16A5FE1C215A882700AEEBBD /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE11215A87B600AEEBBD /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		16A5FE1D215A882700AEEBBD /* Ono.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE13215A87B600AEEBBD /* Ono.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		16A5FE1E215A882700AEEBBD /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE10215A87B600AEEBBD /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		16A5FE1F215A882700AEEBBD /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 16A5FE12215A87B600AEEBBD /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5E2BEC54214BA4A600E65B53 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E2BEC53214BA4A600E65B53 /* AppDelegate.swift */; };
@@ -30,6 +28,9 @@
 		5E9EA4CE2242785900D401B2 /* LinkAttachmentDetectorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */; };
 		5E9EA4D022427BBB00D401B2 /* soundcloud_track_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */; };
 		5E9EA4D222427E0300D401B2 /* soundcloud_playlist_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = 5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */; };
+		5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
+		5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 5EDF03F02249287B00C04007 /* libxml2.tbd */; };
+		5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EDF03F3224A208E00C04007 /* HTMLDocument.swift */; };
 		87B48ECB20A088F700DBAD9D /* crash_emoji.txt in Resources */ = {isa = PBXBuildFile; fileRef = 87B48ECA20A088F700DBAD9D /* crash_emoji.txt */; };
 		BF21CC8D1E925AA300A874F5 /* foursquare_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */; };
 		BF21CC8E1E925AA300A874F5 /* guardian_head.txt in Resources */ = {isa = PBXBuildFile; fileRef = BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */; };
@@ -99,7 +100,6 @@
 			dstSubfolderSpec = 10;
 			files = (
 				16A5FE1C215A882700AEEBBD /* HTMLString.framework in CopyFiles */,
-				16A5FE1D215A882700AEEBBD /* Ono.framework in CopyFiles */,
 				16A5FE1E215A882700AEEBBD /* WireSystem.framework in CopyFiles */,
 				16A5FE1F215A882700AEEBBD /* WireUtilities.framework in CopyFiles */,
 			);
@@ -133,6 +133,8 @@
 		5E9EA4CD2242785900D401B2 /* LinkAttachmentDetectorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentDetectorTests.swift; sourceTree = "<group>"; };
 		5E9EA4CF22427BBB00D401B2 /* soundcloud_track_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_track_head.txt; sourceTree = "<group>"; };
 		5E9EA4D122427E0300D401B2 /* soundcloud_playlist_head.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = soundcloud_playlist_head.txt; sourceTree = "<group>"; };
+		5EDF03F02249287B00C04007 /* libxml2.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libxml2.tbd; path = usr/lib/libxml2.tbd; sourceTree = SDKROOT; };
+		5EDF03F3224A208E00C04007 /* HTMLDocument.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLDocument.swift; sourceTree = "<group>"; };
 		87B48ECA20A088F700DBAD9D /* crash_emoji.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = crash_emoji.txt; sourceTree = "<group>"; };
 		BF21CC6D1E925A9E00A874F5 /* foursquare_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = foursquare_head.txt; path = WireLinkPreviewTests/foursquare_head.txt; sourceTree = SOURCE_ROOT; };
 		BF21CC6E1E925A9E00A874F5 /* guardian_head.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = guardian_head.txt; path = WireLinkPreviewTests/guardian_head.txt; sourceTree = SOURCE_ROOT; };
@@ -205,8 +207,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EDF03F12249287B00C04007 /* libxml2.tbd in Frameworks */,
 				16A5FE18215A87F500AEEBBD /* HTMLString.framework in Frameworks */,
-				16A5FE19215A87F500AEEBBD /* Ono.framework in Frameworks */,
 				16A5FE1A215A87F500AEEBBD /* WireSystem.framework in Frameworks */,
 				16A5FE1B215A87F500AEEBBD /* WireUtilities.framework in Frameworks */,
 			);
@@ -216,6 +218,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EDF03F22249316B00C04007 /* libxml2.tbd in Frameworks */,
 				BFF057951D25434E004A2C29 /* WireLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -226,6 +229,7 @@
 		16A5FE0F215A868700AEEBBD /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				5EDF03F02249287B00C04007 /* libxml2.tbd */,
 				16A5FE11215A87B600AEEBBD /* HTMLString.framework */,
 				16A5FE13215A87B600AEEBBD /* Ono.framework */,
 				16A5FE10215A87B600AEEBBD /* WireSystem.framework */,
@@ -364,6 +368,7 @@
 				BF4F2B371E925AC9000B22D1 /* URLSessionProtocols.swift */,
 				5E9EA4B62241426A00D401B2 /* NSDataDetector+Links.swift */,
 				5E9EA4C52242503E00D401B2 /* NSDataDetector+LinkAttachments.swift */,
+				5EDF03F3224A208E00C04007 /* HTMLDocument.swift */,
 				BF4F2B2D1E925AC9000B22D1 /* Info.plist */,
 			);
 			path = WireLinkPreview;
@@ -567,6 +572,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5EDF03F4224A208E00C04007 /* HTMLDocument.swift in Sources */,
 				BF4F2B3F1E925AC9000B22D1 /* OpenGraphDataTypes.swift in Sources */,
 				BF4F2B401E925AC9000B22D1 /* OpenGraphScanner.swift in Sources */,
 				BF4F2B3C1E925AC9000B22D1 /* LinkPreviewTypes.swift in Sources */,
@@ -791,6 +797,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -802,6 +809,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -813,6 +821,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2731D25445600D51DED /* ios-test-target.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
@@ -824,6 +833,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2731D25445600D51DED /* ios-test-target.xcconfig */;
 			buildSettings = {
+				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = WireLinkPreviewTests/Info.plist;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.2;
