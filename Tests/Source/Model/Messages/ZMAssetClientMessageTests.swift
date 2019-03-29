@@ -1417,7 +1417,7 @@ extension ZMAssetClientMessageTests {
         // GIVEN
         let gifMIME = "image/gif"
         // WHEN
-        let isGif = gifMIME.isGIF
+        let isGif = UTType(mimeType: gifMIME)!.isGIF
         // THEN
         XCTAssertTrue(isGif)
     }
@@ -1426,22 +1426,11 @@ extension ZMAssetClientMessageTests {
         // GIVEN
         
         ["text/plain", "application/pdf", "image/jpeg", "video/mp4"].forEach {
-        
             // WHEN
-            let isGif = $0.isGIF
+            let isGif = UTType(mimeType: $0)!.isGIF
+            
             // THEN
             XCTAssertFalse(isGif)
         }
-    }
-}
-
-// MARK: - PassKit
-extension ZMAssetClientMessageTests {
-    func testThatItDetectsPass_MIME() {
-        // GIVEN
-        let passMIME = "application/vnd.apple.pkpass"
-
-        // WHEN & THEN
-        XCTAssertTrue(passMIME.isPassMimeType)
     }
 }

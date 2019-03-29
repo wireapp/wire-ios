@@ -346,7 +346,8 @@ struct CacheAsset: Asset {
         case .file:
             return false
         case .image, .thumbnail:
-            return owner.genericMessage?.assetData?.original.mimeType.isGIF == false
+            return owner.genericMessage?.assetData?.original.mimeType
+                .flatMap(UTType.init(mimeType:))?.isGIF == false
         }
     }
     

@@ -125,6 +125,11 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         
         return nil
     }
+
+    /// If the asset is a rich file type, this returns its type.
+    public var richAssetType: RichAssetFileType? {
+        return mimeType.flatMap(RichAssetFileType.init)
+    }
     
     public var fileURL: URL? {
         guard let assetURL = asset?.fileURL, let filename = filename, let temporaryDirectoryURL = temporaryDirectoryURL else { return nil }
@@ -238,15 +243,15 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
 
     public var isPass: Bool {
-        return self.mimeType?.isPassMimeType ?? false
+        return richAssetType == .walletPass
     }
 
     public var isVideo: Bool {
-        return self.mimeType?.isPlayableVideoMimeType() ?? false
+        return richAssetType == .video
     }
     
     public var isAudio: Bool {
-        return self.mimeType?.isAudioMimeType() ?? false
+        return richAssetType == .audio
     }
     
     public var v3_isImage: Bool {

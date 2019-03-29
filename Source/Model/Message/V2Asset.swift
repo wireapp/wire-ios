@@ -21,10 +21,13 @@ import Foundation
 import MobileCoreServices
 
 
-extension String {
+extension UTType {
     var isGIF: Bool {
-        guard let UTIString = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, self as CFString, nil)?.takeRetainedValue() else { return false }
-        return UTIString == kUTTypeGIF
+        return self == kUTTypeGIF
+    }
+
+    var isSVG: Bool {
+        return self == kUTTypeScalableVectorGraphics
     }
 }
 
@@ -92,7 +95,8 @@ extension String {
     }
 
     public var isAnimatedGIF: Bool {
-        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType.isGIF ?? false
+        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
+            .flatMap(UTType.init(mimeType:))?.isGIF == true
     }
 
     public var imageType: String? {
