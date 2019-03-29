@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 public extension ZMAssetOriginal {
     var hasRasterImage: Bool {
         return hasImage() && UTType(mimeType: mimeType)?.isSVG == false

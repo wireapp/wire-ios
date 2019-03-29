@@ -119,31 +119,22 @@ open class ZMVideoMetadata : ZMFileMetadata {
 }
 
 extension ZMFileMetadata {
-    
-    var mimeType : String {
-        get {
-            let pathExtension = fileURL.pathExtension as CFString
-            guard  let UTI = UTTypeCreatePreferredIdentifierForTag(kUTTagClassFilenameExtension, pathExtension, nil)?.takeRetainedValue(),
-                  let MIMEType = UTTypeCopyPreferredTagWithClass (UTI, kUTTagClassMIMEType) else {
-                    return "application/octet-stream"
-            }
-            
-            return (MIMEType.takeRetainedValue()) as String
-        }
+
+    var fileType: UTType? {
+        return UTType(fileExtension: fileURL.pathExtension)
     }
     
-    var size : UInt64 {
-        get {
-            do {
-                let attributes = try FileManager.default.attributesOfItem(atPath: fileURL.path)
-                if let fileSize = attributes[FileAttributeKey.size] as? NSNumber {
-                    return fileSize.uint64Value
-                }
-            } catch {
-                zmLog.error("Couldn't read file size of \(fileURL)")
-                return 0
-            }
-            
+    var mimeType: String {
+        return fileType?.mimeType ?? "application/octet-stream"
+    }
+    
+    var size: UInt64 {
+        do {
+            let attributes = try fileURL.resourceValues(forKeys: [.fileSizeKey])
+            let size = attributes.fileSize ?? 0
+            return UInt64(size)
+        } catch {
+            zmLog.error("Couldn't read file size of \(fileURL)")
             return 0
         }
     }

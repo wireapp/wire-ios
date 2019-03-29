@@ -109,7 +109,8 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var isAnimatedGIF: Bool {
-        return assetClientMessage.genericAssetMessage?.assetData?.original.mimeType.isGIF ?? false
+        return assetClientMessage.genericAssetMessage?.assetData?.original.mimeType
+            .flatMap(UTType.init(mimeType:))?.isGIF == true
     }
 
     public var imageType: String? {

@@ -162,7 +162,7 @@ extension TimeInterval {
         let now = Date()
         let oneYear = Calendar.current.date(byAdding: .year, value: 1, to: now)
 
-        return (oneYear?.timeIntervalSince(now))!
+        return oneYear!.timeIntervalSince(now)
     }
 }
 
