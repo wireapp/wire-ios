@@ -137,6 +137,41 @@
     XCTAssertEqualObjects(expectedActiveParticipants, conversation.lastServerSyncedActiveParticipants);
 }
 
+- (void)testThatItDoesNotUnarchiveTheConversationWhenTheSelfUserIsAddedIfMuted
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.isArchived = YES;
+    conversation.mutedStatus = MutedMessageOptionValueAll;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID createUUID];
+    
+    // when
+    [conversation internalAddParticipants:[NSSet setWithObjects:selfUser, nil]];
+    WaitForAllGroupsToBeEmpty(0.5f);
+    
+    // then
+    XCTAssertTrue(conversation.isArchived);
+}
+
+- (void)testThatItUnarchivesTheConversationWhenTheSelfUserIsAdded
+{
+    // given
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.conversationType = ZMConversationTypeGroup;
+    conversation.isArchived = YES;
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID createUUID];
+
+    // when
+    [conversation internalAddParticipants:[NSSet setWithObjects:selfUser, nil]];
+    WaitForAllGroupsToBeEmpty(0.5f);
+    
+    // then
+    XCTAssertFalse(conversation.isArchived);
+}
+
 - (void)testThatItCanRemoveTheSelfUser
 {
     // given

@@ -1120,6 +1120,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     if ([participants intersectsSet:selfUserSet]) {
         self.isSelfAnActiveMember = YES;
         self.needsToBeUpdatedFromBackend = YES;
+        
+        if (self.mutedStatus == MutedMessageOptionValueNone) {
+            self.isArchived = NO;
+        }
     }
     
     if (otherUsers.count > 0) {
