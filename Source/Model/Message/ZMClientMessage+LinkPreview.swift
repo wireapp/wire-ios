@@ -48,7 +48,9 @@ import WireLinkPreview
         if linkPreview.hasTweet() {
             return TwitterStatusMetadata(protocolBuffer: linkPreview)
         } else {
-            return ArticleMetadata(protocolBuffer: linkPreview)
+            let metadata = ArticleMetadata(protocolBuffer: linkPreview)
+            guard !metadata.isBlacklisted else { return nil }
+            return metadata
         }
     }
 

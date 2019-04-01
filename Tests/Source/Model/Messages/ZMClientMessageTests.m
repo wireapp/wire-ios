@@ -609,6 +609,49 @@
     XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
 }
 
+- (void)testThatItIgnoresBlacklistedLinkPreview
+{
+    // given
+    NSString *initialText = @"initial text";
+
+    NSUUID *nonce = [NSUUID createUUID];
+    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
+    conversation.remoteIdentifier = [NSUUID createUUID];
+
+    UserClient *selfClient = [self createSelfClient];
+
+    ZMClientMessage *existingMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
+    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[] replyingTo:nil] nonce:nonce];
+    [existingMessage addData:message.data];
+    existingMessage.visibleInConversation = conversation;
+    existingMessage.sender = self.selfUser;
+    existingMessage.senderClientID = selfClient.remoteIdentifier;
+
+    // We add a quote to the link preview update
+    ZMLinkPreview *linkPreview = [ZMLinkPreview linkPreviewWithOriginalURL:@"http://www.youtube.com/watch" permanentURL:@"http://www.youtube.com/watch" offset:0 title:@"YouTube" summary:nil imageAsset:nil];
+    ZMGenericMessage *modifiedMessage = [ZMGenericMessage messageWithContent:[ZMText textWith:initialText mentions:@[] linkPreviews:@[linkPreview] replyingTo:existingMessage] nonce:nonce];
+
+    NSDictionary *data = @{ @"sender" : selfClient.remoteIdentifier, @"recipient": selfClient.remoteIdentifier, @"text": modifiedMessage.data.base64String };
+    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAddOTRMessage data:data time:[NSDate date] fromUser:self.selfUser];
+
+    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
+    XCTAssertNotNil(event);
+
+    // when
+    __block ZMClientMessage *sut;
+    [self performPretendingUiMocIsSyncMoc:^{
+        sut = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+    }];
+
+    // then
+    XCTAssertNotNil(sut);
+    XCTAssertNotNil(existingMessage.firstZMLinkPreview);
+    XCTAssertNil(existingMessage.linkPreview); // do not return a link preview even if it's included in the protobuf
+    XCTAssertFalse(existingMessage.genericMessage.textData.hasQuote);
+    XCTAssertEqualObjects(existingMessage.textMessageData.messageText, initialText);
+}
+
+
 - (void)testThatItReturnsNilIfTheClientMessageIsZombie
 {
     // given
