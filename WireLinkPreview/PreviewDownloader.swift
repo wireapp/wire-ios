@@ -150,12 +150,21 @@ extension PreviewDownloader {
         guard let url = dataTask.originalRequest?.url, let completion = completionByURL[url] else { return }
         let (headers, contentTypeKey) = (response.allHeaderFields, HeaderKey.contentType.rawValue)
         let contentType = headers[contentTypeKey] as? String ?? headers[contentTypeKey.lowercased()] as? String
-        if let contentType = contentType , !contentType.lowercased().contains("text/html") {
+        if let contentType = contentType , !contentType.lowercased().contains("text/html") || !response.isSuccess {
             completeAndCleanUp(completion, result: nil, url: url, taskIdentifier: dataTask.taskIdentifier)
             return completionHandler(.cancel)
         }
         
         return completionHandler(.allow)
+    }
+
+}
+
+extension HTTPURLResponse {
+
+    /// Whether the response is a success.
+    var isSuccess: Bool {
+        return statusCode < 400
     }
 
 }
