@@ -38,6 +38,16 @@ import Foundation
         characterOffsetInText = offset
         super.init()
     }
+
+    @objc public var isBlacklisted: Bool {
+        if let permanentURL = permanentURL {
+            return PreviewBlacklist.isBlacklisted(permanentURL)
+        } else if let resolvedURL = resolvedURL {
+            return PreviewBlacklist.isBlacklisted(resolvedURL)
+        } else {
+            return false
+        }
+    }
     
     func requestAssets(withImageDownloader downloader: ImageDownloaderType, completion: @escaping DownloadCompletion) {
         guard let imageURL = imageURLs.first else { return completion(false) }

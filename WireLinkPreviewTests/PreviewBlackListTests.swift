@@ -21,25 +21,50 @@ import XCTest
 @testable import WireLinkPreview
 
 class PreviewBlackListTests: XCTestCase {
-    
-    var sut: PreviewBlacklist!
-    
+
+    var hosts: [String]!
+
     override func setUp() {
         super.setUp()
-        sut = PreviewBlacklist()
+        hosts = ["soundcloud", "spotify", "youtube", "giphy", "youtu.be", "y2u.be"]
     }
-    
-    func testThatCorrectHostsAreAllBlacklisted() {
-        let hosts = ["soundcloud", "spotify", "youtube", "giphy", "youtu.be", "y2u.be"]
 
+    override func tearDown() {
+        hosts = nil
+        super.tearDown()
+    }
+
+    func testThatCorrectHostsAreAllBlacklisted() {
         for host in hosts {
             assertThatHostIsBlacklisted(host)
         }
     }
-    
+
+    func testThatCorrectHostsAreBlacklistedInPreviewMetadata() {
+        for host in hosts {
+            assertThatPreviewMetadataIsBlacklisted(host)
+        }
+    }
+
+    func testThatAllowedHostsAreNotBlacklistedInPreview() {
+        assertThatPreviewMetadataIsNotBlacklisted("twitter.com")
+    }
+
+    // MARK: - Helpers
+
     func assertThatHostIsBlacklisted(_ host: String, line: UInt = #line) {
         let url = URL(string: "www.\(host).com/example")!
-        XCTAssertTrue(sut.isBlacklisted(url), "\(host) was not blacklisted", line: line)
+        XCTAssertTrue(PreviewBlacklist.isBlacklisted(url), "\(host) was not blacklisted", line: line)
     }
-    
+
+    func assertThatPreviewMetadataIsBlacklisted(_ host: String, line: UInt = #line) {
+        let metadata = LinkMetadata(originalURLString: "https://www.\(host).com/example", permanentURLString: "https://www.\(host).com/example", resolvedURLString: "https://www.\(host).com/example", offset: 0)
+        XCTAssertTrue(metadata.isBlacklisted, line: line)
+    }
+
+    func assertThatPreviewMetadataIsNotBlacklisted(_ host: String, line: UInt = #line) {
+        let metadata = LinkMetadata(originalURLString: "https://www.\(host).com/example", permanentURLString: "https://www.\(host).com/example", resolvedURLString: "https://www.\(host).com/example", offset: 0)
+        XCTAssertFalse(metadata.isBlacklisted, line: line)
+    }
+
 }

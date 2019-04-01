@@ -28,7 +28,6 @@ public protocol LinkPreviewDetectorType {
 
 public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
     
-    private let blacklist = PreviewBlacklist()
     private let linkDetector : NSDataDetector? = NSDataDetector.linkDetector
     private let previewDownloader: PreviewDownloaderType
     private let imageDownloader: ImageDownloaderType
@@ -67,7 +66,7 @@ public final class LinkPreviewDetector : NSObject, LinkPreviewDetectorType {
      - parameter completion: The completion closure called when the link previews (and it's images) have been downloaded.
      */
     public func downloadLinkPreviews(inText text: String, excluding: [NSRange] = [], completion : @escaping DetectCompletion) {
-        guard let (url, range) = linkDetector?.detectLinksAndRanges(in: text, excluding: excluding).first, !blacklist.isBlacklisted(url) else { return completion([]) }
+        guard let (url, range) = linkDetector?.detectLinksAndRanges(in: text, excluding: excluding).first, !PreviewBlacklist.isBlacklisted(url) else { return completion([]) }
         previewDownloader.requestOpenGraphData(fromURL: url) { [weak self] openGraphData in
             guard let `self` = self, let substringRange = Range<String.Index>(range, in: text) else { return }
             let originalURLString = String(text[substringRange])
