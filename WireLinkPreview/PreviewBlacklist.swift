@@ -19,9 +19,9 @@
 
 import Foundation
 
-final class PreviewBlacklist {
-    
-    private let blacklistedHosts = [
+enum PreviewBlacklist {
+
+    private static let blacklistedHosts = [
         "soundcloud",
         "youtube",
         "youtu.be",
@@ -30,7 +30,7 @@ final class PreviewBlacklist {
         "giphy"
     ]
     
-    func isBlacklisted(_ url: URL) -> Bool {
+    static func isBlacklisted(_ url: URL) -> Bool {
         return blacklistedHosts.contains { blacklisted in
             url.absoluteString.lowercased().contains(blacklisted)
         }
