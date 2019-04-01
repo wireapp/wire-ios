@@ -226,6 +226,10 @@ class PreviewDownloaderTests: XCTestCase {
     func testThatItCallsTheCompletionHandlerAndCancelsTheRequestIfTheContentTypeOfTheResponseIfNotHTML() {
         assertThatItCallsTheDipositionHandler(.cancel, contentType: "something-other-than-html")
     }
+
+    func testThatItCallsTheCompletionHandlerAndCancelsTheRequestIfTheStatusIsNotSuccessful() {
+        assertThatItCallsTheDipositionHandler(.cancel, contentType: "text/html", statusCode: 404)
+    }
     
     func testThatItCallsTheDispositionHandlerWithAllowAndDoesNotCallTheDownloadCompletionForContentTypeHTML() {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "text/html")
@@ -239,7 +243,7 @@ class PreviewDownloaderTests: XCTestCase {
         assertThatItCallsTheDipositionHandler(.allow, contentType: "TEXT/HTML")
     }
     
-    func assertThatItCallsTheDipositionHandler(_ expected: URLSession.ResponseDisposition, contentType: String, line: UInt = #line) {
+    func assertThatItCallsTheDipositionHandler(_ expected: URLSession.ResponseDisposition, contentType: String, statusCode: Int = 200, line: UInt = #line) {
         // given
         let downloadExpectation = expectation(description: "It should call the downloader completion handler")
         let sessionExpectation = expectation(description: "It should call the session completion handler")
@@ -251,7 +255,7 @@ class PreviewDownloaderTests: XCTestCase {
         // when
         let response = HTTPURLResponse(
             url: originalRequest.url!,
-            statusCode: 200,
+            statusCode: statusCode,
             httpVersion: nil,
             headerFields: ["Content-Type": contentType]
         )

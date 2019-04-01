@@ -123,6 +123,11 @@ class IntegrationTests: XCTestCase {
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
+    func testThatItDoesNotParse404Links() {
+        let mockSite = OpenGraphMockData(head: "", expected: nil, urlString: "https://instagram.com/404", urlVersion: nil)
+        assertThatItCanParseSampleData(mockSite, expected: nil)
+    }
+
     struct OpenGraphDataExpectation {
         let numberOfImages: Int
         let type: String?
@@ -132,7 +137,7 @@ class IntegrationTests: XCTestCase {
         let hasFoursquareMetaData: Bool
     }
     
-    func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData, expected: OpenGraphDataExpectation, line: UInt = #line) {
+    func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData, expected: OpenGraphDataExpectation?, line: UInt = #line) {
 
         // given
         let completionExpectation = expectation(description: "It should parse the data")
@@ -151,11 +156,17 @@ class IntegrationTests: XCTestCase {
         var result: OpenGraphData?
         sut.requestOpenGraphData(fromURL: resolvedURL) { data in
             result = data
-            XCTAssertNotNil(data, line: line)
             completionExpectation.fulfill()
         }
 
         waitForExpectations(timeout: 60, handler: nil)
+
+        if expected == nil {
+            return XCTAssertNil(result, "Expected no OpenGraph data from \(mockData.urlString)", line: line)
+        }
+
+        let expected = expected!
+
         guard let data = result else {
             return XCTFail("Could not extract open graph data from \(mockData.urlString)", line: line)
         }
