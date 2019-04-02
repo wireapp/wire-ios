@@ -110,9 +110,9 @@ extension LinkAttachment {
     convenience init?(openGraphData: OpenGraphData, detectedType: LinkAttachmentType, originalRange: NSRange) {
         switch detectedType {
         case .soundCloudPlaylist:
-            guard openGraphData.type.hasPrefix("music.playlist") else { return nil }
+            guard openGraphData.type.hasPrefix("music.playlist") || openGraphData.type.hasPrefix("soundcloud:set") else { return nil }
         case .soundCloudTrack:
-            guard openGraphData.type.hasPrefix("music.song") else { return nil }
+            guard openGraphData.type.hasPrefix("music.song") || openGraphData.type.hasPrefix("soundcloud:sound") else { return nil }
         case .youTubeVideo:
             guard openGraphData.type.hasPrefix("video") else { return nil }
         }
