@@ -303,6 +303,51 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
     }
     
     // MARK: Background behaviour
+    
+    func testThatItDoesNotProcessChangesWhenDisabled(){
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.name = "foo"
+        uiMOC.saveOrRollback()
+        
+        let observer = UserObserver()
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+            
+            // when
+            sut.isDisabled = true
+            user.name = "bar"
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            
+            // then
+            XCTAssertEqual(observer.notifications.count, 0)
+        }
+    }
+    
+    func testThatItProcessesChangesAfterBeingEnabled(){
+        // given
+        let user = ZMUser.insertNewObject(in: uiMOC)
+        user.name = "foo"
+        uiMOC.saveOrRollback()
+        sut.isDisabled = true
+        
+        let observer = UserObserver()
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+            
+            // when
+            sut.isDisabled = false
+            user.name = "bar"
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            
+            // then
+            XCTAssertEqual(observer.notifications.count, 1)
+            if let note = observer.notifications.first {
+                XCTAssertTrue(note.nameChanged)
+            }
+        }
+    }
+    
     func testThatItDoesNotProcessChangesWhenAppEntersBackground(){
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
@@ -328,12 +373,12 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "foo"
         uiMOC.saveOrRollback()
+        sut.applicationDidEnterBackground()
         
         let observer = UserObserver()
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
 
             // when
-            sut.applicationDidEnterBackground()
             sut.applicationWillEnterForeground()
             user.name = "bar"
             uiMOC.saveOrRollback()
@@ -351,46 +396,74 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
     // MARK: ChangeInfoConsumer
     class ChangeConsumer : NSObject, ChangeInfoConsumer {
         var changes : [ClassIdentifier : [ObjectChangeInfo]]?
-        var didCallEnterBackground = false
-        var didCallEnterForeground = false
+        var didCallStopObserving = false
+        var didCallStartObserving = false
         
         func objectsDidChange(changes: [ClassIdentifier : [ObjectChangeInfo]]) {
             self.changes = changes
         }
         
-        func applicationDidEnterBackground() {
-            didCallEnterBackground = true
+        func stopObserving() {
+            didCallStopObserving = true
         }
         
-        func applicationWillEnterForeground() {
-            didCallEnterForeground = true
+        func startObserving() {
+            didCallStartObserving = true
         }
     }
     
-    func testThatItNotifiesChangeInfoConsumersWhenAppEntersBackground(){
+    func testThatItNotifiesChangeInfoConsumersWhenObservationStops_enteringBackground(){
         // given
         let consumer = ChangeConsumer()
         sut.addChangeInfoConsumer(consumer)
-        XCTAssertFalse(consumer.didCallEnterBackground)
+        XCTAssertFalse(consumer.didCallStopObserving)
 
         // when
         sut.applicationDidEnterBackground()
         
         // then
-        XCTAssertTrue(consumer.didCallEnterBackground)
+        XCTAssertTrue(consumer.didCallStopObserving)
     }
     
-    func testThatItNotifiesChangeInfoConsumersWhenAppEntersForeground(){
+    func testThatItNotifiesChangeInfoConsumersWhenObservationStarts_enteringForeground(){
         // given
         let consumer = ChangeConsumer()
+        sut.applicationDidEnterBackground()
         sut.addChangeInfoConsumer(consumer)
-        XCTAssertFalse(consumer.didCallEnterForeground)
+        XCTAssertFalse(consumer.didCallStartObserving)
         
         // when
         sut.applicationWillEnterForeground()
         
         // then
-        XCTAssertTrue(consumer.didCallEnterForeground)
+        XCTAssertTrue(consumer.didCallStartObserving)
+    }
+    
+    func testThatItNotifiesChangeInfoConsumersWhenObservationStops_disabled(){
+        // given
+        let consumer = ChangeConsumer()
+        sut.addChangeInfoConsumer(consumer)
+        XCTAssertFalse(consumer.didCallStopObserving)
+        
+        // when
+        sut.isDisabled = true
+        
+        // then
+        XCTAssertTrue(consumer.didCallStopObserving)
+    }
+    
+    func testThatItNotifiesChangeInfoConsumersWhenObservationStarts_enabled(){
+        // given
+        let consumer = ChangeConsumer()
+        sut.isDisabled = true
+        sut.addChangeInfoConsumer(consumer)
+        XCTAssertFalse(consumer.didCallStartObserving)
+        
+        // when
+        sut.isDisabled = false
+        
+        // then
+        XCTAssertTrue(consumer.didCallStartObserving)
     }
     
     func testThatItNotifiesChangeInfoConsumersWhenObjectChanged(){

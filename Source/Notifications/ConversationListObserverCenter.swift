@@ -21,8 +21,8 @@ import Foundation
 private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 
 extension Notification.Name {
-    static let StartObservingList = Notification.Name("StartObservingListNotification")
-    static let ZMConversationListDidChange = Notification.Name("ZMConversationListDidChangeNotification")
+    static let conversationListsDidReload = Notification.Name("conversationListsDidReloadNotification")
+    static let conversationListDidChange = Notification.Name("conversationListDidChangeNotification")
 }
 
 
@@ -151,16 +151,20 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         snapshotsToRemove.forEach{listSnapshots.removeValue(forKey: $0)}
     }
 
-    public func applicationDidEnterBackground() {
-        // We should always recreate the snapshots when reenerting the foreground
+    public func stopObserving() {
+        // We should always re-create the snapshots when re-entering the foreground
         // Therefore it would be safe to clear the snapshots here
         listSnapshots = [:]
         zmLog.debug("\(#function), clearing listSnapshots")
     }
     
-    public func applicationWillEnterForeground() {
-        // list snapshots are automaically recreated when the lists are recreated and `recreateSnapshot(for conversation:)` is called
+    public func startObserving() {
+        // list snapshots are automatically re-created when the lists are re-created and `recreateSnapshot(for conversation:)` is called
         zmLog.debug(#function)
+        
+        managedObjectContext.conversationListDirectory().refetchAllLists(in: managedObjectContext)
+        
+        NotificationInContext.init(name: .conversationListsDidReload, context: managedObjectContext.notificationContext).post()
     }
 }
 
@@ -282,9 +286,9 @@ class ConversationListSnapshot: NSObject {
             return
         }
         
-        let notification = NotificationInContext(name: .ZMConversationListDidChange,
-                                                 context: self.managedObjectContext.notificationContext,
-                                                 object: self.conversationList,
+        let notification = NotificationInContext(name: .conversationListDidChange,
+                                                 context: managedObjectContext.notificationContext,
+                                                 object: conversationList,
                                                  userInfo: userInfo)
             
         zmLog.debug(logMessage(for: conversationChanges, listChanges: listChanges))
