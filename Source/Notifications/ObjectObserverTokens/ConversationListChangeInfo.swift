@@ -60,6 +60,10 @@ extension ZMConversationList {
     @objc optional func conversationInsideList(_ list: ZMConversationList, didChange changeInfo: ConversationChangeInfo)
 }
 
+@objc public protocol ZMConversationListReloadObserver : NSObjectProtocol {
+    func conversationListsDidReload()
+}
+
 
 extension ConversationListChangeInfo {
     
@@ -71,7 +75,7 @@ extension ConversationListChangeInfo {
                            managedObjectContext: NSManagedObjectContext
                            ) -> NSObjectProtocol {
         zmLog.debug("Registering observer \(observer) for list \(list.identifier)")
-        return ManagedObjectObserverToken(name: .ZMConversationListDidChange, managedObjectContext: managedObjectContext, object: list)
+        return ManagedObjectObserverToken(name: .conversationListDidChange, managedObjectContext: managedObjectContext, object: list)
         { [weak observer] (note) in
             guard let `observer` = observer, let aList = note.object as? ZMConversationList
                 else { return }
@@ -86,5 +90,12 @@ extension ConversationListChangeInfo {
                 }
             }
         }
+    }
+    
+    @objc(addConversationListReloadObserver:managedObjectcontext:)
+    public static func add(observer: ZMConversationListReloadObserver, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return ManagedObjectObserverToken(name: .conversationListsDidReload, managedObjectContext: managedObjectContext, block: { [weak observer] _ in
+            observer?.conversationListsDidReload()
+        })
     }
 }

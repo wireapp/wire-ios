@@ -49,6 +49,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         group.conversationType = .group
         let selfConversation = ZMConversation.insertNewObject(in: uiMOC)
         selfConversation.conversationType = .self
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -65,6 +66,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         group.conversationType = .group
         let otherGroup = ZMConversation.insertNewObject(in: uiMOC)
         otherGroup.conversationType = .group
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -80,6 +82,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation2 = createGroupConversation(in: team)
         let archived1 = createGroupConversation(in: team, archived: true)
         let archived2 = createGroupConversation(in: team, archived: true)
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -95,6 +98,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         createGroupConversation(in: team)
         let archived1 = createGroupConversation(in: team, archived: true)
         let archived2 = createGroupConversation(in: team, archived: true)
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.archivedConversations(in: uiMOC)
@@ -110,6 +114,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation2 = createGroupConversation(in: team)
         createGroupConversation(in: team, archived: true)
         createGroupConversation(in: team, archived: true)
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.conversationsExcludingArchived(in: uiMOC)
@@ -128,6 +133,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         conversation2.lastModifiedDate = startDate.addingTimeInterval(500)
         let conversation3 = createGroupConversation(in: team)
         conversation3.lastModifiedDate = startDate.addingTimeInterval(-200)
+        uiMOC.saveOrRollback()
 
         // when
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
@@ -141,6 +147,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let startDate = Date(timeIntervalSinceReferenceDate: 12345678)
         let conversation1 = createGroupConversation(in: team)
         conversation1.lastModifiedDate = startDate
+        uiMOC.saveOrRollback()
 
         let sut = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         let observer = ConversationListChangeObserver(conversationList: sut, managedObjectContext: self.uiMOC)
@@ -149,7 +156,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         dispatcher.applicationDidEnterBackground()
         let conversation2 = createGroupConversation(in: team)
         conversation2.lastModifiedDate = startDate.addingTimeInterval(-10)
-        createGroupConversation(in: otherTeam)
+        uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
 
         XCTAssertEqual(sut.arrayValue, [conversation1])
@@ -246,6 +253,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation2 = createGroupConversation(in: team)
         let conversation3 = createGroupConversation(in: team)
         let conversation4 = createGroupConversation(in: team, archived: true)
+        uiMOC.saveOrRollback()
 
         // then
         let unarchivedList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
@@ -281,6 +289,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         let conversation1 = createGroupConversation(in: team)
         let message = conversation1.append(text: "Text") as! ZMMessage
         message.serverTimestamp = Date()
+        uiMOC.saveOrRollback()
 
         // then
         let activeList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
@@ -308,6 +317,7 @@ final class ZMConversationListTests_Teams: ZMBaseManagedObjectTest {
         // given
         let conversation = createGroupConversation(in: team)
         conversation.isArchived = true
+        uiMOC.saveOrRollback()
 
         // then
         do {

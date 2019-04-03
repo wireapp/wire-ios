@@ -189,11 +189,11 @@ public class SearchUserSnapshot  {
         snapshot.updateAndNotify()
     }
     
-    public func applicationDidEnterBackground() {
-        // do nothing?
+    public func stopObserving() {
+        // do nothing
     }
     
-    public func applicationWillEnterForeground() {
+    public func startObserving() {
         // do nothing
     }
     
