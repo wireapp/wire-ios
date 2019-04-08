@@ -131,7 +131,14 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     fileprivate var internalConnectionRequestMessage: String?
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?
-    
+
+
+    public var emailAddress: String? {
+        get {
+            return user?.emailAddress
+        }
+    }
+
     public var name: String? {
         get {
             return user != nil ? user?.name : internalName
