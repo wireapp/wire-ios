@@ -57,7 +57,7 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     /// It can have 2 types: Delivered and Read depending on the confirmation type
     @objc
     @discardableResult
-    public static func createMessageMessageConfirmations(_ confirmation: ZMConfirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
+    public static func createMessageConfirmations(_ confirmation: ZMConfirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
         
         let type = MessageConfirmationType.convert(confirmation.type)
         
