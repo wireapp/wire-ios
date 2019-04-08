@@ -222,7 +222,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         insertAssetMessages(count: 10)
         
         // when
-        conversation.recentMessages.forEach{_ = $0.cachedCategory}
+        conversation.allMessages.forEach{_ = $0.cachedCategory}
         uiMOC.saveOrRollback()
         
         sut = AssetCollectionBatched(conversation: conversation, matchingCategories: [defaultMatchPair], delegate: delegate)
@@ -236,7 +236,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
     func testThatItGetsPreCategorizedMessagesInTheCorrectOrder() {
         // given
         let messages = insertAssetMessages(count: 10)
-        conversation.recentMessages.forEach{_ = $0.cachedCategory}
+        conversation.allMessages.forEach{_ = $0.cachedCategory}
         uiMOC.saveOrRollback()
 
         // when
@@ -257,7 +257,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         uiMOC.saveOrRollback()
         
         // when
-        conversation.recentMessages.forEach{_ = $0.cachedCategory}
+        conversation.allMessages.forEach{_ = $0.cachedCategory}
         uiMOC.saveOrRollback()
         
         let excludingGif = CategoryMatch(including: .image, excluding: .GIF)

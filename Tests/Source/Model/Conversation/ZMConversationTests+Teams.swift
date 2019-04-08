@@ -225,7 +225,7 @@ extension ConversationTests_Teams {
         conversation.appendTeamMemberRemovedSystemMessage(user: otherUser, at: timestamp)
         
         // then
-        guard let message = conversation.recentMessages.last as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
+        guard let message = conversation.lastMessage as? ZMSystemMessage else { XCTFail("Last message should be system message"); return }
         
         XCTAssertEqual(message.systemMessageType, .teamMemberLeave)
         XCTAssertEqual(message.sender, otherUser)

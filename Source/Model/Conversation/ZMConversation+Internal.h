@@ -155,8 +155,6 @@ NS_ASSUME_NONNULL_END
 
 - (nullable ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(nonnull NSUUID *)nonce imageData:(nonnull NSData *)imageData;
 
-@property (nonatomic, nullable) id _recentMessagesFetcher;
-
 - (void)unarchiveIfNeeded;
 
 @end

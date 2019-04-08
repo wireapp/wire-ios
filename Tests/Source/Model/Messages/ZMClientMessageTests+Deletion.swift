@@ -291,7 +291,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        XCTAssertEqual(conversation.recentMessages.count, 0)
+        XCTAssertEqual(conversation.allMessages.count, 0)
     }
     
     func testThatItDoesNotInsertASystemMessageWhenAMessageIsDeletedForEveryoneLocally() {
@@ -307,7 +307,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertEqual(conversation.recentMessages.count, 0)
+        XCTAssertEqual(conversation.allMessages.count, 0)
     }
 }
 
@@ -331,8 +331,7 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertEqual(conversation.recentMessages.count, 1)
-        if let systemMessage = conversation.recentMessages.last as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone {
+        if let systemMessage = conversation.lastMessage as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone {
             return XCTFail()
         }
     }
@@ -357,7 +356,7 @@ extension ZMClientMessageTests_Deletion {
         // then
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
         // No system message as the selfUser was the sender
-        XCTAssertEqual(conversation.recentMessages.count, 0)
+        XCTAssertEqual(conversation.allMessages.count, 0)
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
     }
@@ -411,12 +410,11 @@ extension ZMClientMessageTests_Deletion {
         
         // then
         assertDeletedContent(ofMessage: message, inConversation: conversation)
-        XCTAssertEqual(conversation.recentMessages.count, 1)
 
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
         
-        guard let systemMessage = conversation.recentMessages.last as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone else {
+        guard let systemMessage = conversation.lastMessage as? ZMSystemMessage , systemMessage.systemMessageType == .messageDeletedForEveryone else {
             return XCTFail()
         }
         
@@ -458,7 +456,7 @@ extension ZMClientMessageTests_Deletion {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
 
         // No system message as the selfUser was the sender
-        XCTAssertEqual(conversation.recentMessages.count, 0)
+        XCTAssertEqual(conversation.allMessages.count, 0)
         // A deletion should not update the lastModified date
         XCTAssertEqual(conversation.lastModifiedDate, lastModified)
     }

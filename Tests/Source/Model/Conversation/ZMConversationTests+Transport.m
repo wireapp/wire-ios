@@ -726,7 +726,7 @@
         [conversation updateWithTransportData:payload serverTimeStamp:serverTimestamp];
         
         // then
-        ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.recentMessages.lastObject;
+        ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.lastMessage;
         XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeReadReceiptsOn);
     }];
 }

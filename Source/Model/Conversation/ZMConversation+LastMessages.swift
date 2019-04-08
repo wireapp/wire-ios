@@ -21,7 +21,7 @@ import Foundation
 extension ZMConversation {
     public var visibleMessagesPredicate: NSPredicate? {
         var allPredicates: [NSPredicate] = []
-
+        
         if let clearedTimeStamp = self.clearedTimeStamp {
             // This must filter out:
             // 1. Messages that are older than clearedTimeStamp.
@@ -38,35 +38,25 @@ extension ZMConversation {
 }
 
 extension ZMConversation {
-    private var recentMessagesFetcher: FetchedObjectsArray<ZMMessage> {
-        set {
-            _recentMessagesFetcher = newValue
-        }
-        get {
-            if let currentFetcher = _recentMessagesFetcher as? FetchedObjectsArray<ZMMessage> {
-                return currentFetcher
-            }
-            
-            let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
-            // Magic number of messages that are relevant to the user
-            fetchRequest.fetchLimit = 256
-            fetchRequest.predicate = self.visibleMessagesPredicate
-            fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
-            
-            let newFetcher = try! FetchedObjectsArray<ZMMessage>(on: self.managedObjectContext!, fetchRequest: fetchRequest)
-            self.recentMessagesFetcher = newFetcher
-            return newFetcher
-        }
+
+    /// Returns a list of the most recent messages in the conversation, ordered from most recent to oldest.
+    @objc public func lastMessages(limit: Int = 256) -> [ZMMessage] {
+        guard let managedObjectContext = managedObjectContext else { return [] }
+        
+        let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
+        fetchRequest.fetchLimit = limit
+        fetchRequest.predicate = NSPredicate(format: "%K == %@", #keyPath(ZMMessage.visibleInConversation), self)
+        fetchRequest.sortDescriptors = [NSSortDescriptor(key: #keyPath(ZMMessage.serverTimestamp), ascending: false)]
+        
+        return managedObjectContext.fetchOrAssert(request: fetchRequest)
     }
     
-    @objc public var recentMessages: [ZMMessage] {
-        return recentMessagesFetcher.reversed()
+    /// Returns the most recent message in the conversation.
+    @objc public var lastMessage: ZMMessage? {
+        return lastMessages(limit: 1).first
     }
     
-    @objc public func updateMessageFetcher() {
-        managedObjectContext?.processPendingChanges()
-    }
-    
+    /// Returns the most recent message sent by a particular user in the conversation.
     public func lastMessageSent(by user: ZMUser) -> ZMMessage? {
         let fetchRequest = NSFetchRequest<ZMMessage>(entityName: ZMMessage.entityName())
         fetchRequest.fetchLimit = 1

@@ -103,7 +103,7 @@ final class ClientMessageTests_Cleared: DatabaseBaseTest {
             syncConversation.clearedTimeStamp = syncConversation.lastServerTimeStamp
             contextDirectory.syncContext.processPendingChanges()
             // then
-            for message in syncConversation.recentMessages {
+            for message in syncConversation.allMessages {
                 XCTAssertTrue(message.isDeleted)
             }
         }

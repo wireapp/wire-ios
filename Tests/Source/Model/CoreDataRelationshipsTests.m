@@ -114,12 +114,12 @@
         ZMConversation *c2Conversation2 = (id) [self.syncMOC existingObjectWithID:conversation2.objectID error:&error];
         XCTAssertEqualObjects(c2Conversation2.objectID, conversation2.objectID, @"Failed to read in 2nd context: %@", error);
         
-        NSArray *c2Messages1 = c2Conversation1.recentMessages;
+        NSArray *c2Messages1 = [c2Conversation1 lastMessagesWithLimit:10];
         XCTAssertEqual(c2Messages1.count, (NSUInteger) 2);
-        NSArray *c2Messages2 = c2Conversation2.recentMessages;
+        NSArray *c2Messages2 = [c2Conversation2 lastMessagesWithLimit:10];
         XCTAssertEqual(c2Messages2.count, (NSUInteger) 1);
-        ZMTextMessage *c2Message1 = c2Messages1[0];
-        ZMTextMessage *c2Message2 = c2Messages1[1];
+        ZMTextMessage *c2Message1 = c2Messages1[1];
+        ZMTextMessage *c2Message2 = c2Messages1[0];
         ZMTextMessage *c2Message3 = c2Messages2[0];
         XCTAssertEqualObjects(c2Message1.objectID, message1.objectID);
         XCTAssertEqualObjects(c2Message2.objectID, message2.objectID);
