@@ -30,7 +30,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD421B1F3EA300232589"
                BuildableName = "WireUtilities-Tests.xctest"
-               BlueprintName = "WireUtilities-tests"
+               BlueprintName = "WireUtilities-Tests"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -49,7 +49,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "3E88BD421B1F3EA300232589"
                BuildableName = "WireUtilities-Tests.xctest"
-               BlueprintName = "WireUtilities-tests"
+               BlueprintName = "WireUtilities-Tests"
                ReferencedContainer = "container:WireUtilities.xcodeproj">
             </BuildableReference>
          </TestableReference>

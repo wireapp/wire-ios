@@ -17,7 +17,7 @@
 //
 
 extension CharacterSet {
-    static let asciiPrintableSet = CharacterSet(charactersIn: "!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~")
+    static let asciiPrintableSet = CharacterSet(charactersIn: "\u{0020}!\"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~")
 }
 
 extension Unicode.Scalar {
