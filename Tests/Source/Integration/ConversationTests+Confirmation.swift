@@ -36,7 +36,7 @@ class ConversationTests_Confirmation: ConversationTestsBase {
             mockTransportSession?.responseGeneratorBlock = { request in
                 if (request.path == requestPath) {
                     guard let hiddenMessage = conversation?.hiddenMessages.first as? ZMClientMessage,
-                        let message = conversation?.recentMessages.last as? ZMClientMessage
+                        let message = conversation?.lastMessage as? ZMClientMessage
                         else {
                             XCTFail("Did not insert confirmation message.")
                             return nil
@@ -54,13 +54,12 @@ class ConversationTests_Confirmation: ConversationTestsBase {
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
             
             // then
-            let messages = conversation?.recentMessages
-            XCTAssertEqual(messages?.count, 2) // system message & inserted message
+            XCTAssertEqual(conversation?.allMessages.count, 2) // system message & inserted message
             
             guard let request = mockTransportSession?.receivedRequests().last else {return XCTFail()}
             XCTAssertEqual((request as AnyObject).path, requestPath)
             
-            XCTAssertEqual(conversation?.lastModifiedDate, messages?.last?.serverTimestamp)
+            XCTAssertEqual(conversation?.lastModifiedDate, conversation?.lastMessage?.serverTimestamp)
         }
     }
     
@@ -84,7 +83,7 @@ class ConversationTests_Confirmation: ConversationTestsBase {
                             return (item as? ZMClientMessage)?.genericMessage!.confirmation.moreMessageIds != nil
                     }) as? ZMClientMessage else { return nil }
                     
-                    var nonces = Set(conversation.recentMessages.compactMap { $0.nonce?.transportString() })
+                    var nonces = Set(conversation.allMessages.compactMap { $0.nonce?.transportString() })
                     XCTAssertTrue(hiddenMessage.genericMessage!.hasConfirmation())
                     XCTAssertNotNil(nonces.remove(hiddenMessage.genericMessage!.confirmation.firstMessageId))
                     XCTAssertNotNil(hiddenMessage.genericMessage!.confirmation.moreMessageIds)
@@ -112,13 +111,12 @@ class ConversationTests_Confirmation: ConversationTestsBase {
             
             
             // then
-            let messages = conversation?.recentMessages
-            XCTAssertEqual(messages?.count, 3) // system message & inserted message
+            XCTAssertEqual(conversation?.allMessages.count, 3) // system message & inserted message
             
             guard let request = mockTransportSession?.receivedRequests().last else {return XCTFail()}
             XCTAssertEqual((request as AnyObject).path, requestPath)
             
-            XCTAssertEqual(conversation?.lastModifiedDate, messages?.last?.serverTimestamp)
+            XCTAssertEqual(conversation?.lastModifiedDate, conversation?.lastMessage?.serverTimestamp)
         }
     }
     
