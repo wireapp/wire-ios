@@ -35,9 +35,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             bob.name = "bob"
 
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [alice, bob], name: nil, in: nil)
-
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-            let systemMessage = conversation?.recentMessages.first as? ZMSystemMessage
+            let systemMessage = conversation?.lastMessage as? ZMSystemMessage
 
             XCTAssertNotNil(systemMessage)
             XCTAssertEqual(systemMessage?.systemMessageType, .newConversation)
@@ -59,10 +57,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let name = "Crypto"
 
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [alice, bob], name: name, in: nil)
-
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-
-            let systemMessage = conversation?.recentMessages.last as? ZMSystemMessage
+            let systemMessage = conversation?.lastMessage as? ZMSystemMessage
 
             XCTAssertNotNil(systemMessage)
             XCTAssertEqual(systemMessage?.systemMessageType, .newConversation)
@@ -79,10 +74,8 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
 
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [], name: name, in: nil)
-
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-
-            let nameMessage = conversation?.recentMessages.first as? ZMSystemMessage
+            let nameMessage = conversation?.lastMessage as? ZMSystemMessage
+            
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage?.systemMessageType, .newConversation)
             XCTAssertEqual(nameMessage?.text, name)
@@ -106,10 +99,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1], name: self.name, in: team)
-            
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-            
-            guard let nameMessage = conversation?.recentMessages.first as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -133,10 +123,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1, user2], name: self.name, in: team)
-            
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-            
-            guard let nameMessage = conversation?.recentMessages.first as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -162,10 +149,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1, user2, guest1, guest2], name: self.name, in: team)
-            
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-            
-            guard let nameMessage = conversation?.recentMessages.first as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)
@@ -191,10 +175,7 @@ class ZMConversationCreationSystemMessageTests: ZMConversationTestsBase {
             
             // when
             let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user1, guest1, guest2], name: self.name, in: team)
-            
-            XCTAssertEqual(conversation?.recentMessages.count, 1)
-            
-            guard let nameMessage = conversation?.recentMessages.first as? ZMSystemMessage else { return XCTFail() }
+            guard let nameMessage = conversation?.lastMessage as? ZMSystemMessage else { return XCTFail() }
             
             XCTAssertNotNil(nameMessage)
             XCTAssertEqual(nameMessage.systemMessageType, .newConversation)

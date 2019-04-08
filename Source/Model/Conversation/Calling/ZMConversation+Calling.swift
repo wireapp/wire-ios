@@ -21,6 +21,8 @@ public extension ZMConversation {
 
     @discardableResult
     @objc public func appendMissedCallMessage(fromUser user: ZMUser, at timestamp: Date, relevantForStatus: Bool = true) -> ZMSystemMessage {
+        let associatedMessage = associatedSystemMessage(of: .missedCall, sender: user)
+        
         let message = appendSystemMessage(
             type: .missedCall,
             sender: user,
@@ -33,10 +35,8 @@ public extension ZMConversation {
         if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
-
-        if let previous = associatedMessage(before: message) {
-            previous.addChild(message)
-        }
+        
+        associatedMessage?.addChild(message)
 
         managedObjectContext?.enqueueDelayedSave()
         return message
@@ -44,6 +44,8 @@ public extension ZMConversation {
 
     @discardableResult
     @objc public func appendPerformedCallMessage(with duration: TimeInterval, caller: ZMUser) -> ZMSystemMessage {
+        let associatedMessage = associatedSystemMessage(of: .performedCall, sender: caller)
+        
         let message = appendSystemMessage(
             type: .performedCall,
             sender: caller,
@@ -56,21 +58,20 @@ public extension ZMConversation {
         if isArchived && mutedMessageTypes == .none {
             isArchived = false
         }
-
-        if let previous = associatedMessage(before: message) {
-            previous.addChild(message)
-        }
+        
+        associatedMessage?.addChild(message)
 
         managedObjectContext?.enqueueDelayedSave()
         return message
     }
 
-    @objc public func associatedMessage(before message: ZMSystemMessage) -> ZMSystemMessage? {
-        guard recentMessages.count > 1 else { return nil }
-        guard let previous = recentMessages[recentMessages.count - 2] as? ZMSystemMessage else { return nil }
-        guard previous.systemMessageType == message.systemMessageType else { return nil }
-        guard previous.users == message.users, previous.sender == message.sender else { return nil }
-        return previous
+    private func associatedSystemMessage(of type: ZMSystemMessageType, sender: ZMUser) -> ZMSystemMessage? {
+        guard let lastMessage = lastMessage as? ZMSystemMessage,
+              lastMessage.systemMessageType == type,
+              lastMessage.sender == sender
+        else { return nil }
+        
+        return lastMessage
     }
 
 }

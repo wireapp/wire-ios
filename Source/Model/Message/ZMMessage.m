@@ -928,7 +928,6 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
     
-    [conversation updateMessageFetcher];
     [conversation updateTimestampsAfterUpdatingMessage:message];
     
     return message;

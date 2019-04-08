@@ -617,7 +617,7 @@ extension DuplicatedEntityRemovalTests {
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(Set(conversation1.recentMessages), Set([message1, message2]))
+        XCTAssertEqual(Set(conversation1.allMessages), Set([message1, message2]))
     }
     
     public func testThatItMergesConversations_hiddenMessages() {

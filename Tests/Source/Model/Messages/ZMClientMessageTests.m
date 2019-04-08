@@ -63,8 +63,7 @@
     
     // then
     XCTAssertNil(sut);
-    XCTAssertEqual(conversation.recentMessages.count, 1u);
-    XCTAssertEqual(conversation.recentMessages.firstObject, clientMessage);
+    XCTAssertEqual(conversation.lastMessage, clientMessage);
 }
 
 - (void)testThatItStoresClientAsMissing
@@ -289,8 +288,7 @@
     
     // then
     XCTAssertNil(sut);
-    XCTAssertEqual(conversation.recentMessages.count, 1u);
-    XCTAssertEqual(conversation.recentMessages.firstObject, existingMessage);
+    XCTAssertEqual(conversation.lastMessage, existingMessage);
 }
 
 - (void)testThatItDoesNotCreateMessageFromClientActionMessage
@@ -314,7 +312,7 @@
     
     // then
     XCTAssertNil(sut);
-    XCTAssertEqual(conversation.recentMessages.count, 0u);
+    XCTAssertEqual(conversation.allMessages.count, 0u);
 }
 
 - (void)testThatItDoesNotCreateMessageFromAvailabilityMessage
@@ -336,7 +334,7 @@
     
     // then
     XCTAssertNil(sut);
-    XCTAssertEqual(conversation.recentMessages.count, 0u);
+    XCTAssertEqual(conversation.allMessages.count, 0u);
 }
 
 - (void)testThatItIgnoresUpdates_OnAnAlreadyExistingClientMessageWithoutASenderClientID

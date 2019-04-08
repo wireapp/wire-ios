@@ -94,24 +94,23 @@ extension ZMConversation {
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
     @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         
+        let previousLastMessage = lastMessage
         let systemMessage = self.appendSystemMessage(type: .potentialGap,
-                                                              sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                                              users: users,
-                                                              clients: nil,
-                                                              timestamp: timestamp)
+                                                     sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                                                     users: users,
+                                                     clients: nil,
+                                                     timestamp: timestamp)
         systemMessage.needsUpdatingUsers = true
         
-        if let index = self.recentMessages.index(of: systemMessage),
-            index > 1,
-            let previousMessage = self.recentMessages[Int(index - 1)] as? ZMSystemMessage,
-            previousMessage.systemMessageType == .potentialGap
-        {
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage,
+            previousLastMessage.systemMessageType == .potentialGap,
+            previousLastMessage.serverTimestamp < timestamp {
             // In case the message before the new system message was also a system message of
             // the type ZMSystemMessageTypePotentialGap, we delete the old one and update the
             // users property of the new one to use old users and calculate the added / removed users
             // from the time the previous one was added
-            systemMessage.users = previousMessage.users
-            self.managedObjectContext?.delete(previousMessage)
+            systemMessage.users = previousLastMessage.users
+            self.managedObjectContext?.delete(previousLastMessage)
         }
     }
 
@@ -262,7 +261,7 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
         guard let selfClient = selfUser.selfClient() else { return }
         
-        NSOrderedSet(array: recentMessages).enumerateObjects(options: .reverse) { (msg, idx, stop) in
+        NSOrderedSet(array: lastMessages()).enumerateObjects() { (msg, idx, stop) in
             guard idx <= 2 else {
                 stop.initialize(to: true)
                 return
@@ -390,7 +389,7 @@ extension ZMConversation {
     // Returns a timestamp that is shortly (as short as possible) after the last message in the conversation,
     // or current time if there's no last message
     fileprivate func timestampAfterLastMessage() -> Date {
-        return timestamp(after: recentMessages.last) ?? Date()
+        return timestamp(after: lastMessage) ?? Date()
     }
 }
 

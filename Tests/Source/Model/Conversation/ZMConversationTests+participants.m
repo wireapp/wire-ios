@@ -39,7 +39,7 @@
     
     // then
     [conversation.activeParticipants containsObject:user];
-    ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.recentMessages.lastObject;
+    ZMSystemMessage *systemMessage = (ZMSystemMessage *)conversation.lastMessage;
     XCTAssertEqual(systemMessage.systemMessageType, ZMSystemMessageTypeParticipantsAdded);
 }
 
@@ -56,7 +56,7 @@
     
     // then
     [conversation.activeParticipants containsObject:user];
-    XCTAssertEqual(conversation.recentMessages.count, 0lu);
+    XCTAssertEqual(conversation.allMessages.count, 0lu);
 }
 
 - (void)testThatItAddsMissingParticipantInOneToOne

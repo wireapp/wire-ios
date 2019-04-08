@@ -156,8 +156,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
         
         // then
-        XCTAssertEqual(conversation.recentMessages.count, 1, file: file, line: line)
-        XCTAssertEqual(conversation.recentMessages.first as? ZMClientMessage, sut.message, file: file, line: line)
+        XCTAssertEqual(conversation.lastMessage as? ZMClientMessage, sut.message, file: file, line: line)
         XCTAssertEqual(shouldSendConfirmation, sut.needsConfirmation, file: file, line: line)
     }
     
@@ -195,8 +194,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertEqual(conversation.recentMessages.count, 1)
-        XCTAssertEqual(conversation.recentMessages.first as? ZMClientMessage, sut.message)
+        XCTAssertEqual(conversation.lastMessage as? ZMClientMessage, sut.message)
         XCTAssertFalse(sut.needsConfirmation)
     }
     

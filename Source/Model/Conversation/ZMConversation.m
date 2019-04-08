@@ -127,8 +127,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @property (nonatomic) NSDate *archivedChangedTimestamp;
 @property (nonatomic) NSDate *silencedChangedTimestamp;
 
-@property (nonatomic) id _recentMessagesFetcher;
-
 @end
 
 /// Declaration of properties implemented (automatically) by Core Data
@@ -163,7 +161,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @synthesize pendingLastReadServerTimestamp;
 @synthesize lastReadTimestampSaveDelay;
 @synthesize lastReadTimestampUpdateCounter;
-@synthesize _recentMessagesFetcher;
 
 - (BOOL)isArchived
 {
@@ -255,14 +252,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         }];
     }
 }
-
-- (void)willTurnIntoFault
-{
-    [super willTurnIntoFault];
-    self._recentMessagesFetcher = nil;
-}
-
-
 
 -(NSSet <ZMUser *> *)activeParticipants
 {
@@ -601,13 +590,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 - (ZMMessage *)lastEditableMessage;
 {
     __block ZMMessage *result;
-    [self.recentMessages enumerateObjectsWithOptions:NSEnumerationReverse
-                                    usingBlock:^(ZMMessage *message, NSUInteger ZM_UNUSED idx, BOOL *stop) {
-                                            if ([message isEditableMessage]) {
-                                                result = message;
-                                                *stop = YES;
-                                            }
-                                    }];
+    [[self lastMessagesWithLimit:50] enumerateObjectsUsingBlock:^(ZMMessage * _Nonnull message, NSUInteger idx, BOOL * _Nonnull stop) {
+        NOT_USED(idx);
+        if ([message isEditableMessage]) {
+            result = message;
+            *stop = YES;
+        }
+    }];
     return result;
 }
 
@@ -636,10 +625,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (BOOL)canMarkAsUnread
 {
-    if (self.recentMessages.count == 0) {
-        return NO;
-    }
-    
     if (self.estimatedUnreadCount > 0) {
         return NO;
     }
@@ -653,19 +638,13 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 - (ZMMessage *)lastMessageCanBeMarkedUnread
 {
-    NSUInteger lastMessageIndexCanBeMarkedUnread = [self.recentMessages indexOfObjectWithOptions:NSEnumerationReverse
-                                                                                     passingTest:^BOOL(ZMMessage *message, NSUInteger idx, BOOL *stop) {
-        NOT_USED(idx);
-        NOT_USED(stop);
-        return message.canBeMarkedUnread;
-    }];
+    for (ZMMessage *message in [self lastMessagesWithLimit:50]) {
+        if (message.canBeMarkedUnread) {
+            return message;
+        }
+    }
     
-    if (lastMessageIndexCanBeMarkedUnread != NSNotFound) {
-        return self.recentMessages[self.recentMessages.count - lastMessageIndexCanBeMarkedUnread - 1];
-    }
-    else {
-        return nil;
-    }
+    return nil;
 }
 
 - (void)markAsUnread
@@ -1002,8 +981,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     message.visibleInConversation = self;
     
     [self addAllMessagesObject:message];
-    [self updateMessageFetcher];
-    
     [self updateTimestampsAfterInsertingMessage:message];
 }
 

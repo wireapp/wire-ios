@@ -554,8 +554,8 @@
     ZMConversationList *archivedList = [ZMConversation archivedConversationsInContext:self.uiMOC];
     ZMConversationList *clearedList = [ZMConversation clearedConversationsInContext:self.uiMOC];
 
-    XCTAssertTrue([c1.recentMessages containsObject:message1]);
-    XCTAssertTrue([c2.recentMessages containsObject:message2]);
+    XCTAssertTrue([c1.allMessages containsObject:message1]);
+    XCTAssertTrue([c2.allMessages containsObject:message2]);
 
     XCTAssertEqual(activeList.count, 2u);
     XCTAssertEqualObjects(activeList.set, conversations);
@@ -572,8 +572,8 @@
     XCTAssertTrue([self.uiMOC saveOrRollback]);
 
     // then
-    XCTAssertFalse([c1.recentMessages containsObject:message1]);
-    XCTAssertTrue([c2.recentMessages containsObject:message2]);
+    XCTAssertFalse([c1.allMessages containsObject:message1]);
+    XCTAssertTrue([c2.allMessages containsObject:message2]);
 
     XCTAssertEqual(activeList.count, 1u);
     XCTAssertEqual(archivedList.count, 0u);
