@@ -90,7 +90,7 @@ extension ZMMessage {
         // so we iterate backwards and we ignore everything until we find this one
         var selfMessageFound = false
 
-        for previousMessage in conversation.recentMessages.reversed() {
+        for previousMessage in conversation.lastMessages() {
             if let currentTimestamp = self.serverTimestamp,
                 let previousTimestamp = previousMessage.serverTimestamp {
                 

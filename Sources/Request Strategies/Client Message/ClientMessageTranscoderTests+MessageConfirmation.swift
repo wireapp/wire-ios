@@ -125,7 +125,7 @@ extension ClientMessageTranscoderTests {
             self.syncMOC.saveOrRollback()
             
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.lastMessage as? ZMClientMessage else { return XCTFail() }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
             // WHEN
@@ -153,7 +153,7 @@ extension ClientMessageTranscoderTests {
             
             // find confirmation
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.lastMessage as? ZMClientMessage else { return XCTFail() }
             guard originalMessage.textMessageData?.messageText == text else { return XCTFail("wrong message?") }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
@@ -182,7 +182,7 @@ extension ClientMessageTranscoderTests {
             
             // find confirmation
             guard let confirmMessage = self.lastConfirmationMessage else { return XCTFail() }
-            guard let originalMessage = self.oneToOneConversation.recentMessages.last as? ZMClientMessage else { return XCTFail() }
+            guard let originalMessage = self.oneToOneConversation.lastMessage as? ZMClientMessage else { return XCTFail() }
             guard originalMessage.textMessageData?.messageText == text else { return XCTFail("wrong message?") }
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmMessage])) }
             
