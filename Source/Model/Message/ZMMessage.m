@@ -635,6 +635,15 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
     return [NSPredicate predicateWithFormat:@"(%K == YES)", ZMMessageNeedsLinkAttachmentsUpdateKey];
 }
 
++ (NSSet <ZMMessage *> *)messagesWithRemoteIDs:(NSSet <NSUUID *>*)UUIDs inContext:(NSManagedObjectContext *)moc;
+{
+    return [self fetchObjectsWithRemoteIdentifiers:UUIDs inManagedObjectContext:moc];
+}
+
++(NSString *)remoteIdentifierDataKey {
+    return ZMMessageNonceDataKey;
+}
+
 @end
 
 

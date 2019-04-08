@@ -380,5 +380,4 @@ extension ZMConversation {
         
         return managedObjectContext.fetchOrAssert(request: fetchRequest).filter({ $0.shouldGenerateUnreadCount() })
     }
-    
 }

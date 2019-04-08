@@ -70,6 +70,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 +(instancetype _Nonnull )insertNewObjectInManagedObjectContext:(NSManagedObjectContext *_Nonnull)moc NS_UNAVAILABLE;
 - (instancetype _Nonnull)initWithNonce:(NSUUID * _Nonnull)nonce managedObjectContext:(NSManagedObjectContext * _Nonnull)managedObjectContext;
++ (nonnull NSSet <ZMMessage *> *)messagesWithRemoteIDs:(nonnull NSSet <NSUUID *>*)UUIDs inContext:(nonnull NSManagedObjectContext *)moc;
 
 // Use these for sorting:
 + (NSArray<NSSortDescriptor *> * _Nonnull)defaultSortDescriptors;

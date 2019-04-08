@@ -45,7 +45,9 @@ extension ZMOTRMessage {
         guard let conversation = conversation, conversation.conversationType == .oneOnOne,
               let sender = sender, !sender.isSelfUser,
               let serverTimestamp = serverTimestamp,
-              let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day
+              let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day,
+              deliveryState != .delivered,
+              deliveryState != .read
         else { return false }
         
         return daysElapsed <= ZMOTRMessage.deliveryConfirmationDayThreshold
