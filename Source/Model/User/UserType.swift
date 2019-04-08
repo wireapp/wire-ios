@@ -30,7 +30,7 @@ public protocol UserType: NSObjectProtocol {
     
     /// The full name
     var name: String? { get }
-    
+
     /// The given name / first name e.g. "John" for "John Smith"
     var displayName: String { get }
     
@@ -39,7 +39,10 @@ public protocol UserType: NSObjectProtocol {
     
     /// The initials e.g. "JS" for "John Smith"
     var initials: String? { get }
-    
+
+    /// Email for the user
+    var emailAddress: String? { get }
+
     /// Whether this is the self user
     var isSelfUser: Bool { get }
     
