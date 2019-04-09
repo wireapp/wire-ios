@@ -110,12 +110,12 @@ public enum PasswordCharacterClass: Hashable, Decodable {
     /// The standard character set that represents the character class.
     var associatedCharacterSet: CharacterSet {
         switch self {
-        case .unicode: return .alphanumerics
-        case .uppercase: return .uppercaseLetters
-        case .lowercase: return .lowercaseLetters
+        case .unicode: return .unicode
+        case .uppercase: return .asciiUppercaseLetters
+        case .lowercase: return .asciiLowercaseLetters
         case .digits: return .decimalDigits
-        case .special: return CharacterSet(charactersIn: "-~!@#$%^&*_+=`|(){}[:;\"'<>,.? ]\u{0020}")
         case .asciiPrintable: return .asciiPrintableSet
+        case .special: return CharacterSet.asciiStandardCharacters.inverted
         case .custom(let charactersString): return CharacterSet(charactersIn: charactersString)
         }
     }

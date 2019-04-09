@@ -21,6 +21,18 @@ import XCTest
 
 class PasswordRuleSetTests: XCTestCase {
 
+    var defaultRuleSet: PasswordRuleSet!
+
+    override func setUp() {
+        super.setUp()
+        defaultRuleSet = PasswordRuleSet(minimumLength: 8, maximumLength: 15, allowedCharacters: [.unicode], requiredCharacters: [.digits, .uppercase, .lowercase, .special])
+    }
+
+    override func tearDown() {
+        defaultRuleSet = nil
+        super.tearDown()
+    }
+
     // MARK: - Creation
 
     func testThatItAddsRequiredCharactersToAllowedSet() {
@@ -38,28 +50,25 @@ class PasswordRuleSetTests: XCTestCase {
 
     // MARK: - Validation
 
-    func testThatItDetectsTooShortPassword() {
-        // GIVEN
-        let ruleSet = PasswordRuleSet(minimumLength: 10, maximumLength: 100, allowedCharacters: [.unicode], requiredCharacters: [.digits])
-        let shortPassword = "123456789"
+    func testKnownCases() {
+        // Valid
+        checkPassword("Passw0rd!", expectedResult: .valid)
+        checkPassword("Pass w0rd!", expectedResult: .valid)
+        checkPassword("Päss w0rd!", expectedResult: .valid)
+        checkPassword("Päss\u{1F43C}w0rd!", expectedResult: .valid)
 
-        // WHEN
-        let result = ruleSet.validatePassword(shortPassword)
-
-        // THEN
-        XCTAssertEqual(result, .tooShort)
+        // Invalid
+        checkPassword("aA1!", expectedResult: .tooShort)
+        checkPassword("aA1!aA1!aA1!aA1!aA1!", expectedResult: .tooLong)
+        checkPassword("A1!A1!A1!A1!", expectedResult: .missingRequiredClasses([.lowercase]))
+        checkPassword("a1!a1!a1!a1!", expectedResult: .missingRequiredClasses([.uppercase]))
+        checkPassword("aA!aA!aA!aA!", expectedResult: .missingRequiredClasses([.digits]))
+        checkPassword("aA1aA1aA1aA1", expectedResult: .missingRequiredClasses([.special]))
+        checkPassword("aaaaAAAA", expectedResult: .missingRequiredClasses([.digits, .special]))
     }
 
-    func testThatItDetectsTooLongPassword() {
-        // GIVEN
-        let ruleSet = PasswordRuleSet(minimumLength: 2, maximumLength: 8, allowedCharacters: [.unicode], requiredCharacters: [.digits])
-        let longPassword = "123456789"
-
-        // WHEN
-        let result = ruleSet.validatePassword(longPassword)
-
-        // THEN
-        XCTAssertEqual(result, .tooLong)
+    func checkPassword(_ password: String, expectedResult: PasswordValidationResult, file: StaticString = #file, line: UInt = #line) {
+        XCTAssertEqual(defaultRuleSet.validatePassword(password), expectedResult, file: file, line: line)
     }
 
     func testThatItDetectsDisallowedCharacter() {
@@ -75,17 +84,6 @@ class PasswordRuleSetTests: XCTestCase {
         XCTAssertEqual(result, .disallowedCharacter(dalet))
     }
 
-    func testThatItDetectsMissingClasses() {
-        // GIVEN
-        let ruleSet = PasswordRuleSet(minimumLength: 8, maximumLength: 120, allowedCharacters: [.asciiPrintable], requiredCharacters: [.digits, .special, .uppercase, .lowercase])
-        let plainPassword = "Wire2019"
-
-        // WHEN
-        let result = ruleSet.validatePassword(plainPassword)
-
-        // THEN
-        XCTAssertEqual(result, .missingRequiredClasses([.special]))
-    }
 
     // MARK: - Codable
 
@@ -93,12 +91,12 @@ class PasswordRuleSetTests: XCTestCase {
         // GIVEN
         let json = """
         {
-            "minimum-length": 8,
-            "maximum-length": 120,
-            "allowed-characters": [
+            "new_password_minimum_length": 8,
+            "new_password_maximum_length": 120,
+            "new_password_allowed_characters": [
                 "ascii-printable",
             ],
-            "required-characters": [
+            "new_password_required_characters": [
                 "digits",
                 "[🐼]"
             ]

@@ -74,10 +74,10 @@ public struct PasswordRuleSet: Decodable {
     // MARK: - Codable
 
     private enum CodingKeys: String, CodingKey {
-        case minimumLength = "minimum-length"
-        case maximumLength = "maximum-length"
-        case allowedCharacters = "allowed-characters"
-        case requiredCharacters = "required-characters"
+        case minimumLength = "new_password_minimum_length"
+        case maximumLength = "new_password_maximum_length"
+        case allowedCharacters = "new_password_allowed_characters"
+        case requiredCharacters = "new_password_required_characters"
     }
 
     public init(from decoder: Decoder) throws {
