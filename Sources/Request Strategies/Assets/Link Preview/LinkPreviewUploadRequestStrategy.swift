@@ -18,15 +18,6 @@
 
 private let zmLog = ZMSLog(tag: "link previews")
 
-
-fileprivate extension ZMClientMessage {
-
-    static var predicateForLinkPreviewUpload: NSPredicate {
-        return NSPredicate(format: "%K == %d", #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
-    }
-
-}
-
 public final class LinkPreviewUploadRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
 
     fileprivate let requestFactory = ClientMessageRequestFactory()
@@ -41,11 +32,23 @@ public final class LinkPreviewUploadRequestStrategy: AbstractRequestStrategy, ZM
         upstreamSync = ZMUpstreamModifiedObjectSync(
             transcoder: self,
             entityName: ZMClientMessage.entityName(),
-            update: ZMClientMessage.predicateForLinkPreviewUpload,
-            filter: nil,
+            update: LinkPreviewUploadRequestStrategy.updatePredicate,
+            filter: LinkPreviewUploadRequestStrategy.updateFilter,
             keysToSync: [ZMClientMessageLinkPreviewStateKey],
             managedObjectContext: managedObjectContext
         )
+    }
+    
+    static var updatePredicate: NSPredicate {
+        return NSPredicate(format: "%K == %d", #keyPath(ZMClientMessage.linkPreviewState), ZMLinkPreviewState.uploaded.rawValue)
+    }
+    
+    static var updateFilter: NSPredicate {
+        return NSPredicate { object, _ in
+            guard let message = object as? ZMMessage, let sender = message.sender  else { return false }
+            
+            return sender.isSelfUser
+        }
     }
 
     public var contextChangeTrackers : [ZMContextChangeTracker] {
