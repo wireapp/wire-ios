@@ -31,10 +31,13 @@ public struct PasswordRuleSet: Decodable {
     public let maximumLength: UInt
 
     /// The allowed set of characters.
-    public let allowedCharacters: Set<PasswordCharacterClass>
+    public let allowedCharacters: [PasswordCharacterClass]
 
     /// The character set that represents the union of all the characters in `allowedCharacters`.
     public let allowedCharacterSet: CharacterSet
+
+    /// The required classes of characters.
+    public let requiredCharacters: [PasswordCharacterClass]
 
     /// The required set of characters.
     public let requiredCharacterSets: [PasswordCharacterClass: CharacterSet]
@@ -50,7 +53,7 @@ public struct PasswordRuleSet: Decodable {
      * not included in `allowedCharacters`, they will be added to that set.
      */
 
-    public init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: Set<PasswordCharacterClass>, requiredCharacters: Set<PasswordCharacterClass>) {
+    public init(minimumLength: UInt, maximumLength: UInt, allowedCharacters: [PasswordCharacterClass], requiredCharacters: [PasswordCharacterClass]) {
         self.minimumLength = minimumLength
         self.maximumLength = maximumLength
 
@@ -60,7 +63,7 @@ public struct PasswordRuleSet: Decodable {
         var requiredCharacterSets: [PasswordCharacterClass: CharacterSet] = [:]
 
         for requiredClass in requiredCharacters {
-            allowedCharacters.insert(requiredClass)
+            allowedCharacters.append(requiredClass)
             let characterSet = requiredClass.associatedCharacterSet
             allowedCharacterSet.formUnion(characterSet)
             requiredCharacterSets[requiredClass] = characterSet
@@ -68,6 +71,7 @@ public struct PasswordRuleSet: Decodable {
 
         self.allowedCharacters = allowedCharacters
         self.allowedCharacterSet = allowedCharacterSet
+        self.requiredCharacters = requiredCharacters
         self.requiredCharacterSets = requiredCharacterSets
     }
 
@@ -84,8 +88,8 @@ public struct PasswordRuleSet: Decodable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         let minimumLength = try container.decode(UInt.self, forKey: .minimumLength)
         let maximumLength = try container.decode(UInt.self, forKey: .maximumLength)
-        let allowedCharacters = try container.decode(Set<PasswordCharacterClass>.self, forKey: .allowedCharacters)
-        let requiredCharacters = try container.decode(Set<PasswordCharacterClass>.self, forKey: .requiredCharacters)
+        let allowedCharacters = try container.decode([PasswordCharacterClass].self, forKey: .allowedCharacters)
+        let requiredCharacters = try container.decode([PasswordCharacterClass].self, forKey: .requiredCharacters)
         self.init(minimumLength: minimumLength, maximumLength: maximumLength, allowedCharacters: allowedCharacters, requiredCharacters: requiredCharacters)
     }
 
@@ -94,7 +98,7 @@ public struct PasswordRuleSet: Decodable {
     /// Encodes the rules in the format used by the Apple keychain.
     public func encodeInKeychainFormat() -> String {
         let allowed = allowedCharacters.map({ "allowed: \($0.rawValue)" }).joined(separator: "; ")
-        let required = requiredCharacterSets.keys.map({ "required: \($0.rawValue)" }).joined(separator: "; ")
+        let required = requiredCharacters.map({ "required: \($0.rawValue)" }).joined(separator: "; ")
         return "minlength: \(minimumLength); maxlength: \(maximumLength); \(allowed); \(required);"
     }
 
