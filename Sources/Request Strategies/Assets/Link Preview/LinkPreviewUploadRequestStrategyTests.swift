@@ -56,6 +56,22 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestInState_Processed() {
         self.verifyThatItDoesNotCreateARequest(for: .processed)
     }
+    
+    func testThatItDoesNotCreateARequestInState_Uploaded_ForOtherUser() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            let message = self.insertMessage(with: .uploaded)
+            message.sender = self.otherUser
+            
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            
+            // Then
+            XCTAssertNil(self.sut.nextRequest())
+        }
+    }
 
     func testThatItDoesCreateARequestInState_Uploaded() {
         self.syncMOC.performGroupedAndWait { moc in
