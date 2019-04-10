@@ -40,6 +40,13 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     // MARK: - Helpers
 
+    var colorSchemeVariant: ColorSchemeVariant = .light {
+        didSet {
+            passwordField.colorSchemeVariant = colorSchemeVariant
+            emailField.colorSchemeVariant = colorSchemeVariant
+        }
+    }
+
     var isPasswordEmpty: Bool {
         return passwordField.input.isEmpty
     }
@@ -76,7 +83,7 @@ class EmailPasswordTextField: UIView, MagicTappable {
         emailField.placeholder = "email.placeholder".localized(uppercased: true)
         emailField.showConfirmButton = false
         emailField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
-
+        emailField.colorSchemeVariant = colorSchemeVariant
         emailField.enableConfirmButton = { [weak self] in
             self?.emailValidationError == nil
         }
@@ -93,9 +100,14 @@ class EmailPasswordTextField: UIView, MagicTappable {
         passwordField.bindConfirmationButton(to: emailField)
         passwordField.addTarget(self, action: #selector(textInputDidChange), for: .editingChanged)
         passwordField.confirmButton.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        passwordField.colorSchemeVariant = colorSchemeVariant
 
         passwordField.enableConfirmButton = { [weak self] in
             self?.passwordValidationError == nil
+        }
+
+        passwordField.hasValidationIssues = { [weak self] in
+            self?.passwordValidationError != nil && self?.isPasswordEmpty == false
         }
 
         contentStack.addArrangedSubview(passwordField)
@@ -138,6 +150,11 @@ class EmailPasswordTextField: UIView, MagicTappable {
 
     func setSeparatorColor(_ color: UIColor) {
         separatorContainer.view.backgroundColor = color
+    }
+
+    func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
+        emailField.colorSchemeVariant = colorSchemeVariant
+        passwordField.colorSchemeVariant = colorSchemeVariant
     }
 
     // MARK: - Responder
