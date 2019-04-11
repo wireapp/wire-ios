@@ -154,6 +154,11 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
     return self.serviceIdentifier != nil && self.providerIdentifier != nil;
 }
 
++ (NSSet<NSString *> *)keyPathsForValuesAffectingIsServiceUser
+{
+    return [NSSet setWithObjects:ServiceIdentifierKey, ProviderIdentifierKey, nil];
+}
+
 - (BOOL)isSelfUser
 {
     if ([self isZombieObject]) {

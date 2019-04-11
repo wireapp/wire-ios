@@ -66,6 +66,7 @@ NSString *const ZMConversationLastReadServerTimeStampKey = @"lastReadServerTimeS
 NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
 NSString *const ZMConversationArchivedChangedTimeStampKey = @"archivedChangedTimestamp";
 NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTimestamp";
+NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipantsState";
 
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
 

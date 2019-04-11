@@ -101,8 +101,14 @@ extension ZMUser : SideEffectSource {
     func conversationChanges(changedKeys: Set<String>, conversations: [ZMConversation], keyStore: DependencyKeyStore) ->  ObjectAndChanges {
         var affectedObjects = [ZMManagedObject : Changes]()
         let classIdentifier = ZMConversation.entityName()
-        let otherPartKeys = changedKeys.map{"\(#keyPath(ZMConversation.lastServerSyncedActiveParticipants)).\($0)"}
-        let selfUserKeys = changedKeys.map{"\(#keyPath(ZMConversation.connection)).\(#keyPath(ZMConnection.to)).\($0)"}
+
+        // Get all the changed keys, including the ones in the user that are affected by this change
+        let allChangedKeys = changedKeys.reduce(into: Set<String>()) { keys, changedKey in
+            keys.formUnion(keyStore.observableKeysAffectedByValue(ZMUser.entityName(), key: changedKey))
+        }
+
+        let otherPartKeys = allChangedKeys.map{"\(#keyPath(ZMConversation.lastServerSyncedActiveParticipants)).\($0)"}
+        let selfUserKeys = allChangedKeys.map{"\(#keyPath(ZMConversation.connection)).\(#keyPath(ZMConnection.to)).\($0)"}
         let mappedKeys = otherPartKeys + selfUserKeys
         var keys = mappedKeys.map{keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)}.reduce(Set()){$0.union($1)}
 

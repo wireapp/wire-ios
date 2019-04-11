@@ -54,7 +54,8 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
             "allowGuestsChanged",
             "destructionTimeoutChanged",
             "languageChanged",
-            "hasReadReceiptsEnabledChanged"
+            "hasReadReceiptsEnabledChanged",
+            "externalParticipantsStateChanged"
         ]
     }
     
@@ -776,6 +777,25 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         },
                                                      expectedChangedFields: ["hasReadReceiptsEnabledChanged"],
                                                      expectedChangedKeys: ["hasReadReceiptsEnabled"])
+    }
+
+    func testThatItSendsUpdateForUpdatedServiceUser() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation.conversationType = .group
+
+        let user = createUser(in: uiMOC)
+        conversation.internalAddParticipants([user])
+        self.uiMOC.saveOrRollback()
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                     modifier: { conversation, _ in
+                                                        user.serviceIdentifier = UUID().uuidString
+                                                        user.providerIdentifier = UUID().uuidString
+        },
+                                                     expectedChangedFields: ["externalParticipantsStateChanged"],
+                                                     expectedChangedKeys: ["externalParticipantsState"])
     }
 }
 
