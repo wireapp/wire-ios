@@ -512,6 +512,18 @@ extension ZMUserTests {
         XCTAssertEqual(Set<ZMUser>(arrayLiteral: connectedUser, connectedUserWithoutHandle, teamUser, selfUser), connectionsAndTeamMembers)
     }
     
+    func testThatNeedsToNotifyAvailabilityBehaviourChangeDefaultsToNothing() {
+        XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, [])
+    }
+    
+    func testThatNeedsToNotifyAvailabilityBehaviourChangeCanBeUpdated() {
+        // given
+        selfUser.needsToNotifyAvailabilityBehaviourChange = .alert
+        
+        // then
+        XCTAssertEqual(selfUser.needsToNotifyAvailabilityBehaviourChange, .alert)
+    }
+        
 }
 
 // MARK: - Bot support

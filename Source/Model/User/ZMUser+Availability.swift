@@ -41,6 +41,24 @@ extension Availability {
     
 }
 
+/// Describes how the user should be notified about a change.
+public struct NotificationMethod: OptionSet {
+    
+    public let rawValue: Int
+    
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+    
+    /// Alert user by local notification
+    public static let notification = NotificationMethod(rawValue: 1 << 0)
+    /// Alert user by alert dialogue
+    public static let alert = NotificationMethod(rawValue: 1 << 1)
+    
+    public static let all: NotificationMethod = [.notification, .alert]
+    
+}
+
 extension ZMUser {
     
     @objc public static func connectionsAndTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
@@ -86,6 +104,20 @@ extension ZMUser {
         guard let availabilityProtobuffer = genericMessage.availability else { return }
         
         updateAvailability(Availability(availabilityProtobuffer))
+    }
+    
+    private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"
+    
+    /// Returns an option set describing how we should notify the user about the change in behaviour for the availability feature
+    public var needsToNotifyAvailabilityBehaviourChange: NotificationMethod {
+        get {
+            guard let rawValue = managedObjectContext?.persistentStoreMetadata(forKey: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey) as? Int else { return [] }
+            
+            return NotificationMethod(rawValue: rawValue)
+        }
+        set {
+            managedObjectContext?.setPersistentStoreMetadata(newValue.rawValue, key: type(of: self).needsToNotifyAvailabilityBehaviourChangeKey)
+        }
     }
     
 }

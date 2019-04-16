@@ -258,7 +258,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     ZMLogDebug(@"%@ <%@: %p>.", NSStringFromSelector(_cmd), self.class, self);
     
     NSDictionary *oldMetadata = [self.persistentStoreCoordinator metadataForPersistentStore:[self firstPersistentStore]];
-    [self makeMetadataPersistent];
+    BOOL hasMetadataChanges = [self makeMetadataPersistent];
     
     if (self.userInfo[IsFailingToSave]) {
         [self rollbackWithOldMetadata:oldMetadata];
@@ -267,7 +267,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     
     // We need to save even if hasChanges is NO as long as the callState changes. An empty save will result in an empty did-save notification.
     // That notification in turn will result in a merge, even if it is empty, and thus merge the call state.
-    if (self.zm_hasChanges || shouldIgnoreChanges) {
+    if (self.zm_hasChanges || shouldIgnoreChanges || hasMetadataChanges) {
         NSError *error;
         ZMLogDebug(@"Saving <%@: %p>.", self.class, self);
         self.timeOfLastSave = [NSDate date];

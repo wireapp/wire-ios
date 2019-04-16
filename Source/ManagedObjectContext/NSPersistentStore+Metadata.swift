@@ -32,6 +32,7 @@ extension String : SwiftPersistableInMetadata {}
 extension Date : SwiftPersistableInMetadata {}
 extension Data : SwiftPersistableInMetadata {}
 extension Array : SwiftPersistableInMetadata {}
+extension Int : SwiftPersistableInMetadata {}
 
 // TODO: Swift 4
 // extension Array where Element == SwiftPersistableInMetadata: SwiftPersistableInMetadata {}
@@ -80,7 +81,9 @@ extension NSManagedObjectContext {
     }
     
     /// Persist in-memory metadata to persistent store
-    @objc func makeMetadataPersistent() {
+    @objc func makeMetadataPersistent() -> Bool {
+        
+        guard nonCommittedMetadata.count > 0 || nonCommittedDeletedMetadataKeys.count > 0 else  { return false }
         
         let store = self.persistentStoreCoordinator!.persistentStores.first!
         var storedMetadata = self.persistentStoreCoordinator!.metadata(for: store)
@@ -98,6 +101,8 @@ extension NSManagedObjectContext {
         
         self.persistentStoreCoordinator?.setMetadata(storedMetadata, for: store)
         self.discardNonCommitedMetadata()
+        
+        return true
     }
     
     /// Remove key from list of keys that will be deleted next time
