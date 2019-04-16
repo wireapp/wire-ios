@@ -256,3 +256,4 @@ private class NewUserEventNotificationBuilder: EventNotificationBuilder {
         return notificationType.messageBodyText(senderName: name)
     }
 }
+
