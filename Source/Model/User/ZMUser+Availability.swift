@@ -19,8 +19,7 @@
 
 import Foundation
 
-@objc
-public enum Availability : Int {
+@objc public enum Availability : Int, CaseIterable {
     case none, available, busy, away
 }
 
@@ -38,7 +37,7 @@ extension Availability {
             self = .busy
         }
     }
-    
+
 }
 
 /// Describes how the user should be notified about a change.
