@@ -59,6 +59,7 @@ public struct MutedMessageTypes: OptionSet {
 public extension ZMConversation {
     @NSManaged @objc public var mutedStatus: Int32
     
+    /// Returns an option set of messages types which should be muted
     public var mutedMessageTypes: MutedMessageTypes {
         get {
             guard let managedObjectContext = self.managedObjectContext else {
@@ -94,9 +95,38 @@ public extension ZMConversation {
             }
         }
     }
+    
+    /// Returns an option set of messages types which should be muted when also considering the
+    /// the availability status of the self user.
+    public var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
+        get {
+            guard let managedObjectContext = self.managedObjectContext else {
+                return .none
+            }
+            
+            let selfUser = ZMUser.selfUser(in: managedObjectContext)
+            return selfUser.mutedMessagesTypes.union(mutedMessageTypes)
+        }
+    }
+}
+
+extension ZMUser {
+    
+    var mutedMessagesTypes: MutedMessageTypes {
+        switch availability {
+        case .available, .none:
+            return .none
+        case .busy:
+            return .regular
+        case .away:
+            return .all
+        }
+    }
+    
 }
 
 extension ZMConversationMessage {
+    
     public var isSilenced: Bool {
         guard let conversation = self.conversation else {
             return false
@@ -106,7 +136,7 @@ extension ZMConversationMessage {
             return true
         }
         
-        if conversation.mutedMessageTypes == .none {
+        if conversation.mutedMessageTypesIncludingAvailability == .none {
             return false
         }
         
@@ -114,11 +144,12 @@ extension ZMConversationMessage {
             return true
         }
         
-        if conversation.mutedMessageTypes == .regular && (textMessageData.isMentioningSelf || textMessageData.isQuotingSelf) {
+        if conversation.mutedMessageTypesIncludingAvailability == .regular && (textMessageData.isMentioningSelf || textMessageData.isQuotingSelf) {
             return false
         }
         else {
             return true
         }
     }
+    
 }

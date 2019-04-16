@@ -94,7 +94,7 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 @dynamic hasUnreadUnsentMessage;
 
 + (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
-{
+{    
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:[ZMConversation entityName]];
     request.predicate = [self predicateForConversationConsideredUnread];
     
