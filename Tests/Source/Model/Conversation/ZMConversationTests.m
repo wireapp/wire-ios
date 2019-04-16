@@ -2422,7 +2422,7 @@
 
 @end
 
-@implementation ZMConversationTests (UnreadCountIncludingSilenced)
+@implementation ZMConversationTests (UnreadCount)
 
 - (void)testThatItDoesNotCountExcludedConversationWithUnreadMessagesAsUnread
 {
@@ -2456,11 +2456,6 @@
     }];
 }
 
-@end
-
-
-@implementation ZMConversationTests (ObjectIds)
-
 - (void)testThatItCountsConversationsWithUnreadMessagesAsUnread_IfItHasUnread
 {
     // given
@@ -2476,7 +2471,6 @@
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 1lu);
     }];
 }
-
 
 - (void)testThatItDoesNotCountConversationsWithUnreadMessagesAsUnread_IfItHasNoUnread
 {
