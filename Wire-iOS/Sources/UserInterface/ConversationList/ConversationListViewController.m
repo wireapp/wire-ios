@@ -91,7 +91,7 @@
 @property (nonatomic) ConversationListContentController *listContentController;
 @property (nonatomic) ConversationListBottomBarController *bottomBarController;
 
-@property (nonatomic) ConversationListTopBar *topBar;
+@property (nonatomic) ConversationListTopBarViewController *topBarViewController;
 @property (nonatomic) NetworkStatusViewController *networkStatusViewController;
 
 /// for NetworkStatusViewDelegate
@@ -169,6 +169,8 @@
 
     [self createViewConstraints];
     [self.listContentController.collectionView scrollRectToVisible:CGRectMake(0, 0, self.view.bounds.size.width, 1) animated:NO];
+    
+    [self.topBarViewController didMoveToParentViewController:self];
     
     [self hideNoContactLabelAnimated:NO];
     [self updateNoConversationVisibility];
@@ -394,12 +396,11 @@
     [self.bottomBarController.view autoPinEdgeToSuperviewEdge:ALEdgeRight];
     self.bottomBarBottomOffset = [self.bottomBarController.view autoPinEdgeToSuperviewEdge:ALEdgeBottom];
 
-    [self.networkStatusViewController createConstraintsInParentControllerWithBottomView:self.topBar controller:self];
+    [self.networkStatusViewController createConstraintsInParentControllerWithBottomView:self.topBarViewController.view controller:self];
     
-    [self.topBar autoPinEdgeToSuperviewEdge:ALEdgeLeft];
-    [self.topBar autoPinEdgeToSuperviewEdge:ALEdgeRight];
-
-    [self.topBar autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.conversationListContainer];
+    [self.topBarViewController.view autoPinEdgeToSuperviewEdge:ALEdgeLeft];
+    [self.topBarViewController.view autoPinEdgeToSuperviewEdge:ALEdgeRight];
+    [self.topBarViewController.view autoPinEdge:ALEdgeBottom toEdge:ALEdgeTop ofView:self.conversationListContainer];
     
     [[self.contentContainer.bottomAnchor constraintEqualToAnchor:self.safeBottomAnchor] setActive:YES];
     [[self.contentContainer.topAnchor constraintEqualToAnchor:self.safeTopAnchor] setActive:YES];
@@ -511,22 +512,6 @@
     [self setState:ConversationListStatePeoplePicker animated:animated];
 }
 
-- (void)presentSettings
-{
-    UIViewController *settingsViewController = [self createSettingsViewController];
-    KeyboardAvoidingViewController *keyboardAvoidingWrapperController = [[KeyboardAvoidingViewController alloc] initWithViewController:settingsViewController];
-    
-    if (self.wr_splitViewController.layoutSize == SplitViewControllerLayoutSizeCompact) {
-        keyboardAvoidingWrapperController.modalPresentationStyle = UIModalPresentationCurrentContext;
-        keyboardAvoidingWrapperController.transitioningDelegate = self;
-        [self presentViewController:keyboardAvoidingWrapperController animated:YES completion:nil];
-    } else {
-        keyboardAvoidingWrapperController.modalPresentationStyle = UIModalPresentationFormSheet;
-        keyboardAvoidingWrapperController.view.backgroundColor = [UIColor blackColor];
-        [self.parentViewController presentViewController:keyboardAvoidingWrapperController animated:YES completion:nil];
-    }
-}
-
 - (void)dismissPeoplePickerWithCompletionBlock:(dispatch_block_t)block
 {
     [self setState:ConversationListStateConversationList animated:YES completion:block];
@@ -596,7 +581,7 @@
 {
     [self updateBottomBarSeparatorVisibilityWithContentController:controller];
     
-    [self.topBar scrollViewDidScroll:controller.collectionView];
+    [self.topBarViewController scrollViewDidScroll:controller.collectionView];
 }
 
 - (void)conversationList:(ConversationListViewController *)controller didSelectConversation:(ZMConversation *)conversation focusOnView:(BOOL)focus
