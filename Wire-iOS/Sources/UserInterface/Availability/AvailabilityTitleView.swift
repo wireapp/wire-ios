@@ -53,7 +53,7 @@ class AvailabilityTitleView: TitleView, Themeable, ZMUserObserver {
     
     // MARK: - Properties
     
-    private let user: GenericUser
+    private let user: UserType
     private var observerToken: Any?
     
     private let feedbackGenerator = UIImpactFeedbackGenerator(style: .medium)
@@ -86,7 +86,7 @@ class AvailabilityTitleView: TitleView, Themeable, ZMUserObserver {
      * - note: You can change the options later, through the `options` property.
      */
     
-    init(user: GenericUser, options: Options) {
+    init(user: UserType, options: Options) {
         self.options = options
         self.user = user
         super.init()
@@ -171,7 +171,7 @@ class AvailabilityTitleView: TitleView, Themeable, ZMUserObserver {
     func actionSheet(presentingViewController: UIViewController) -> UIAlertController {
         let alert = UIAlertController(title: "availability.message.set_status".localized, message: nil, preferredStyle: .actionSheet)
         
-        for availability in Availability.allValues {
+        for availability in Availability.allCases {
             alert.addAction(UIAlertAction(title: availability.localizedName, style: .default, handler: { [weak self] (action) in
                 self?.didSelectAvailability(availability)
                 
