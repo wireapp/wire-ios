@@ -36,7 +36,6 @@
 #import "MessageAction.h"
 
 #import "Constants.h"
-#import "UIImage+ZetaIconsNeue.h"
 
 #import "Analytics.h"
 
