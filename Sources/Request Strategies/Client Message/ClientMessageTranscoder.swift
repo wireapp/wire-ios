@@ -159,16 +159,7 @@ extension ClientMessageTranscoder {
             }
             
             updateResult.message?.markAsSent()
-                        
-            if type(of: self.applicationStatus!.deliveryConfirmation).sendDeliveryReceipts {
-                if updateResult.needsConfirmation {
-                    let confirmation = updateResult.message!.confirmDelivery()!
-                    if event.source == .pushNotification {
-                        self.applicationStatus!.deliveryConfirmation.needsToConfirmMessage(confirmation.nonce!)
-                    }
-                }
-            }
-            
+                                    
             if let updateMessage = updateResult.message, event.source == .pushNotification || event.source == .webSocket {
                 self.localNotificationDispatcher.process(updateMessage)
             }
