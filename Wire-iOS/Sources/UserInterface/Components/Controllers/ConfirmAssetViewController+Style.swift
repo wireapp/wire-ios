@@ -21,6 +21,20 @@ import AVKit
 
 extension ConfirmAssetViewController {
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateStatusBar()
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        updateStatusBar()
+    }
+
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        return ColorScheme.default.statusBarStyle
+    }
+
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
@@ -71,5 +85,28 @@ extension ConfirmAssetViewController {
         
         view.addSubview(playerViewController.view)
     }
-    
+
+    @objc(openSketchInEditMode:)
+    func openSketch(in editMode: CanvasViewControllerEditMode) {
+        guard let image = image as? UIImage else {
+            return
+        }
+
+        let canvasViewController = CanvasViewController()
+        canvasViewController.sketchImage = image
+        canvasViewController.delegate = self
+        canvasViewController.title = previewTitle
+        canvasViewController.select(editMode: editMode, animated: false)
+
+        let navigationController = canvasViewController.wrapInNavigationController()
+        navigationController.modalTransitionStyle = .crossDissolve
+
+        present(navigationController, animated: true)
+    }
+}
+
+extension ConfirmAssetViewController: CanvasViewControllerDelegate {
+    func canvasViewController(_ canvasViewController: CanvasViewController, didExportImage image: UIImage) {
+        onConfirm?(image)
+    }
 }

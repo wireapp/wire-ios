@@ -18,6 +18,7 @@
 
 import Foundation
 import Photos
+import MobileCoreServices
 
 extension ProfileSelfPictureViewController {
     override open func viewDidLoad() {
@@ -29,11 +30,25 @@ extension ProfileSelfPictureViewController {
         setupTopView()
     }
 
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateStatusBar()
+    }
+
+    override open func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        updateStatusBar()
+    }
+
+    override open var preferredStatusBarStyle: UIStatusBarStyle {
+        return ColorScheme.default.statusBarStyle
+    }
+
+
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
         return wr_supportedInterfaceOrientations
     }
 
-    @objc
     func addCameraButton() {
         cameraButton = IconButton()
         cameraButton.translatesAutoresizingMaskIntoConstraints = false
@@ -53,7 +68,6 @@ extension ProfileSelfPictureViewController {
         cameraButton.accessibilityLabel = "cameraButton"
     }
 
-    @objc
     func addCloseButton() {
         closeButton = IconButton()
         closeButton.accessibilityIdentifier = "CloseButton"
@@ -74,7 +88,6 @@ extension ProfileSelfPictureViewController {
         closeButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for: .touchUpInside)
     }
 
-    @objc
     func addLibraryButton() {
         let length: CGFloat = 32
         let libraryButtonSize = CGSize(width: length, height: length)
@@ -169,5 +182,28 @@ extension ProfileSelfPictureViewController {
         addCloseButton()
     }
 
-}
+    @objc
+    func libraryButtonTapped(_ sender: Any?) {
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .photoLibrary
+        imagePickerController.mediaTypes = [kUTTypeImage as String]
+        imagePickerController.delegate = imagePickerConfirmationController
 
+        if isIPadRegular() {
+            imagePickerController.modalPresentationStyle = .popover
+            let popover: UIPopoverPresentationController? = imagePickerController.popoverPresentationController
+
+            if let view = sender as? UIView {
+                popover?.sourceRect = view.bounds.insetBy(dx: 4, dy: 4)
+                popover?.sourceView = view
+            }
+            popover?.backgroundColor = UIColor.white
+        }
+
+        /// update status bar style for the top view controller (UIImagePickerController)
+        present(imagePickerController, animated: true) { [weak self] in
+            self?.updateStatusBar()
+        }
+    }
+
+}
