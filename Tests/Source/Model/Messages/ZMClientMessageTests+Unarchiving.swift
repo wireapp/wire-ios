@@ -33,7 +33,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
 
         // when
         performPretendingUiMocIsSyncMoc {
-            XCTAssertNotNil(ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil))
+            XCTAssertNotNil(ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil))
         }
         
         // then
@@ -53,7 +53,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         
         // then
@@ -81,7 +81,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc { 
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         
         // then
@@ -108,7 +108,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         // then
         XCTAssertFalse(conversation.isArchived)

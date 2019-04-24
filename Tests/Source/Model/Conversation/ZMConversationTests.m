@@ -1818,7 +1818,7 @@
     __block ZMClientMessage *newMessage;
     
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
 
     WaitForAllGroupsToBeEmpty(0.5);
@@ -3303,7 +3303,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -3339,7 +3339,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // then
@@ -3384,7 +3384,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // then
@@ -3436,7 +3436,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // re-create message with same nonce to access the cache
@@ -3475,7 +3475,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // then
@@ -3512,7 +3512,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // then
@@ -3549,7 +3549,7 @@
         ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:(id)payload uuid:nil];
         
         // when
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.syncMOC prefetchResult:nil];
         [self.syncMOC saveOrRollback];
         
         // then
