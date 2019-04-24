@@ -154,14 +154,12 @@ extension ClientMessageTranscoder {
                 }
             }
             
-            guard let updateResult = ZMOTRMessage.messageUpdateResult(from: event, in: self.managedObjectContext, prefetchResult: prefetchResult) else {
-                return
-            }
+            guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
             
-            updateResult.message?.markAsSent()
+            message.markAsSent()
                                     
-            if let updateMessage = updateResult.message, event.source == .pushNotification || event.source == .webSocket {
-                self.localNotificationDispatcher.process(updateMessage)
+            if event.source == .pushNotification || event.source == .webSocket {
+                self.localNotificationDispatcher.process(message)
             }
             
         default:
