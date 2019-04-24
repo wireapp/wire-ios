@@ -56,7 +56,7 @@ extension ZMClientMessageTests_Reaction {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -75,7 +75,7 @@ extension ZMClientMessageTests_Reaction {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -92,7 +92,7 @@ extension ZMClientMessageTests_Reaction {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -112,7 +112,7 @@ extension ZMClientMessageTests_Reaction {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -134,7 +134,7 @@ extension ZMClientMessageTests_Reaction {
         
         // when
         performPretendingUiMocIsSyncMoc {
-            ZMClientMessage.messageUpdateResult(from: event, in: self.uiMOC, prefetchResult: nil)
+            ZMClientMessage.createOrUpdate(from: event, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

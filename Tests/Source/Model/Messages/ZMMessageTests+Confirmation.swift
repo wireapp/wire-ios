@@ -36,7 +36,7 @@ extension ZMMessageTests_Confirmation {
         conversation.hasReadReceiptsEnabled = true
         
         // when
-        let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
         
         // then
         XCTAssertTrue(message.expectsReadConfirmation)
@@ -50,7 +50,7 @@ extension ZMMessageTests_Confirmation {
         conversation.hasReadReceiptsEnabled = false
         
         // when
-        let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
         
         // then
         XCTAssertFalse(message.expectsReadConfirmation)
@@ -63,7 +63,7 @@ extension ZMMessageTests_Confirmation {
         conversation.hasReadReceiptsEnabled = true
         
         // when
-        let message = insertMessage(conversation, fromSender: ZMUser.selfUser(in: uiMOC), timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: ZMUser.selfUser(in: uiMOC), timestamp: Date()) as! ZMClientMessage
         
         // then
         XCTAssertFalse(message.expectsReadConfirmation)
@@ -77,7 +77,7 @@ extension ZMMessageTests_Confirmation {
         conversation.conversationType = .oneOnOne
         
         // when
-        let message = insertMessage(conversation, fromSender: ZMUser.selfUser(in: uiMOC), timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: ZMUser.selfUser(in: uiMOC), timestamp: Date()) as! ZMClientMessage
         
         // then
         XCTAssertFalse(message.expectsReadConfirmation)
@@ -90,7 +90,7 @@ extension ZMMessageTests_Confirmation {
         conversation.conversationType = .oneOnOne
         
         // insert message which expects read confirmation
-        let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
         message.genericMessage?.setExpectsReadConfirmation(true)?.data().apply(message.add)
 
         // when
@@ -108,7 +108,7 @@ extension ZMMessageTests_Confirmation {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = false
         
         // insert message which expects read confirmation
-        let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
         message.genericMessage?.setExpectsReadConfirmation(true)?.data().apply(message.add)
         
         // then
@@ -124,96 +124,12 @@ extension ZMMessageTests_Confirmation {
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
         
         // insert message which doesn't expect read confirmation
-        let message = insertMessage(conversation, fromSender: user, timestamp: Date()).message as! ZMClientMessage
+        let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
         
         // then
         XCTAssertFalse(message.needsReadConfirmation)
     }
-    
-    // MARK: Delivery receipts
-    
-    func checkThatItInsertsADeliveryConfirmationMessageWhenItReceivesAMessage(_ conversationType: ZMConversationType,
-                                                                              shouldSendConfirmation: Bool,
-                                                                              timestamp: Date = .init(),
-                                                                              file: StaticString = #file,
-                                                                              line: UInt = #line ) {
-        // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        user.remoteIdentifier = UUID.create()
-        
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.conversationType = conversationType
-        conversation.mutableLastServerSyncedActiveParticipants.add(user)
-        
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
-        conversation.lastModifiedDate = lastModified
-        
-        // when
-        // other user sends confirmation
-        let sut = insertMessage(conversation, fromSender: user, timestamp: timestamp)
-        XCTAssertTrue(uiMOC.saveOrRollback(), file: file, line: line)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
-        
-        // then
-        XCTAssertEqual(conversation.lastMessage as? ZMClientMessage, sut.message, file: file, line: line)
-        XCTAssertEqual(shouldSendConfirmation, sut.needsConfirmation, file: file, line: line)
-    }
-    
-    func testThatIt_Inserts_AConfirmationMessageWhenItReceivesAMessageInA_OneOnOne_Conversation(){
-        checkThatItInsertsADeliveryConfirmationMessageWhenItReceivesAMessage(.oneOnOne, shouldSendConfirmation:true)
-    }
-    
-    func testThatIt_DoesNotInsert_AConfirmationMessageWhenItReceivesAMessageInA_Group_Conversation(){
-        checkThatItInsertsADeliveryConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation:false)
-    }
 
-    func testThatIt_DoesNotInsert_AConfirmationMessageWhenItReceivesAMessageOlderThan7Days() {
-        guard let olderDate = Calendar.current.date(byAdding: .init(day: -8), to: Date()) else { return XCTFail("No date") }
-        checkThatItInsertsADeliveryConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation: false, timestamp: olderDate)
-    }
-
-    func testThatIt_DoesInsert_AConfirmationMessageWhenItReceivesAMessageNotOlderThan7Days() {
-        guard let olderDate = Calendar.current.date(byAdding: .init(day: -7), to: Date()) else { return XCTFail("No date") }
-        checkThatItInsertsADeliveryConfirmationMessageWhenItReceivesAMessage(.group, shouldSendConfirmation: false, timestamp: olderDate)
-    }
-    
-    func testThatItDoesNotRequiresAConfirmationMessageIfTheMessageWasSentByTheSelfUser(){
-        // given
-        let conversation = ZMConversation.insertNewObject(in:uiMOC)
-        conversation.remoteIdentifier = .create()
-        conversation.conversationType = .oneOnOne
-        
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
-        conversation.lastModifiedDate = lastModified
-        
-        // when
-        // selfuser sends confirmation
-        let sut = insertMessage(conversation, fromSender: selfUser)
-        XCTAssertTrue(uiMOC.saveOrRollback())
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // then
-        XCTAssertEqual(conversation.lastMessage as? ZMClientMessage, sut.message)
-        XCTAssertFalse(sut.needsConfirmation)
-    }
-    
-    func testThatAMessageConfirmationDoesNotExpire() {
-        
-        // given
-        let conversation = ZMConversation.insertNewObject(in:uiMOC)
-        conversation.remoteIdentifier = .create()
-        let lastModified = Date(timeIntervalSince1970: 1234567890)
-        conversation.lastModifiedDate = lastModified
-        
-        let message = conversation.append(text: "foo") as! ZMClientMessage
-        
-        // when
-        let sut = message.confirmDelivery()!
-        
-        // then
-        XCTAssertNil(sut.expirationDate)
-    }
 }
 
 // MARK: - Deletion
@@ -228,7 +144,7 @@ extension ZMMessageTests_Confirmation {
         message.markAsSent()
         let confirmationUpdate = createMessageDeliveryConfirmationUpdateEvent(message.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: confirmationUpdate, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: confirmationUpdate, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         XCTAssertTrue(uiMOC.saveOrRollback())
@@ -260,9 +176,9 @@ extension ZMMessageTests_Confirmation {
         
         // when
         let sut = insertMessage(conversation, fromSender: remoteUser)
-        let _ = sut.message?.confirmDelivery()
+        _ = conversation.append(message: ZMConfirmation.confirm(messageId: sut.nonce!, type: .DELIVERED), hidden: true)
+        
         // then
-        XCTAssertTrue(sut.needsConfirmation)
         guard let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage else {
             XCTFail("Did not insert confirmation message.")
             return
@@ -271,7 +187,7 @@ extension ZMMessageTests_Confirmation {
         XCTAssertTrue(hiddenMessage.genericMessage?.hasConfirmation() == true)
         // when
         
-        sut.message!.removePendingDeliveryReceipts()
+        sut.removePendingDeliveryReceipts()
         self.uiMOC.saveOrRollback()
         
         // then
@@ -289,16 +205,16 @@ extension ZMMessageTests_Confirmation {
         remoteUser.remoteIdentifier = .create()
         
         let textMessage = insertMessage(conversation, fromSender: selfUser)
-        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
-        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.mutableSetValue(forKey: "confirmations").add(confirmation)
         
-        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        XCTAssertEqual(textMessage.confirmations.count, 1)
         // when
-        textMessage.message!.hideForSelfUser()
+        textMessage.hideForSelfUser()
         uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(textMessage.message!.confirmations.count, 0)
+        XCTAssertEqual(textMessage.confirmations.count, 0)
         XCTAssertNil(confirmation.managedObjectContext)
     }
     
@@ -313,16 +229,16 @@ extension ZMMessageTests_Confirmation {
         remoteUser.remoteIdentifier = .create()
         
         let textMessage = insertMessage(conversation, fromSender: selfUser)
-        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
-        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.mutableSetValue(forKey: "confirmations").add(confirmation)
         
-        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        XCTAssertEqual(textMessage.confirmations.count, 1)
         // when
-        textMessage.message!.deleteForEveryone()
+        textMessage.deleteForEveryone()
         uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(textMessage.message!.confirmations.count, 0)
+        XCTAssertEqual(textMessage.confirmations.count, 0)
         XCTAssertNil(confirmation.managedObjectContext)
     }
     
@@ -337,16 +253,16 @@ extension ZMMessageTests_Confirmation {
         remoteUser.remoteIdentifier = .create()
         
         let textMessage = insertMessage(conversation, fromSender: selfUser)
-        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage.message!, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
-        textMessage.message!.mutableSetValue(forKey: "confirmations").add(confirmation)
+        let confirmation = ZMMessageConfirmation(type: .read, message: textMessage, sender: remoteUser, serverTimestamp: Date(), managedObjectContext: uiMOC)
+        textMessage.mutableSetValue(forKey: "confirmations").add(confirmation)
         
-        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        XCTAssertEqual(textMessage.confirmations.count, 1)
         // when
-        textMessage.message!.obfuscate()
+        textMessage.obfuscate()
         uiMOC.saveOrRollback()
         
         // then
-        XCTAssertEqual(textMessage.message!.confirmations.count, 1)
+        XCTAssertEqual(textMessage.confirmations.count, 1)
         XCTAssertNotNil(confirmation.managedObjectContext)
     }
 }
@@ -373,7 +289,7 @@ extension ZMMessageTests_Confirmation {
         // other user sends confirmation
         let updateEvent = createMessageReadConfirmationUpdateEvent([sut.nonce!], conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -398,7 +314,7 @@ extension ZMMessageTests_Confirmation {
         // other user sends read confirmation
         let updateEvent = createMessageReadConfirmationUpdateEvent([sut.nonce!], conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -427,7 +343,7 @@ extension ZMMessageTests_Confirmation {
         // other user sends read confirmation
         let updateEvent = createMessageReadConfirmationUpdateEvent([messsage1.nonce!, messsage2.nonce!], conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -461,9 +377,9 @@ extension ZMMessageTests_Confirmation {
         let updateEvent2 = createMessageReadConfirmationUpdateEvent([sut.nonce!], conversationID: conversation.remoteIdentifier!, timestamp: timestamp1)
         let updateEvent3 = createMessageReadConfirmationUpdateEvent([sut.nonce!], conversationID: conversation.remoteIdentifier!, timestamp: timestamp3)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent1, in: self.uiMOC, prefetchResult: nil)
-            ZMOTRMessage.messageUpdateResult(from: updateEvent2, in: self.uiMOC, prefetchResult: nil)
-            ZMOTRMessage.messageUpdateResult(from: updateEvent3, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent1, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent2, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent3, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -491,7 +407,7 @@ extension ZMMessageTests_Confirmation {
         // other user sends confirmation
         let updateEvent = createMessageDeliveryConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -515,15 +431,15 @@ extension ZMMessageTests_Confirmation {
         
         // when
         // other user sends confirmation
-        let updateEvent = createMessageDeliveryConfirmationUpdateEvent(sut.message!.nonce!, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageDeliveryConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
-        XCTAssertNotEqual(sut.message!.deliveryState, ZMDeliveryState.delivered)
+        XCTAssertNotEqual(sut.deliveryState, ZMDeliveryState.delivered)
     }
     
     func testThatItSendsOutNotificationsForTheDeliveryStatusChange(){
@@ -553,7 +469,7 @@ extension ZMMessageTests_Confirmation {
         // when
         let updateEvent = createMessageDeliveryConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
-            ZMOTRMessage.messageUpdateResult(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }
         XCTAssertTrue(self.uiMOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -573,7 +489,7 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Helpers
 extension ZMMessageTests_Confirmation {
     
-    func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> MessageUpdateResult {
+    func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> ZMMessage {
         let nonce = UUID.create()
         let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "foo"), nonce: nonce)
         let messageEvent = createUpdateEvent(
@@ -585,21 +501,21 @@ extension ZMMessageTests_Confirmation {
             eventSource: eventSource
         )
         
-        var messageUpdateResult : MessageUpdateResult!
+        var message: ZMMessage!
         let MOC = moc ?? uiMOC
 
         if MOC.zm_isUserInterfaceContext {
             performPretendingUiMocIsSyncMoc {
-                messageUpdateResult = ZMClientMessage.messageUpdateResult(from: messageEvent, in: MOC, prefetchResult: nil)
+                message = ZMOTRMessage.createOrUpdate(from: messageEvent, in: self.uiMOC, prefetchResult: nil)
             }
         }
         else {
-            messageUpdateResult = ZMClientMessage.messageUpdateResult(from: messageEvent, in: MOC, prefetchResult: nil)
+            message = ZMOTRMessage.createOrUpdate(from: messageEvent, in: MOC, prefetchResult: nil)
 
         }
         XCTAssertTrue(MOC.saveOrRollback())
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        return messageUpdateResult
+        return message
     }
     
     func createMessageDeliveryConfirmationUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create(), timestamp: Date = .init()) -> ZMUpdateEvent {

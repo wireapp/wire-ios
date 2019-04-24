@@ -276,7 +276,7 @@ extension ZMClientMessageTests_Ephemeral {
             // when
             let delete = ZMGenericMessage.message(content: ZMMessageDelete.delete(messageId: message.nonce!), nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.syncUser1.remoteIdentifier!, eventSource: .download)
-            _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            _ = ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
             
             // then
             XCTAssertNil(message.sender)
@@ -301,7 +301,7 @@ extension ZMClientMessageTests_Ephemeral {
             // when
             let delete = ZMGenericMessage.message(content: ZMMessageDelete.delete(messageId: message.nonce!), nonce: UUID.create())
             let event = self.createUpdateEvent(UUID.create(), conversationID: self.syncConversation.remoteIdentifier!, genericMessage: delete, senderID: self.selfUser.remoteIdentifier!, eventSource: .download)
-            _ = ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            _ = ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
             
             // then
             XCTAssertNil(message.sender)

@@ -32,7 +32,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             
             // when
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
             
             // then
             XCTAssertNil(self.syncConversation.clearedTimeStamp)
@@ -52,7 +52,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             self.syncConversation.lastReadServerTimeStamp = nil
             
             // when
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
             
             // then
             XCTAssertNil(self.syncConversation.lastReadServerTimeStamp)
@@ -72,7 +72,7 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             let event = self.createUpdateEvent(nonce, conversationID: selfConversation.remoteIdentifier!, timestamp: Date(), genericMessage: message, senderID: UUID(), eventSource: ZMUpdateEventSource.download)
             
             // when
-            ZMOTRMessage.messageUpdateResult(from: event, in: self.syncMOC, prefetchResult: nil)
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
             
             // then
             XCTAssertFalse(toBehiddenMessage.hasBeenDeleted)

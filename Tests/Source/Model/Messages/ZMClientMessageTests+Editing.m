@@ -315,7 +315,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -348,7 +348,7 @@
     
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -377,7 +377,7 @@
 
     // when
     [self performPretendingUiMocIsSyncMoc:^{
-        [ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
+        [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -423,7 +423,7 @@
     // when
     __block ZMClientMessage *newMessage;
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 
@@ -457,7 +457,7 @@
     __block ZMClientMessage *newMessage;
 
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -497,7 +497,7 @@
     __block ZMClientMessage *newMessage;
     
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -540,7 +540,7 @@
     __block ZMClientMessage *newMessage;
 
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -578,7 +578,7 @@
     __block ZMClientMessage *newMessage;
     
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -612,7 +612,7 @@
     __block ZMClientMessage *newMessage;
 
     [self performPretendingUiMocIsSyncMoc:^{
-        newMessage = (id)[ZMClientMessage messageUpdateResultFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil].message;
+        newMessage = [ZMClientMessage createOrUpdateMessageFromUpdateEvent:updateEvent inManagedObjectContext:self.uiMOC prefetchResult:nil];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
 

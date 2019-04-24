@@ -133,10 +133,10 @@ NSString * const DeliveredKey = @"delivered";
 {
     NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
 }
-
-+ (MessageUpdateResult *)messageUpdateResultFromUpdateEvent:(ZMUpdateEvent *)updateEvent
-                                     inManagedObjectContext:(NSManagedObjectContext *)moc
-                                             prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
+    
++ (instancetype)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
+                              inManagedObjectContext:(NSManagedObjectContext *)moc
+                                      prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
 {
     ZMGenericMessage *message;
     @try {
@@ -166,8 +166,8 @@ NSString * const DeliveredKey = @"delivered";
     if (message == nil) {
         ZMUser *sender = [ZMUser userWithRemoteID:updateEvent.senderUUID createIfNeeded:NO inContext:moc];
         VerifyReturnNil(sender);
-        ZMSystemMessage *systemMessage = [conversation appendInvalidSystemMessageAt:updateEvent.timeStamp sender:sender];
-        return [[MessageUpdateResult alloc] initWithMessage:systemMessage needsConfirmation:NO wasInserted:YES];
+        [conversation appendInvalidSystemMessageAt:updateEvent.timeStamp sender:sender];
+        return nil;
     }
     
     // Verify sender is part of conversation
@@ -197,7 +197,7 @@ NSString * const DeliveredKey = @"delivered";
         ZMClientMessage *editedMessage = [ZMClientMessage fetchMessageWithNonce:editedMessageId forConversation:conversation inManagedObjectContext:moc prefetchResult:prefetchResult];
         if ([editedMessage processMessageEdit:message.edited from:updateEvent]) {
             [editedMessage updateCategoryCache];
-            return [[MessageUpdateResult alloc] initWithMessage:editedMessage needsConfirmation:editedMessage.needsDeliveryConfirmation wasInserted:YES];
+            return editedMessage;
         }
     } else if ([conversation shouldAddEvent:updateEvent] && !(message.hasClientAction || message.hasCalling || message.hasAvailability)) {
         NSUUID *nonce = [NSUUID uuidWithTransportString:message.messageId];
@@ -242,7 +242,7 @@ NSString * const DeliveredKey = @"delivered";
         [clientMessage unarchiveIfNeeded:conversation];
         [clientMessage updateCategoryCache];
         
-        return [[MessageUpdateResult alloc] initWithMessage:clientMessage needsConfirmation:clientMessage.needsDeliveryConfirmation wasInserted:isNewMessage];
+        return clientMessage;
     }
 
     return nil;
