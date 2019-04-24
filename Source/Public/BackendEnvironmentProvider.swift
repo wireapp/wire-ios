@@ -24,6 +24,14 @@ import Foundation
     @objc func verifyServerTrust(trust: SecTrust, host: String?) -> Bool
 }
 
+// Wrapper around Swift-only EnvironmentType so that it would be useable in Objective-C
+@objc public class EnvironmentTypeProvider: NSObject {
+    public var value: EnvironmentType
+    init(environmentType: EnvironmentType) {
+        self.value = environmentType
+    }
+}
+
 // Swift migration notice: this protocol conforms to NSObjectProtocol only to be usable from Obj-C.
 @objc public protocol BackendEndpointsProvider: NSObjectProtocol {
     /// Backend base URL.
@@ -32,8 +40,14 @@ import Foundation
     var backendWSURL: URL { get }
     /// URL for version blacklist file.
     var blackListURL: URL { get }
-    /// Frontent URL, used to open the necessary web resources, like password reset.
-    var frontendURL: URL { get }
+    var teamsURL: URL { get }
+    var accountsURL: URL { get }
+    var websiteURL: URL { get }
 }
 
-@objc public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider { }
+@objc public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider {
+    /// Descriptive name of the backend
+    var title: String { get }
+    
+    var environmentType: EnvironmentTypeProvider { get }
+}
