@@ -23,6 +23,7 @@ import XCTest
 class BackendEnvironmentTests: XCTestCase {
     
     var backendBundle: Bundle!
+    var defaults: UserDefaults!
     
     override func setUp() {
         super.setUp()
@@ -32,6 +33,8 @@ class BackendEnvironmentTests: XCTestCase {
         guard let backendBundle = Bundle(path: backendBundlePath) else { XCTFail("Could not load Backend.bundle"); return }
 
         self.backendBundle = backendBundle
+        defaults = UserDefaults(suiteName: name)
+        EnvironmentType.production.save(in: defaults)
         continueAfterFailure = true
     }
     
@@ -41,16 +44,20 @@ class BackendEnvironmentTests: XCTestCase {
     }
     
     func testThatWeCanLoadBackendEndpoints() {
-        guard let environment = BackendEnvironment.from(environmentType: .production, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
+        
+        guard let environment = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
 
         XCTAssertEqual(environment.backendURL, URL(string: "https://prod-nginz-https.wire.com")!)
         XCTAssertEqual(environment.backendWSURL, URL(string: "https://prod-nginz-ssl.wire.com")!)
-        XCTAssertEqual(environment.blackListURL, URL(string: "https://clientblacklist.wire.com/prod/ios")!)
-        XCTAssertEqual(environment.frontendURL, URL(string: "https://wire.com")!)
+        XCTAssertEqual(environment.blackListURL, URL(string: "https://clientblacklist.wire.com/prod")!)
+        XCTAssertEqual(environment.websiteURL, URL(string: "https://wire.com")!)
+        XCTAssertEqual(environment.teamsURL, URL(string: "https://teams.wire.com")!)
+        XCTAssertEqual(environment.accountsURL, URL(string: "https://accounts.wire.com")!)
+
     }
     
     func testThatWeCanLoadBackendTrust() {
-        guard let environment = BackendEnvironment.from(environmentType: .production, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
+        guard let environment = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
         
         guard let trust = environment.certificateTrust as? ServerCertificateTrust else {
             XCTFail(); return
@@ -65,13 +72,42 @@ class BackendEnvironmentTests: XCTestCase {
     }
     
     func testThatWeCanWorkWithoutLoadingTrust() {
-        guard let environment = BackendEnvironment.from(environmentType: .staging, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
+        EnvironmentType.staging.save(in: defaults)
+        guard let environment = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
         
         guard let trust = environment.certificateTrust as? ServerCertificateTrust else {
             XCTFail(); return
         }
         
         XCTAssertEqual(trust.trustData.count, 0, "We should not have any keys")
+    }
+    
+    func testThatWeCanSaveCustomBackendInfoToUserDefaults() {
+        let configURL = URL(string: "example.com/config.json")!
+        let baseURL = URL(string: "some.host.com")!
+        let title = "Example"
+        let endpoints = BackendEndpoints(
+            backendURL: baseURL.appendingPathComponent("backend"),
+            backendWSURL: baseURL.appendingPathComponent("backendWS"),
+            blackListURL: baseURL.appendingPathComponent("blacklist"),
+            teamsURL: baseURL.appendingPathComponent("teams"),
+            accountsURL: baseURL.appendingPathComponent("accounts"),
+            websiteURL: baseURL)
+        let trust = ServerCertificateTrust(trustData: [])
+        let environmentType = EnvironmentType.custom(url: configURL)
+        let backendEnvironment = BackendEnvironment(title: title, environmentType: environmentType, endpoints: endpoints, certificateTrust: trust)
+        
+        backendEnvironment.save(in: defaults)
+        
+        let loaded = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle)
+        
+        XCTAssertEqual(loaded?.endpoints.backendURL, endpoints.backendURL)
+        XCTAssertEqual(loaded?.endpoints.backendWSURL, endpoints.backendWSURL)
+        XCTAssertEqual(loaded?.endpoints.blackListURL, endpoints.blackListURL)
+        XCTAssertEqual(loaded?.endpoints.teamsURL, endpoints.teamsURL)
+        XCTAssertEqual(loaded?.endpoints.accountsURL, endpoints.accountsURL)
+        XCTAssertEqual(loaded?.endpoints.websiteURL, endpoints.websiteURL)
+        XCTAssertEqual(loaded?.title, title)
     }
 
 }

@@ -18,11 +18,10 @@
 
 import Foundation
 
-let log = ZMSLog(tag: "backend-environment")
-
-@objc public enum EnvironmentType: Int {
+public enum EnvironmentType: Equatable {
     case production
     case staging
+    case custom(url: URL)
 
     var stringValue: String {
         switch self {
@@ -30,6 +29,8 @@ let log = ZMSLog(tag: "backend-environment")
             return "production"
         case .staging:
             return "staging"
+        case .custom(url: let url):
+            return "custom-\(url.absoluteString)"
         }
     }
 
@@ -37,60 +38,75 @@ let log = ZMSLog(tag: "backend-environment")
         switch stringValue {
         case EnvironmentType.staging.stringValue:
             self = .staging
+        case let value where value.hasPrefix("custom-"):
+            let urlString = value.dropFirst("custom-".count)
+            if let url = URL(string: String(urlString)) {
+                self = .custom(url: url)
+            } else {
+                self = .production
+            }
         default:
-            self = .production
-        }
-    }
-
-    public init(userDefaults: UserDefaults) {
-        if let value = userDefaults.string(forKey: "ZMBackendEnvironmentType") {
-            self.init(stringValue: value)
-        } else {
             self = .production
         }
     }
 }
 
+extension EnvironmentType {
+    private static let defaultsKey = "ZMBackendEnvironmentType"
+    
+    public init(userDefaults: UserDefaults) {
+        if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {
+            self.init(stringValue: value)
+        } else {
+            Logging.backendEnvironment.error("Could not load environment type from user defaults, falling back to production")
+            self = .production
+        }
+    }
+    
+    public func save(in userDefaults: UserDefaults) {
+        userDefaults.setValue(self.stringValue, forKey: EnvironmentType.defaultsKey)
+    }
+}
+
 public class BackendEnvironment: NSObject {
+    public let title: String
     let endpoints: BackendEndpointsProvider
     let certificateTrust: BackendTrustProvider
+    let type: EnvironmentType
     
-    init(endpoints: BackendEndpointsProvider, certificateTrust: BackendTrustProvider) {
+    init(title: String, environmentType: EnvironmentType, endpoints: BackendEndpointsProvider, certificateTrust: BackendTrustProvider) {
+        self.title = title
+        self.type = environmentType
         self.endpoints = endpoints
         self.certificateTrust = certificateTrust
     }
     
-    // Will try to deserialize backend environment from .json files inside configurationBundle.
-    public static func from(environmentType: EnvironmentType, configurationBundle: Bundle) -> BackendEnvironment? {        
+    convenience init?(environmentType: EnvironmentType, data: Data) {
         struct SerializedData: Decodable {
+            let title: String
             let endpoints: BackendEndpoints
             let pinnedKeys: [TrustData]?
         }
 
-        guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
-            log.error("Could not find \(environmentType.stringValue).json inside bundle \(configurationBundle)")
-            return nil 
-        }
-        guard let data = try? Data(contentsOf: URL(fileURLWithPath: path)) else { 
-            log.error("Could not read \(environmentType.stringValue).json")
-            return nil 
-        }
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         do {
             let backendData = try decoder.decode(SerializedData.self, from: data)
             let pinnedKeys = backendData.pinnedKeys ?? []
             let certificateTrust = ServerCertificateTrust(trustData: pinnedKeys)
-            return BackendEnvironment(endpoints: backendData.endpoints, certificateTrust: certificateTrust) 
+            self.init(title: backendData.title, environmentType: environmentType, endpoints: backendData.endpoints, certificateTrust: certificateTrust)
         } catch {
-            log.error("Could decode information from \(environmentType.stringValue).json")
+            Logging.backendEnvironment.error("Could not decode information from data: \(error)")
             return nil
         }
-    }
-
+    }    
 }
 
 extension BackendEnvironment: BackendEnvironmentProvider {
+    public var environmentType: EnvironmentTypeProvider {
+        return EnvironmentTypeProvider(environmentType: type)
+    }
+    
     public var backendURL: URL {
         return endpoints.backendURL
     }
@@ -103,8 +119,16 @@ extension BackendEnvironment: BackendEnvironmentProvider {
         return endpoints.blackListURL
     }
     
-    public var frontendURL: URL {
-        return endpoints.frontendURL
+    public var teamsURL: URL {
+        return endpoints.teamsURL
+    }
+    
+    public var accountsURL: URL {
+        return endpoints.accountsURL
+    }
+    
+    public var websiteURL: URL {
+        return endpoints.websiteURL
     }
     
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {

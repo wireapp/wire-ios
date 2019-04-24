@@ -141,6 +141,9 @@
 		EF1A09A41FF6AC7500F89634 /* ZMPersistentCookieStorage+Testing.h in Headers */ = {isa = PBXBuildFile; fileRef = EF1A09A31FF6A73200F89634 /* ZMPersistentCookieStorage+Testing.h */; settings = {ATTRIBUTES = (Private, ); }; };
 		F108BCC821C3CB6D00E1BBE3 /* Backend.bundle in Resources */ = {isa = PBXBuildFile; fileRef = F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */; };
 		F118CBBF1F432F25004DCF96 /* ZMTransportSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */; };
+		F1858A84226874C300FA2ACE /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1858A83226874C300FA2ACE /* Logging.swift */; };
+		F186BD572265DD780072A85F /* BackendEnvironment+Fetching.swift in Sources */ = {isa = PBXBuildFile; fileRef = F186BD562265DD780072A85F /* BackendEnvironment+Fetching.swift */; };
+		F186BD592265E0EA0072A85F /* BackendEnvironment+Defaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = F186BD582265E0EA0072A85F /* BackendEnvironment+Defaults.swift */; };
 		F1A522F62040264D009414E7 /* ZMUpdateEvent.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */; };
 		F1D1280221C020470090045E /* MockEnvironment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D1280121C020470090045E /* MockEnvironment.swift */; };
 		F1D1281821C1556E0090045E /* BackendEnvironmentProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1D1281621C1556D0090045E /* BackendEnvironmentProvider.swift */; };
@@ -363,6 +366,9 @@
 		EF1A09A51FF6BEE300F89634 /* testing.modulemap */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.module-map"; path = testing.modulemap; sourceTree = "<group>"; };
 		F108BCC721C3CB6C00E1BBE3 /* Backend.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Backend.bundle; sourceTree = "<group>"; };
 		F118CBBC1F432E75004DCF96 /* ZMTransportSessionTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMTransportSessionTests.swift; sourceTree = "<group>"; };
+		F1858A83226874C300FA2ACE /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+		F186BD562265DD780072A85F /* BackendEnvironment+Fetching.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendEnvironment+Fetching.swift"; sourceTree = "<group>"; };
+		F186BD582265E0EA0072A85F /* BackendEnvironment+Defaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BackendEnvironment+Defaults.swift"; sourceTree = "<group>"; };
 		F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMUpdateEvent.swift; sourceTree = "<group>"; };
 		F1D1280121C020470090045E /* MockEnvironment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockEnvironment.swift; sourceTree = "<group>"; };
 		F1D1281621C1556D0090045E /* BackendEnvironmentProvider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackendEnvironmentProvider.swift; sourceTree = "<group>"; };
@@ -694,6 +700,7 @@
 			children = (
 				F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */,
 				54CA15DE1B32F791008D3787 /* WireTransport.h */,
+				F1858A83226874C300FA2ACE /* Logging.swift */,
 				5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */,
 				5451EF9D1B7A1359002F503B /* Collections+ZMTSafeTypes.h */,
 				F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */,
@@ -722,6 +729,8 @@
 				871667FF1BB2CD2A009C6EEA /* ZMKeychain.h */,
 				160C31221E5B28A10012E4BC /* ZMPushChannel.h */,
 				8756C4492178C97A00627F1F /* BackendEnvironment.swift */,
+				F186BD562265DD780072A85F /* BackendEnvironment+Fetching.swift */,
+				F186BD582265E0EA0072A85F /* BackendEnvironment+Defaults.swift */,
 				F1D1281D21C2656F0090045E /* ServerCertificateTrust.swift */,
 				F1D1281F21C2665E0090045E /* BackendEndpoints.swift */,
 				F1D1281621C1556D0090045E /* BackendEnvironmentProvider.swift */,
@@ -1049,10 +1058,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				54CA15BB1B32F2C1008D3787 /* ZMUserAgent.m in Sources */,
+				F186BD572265DD780072A85F /* BackendEnvironment+Fetching.swift in Sources */,
 				F1EDA286221AB6CB00DAF906 /* URLSessionsDirectory.swift in Sources */,
 				5499FFD21B31C66D00835C8B /* ZMTransportPushChannel.m in Sources */,
+				F1858A84226874C300FA2ACE /* Logging.swift in Sources */,
 				54CA15BF1B32F2C1008D3787 /* NSString+UUID.m in Sources */,
 				BF8E457F1F1778E000CE6A0A /* UnauthenticatedTransportSession.swift in Sources */,
+				F186BD592265E0EA0072A85F /* BackendEnvironment+Defaults.swift in Sources */,
 				54CA15CF1B32F2C1008D3787 /* ZMReachability.m in Sources */,
 				BF9D0AFF1F1CC0C5005D4C31 /* SessionProtocols.swift in Sources */,
 				54CA155D1B32F2C1008D3787 /* ZMTemporaryFileListForBackgroundRequests.m in Sources */,

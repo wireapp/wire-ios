@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2019 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,21 +18,6 @@
 
 import Foundation
 
-class BackendEndpoints: NSObject, BackendEndpointsProvider, Codable {
-    let backendURL: URL
-    let backendWSURL: URL
-    let blackListURL: URL
-    let teamsURL: URL
-    let accountsURL: URL
-    let websiteURL: URL
-    
-    init(backendURL: URL, backendWSURL: URL, blackListURL: URL, teamsURL: URL, accountsURL: URL, websiteURL: URL) {
-        self.backendURL = backendURL
-        self.backendWSURL = backendWSURL
-        self.blackListURL = blackListURL
-        self.teamsURL = teamsURL
-        self.accountsURL = accountsURL
-        self.websiteURL = websiteURL
-        super.init()
-    }
+enum Logging {
+    static var backendEnvironment = ZMSLog(tag: "backend-environment")
 }
