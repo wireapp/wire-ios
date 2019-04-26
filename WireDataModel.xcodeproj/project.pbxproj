@@ -63,7 +63,6 @@
 		16DCB6631DDA2715002A7AC2 /* PersistentStoreRelocator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16DCB6621DDA2715002A7AC2 /* PersistentStoreRelocator.swift */; };
 		16E7DA281FD9973B0065B6A6 /* store2-39-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 16E7DA261FD995810065B6A6 /* store2-39-0.wiredatabase */; };
 		16E7DA2A1FDABE440065B6A6 /* ZMOTRMessage+SelfConversationUpdateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E7DA291FDABE440065B6A6 /* ZMOTRMessage+SelfConversationUpdateTests.swift */; };
-		16F5F16E1E4215DC0062F0AE /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F5F16D1E4215DC0062F0AE /* libPhoneNumberiOS.framework */; };
 		16F6BB3A1EDEC2D6009EA803 /* ZMConversation+ObserverHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F6BB391EDEC2D6009EA803 /* ZMConversation+ObserverHelper.swift */; };
 		16F6BB3C1EDEDEFD009EA803 /* ZMConversationTests+ObservationHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F6BB3B1EDEDEFD009EA803 /* ZMConversationTests+ObservationHelper.swift */; };
 		54178A1C1E02EA9900860ECE /* store2-24-1.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54178A1A1E02E9FB00860ECE /* store2-24-1.wiredatabase */; };
@@ -1195,7 +1194,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1FDF30221B17AD700E037A1 /* SwiftProtobuf.framework in Frameworks */,
-				16F5F16E1E4215DC0062F0AE /* libPhoneNumberiOS.framework in Frameworks */,
 				F9A707351CAEE3FA00C2F5FE /* ocmock.framework in Frameworks */,
 				F9A707321CAEE3C900C2F5FE /* WireSystem.framework in Frameworks */,
 				F9A7070B1CAEE38500C2F5FE /* WireProtos.framework in Frameworks */,
@@ -2479,7 +2477,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireLinkPreview.framework",
 			);
