@@ -1,6 +1,5 @@
 github "wireapp/HTMLString" "4.0.2-xcode_10_1"
 github "wireapp/PINCache" "2.3-swift3.1"
-github "wireapp/libPhoneNumber-iOS" "0.9.3"
 github "wireapp/ocmock" "v3.4.3"
 github "wireapp/protobuf-objc" "1.9.14"
 github "wireapp/swift-protobuf" "1.2.1"
