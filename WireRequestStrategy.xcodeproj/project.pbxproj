@@ -66,7 +66,6 @@
 		168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */; };
 		16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */; };
 		16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */; };
-		5442A7301E4222BD00415104 /* libPhoneNumberiOS.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547D47161E7C1B0D002EEA15 /* DependentObjects.swift */; };
 		547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547D47181E7C2F6C002EEA15 /* DependentObjectsTests.swift */; };
 		547E664D1F7512FE008CB1FA /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 547E664C1F7512FE008CB1FA /* Default-568h@2x.png */; };
@@ -87,7 +86,6 @@
 		54E03A381E93BFE10089AC69 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54E03A261E93BFDC0089AC69 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54E03A391E93BFE10089AC69 /* WireTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54E03A271E93BFDC0089AC69 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54E03A3A1E93BFE10089AC69 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54E03A281E93BFDC0089AC69 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54FB03B31E422125000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */; };
 		5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E68F22622452CDC00298376 /* LinkPreprocessor.swift */; };
 		5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DD2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift */; };
 		5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4DF2243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift */; };
@@ -228,7 +226,6 @@
 				54E03A381E93BFE10089AC69 /* WireTesting.framework in CopyFiles */,
 				54E03A391E93BFE10089AC69 /* WireTransport.framework in CopyFiles */,
 				54E03A3A1E93BFE10089AC69 /* WireUtilities.framework in CopyFiles */,
-				5442A7301E4222BD00415104 /* libPhoneNumberiOS.framework in CopyFiles */,
 				BF7D9BF31D8C355100949267 /* OCMock.framework in CopyFiles */,
 				BF7D9BF51D8C355100949267 /* PINCache.framework in CopyFiles */,
 				BF7D9BF61D8C355100949267 /* ProtocolBuffers.framework in CopyFiles */,
@@ -329,7 +326,6 @@
 		54E03A261E93BFDC0089AC69 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		54E03A271E93BFDC0089AC69 /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
 		54E03A281E93BFDC0089AC69 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
-		54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = libPhoneNumberiOS.framework; path = Carthage/Build/iOS/libPhoneNumberiOS.framework; sourceTree = "<group>"; };
 		5E68F22622452CDC00298376 /* LinkPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkPreprocessor.swift; sourceTree = "<group>"; };
 		5E9EA4DD2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentsPreprocessor.swift; sourceTree = "<group>"; };
 		5E9EA4DF2243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LinkAttachmentsPreprocessorTests.swift; sourceTree = "<group>"; };
@@ -446,7 +442,6 @@
 				54E03A2D1E93BFDC0089AC69 /* WireProtos.framework in Frameworks */,
 				54E03A291E93BFDC0089AC69 /* WireCryptobox.framework in Frameworks */,
 				54E03A2C1E93BFDC0089AC69 /* WireLinkPreview.framework in Frameworks */,
-				54FB03B31E422125000E13DC /* libPhoneNumberiOS.framework in Frameworks */,
 				54E03A301E93BFDC0089AC69 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -586,7 +581,6 @@
 				54E03A261E93BFDC0089AC69 /* WireTesting.framework */,
 				54E03A271E93BFDC0089AC69 /* WireTransport.framework */,
 				54E03A281E93BFDC0089AC69 /* WireUtilities.framework */,
-				54FB03B21E422125000E13DC /* libPhoneNumberiOS.framework */,
 				BF66512F1D8C2ED50074F367 /* OCMock.framework */,
 				BF6651311D8C2ED50074F367 /* PINCache.framework */,
 				BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */,
