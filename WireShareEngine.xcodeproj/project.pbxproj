@@ -28,7 +28,6 @@
 		54B04A6B1D77359A00CED57C /* WireTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4531D77169900FDE440 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6C1D77359A00CED57C /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A6D1D77359A00CED57C /* WireDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54FB03B01E42202A000E13DC /* libPhoneNumberiOS.framework */; };
 		878B823C20A1E192007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; };
 		878B823D20A1E19D007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; };
 		878B823E20A1E2AF007455CA /* HTMLString.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 878B823B20A1E192007455CA /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -172,7 +171,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				878B823C20A1E192007455CA /* HTMLString.framework in Frameworks */,
-				54FB03B11E42202A000E13DC /* libPhoneNumberiOS.framework in Frameworks */,
 				5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */,
 				5470D45A1D77169900FDE440 /* WireImages.framework in Frameworks */,
 				5470D4321D77165800FDE440 /* WireDataModel.framework in Frameworks */,
@@ -497,7 +495,6 @@
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/libPhoneNumberiOS.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireImages.framework",
