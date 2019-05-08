@@ -1,2 +1,2 @@
-github "wireapp/HTMLString" "4.0.2-xcode_10_1"
-github "wireapp/wire-ios-utilities" ~> 31.0
+github "wireapp/HTMLString" "4.1.0-beta.1-xcode_10_2"
+github "wireapp/wire-ios-utilities" ~> 32.0
