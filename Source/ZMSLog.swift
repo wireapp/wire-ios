@@ -79,16 +79,16 @@ public class ZMSLogEntry: NSObject {
 extension ZMSLog {
     
     public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
-        ZMSLog.logWithLevel(.error, message: message, tag: self.tag, file: file, line:line)
+        ZMSLog.logWithLevel(.error, message: message(), tag: self.tag, file: file, line:line)
     }
     public func warn(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
-        ZMSLog.logWithLevel(.warn, message: message, tag: self.tag, file: file, line:line)
+        ZMSLog.logWithLevel(.warn, message: message(), tag: self.tag, file: file, line:line)
     }
     public func info(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
-        ZMSLog.logWithLevel(.info, message: message, tag: self.tag, file: file, line:line)
+        ZMSLog.logWithLevel(.info, message: message(), tag: self.tag, file: file, line:line)
     }
     public func debug(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
-        ZMSLog.logWithLevel(.debug, message: message, tag: self.tag, file: file, line:line)
+        ZMSLog.logWithLevel(.debug, message: message(), tag: self.tag, file: file, line:line)
     }
 }
 
