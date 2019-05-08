@@ -20,7 +20,7 @@
 import XCTest
 @testable import WireCryptobox
 
-class GenericHashBuilderTests: XCTestCase {
+final class GenericHashBuilderTests: XCTestCase {
     func testThatItHashesTheData() {
         // GIVEN
         let data = "some data".data(using: .utf8)!
@@ -29,7 +29,9 @@ class GenericHashBuilderTests: XCTestCase {
         builder.append(data)
         let hash = builder.build()
         // THEN
-        XCTAssertEqual(hash.hashValue, 108806884620190685)
+        let genericHash = GenericHash(value: 108806884620190685)
+        XCTAssertEqual(hash, genericHash)
+        XCTAssertEqual(hash.hashValue, genericHash.hashValue)
     }
     
     func testThatDifferentDataHasDifferentHash() {

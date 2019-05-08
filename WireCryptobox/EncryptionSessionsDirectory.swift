@@ -221,10 +221,10 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         
         // init
         let cbsession = _CBoxSession()
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer : UnsafePointer<UInt8>) -> CBoxResult in
+        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer : UnsafeRawBufferPointer) -> CBoxResult in
             cbox_session_init_from_prekey(context.implementation.ptr,
                                           identifier.rawValue,
-                                          prekeyDataPointer,
+                                          prekeyDataPointer.bindMemory(to: UInt8.self).baseAddress!,
                                           prekeyData.count,
                                           &cbsession.ptr)
         }
@@ -244,10 +244,10 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
         let cbsession = _CBoxSession()
         var plainTextBacking : OpaquePointer? = nil
         
-        let result = prekeyMessage.withUnsafeBytes { (prekeyMessagePointer : UnsafePointer<UInt8>) -> CBoxResult in
+        let result = prekeyMessage.withUnsafeBytes { (prekeyMessagePointer : UnsafeRawBufferPointer) -> CBoxResult in
             cbox_session_init_from_message(context.implementation.ptr,
                                            identifier.rawValue,
-                                           prekeyMessagePointer,
+                                           prekeyMessagePointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
                                            prekeyMessage.count,
                                            &cbsession.ptr,
                                            &plainTextBacking)
@@ -529,9 +529,9 @@ extension EncryptionSession {
 
         zmLog.debug("Decrypting with session \(self.id)")
 
-        let result = cypher.withUnsafeBytes { (cypherPointer: UnsafePointer<UInt8>) -> CBoxResult in
+        let result = cypher.withUnsafeBytes { (cypherPointer: UnsafeRawBufferPointer) -> CBoxResult in
             cbox_decrypt(self.implementation.ptr,
-                         cypherPointer,
+                         cypherPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
                          cypher.count,
                          &vectorBacking)
         }
@@ -548,9 +548,9 @@ extension EncryptionSession {
         var vectorBacking : OpaquePointer? = nil
         
         zmLog.debug("Encrypting with session \(self.id)")
-        let result = plainText.withUnsafeBytes { (plainTextPointer: UnsafePointer<UInt8>) -> CBoxResult in
+        let result = plainText.withUnsafeBytes { (plainTextPointer: UnsafeRawBufferPointer) -> CBoxResult in
             cbox_encrypt(self.implementation.ptr,
-                         plainTextPointer,
+                         plainTextPointer.baseAddress!.assumingMemoryBound(to: UInt8.self),
                          plainText.count,
                          &vectorBacking)
         }
@@ -609,6 +609,10 @@ public struct EncryptionSessionIdentifier : Hashable, Equatable {
     
     public var hashValue: Int {
         return self.rawValue.hashValue
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(hashValue)
     }
 }
 
