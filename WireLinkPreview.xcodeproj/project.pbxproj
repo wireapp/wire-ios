@@ -159,7 +159,6 @@
 		BF3DD2771D25445600D51DED /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		BF3DD2781D25445600D51DED /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		BF3DD2791D25445600D51DED /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		BF3DD27B1D25445600D51DED /* swift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		BF3DD27C1D25445600D51DED /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		BF3DD27D1D25445600D51DED /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		BF3DD27E1D25445600D51DED /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
@@ -278,7 +277,6 @@
 				BF3DD2771D25445600D51DED /* project-common.xcconfig */,
 				BF3DD2781D25445600D51DED /* project-debug.xcconfig */,
 				BF3DD2791D25445600D51DED /* project.xcconfig */,
-				BF3DD27B1D25445600D51DED /* swift.xcconfig */,
 				BF3DD27C1D25445600D51DED /* tests.xcconfig */,
 				BF3DD27D1D25445600D51DED /* warnings-debug.xcconfig */,
 				BF3DD27E1D25445600D51DED /* warnings.xcconfig */,
@@ -493,7 +491,7 @@
 			};
 			buildConfigurationList = BFF057841D25434D004A2C29 /* Build configuration list for PBXProject "WireLinkPreview" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
