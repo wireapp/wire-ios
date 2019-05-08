@@ -56,7 +56,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
     /// Whether any tasks are active.
     @objc public var isActive: Bool {
         return isolationQueue.sync {
-            return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskInvalid
+            return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
         }
     }
 
@@ -100,7 +100,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     @objc public func resume() {
         isolationQueue.sync {
-            if currentBackgroundTask == UIBackgroundTaskInvalid {
+            if currentBackgroundTask == UIBackgroundTaskIdentifier.invalid {
                 zmLog.debug("Resume: currentBackgroundTask is invalid, setting it to nil")
                 currentBackgroundTask = nil
             }
@@ -114,7 +114,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
-            guard currentBackgroundTask != UIBackgroundTaskInvalid else {
+            guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
                 zmLog.debug("End background activity: current background task is invalid")
                 return
             }
@@ -143,7 +143,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
             }
             
             // Do not start new tasks if the background timer is running.
-            guard currentBackgroundTask != UIBackgroundTaskInvalid else { 
+            guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
                 zmLog.debug("Start activity [\(name)]: failed, currentBackgroundTask is invalid")
                 return nil         
             }
@@ -154,7 +154,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
             if currentBackgroundTask == nil {
                 zmLog.debug("Start activity [\(name)]: no current background task, starting new")
                 let task = activityManager.beginBackgroundTask(withName: name, expirationHandler: handleExpiration)
-                guard task != UIBackgroundTaskInvalid else {
+                guard task != UIBackgroundTaskIdentifier.invalid else {
                     zmLog.debug("Start activity [\(name)]: failed to begin new background task")
                     return nil         
                 }
@@ -189,7 +189,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
         }
         isolationQueue.sync {
             finishBackgroundTask()
-            currentBackgroundTask = UIBackgroundTaskInvalid
+            currentBackgroundTask = UIBackgroundTaskIdentifier.invalid
         }
     }
 
