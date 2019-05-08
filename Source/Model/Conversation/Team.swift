@@ -41,8 +41,13 @@ public protocol TeamType: class {
     @NSManaged private var remoteIdentifier_data: Data?
 
     public var remoteIdentifier: UUID? {
-        get { return remoteIdentifier_data.flatMap { NSUUID(uuidBytes: $0.withUnsafeBytes(UnsafePointer<UInt8>.init)) } as UUID? }
-        set { remoteIdentifier_data = (newValue as NSUUID?)?.data() }
+        get {
+            guard let data = remoteIdentifier_data else { return nil }
+            return UUID(data: data)
+        }
+        set {
+            remoteIdentifier_data = newValue?.uuidData
+        }
     }
 
     public override static func entityName() -> String {
