@@ -20,7 +20,6 @@
 
 #include "osx.xcconfig"
 #include "tests.xcconfig"
-#include "swift.xcconfig"
 
 //Linking
 //
