@@ -33,7 +33,7 @@ public extension FixedWidthInteger {
     /// Data.secureRandomData(length:) method. This implementation is
     /// modulo bias free.
     ///
-    public static func secureRandomNumber(upperBound: Self) -> Self {
+    static func secureRandomNumber(upperBound: Self) -> Self {
         
         assert(upperBound != 0 && upperBound != Self.min, "Upper bound should not be zero or equal to the minimum possible value")
         
@@ -50,8 +50,8 @@ public extension FixedWidthInteger {
             let data = Data.secureRandomData(length: UInt(MemoryLayout<Self>.size))
             
             // extract the UInt
-            random = data.withUnsafeBytes { (pointer: UnsafePointer<Self>) -> Self in
-                return pointer.pointee
+            random = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> Self in
+                return pointer.bindMemory(to: Self.self).baseAddress!.pointee
             }
             
         } while random.abs < min
@@ -62,7 +62,7 @@ public extension FixedWidthInteger {
 
 /// Extension for NSNumber so we can support ObjC
 public extension NSNumber {
-    @objc public static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
+    @objc static func secureRandomNumber(upperBound: UInt32) -> UInt32 {
         return UInt32.secureRandomNumber(upperBound: upperBound)
     }
 }
