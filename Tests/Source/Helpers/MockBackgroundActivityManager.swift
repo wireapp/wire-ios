@@ -64,11 +64,11 @@ import WireTesting
         assert(numberOfTasks + 1 <= limit, "Creating a new task would exceed the limit.")
 
         if isExpiring {
-            return UIBackgroundTaskInvalid
+            return UIBackgroundTaskIdentifier.invalid
         }
 
         let task = Task(name: name, expirationHandler: expirationHandler)
-        let identifier = lastIdentifier.increment()
+        let identifier: UIBackgroundTaskIdentifier = UIBackgroundTaskIdentifier(rawValue: lastIdentifier.increment())
 
         tasks[identifier] = task
         startTaskHandler?(name)
@@ -76,7 +76,7 @@ import WireTesting
     }
 
     func endBackgroundTask(_ task: UIBackgroundTaskIdentifier) {
-        assert(task != UIBackgroundTaskInvalid, "The task is invalid.")
+        assert(task != UIBackgroundTaskIdentifier.invalid, "The task is invalid.")
 
         let name = tasks[task]?.name
         tasks[task] = nil
