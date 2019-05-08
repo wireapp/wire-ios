@@ -69,10 +69,11 @@
 		16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		16CB8A411DBA73B900B5BC47 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		16CB8A431DBA73B900B5BC47 /* swift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		16CB8A441DBA73B900B5BC47 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		EFF7A46B2271BFAF00F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		EFF7A46C2271BFAF00F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -98,6 +99,8 @@
 		165EA0B91DB67C3B008ECC60 = {
 			isa = PBXGroup;
 			children = (
+				EFF7A46B2271BFAF00F1AC33 /* Cartfile.private */,
+				EFF7A46C2271BFAF00F1AC33 /* Cartfile.resolved */,
 				16CB8A341DBA73B900B5BC47 /* Resources */,
 				165EA0C51DB67C3B008ECC60 /* Sources */,
 				165EA0D01DB67C3B008ECC60 /* Tests */,
@@ -184,7 +187,6 @@
 				16CB8A3F1DBA73B900B5BC47 /* project-common.xcconfig */,
 				16CB8A401DBA73B900B5BC47 /* project-debug.xcconfig */,
 				16CB8A411DBA73B900B5BC47 /* project.xcconfig */,
-				16CB8A431DBA73B900B5BC47 /* swift.xcconfig */,
 				16CB8A441DBA73B900B5BC47 /* tests.xcconfig */,
 				16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */,
 				16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */,
@@ -267,10 +269,11 @@
 			};
 			buildConfigurationList = 165EA0BD1DB67C3B008ECC60 /* Build configuration list for PBXProject "WireCanvas" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 165EA0B91DB67C3B008ECC60;
 			productRefGroup = 165EA0C41DB67C3B008ECC60 /* Products */;
@@ -355,7 +358,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -365,7 +367,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = Sources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.Canvas;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -376,7 +377,6 @@
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -387,7 +387,6 @@
 				INFOPLIST_FILE = Tests/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.CanvasTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
