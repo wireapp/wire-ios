@@ -19,12 +19,12 @@
 
 public extension IteratorProtocol {
 
-    mutating public func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
+    mutating func any(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         guard let current = next() else { return false }
         return try predicate(current) || any(predicate)
     }
 
-    mutating public func all(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
+    mutating func all(_ predicate: (Element) throws -> Bool) rethrows -> Bool {
         guard let current = next() else { return true }
         return try predicate(current) && all(predicate)
     }
@@ -33,12 +33,12 @@ public extension IteratorProtocol {
 
 
 public extension Sequence {
-    public func any(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
+    func any(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
         var iterator = makeIterator()
         return try iterator.any(predicate)
     }
 
-    public  func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
+     func all(_ predicate: (Iterator.Element) throws -> Bool) rethrows -> Bool {
         var iterator = makeIterator()
         return try iterator.all(predicate)
     }

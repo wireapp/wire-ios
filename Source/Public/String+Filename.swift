@@ -24,7 +24,7 @@ public extension String {
     
     /// Convert to a POSIX "Fully portable filenames" (only allow A–Z a–z 0–9 . _ -)
     /// Space will be converted to underscore first.
-    public var normalizedFilename: String {
+    var normalizedFilename: String {
         let ref = NSMutableString(string: self) as CFMutableString
         type(of: self).transforms.forEach { CFStringTransform(ref, nil, $0, false) }
         
@@ -45,7 +45,7 @@ public extension String {
     ///
     /// - Parameter numReservedChar: number for characters to reserve. It should < 255 and >= 0.
     /// - Returns: trimmed filename with length <= (255 - 5 - 37 - numReservedChar)
-    public func trimmedFilename(numReservedChar: Int) -> String {
+    func trimmedFilename(numReservedChar: Int) -> String {
         // reserve 5 characters for dash and file extension, 37 char for UUID prefix
         let offset = -(normalizedFilename.count - 255 + numReservedChar + 4 + 37)
         

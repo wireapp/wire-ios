@@ -30,7 +30,7 @@ public extension CharacterSet {
     // http://www.unicode.org/charts/PDF/UFE20.pdf
     private static let diacriticsCombiningCodesHalfMarks     = CharacterSet(charactersIn: UnicodeScalar(0xfe20 as UInt16)!...UnicodeScalar(0xfe2f as UInt16)!)
 
-    public static var diacriticsCombining: CharacterSet = {
+    static var diacriticsCombining: CharacterSet = {
         return  [diacriticsCombiningCodes,
                  diacriticsCombiningCodesExtended,
                  diacriticsCombiningCodesSupplementary,
@@ -42,7 +42,7 @@ public extension CharacterSet {
 }
 
 public extension UnicodeScalar {
-    public var isDiacritics: Bool {
+    var isDiacritics: Bool {
         return CharacterSet.diacriticsCombining.contains(self)
     }
 }
@@ -57,7 +57,7 @@ public extension String {
     // Sanitizes the string from excessive use of diacritic combining characters.
     // @warning the return value would still contain some amount of diacritic combining characters. The algorithm
     // implemented in the way that the text with valid diacritics should not be sanitized.
-    public var removingExtremeCombiningCharacters: String {
+    var removingExtremeCombiningCharacters: String {
         
         if self.unicodeScalars.count < extremeDiacriticsViewWindowSize {
             return self
@@ -102,7 +102,7 @@ public extension String {
 
 public extension NSString {
     @objc(stringByRemovingExtremeCombiningCharacters)
-    public var removingExtremeCombiningCharacters: NSString {
+    var removingExtremeCombiningCharacters: NSString {
         let selfString = (self as String)
         let result = selfString.removingExtremeCombiningCharacters
         return result as NSString

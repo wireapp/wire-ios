@@ -67,7 +67,7 @@ extension FileManager {
 public extension URL {
     
     /// Sets the resource value to exclude this entry from backups
-    public func excludeFromBackup() {
+    func excludeFromBackup() {
         var mutableCopy = self
         do {
             var resourceValues = URLResourceValues()
@@ -80,7 +80,7 @@ public extension URL {
     }
     
     /// Returns whether the item is excluded from backups
-    public var isExcludedFromBackup : Bool {
+    var isExcludedFromBackup : Bool {
         guard let values = try? resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else { return false }
         return values.isExcludedFromBackup ?? false
     }
