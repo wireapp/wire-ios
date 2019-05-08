@@ -111,7 +111,7 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         let bytesWritten = try ChaCha20Encryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         
-        return Data(bytes: outputBuffer.prefix(bytesWritten))
+        return Data(outputBuffer.prefix(bytesWritten))
     }
     
     func decrypt(_ chipherMessage: Data, passphrase: ChaCha20Encryption.Passphrase) throws -> Data {
@@ -120,7 +120,7 @@ class ChaCha20EncryptionTests: XCTestCase {
         let inputStream = InputStream(data: chipherMessage)
         let decryptedBytes = try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         
-        return Data(bytes: outputBuffer.prefix(decryptedBytes))
+        return Data(outputBuffer.prefix(decryptedBytes))
     }
     
     func encryptToURL(_ message: Data, passphrase: ChaCha20Encryption.Passphrase) throws -> URL {
@@ -305,7 +305,7 @@ class ChaCha20EncryptionTests: XCTestCase {
             let encryptedMessage = try encrypt(message, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid1))
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[3] = 65 // replace I with A (A = Android)
-            _ = try decrypt(Data(bytes: modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
+            _ = try decrypt(Data(modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
         } catch ChaCha20Encryption.EncryptionError.malformedHeader {
             return // success
         } catch {
@@ -326,7 +326,7 @@ class ChaCha20EncryptionTests: XCTestCase {
             let encryptedMessage = try encrypt(message, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid1))
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[6] = 2 // change version number
-            _ = try decrypt(Data(bytes: modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
+            _ = try decrypt(Data(modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
         } catch ChaCha20Encryption.EncryptionError.malformedHeader {
             return // success
         } catch {

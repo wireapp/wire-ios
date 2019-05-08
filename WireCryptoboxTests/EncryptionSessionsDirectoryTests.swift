@@ -141,7 +141,7 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId : UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafePointer<UInt8>) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer, prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
         
@@ -158,7 +158,7 @@ extension EncryptionSessionsDirectoryTests {
         // THEN
         var prekeyRetrievedId : UInt16 = 0
         let prekeyData = Data(base64Encoded: prekey, options: [])!
-        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafePointer<UInt8>) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer, prekeyData.count, &prekeyRetrievedId) }
+        let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
         XCTAssertEqual(result, CBOX_SUCCESS)
         XCTAssertEqual(prekeyRetrievedId, prekeyId)
         
@@ -181,7 +181,7 @@ extension EncryptionSessionsDirectoryTests {
             let (id, prekey) = prekeys[i]
             let prekeyData = Data(base64Encoded: prekey, options: [])!
             var prekeyRetrievedId : UInt16 = 0
-            let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafePointer<UInt8>) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer, prekeyData.count, &prekeyRetrievedId) }
+            let result = prekeyData.withUnsafeBytes { (prekeyDataPointer: UnsafeRawBufferPointer) -> CBoxResult in  cbox_is_prekey(prekeyDataPointer.baseAddress!.assumingMemoryBound(to: UInt8.self), prekeyData.count, &prekeyRetrievedId) }
             XCTAssertEqual(result, CBOX_SUCCESS)
             XCTAssertEqual(Int(prekeyRetrievedId), i+rangeStart)
             XCTAssertEqual(prekeyRetrievedId, id)

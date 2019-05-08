@@ -19,11 +19,12 @@
 import Foundation
 
 /// Encapsulates the hash value.
+
 public struct GenericHash: Hashable {
-    public let hashValue: Int
-    
-    fileprivate init(hashValue: Int) {
-        self.hashValue = hashValue
+    private let value: Int
+
+    init(value: Int) {
+        self.value = value
     }
 }
 
@@ -46,19 +47,27 @@ public final class GenericHashBuilder {
         case readyToBuild
         case done
     }
+
+
     
-    private var cryptoState: crypto_generichash_state = crypto_generichash_state()
+    private var cryptoState: UnsafeMutableRawBufferPointer
+    private var opaqueCryptoState: OpaquePointer
+
+
     private var state: State = .initial
     private static let size = MemoryLayout<Int>.size
     
     init() {
-        crypto_generichash_init(&cryptoState, nil, 0, GenericHashBuilder.size)
+        cryptoState = UnsafeMutableRawBufferPointer.allocate(byteCount: crypto_generichash_statebytes(), alignment: 64)
+        opaqueCryptoState = OpaquePointer(cryptoState.baseAddress!)
+
+        crypto_generichash_init(opaqueCryptoState, nil, 0, GenericHashBuilder.size)
     }
     
     public func append(_ data: Data) {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
-        state = data.withUnsafeBytes { (bytes: UnsafePointer<UInt8>) -> State in
-            crypto_generichash_update(&cryptoState, bytes, UInt64(data.count))
+        state = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> State in
+            crypto_generichash_update(opaqueCryptoState, bytes.baseAddress!.assumingMemoryBound(to: UInt8.self), UInt64(data.count))
             return .readyToBuild
         }
     }
@@ -66,13 +75,13 @@ public final class GenericHashBuilder {
     public func build() -> GenericHash {
         assert(state != .done, "This builder cannot be used any more: hash is already calculated")
         var hashBytes: Array<UInt8> = Array(repeating: 0, count: GenericHashBuilder.size)
-        crypto_generichash_final(&cryptoState, &hashBytes, GenericHashBuilder.size)
+        crypto_generichash_final(opaqueCryptoState, &hashBytes, GenericHashBuilder.size)
         state = .done
         
         let bigEndianValue = hashBytes.withUnsafeBufferPointer {
             ($0.baseAddress!.withMemoryRebound(to: Int.self, capacity: 1) { $0 })
             }.pointee
         
-        return GenericHash(hashValue: Int(bigEndian: bigEndianValue))
+        return GenericHash(value: Int(bigEndian: bigEndianValue))
     }
 }

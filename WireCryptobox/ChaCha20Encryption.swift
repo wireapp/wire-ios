@@ -99,7 +99,7 @@ public final class ChaCha20Encryption {
                 case .emptySpace:
                     break
                 case .version:
-                    guard UInt16(bigEndian: Data(bytes: Array(partition)).withUnsafeBytes { $0.pointee }) == Header.version else {
+                    guard UInt16(bigEndian: Data(Array(partition)).withUnsafeBytes { $0.baseAddress!.assumingMemoryBound(to: UInt16.self).pointee }) == Header.version else {
                         throw EncryptionError.malformedHeader
                     }
                 case .salt:
