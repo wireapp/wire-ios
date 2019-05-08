@@ -146,6 +146,8 @@
 		EECE92301FFBC5540096387F /* FixedWidthInteger+Random.swift in Sources */ = {isa = PBXBuildFile; fileRef = EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */; };
 		EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D11F9E37CA0085A832 /* String+Filename.swift */; };
 		EF18C7DA1F9E3D3B0085A832 /* String+FilenameTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */; };
+		EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2AFC9C228176C3008C921A /* UUID+Data.swift */; };
+		EF2AFCA022817AC0008C921A /* UUID+DataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */; };
 		EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */; };
 		EFD003562179FABC008C20D3 /* StringLengthValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */; };
 		F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BDB1D20889772002F36E8 /* TearDownCapable.swift */; };
@@ -387,6 +389,8 @@
 		EECE922F1FFBC5540096387F /* FixedWidthInteger+Random.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FixedWidthInteger+Random.swift"; sourceTree = "<group>"; };
 		EF18C7D11F9E37CA0085A832 /* String+Filename.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Filename.swift"; sourceTree = "<group>"; };
 		EF18C7D91F9E3D3B0085A832 /* String+FilenameTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+FilenameTests.swift"; sourceTree = "<group>"; };
+		EF2AFC9C228176C3008C921A /* UUID+Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+Data.swift"; sourceTree = "<group>"; };
+		EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UUID+DataTests.swift"; sourceTree = "<group>"; };
 		EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiOnlyStringTests.swift; sourceTree = "<group>"; };
 		EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLengthValidatorTests.swift; sourceTree = "<group>"; };
 		F15BDB1D20889772002F36E8 /* TearDownCapable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TearDownCapable.swift; sourceTree = "<group>"; };
@@ -696,6 +700,7 @@
 				16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */,
 				8735AE6E2035E3BC00DCE66E /* StringLengthValidator.swift */,
 				5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */,
+				EF2AFC9C228176C3008C921A /* UUID+Data.swift */,
 			);
 			path = Public;
 			sourceTree = "<group>";
@@ -790,6 +795,7 @@
 				16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */,
 				5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */,
 				5E39FC5A225B747600C682B8 /* PasswordRuleSetTests.swift */,
+				EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -928,6 +934,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1019,6 +1026,7 @@
 				F9C9A7BD1CAEAF240039E10C /* ZMPropertyValidator.m in Sources */,
 				3E88BF6B1B1F693F00232589 /* NSData+ZMAdditions.m in Sources */,
 				54C388A81C4D5A3B00A55C79 /* NSUUID+Type1.swift in Sources */,
+				EF2AFC9D228176C3008C921A /* UUID+Data.swift in Sources */,
 				BFA2F03620C9480A00EBE97C /* FunctionOperators.swift in Sources */,
 				54024FE61DF81C8E009BF6A0 /* Dictionary.swift in Sources */,
 				54CA313D1B74F36B00B820C0 /* SwiftDebugging.swift in Sources */,
@@ -1095,6 +1103,7 @@
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
 				D53DB9A2203ED6E100655CB4 /* ResultTests.swift in Sources */,
 				D504CD3D2090D12900A78DAA /* PapplyTests.swift in Sources */,
+				EF2AFCA022817AC0008C921A /* UUID+DataTests.swift in Sources */,
 				F9C9A7C71CAEAFE10039E10C /* ZMPhoneNumberValidatorTests.m in Sources */,
 				F9D381AE1B70B93800E6E4EB /* ZMTimerTests.m in Sources */,
 				168B158C1F25F67600AB3C44 /* DispatchGroupQueueTests.swift in Sources */,
