@@ -283,7 +283,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
 // MARK: - SelfUser client methods (selfClient + other clients of the selfUser)
 public extension UserClient {
 
-    @objc public static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
+    @objc static func fetchExistingUserClient(with remoteIdentifier: String, in context: NSManagedObjectContext) -> UserClient? {
         let fetchRequest = NSFetchRequest<UserClient>(entityName: UserClient.entityName())
         fetchRequest.predicate = NSPredicate(format: "%K == %@", ZMUserClientRemoteIdentifierKey, remoteIdentifier)
         fetchRequest.fetchLimit = 1
@@ -292,7 +292,7 @@ public extension UserClient {
     }
     
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc public static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
+    @objc static func createOrUpdateSelfUserClient(_ payloadData: [String: AnyObject], context: NSManagedObjectContext) -> UserClient? {
         
         guard let id = payloadData["id"] as? String,
               let type = payloadData["type"] as? String
@@ -354,7 +354,7 @@ public extension UserClient {
     }
 
     /// Use this method only for selfUser clients (selfClient + remote clients)
-    @objc public func markForDeletion() {
+    @objc func markForDeletion() {
         guard let context = self.managedObjectContext else {
             zmLog.error("Object already deleted?")
             return
@@ -371,11 +371,11 @@ public extension UserClient {
     }
     
     @available(*, deprecated)
-    public func markForFetchingPreKeys() {
+    func markForFetchingPreKeys() {
         self.fetchFingerprintOrPrekeys()
     }
     
-    @objc public func fetchFingerprintOrPrekeys() {
+    @objc func fetchFingerprintOrPrekeys() {
         guard self.fingerprint == .none,
             let syncMOC = self.managedObjectContext?.zm_sync
             else { return }
@@ -429,7 +429,7 @@ public extension UserClient {
 
 public extension UserClient {
     
-    @objc public var failedToEstablishSession: Bool {
+    @objc var failedToEstablishSession: Bool {
         set {
             if newValue {
                 managedObjectContext?.zm_failedToEstablishSessionStore?.add(self)
@@ -448,18 +448,18 @@ public extension UserClient {
 // MARK: - SelfClient methods
 public extension UserClient {
     
-    @objc public func isSelfClient() -> Bool {
+    @objc func isSelfClient() -> Bool {
         guard let managedObjectContext = managedObjectContext,
             let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
             else { return false }
         return self == selfClient
     }
     
-    @objc public func missesClient(_ client: UserClient) {
+    @objc func missesClient(_ client: UserClient) {
         missesClients(Set(arrayLiteral: client))
     }
     
-    @objc public func missesClients(_ clients: Set<UserClient>) {
+    @objc func missesClients(_ clients: Set<UserClient>) {
         
         zmLog.debug("Adding clients(\( clients.count)) to list of missing clients")
 
@@ -470,7 +470,7 @@ public extension UserClient {
     }
     
     /// Use this method only for the selfClient
-    @objc public func removeMissingClient(_ client: UserClient) {
+    @objc func removeMissingClient(_ client: UserClient) {
         zmLog.debug("Removing client from list of missing clients")
         
         self.mutableSetValue(forKey: ZMUserClientMissingKey).remove(client)
@@ -532,7 +532,7 @@ public extension UserClient {
     }
     
     /// Use this method only for the selfClient
-    @objc public func decrementNumberOfRemainingKeys() {
+    @objc func decrementNumberOfRemainingKeys() {
         guard isSelfClient() else { fatal("`decrementNumberOfRemainingKeys` should only be called on the self client") }
         
         if numberOfKeysRemaining > 0 {

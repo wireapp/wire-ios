@@ -80,7 +80,7 @@ fileprivate extension Float {
 extension String: BigEndianDataConvertible {
     
     var asBigEndianData: Data {
-        var data = Data(bytes: [0xFE, 0xFF]) // Byte order marker
+        var data = Data([0xFE, 0xFF]) // Byte order marker
         data.append(self.data(using: .utf16BigEndian)!)
         return data
     }

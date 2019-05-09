@@ -127,8 +127,6 @@ extension NSManagedObjectContext {
         } catch let error {
             fatal("Cannot perform the fetch: \(error)")
         }
-        
-        return [:]
     }
 }
 

@@ -19,16 +19,16 @@
 
 public extension ZMUser {
 
-    @objc public var hasTeam: Bool {
+    @objc var hasTeam: Bool {
         /// Other users won't have a team object, but a teamIdentifier.
         return nil != team || nil != teamIdentifier
     }
 
-    @objc public var team: Team? {
+    @objc var team: Team? {
         return membership?.team
     }
     
-    public var teamRole: TeamRole {
+    var teamRole: TeamRole {
         return TeamRole(rawPermissions: permissions?.rawValue ?? 0)
     }
     
@@ -41,22 +41,22 @@ public extension ZMUser {
     }
 
     @objc(canAddUserToConversation:)
-    public func canAddUser(to conversation: ZMConversation) -> Bool {
+    func canAddUser(to conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
         return permissions?.contains(.addRemoveConversationMember) ?? true
     }
 
     @objc(canRemoveUserFromConversation:)
-    public func canRemoveUser(from conversation: ZMConversation) -> Bool {
+    func canRemoveUser(from conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
         return permissions?.contains(.addRemoveConversationMember) ?? true
     }
 
-    @objc public var canCreateConversation: Bool {
+    @objc var canCreateConversation: Bool {
         return permissions?.contains(.createConversation) ?? true
     }
 
-    @objc public func _isGuest(in conversation: ZMConversation) -> Bool {
+    @objc func _isGuest(in conversation: ZMConversation) -> Bool {
         if isSelfUser {
             // In case the self user is a guest in a team conversation, the backend will
             // return a 404 when fetching said team and we will delete the team.
@@ -72,11 +72,11 @@ public extension ZMUser {
         }
     }
 
-    @objc public var isWirelessUser: Bool {
+    @objc var isWirelessUser: Bool {
         return self.expiresAt != nil
     }
     
-    @objc public var isExpired: Bool {
+    @objc var isExpired: Bool {
         guard let expiresAt = self.expiresAt else {
             return false
         }
@@ -84,7 +84,7 @@ public extension ZMUser {
         return expiresAt.compare(Date()) != .orderedDescending
     }
     
-    @objc public var expiresAfter: TimeInterval {
+    @objc var expiresAfter: TimeInterval {
         guard let expiresAt = self.expiresAt else {
             return 0
         }

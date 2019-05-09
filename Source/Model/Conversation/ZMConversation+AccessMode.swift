@@ -51,11 +51,11 @@ public extension ConversationAccessMode {
                                                                           .link: "link",
                                                                           .`private`: "private"]
     
-    public var stringValue: [String] {
+    var stringValue: [String] {
         return ConversationAccessMode.stringValues.compactMap { self.contains($0) ? $1 : nil }
     }
     
-    public init(values: [String]) {
+    init(values: [String]) {
         var result = ConversationAccessMode()
         ConversationAccessMode.stringValues.forEach {
             if values.contains($1) {
@@ -67,7 +67,7 @@ public extension ConversationAccessMode {
 }
 
 public extension ConversationAccessMode {
-    public static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessMode {
+    static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessMode {
         return allowGuests ? .allowGuests : .teamOnly
     }
 }
@@ -83,7 +83,7 @@ public enum ConversationAccessRole: String {
 }
 
 public extension ConversationAccessRole {
-    public static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessRole {
+    static func value(forAllowGuests allowGuests: Bool) -> ConversationAccessRole {
         return allowGuests ? ConversationAccessRole.nonActivated : ConversationAccessRole.team
     }
 }
@@ -95,7 +95,7 @@ public extension ZMConversation {
     /// If set to false, only team member can join the conversation.
     /// True means that a regular guest OR wireless guests could join
     /// Controls the values of `accessMode` and `accessRole`.
-    @objc public var allowGuests: Bool {
+    @objc var allowGuests: Bool {
         get {
             return accessMode != .teamOnly && accessRole != .team
         }
@@ -108,7 +108,7 @@ public extension ZMConversation {
     // The conversation access mode is stored as an array of string in CoreData, cf. `acccessModeStrings`.
     
     /// Defines how users can join a conversation.
-    public var accessMode: ConversationAccessMode? {
+    var accessMode: ConversationAccessMode? {
         get {
             guard let strings = self.accessModeStrings else {
                 return nil
@@ -126,7 +126,7 @@ public extension ZMConversation {
     }
     
     /// Defines who can join the conversation.
-    public var accessRole: ConversationAccessRole? {
+    var accessRole: ConversationAccessRole? {
         get {
             guard let strings = self.accessRoleString else {
                 return nil

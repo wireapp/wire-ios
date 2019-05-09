@@ -30,7 +30,7 @@ public extension ZMConversation {
     /// This is equal to the meaningful display name, if it exists, otherwise a
     /// fallback placeholder name is used.
     ///
-    @objc public var displayName: String {
+    @objc var displayName: String {
         let result = self.meaningfulDisplayName
         switch conversationType {
         case .oneOnOne, .connection: return result ?? ZMConversation.emptyConversationEllipsis
@@ -42,7 +42,7 @@ public extension ZMConversation {
     /// A meaningful display name is one that can be constructed from the conversation
     /// data, rather than relying on a fallback placeholder name, such as "…" or "Empty conversation".
     ///
-    @objc public var meaningfulDisplayName: String? {
+    @objc var meaningfulDisplayName: String? {
         switch conversationType {
         case .connection: return connectionDisplayName()
         case .group: return groupDisplayName()

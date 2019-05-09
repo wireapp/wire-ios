@@ -24,14 +24,6 @@ public enum SearchUserAsset: ExpressibleByNilLiteral, Hashable {
     public init(nilLiteral: ()) {
         self = .none
     }
-
-    public var hashValue: Int {
-        switch self {
-        case .none: return 0
-        case .assetKey(let key): return key.hashValue
-        }
-    }
-
 }
 
 

@@ -165,7 +165,7 @@ fileprivate extension Mention {
 fileprivate extension DraftMessage {
 
     /// The storable version of the object.
-    fileprivate var storable: StorableDraftMessage {
+    var storable: StorableDraftMessage {
         return .init(text: text,
                      mentions: mentions.compactMap(\.storable),
                      quote: StorableQuote(nonce: quote?.nonce))

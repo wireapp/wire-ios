@@ -33,7 +33,7 @@ public struct ConversationCreationOptions {
 }
 
 public extension ZMManagedObjectContextProvider {
-    public func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
+    func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
         return ZMConversation.insertGroupConversation(intoUserSession: self,
                                                       withParticipants: options.participants,
                                                       name: options.name,

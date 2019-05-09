@@ -183,7 +183,7 @@ public struct ChangedIndexes<T : Hashable> {
                 if intermediateValue != endValue {
                     if let oldIdx = start.order[endValue] {
                         movedIndexes.append(MovedIndex(from: oldIdx, to: idx))
-                        if let intIdx = intermediateState.index(of: endValue) {
+                        if let intIdx = intermediateState.firstIndex(of: endValue) {
                             intermediateState.remove(at: intIdx)
                             intermediateState.insert(endValue, at: idx)
                         }
@@ -204,7 +204,7 @@ public struct ChangedIndexes<T : Hashable> {
                 let intermediateValue = intermediateState[idx]
                 let endValue = end.array[idx]
                 if intermediateValue != endValue {
-                    if let intIdx = intermediateState.index(of: endValue) {
+                    if let intIdx = intermediateState.firstIndex(of: endValue) {
                         intermediateState.remove(at: intIdx)
                         intermediateState.insert(endValue, at: idx)
                         movedIndexes.append(MovedIndex(from: intIdx, to: idx))

@@ -57,10 +57,10 @@ public struct MutedMessageTypes: OptionSet {
 }
 
 public extension ZMConversation {
-    @NSManaged @objc public var mutedStatus: Int32
+    @NSManaged @objc var mutedStatus: Int32
     
     /// Returns an option set of messages types which should be muted
-    public var mutedMessageTypes: MutedMessageTypes {
+    var mutedMessageTypes: MutedMessageTypes {
         get {
             guard let managedObjectContext = self.managedObjectContext else {
                 return .none
@@ -98,7 +98,7 @@ public extension ZMConversation {
     
     /// Returns an option set of messages types which should be muted when also considering the
     /// the availability status of the self user.
-    public var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
+    var mutedMessageTypesIncludingAvailability: MutedMessageTypes {
         get {
             guard let managedObjectContext = self.managedObjectContext else {
                 return .none

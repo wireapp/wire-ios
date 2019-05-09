@@ -23,15 +23,20 @@ public struct AnyClassTuple<T : Hashable> : Hashable {
     
     public let classOfObject : AnyClass
     public let secondElement : T
-    public let hashValue : Int
-    
+
     public init(classOfObject: AnyClass, secondElement: T) {
         self.classOfObject = classOfObject
         self.secondElement = secondElement
-        let classHash = "\(self.classOfObject)".hashValue
-        let elementHash = self.secondElement.hashValue
-        self.hashValue = classHash ^ elementHash
     }
+
+    public func hash(into hasher: inout Hasher) {
+        let classHash = "\(classOfObject)".hashValue
+        let elementHash = secondElement.hashValue
+
+        hasher.combine(classHash)
+        hasher.combine(elementHash)
+    }
+
 }
 
 public func ==<T>(lhs: AnyClassTuple<T>, rhs: AnyClassTuple<T>) -> Bool {
