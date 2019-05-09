@@ -20,6 +20,4 @@
 
 // Preprocessing
 //
-GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
-
 

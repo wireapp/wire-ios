@@ -21,8 +21,6 @@
 // It gets included by {target}-ios.xcconfig
 //
 
-#include "swift.xcconfig"
-
 
 // Architectures
 //
@@ -42,3 +40,5 @@ FRAMEWORK_VERSION = A
 //
 OTHER_LDFLAGS = -ObjC
 FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
+
+GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
