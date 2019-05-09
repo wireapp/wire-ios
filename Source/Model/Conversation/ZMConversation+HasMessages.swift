@@ -26,7 +26,7 @@ import Foundation
     /// requests, however it does not guarantee the validity of the result. Use
     /// this in when the need for permformance outweighs the need for accuracy.
     ///
-    @objc public var estimatedHasMessages: Bool {
+    @objc var estimatedHasMessages: Bool {
         // If we haven't read any messages, then we don't have any.
         guard let lastRead = lastReadServerTimeStamp else { return false }
         

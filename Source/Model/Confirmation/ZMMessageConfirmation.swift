@@ -24,11 +24,14 @@ import CoreData
     case delivered, read
     
     static func convert(_ zmConfirmationType: ZMConfirmationType) -> MessageConfirmationType {
+        //TODO: change ZMConfirmationType to NS_CLOSED_ENUM
         switch zmConfirmationType {
         case .DELIVERED:
             return .delivered
         case .READ:
             return .read
+        @unknown default:
+            fatalError()
         }
     }
 }

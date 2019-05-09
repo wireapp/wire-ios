@@ -30,7 +30,7 @@ public extension String {
         return chars[Int(random)]
     }
     
-    public func obfuscated() -> String {
+    func obfuscated() -> String {
         var obfuscatedVersion = UnicodeScalarView()
         for char in self.unicodeScalars {
             if NSCharacterSet.whitespacesAndNewlines.contains(char) {
@@ -46,7 +46,7 @@ public extension String {
 
 public extension ZMGenericMessage {
 
-    @objc public func obfuscatedMessage() -> ZMGenericMessage? {
+    @objc func obfuscatedMessage() -> ZMGenericMessage? {
         guard let messageID = (messageId as String?).flatMap(UUID.init) else { return nil }
         guard hasEphemeral() else { return nil }
         

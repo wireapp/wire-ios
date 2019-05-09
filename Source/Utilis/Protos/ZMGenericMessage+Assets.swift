@@ -21,7 +21,7 @@ import Foundation
 
 @objc public extension ZMAsset {
     
-    public static func asset(withOriginal original: ZMAssetOriginal? = nil, preview: ZMAssetPreview? = nil) -> ZMAsset {
+    static func asset(withOriginal original: ZMAssetOriginal? = nil, preview: ZMAssetPreview? = nil) -> ZMAsset {
         let builder = ZMAsset.builder()!
         if let original = original {
             builder.setOriginal(original)
@@ -32,13 +32,13 @@ import Foundation
         return builder.build()
     }
     
-    public static func asset(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMAsset {
+    static func asset(withUploadedOTRKey otrKey: Data, sha256: Data) -> ZMAsset {
         let builder = ZMAsset.builder()!
         builder.setUploaded(.remoteData(withOTRKey: otrKey, sha256: sha256))
         return builder.build()
     }
     
-    public static func asset(withNotUploaded notUploaded: ZMAssetNotUploaded) -> ZMAsset {
+    static func asset(withNotUploaded notUploaded: ZMAssetNotUploaded) -> ZMAsset {
         let builder = ZMAsset.builder()!
         builder.setNotUploaded(notUploaded)
         return builder.build()
@@ -48,11 +48,11 @@ import Foundation
 
 @objc public extension ZMAssetOriginal {
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String?) -> ZMAssetOriginal {
+    static func original(withSize size: UInt64, mimeType: String, name: String?) -> ZMAssetOriginal {
         return original(withSize: size, mimeType: mimeType, name: name, imageMetaData: nil)
     }
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: ZMAssetImageMetaData?) -> ZMAssetOriginal {
+    static func original(withSize size: UInt64, mimeType: String, name: String?, imageMetaData: ZMAssetImageMetaData?) -> ZMAssetOriginal {
         let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
@@ -65,7 +65,7 @@ import Foundation
         return builder.build()
     }
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String, videoDurationInMillis: UInt, videoDimensions: CGSize) -> ZMAssetOriginal {
+    static func original(withSize size: UInt64, mimeType: String, name: String, videoDurationInMillis: UInt, videoDimensions: CGSize) -> ZMAssetOriginal {
         let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
@@ -80,7 +80,7 @@ import Foundation
         return builder.build()
     }
     
-    public static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt, normalizedLoudness: [Float]) -> ZMAssetOriginal {
+    static func original(withSize size: UInt64, mimeType: String, name: String, audioDurationInMillis: UInt, normalizedLoudness: [Float]) -> ZMAssetOriginal {
         let builder = ZMAssetOriginal.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
@@ -96,7 +96,7 @@ import Foundation
     }
     
     /// Returns the normalized loudness as floats between 0 and 1
-    public var normalizedLoudnessLevels : [Float] {
+    var normalizedLoudnessLevels : [Float] {
         
         guard self.audio.hasNormalizedLoudness() else { return [] }
         guard self.audio.normalizedLoudness.count > 0 else { return [] }
@@ -114,7 +114,7 @@ import Foundation
 
 @objc public extension ZMAssetPreview {
     
-    public static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData?, imageMetadata: ZMAssetImageMetaData) -> ZMAssetPreview {
+    static func preview(withSize size: UInt64, mimeType: String, remoteData: ZMAssetRemoteData?, imageMetadata: ZMAssetImageMetaData) -> ZMAssetPreview {
         let builder = ZMAssetPreview.builder()!
         builder.setSize(size)
         builder.setMimeType(mimeType)
@@ -130,7 +130,7 @@ import Foundation
 }
 
 @objc public extension ZMAssetImageMetaData {
-    public static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
+    static func imageMetaData(withWidth width: Int32, height: Int32) -> ZMAssetImageMetaData {
         let builder = ZMAssetImageMetaData.builder()!
         builder.setWidth(width)
         builder.setHeight(height)
@@ -140,7 +140,7 @@ import Foundation
 
 @objc public extension ZMAssetRemoteData {
     
-    public static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
+    static func remoteData(withOTRKey otrKey: Data, sha256: Data, assetId: String? = nil, assetToken: String? = nil) -> ZMAssetRemoteData {
         let builder = ZMAssetRemoteData.builder()!
         builder.setOtrKey(otrKey)
         builder.setSha256(sha256)

@@ -19,5 +19,5 @@
 import Foundation
 
 public extension ZMConversation {
-    @NSManaged public var language: String
+    @NSManaged var language: String
 }

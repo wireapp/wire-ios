@@ -25,8 +25,7 @@ public final class StringKeyPath : Hashable {
     
     public let rawValue: String
     public let count: Int
-    public let hashValue: Int
-    
+
     static private var KeyPathCache : [String : StringKeyPath] = [:]
     
     public class func keyPathForString(_ string: String) -> StringKeyPath {
@@ -46,8 +45,12 @@ public final class StringKeyPath : Hashable {
         count = rawValue.filter {
             $0 == "."
         }.count + 1
-        hashValue = rawValue.hashValue
     }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(rawValue.hashValue)
+    }
+
     
     public var isPath: Bool {
         return 1 < count
@@ -55,7 +58,7 @@ public final class StringKeyPath : Hashable {
 
     public lazy var decompose : (head: StringKeyPath, tail: StringKeyPath?)? = {
         if 1 <= self.count {
-            if let i = self.rawValue.index(of: ".") {
+            if let i = self.rawValue.firstIndex(of: ".") {
                 let head = self.rawValue[..<i]
                 var tail : StringKeyPath?
                 if i != self.rawValue.endIndex {

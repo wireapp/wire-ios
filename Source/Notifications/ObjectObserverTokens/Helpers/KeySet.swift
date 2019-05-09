@@ -120,8 +120,8 @@ public struct KeySet : Sequence {
 }
 
 extension KeySet : Hashable {
-    public var hashValue: Int {
-        return backing.hashValue
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(backing.hashValue)
     }
 }
 

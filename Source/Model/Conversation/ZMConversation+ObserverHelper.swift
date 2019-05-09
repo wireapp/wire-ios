@@ -39,7 +39,7 @@ class ConversationObserverToken : NSObject, ZMConversationObserver {
 
 public extension ZMConversation {
     
-    public func onCreatedRemotely(_ block : @escaping () -> Void) -> NSObjectProtocol? {
+    func onCreatedRemotely(_ block : @escaping () -> Void) -> NSObjectProtocol? {
         guard remoteIdentifier == nil else { block(); return nil }
         
         let observer = ConversationObserverToken(filter: { $0.createdRemotelyChanged }, block: block)

@@ -166,11 +166,14 @@ extension ZMAssetClientMessage {
         }
         
         if let assetData = message.assetData, assetData.hasNotUploaded(), self.transferState != .uploaded {
+            ///TODO: change ZMAssetNotUploaded to NS_CLOSED_ENUM
             switch assetData.notUploaded {
             case .CANCELLED:
                 self.managedObjectContext?.delete(self)
             case .FAILED:
                 self.updateTransferState(.uploadingFailed, synchronize: false)
+            @unknown default:
+                fatalError()
             }
         }
     }

@@ -25,10 +25,6 @@ public struct CategoryMatch : Hashable {
         self.including = including
         self.excluding = excluding
     }
-    
-    public var hashValue: Int {
-        return excluding.hashValue ^ including.hashValue
-    }
 }
 
 public func ==(lhs: CategoryMatch, rhs: CategoryMatch) -> Bool {

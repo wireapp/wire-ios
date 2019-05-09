@@ -29,7 +29,7 @@ public protocol EphemeralMessageCapable: MessageCapable {
 }
 
 public extension GenericMessage {
-    public static func message(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: TimeInterval? = nil) -> GenericMessage {
+    static func message(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: TimeInterval? = nil) -> GenericMessage {
         return GenericMessage.with() {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable

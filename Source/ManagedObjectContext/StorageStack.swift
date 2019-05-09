@@ -195,7 +195,7 @@ public extension StorageStack {
     
     /// Returns the URL that holds the data for the given account
     /// It will be in the format <application container>/AccountData/<account identifier>
-    @objc public static func accountFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
+    @objc static func accountFolder(accountIdentifier: UUID, applicationContainer: URL) -> URL {
         return applicationContainer
             .appendingPathComponent(StorageStack.accountDataFolder)
             .appendingPathComponent(accountIdentifier.uuidString)
@@ -205,7 +205,7 @@ public extension StorageStack {
 public extension URL {
     
     /// Returns the location of the persistent store file in the given account folder
-    public func appendingPersistentStoreLocation() -> URL {
+    func appendingPersistentStoreLocation() -> URL {
         return self.appendingPathComponent("store").appendingStoreFile()
     }
 }
@@ -213,7 +213,7 @@ public extension URL {
 public extension NSURL {
 
     /// Returns the location of the persistent store file in the given account folder
-    @objc public func URLAppendingPersistentStoreLocation() -> URL {
+    @objc func URLAppendingPersistentStoreLocation() -> URL {
         return (self as URL).appendingPersistentStoreLocation()
     }
 }

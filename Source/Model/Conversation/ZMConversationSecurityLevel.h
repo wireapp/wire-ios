@@ -30,7 +30,7 @@
  When user trust this new client conversation goes back to secure state.
  If the user chooses to send the messages anyway, conversation goes to not secure state
  */
-typedef NS_ENUM(int16_t, ZMConversationSecurityLevel) {
+typedef NS_CLOSED_ENUM(int16_t, ZMConversationSecurityLevel) {
     /// Conversation is not secured
     ZMConversationSecurityLevelNotSecure = 0,
     

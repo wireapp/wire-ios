@@ -539,12 +539,12 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     
     // when
     [user imageDataFor:ProfileImageSizePreview queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
-        XCTAssertEqual(imageDataResult, imageData);
+        XCTAssert([imageDataResult isEqualToData:imageData]);
         [previewDataArrived fulfill];
     }];
     
     [user imageDataFor:ProfileImageSizeComplete queue:dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0) completion:^(NSData *imageDataResult) {
-        XCTAssertEqual(imageDataResult, imageData);
+        XCTAssert([imageDataResult isEqualToData:imageData]);
         [completeDataArrived fulfill];
     }];
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);

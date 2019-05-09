@@ -37,7 +37,7 @@
 
 @protocol ZMConversationMessage;
 
-typedef NS_ENUM(int16_t, ZMConversationType) {
+typedef NS_CLOSED_ENUM(int16_t, ZMConversationType) {
     ZMConversationTypeInvalid = 0,
 
     ZMConversationTypeSelf,

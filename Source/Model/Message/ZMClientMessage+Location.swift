@@ -47,7 +47,7 @@ extension ZMClientMessage: LocationMessageData {
 
 public extension LocationMessageData {
     
-    public var coordinate: CLLocationCoordinate2D {
+    var coordinate: CLLocationCoordinate2D {
         return CLLocationCoordinate2D(
             latitude: CLLocationDegrees(latitude),
             longitude: CLLocationDegrees(longitude)

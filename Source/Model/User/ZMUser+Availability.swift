@@ -26,6 +26,7 @@ import Foundation
 extension Availability {
     
     public init(_ proto : ZMAvailability) {
+        ///TODO: change ZMAvailabilityType to NS_CLOSED_ENUM
         switch proto.type {
         case .NONE:
             self = .none
@@ -35,6 +36,8 @@ extension Availability {
             self = .away
         case .BUSY:
             self = .busy
+        @unknown default:
+            self = .none
         }
     }
 
