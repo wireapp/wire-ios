@@ -81,6 +81,8 @@ extension GenericMessageEntity : EncryptedPayloadGenerator {
         } else if message.hasClientAction() {
             switch message.clientAction {
             case .RESETSESSION: return "Reset Session Message"
+            @unknown default:
+                return "unknown Message"
             }
         }
 

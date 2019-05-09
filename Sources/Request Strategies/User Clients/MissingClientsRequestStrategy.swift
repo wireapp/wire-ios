@@ -26,7 +26,7 @@ struct MissingClientsRequestUserInfoKeys {
 }
 
 public extension UserClient {
-    public override class func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate {
+    override class func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate {
         let baseModifiedPredicate = super.predicateForObjectsThatNeedToBeUpdatedUpstream()
         let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
         let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")
@@ -124,7 +124,6 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         } else {
             fatal("We only expect request about missing clients")
         }
-        return false
     }
     
     /// Make sure that we don't block messages or continue requesting messages for a client that can not be fetched

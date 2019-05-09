@@ -19,7 +19,7 @@
 
 public extension Array where Element == ZMRequestGenerator {
 
-    public func nextRequest() -> ZMTransportRequest? {
+    func nextRequest() -> ZMTransportRequest? {
         return (self as NSArray).nextRequest()
     }
 
