@@ -1043,7 +1043,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				ORGANIZATIONNAME = "Wire GmbH";
 				TargetAttributes = {
 					166901691D707509000FE4AF = {
@@ -1069,6 +1069,7 @@
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
 			knownRegions = (
+				English,
 				en,
 				Base,
 			);
@@ -1275,7 +1276,6 @@
 			baseConfigurationReference = F1E47FED207E0B72008D4299 /* project-debug.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				SWIFT_VERSION = 4.0;
 			};
 			name = Debug;
 		};
@@ -1284,7 +1284,6 @@
 			baseConfigurationReference = F1E47FE9207E0B72008D4299 /* project.xcconfig */;
 			buildSettings = {
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				SWIFT_VERSION = 4.0;
 			};
 			name = Release;
 		};
@@ -1294,7 +1293,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1304,7 +1302,6 @@
 			buildSettings = {
 				INFOPLIST_FILE = Resources/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategy;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -1316,7 +1313,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
 			};
 			name = Debug;
@@ -1329,7 +1325,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
-				SWIFT_VERSION = 4.2;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
 			};
 			name = Release;
@@ -1341,7 +1336,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -1352,7 +1346,6 @@
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/Test Host/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireRequestStrategyTestHost;
 				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
