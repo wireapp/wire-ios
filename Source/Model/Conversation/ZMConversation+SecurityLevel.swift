@@ -174,17 +174,18 @@ extension ZMConversation {
     
     /// Mark conversation as not secure. This method is expected to be called from the UI context
     @objc public func makeNotSecure() {
-        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
-        self.securityLevel = .notSecure
-        self.managedObjectContext?.saveOrRollback()
+        precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
+        securityLevel = .notSecure
+        managedObjectContext?.saveOrRollback()
     }
     
     /// Resend last non sent messages. This method is expected to be called from the UI context
     @objc public func resendMessagesThatCausedConversationSecurityDegradation() {
-        precondition(self.managedObjectContext!.zm_isUserInterfaceContext)
-        self.securityLevel = .notSecure // The conversation needs to be marked as not secure for new messages to be sent
-        self.managedObjectContext?.saveOrRollback()
-        self.enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
+        // Downgrade the conversation to be unverified
+        makeNotSecure()
+
+        // Resend the messages that caused the degradation to happen
+        enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
             $0.causedSecurityLevelDegradation = false
             $0.resend()
         }
@@ -192,7 +193,11 @@ extension ZMConversation {
     
     /// Reset those that caused degradation. This method is expected to be called from the UI context
     @objc public func doNotResendMessagesThatCausedDegradation() {
-        guard let syncMOC = self.managedObjectContext?.zm_sync else { return }
+        // Downgrade the conversation to be unverified
+        makeNotSecure()
+
+        // Leave the messages that caused the degradation to be unverified
+        guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
             conversation.clearMessagesThatCausedSecurityLevelDegradation()

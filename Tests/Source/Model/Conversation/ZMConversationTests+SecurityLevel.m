@@ -738,7 +738,7 @@
         XCTAssertFalse(message3.causedSecurityLevelDegradation);
         XCTAssertEqual(message3.deliveryState, ZMDeliveryStateFailedToSend);
         XCTAssertFalse(conversation.allUsersTrusted);
-        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
+        XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelNotSecure);
     }];
 }
 
