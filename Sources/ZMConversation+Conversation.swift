@@ -104,7 +104,7 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
     }
     
     func conversationDidChange(_ note: ConversationChangeInfo) {
-        if note.didNotSendMessagesBecauseOfConversationSecurityLevel {
+        if note.causedByConversationPrivacyChange {
             self.callback(ConversationDegradationInfo(conversation: note.conversation,
                                                       users: Set(note.usersThatCausedConversationToDegrade)))
         }

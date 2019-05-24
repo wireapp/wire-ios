@@ -31,13 +31,14 @@ public protocol Conversation : SharingTarget {
     
     /// Returns true if the conversation is trusted (all participants are trusted)
     var isTrusted : Bool { get }
-    
+
+    /// The status of legal hold in the conversation.
+    var legalHoldStatus: ZMConversationLegalHoldStatus { get }
+
     /// Adds an observer for when the conversation verification status degrades
     func add(conversationVerificationDegradedObserver: @escaping (ConversationDegradationInfo)->()) -> TearDownCapable
     
-    /// Resends all those messages that caused conversation security degradation
-    func resendMessagesThatCausedConversationSecurityDegradation()
-    
-    /// Do not resend all those messages that caused conversation security degradation
-    func doNotResendMessagesThatCausedDegradation()
+    /// Accept the privacy warning, and resend the messages that caused them if wanted.
+    func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool)
+
 }
