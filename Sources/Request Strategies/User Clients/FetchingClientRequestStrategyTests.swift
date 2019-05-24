@@ -92,10 +92,10 @@ extension FetchClientRequestStrategyTests {
         
         // THEN
         self.syncMOC.performGroupedBlockAndWait {
-            let expectedDeviceClasses = Set(arrayLiteral: "phone", "tablet")
-            let actualDeviceClasses = Set(user.clients.compactMap { $0.deviceClass })
-            let expectedIdentifiers = Set(arrayLiteral: firstIdentifier, secondIdentifier)
-            let actualIdentifiers = Set(user.clients.map { $0.remoteIdentifier! })
+            let expectedDeviceClasses: Set<DeviceClass> = [.phone, .tablet]
+            let actualDeviceClasses = Set(user.clients.compactMap(\.deviceClass))
+            let expectedIdentifiers: Set<String> = [firstIdentifier, secondIdentifier]
+            let actualIdentifiers = Set(user.clients.compactMap(\.remoteIdentifier))
             XCTAssertEqual(user.clients.count, 2)
             XCTAssertEqual(expectedDeviceClasses, actualDeviceClasses)
             XCTAssertEqual(expectedIdentifiers, actualIdentifiers)
