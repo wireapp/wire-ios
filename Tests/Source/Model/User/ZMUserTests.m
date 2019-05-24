@@ -1281,6 +1281,17 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertTrue(user.canBeConnected);
 }
 
+- (void)testThatOneToOneConversationReturnSelfConversationForTheSelfUser
+{
+    // given
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    ZMConversation *selfConversation = [ZMConversation selfConversationInContext:self.uiMOC];
+    
+    // then
+    XCTAssertNotNil(selfUser.oneToOneConversation);
+    XCTAssertEqual(selfConversation, selfUser.oneToOneConversation);
+}
+
 - (void)testThatItReturnsTheOneToOneConversationToAnUser
 {
     // given

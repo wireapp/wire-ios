@@ -50,7 +50,8 @@ extension ZMUser : ObjectInSnapshot {
             ZMUserKeys.RichProfile,
             #keyPath(ZMUser.isServiceUser),
             #keyPath(ZMUser.serviceIdentifier),
-            #keyPath(ZMUser.providerIdentifier)
+            #keyPath(ZMUser.providerIdentifier),
+            #keyPath(ZMUser.isUnderLegalHold)
         ]
     }
 
@@ -149,6 +150,10 @@ extension ZMUser : ObjectInSnapshot {
     
     public var richProfileChanged : Bool {
         return changedKeys.contains(ZMUserKeys.RichProfile)
+    }
+
+    public var legalHoldStatusChanged: Bool {
+        return changedKeys.contains(#keyPath(ZMUser.isUnderLegalHold))
     }
     
     public let user: UserType

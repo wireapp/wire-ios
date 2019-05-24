@@ -82,6 +82,9 @@ public protocol UserType: NSObjectProtocol {
     /// Wheater the account of the user is deleted
     var isAccountDeleted: Bool { get }
     
+    /// Wheater the user is under legal hold
+    var isUnderLegalHold: Bool { get }
+    
     var accentColorValue: ZMAccentColor { get }
 
     /// Whether the user is a wireless user.
@@ -110,6 +113,9 @@ public protocol UserType: NSObjectProtocol {
     
     /// Conversations the user is a currently a participant of
     var activeConversations: Set<ZMConversation> { get }
+    
+    /// All clients belonging to the user
+    var allClients: [UserClientType] { get }
     
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()

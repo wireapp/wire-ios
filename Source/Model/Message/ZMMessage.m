@@ -978,6 +978,8 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
             case ZMSystemMessageTypeReadReceiptsEnabled:
             case ZMSystemMessageTypeReadReceiptsDisabled:
             case ZMSystemMessageTypeReadReceiptsOn:
+            case ZMSystemMessageTypeLegalHoldEnabled:
+            case ZMSystemMessageTypeLegalHoldDisabled:
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:

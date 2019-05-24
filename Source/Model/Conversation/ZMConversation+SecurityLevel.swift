@@ -16,57 +16,182 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 import WireCryptobox
 
+@objc public enum ZMConversationLegalHoldStatus: Int16 {
+    case disabled = 0
+    case pendingApproval = 1
+    case enabled = 2
+
+    public var denotesEnabledComplianceDevice: Bool {
+        switch self {
+        case .pendingApproval, .enabled:
+            return true
+        case .disabled:
+            return false
+        }
+    }
+}
 
 extension ZMConversation {
 
     /// Contains current security level of conversation.
-    ///Client should check this property to properly annotate conversation.
-    @NSManaged public internal(set) var securityLevel : ZMConversationSecurityLevel
+    /// Client should check this property to properly annotate conversation.
+    @NSManaged public internal(set) var securityLevel: ZMConversationSecurityLevel
+
+    @NSManaged private var primitiveLegalHoldStatus: NSNumber
+
+    /// Whether the conversation is under legal hold.
+    @objc public internal(set) var legalHoldStatus: ZMConversationLegalHoldStatus {
+        get {
+            willAccessValue(forKey: #keyPath(legalHoldStatus))
+            defer { didAccessValue(forKey: #keyPath(legalHoldStatus)) }
+
+            if let status = ZMConversationLegalHoldStatus(rawValue: primitiveLegalHoldStatus.int16Value) {
+                return status
+            } else {
+                return .disabled
+            }
+        }
+        set {
+            willChangeValue(forKey: #keyPath(legalHoldStatus))
+            primitiveLegalHoldStatus = NSNumber(value: newValue.rawValue)
+            didChangeValue(forKey: #keyPath(legalHoldStatus))
+        }
+    }
+
+    /// Whether the conversation is under legal hold.
+    @objc public var isUnderLegalHold: Bool {
+        return legalHoldStatus.denotesEnabledComplianceDevice
+    }
+
+    /// Whether the self user can send messages in this conversation.
+    @objc public var selfUserCanSendMessages: Bool {
+        return !isReadOnly && securityLevel != .secureWithIgnored && legalHoldStatus != .pendingApproval
+    }
+
+    // MARK: - Events
 
     /// Should be called when client is trusted.
     /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
     @objc(increaseSecurityLevelIfNeededAfterTrustingClients:)
     public func increaseSecurityLevelIfNeededAfterTrusting(clients: Set<UserClient>) {
-        guard self.increaseSecurityLevelIfNeeded() else { return }
-        self.appendNewIsSecureSystemMessage(verified: clients)
-        self.notifyOnUI(name: ZMConversation.isVerifiedNotificationName)
+         applySecurityChanges(cause: .verifiedClients(clients))
     }
 
     /// Should be called when client is deleted.
     /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
     @objc(increaseSecurityLevelIfNeededAfterRemovingClientForUsers:)
-    public func increaseSecurityLevelIfNeededAfterRemovingClient(for users: Set<ZMUser>) {
-        guard self.increaseSecurityLevelIfNeeded() else { return }
-        self.appendNewIsSecureSystemMessage(verified: Set<UserClient>(), for: users)
-        self.notifyOnUI(name: ZMConversation.isVerifiedNotificationName)
+    public func increaseSecurityLevelIfNeededAfterRemoving(clients: [ZMUser: Set<UserClient>]) {
+        applySecurityChanges(cause: .removedClients(clients))
+    }
+
+    /// Should be called when a user is deleted.
+    /// If the conversation became trusted, it will trigger UI notification and add system message for all devices verified
+    @objc(increaseSecurityLevelIfNeededAfterRemovingUsers:)
+    public func increaseSecurityLevelIfNeededAfterRemoving(users: Set<ZMUser>) {
+        applySecurityChanges(cause: .removedUsers(users))
     }
 
     /// Should be called when a new client is discovered
     @objc(decreaseSecurityLevelIfNeededAfterDiscoveringClients:causedByMessage:)
     public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy message: ZMOTRMessage?) {
-        guard self.decreaseSecurityLevelIfNeeded() else { return }
-        self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.message(message))
-        self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+        applySecurityChanges(cause: .addedClients(clients, source: message))
     }
     
     /// Should be called when a new user is added to the conversation
     @objc(decreaseSecurityLevelIfNeededAfterDiscoveringClients:causedByAddedUsers:)
     public func decreaseSecurityLevelIfNeededAfterDiscovering(clients: Set<UserClient>, causedBy users: Set<ZMUser>) {
-        guard self.decreaseSecurityLevelIfNeeded() else { return }
-        self.appendNewAddedClientSystemMessage(added: clients, causedBy: DiscoveryCause.addedUsers(users))
-        self.expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+        applySecurityChanges(cause: .addedUsers(users))
     }
 
     /// Should be called when a client is ignored
     @objc(decreaseSecurityLevelIfNeededAfterIgnoringClients:)
     public func decreaseSecurityLevelIfNeededAfterIgnoring(clients: Set<UserClient>) {
-        guard self.decreaseSecurityLevelIfNeeded() else { return }
-        self.appendIgnoredClientsSystemMessage(ignored: clients)
+        applySecurityChanges(cause: .ignoredClients(clients))
     }
+
+    /// Applies the security changes for the set of users.
+    private func applySecurityChanges(cause: SecurityChangeCause) {
+        updateLegalHoldState(cause: cause)
+        updateSecurityLevel(cause: cause)
+    }
+
+    private func updateLegalHoldState(cause: SecurityChangeCause) {
+        switch cause {
+        case .addedUsers, .addedClients:
+            enableLegalHoldIfNeeded()
+
+        case .removedClients, .removedUsers:
+            disableLegalHoldIfNeeded()
+
+        case .verifiedClients, .ignoredClients:
+            // no-op: verification does not impact legal hold because no clients are added or removed
+            break
+        }
+    }
+
+    private func updateSecurityLevel(cause: SecurityChangeCause) {
+        switch cause {
+        case .addedUsers, .addedClients, .ignoredClients:
+            degradeSecurityLevelIfNeeded(for: cause)
+
+        case .removedUsers, .removedClients, .verifiedClients:
+            increaseSecurityLevelIfNeeded(for: cause)
+        }
+    }
+
+    private func increaseSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
+        guard securityLevel != .secure && allUsersTrusted && allParticipantsHaveClients else {
+            return
+        }
+
+        securityLevel = .secure
+        appendNewIsSecureSystemMessage(cause: cause)
+        notifyOnUI(name: ZMConversation.isVerifiedNotificationName)
+    }
+
+    private func degradeSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
+        guard securityLevel == .secure && !allUsersTrusted else {
+            return
+        }
+
+        securityLevel = .secureWithIgnored
+
+        switch cause {
+        case .addedClients, .addedUsers:
+            appendNewAddedClientSystemMessage(cause: cause)
+            expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+        case .ignoredClients(let clients):
+            appendIgnoredClientsSystemMessage(ignored: clients)
+        default:
+            break
+        }
+    }
+
+    /// Check whether the conversation became under legal hold and disable it if needed.
+    private func enableLegalHoldIfNeeded() {
+        guard !legalHoldStatus.denotesEnabledComplianceDevice && activeParticipants.any(\.isUnderLegalHold) else {
+            return
+        }
+
+        legalHoldStatus = .pendingApproval
+        appendLegalHoldEnabledSystemMessageForConversation()
+        expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
+    }
+
+    /// Check whether the conversation is still under legal hold and disable it if needed.
+    private func disableLegalHoldIfNeeded() {
+        guard legalHoldStatus.denotesEnabledComplianceDevice && !activeParticipants.any(\.isUnderLegalHold) else {
+            return
+        }
+
+        legalHoldStatus = .disabled
+        appendLegalHoldDisabledSystemMessageForConversation()
+    }
+
+    // MARK: - Messages
 
     /// Creates system message that says that you started using this device, if you were not registered on this device
     @objc public func appendStartedUsingThisDeviceMessage() {
@@ -126,23 +251,7 @@ extension ZMConversation {
                                  clients: clients,
                                  timestamp: serverTimestamp)
     }
-    
-    /// Decrease the security level if some clients are now not trusted
-    /// - returns: true if the security level was decreased
-    private func decreaseSecurityLevelIfNeeded() -> Bool {
-        guard !self.allUsersTrusted && self.securityLevel == .secure else { return false }
-        self.securityLevel = .secureWithIgnored
-        return true
-    }
-    
-    /// Increase the security level if all clients are now trusted
-    /// - returns: true if the security level was increased
-    private func increaseSecurityLevelIfNeeded() -> Bool {
-        guard self.allUsersTrusted && self.allParticipantsHaveClients && self.securityLevel != .secure else { return false }
-        self.securityLevel = .secure
-        return true
-    }
-    
+
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message
     @objc(addParticipantIfMissing:date:)
     public func addParticipantIfMissing(_ user: ZMUser, at date: Date = Date()) {
@@ -167,36 +276,52 @@ extension ZMConversation {
         // A missing user indicate that we are out of sync with the BE so we'll re-sync the conversation
         needsToBeUpdatedFromBackend = true
     }
+
+    private func appendLegalHoldEnabledSystemMessageForConversation() {
+        appendSystemMessage(type: .legalHoldEnabled,
+                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestampAfterLastMessage())
+    }
+
+    private func appendLegalHoldDisabledSystemMessageForConversation() {
+        appendSystemMessage(type: .legalHoldDisabled,
+                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                            users: nil,
+                            clients: nil,
+                            timestamp: timestampAfterLastMessage())
+    }
+
 }
 
 // MARK: - Messages resend/expiration
 extension ZMConversation {
-    
-    /// Mark conversation as not secure. This method is expected to be called from the UI context
-    @objc public func makeNotSecure() {
+
+    private func acknowledgePrivacyChanges() {
         precondition(managedObjectContext?.zm_isUserInterfaceContext == true)
-        securityLevel = .notSecure
+
+        // Downgrade the conversation to be unverified
+        if securityLevel == .secureWithIgnored {
+            securityLevel = .notSecure
+        }
+
+        // Accept legal hold
+        if legalHoldStatus == .pendingApproval {
+            legalHoldStatus = .enabled
+        }
+
         managedObjectContext?.saveOrRollback()
     }
-    
-    /// Resend last non sent messages. This method is expected to be called from the UI context
-    @objc public func resendMessagesThatCausedConversationSecurityDegradation() {
-        // Downgrade the conversation to be unverified
-        makeNotSecure()
 
-        // Resend the messages that caused the degradation to happen
+    private func resendPendingMessagesAfterPrivacyChanges() {
         enumerateReverseMessagesThatCausedDegradationUntilFirstSystemMessageOnSyncContext {
             $0.causedSecurityLevelDegradation = false
             $0.resend()
         }
     }
-    
-    /// Reset those that caused degradation. This method is expected to be called from the UI context
-    @objc public func doNotResendMessagesThatCausedDegradation() {
-        // Downgrade the conversation to be unverified
-        makeNotSecure()
 
-        // Leave the messages that caused the degradation to be unverified
+    private func discardPendingMessagesAfterPrivacyChanges() {
         guard let syncMOC = managedObjectContext?.zm_sync else { return }
         syncMOC.performGroupedBlock {
             guard let conversation = (try? syncMOC.existingObject(with: self.objectID)) as? ZMConversation else { return }
@@ -204,7 +329,18 @@ extension ZMConversation {
             syncMOC.saveOrRollback()
         }
     }
-    
+
+    /// Accepts the privacy changes (legal hold and/or degradation) and resend the pending messages.
+    @objc(acknowledgePrivacyWarningWithResendIntent:) public func acknowledgePrivacyWarning(withResendIntent shouldResendMessages: Bool) {
+        acknowledgePrivacyChanges()
+
+        if shouldResendMessages {
+            resendPendingMessagesAfterPrivacyChanges()
+        } else {
+            discardPendingMessagesAfterPrivacyChanges()
+        }
+    }
+
     /// Enumerates all messages from newest to oldest and apply a block to all ZMOTRMessage encountered, 
     /// halting the enumeration when a system message for security level degradation is found.
     /// This is executed asychronously on the sync context
@@ -289,49 +425,70 @@ extension ZMConversation {
 // MARK: - Appending system messages
 extension ZMConversation {
     
-    fileprivate func appendNewIsSecureSystemMessage(verified clients: Set<UserClient>) {
-        let users = Set(clients.compactMap { $0.user })
-        self.appendNewIsSecureSystemMessage(verified: clients, for: users)
+    fileprivate func appendNewIsSecureSystemMessage(cause: SecurityChangeCause) {
+        switch cause {
+        case .removedUsers(let users):
+            appendNewIsSecureSystemMessage(verified: [], for: users)
+        case .verifiedClients(let userClients):
+            let users = Set(userClients.compactMap { $0.user })
+            appendNewIsSecureSystemMessage(verified: userClients, for: users)
+        case .removedClients(let userClients):
+            let users = Set(userClients.keys)
+            let clients = Set(userClients.values.flatMap { $0 })
+            appendNewIsSecureSystemMessage(verified: clients, for: users)
+        default:
+            // no-op: the conversation is not secure in other cases
+            return
+        }
     }
     
     fileprivate func appendNewIsSecureSystemMessage(verified clients: Set<UserClient>, for users: Set<ZMUser>) {
-        guard !users.isEmpty,
-            self.securityLevel != .secureWithIgnored else {
-                return
-            }
-        self.appendSystemMessage(type: .conversationIsSecure,
-                                 sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                 users: users,
-                                 clients: clients,
-                                 timestamp: timestampAfterLastMessage())
+        guard !users.isEmpty, securityLevel != .secureWithIgnored else {
+            return
+        }
+
+        appendSystemMessage(type: .conversationIsSecure,
+                            sender: ZMUser.selfUser(in: self.managedObjectContext!),
+                            users: users,
+                            clients: clients,
+                            timestamp: timestampAfterLastMessage())
     }
     
-    fileprivate enum DiscoveryCause {
-        case message(ZMOTRMessage?)
+    fileprivate enum SecurityChangeCause {
+        case addedClients(Set<UserClient>, source: ZMOTRMessage?)
         case addedUsers(Set<ZMUser>)
+        case removedUsers(Set<ZMUser>)
+        case verifiedClients(Set<UserClient>)
+        case removedClients([ZMUser: Set<UserClient>])
+        case ignoredClients(Set<UserClient>)
     }
     
-    fileprivate func appendNewAddedClientSystemMessage(added clients: Set<UserClient>, causedBy cause: DiscoveryCause) {
-        let users = Set(clients.compactMap { $0.user })
+    fileprivate func appendNewAddedClientSystemMessage(cause: SecurityChangeCause) {
         var timestamp : Date?
-        var addedUsers: Set<ZMUser> = Set<ZMUser>([])
+        var addedUsers: Set<ZMUser> = []
+        var addedClients: Set<UserClient> = []
         
         switch cause {
         case .addedUsers(let users):
             addedUsers = users
-        case .message(let message):
+        case .addedClients(let clients, let message):
+            addedClients = clients
+            addedUsers = Set(clients.compactMap(\.user))
             if let message = message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
             }
+        default:
+            // unsupported cause
+            return
         }
         
-        guard !clients.isEmpty || !addedUsers.isEmpty else { return }
+        guard !addedClients.isEmpty || !addedUsers.isEmpty else { return }
         
         self.appendSystemMessage(type: .newClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                 users: users,
+                                 users: addedUsers,
                                  addedUsers: addedUsers,
-                                 clients: clients,
+                                 clients: addedClients,
                                  timestamp: timestamp ?? timestampAfterLastMessage())
     }
     

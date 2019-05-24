@@ -60,6 +60,11 @@
     [self.testSession performPretendingUiMocIsSyncMoc:block];
 }
 
+- (void)performPretendingSyncMocIsUiMoc:(void(^)(void))block
+{
+    [self.testSession performPretendingSyncMocIsUiMoc:block];
+}
+
 - (void)setUp;
 {
     [super setUp];

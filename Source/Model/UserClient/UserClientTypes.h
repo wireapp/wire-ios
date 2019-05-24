@@ -19,24 +19,15 @@
 
 @import Foundation;
 
-extern NSString * const ZMUserClientTypePermanent;
-extern NSString * const ZMUserClientTypeTemporary;
+typedef NSString * ZMUserClientType NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(DeviceType);
 
-@class ZMUser;
-@class Team;
+extern ZMUserClientType const _Nonnull ZMUserClientTypePermanent;
+extern ZMUserClientType const _Nonnull ZMUserClientTypeTemporary;
+extern ZMUserClientType const _Nonnull ZMUserClientTypeLegalHold;
 
-@protocol UserClientType <NSObject>
-@property (nonatomic) NSString *type;
-@property (nonatomic) NSString *label;
-@property (nonatomic) NSString *remoteIdentifier;
-@property (nonatomic) ZMUser *user;
-@property (nonatomic) NSString *activationAddress;
-@property (nonatomic) NSDate *activationDate;
-@property (nonatomic) NSString *model;
-@property (nonatomic) NSString *deviceClass;
-@property (nonatomic) double activationLatitude;
-@property (nonatomic) double activationLongitude;
-@property (nonatomic) NSData *fingerprint;
-@property (nonatomic, readonly) BOOL verified;
-- (void)resetSession;
-@end
+typedef NSString * ZMUserClientDeviceClass NS_TYPED_EXTENSIBLE_ENUM NS_SWIFT_NAME(DeviceClass);
+
+extern ZMUserClientDeviceClass const _Nonnull ZMUserClientDeviceClassPhone;
+extern ZMUserClientDeviceClass const _Nonnull ZMUserClientDeviceClassTablet;
+extern ZMUserClientDeviceClass const _Nonnull ZMUserClientDeviceClassDesktop;
+extern ZMUserClientDeviceClass const _Nonnull ZMUserClientDeviceClassLegalHold;

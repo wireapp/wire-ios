@@ -92,6 +92,18 @@
     [self.uiMOC markAsUIContext];
 }
 
+- (void)performPretendingSyncMocIsUiMoc:(void(^)(void))block;
+{
+    if(!block) {
+        return;
+    }
+    [self.syncMOC resetContextType];
+    [self.syncMOC markAsUIContext];
+    block();
+    [self.syncMOC resetContextType];
+    [self.syncMOC markAsSyncContext];
+}
+
 - (void)prepareForTestNamed:(NSString *)testName
 {
     self.testName = testName;

@@ -202,6 +202,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.activeConversations ?? Set()
     }
     
+    public var allClients: [UserClientType] {
+        return user?.allClients ?? []
+    }
+    
     public var managedByWire: Bool {
         return user?.managedByWire != false
     }
@@ -243,6 +247,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         guard let user = user else { return false }
         
         return user.isAccountDeleted
+    }
+    
+    public var isUnderLegalHold: Bool {
+        return user?.isUnderLegalHold == true
     }
     
     public var accentColorValue: ZMAccentColor {

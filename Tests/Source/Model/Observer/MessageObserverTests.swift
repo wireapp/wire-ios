@@ -39,14 +39,14 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         expectedChangedField: String?,
         customAffectedKeys: AffectedKeys? = nil
         ) {
-        let fields = expectedChangedField == nil ? [] : [expectedChangedField!]
+        let fields: Set<String> = expectedChangedField == nil ? [] : [expectedChangedField!]
         checkThatItNotifiesTheObserverOfAChange(message, modifier: modifier, expectedChangedFields: fields, customAffectedKeys: customAffectedKeys)
     }
     
     func checkThatItNotifiesTheObserverOfAChange<T: ZMMessage>(
         _ message: T,
         modifier: (T) -> Void,
-        expectedChangedFields: [String],
+        expectedChangedFields: Set<String>,
         customAffectedKeys: AffectedKeys? = nil
         ) {
         
@@ -69,7 +69,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
             // then
             XCTAssertTrue(messageObserver.notifications.count <= 1, "Should have changed only once")
             
-            let messageInfoKeys = [
+            let messageInfoKeys: Set<String> = [
                 #keyPath(MessageChangeInfo.imageChanged),
                 #keyPath(MessageChangeInfo.deliveryStateChanged),
                 #keyPath(MessageChangeInfo.senderChanged),

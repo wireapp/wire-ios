@@ -52,7 +52,7 @@ class UserClientTests: ZMBaseManagedObjectTest {
 
     func testThatItCanInitializeClient() {
         let client = UserClient.insertNewObject(in: self.uiMOC)
-        XCTAssertEqual(client.type, ZMUserClientTypePermanent, "Client type should be 'permanent'")
+        XCTAssertEqual(client.type, .permanent, "Client type should be 'permanent'")
     }
     
     func testThatItReturnsTrackedKeys() {
@@ -551,7 +551,7 @@ extension UserClientTests {
 // MARK : fetchFingerprintOrPrekeys
 
 extension UserClientTests {
-    
+        
     func testThatItSetsTheUserWhenInsertingANewSelfUserClient(){
         // given
         _ = createSelfClient()
@@ -822,7 +822,7 @@ extension UserClientTests {
         self.uiMOC.saveOrRollback()
 
         self.syncMOC.performGroupedBlockAndWait {
-            let syncClient = try? self.syncMOC.existingObject(with: client.objectID) as! UserClient
+            let syncClient = try? self.syncMOC.existingObject(with: client.objectID) as? UserClient
 
             // when
             syncClient?.pushToken = token

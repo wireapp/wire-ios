@@ -61,6 +61,9 @@
 /// Perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
 
+/// Perform operations pretending that the syncMOC is a uiMOC
+- (void)performPretendingSyncMocIsUiMoc:(void(^)(void))block;
+
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;
 

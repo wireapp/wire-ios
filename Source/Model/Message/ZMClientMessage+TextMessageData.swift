@@ -48,12 +48,12 @@ extension ZMClientMessage: ZMTextMessageData {
         
         let mentions = Array(protoBuffers.compactMap({ Mention($0, context: managedObjectContext) }).prefix(500))
         var mentionRanges = IndexSet()
-        let messageRange = messageText.startIndex.encodedOffset...messageText.endIndex.encodedOffset
-        
+        let messageRange = NSRange(messageText.startIndex ..< messageText.endIndex, in: messageText)
+
         return mentions.filter({ mention  in
             let range = mention.range.range
             
-            guard !mentionRanges.intersects(integersIn: range), messageRange.contains(range.upperBound) else { return false }
+            guard !mentionRanges.intersects(integersIn: range), range.upperBound <= messageRange.upperBound else { return false }
             
             mentionRanges.insert(integersIn: range)
             

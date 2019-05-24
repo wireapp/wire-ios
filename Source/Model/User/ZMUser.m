@@ -252,7 +252,9 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 
 - (ZMConversation *)oneToOneConversation
 {
-    if (self.isTeamMember) {
+    if (self.isSelfUser) {
+        return [ZMConversation selfConversationInContext:self.managedObjectContext];
+    } else if (self.isTeamMember) {
         return [ZMConversation fetchOrCreateTeamConversationInManagedObjectContext:self.managedObjectContext
                                                                    withParticipant:self
                                                                               team:self.team];

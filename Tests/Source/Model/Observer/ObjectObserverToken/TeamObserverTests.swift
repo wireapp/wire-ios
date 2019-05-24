@@ -34,14 +34,14 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         super.tearDown()
     }
     
-    var userInfoKeys : [String] {
+    var userInfoKeys : Set<String> {
         return [
             #keyPath(TeamChangeInfo.membersChanged),
             #keyPath(TeamChangeInfo.nameChanged)
         ]
     }
     
-    func checkThatItNotifiesTheObserverOfAChange(_ team : Team, modifier: (Team) -> Void, expectedChangedFields: [String], customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ team : Team, modifier: (Team) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
         
         // given
         self.uiMOC.saveOrRollback()
