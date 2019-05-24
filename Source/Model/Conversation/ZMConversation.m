@@ -67,6 +67,7 @@ NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
 NSString *const ZMConversationArchivedChangedTimeStampKey = @"archivedChangedTimestamp";
 NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTimestamp";
 NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipantsState";
+NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
 
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
 
@@ -371,6 +372,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             AccessRoleStringKey,
             LanguageKey,
             HasReadReceiptsEnabledKey,
+            ZMConversationLegalHoldStatusKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -1129,7 +1131,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     [self.mutableLastServerSyncedActiveParticipants removeObjectsInArray:otherUsers.allObjects];
-    [self increaseSecurityLevelIfNeededAfterRemovingClientForUsers:otherUsers];
+    [self increaseSecurityLevelIfNeededAfterRemovingUsers:otherUsers];
 }
 
 @dynamic isSelfAnActiveMember;

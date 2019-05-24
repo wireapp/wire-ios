@@ -23,8 +23,8 @@ import Foundation
 
 extension ObjectChangeInfo {
 
-    func checkForExpectedChangeFields(userInfoKeys: [String], expectedChangedFields: [String], file: StaticString = #file, line: UInt = #line){
-        guard Set(userInfoKeys).isSuperset(of: expectedChangedFields) else {
+    func checkForExpectedChangeFields(userInfoKeys: Set<String>, expectedChangedFields: Set<String>, file: StaticString = #file, line: UInt = #line){
+        guard userInfoKeys.isSuperset(of: expectedChangedFields) else {
             return XCTFail("Expected change fields \(expectedChangedFields) not in userInfoKeys \(userInfoKeys). Please add them to the list.", file: file, line: line)
         }
 

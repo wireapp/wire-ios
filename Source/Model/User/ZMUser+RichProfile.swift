@@ -45,7 +45,7 @@ extension ZMUser {
         static let RichProfile = "richProfile"
     }
     
-    @NSManaged private  var primitiveRichProfile: Data?
+    @NSManaged private var primitiveRichProfile: Data?
     public var richProfile: [UserRichProfileField] {
         get {
             self.willAccessValue(forKey: ZMUserKeys.RichProfile)

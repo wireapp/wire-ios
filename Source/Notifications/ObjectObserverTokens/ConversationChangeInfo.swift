@@ -42,7 +42,8 @@ extension ZMConversation : ObjectInSnapshot {
                     #keyPath(ZMConversation.syncedMessageDestructionTimeout),
                     #keyPath(ZMConversation.language),
                     #keyPath(ZMConversation.hasReadReceiptsEnabled),
-                    ZMConversation.externalParticipantsStateKey
+                    ZMConversation.externalParticipantsStateKey,
+                    #keyPath(ZMConversation.legalHoldStatus)
             ])
     }
 
@@ -136,6 +137,10 @@ extension ZMConversation : ObjectInSnapshot {
     public var externalParticipantsStateChanged: Bool {
         return changedKeysContain(keys: ZMConversation.externalParticipantsStateKey)
     }
+
+    public var legalHoldStatusChanged: Bool {
+        return changedKeysContain(keys: #keyPath(ZMConversation.legalHoldStatus))
+    }
     
     public var conversation : ZMConversation { return self.object as! ZMConversation }
     
@@ -158,7 +163,8 @@ extension ZMConversation : ObjectInSnapshot {
                 "destructionTimeoutChanged \(destructionTimeoutChanged)",
                 "languageChanged \(languageChanged)",
                 "hasReadReceiptsEnabledChanged \(hasReadReceiptsEnabledChanged)",
-                "externalParticipantsStateChanged \(externalParticipantsStateChanged)"
+                "externalParticipantsStateChanged \(externalParticipantsStateChanged)",
+                "legalHoldStatusChanged: \(legalHoldStatusChanged)"
             ].joined(separator: ", ")
     }
     
@@ -202,12 +208,15 @@ extension ConversationChangeInfo {
 
 /// Conversation degraded
 extension ConversationChangeInfo {
-    
-    /// True if the conversation security level is .secureWithIgnored and we tried to send a message
-    @objc public var didNotSendMessagesBecauseOfConversationSecurityLevel : Bool {
-        return self.securityLevelChanged &&
-            self.conversation.securityLevel == .secureWithIgnored &&
-            !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+
+    @objc public var causedByConversationPrivacyChange: Bool {
+        if securityLevelChanged {
+            return conversation.securityLevel == .secureWithIgnored && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+        } else if legalHoldStatusChanged {
+            return conversation.legalHoldStatus == .pendingApproval && !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty
+        }
+
+        return false
     }
     
     /// Users that caused the conversation to degrade

@@ -55,6 +55,9 @@
 /// perform operations pretending that the uiMOC is a syncMOC
 - (void)performPretendingUiMocIsSyncMoc:(nonnull void(^)(void))block;
 
+/// perform operations pretending that the syncMOC is a uiMOC
+- (void)performPretendingSyncMocIsUiMoc:(nonnull void(^)(void))block;
+
 @end
 
 

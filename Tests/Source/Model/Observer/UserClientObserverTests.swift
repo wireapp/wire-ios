@@ -34,13 +34,13 @@ class UserClientObserverTests: NotificationDispatcherTestBase {
         super.tearDown()
     }
     
-    let userInfoKeys = [
-        UserClientChangeInfoKey.TrustedByClientsChanged,
-        UserClientChangeInfoKey.IgnoredByClientsChanged,
-        UserClientChangeInfoKey.FingerprintChanged
-        ].map { $0.rawValue }
+    let userInfoKeys: Set<String> = [
+        UserClientChangeInfoKey.TrustedByClientsChanged.rawValue,
+        UserClientChangeInfoKey.IgnoredByClientsChanged.rawValue,
+        UserClientChangeInfoKey.FingerprintChanged.rawValue
+    ]
     
-    func checkThatItNotifiesTheObserverOfAChange(_ userClient : UserClient, modifier: (UserClient) -> Void, expectedChangedFields: [String], customAffectedKeys: AffectedKeys? = nil) {
+    func checkThatItNotifiesTheObserverOfAChange(_ userClient : UserClient, modifier: (UserClient) -> Void, expectedChangedFields: Set<String>, customAffectedKeys: AffectedKeys? = nil) {
         
         // given
         self.uiMOC.saveOrRollback()
