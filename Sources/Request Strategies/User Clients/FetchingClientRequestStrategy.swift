@@ -108,12 +108,12 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
         var newClients = Set<UserClient>()
         guard let arrayPayload = response.payload?.asArray() else { return }
         let clients: [UserClient] = arrayPayload.compactMap {
-            guard let dict = $0 as? [String: AnyObject], let identifier = dict["id"] as? String else { return nil }
-            guard let client = UserClient.fetchUserClient(withRemoteId: identifier, forUser:user, createIfNeeded: true) else { return nil }
+            guard let payload = $0 as? [String: AnyObject], let remoteIdentifier = payload["id"] as? String else { return nil }
+            guard let client = UserClient.fetchUserClient(withRemoteId: remoteIdentifier, forUser:user, createIfNeeded: true) else { return nil }
             if client.isInserted {
                 newClients.insert(client)
             }
-            client.deviceClass = dict["class"] as? String
+            client.update(with: payload)
             return client
         }
         

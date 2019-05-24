@@ -288,7 +288,7 @@ extension MessagingTestBase {
         selfClient.user = user
         
         self.syncMOC.setPersistentStoreMetadata(selfClient.remoteIdentifier!, key: "PersistedClientId")
-        selfClient.type = "permanent"
+        selfClient.type = .permanent
         self.syncMOC.saveOrRollback()
         return selfClient
     }
