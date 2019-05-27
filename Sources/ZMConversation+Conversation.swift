@@ -25,11 +25,7 @@ import WireRequestStrategy
 extension ZMConversation: Conversation {
 
     @objc public var name: String { return displayName }
-    
-    @objc public var isTrusted: Bool {
-        return securityLevel == .secure
-    }
-    
+        
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         return append(text: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
     }

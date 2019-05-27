@@ -30,7 +30,7 @@ public protocol Conversation : SharingTarget {
     var conversationType : ZMConversationType { get }
     
     /// Returns true if the conversation is trusted (all participants are trusted)
-    var isTrusted : Bool { get }
+    var securityLevel : ZMConversationSecurityLevel { get }
 
     /// The status of legal hold in the conversation.
     var legalHoldStatus: ZMConversationLegalHoldStatus { get }
