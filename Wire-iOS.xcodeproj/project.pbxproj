@@ -429,6 +429,7 @@
 		7CC085461F7AA30F0010F96B /* DotView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CC085451F7AA30F0010F96B /* DotView.swift */; };
 		7CCA7CC2221AEC7B00A7CA2A /* ConversationDetailFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */; };
 		7CCA7CC4221AF55300A7CA2A /* ProfileFooterView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCA7CC3221AF55300A7CA2A /* ProfileFooterView.swift */; };
+		7CCB8F7F229D67BD005BBC10 /* URL+WireTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCB8F7E229D67BD005BBC10 /* URL+WireTests.swift */; };
 		7CCFC10F228AFCC0007C365B /* ConversationLegalHoldCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */; };
 		7CCFC111228B1E8E007C365B /* WireStyleKit.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CCFC110228B1E8D007C365B /* WireStyleKit.swift */; };
 		7CD0154A218053FF00DE7E3F /* NSString+URL.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168A16A31D95964B005CFA6C /* NSString+URL.swift */; };
@@ -1958,6 +1959,7 @@
 		7CC085451F7AA30F0010F96B /* DotView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DotView.swift; sourceTree = "<group>"; };
 		7CCA7CC1221AEC7B00A7CA2A /* ConversationDetailFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationDetailFooterView.swift; sourceTree = "<group>"; };
 		7CCA7CC3221AF55300A7CA2A /* ProfileFooterView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileFooterView.swift; sourceTree = "<group>"; };
+		7CCB8F7E229D67BD005BBC10 /* URL+WireTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "URL+WireTests.swift"; sourceTree = "<group>"; };
 		7CCBE24C1FC72FE500CBD55D /* SharedConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SharedConstants.swift; sourceTree = "<group>"; };
 		7CCFC10E228AFCC0007C365B /* ConversationLegalHoldCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationLegalHoldCell.swift; sourceTree = "<group>"; };
 		7CCFC110228B1E8D007C365B /* WireStyleKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WireStyleKit.swift; sourceTree = "<group>"; };
@@ -5855,6 +5857,7 @@
 				5E39FC64225CDA7800C682B8 /* ChangeEmailViewControllerTests.swift */,
 				EF2FEDC7228E9E42000883C8 /* UserImageViewContainerSnapshotTests.swift */,
 				EF4FFB3422830BD200B69851 /* String+WholeRangeTests.swift */,
+				7CCB8F7E229D67BD005BBC10 /* URL+WireTests.swift */,
 			);
 			path = "Wire-iOS Tests";
 			sourceTree = "<group>";
@@ -8092,6 +8095,7 @@
 				EF6E3C7C208A02FE003F6752 /* GiphySearchViewControllerSnapshotTests.swift in Sources */,
 				EFC0C7F121778FB000380C4B /* SettingsTextCellSnapshotTests.swift in Sources */,
 				EFE806301FE006A7006A0EE7 /* DateFormatterTests.swift in Sources */,
+				7CCB8F7F229D67BD005BBC10 /* URL+WireTests.swift in Sources */,
 				EF1FDC8221DE677600C9CEB1 /* XCTestCase+EmoticonSubstitutionConfiguration.swift in Sources */,
 				87BEB0DC1C734D710094BFE9 /* MockConversation.m in Sources */,
 				EE118C012031D1C300BC68D6 /* MarkdownTextViewTests.swift in Sources */,
