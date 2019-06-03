@@ -137,6 +137,14 @@ typedef NS_ENUM(SInt32, ZMEncryptionAlgorithm) {
 BOOL ZMEncryptionAlgorithmIsValidValue(ZMEncryptionAlgorithm value);
 NSString *NSStringFromZMEncryptionAlgorithm(ZMEncryptionAlgorithm value);
 
+typedef NS_ENUM(SInt32, ZMLegalHoldStatus) {
+  ZMLegalHoldStatusDISABLED = 0,
+  ZMLegalHoldStatusENABLED = 1,
+};
+
+BOOL ZMLegalHoldStatusIsValidValue(ZMLegalHoldStatus value);
+NSString *NSStringFromZMLegalHoldStatus(ZMLegalHoldStatus value);
+
 typedef NS_ENUM(SInt32, ZMAvailabilityType) {
   ZMAvailabilityTypeNONE = 0,
   ZMAvailabilityTypeAVAILABLE = 1,
@@ -587,25 +595,30 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Text_mentions @"mentions"
 #define Text_quote @"quote"
 #define Text_expects_read_confirmation @"expectsReadConfirmation"
+#define Text_legal_hold_status @"legalHoldStatus"
 @interface ZMText : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasExpectsReadConfirmation_:1;
   BOOL hasContent_:1;
   BOOL hasQuote_:1;
+  BOOL hasLegalHoldStatus_:1;
   BOOL expectsReadConfirmation_:1;
   NSString* content;
   ZMQuote* quote;
+  ZMLegalHoldStatus legalHoldStatus;
   NSMutableArray * linkPreviewArray;
   NSMutableArray * mentionsArray;
 }
 - (BOOL) hasContent;
 - (BOOL) hasQuote;
 - (BOOL) hasExpectsReadConfirmation;
+- (BOOL) hasLegalHoldStatus;
 @property (readonly, strong) NSString* content;
 @property (readonly, strong) NSArray<ZMLinkPreview*> * linkPreview;
 @property (readonly, strong) NSArray<ZMMention*> * mentions;
 @property (readonly, strong) ZMQuote* quote;
 - (BOOL) expectsReadConfirmation;
+@property (readonly) ZMLegalHoldStatus legalHoldStatus;
 - (ZMLinkPreview*)linkPreviewAtIndex:(NSUInteger)index;
 - (ZMMention*)mentionsAtIndex:(NSUInteger)index;
 
@@ -672,21 +685,31 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) expectsReadConfirmation;
 - (ZMTextBuilder*) setExpectsReadConfirmation:(BOOL) value;
 - (ZMTextBuilder*) clearExpectsReadConfirmation;
+
+- (BOOL) hasLegalHoldStatus;
+- (ZMLegalHoldStatus) legalHoldStatus;
+- (ZMTextBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value;
+- (ZMTextBuilder*) clearLegalHoldStatus;
 @end
 
 #define Knock_hot_knock @"hotKnock"
 #define Knock_expects_read_confirmation @"expectsReadConfirmation"
+#define Knock_legal_hold_status @"legalHoldStatus"
 @interface ZMKnock : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasHotKnock_:1;
   BOOL hasExpectsReadConfirmation_:1;
+  BOOL hasLegalHoldStatus_:1;
   BOOL hotKnock_:1;
   BOOL expectsReadConfirmation_:1;
+  ZMLegalHoldStatus legalHoldStatus;
 }
 - (BOOL) hasHotKnock;
 - (BOOL) hasExpectsReadConfirmation;
+- (BOOL) hasLegalHoldStatus;
 - (BOOL) hotKnock;
 - (BOOL) expectsReadConfirmation;
+@property (readonly) ZMLegalHoldStatus legalHoldStatus;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -732,6 +755,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) expectsReadConfirmation;
 - (ZMKnockBuilder*) setExpectsReadConfirmation:(BOOL) value;
 - (ZMKnockBuilder*) clearExpectsReadConfirmation;
+
+- (BOOL) hasLegalHoldStatus;
+- (ZMLegalHoldStatus) legalHoldStatus;
+- (ZMKnockBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value;
+- (ZMKnockBuilder*) clearLegalHoldStatus;
 @end
 
 #define LinkPreview_url @"url"
@@ -1499,6 +1527,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Location_name @"name"
 #define Location_zoom @"zoom"
 #define Location_expects_read_confirmation @"expectsReadConfirmation"
+#define Location_legal_hold_status @"legalHoldStatus"
 @interface ZMLocation : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasExpectsReadConfirmation_:1;
@@ -1506,22 +1535,26 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasLatitude_:1;
   BOOL hasZoom_:1;
   BOOL hasName_:1;
+  BOOL hasLegalHoldStatus_:1;
   BOOL expectsReadConfirmation_:1;
   Float32 longitude;
   Float32 latitude;
   SInt32 zoom;
   NSString* name;
+  ZMLegalHoldStatus legalHoldStatus;
 }
 - (BOOL) hasLongitude;
 - (BOOL) hasLatitude;
 - (BOOL) hasName;
 - (BOOL) hasZoom;
 - (BOOL) hasExpectsReadConfirmation;
+- (BOOL) hasLegalHoldStatus;
 @property (readonly) Float32 longitude;
 @property (readonly) Float32 latitude;
 @property (readonly, strong) NSString* name;
 @property (readonly) SInt32 zoom;
 - (BOOL) expectsReadConfirmation;
+@property (readonly) ZMLegalHoldStatus legalHoldStatus;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -1582,6 +1615,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) expectsReadConfirmation;
 - (ZMLocationBuilder*) setExpectsReadConfirmation:(BOOL) value;
 - (ZMLocationBuilder*) clearExpectsReadConfirmation;
+
+- (BOOL) hasLegalHoldStatus;
+- (ZMLegalHoldStatus) legalHoldStatus;
+- (ZMLocationBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value;
+- (ZMLocationBuilder*) clearLegalHoldStatus;
 @end
 
 #define ImageAsset_tag @"tag"
@@ -1739,6 +1777,7 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 #define Asset_uploaded @"uploaded"
 #define Asset_preview @"preview"
 #define Asset_expects_read_confirmation @"expectsReadConfirmation"
+#define Asset_legal_hold_status @"legalHoldStatus"
 @interface ZMAsset : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasExpectsReadConfirmation_:1;
@@ -1746,22 +1785,26 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
   BOOL hasUploaded_:1;
   BOOL hasPreview_:1;
   BOOL hasNotUploaded_:1;
+  BOOL hasLegalHoldStatus_:1;
   BOOL expectsReadConfirmation_:1;
   ZMAssetOriginal* original;
   ZMAssetRemoteData* uploaded;
   ZMAssetPreview* preview;
   ZMAssetNotUploaded notUploaded;
+  ZMLegalHoldStatus legalHoldStatus;
 }
 - (BOOL) hasOriginal;
 - (BOOL) hasNotUploaded;
 - (BOOL) hasUploaded;
 - (BOOL) hasPreview;
 - (BOOL) hasExpectsReadConfirmation;
+- (BOOL) hasLegalHoldStatus;
 @property (readonly, strong) ZMAssetOriginal* original;
 @property (readonly) ZMAssetNotUploaded notUploaded;
 @property (readonly, strong) ZMAssetRemoteData* uploaded;
 @property (readonly, strong) ZMAssetPreview* preview;
 - (BOOL) expectsReadConfirmation;
+@property (readonly) ZMLegalHoldStatus legalHoldStatus;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -2328,6 +2371,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (BOOL) expectsReadConfirmation;
 - (ZMAssetBuilder*) setExpectsReadConfirmation:(BOOL) value;
 - (ZMAssetBuilder*) clearExpectsReadConfirmation;
+
+- (BOOL) hasLegalHoldStatus;
+- (ZMLegalHoldStatus) legalHoldStatus;
+- (ZMAssetBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value;
+- (ZMAssetBuilder*) clearLegalHoldStatus;
 @end
 
 #define External_otr_key @"otrKey"
