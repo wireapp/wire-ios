@@ -1,2 +1,2 @@
-github "wireapp/generic-message-proto" "v1.23.0"
+github "wireapp/generic-message-proto" "v1.24.0"
 github "wireapp/backend-api-protobuf" "2.2"
