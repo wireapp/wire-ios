@@ -277,6 +277,75 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         }
     }
 
+    func testThatItUpdateLegalHoldStatusWhenLegalHoldIsEnabled() {
+        self.syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
+            message.add(message.genericMessage!.setExpectsReadConfirmation(true)!)
+
+            // WHEN
+            XCTAssertNotNil(self.sut.nextRequest())
+
+            // THEN
+            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+        }
+    }
+
+    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsEnabled() {
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let legalHoldClient = UserClient.insertNewObject(in: self.syncMOC)
+            legalHoldClient.deviceClass = .legalHold
+            legalHoldClient.type = .legalHold
+            legalHoldClient.user = self.otherUser
+
+            let conversation = self.groupConversation!
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [self.otherUser])
+            XCTAssertTrue(conversation.isUnderLegalHold)
+
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
+            message.add(message.genericMessage!.setLegalHoldStatus(.ENABLED)!)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            if self.sut.nextRequest() == nil {
+                XCTFail()
+                return
+            }
+
+            // THEN
+            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .ENABLED)
+        }
+    }
+
+    func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() {
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let conversation = self.groupConversation!
+            XCTAssertFalse(conversation.isUnderLegalHold)
+
+            let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
+            message.add(message.genericMessage!.setLegalHoldStatus(.ENABLED)!)
+            self.syncMOC.saveOrRollback()
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            if self.sut.nextRequest() == nil {
+                XCTFail()
+                return
+            }
+
+            // THEN
+            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .DISABLED)
+        }
+    }
+
+
+
     // MARK: Response handling
     
     func testThatItExpiresAMessageWhenItReceivesAFailureResponse() {
