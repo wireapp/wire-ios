@@ -243,15 +243,15 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
@@ -312,16 +312,16 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         otherUser = [session insertUserWithName:@"bar"];
         MockUser *extraUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser, extraUser] type:ZMTConversationTypeOneOnOne];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         otherUserClient1 = [otherUser.clients anyObject];
-        otherUserClient2 = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        otherUserClient2 = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
@@ -375,13 +375,13 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         otherUser = [session insertUserWithName:@"bar"];
         MockUser *extraUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser, extraUser] type:ZMTConversationTypeOneOnOne];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         otherUserClient = [otherUser.clients anyObject];
     }];
@@ -430,15 +430,15 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
 
         otherUser = [session insertUserWithName:@"bar"];
         otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
-        redundantClient = [session registerClientForUser:otherUser label:@"Wire for OS/2" type:@"permanent"];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
+        redundantClient = [session registerClientForUser:otherUser label:@"Wire for OS/2" type:@"permanent" deviceClass:@"phone"];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
     }];
@@ -493,7 +493,7 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
@@ -544,16 +544,16 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
 
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
@@ -623,16 +623,16 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
 
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
         selfClient = [selfUser.clients anyObject];
-        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent"];
+        secondSelfClient = [session registerClientForUser:selfUser label:@"self2" type:@"permanent" deviceClass:@"phone"];
         
         otherUserClient = [otherUser.clients anyObject];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     NSUInteger previousNotificationsCount = self.sut.generatedPushEvents.count;
@@ -685,7 +685,7 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
@@ -727,7 +727,7 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         otherUser = [session insertUserWithName:@"bar"];
         conversation = [session insertConversationWithCreator:selfUser otherUsers:@[otherUser] type:ZMTConversationTypeOneOnOne];
         
@@ -769,7 +769,7 @@
     
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
-        [session registerClientForUser:selfUser label:@"Self Client" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"Self Client" type:@"permanent" deviceClass:@"phone"];
         conversation = [session insertSelfConversationWithSelfUser:selfUser];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -828,8 +828,8 @@
     __block NSMutableDictionary *expectedPayloadData = [@{@"text": [data base64EncodedStringWithOptions:0]} mutableCopy];
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
-        MockUserClient *client1 = [session registerClientForUser:self.sut.selfUser label:@"client1" type:@"permanent"];
-        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent"];
+        MockUserClient *client1 = [session registerClientForUser:self.sut.selfUser label:@"client1" type:@"permanent" deviceClass:@"phone"];
+        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent" deviceClass:@"phone"];
         expectedPayloadData[@"sender"] = client1.identifier;
         expectedPayloadData[@"recipient"] = client2.identifier;
         return [conversation insertOTRMessageFromClient:client1 toClient:client2 data:data];
@@ -847,8 +847,8 @@
                                                           @"id": assetId.transportString} mutableCopy];
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
-        MockUserClient *client1 = [session registerClientForUser:self.sut.selfUser label:@"client1" type:@"permanent"];
-        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent"];
+        MockUserClient *client1 = [session registerClientForUser:self.sut.selfUser label:@"client1" type:@"permanent" deviceClass:@"phone"];
+        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent" deviceClass:@"phone"];
         expectedPayloadData[@"sender"] = client1.identifier;
         expectedPayloadData[@"recipient"] = client2.identifier;
         
@@ -868,7 +868,7 @@
     
     [self testThatInsertingArbitraryEventWithBlock:^MockEvent *(id<MockTransportSessionObjectCreation> session, MockConversation *conversation) {
         MockUserClient *client1 = [self.sut.selfUser.clients anyObject];
-        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent"];
+        MockUserClient *client2 = [session registerClientForUser:self.sut.selfUser label:@"client2" type:@"permanent" deviceClass:@"phone"];
         expectedPayloadData[@"sender"] = client1.identifier;
         expectedPayloadData[@"recipient"] = client2.identifier;
         

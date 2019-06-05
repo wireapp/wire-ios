@@ -62,7 +62,7 @@ class MockTransportSessionObjectCreationTests : MockTransportSessionTests {
         var user: MockUser!
         self.sut.performRemoteChanges { (session) in
             user = session.insertUser(withName: "Foo")
-            session.registerClient(for: user, label: "iPhone 89", type: "permanent")
+            session.registerClient(for: user, label: "iPhone 89", type: "permanent", deviceClass: "phone")
         }
         
         // WHEN
@@ -81,7 +81,7 @@ class MockTransportSessionObjectCreationTests : MockTransportSessionTests {
         var identifier: String!
         self.sut.performRemoteChanges { (session) in
             user = session.insertUser(withName: "Foo")
-            let client = session.registerClient(for: user, label: "iPhone 89", type: "permanent")
+            let client = session.registerClient(for: user, label: "iPhone 89", type: "permanent", deviceClass: "phone")
             identifier = client.identifier
         }
         
