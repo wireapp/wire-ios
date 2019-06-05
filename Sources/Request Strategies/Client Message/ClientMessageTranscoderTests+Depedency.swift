@@ -24,6 +24,21 @@ import WireDataModel
 // MARK: - Dependency
 extension ClientMessageTranscoderTests {
     
+    func testThatItReturnsNewClientAsDependentObjectForMessageIfItHasNotBeenFetched() {
+        self.syncMOC.performGroupedBlockAndWait {
+            
+            // GIVEN
+            let message = self.groupConversation.append(text: "foo") as! ZMClientMessage
+            
+            // WHEN
+            self.otherClient.needsToBeUpdatedFromBackend = true
+            
+            // THEN
+            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            XCTAssertEqual(dependency as? UserClient, self.otherClient)
+        }
+    }
+    
     func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
         self.syncMOC.performGroupedBlockAndWait {
             

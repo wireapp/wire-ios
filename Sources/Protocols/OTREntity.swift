@@ -89,13 +89,19 @@ extension OTREntity {
     
     /// Which objects this message depends on when sending it to a list recipients
     public func dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients : Set<ZMUser>) -> ZMManagedObject? {
+        let recipientClients = recipients.flatMap {
+            return Array($0.clients)
+        }
+        
+        // If we discovered a new client we need fetch the client details before retrying
+        if let newClient = recipientClients.first(where: { $0.needsToBeUpdatedFromBackend }) {
+            return newClient
+        }
+        
         // If we are missing clients, we need to refetch the clients before retrying
         if let selfClient = ZMUser.selfUser(in: context).selfClient(),
            let missingClients = selfClient.missingClients , missingClients.count > 0
         {
-            let recipientClients = recipients.flatMap {
-                return Array($0.clients)
-            }
             // Don't block sending of messages if they are not affected by the missing clients
             if !missingClients.intersection(recipientClients).isEmpty {
                 
@@ -180,7 +186,11 @@ extension OTREntity {
             
             // client
             guard let clientIDs = pair.1 as? [String] else { fatal("Missing client ID is not parsed properly") }
-            let clients = clientIDs.map { UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)! }
+            let clients: [UserClient] = clientIDs.map {
+                let client = UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)!
+                client.discoveredByMessage = self as? ZMOTRMessage
+                return client
+            }
             
             // is this user not there?
             detectedMissingClient(for: user)
@@ -200,7 +210,7 @@ extension OTREntity {
         selfClient.missesClients(missingClients)
         self.missesRecipients(missingClients)
         
-        selfClient.addNewClientsToIgnored(missingClients, causedBy: self as? ZMOTRMessage)
+        selfClient.addNewClientsToIgnored(missingClients)
         
     }
     
