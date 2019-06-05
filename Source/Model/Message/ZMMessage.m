@@ -89,6 +89,7 @@ NSString * const ZMMessageQuoteKey = @"quote";
 NSString * const ZMMessageExpectReadConfirmationKey = @"expectsReadConfirmation";
 NSString * const ZMMessageLinkAttachmentsKey = @"linkAttachments";
 NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachmentsUpdate";
+NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 
 
 @interface ZMMessage ()
@@ -704,7 +705,8 @@ NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachments
                              DeliveredKey,
                              ZMMessageExpectReadConfirmationKey,
                              ZMMessageLinkAttachmentsKey,
-                             ZMMessageNeedsLinkAttachmentsUpdateKey
+                             ZMMessageNeedsLinkAttachmentsUpdateKey,
+                             ZMMessageDiscoveredClientsKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });

@@ -71,6 +71,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
     @NSManaged public var numberOfKeysRemaining: Int32
     @NSManaged public var activationAddress: String?
     @NSManaged public var activationDate: Date?
+    @NSManaged public var discoveryDate: Date?
     @NSManaged public var model: String?
     @NSManaged public var deviceClass: DeviceClass?
     @NSManaged public var activationLocationLatitude: NSNumber?
@@ -80,6 +81,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
     @NSManaged public var apsVerificationKey: Data?
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
+    @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
     private enum Keys {
         static let PushToken = "pushToken"
@@ -206,6 +208,8 @@ private let zmLog = ZMSLog(tag: "UserClient")
             let newClient = UserClient.insertNewObject(in: context)
             newClient.remoteIdentifier = remoteIdentifier
             newClient.user = user
+            newClient.needsToBeUpdatedFromBackend = true
+            newClient.discoveryDate = Date()
             // Form reverse relationship
             user.mutableSetValue(forKey: "clients").add(newClient)
             return newClient
@@ -222,6 +226,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
         guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else { return }
         
         self.deviceClass = DeviceClass(rawValue: deviceClass)
+        self.needsToBeUpdatedFromBackend = false
     }
 
     /// Resets releationships and ends an exisiting session before deleting the object
@@ -615,11 +620,6 @@ extension UserClient {
         
         self.changeSecurityLevel(.clientTrusted, clients: clients, causedBy: nil)
     }
-
-    /// Adds a new client that was just discovered to the ignored ones
-    @objc public func addNewClientToIgnored(_ client: UserClient, causedBy: ZMOTRMessage? = .none) {
-        addNewClientsToIgnored(Set(arrayLiteral: client), causedBy: causedBy)
-    }
     
     /// Ignore a know client
     @objc public func ignoreClient(_ client: UserClient) {
@@ -646,12 +646,20 @@ extension UserClient {
         guard notSelfClients.count > 0 else { return}
         self.changeSecurityLevel(.clientIgnored, clients: notSelfClients, causedBy: .none)
     }
+    
+    /// Adds a new client that was just discovered to the ignored ones
+    @objc public func addNewClientToIgnored(_ client: UserClient) {
+        addNewClientsToIgnored(Set(arrayLiteral: client))
+    }
 
-    /// Add new clients that were jsut discovered to the ignored ones
-    @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>, causedBy: ZMOTRMessage? = .none) {
-        let notSelfClients = self.addIgnoredClients(clients)
-        guard notSelfClients.count > 0 else { return}
-        self.changeSecurityLevel(.clientDiscovered, clients: notSelfClients, causedBy: causedBy)
+    /// Add new clients that were just discovered to the ignored ones
+    @objc public func addNewClientsToIgnored(_ clients: Set<UserClient>) {
+        _ = self.addIgnoredClients(clients)
+
+    }
+    
+    public func updateSecurityLevelAfterDiscovering(_ clients: Set<UserClient>) {
+        changeSecurityLevel(.clientDiscovered, clients: clients, causedBy: clients.compactMap(\.discoveredByMessage).first)
     }
     
     func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
