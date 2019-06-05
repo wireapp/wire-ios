@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 fileprivate let zmLog = ZMSLog(tag: "Network")
 
@@ -97,7 +98,14 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
                 message.add(updatedGenericMessage.data())
             }
         }
-        
+
+        if let legalHoldStatus = message.conversation?.legalHoldStatus {
+            // Update the legalHoldStatus flag to reflect the current known legal hold status
+            if let updatedGenericMessage = message.genericMessage?.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .ENABLED : .DISABLED) {
+                message.add(updatedGenericMessage.data())
+            }
+        }
+
         let request = self.requestFactory.upstreamRequestForMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!)!
         
         // We need to flush the encrypted payloads cache, since the client is online now (request succeeded).

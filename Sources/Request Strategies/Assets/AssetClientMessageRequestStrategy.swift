@@ -101,6 +101,12 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
                 message.add(updatedGenericMessage)
             }
         }
+
+        if let legalHoldStatus = message.conversation?.legalHoldStatus {
+            if let updatedGenericMessage = message.genericMessage?.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .ENABLED : .DISABLED) {
+                message.add(updatedGenericMessage)
+            }
+        }
         
         guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.privateDescription)") }
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
