@@ -37,82 +37,163 @@ public let ZMNeedsToUpdateUserClientsNotificationUserObjectIDKey = "userObjectID
 }
 
 @objc
-public final class FetchingClientRequestStrategy : AbstractRequestStrategy, ZMEventConsumer {
+public final class FetchingClientRequestStrategy : AbstractRequestStrategy {
 
     fileprivate static let needsToUpdateUserClientsNotificationName = Notification.Name("ZMNeedsToUpdateUserClientsNotification")
 
-    fileprivate(set) var userClientsObserverToken: Any? = nil
-    fileprivate(set) var userClientsSync: ZMRemoteIdentifierObjectSync!
+    fileprivate var userClientsObserverToken: Any? = nil
+    fileprivate var userClientsByUserID: IdentifierObjectSync<UserClientByUserIDTranscoder>
+    fileprivate var userClientsByUserClientID: IdentifierObjectSync<UserClientByUserClientIDTranscoder>
     
-    fileprivate var insertSyncFilter: NSPredicate {
-        return NSPredicate { [unowned self] object, _ -> Bool in
-            guard let client = object as? UserClient else { return false }
-            return client.user == ZMUser.selfUser(in: self.managedObjectContext)
-        }
-    }
+    fileprivate var userClientByUserIDTranscoder: UserClientByUserIDTranscoder
+    fileprivate var userClientByUserClientIDTranscoder: UserClientByUserClientIDTranscoder
     
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+        
+        self.userClientByUserIDTranscoder = UserClientByUserIDTranscoder(managedObjectContext: managedObjectContext)
+        self.userClientByUserClientIDTranscoder = UserClientByUserClientIDTranscoder(managedObjectContext: managedObjectContext)
+        
+        self.userClientsByUserID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserIDTranscoder)
+        self.userClientsByUserClientID = IdentifierObjectSync(managedObjectContext: managedObjectContext, transcoder: userClientByUserClientIDTranscoder)
+        
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
-        self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsDuringNotificationStreamFetch]
-        
-        self.userClientsSync = ZMRemoteIdentifierObjectSync(transcoder: self, managedObjectContext: self.managedObjectContext)
-        
+        self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsDuringNotificationStreamFetch, .allowsRequestsWhileInBackground]
         self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
-                                                                       context: self.managedObjectContext.notificationContext,
-                                                                       object: nil)
-            {
-                [weak self] note in
-                guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
-                self.managedObjectContext.performGroupedBlock {
-                    guard let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser else { return }
-                    self.userClientsSync.setRemoteIdentifiersAsNeedingDownload(Set(arrayLiteral: user.remoteIdentifier!))
-                    RequestAvailableNotification.notifyNewRequestsAvailable(self)
-                }
+                                                                          context: self.managedObjectContext.notificationContext,
+                                                                          object: nil)
+        { [weak self] note in
+            guard let `self` = self, let objectID = note.object as? NSManagedObjectID else { return }
+            self.managedObjectContext.performGroupedBlock {
+                guard let user = (try? self.managedObjectContext.existingObject(with: objectID)) as? ZMUser, let remoteIdentifier = user.remoteIdentifier else { return }
+                self.userClientsByUserID.sync(identifiers: Set(arrayLiteral: remoteIdentifier))
+                RequestAvailableNotification.notifyNewRequestsAvailable(self)
+            }
         }
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return userClientsSync.nextRequest()
+        return userClientsByUserClientID.nextRequest() ?? userClientsByUserID.nextRequest()
     }
     
-    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
-        //no-op
-    }
 }
 
-// Used to fetch clients of particluar user when ui asks for them
-extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
+extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChangeTrackerSource {
     
-    public func maximumRemoteIdentifiersPerRequest(for sync: ZMRemoteIdentifierObjectSync!) -> UInt {
+    public var contextChangeTrackers: [ZMContextChangeTracker] {
+        return [self]
+    }
+    
+    public func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
+        return UserClient.sortedFetchRequest(with: UserClient.predicateForNeedingToBeUpdatedFromBackend()!)
+    }
+    
+    public func addTrackedObjects(_ objects: Set<NSManagedObject>) {
+        let clientsNeedingToBeUpdated = objects.compactMap({ $0 as? UserClient})
+        
+        fetch(userClients: clientsNeedingToBeUpdated)
+    }
+    
+    
+    public func objectsDidChange(_ object: Set<NSManagedObject>) {
+        let clientsNeedingToBeUpdated = object.compactMap({ $0 as? UserClient}).filter(\.needsToBeUpdatedFromBackend)
+        
+        fetch(userClients: clientsNeedingToBeUpdated)
+    }
+    
+    private func fetch(userClients: [UserClient]) {
+        let userClientIdentifiers: [UserClientByUserClientIDTranscoder.UserClientID] = userClients.compactMap({
+            guard let userId = $0.user?.remoteIdentifier, let clientId = $0.remoteIdentifier else { return nil }
+            
+            return UserClientByUserClientIDTranscoder.UserClientID(userId: userId, clientId: clientId)
+        })
+        
+        userClientsByUserClientID.sync(identifiers: userClientIdentifiers)
+    }
+    
+}
+
+fileprivate final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
+    
+    struct UserClientID: Hashable {
+        let userId: UUID
+        let clientId: String
+    }
+    
+    public typealias T = UserClientID
+    
+    var managedObjectContext: NSManagedObjectContext
+    
+    init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
+    }
+    
+    var fetchLimit: Int {
         return 1
     }
     
-    public func request(for sync: ZMRemoteIdentifierObjectSync!, remoteIdentifiers identifiers: Set<UUID>!) -> ZMTransportRequest! {
+    public func request(for identifiers: Set<UserClientID>) -> ZMTransportRequest? {
+        guard let identifier = identifiers.first else { return nil }
         
-        guard let userId = (identifiers.first as NSUUID?)?.transportString() else { return nil }
+        //GET /users/<user-id>/clients/<client-id>
+        return ZMTransportRequest(path: "/users/\(identifier.userId.transportString())/clients/\(identifier.clientId)", method: .methodGET, payload: nil)
+    }
+    
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>) {
+
+        guard let identifier = identifiers.first,
+              let payload = response.payload as? [String: AnyObject],
+              let user = ZMUser(remoteID: identifier.userId, createIfNeeded: true, in: managedObjectContext),
+              let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId, forUser:user, createIfNeeded: true) else { return }
+        
+        client.update(with: payload)
+        
+        let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+        
+        selfClient?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: client))
+    }
+}
+
+fileprivate final class UserClientByUserIDTranscoder: IdentifierObjectSyncTranscoder {
+    
+    public typealias T = UUID
+    
+    var managedObjectContext: NSManagedObjectContext
+    
+    init(managedObjectContext: NSManagedObjectContext) {
+        self.managedObjectContext = managedObjectContext
+    }
+    
+    var fetchLimit: Int {
+        return 1
+    }
+    
+    public func request(for identifiers: Set<UUID>) -> ZMTransportRequest? {
+        guard let userId = identifiers.first?.transportString() else { return nil }
         
         //GET /users/<user-id>/clients
         let path = NSString.path(withComponents: ["/users", "\(userId)", "clients"])
         return ZMTransportRequest(path: path, method: .methodGET, payload: nil)
     }
     
-    public func didReceive(_ response: ZMTransportResponse!, remoteIdentifierObjectSync sync: ZMRemoteIdentifierObjectSync!, forRemoteIdentifiers remoteIdentifiers: Set<UUID>!) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<UUID>) {
         
-        guard let identifier = remoteIdentifiers.first,
-            let user = ZMUser(remoteID: identifier, createIfNeeded: true, in: managedObjectContext),
-            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-            else { return }
+        guard let identifier = identifiers.first,
+              let user = ZMUser(remoteID: identifier, createIfNeeded: true, in: managedObjectContext),
+              let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient() else { return }
         
         // Create clients from the response
         var newClients = Set<UserClient>()
         guard let arrayPayload = response.payload?.asArray() else { return }
+        
         let clients: [UserClient] = arrayPayload.compactMap {
             guard let payload = $0 as? [String: AnyObject], let remoteIdentifier = payload["id"] as? String else { return nil }
             guard let client = UserClient.fetchUserClient(withRemoteId: remoteIdentifier, forUser:user, createIfNeeded: true) else { return nil }
+            
             if client.isInserted {
                 newClients.insert(client)
             }
+            
             client.update(with: payload)
             return client
         }
@@ -122,17 +203,18 @@ extension FetchingClientRequestStrategy: ZMRemoteIdentifierObjectTranscoder {
         deletedClients.forEach {
             $0.deleteClientAndEndSession()
         }
-
+        
         for client in clients {
             if client.hasSessionWithSelfClient { continue }
             // Add clients without a session to missed clients
             newClients.insert(client)
         }
-
+        
         guard newClients.count > 0 else { return }
         selfClient.missesClients(Set(newClients))
         
         // add missing clients to ignored clients
-        selfClient.addNewClientsToIgnored(Set(newClients))
+        selfClient.addNewClientsToIgnored(newClients)
+        selfClient.updateSecurityLevelAfterDiscovering(newClients)
     }
 }

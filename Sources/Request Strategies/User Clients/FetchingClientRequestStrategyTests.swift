@@ -51,6 +51,52 @@ class FetchClientRequestStrategyTests : MessagingTestBase {
     
 }
 
+
+// MARK: Fetching client based on needsToBeUpdatedFromBackend flag
+extension FetchClientRequestStrategyTests {
+    
+    func testThatItCreatesARequest_WhenUserClientNeedsToBeUpdatedFromBackend() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            
+            // THEN
+            XCTAssertEqual(self.sut.nextRequest()?.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
+        }
+    }
+    
+    func testThatItUpdatesTheClient_WhenReceivingTheResponse() {
+        var client: UserClient!
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            let payload = [
+                    "id" : clientUUID.transportString(),
+                    "class" : "phone"
+                ]
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            let request = self.sut.nextRequest()
+            request?.complete(with: ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(client.deviceClass, .phone)
+        }
+    }
+    
+}
+
 // MARK: Fetching Other Users Clients
 extension FetchClientRequestStrategyTests {
     

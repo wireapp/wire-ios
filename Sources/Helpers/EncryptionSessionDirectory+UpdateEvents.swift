@@ -36,16 +36,12 @@ extension EncryptionSessionsDirectory {
         
         // is it for the current client?
         let selfUser = ZMUser.selfUser(in: moc)
-        guard let recipientIdentifier = event.recipientIdentifier,
-            selfUser.selfClient()?.remoteIdentifier == recipientIdentifier,
-            let senderIdentifier = event.senderClientRemoteIdentifier
-        else {
+        guard let recipientIdentifier = event.recipientIdentifier, selfUser.selfClient()?.remoteIdentifier == recipientIdentifier else {
             return nil
         }
 
         // client
-        guard let userIdentifier = event.senderUUID() else { fatal("No sender for event") }
-        let senderClient = self.createClientIfNeeded(clientRemoteIdentifier: senderIdentifier, senderUserRemoteIdentifier: userIdentifier, in: moc)
+        guard let senderClient = self.createClientIfNeeded(from: event, in: moc) else { return nil }
         
         // decrypt
         let createdNewSession : Bool
@@ -136,9 +132,15 @@ extension EncryptionSessionsDirectory {
     }
     
     /// Create user and client if needed. The client will not be trusted
-    fileprivate func createClientIfNeeded(clientRemoteIdentifier: String, senderUserRemoteIdentifier: UUID, in moc: NSManagedObjectContext) -> UserClient {
-        let user = ZMUser(remoteID: senderUserRemoteIdentifier, createIfNeeded: true, in: moc)!
-        return UserClient.fetchUserClient(withRemoteId: clientRemoteIdentifier, forUser: user, createIfNeeded: true)!
+    fileprivate func createClientIfNeeded(from updateEvent: ZMUpdateEvent, in moc: NSManagedObjectContext) -> UserClient? {
+        guard let senderUUID = updateEvent.senderUUID(), let senderClientID = updateEvent.senderClientID() else { return nil }
+        
+        let user = ZMUser(remoteID: senderUUID, createIfNeeded: true, in: moc)!
+        let client = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: user, createIfNeeded: true)!
+        
+        client.discoveryDate = updateEvent.timeStamp()
+        
+        return client
     }
 }
 

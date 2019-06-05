@@ -64,6 +64,8 @@
 		166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 166902111D70851E000FE4AF /* ZMOutstandingItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */; };
+		16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */; };
+		16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */; };
 		16D0E07F1DF88B430075DF8F /* EntityTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */; };
 		16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */; };
 		547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547D47161E7C1B0D002EEA15 /* DependentObjects.swift */; };
@@ -311,6 +313,8 @@
 		166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSyncTests.m; sourceTree = "<group>"; };
 		166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSyncTests.m; sourceTree = "<group>"; };
 		168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsPreprocessorTests.swift; sourceTree = "<group>"; };
+		16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSync.swift; sourceTree = "<group>"; };
+		16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSyncTests.swift; sourceTree = "<group>"; };
 		16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyEntitySyncTests.swift; sourceTree = "<group>"; };
 		16D0E07E1DF88B430075DF8F /* EntityTranscoder.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EntityTranscoder.swift; sourceTree = "<group>"; };
 		16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyEntitySync.swift; sourceTree = "<group>"; };
@@ -801,6 +805,8 @@
 				1621D22C1D75AC36007108C2 /* ZMChangeTrackerBootstrap.m */,
 				1666AA2B1D93FA0B00164C06 /* ZMChangeTrackerBootstrapTests.m */,
 				1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */,
+				16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */,
+				16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1142,6 +1148,7 @@
 				16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				F18401BA2073BE0800E9F4CC /* LinkPreviewUploadRequestStrategy.swift in Sources */,
+				16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */,
 				F18401C82073BE0800E9F4CC /* AssetDownloadRequestFactory.swift in Sources */,
 				166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */,
 				F18401B42073BE0800E9F4CC /* ZMAbstractRequestStrategy.m in Sources */,
@@ -1215,6 +1222,7 @@
 				F1956204202A1506005347C0 /* ZMRequestGeneratorTests.m in Sources */,
 				1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */,
 				F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */,
+				16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */,
 				F18401DE2073C25900E9F4CC /* ClientMessageTranscoderTests.swift in Sources */,
 				F19561FB202A13C3005347C0 /* ZMSyncOperationSetTests.m in Sources */,
 				F18401E92073C26700E9F4CC /* AvailabilityRequestStrategyTests.swift in Sources */,
