@@ -21,7 +21,9 @@
 public protocol MessageContentType: NSObjectProtocol {
     func setContent(on builder: ZMGenericMessageBuilder)
     func expectsReadConfirmation() -> Bool
+    var legalHoldStatus: ZMLegalHoldStatus { get }
     func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType?
+    func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType?
 }
 
 @objc
@@ -197,7 +199,19 @@ public extension ZMGenericMessage {
         
         return builder.buildAndValidate()
     }
-    
+
+    @objc func setLegalHoldStatus(_ status: ZMLegalHoldStatus) -> ZMGenericMessage? {
+        guard let builder = toBuilder() else { return nil }
+
+        if hasEphemeral(), let content = ephemeral?.updateLegalHoldStatus(status) {
+            content.setContent(on: builder)
+        } else if let content = content?.updateLegalHoldStatus(status) {
+            content.setContent(on: builder)
+        }
+
+        return builder.buildAndValidate()
+    }
+
 }
 
 @objc
@@ -208,7 +222,7 @@ extension ZMKnock: EphemeralMessageContentType {
         builder.setHotKnock(false)
         return builder.build()
     }
-    
+
     public func setContent(on builder: ZMGenericMessageBuilder) {
         builder.setKnock(self)
     }
@@ -222,12 +236,18 @@ extension ZMKnock: EphemeralMessageContentType {
         builder?.setExpectsReadConfirmation(value)
         return builder?.build()
     }
-    
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+        let builder = toBuilder()
+        builder?.setLegalHoldStatus(value)
+        return builder?.build()
+    }
+
 }
 
 @objc
 extension ZMText: EphemeralMessageContentType {
-        
+
     public static func text(with message: String, mentions: [Mention] = [], linkPreviews: [ZMLinkPreview] = [], replyingTo quotedMessage: ZMOTRMessage? = nil) -> ZMText {
         let builder = ZMTextBuilder()
                 
@@ -256,6 +276,12 @@ extension ZMText: EphemeralMessageContentType {
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
         let builder = toBuilder()
         builder?.setExpectsReadConfirmation(value)
+        return builder?.build()
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+        let builder = toBuilder()
+        builder?.setLegalHoldStatus(value)
         return builder?.build()
     }
     
@@ -442,14 +468,24 @@ extension ZMEphemeral: MessageContentType {
         
         return nil
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return content?.legalHoldStatus ?? .DISABLED
+    }
     
     public func expectsReadConfirmation() -> Bool {
         return content?.expectsReadConfirmation() ?? false
     }
-    
+
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
         let builder = toBuilder()!
         (content?.updateExpectsReadConfirmation(value) as? EphemeralMessageContentType)?.setEphemeralContent(on: builder)
+        return builder.build()
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+        let builder = toBuilder()!
+        (content?.updateLegalHoldStatus(value) as? EphemeralMessageContentType)?.setEphemeralContent(on: builder)
         return builder.build()
     }
     
@@ -484,7 +520,13 @@ extension ZMLocation: EphemeralMessageContentType {
         builder?.setExpectsReadConfirmation(value)
         return builder?.build()
     }
-        
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+        let builder = toBuilder()
+        builder?.setLegalHoldStatus(value)
+        return builder?.build()
+    }
+
 }
 
 extension ZMExternal: MessageContentType {
@@ -507,8 +549,16 @@ extension ZMExternal: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -573,6 +623,12 @@ extension ZMAsset: EphemeralMessageContentType {
         builder?.setExpectsReadConfirmation(value)
         return builder?.build()
     }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+        let builder = toBuilder()
+        builder?.setLegalHoldStatus(value)
+        return builder?.build()
+    }
     
 }
 
@@ -589,8 +645,16 @@ extension ZMImageAsset: EphemeralMessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -760,8 +824,16 @@ extension ZMAvailability: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -785,8 +857,16 @@ extension ZMMessageDelete: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -811,8 +891,16 @@ extension ZMMessageHide: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -837,8 +925,16 @@ extension ZMMessageEdit: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -863,11 +959,19 @@ extension ZMReaction: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
-    
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
+
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
         return nil
     }
-    
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
+       return nil
+    }
+
 }
 
 @objc
@@ -904,8 +1008,16 @@ extension ZMConfirmation: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -938,8 +1050,16 @@ extension ZMLastRead: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -954,8 +1074,16 @@ extension ZMCleared: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
@@ -978,8 +1106,16 @@ extension ZMCalling: MessageContentType {
     public func expectsReadConfirmation() -> Bool {
         return false
     }
+
+    public var legalHoldStatus: ZMLegalHoldStatus {
+        return .DISABLED
+    }
     
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
+        return nil
+    }
+
+    public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
         return nil
     }
     
