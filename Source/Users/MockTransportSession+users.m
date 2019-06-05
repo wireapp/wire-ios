@@ -74,11 +74,37 @@
     else if ([request matchesWithPath:@"/users/*/prekeys/*" method:ZMMethodGET]) {
         return [self processUserPreKeysRequest:[request RESTComponentAtIndex:1] client:[request RESTComponentAtIndex:3]];
     }
+    else if ([request matchesWithPath:@"/users/*/clients/*" method:ZMMethodGET]) {
+        return [self getUserClient:[request RESTComponentAtIndex:3] forUser:[request RESTComponentAtIndex:1]];
+    }
     else if ([request matchesWithPath:@"/users/*/clients" method:ZMMethodGET]) {
         return [self getUserClientsForUser:[request RESTComponentAtIndex:1]];
     }
 
     return [self errorResponseWithCode:400 reason:@"invalid-method"];
+}
+
+- (ZMTransportResponse *)getUserClient:(NSString *)clientID forUser:(NSString *)userID {
+    
+    NSFetchRequest *request = [MockUser sortedFetchRequest];
+    request.predicate = [NSPredicate predicateWithFormat: @"identifier == %@", userID];
+    
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:request];
+    
+    // check that I got all of them
+    if (users.count < 1) {
+        return [self errorResponseWithCode:404 reason:@"user not found"];
+    } else {
+        MockUser *user = users.firstObject;
+
+        for (MockUserClient *client in user.clients) {
+            if ([client.identifier isEqualToString:clientID]) {
+                return [ZMTransportResponse responseWithPayload:client.transportData HTTPStatus:200 transportSessionError:nil];
+            }
+        }
+        
+        return [self errorResponseWithCode:404 reason:@"client not found"];
+    }
 }
 
 - (ZMTransportResponse *)getUserClientsForUser:(NSString *)userID {

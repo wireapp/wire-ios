@@ -825,9 +825,9 @@
         selfUser = [session insertSelfUserWithName:@"foo"];
         otherUser = [session insertUserWithName:@"bar"];
         thirdUser = [session insertUserWithName:@"foobar"];
-        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent"];
-        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent"];
-        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent"];
+        selfClient = [session registerClientForUser:selfUser label:@"self1" type:@"permanent" deviceClass:@"phone"];
+        otherUserClient = [session registerClientForUser:otherUser label:@"other1" type:@"permanent" deviceClass:@"phone"];
+        secondOtherUserClient = [session registerClientForUser:otherUser label:@"other2" type:@"permanent" deviceClass:@"phone"];
     }];
     
     NSString *redunduntClientId = [NSString createAlphanumericalString];

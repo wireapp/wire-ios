@@ -135,15 +135,16 @@ extension MockUserClient {
     }
     
     /// Insert a new client, automatically generate prekeys and last key
-    @objc(insertClientWithLabel:type:user:context:)
-    public static func insertClient(label: String, type: String, for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient?
+    @objc(insertClientWithLabel:type:deviceClass:user:context:)
+    public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient?
     {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
     
         newClient.user = user
         newClient.identifier = NSString.createAlphanumerical() as String
         newClient.label = label;
-        newClient.type = type;
+        newClient.type = type
+        newClient.deviceClass = deviceClass
         newClient.time = Date()
 
         var generatedPrekeys : [[String: Any]]?

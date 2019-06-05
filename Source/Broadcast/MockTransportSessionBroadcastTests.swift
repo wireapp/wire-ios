@@ -42,13 +42,13 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
         
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "foo")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
-            secondSelfClient = session.registerClient(for: selfUser, label: "self2", type: "permanent")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+            secondSelfClient = session.registerClient(for: selfUser, label: "self2", type: "permanent", deviceClass: "phone")
             
             otherUser = session.insertUser(withName: "bar")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
-            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent")
-            otherUserRedundantClient = session.registerClient(for: otherUser, label: "other redundant", type: "permanent")
+            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
+            otherUserRedundantClient = session.registerClient(for: otherUser, label: "other redundant", type: "permanent", deviceClass: "phone")
             
             let connection = session.insertConnection(withSelfUser: selfUser, to: otherUser)
             connection.status = "accepted"
@@ -104,7 +104,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
@@ -153,7 +153,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient
@@ -203,7 +203,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
         sut.performRemoteChanges { session in
             selfUser = session.insertSelfUser(withName: "Self User")
-            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent")
+            selfClient = session.registerClient(for: selfUser, label: "self user", type: "permanent", deviceClass: "phone")
 
             otherUser = session.insertUser(withName: "Team member1")
             otherUserClient = otherUser.clients.anyObject() as? MockUserClient

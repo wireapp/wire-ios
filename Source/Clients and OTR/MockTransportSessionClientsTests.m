@@ -406,7 +406,7 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent" deviceClass:@"phone"];
         client.deviceClass = @"desktop";
         client.time = [NSDate dateWithTimeIntervalSince1970:10000];
         client.model = @"iPod Touch";
@@ -414,7 +414,7 @@
         client.locationLongitude = -10;
         client.address = @"10.0.0.2";
         
-        [session registerClientForUser:selfUser label:@"foobar" type:@"temporary"];
+        [session registerClientForUser:selfUser label:@"foobar" type:@"temporary" deviceClass:@"desktop"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -448,7 +448,7 @@
     __block MockUser *user1;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         user1 = [session insertUserWithName:@"Foo"];
-        [session registerClientForUser:user1 label:@"foobar" type:@"temporary"];
+        [session registerClientForUser:user1 label:@"foobar" type:@"temporary" deviceClass:@"desktop"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -484,10 +484,10 @@
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
         
-        [session registerClientForUser:selfUser label:@"foobar" type:@"temporary"];
-        [session registerClientForUser:selfUser label:@"324211xx" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"foobar" type:@"temporary" deviceClass:@"phone"];
+        [session registerClientForUser:selfUser label:@"324211xx" type:@"permanent" deviceClass:@"phone"];
         
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent" deviceClass:@"phone"];
         client.deviceClass = @"desktop";
         client.time = [NSDate dateWithTimeIntervalSince1970:10000];
         client.model = @"iPod Touch";
@@ -495,7 +495,7 @@
         client.locationLongitude = -10;
         client.address = @"10.0.0.2";
         
-        [session registerClientForUser:selfUser label:@"XXXXX" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"XXXXX" type:@"permanent" deviceClass:@"phone"];
 
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -528,7 +528,7 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -568,7 +568,7 @@
     
     // WHEN
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent"];
+        client = [session registerClientForUser:selfUser label:@"client" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -606,7 +606,7 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
-        [session registerClientForUser:selfUser label:@"self user" type:@"permanent"];
+        [session registerClientForUser:selfUser label:@"self user" type:@"permanent" deviceClass:@"phone"];
         client = [selfUser.clients anyObject];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -638,6 +638,7 @@
     __block MockUserClient *client;
     NSString *clientLabel = @"client label";
     NSString *clientType = @"permanent";
+    NSString *deviceClass = @"phone";
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Foo"];
     }];
@@ -645,7 +646,7 @@
     
     // WHEN
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        client = [session registerClientForUser:selfUser label:clientLabel type:clientType];
+        client = [session registerClientForUser:selfUser label:clientLabel type:clientType  deviceClass:deviceClass];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -662,7 +663,8 @@
                                                       },
                                               @"time": client.time.transportString,
                                               @"id" : client.identifier,
-                                              @"type" : clientType
+                                              @"type" : clientType,
+                                              @"class" : deviceClass
                                       },
                                       @"type" : @"user.client-add"
     };
@@ -679,7 +681,7 @@
     
     // WHEN
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
-        [session registerClientForUser:otherUser label:@"client" type:@"permanent"];
+        [session registerClientForUser:otherUser label:@"client" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -693,7 +695,7 @@
     __block MockUserClient *client;
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         otherUser = [session insertUserWithName:@"Foo"];
-        client = [session registerClientForUser:otherUser label:@"client" type:@"permanent"];
+        client = [session registerClientForUser:otherUser label:@"client" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -714,8 +716,8 @@
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         
         MockUser *selfUser = [session insertSelfUserWithName:@"Brigite Sorço"];
-        selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent"];
-        destClient = [session registerClientForUser:selfUser label:@"autre" type:@"permanent"];
+        selfClient = [session registerClientForUser:selfUser label:@"moi" type:@"permanent" deviceClass:@"phone"];
+        destClient = [session registerClientForUser:selfUser label:@"autre" type:@"permanent" deviceClass:@"phone"];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     

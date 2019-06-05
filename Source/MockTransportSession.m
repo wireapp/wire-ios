@@ -620,7 +620,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
     if (shouldIncludeClient) {
         
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" user:user context:self.managedObjectContext];
+        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" deviceClass:@"phone" user:user context:self.managedObjectContext];
         
         NSMutableSet *clients = [NSMutableSet setWithObject:client];
         user.clients = clients;
@@ -803,9 +803,14 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     
 }
 
-- (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type
+- (MockUserClient *)registerClientForUser:(MockUser *)user
 {
-    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type user:user context:self.managedObjectContext];
+    return [self registerClientForUser:user label:@"Mock Phone" type:@"permanent" deviceClass:@"phone"];
+}
+
+- (MockUserClient *)registerClientForUser:(MockUser *)user label:(NSString *)label type:(NSString *)type deviceClass:(NSString *)deviceClass
+{
+    MockUserClient *client = [MockUserClient insertClientWithLabel:label type:type deviceClass:deviceClass user:user context:self.managedObjectContext];
     return client;
 }
 
