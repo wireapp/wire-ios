@@ -75,12 +75,12 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
     
     // MARK: - Image processing
     
-    func testThatNeedsProcessingIsNotNeededForGIFs() {
+    func testThatNeedsProcessingIsNeededForGIFs() {
         // given
         let gifAsset = self.gifAsset()
-        
+
         // then
-        XCTAssertFalse(gifAsset.needsPreprocessing)
+        XCTAssert(gifAsset.needsPreprocessing)
     }
     
     func testThatNeedsProcessingIsOnlyNeededForImageTypes() {
@@ -133,11 +133,13 @@ class CacheAssetTests: BaseZMAssetClientMessageTests {
         XCTAssertTrue(sut.hasEncrypted)
         XCTAssertNotNil(sut.encrypted)
     }
-    
+
     func testThatEncryptStoresTheEncryptedGIF() {
         // given
-        let sut = self.gifAsset()
-        
+        let sut = gifAsset()
+
+        sut.updateWithPreprocessedData(data(forResource: "animated", extension: "gif"), imageProperties: ZMIImageProperties(size: CGSize(width: 640, height: 400), length: 185798, mimeType: "image/gif"))
+
         // when
         sut.encrypt()
         
