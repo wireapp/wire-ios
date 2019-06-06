@@ -121,10 +121,10 @@ extension ZMConversation {
     private func updateLegalHoldState(cause: SecurityChangeCause) {
         switch cause {
         case .addedUsers, .addedClients:
-            enableLegalHoldIfNeeded()
+            enableLegalHoldIfNeeded(cause: cause)
 
         case .removedClients, .removedUsers:
-            disableLegalHoldIfNeeded()
+            disableLegalHoldIfNeeded(cause: cause)
 
         case .verifiedClients, .ignoredClients:
             // no-op: verification does not impact legal hold because no clients are added or removed
@@ -171,18 +171,18 @@ extension ZMConversation {
     }
 
     /// Check whether the conversation became under legal hold and disable it if needed.
-    private func enableLegalHoldIfNeeded() {
+    private func enableLegalHoldIfNeeded(cause: SecurityChangeCause) {
         guard !legalHoldStatus.denotesEnabledComplianceDevice && activeParticipants.any(\.isUnderLegalHold) else {
             return
         }
 
         legalHoldStatus = .pendingApproval
-        appendLegalHoldEnabledSystemMessageForConversation()
+        appendLegalHoldEnabledSystemMessageForConversation(cause: cause)
         expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
     }
 
     /// Check whether the conversation is still under legal hold and disable it if needed.
-    private func disableLegalHoldIfNeeded() {
+    private func disableLegalHoldIfNeeded(cause: SecurityChangeCause) {
         guard legalHoldStatus.denotesEnabledComplianceDevice && !activeParticipants.any(\.isUnderLegalHold) else {
             return
         }
@@ -277,12 +277,18 @@ extension ZMConversation {
         needsToBeUpdatedFromBackend = true
     }
 
-    private func appendLegalHoldEnabledSystemMessageForConversation() {
+    private func appendLegalHoldEnabledSystemMessageForConversation(cause: SecurityChangeCause) {
+        var timestamp : Date?
+        
+        if case .addedClients(_, let message) = cause, message?.conversation == self {
+            timestamp = self.timestamp(before: message)
+        }
+        
         appendSystemMessage(type: .legalHoldEnabled,
                             sender: ZMUser.selfUser(in: self.managedObjectContext!),
                             users: nil,
                             clients: nil,
-                            timestamp: timestampAfterLastMessage())
+                            timestamp: timestamp ?? timestampAfterLastMessage())
     }
 
     private func appendLegalHoldDisabledSystemMessageForConversation() {
