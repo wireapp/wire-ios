@@ -285,13 +285,13 @@
                                                           selfUser.identifier: @[secondSelfClient.identifier],
                                                           otherUser.identifier: @[secondOtherUserClient.identifier]
                                                           },
-                                                  @"redundant": @{
+                                                  @"deleted": @{
                                                           otherUser.identifier: @[redundantClientId]
                                                           }
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
-        AssertEqualDictionaries(expectedResponsePayload[@"redundant"], response.payload.asDictionary[@"redundant"]);
+        AssertEqualDictionaries(expectedResponsePayload[@"deleted"], response.payload.asDictionary[@"deleted"]);
     }
     
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
@@ -468,13 +468,13 @@
                                                           selfUser.identifier: @[secondSelfClient.identifier],
                                                           otherUser.identifier: @[secondOtherUserClient.identifier]
                                                           },
-                                                  @"redundant": @{
+                                                  @"deleted": @{
                                                           otherUser.identifier: @[redundantClient.identifier]
                                                           }
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
-        AssertEqualDictionaries(expectedResponsePayload[@"redundant"], response.payload.asDictionary[@"redundant"]);
+        AssertEqualDictionaries(expectedResponsePayload[@"deleted"], response.payload.asDictionary[@"deleted"]);
     }
     
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount);
@@ -589,13 +589,13 @@
         
         NSDictionary *expectedResponsePayload = @{
                                                   @"missing": @{},
-                                                  @"redundant": @{
+                                                  @"deleted": @{
                                                           otherUser.identifier: @[redundantClientId]
                                                           }
                                                   };
         
         AssertEqualDictionaries(expectedResponsePayload[@"missing"], response.payload.asDictionary[@"missing"]);
-        AssertEqualDictionaries(expectedResponsePayload[@"redundant"], response.payload.asDictionary[@"redundant"]);
+        AssertEqualDictionaries(expectedResponsePayload[@"deleted"], response.payload.asDictionary[@"deleted"]);
     }
     
     XCTAssertEqual(self.sut.generatedPushEvents.count, previousNotificationsCount+3u);

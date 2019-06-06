@@ -54,9 +54,9 @@
     
     NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClients:recipients sender:senderClient onlyForUserId:onlyForUser];
-    NSDictionary *redundantClients = [self redundantClients:recipients];
+    NSDictionary *deletedClients = [self deletedClients:recipients];
     
-    NSDictionary *responsePayload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
+    NSDictionary *responsePayload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
     
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
@@ -83,9 +83,9 @@
     
     NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients sender:senderClient onlyForUserId:onlyForUser];
-    NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetaData.recipients];
+    NSDictionary *deletedClients = [self deletedClientsFromRecipients:otrMetaData.recipients];
     
-    NSDictionary *payload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
+    NSDictionary *payload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
     
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {

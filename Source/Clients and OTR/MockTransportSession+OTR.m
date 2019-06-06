@@ -66,19 +66,19 @@
     return missedClients;
 }
 
-- (NSDictionary *)redundantClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation
+- (NSDictionary *)deletedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation
 {
-    return [self redundantClients:recipients users:conversation.activeUsers.set];
+    return [self deletedClients:recipients users:conversation.activeUsers.set];
 }
 
-- (NSDictionary *)redundantClients:(NSDictionary *)recipients
+- (NSDictionary *)deletedClients:(NSDictionary *)recipients
 {
-    return [self redundantClients:recipients users:self.selfUser.connectionsAndTeamMembers];
+    return [self deletedClients:recipients users:self.selfUser.connectionsAndTeamMembers];
 }
 
-- (NSDictionary *)redundantClients:(NSDictionary *)recipients users:(NSSet<MockUser *> *)users
+- (NSDictionary *)deletedClients:(NSDictionary *)recipients users:(NSSet<MockUser *> *)users
 {
-    NSMutableDictionary *redundantClients = [NSMutableDictionary new];
+    NSMutableDictionary *deletedClients = [NSMutableDictionary new];
     for (NSString *userId in recipients) {
         NSDictionary *recipientPayload = recipients[userId];
         MockUser *user = [users filteredSetUsingPredicate:[NSPredicate predicateWithFormat:@"identifier == %@", userId]].anyObject;
@@ -86,13 +86,13 @@
         NSSet *userClients = [user.clients mapWithBlock:^id(MockUserClient *client) {
             return client.identifier;
         }];
-        NSMutableSet *redundantUserClients = [NSMutableSet setWithArray:recipientClients];
-        [redundantUserClients minusSet:userClients];
-        if (redundantUserClients.count > 0) {
-            redundantClients[userId] = redundantUserClients.allObjects;
+        NSMutableSet *deletedUserClients = [NSMutableSet setWithArray:recipientClients];
+        [deletedUserClients minusSet:userClients];
+        if (deletedUserClients.count > 0) {
+            deletedClients[userId] = deletedUserClients.allObjects;
         }
     }
-    return redundantClients;
+    return deletedClients;
 }
 
 - (MockUserClient *)otrMessageSenderFromClientId:(ZMClientId *)sender
@@ -148,19 +148,19 @@
     return missedClients;
 }
 
-- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation
+- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation
 {
-    return [self redundantClientsFromRecipients:recipients users:conversation.activeUsers.set];
+    return [self deletedClientsFromRecipients:recipients users:conversation.activeUsers.set];
 }
 
-- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients
+- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients
 {
-    return [self redundantClientsFromRecipients:recipients users:self.selfUser.connectionsAndTeamMembers];
+    return [self deletedClientsFromRecipients:recipients users:self.selfUser.connectionsAndTeamMembers];
 }
 
-- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients users:(NSSet<MockUser *> *)users
+- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients users:(NSSet<MockUser *> *)users
 {
-    NSMutableDictionary *redundantClients = [NSMutableDictionary new];
+    NSMutableDictionary *deletedClients = [NSMutableDictionary new];
     
     for (MockUser *user in users) {
         ZMUserEntry *userEntry = [[recipients filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(ZMUserEntry  * _Nonnull evaluatedObject, NSDictionary<NSString *,id> * _Nullable __unused bindings) {
@@ -177,13 +177,15 @@
             return client.identifier;
         }];
         
-        NSMutableSet *redundantUserClients = [NSMutableSet setWithArray:recipientClients];
-        [redundantUserClients minusSet:userClients];
-        if (redundantUserClients.count > 0) {
-            redundantClients[user.identifier] = redundantUserClients.allObjects;
+        NSMutableSet *deletedUserClients = [NSMutableSet setWithArray:recipientClients];
+        [deletedUserClients minusSet:userClients];
+        
+        if (deletedUserClients.count > 0) {
+            deletedClients[user.identifier] = deletedUserClients.allObjects;
         }
     }
-    return redundantClients;
+    
+    return deletedClients;
 }
 
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
