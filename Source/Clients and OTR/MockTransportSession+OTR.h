@@ -44,11 +44,11 @@
 
 /// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
-- (NSDictionary *)redundantClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation;
+- (NSDictionary *)deletedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation;
 
 /// Returns a list of redundant clients for broascasting that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
-- (NSDictionary *)redundantClients:(NSDictionary *)recipients;
+- (NSDictionary *)deletedClients:(NSDictionary *)recipients;
 
 - (MockUserClient *)otrMessageSenderFromClientId:(ZMClientId *)sender;
 
@@ -62,13 +62,13 @@
 /// @param onlyForUserId if not nil, only return missing recipients matching this user ID
 - (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
 
-/// Returns a list of redundant clients in the conversation that were included in the list of intendend recipients
+/// Returns a list of deleted clients in the conversation that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
-- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation;
+- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation;
 
-/// Returns a list of redundant clients for broascasting that were included in the list of intendend recipients
+/// Returns a list of deleted clients for broascasting that were included in the list of intendend recipients
 /// @param recipients list of intender recipients
-- (NSDictionary *)redundantClientsFromRecipients:(NSArray *)recipients;
+- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients;
 
 
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation

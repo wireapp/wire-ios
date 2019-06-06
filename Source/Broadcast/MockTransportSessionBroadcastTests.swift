@@ -23,10 +23,10 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
     
     func assertExpectedPayload(_ payload : [String : Any], in response:  ZMTransportResponse, file: StaticString = #file, line: UInt = #line) {
         let missing = response.payload!.asDictionary()!["missing"] as! [String : Any]
-        let redundant = response.payload!.asDictionary()!["redundant"] as! [String : Any]
+        let deleted = response.payload!.asDictionary()!["deleted"] as! [String : Any]
         
         XCTAssertTrue(NSDictionary(dictionary: missing).isEqual(to: payload["missing"]! as! [String : Any]), "missing clients: \n\(missing)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
-        XCTAssertTrue(NSDictionary(dictionary: redundant).isEqual(to: payload["redundant"]! as! [String : Any]), "redundant clients: \n\(redundant)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
+        XCTAssertTrue(NSDictionary(dictionary: deleted).isEqual(to: payload["deleted"]! as! [String : Any]), "deleted clients: \n\(deleted)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
     }
     
     func testThatItReturnsMissingConnectedUsersWhenReceivingOTRMessage() {
@@ -84,9 +84,8 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 412)
                 
                 let expectedPayload = [
-                    "missing"  : [ selfUser.identifier  : [secondSelfClient.identifier!],
-                                   otherUser.identifier : [secondOtherUserClient.identifier!] ],
-                    "redundant" : [ otherUser.identifier : [otherUserRedundantClient.identifier!]]
+                    "missing" : [ selfUser.identifier  : [secondSelfClient.identifier!], otherUser.identifier : [secondOtherUserClient.identifier!] ],
+                    "deleted" : [ otherUser.identifier : [otherUserRedundantClient.identifier!]]
                 ]
                 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -135,7 +134,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing"  : [ otherUser.identifier : [otherUserClient.identifier!] ],
-                    "redundant" : [:]
+                    "deleted" : [:]
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -185,7 +184,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing"  : [:],
-                    "redundant" : [:]
+                    "deleted" : [:]
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)
@@ -235,7 +234,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
 
                 let expectedPayload = [
                     "missing"  : [:],
-                    "redundant" : [:]
+                    "deleted" : [:]
                 ]
 
                 assertExpectedPayload(expectedPayload, in: response)

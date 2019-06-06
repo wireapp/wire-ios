@@ -137,9 +137,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 
     NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClients:recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
-    NSDictionary *redundantClients = [self redundantClients:recipients conversation:conversation];
+    NSDictionary *deletedClients = [self deletedClients:recipients conversation:conversation];
     
-    NSDictionary *responsePayload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
+    NSDictionary *responsePayload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
     
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
@@ -175,9 +175,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     
     NSString *onlyForUser = query[@"report_missing"];
     NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
-    NSDictionary *redundantClients = [self redundantClientsFromRecipients:otrMetaData.recipients conversation:conversation];
+    NSDictionary *deletedClients = [self deletedClientsFromRecipients:otrMetaData.recipients conversation:conversation];
     
-    NSDictionary *payload = @{@"missing": missedClients, @"redundant": redundantClients, @"time": [NSDate date].transportString};
+    NSDictionary *payload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
     
     NSInteger statusCode = 412;
     if (missedClients.count == 0) {
