@@ -85,7 +85,7 @@ private struct FileCache : Cache {
                 zmLog.error("Failed reading asset data for key = \(key): \(error)")
             }
         }
-        
+
         return data
     }
     
