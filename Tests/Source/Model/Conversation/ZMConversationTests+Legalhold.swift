@@ -378,6 +378,50 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         }
     }
 
+    // MARK: - Message Status Hints
+
+    func testThatItUpdatesFromMessageHint_EnabledToDisabled() {
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: true, messageContent: {
+            ZMText.text(with: "Legal hold is coming to town!")
+        })
+    }
+
+    func testThatItUpdatesFromMessageHint_EnabledToDisabled_Ephemeral() {
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: true, messageContent: {
+            ZMEphemeral.ephemeral(content: ZMText.text(with: "Legal hold is coming to town!"), expiresAfter: 60)
+        })
+    }
+
+    func testThatItUpdatesFromMessageHint_DisabledToEnabled() {
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: true, messageContent: {
+            ZMText.text(with: "🙈🙉🙊")
+        })
+    }
+
+    func testThatItUpdatesFromMessageHint_DisabledToEnabled_Ephemeral() {
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: true, messageContent: {
+            ZMEphemeral.ephemeral(content: ZMText.text(with: "🙈🙉🙊"), expiresAfter: 60)
+        })
+    }
+
+    func testThatItDoesNotUpdateFromMessageHint_EnabledToEnabled() {
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: false, messageContent: {
+            ZMText.text(with: "Hello? Can you hear me?")
+        })
+    }
+
+    func testThatItDoesNotUpdateFromMessageHint_DisabledToDisabled() {
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: false, messageContent: {
+            ZMText.text(with: "Really not enabled.")
+        })
+    }
+
+    func testThatItDoesNotUpdateFromMessageHint_EnabledReceivingMessageWithoutHint() {
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .pendingApproval, expectSystemMessage: false, messageContent: {
+            ZMAvailability.availability(.busy)
+        })
+    }
+
     // MARK: - Helpers
 
     @discardableResult
@@ -387,6 +431,60 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         client.deviceClass = deviceClass
         client.user = user
         return client
+    }
+
+    private func assertLegalHoldHintBehavior(initiallyEnabled: Bool, receivedStatus: ZMLegalHoldStatus, expectedStatus: ZMConversationLegalHoldStatus, expectSystemMessage: Bool, messageContent: @escaping () -> MessageContentType, file: StaticString = #file, line: UInt = #line) {
+        syncMOC.performGroupedBlock {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            otherUser.remoteIdentifier = UUID()
+
+            self.createSelfClient(onMOC: self.syncMOC)
+            self.createClient(ofType: .permanent, class: .phone, for: otherUser)
+
+            if initiallyEnabled {
+                self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
+            } else {
+                self.createClient(ofType: .permanent, class: .phone, for: otherUser)
+            }
+
+            let conversation = self.createConversation(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.internalAddParticipants([selfUser, otherUser])
+
+            let lastMessageBeforeHint = conversation.lastMessage as? ZMSystemMessage
+            XCTAssertEqual(conversation.legalHoldStatus, initiallyEnabled ? .pendingApproval : .disabled, file: file, line: line)
+
+            // WHEN
+            let nonce = UUID()
+            var genericMessage = ZMGenericMessage.message(content: messageContent(), nonce: nonce)
+            genericMessage = genericMessage.setLegalHoldStatus(receivedStatus) ?? genericMessage
+
+            let payload: [String: Any] = [
+                "conversation": conversation.remoteIdentifier!.transportString(),
+                "from": otherUser.remoteIdentifier!.transportString(),
+                "time": Date(),
+                "type": "conversation.otr-message-add",
+                "data": [
+                    "text": genericMessage.data()!.base64String(),
+                ]
+            ]
+
+            let updateEvent = ZMUpdateEvent(uuid: UUID(), payload: payload, transient: false, decrypted: true, source: .download)!
+            ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.syncMOC, prefetchResult: nil)
+
+            // THEN
+            let lastMessage = conversation.lastMessages(limit: 2).last as? ZMSystemMessage
+            XCTAssertEqual(conversation.legalHoldStatus, expectedStatus, file: file, line: line)
+
+            if expectSystemMessage {
+                XCTAssertNotEqual(lastMessage, lastMessageBeforeHint, file: file, line: line)
+                XCTAssertEqual(lastMessage?.systemMessageType, expectedStatus.denotesEnabledComplianceDevice ? .legalHoldEnabled : .legalHoldDisabled, file: file, line: line)
+                XCTAssertTrue(lastMessage?.users == [], file: file, line: line)
+            } else {
+                XCTAssertEqual(lastMessage, lastMessageBeforeHint, file: file, line: line)
+            }
+        }
     }
 
 }
