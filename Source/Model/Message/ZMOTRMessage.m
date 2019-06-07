@@ -157,6 +157,9 @@ NSString * const DeliveredKey = @"delivered";
         return nil; // don't process messages in the self conversation not sent from the self user
     }
 
+    // Update the legal hold state in the conversation
+    [conversation updateSecurityLevelIfNeededAfterReceiving:message timestamp:updateEvent.timeStamp ?: [NSDate date]];
+
     if (!message.knownMessage) {
         [UnknownMessageAnalyticsTracker tagUnknownMessageWithAnalytics:moc.analytics];
     }

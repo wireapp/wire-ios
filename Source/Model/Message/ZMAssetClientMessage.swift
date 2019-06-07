@@ -238,7 +238,7 @@ import Foundation
             self.serverTimestamp = serverTimestamp
             self.expectsReadConfirmation = self.conversation?.hasReadReceiptsEnabled ?? false
         }
-        
+
         conversation?.updateTimestampsAfterUpdatingMessage(self)
 
         // NOTE: Calling super since this is method overriden to handle special cases when receiving an asset
