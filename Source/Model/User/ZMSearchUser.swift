@@ -306,6 +306,15 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
 
+    public var hasLegalHoldRequest: Bool {
+        get {
+            return user?.hasLegalHoldRequest ?? false
+        }
+        set {
+            user?.hasLegalHoldRequest = newValue
+        }
+    }
+
     
     public var richProfile: [UserRichProfileField] {
         return user?.richProfile ?? []
