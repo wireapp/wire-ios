@@ -522,7 +522,6 @@ extension ZMConversation {
             addedUsers = users
         case .addedClients(let clients, let message):
             addedClients = clients
-            addedUsers = Set(clients.compactMap(\.user))
             if let message = message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
             } else {
