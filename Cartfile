@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-data-model" ~> 176.0
+github "wireapp/wire-ios-data-model" "feature/has-legal-hold-observation"
