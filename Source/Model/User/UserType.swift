@@ -84,7 +84,10 @@ public protocol UserType: NSObjectProtocol {
     
     /// Wheater the user is under legal hold
     var isUnderLegalHold: Bool { get }
-    
+
+    /// Wheater the user has legal hold request
+    var hasLegalHoldRequest: Bool { get set }
+
     var accentColorValue: ZMAccentColor { get }
 
     /// Whether the user is a wireless user.

@@ -87,6 +87,8 @@ static NSString *const ExtendedMetadataKey = @"extendedMetadata";
 static NSString *const RichProfileKey = @"richProfile";
 static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 
+static NSString *const HasLegalHoldRequestKey = @"hasLegalHoldRequest";
+
 @interface ZMBoxedSelfUser : NSObject
 
 @property (nonatomic, weak) ZMUser *selfUser;
@@ -409,7 +411,8 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
                                            ManagedByKey,
                                            RichProfileKey,
                                            NeedsRichProfileUpdateKey,
-                                           CreatedTeamMembersKey
+                                           CreatedTeamMembersKey,
+                                           HasLegalHoldRequestKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -809,6 +812,7 @@ static NSString *const NeedsRichProfileUpdateKey = @"needsRichProfileUpdate";
 @dynamic needsPropertiesUpdate;
 @dynamic readReceiptsEnabledChangedRemotely;
 @dynamic needsRichProfileUpdate;
+@dynamic hasLegalHoldRequest;
 
 - (void)setHandle:(NSString *)aHandle {
     [self willChangeValueForKey:HandleKey];
