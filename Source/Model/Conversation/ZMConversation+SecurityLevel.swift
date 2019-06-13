@@ -514,13 +514,16 @@ extension ZMConversation {
     
     fileprivate func appendNewAddedClientSystemMessage(cause: SecurityChangeCause) {
         var timestamp : Date?
+        var affectedUsers: Set<ZMUser> = []
         var addedUsers: Set<ZMUser> = []
         var addedClients: Set<UserClient> = []
         
         switch cause {
         case .addedUsers(let users):
+            affectedUsers = users
             addedUsers = users
         case .addedClients(let clients, let message):
+            affectedUsers = Set(clients.compactMap(\.user))
             addedClients = clients
             if let message = message, message.conversation == self {
                 timestamp = self.timestamp(before: message)
@@ -536,7 +539,7 @@ extension ZMConversation {
         
         self.appendSystemMessage(type: .newClient,
                                  sender: ZMUser.selfUser(in: self.managedObjectContext!),
-                                 users: addedUsers,
+                                 users: affectedUsers,
                                  addedUsers: addedUsers,
                                  clients: addedClients,
                                  timestamp: timestamp ?? timestampAfterLastMessage())
