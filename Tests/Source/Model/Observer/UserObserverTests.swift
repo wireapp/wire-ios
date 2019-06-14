@@ -38,7 +38,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case readReceiptsEnabled = "readReceiptsEnabledChanged"
         case readReceiptsEnabledChangedRemotely = "readReceiptsEnabledChangedRemotelyChanged"
         case richProfile = "richProfileChanged"
-        case legalHold = "legalHoldStatusChanged"
+        case legalHoldStatus = "legalHoldStatusChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -546,28 +546,55 @@ extension UserObserverTests {
                                                      expectedChangedField: .richProfile)
     }
 
+    func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Request() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.remoteIdentifier = UUID()
+
+        let legalHoldRequest = LegalHoldRequest.mockRequest(for: user)
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.userDidReceiveLegalHoldRequest(legalHoldRequest) },
+                                                     expectedChangedField: .legalHoldStatus)
+
+        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
+    }
+
+    func testThatItNotifiesTheObserverOfLegalHoldStatusChange_AcceptRequest() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.remoteIdentifier = UUID()
+
+        let request = LegalHoldRequest.mockRequest(for: user)
+        user.userDidReceiveLegalHoldRequest(request)
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.userDidAcceptLegalHoldRequest(request) },
+                                                     expectedChangedField: .legalHoldStatus)
+
+        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
+    }
+
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Added() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
 
-        let legalHoldClient = UserClient.insertNewObject(in: uiMOC)
-        legalHoldClient.type = .legalHold
-        legalHoldClient.deviceClass = .legalHold
-
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
-                                                     modifier: { legalHoldClient.user = $0 },
-                                                     expectedChangedField: .legalHold)
+                                                     modifier: { _ in UserClient.createMockLegalHoldSelfUserClient(in: uiMOC) },
+                                                     expectedChangedField: .legalHoldStatus)
+
+        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
     func testThatItNotifiesTheObserverOfLegalHoldStatusChange_Removed() {
         // given
         let user = ZMUser.selfUser(in: uiMOC)
+        user.acknowledgeLegalHoldStatus()
 
-        let legalHoldClient = UserClient.insertNewObject(in: uiMOC)
-        legalHoldClient.type = .legalHold
-        legalHoldClient.deviceClass = .legalHold
-        legalHoldClient.user = user
+        let legalHoldClient = UserClient.createMockLegalHoldSelfUserClient(in: uiMOC)
 
         let modifier: (ZMUser) -> Void = { _ in
             self.performPretendingUiMocIsSyncMoc {
@@ -578,7 +605,9 @@ extension UserObserverTests {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: modifier,
-                                                     expectedChangedField: .legalHold)
+                                                     expectedChangedField: .legalHoldStatus)
+
+        XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
 
 }
