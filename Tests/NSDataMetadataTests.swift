@@ -67,7 +67,20 @@ class NSDataMetadataTests: XCTestCase {
             XCTAssertNotNil(metadata[String(kCGImagePropertyTIFFDictionary)])
         }
     }
-    
+
+    func testThatGIFsAreExcludedFromMetadataRemoval() {
+        let data = self.data(forResource:"unsplash_big_gif", extension:"gif")!
+
+        let originalMetadata = try! data.wr_metadata()
+
+        let converted = try! data.wr_removingImageMetadata()
+        let convertedMetadata = try! converted.wr_metadata()
+
+        XCTAssertEqual(originalMetadata as NSDictionary, convertedMetadata as NSDictionary)
+
+        XCTAssertGreaterThanOrEqual(data.count, converted.count)
+    }
+
     func testThatItPassThroughtImagesWithoutMetadataForImageTypes() {
         // GIVEN
         [self.data(forResource:"unsplash_big_gif", extension:"gif")!,

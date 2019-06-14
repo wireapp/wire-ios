@@ -18,6 +18,7 @@
 
 import Foundation
 import ImageIO
+import MobileCoreServices
 
 public enum MetadataError: Error {
     case unknownFormat
@@ -56,6 +57,11 @@ public extension NSData {
         guard let imageSource = CGImageSourceCreateWithData(self, nil),
               let type = CGImageSourceGetType(imageSource) else {
             throw MetadataError.unknownFormat
+        }
+
+        // GIF file does not have properties in nullMetadataProperties. Tested some recreated GIF data from CGImageDestinationAddImageFromSource have the file size increased and lost animation. e.g. 1.6MB -> 9MB
+        if type == kUTTypeGIF {
+            return self
         }
         
         let count = CGImageSourceGetCount(imageSource)
