@@ -193,6 +193,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     public var isServiceUser: Bool {
         return providerIdentifier != nil
     }
+
+    public var usesCompanyLogin: Bool {
+        return user?.usesCompanyLogin == true
+    }
     
     public var readReceiptsEnabled: Bool {
         return user?.readReceiptsEnabled ?? false
@@ -305,16 +309,6 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
             user?.needsRichProfileUpdate = newValue
         }
     }
-
-    public var hasLegalHoldRequest: Bool {
-        get {
-            return user?.hasLegalHoldRequest ?? false
-        }
-        set {
-            user?.hasLegalHoldRequest = newValue
-        }
-    }
-
     
     public var richProfile: [UserRichProfileField] {
         return user?.richProfile ?? []
