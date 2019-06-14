@@ -58,6 +58,7 @@
              @"user.contact-join" : @(ZMUpdateEventTypeUserContactJoin),
              @"user.client-add" : @(ZMUpdateEventTypeUserClientAdd),
              @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
+             @"user.client-legal-hold-request" : @(ZMUpdateEventTypeUserClientLegalHoldRequest),
              @"team.create" : @(ZMUpdateEventTypeTeamCreate),
              @"team.delete" : @(ZMUpdateEventTypeTeamDelete),
              @"team.update" : @(ZMUpdateEventTypeTeamUpdate),
