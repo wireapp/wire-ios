@@ -129,6 +129,14 @@ extension EncryptionSessionsDirectoryTests {
 
 // MARK: - Prekeys
 extension EncryptionSessionsDirectoryTests {
+    
+    func testThatFingerprintExtractedFromPrekeyMatchesLocalFingerprint() throws {
+        let prekeyId : UInt16 = 12
+        let prekeyData = try statusAlice.generatePrekey(prekeyId)
+        let fingerprint = EncryptionSessionsDirectory.fingerprint(fromPrekey: Data(base64Encoded: prekeyData)!)
+        
+        XCTAssertEqual(fingerprint, statusAlice.localFingerprint)
+    }
 
     func testThatItGeneratesAPrekey() {
         

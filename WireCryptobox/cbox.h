@@ -310,6 +310,15 @@ CBoxResult cbox_fingerprint_remote(CBoxSession const * s, CBoxVec ** fp);
 
 // Utilities ////////////////////////////////////////////////////////////////
 
+// Get the public key fingerprint from a prekey
+//
+// The fingerprint is represented as a hex-encoded byte sequence.
+// ---
+// `prekey` is the byte array to extract the fingerprint from.
+// `prekey_len` is the length of `prekey`.
+// `fp` is the pointer to point at the fingerprint.
+CBoxResult cbox_fingerprint_prekey(uint8_t const * prekey, size_t prekey_len, CBoxVec ** fp);
+
 // Generate `len` cryptographically strong random bytes.
 //
 // Returns a pointer to the allocated random bytes.

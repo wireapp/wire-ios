@@ -397,6 +397,24 @@ extension EncryptionSessionsDirectory: PrekeyGeneratorType {
         let prekeys = try generatePrekeys(UInt16(nsRange.location)..<UInt16(nsRange.length))
         return prekeys.map{ ["id": NSNumber(value: $0.id as UInt16), "prekey": $0.prekey as AnyObject] }
     }
+    
+    /// Extracts the fingerprint from a prekey
+    ///
+    /// - returns: HEX encoded fingerprint
+    @objc(fingerprintFromPrekey:)
+    public static func fingerprint(fromPrekey prekey: Data) -> Data? {
+        return prekey.withUnsafeBytes({
+            let bytes = $0.baseAddress?.assumingMemoryBound(to: UInt8.self)
+            var vectorBacking : OpaquePointer? = nil
+            let result = cbox_fingerprint_prekey(bytes, $0.count, &vectorBacking)
+            
+            guard result == CBOX_SUCCESS else {
+                return nil
+            }
+            
+            return Data.moveFromCBoxVector(vectorBacking)!
+        })
+    }
 }
 
 // MARK: - Fingerprint
