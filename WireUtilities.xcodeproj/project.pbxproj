@@ -151,6 +151,8 @@
 		EFC0C7B021772E6200380C4B /* EmojiOnlyStringTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */; };
 		EFD003562179FABC008C20D3 /* StringLengthValidatorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */; };
 		F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F15BDB1D20889772002F36E8 /* TearDownCapable.swift */; };
+		F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */; };
+		F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */; };
 		F1D567B1207BA40C00CCDD77 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		F1D567B5207BA50700CCDD77 /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F9479C751E4A2D0F0039F55F /* NSOrderedSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9479C741E4A2D0F0039F55F /* NSOrderedSet.swift */; };
@@ -394,6 +396,8 @@
 		EF638D7B2170EDF000344C8A /* EmojiOnlyStringTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EmojiOnlyStringTests.swift; sourceTree = "<group>"; };
 		EFD003552179FABC008C20D3 /* StringLengthValidatorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringLengthValidatorTests.swift; sourceTree = "<group>"; };
 		F15BDB1D20889772002F36E8 /* TearDownCapable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TearDownCapable.swift; sourceTree = "<group>"; };
+		F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+ReadableHash.swift"; sourceTree = "<group>"; };
+		F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+ReadableHash.swift"; sourceTree = "<group>"; };
 		F1E148C0207BAECF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148C2207BAED000F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		F1E148C4207BAED000F81833 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
@@ -691,6 +695,8 @@
 				BF3493F31EC362D400B0C314 /* Iterator+Containment.swift */,
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				5E4BC1C5218C830500A8682E /* String+Spaces.swift */,
+				F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */,
+				F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
 				163FB9071F22302C00802AF4 /* DispatchGroupQueue.swift */,
@@ -1043,8 +1049,10 @@
 				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
+				F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
 				BFBAE9DB1E01A8F2003FCE49 /* String+Emoji.swift in Sources */,
+				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
 				5E39FC55225B399D00C682B8 /* PasswordCharacterClass.swift in Sources */,
