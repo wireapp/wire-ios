@@ -57,6 +57,8 @@ extension UIApplication.State: CustomDebugStringConvertible {
             return "background"
         case .inactive:
             return "inactive"
+        @unknown default:
+            return "<uknown>"
         }
     }
 }

@@ -101,7 +101,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
     @objc public func resume() {
         isolationQueue.sync {
             if currentBackgroundTask == UIBackgroundTaskIdentifier.invalid {
-                zmLog.debug("Resume: currentBackgroundTask is invalid, setting it to nil")
+                zmLog.safePublic("Resume: currentBackgroundTask is invalid, setting it to nil")
                 currentBackgroundTask = nil
             }
         }
@@ -115,18 +115,19 @@ private let zmLog = ZMSLog(tag: "background-activity")
     @objc public func endBackgroundActivity(_ activity: BackgroundActivity) {
         isolationQueue.sync {
             guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
-                zmLog.debug("End background activity: current background task is invalid")
+                zmLog.safePublic("End background activity: current background task is invalid")
                 return
             }
-
+            
+            let count = SafeValueForLogging(activities.count)
             if activities.remove(activity) != nil {
-                zmLog.debug("End background activity: removed \(activity), \(activities.count) others left.")
+                zmLog.safePublic("End background activity: removed \(activity), \(count) others left.")
             } else {
-                zmLog.debug("End background activity: could not remove \(activity), \(activities.count) others left")
+                zmLog.safePublic("End background activity: could not remove \(activity), \(count) others left")
             }
             
             if activities.isEmpty {
-                zmLog.debug("End background activity: no activities left, finishing")
+                zmLog.safePublic("End background activity: no activities left, finishing")
                 finishBackgroundTask()
             }
         }
@@ -137,14 +138,15 @@ private let zmLog = ZMSLog(tag: "background-activity")
     /// Starts the background activity of the system allows it.
     private func startActivityIfPossible(_ name: String, _ expirationHandler: (() -> Void)?) -> BackgroundActivity? {
         return isolationQueue.sync {
+            let activityName = ActivityName(name: name)
             guard let activityManager = activityManager else {
-                zmLog.debug("Start activity [\(name)]: failed, activityManager is nil")
+                zmLog.safePublic("Start activity <\(activityName)>: failed, activityManager is nil")
                 return nil 
             }
             
             // Do not start new tasks if the background timer is running.
             guard currentBackgroundTask != UIBackgroundTaskIdentifier.invalid else {
-                zmLog.debug("Start activity [\(name)]: failed, currentBackgroundTask is invalid")
+                zmLog.safePublic("Start activity <\(activityName)>: failed, currentBackgroundTask is invalid")
                 return nil         
             }
 
@@ -152,21 +154,22 @@ private let zmLog = ZMSLog(tag: "background-activity")
             let activity = BackgroundActivity(name: name, expirationHandler: expirationHandler)
 
             if currentBackgroundTask == nil {
-                zmLog.debug("Start activity [\(name)]: no current background task, starting new")
+                zmLog.safePublic("Start activity <\(activityName)>: no current background task, starting new")
                 let task = activityManager.beginBackgroundTask(withName: name, expirationHandler: handleExpiration)
                 guard task != UIBackgroundTaskIdentifier.invalid else {
-                    zmLog.debug("Start activity [\(name)]: failed to begin new background task")
+                    zmLog.safePublic("Start activity <\(activityName)>: failed to begin new background task")
                     return nil         
                 }
-                zmLog.debug("Start activity [\(name)]: started new background task: \(task)")
+                let value = SafeValueForLogging(task.rawValue)
+                zmLog.safePublic("Start activity <\(activityName)>: started new background task: \(value)")
                 currentBackgroundTask = task
             }
 
             let (inserted, _) = activities.insert(activity)
             if inserted {
-                zmLog.debug("Start activity [\(name)]: started \(activity)")
+                zmLog.safePublic("Start activity <\(activityName)>: started \(activity)")
             } else {
-                zmLog.debug("Start activity [\(name)]: could not insert activity \(activity)")
+                zmLog.safePublic("Start activity <\(activityName)>: could not insert activity \(activity)")
             }
             return activity
         }
@@ -175,16 +178,17 @@ private let zmLog = ZMSLog(tag: "background-activity")
     /// Called on main queue when the background timer is about to expire.
     private func handleExpiration() {
         guard let activityManager = self.activityManager else {
-            zmLog.debug("Handle expiration: failed, activityManager is nil")
+            zmLog.safePublic("Handle expiration: failed, activityManager is nil")
             return
         }
         
-        zmLog.debug("Handle expiration: \(activityManager.stateDescription)")
+        let value = SafeValueForLogging(activityManager.stateDescription)
+        zmLog.safePublic("Handle expiration: \(value)")
         let activities = isolationQueue.sync {
             return self.activities
         }
         activities.forEach { activity in
-            zmLog.debug("Handle expiration: notifying \(activity)")
+            zmLog.safePublic("Handle expiration: notifying \(activity)")
             activity.expirationHandler?()
         }
         isolationQueue.sync {
@@ -199,16 +203,17 @@ private let zmLog = ZMSLog(tag: "background-activity")
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {
             if let activityManager = activityManager {
-                zmLog.debug("Finishing background task: \(currentBackgroundTask)")
+                let value = SafeValueForLogging(currentBackgroundTask.rawValue)
+                zmLog.safePublic("Finishing background task: \(value)")
                 // We might get killed pretty soon, let's flush the logs
                 ZMSLog.sync()
                 activityManager.endBackgroundTask(currentBackgroundTask)
             } else {
-                zmLog.debug("Finishing background task: failed, activityManager is nil")
+                zmLog.safePublic("Finishing background task: failed, activityManager is nil")
             }
             self.currentBackgroundTask = nil
         } else {
-            zmLog.debug("Finishing background task: no current background task")
+            zmLog.safePublic("Finishing background task: no current background task")
         }
     }
 

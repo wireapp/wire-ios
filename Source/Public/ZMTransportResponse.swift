@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2019 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,13 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
 
-
-public extension UUID {
-
-    func transportString() -> String {
-        return (self as NSUUID).transportString()
-    }
-}
-
-extension Date {
-    
-    public func transportString() -> String {
-        return (self as NSDate).transportString()
+extension ZMTransportResponse: SafeForLoggingStringConvertible {
+    @objc public var safeForLoggingDescription: String {
+        let errorDescription = transportSessionError?.localizedDescription
+        let status = "status: \(httpStatus)"
+        let dataSize = "size: \(self.rawData?.count ?? 0)"
+        return "\(errorDescription ?? status) \(dataSize)"
     }
 }

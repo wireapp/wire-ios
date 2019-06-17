@@ -201,8 +201,7 @@ private enum UserKey: String {
     case user, id
 }
 
-
-@objc public extension ZMTransportResponse {
+extension ZMTransportResponse {
 
     /// Extracts the wire cookie data from the response.
     /// - returns: The encrypted cookie data (using the cookies key) if there is any.
@@ -218,7 +217,7 @@ private enum UserKey: String {
             ?? (data[UserKey.id.rawValue] as? String).flatMap(UUID.init)
     }
 
-    public func extractUserInfo() -> UserInfo? {
+    @objc public func extractUserInfo() -> UserInfo? {
         guard let data = extractCookieData(), let id = extractUserIdentifier() else { return nil }
         return .init(identifier: id, cookieData: data)
     }

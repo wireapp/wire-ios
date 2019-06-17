@@ -439,6 +439,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;
+    ZMLogPublic(@"Request: %@", request.safeForLoggingDescription);
     ZMLogInfo(@"----> Request: %@\n%@", URLRequest.allHTTPHeaderFields, request);
     NSURLSessionTask *task = [session taskWithRequest:URLRequest bodyData:(bodyData.length == 0) ? nil : bodyData transportRequest:request];
     return task;
@@ -491,6 +492,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     }
     NSError *transportError = [NSError transportErrorFromURLTask:task expired:expired];
     ZMTransportResponse *response = [self transportResponseFromURLResponse:httpResponse data:data error:transportError];
+    ZMLogPublic(@"Response to %@: %@", request.safeForLoggingDescription,  response.safeForLoggingDescription);
     ZMLogInfo(@"<---- Response to %@ %@ (status %u): %@", [ZMTransportRequest stringForMethod:request.method], request.path, (unsigned) httpResponse.statusCode, response);
     ZMLogInfo(@"URL Session is %@", session.description);
     if (response.result == ZMTransportResponseStatusExpired) {
