@@ -157,7 +157,7 @@ import WireTransport
             }
         }
         
-        fatalError("Cannot generate request for \(object.privateDescription)")
+        fatalError("Cannot generate request for \(object.safeForLoggingDescription)")
     }
     
     public func delete(_ object: ZMManagedObject!, with response: ZMTransportResponse!, downstreamSync: ZMObjectSync!) {
