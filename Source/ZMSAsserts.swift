@@ -19,13 +19,6 @@
 
 import Foundation
 
-/// Object can implement `PrivateStringConvertible` to allow creating the privacy-enabled object description.
-/// Things to consider when implementing is to exclude any kind of personal information from the object description:
-/// No user name, login, email, etc., or any kind of backend object ID.
-public protocol PrivateStringConvertible {
-    var privateDescription: String { get }
-}
-
 /// Reports an error and terminates the application
 public func fatal(_ message: String, file: String = #file, line: Int = #line) -> Never  {
     ZMAssertionDump_NSString("Swift assertion", file, Int32(line), message)

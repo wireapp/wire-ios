@@ -78,6 +78,11 @@ public class ZMSLogEntry: NSObject {
 // MARK: - Emit logs
 extension ZMSLog {
     
+    public func safePublic(_ message: @autoclosure () -> SanitizedString, file: String = #file, line: UInt = #line) {
+        let entry = ZMSLogEntry(text: message().value, timestamp: Date())
+        ZMSLog.logEntry(entry, level: .public, tag: tag, file: file, line: line)
+    }
+    
     public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
         ZMSLog.logWithLevel(.error, message: message(), tag: self.tag, file: file, line:line)
     }
@@ -187,14 +192,14 @@ extension ZMLogLevel_t {
     @available(iOS 10.0, *)
     var logLevel: OSLogType {
         switch self {
-        case .error:
-            return .error
-        case .warn:
+        case .public, .error, .warn:
             return .error
         case .info:
             return .info
         case .debug:
             return .debug
+        @unknown default:
+            return .error
         }
     }
 }
@@ -202,17 +207,20 @@ extension ZMLogLevel_t {
 // MARK: - Internal stuff
 extension ZMSLog {
     
-    /// Log only if this log level is enabled for the tag, or no tag is set
     @objc static public func logWithLevel(_ level: ZMLogLevel_t, message:  @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
-        let logEntry = ZMSLogEntry(text: message(), timestamp: Date())
+        let entry = ZMSLogEntry(text: message(), timestamp: Date())
+        logEntry(entry, level: level, tag: tag, file: file, line: line)
+    }
+    
+    static private func logEntry(_ entry: ZMSLogEntry, level: ZMLogLevel_t, tag: String?, file: String = #file, line: UInt = #line) {
         logQueue.async {
             if let tag = tag {
                 self.register(tag: tag)
             }
         
             if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
-                os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, logEntry.text)
-                self.notifyHooks(level: level, tag: tag, entry: logEntry)
+                os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, entry.text)
+                self.notifyHooks(level: level, tag: tag, entry: entry)
             }
         }
     }

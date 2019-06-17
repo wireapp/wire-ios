@@ -420,8 +420,33 @@ extension ZMLogTests {
         let lines = getLinesFromCurrentLog()
 
         XCTAssertEqual(lines.count, 2)
-        XCTAssertTrue(lines.first!.hasSuffix("[0] [foo] PANIC"))
-        XCTAssertTrue(lines.last!.hasSuffix("[0] [foo] HELP"))
+        XCTAssertTrue(lines.first!.hasSuffix("[1] [foo] PANIC"))
+        XCTAssertTrue(lines.last!.hasSuffix("[1] [foo] HELP"))
+    }
+    
+    func testThatItRecordsPublicLogs() {
+        struct Item: SafeForLoggingStringConvertible {
+            var name: String
+            var safeForLoggingDescription: String {
+                return "hidden"
+            }
+        }
+        
+        // GIVEN
+        let sut = ZMSLog(tag: "foo")
+        let item = Item(name: "Secret")
+        ZMSLog.startRecording()
+        
+        // WHEN
+        sut.safePublic("Item: \(item)")
+        
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // THEN
+        let lines = getLinesFromCurrentLog()
+        
+        XCTAssertEqual(lines.count, 1)
+        XCTAssertTrue(lines.first!.hasSuffix("[0] [foo] Item: hidden"))
     }
     
     func testThatItDiscardsLogsWhenStopped() {
@@ -498,6 +523,8 @@ extension ZMLogTests {
         //when
         ZMSLog.startRecording(isInternal: false)
         
+        sut.safePublic("PUBLIC")
+        
         ZMSLog.set(level: .error, tag: tag)
         sut.error("ERROR")
         
@@ -515,11 +542,8 @@ extension ZMLogTests {
         let lines = getLinesFromCurrentLog()
         
         //then
-        XCTAssertEqual(lines.count, 3)
+        XCTAssertEqual(lines.count, 1)
         XCTAssertFalse(lines.first!.hasSuffix("[0] [tag] ERROR"))
-        XCTAssertTrue(lines[0].hasSuffix("[1] [tag] WARN"))
-        XCTAssertTrue(lines[1].hasSuffix("[2] [tag] INFO"))
-        XCTAssertTrue(lines[2].hasSuffix("[3] [tag] DEBUG"))
     }
     
     func testThatItSavesAllLevelsOnInternals() {
@@ -531,6 +555,8 @@ extension ZMLogTests {
         //when
         ZMSLog.startRecording(isInternal: true)
         
+        sut.safePublic("PUBLIC")
+        
         ZMSLog.set(level: .error, tag: tag)
         sut.error("ERROR")
         
@@ -548,11 +574,12 @@ extension ZMLogTests {
         let lines = getLinesFromCurrentLog()
         
         //then
-        XCTAssertEqual(lines.count, 4)
-        XCTAssertTrue(lines[0].hasSuffix("[0] [tag] ERROR"))
-        XCTAssertTrue(lines[1].hasSuffix("[1] [tag] WARN"))
-        XCTAssertTrue(lines[2].hasSuffix("[2] [tag] INFO"))
-        XCTAssertTrue(lines[3].hasSuffix("[3] [tag] DEBUG"))
+        XCTAssertEqual(lines.count, 5)
+        XCTAssertTrue(lines[0].hasSuffix("[0] [tag] PUBLIC"))
+        XCTAssertTrue(lines[1].hasSuffix("[1] [tag] ERROR"))
+        XCTAssertTrue(lines[2].hasSuffix("[2] [tag] WARN"))
+        XCTAssertTrue(lines[3].hasSuffix("[3] [tag] INFO"))
+        XCTAssertTrue(lines[4].hasSuffix("[4] [tag] DEBUG"))
     }
     
     
