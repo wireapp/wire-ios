@@ -108,7 +108,7 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
             }
         }
         
-        guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.privateDescription)") }
+        guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.safeForLoggingDescription)") }
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
         
         // We need to flush the encrypted payloads cache, since the client is online now (request succeeded).
