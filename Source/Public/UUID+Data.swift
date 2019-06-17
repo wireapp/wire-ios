@@ -22,7 +22,7 @@ public extension UUID {
     
     /// return a Data representation of this UUID
     var uuidData: Data {
-        return withUnsafeBytes(of: uuid, Data.init(bytes:))
+        return withUnsafeBytes(of: uuid, Data.init(_:))
     }
     
     
