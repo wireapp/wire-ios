@@ -1,6 +1,6 @@
-//
+////
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2019 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,20 +16,20 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-
 import Foundation
+import WireSystem
+import WireUtilities
 
-
-public extension UUID {
-
-    func transportString() -> String {
-        return (self as NSUUID).transportString()
+extension BackgroundActivity: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        return "<BackgroundActivity [\(index)]: \(name.readableHash)>"
     }
 }
 
-extension Date {
-    
-    public func transportString() -> String {
-        return (self as NSDate).transportString()
+struct ActivityName: SafeForLoggingStringConvertible {
+    let name: String
+    var safeForLoggingDescription: String {
+        return name.readableHash
     }
 }
+

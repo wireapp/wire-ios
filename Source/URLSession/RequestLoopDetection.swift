@@ -74,7 +74,7 @@ extension RequestLoopDetection : RequestRecorder{
     /// Removes requests that are too old from the recorded requests
     private func purgeOldRequests() {
         let purgeDate = Date(timeIntervalSinceNow: -type(of: self).decayTimer)
-        if let firstNonTooOldIndex = self.recordedRequests.index(where: {
+        if let firstNonTooOldIndex = self.recordedRequests.firstIndex(where: {
             $0.date > purgeDate
         }) {
             self.recordedRequests.removeFirst(firstNonTooOldIndex) // note, this would be more efficient with linked list
