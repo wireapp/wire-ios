@@ -22,7 +22,8 @@
 
 /// Log levels
 typedef NS_ENUM(int8_t, ZMLogLevel_t) {
-    ZMLogLevelError = 0,
+    ZMLogLevelPublic = 0,
+    ZMLogLevelError,
     ZMLogLevelWarn,
     ZMLogLevelInfo,
     ZMLogLevelDebug,
@@ -51,7 +52,7 @@ typedef NS_ENUM(int8_t, ZMLogLevel_t) {
  You can set a (symbolic) breakpoint at ZMLogDebugger to stop automatically when a warning or error level message is logged.
  
  **/
-
+#define ZMLogPublic(format, ...) ZMLogWithLevelAndTag(ZMLogLevelPublic, ZMLogTag, format, ##__VA_ARGS__)
 #define ZMLogError(format, ...) ZMLogWithLevel(ZMLogLevelError, format, ##__VA_ARGS__)
 #define ZMLogWarn(format, ...) ZMLogWithLevel(ZMLogLevelWarn, format, ##__VA_ARGS__)
 #define ZMLogInfo(format, ...) ZMLogWithLevelAndTag(ZMLogLevelInfo, ZMLogTag, format, ##__VA_ARGS__)
