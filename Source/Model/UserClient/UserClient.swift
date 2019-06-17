@@ -189,12 +189,12 @@ private let zmLog = ZMSLog(tag: "UserClient")
         precondition(!createIfNeeded || user.managedObjectContext!.zm_isSyncContext, "clients can only be created on the syncContext")
         
         guard let context = user.managedObjectContext else {
-            fatal("User \(user.privateDescription) is not a member of a managed object context (deleted object).")
+            fatal("User \(user.safeForLoggingDescription) is not a member of a managed object context (deleted object).")
         }
         
         let relationClients = user.clients.filter({$0.remoteIdentifier == remoteIdentifier})
         
-        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map({ $0.privateDescription }))")
+        requireInternal(relationClients.count <= 1, "Detected duplicate clients: \(relationClients.map({ $0.safeForLoggingDescription }))")
         
         if let client = relationClients.first {
             return client
@@ -405,7 +405,7 @@ public extension UserClient {
         }
         let selfUser = ZMUser.selfUser(in: context)
         guard self.user == selfUser else {
-            fatal("The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.privateDescription))")
+            fatal("The method 'markForDeletion()' can only be called for clients that belong to the selfUser (self user is \(selfUser.safeForLoggingDescription))")
         }
         guard selfUser.selfClient() != self else {
             fatal("Attempt to delete the self client. This should never happen!")

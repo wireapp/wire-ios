@@ -308,8 +308,8 @@ extension ZMUser {
     }
 }
 
-extension NSManagedObject: PrivateStringConvertible {
-    public var privateDescription: String {
+extension NSManagedObject: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
         let moc: String = self.managedObjectContext?.description ?? "nil"
         
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
