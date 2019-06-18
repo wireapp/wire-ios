@@ -385,6 +385,23 @@ extension ZMLogTests {
         ZMSLog.removeLogHook(token: token1)
         ZMSLog.removeLogHook(token: token2)
     }
+    
+    func testThatItAppendsOnlyOneNewlineWhenLogEntryContainsNewline() {
+        // GIVEN
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.startRecording()
+        
+        // WHEN
+        sut.error("PANIC\n")
+        sut.error("HELP")
+        
+        Thread.sleep(forTimeInterval: 0.2)
+        
+        // THEN
+        let lines = getLinesFromCurrentLog()
+
+        XCTAssertEqual(lines.count, 2)
+    }
 
 }
 
