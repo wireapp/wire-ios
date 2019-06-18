@@ -56,7 +56,14 @@ typedef NS_ENUM(NSInteger, ZMWebSocketErrorCode) {
 - (void)sendBinaryFrameWithData:(NSData *)data;
 - (void)sendPingFrame;
 
-@property (nonatomic, readonly) BOOL handshakeCompleted;
+
+/**
+ When this object is created, hand shake is initialized as not complete.
+ After didParseHandshakeInBuffer is called and handshaked sucessfully this method will return true.
+
+ @return return ture if handshake is completed
+ */
+- (BOOL)handshakeCompleted;
 
 @end
 
