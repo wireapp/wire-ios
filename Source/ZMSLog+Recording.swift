@@ -30,7 +30,9 @@ extension ZMSLog {
                     guard isInternal || level == .public else { return }
                     let tagString = tag.flatMap { "[\($0)] "} ?? ""
                     let date = dateFormatter.string(from: entry.timestamp)
-                    ZMSLog.appendToCurrentLog("\(date): [\(level.rawValue)] \(tagString)\(entry.text)\n")
+                    // Add newline if it does not have it yet
+                    let text = entry.text.hasSuffix("\n") ? entry.text : entry.text + "\n"
+                    ZMSLog.appendToCurrentLog("\(date): [\(level.rawValue)] \(tagString)\(text)")
                 })
             }
         }
