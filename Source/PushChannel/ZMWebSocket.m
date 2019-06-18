@@ -44,7 +44,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 @property (atomic) ZMSDispatchGroup *consumerGroup;
 @property (nonatomic) dispatch_queue_t networkSocketQueue;
 @property (nonatomic) NetworkSocket *networkSocket;
-@property (nonatomic) BOOL handshakeCompleted;
 @property (nonatomic) DataBuffer *inputBuffer;
 @property (nonatomic) ZMWebSocketHandshake *handshake;
 @property (nonatomic) NSError *handshakeError;
@@ -181,6 +180,7 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
                 [self.networkSocket writeData:data];
             }];
         }
+
         self.dataPendingTransmission = nil;
     } else if (handshakeCompleted == ZMWebSocketHandshakeError) {
         ZMLogError(@"Failed to parse WebSocket handshake response: %@", error);
@@ -245,16 +245,16 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
 {
     dispatch_data_t frameData = frame.frameData;
     if (frameData != nil) {
-        ZM_WEAK(self);
-        [self safelyDispatchOnQueue:^{
-            ZM_STRONG(self);
-            if (self.handshakeCompleted) {
+        if (self.handshakeCompleted) {
+            ZM_WEAK(self);
+            [self safelyDispatchOnQueue:^{
+                ZM_STRONG(self);
                 [self.networkSocket writeData:(NSData *)frameData];
-            } else {
-                RequireString(self.dataPendingTransmission != nil, "Was already sent & cleared?");
-                [self.dataPendingTransmission addObject:frameData];
-            }
-        }];
+            }];
+        } else {
+            RequireString(self.dataPendingTransmission != nil, "Was already sent & cleared?");
+            [self.dataPendingTransmission addObject:frameData];
+        }
     }
 }
 
@@ -291,6 +291,11 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
     return base64String;
 }
 
+- (BOOL)handshakeCompleted
+{
+    return self.dataPendingTransmission == nil;
+}
+
 @end
 
 
@@ -315,7 +320,6 @@ NSString * const ZMWebSocketErrorDomain = @"ZMWebSocket";
             case ZMWebSocketHandshakeCompleted:
                 {
                     NSHTTPURLResponse *response = self.handshake.response;
-                    self.handshakeCompleted = YES;
                     ZM_WEAK(self);
                     [self safelyDispatchOnQueue:^{
                         ZM_STRONG(self);
