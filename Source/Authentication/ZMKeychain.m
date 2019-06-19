@@ -170,6 +170,20 @@ extern NSString *ZMKeychainErrorDescription(OSStatus s)
 
 #pragma mark - Lookup
 
++ (BOOL)hasAccessibleAccountData
+{
+    NSMutableDictionary *query = [self fetchQuery];
+    query[(__bridge id) kSecReturnData] = @(NO);
+    NSString *group = [self defaultAccessGroup];
+    
+    if (group != nil) {
+        query[(__bridge id) kSecAttrAccessGroup] = group;
+    }
+    
+    OSStatus const s = SecItemCopyMatching((__bridge CFDictionaryRef) query, NULL);
+    return errSecSuccess == s;
+}
+
 + (id)valueForAccount:(NSString *)accountName
               inGroup:(NSString *)group
            returnData:(BOOL)returnData

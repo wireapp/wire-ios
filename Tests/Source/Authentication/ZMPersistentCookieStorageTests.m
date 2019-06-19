@@ -231,6 +231,21 @@
     }
 }
 
+- (void)testThatItHasAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsAvailable
+{
+    // given
+    ZMPersistentCookieStorage *sut = [ZMPersistentCookieStorage storageForServerName:@"z1.example.com" userIdentifier:self.userIdentifier];
+    [sut setAuthenticationCookieData:[@"This is a cookie" dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // then
+    XCTAssertTrue([ZMPersistentCookieStorage hasAccessibleAuthenticationCookieData]);
+}
+
+- (void)testThatItDoesNotHaveAccessibleAuthenticationCookieData_WhenAuthenticationCookieDataIsNotAvailable
+{
+    XCTAssertFalse([ZMPersistentCookieStorage hasAccessibleAuthenticationCookieData]);
+}
+
 @end
 
 
