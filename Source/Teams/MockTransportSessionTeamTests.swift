@@ -371,4 +371,55 @@ extension MockTransportSessionTeamTests {
         XCTAssertEqual(payload?["user"] as? String, user1.identifier)
     }
 
+    func testThatItDoesNotApproveLegalHoldRequestForNonPendingUser() {
+        var user: MockUser!
+        var team: MockTeam!
+
+        sut.performRemoteChanges { session in
+            user = session.insertSelfUser(withName: "one")
+            user.password = "Ex@mple!"
+
+            team = session.insertTeam(withName: "name", isBound: true, users: [user])
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
+
+            team.hasLegalHoldService = true
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
+        let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .methodPUT)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 412)
+        XCTAssertEqual(response?.payload as? NSDictionary, ["label": "legalhold-not-pending"])
+    }
+
+    func testThatItApprovesLegalHoldRequestForUser() {
+        var user: MockUser!
+        var team: MockTeam!
+
+        sut.performRemoteChanges { session in
+            user = session.insertSelfUser(withName: "one")
+            user.password = "Ex@mple!"
+
+            team = session.insertTeam(withName: "name", isBound: true, users: [user])
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
+
+            team.hasLegalHoldService = true
+            XCTAssertTrue(user.requestLegalHold())
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // Then
+        let path = "/teams/\(team.identifier)/legalhold/\(user.identifier)/approve"
+        let response = self.response(forPayload: ["password": "Ex@mple!"] as NSDictionary, path: path, method: .methodPUT)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNil(response?.payload)
+        XCTAssertEqual(user.legalHoldState, .enabled)
+        XCTAssertNil(user.pendingLegalHoldClient)
+    }
+
 }

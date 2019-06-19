@@ -29,6 +29,7 @@ import CoreData
     @NSManaged public var identifier: String
     @NSManaged public var createdAt: Date
     @NSManaged public var isBound: Bool
+    @NSManaged public var hasLegalHoldService: Bool
 
     public static var entityName = "Team"
     

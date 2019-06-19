@@ -343,3 +343,36 @@ extension MockTransportSessionTeamEventsTests {
 
     }
 }
+
+// MARK: - Legal Hold Events
+
+extension MockTransportSessionTeamEventsTests {
+
+    func testThatItDoesSendEventWhenRequestingLegalHoldOnUser() {
+        // GIVEN
+        createAndOpenPushChannel()
+
+        var team: MockTeam!
+        var user: MockUser!
+
+        // WHEN
+        sut.performRemoteChanges { session in
+            user = session.insertUser(withName: "one")
+            team = session.insertTeam(withName: "some", isBound: true, users: [user])
+
+            team.hasLegalHoldService = true
+            XCTAssertTrue(user.requestLegalHold())
+        }
+
+        // THEN
+        let events = pushChannelReceivedEvents as! [TestPushChannelEvent]
+        XCTAssertEqual(events.count, 1)
+
+        guard let firstEvent = events.first else {
+            return XCTFail("Expected one update event")
+        }
+
+        XCTAssertEqual(firstEvent.type, .userClientLegalHoldRequest)
+    }
+
+}
