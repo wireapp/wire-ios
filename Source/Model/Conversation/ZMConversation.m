@@ -68,6 +68,7 @@ NSString *const ZMConversationArchivedChangedTimeStampKey = @"archivedChangedTim
 NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTimestamp";
 NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipantsState";
 NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
+NSString *const ZMConversationNeedsToVerifyLegalHoldKey = @"needsToVerifyLegalHold";
 
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
 
@@ -372,7 +373,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             AccessRoleStringKey,
             LanguageKey,
             HasReadReceiptsEnabledKey,
-            ZMConversationLegalHoldStatusKey
+            ZMConversationLegalHoldStatusKey,
+            ZMConversationNeedsToVerifyLegalHoldKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];

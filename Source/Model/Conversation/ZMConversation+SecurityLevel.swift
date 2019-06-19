@@ -41,6 +41,9 @@ extension ZMConversation {
     @NSManaged public internal(set) var securityLevel: ZMConversationSecurityLevel
 
     @NSManaged private var primitiveLegalHoldStatus: NSNumber
+    
+    /// Indicates that we need verify that our local knowledge of clients matches the clients known to the backend.
+    @NSManaged public internal(set) var needsToVerifyLegalHold: Bool
 
     /// Whether the conversation is under legal hold.
     @objc public internal(set) var legalHoldStatus: ZMConversationLegalHoldStatus {
@@ -79,6 +82,13 @@ extension ZMConversation {
     @objc(updateSecurityLevelIfNeededAfterReceiving:timestamp:)
     public func updateSecurityLevelIfNeededAfterReceiving(message: ZMGenericMessage, timestamp: Date) {
         updateLegalHoldIfNeededWithHint(from: message, timestamp: timestamp)
+    }
+    
+    /// Should be called if we need to verify the legal hold status after fetching the clients in a conversation.
+    @objc(updateSecurityLevelIfNeededAfterFetchingClients)
+    public func updateSecurityLevelIfNeededAfterFetchingClients() {
+        applySecurityChanges(cause: .verifyLegalHold)
+        needsToVerifyLegalHold = false
     }
 
     /// Should be called when client is trusted.
@@ -133,6 +143,10 @@ extension ZMConversation {
 
         case .removedClients, .removedUsers:
             disableLegalHoldIfNeeded(cause: cause)
+            
+        case .verifyLegalHold:
+            enableLegalHoldIfNeeded(cause: cause)
+            disableLegalHoldIfNeeded(cause: cause)
 
         case .verifiedClients, .ignoredClients:
             // no-op: verification does not impact legal hold because no clients are added or removed
@@ -147,6 +161,10 @@ extension ZMConversation {
 
         case .removedUsers, .removedClients, .verifiedClients:
             increaseSecurityLevelIfNeeded(for: cause)
+            
+        case .verifyLegalHold:
+            // no-op: verifying legal hold does not impact security level
+            break
         }
     }
 
@@ -207,10 +225,12 @@ extension ZMConversation {
 
         switch statusHint {
         case .ENABLED where !legalHoldStatus.denotesEnabledComplianceDevice:
+            needsToVerifyLegalHold = true
             legalHoldStatus = .pendingApproval
             appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
         case .DISABLED where legalHoldStatus.denotesEnabledComplianceDevice:
+            needsToVerifyLegalHold = true
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
         default:
@@ -510,6 +530,7 @@ extension ZMConversation {
         case verifiedClients(Set<UserClient>)
         case removedClients([ZMUser: Set<UserClient>])
         case ignoredClients(Set<UserClient>)
+        case verifyLegalHold
     }
     
     fileprivate func appendNewAddedClientSystemMessage(cause: SecurityChangeCause) {
