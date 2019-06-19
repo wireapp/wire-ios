@@ -28,11 +28,22 @@ NS_ASSUME_NONNULL_BEGIN
 @interface ZMPersistentCookieStorage : NSObject
 
 + (instancetype)storageForServerName:(NSString *)serverName userIdentifier:(NSUUID *)userIdentifier;
+
+/// Looks up if there's any accessible authentication cookie data for any user
+///
+/// - Returns: True if it's possible acccess any authentication cookie data
++ (BOOL)hasAccessibleAuthenticationCookieData;
+
+/// Delete all keychain items for for all servers and users
 + (void)deleteAllKeychainItems;
 
+/// Delete all keychain items for current the user and server
 - (void)deleteKeychainItems;
 
+/// Authentication cookie available in the storage
 @property (nonatomic, nullable) NSData *authenticationCookieData;
+
+/// User identifier associated with the storage
 @property (nonatomic, readonly) NSUUID *userIdentifier;
 
 @end

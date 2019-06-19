@@ -26,6 +26,7 @@ NS_ASSUME_NONNULL_BEGIN
 + (nullable NSData *)dataForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
 + (nullable NSString *)stringForAccount:(NSString *)accountName;
 + (nullable NSString *)stringForAccount:(NSString *)accountName fallbackToDefaultGroup:(BOOL)fallback;
++ (BOOL)hasAccessibleAccountData;
 
 + (BOOL)setData:(NSData *)data forAccount:(NSString *)accountName;
 

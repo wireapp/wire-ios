@@ -113,6 +113,11 @@
     self.failureCount = 0;
     self.recordedResponse = nil;
     self.userIdentifier = nil;
+    
+#if TARGET_IPHONE_SIMULATOR
+    [ZMPersistentCookieStorage setDoNotPersistToKeychain:NO];
+#endif
+    
     [super tearDown];
 }
 

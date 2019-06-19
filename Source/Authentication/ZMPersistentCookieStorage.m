@@ -155,6 +155,16 @@ static dispatch_queue_t isolationQueue()
     });
 }
 
++ (BOOL)hasAccessibleAuthenticationCookieData
+{
+    __block BOOL success = NO;
+    dispatch_sync(isolationQueue(), ^{
+        success = [ZMKeychain hasAccessibleAccountData];
+    });
+    
+    return success;
+}
+
 @end
 
 
