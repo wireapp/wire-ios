@@ -53,9 +53,11 @@ class StrategyFactory {
 
     private func createStrategies(linkPreviewPreprocessor: LinkPreviewPreprocessor) -> [AnyObject] {
         return [
-            // Missing Clients
+            // Clients
             createMissingClientsStrategy(),
-
+            createFetchingClientsStrategy(),
+            createVerifyLegalHoldStrategy(),
+            
             // Client Messages
             createClientMessageTranscoder(),
 
@@ -67,6 +69,14 @@ class StrategyFactory {
             createAssetClientMessageRequestStrategy(),
             createAssetV3UploadRequestStrategy()
         ]
+    }
+    
+    private func createVerifyLegalHoldStrategy() -> VerifyLegalHoldRequestStrategy {
+        return VerifyLegalHoldRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+    }
+    
+    private func createFetchingClientsStrategy() -> FetchingClientRequestStrategy {
+        return FetchingClientRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     private func createMissingClientsStrategy() -> MissingClientsRequestStrategy {
