@@ -19,7 +19,13 @@
 import Foundation
 
 @objcMembers public class MockUser: NSManagedObject {
-    
+
+    public enum LegalHoldState: Equatable {
+        case enabled
+        case pending(MockPendingLegalHoldClient)
+        case disabled
+    }
+
     public static let mutualFriendsKey = "mutual_friends"
     public static let totalMutualFriendsKey = "total_mutual_friends"
 
@@ -52,6 +58,11 @@ import Foundation
 
     @NSManaged public var serviceIdentifier: String?
     @NSManaged public var richProfile: NSArray?
+    @NSManaged public var pendingLegalHoldClient: MockPendingLegalHoldClient?
+
+    public var userClients: Set<MockUserClient> {
+        return clients as! Set<MockUserClient>
+    }
 
     override public func awakeFromInsert() {
         if accentID == 0 {
@@ -88,6 +99,22 @@ extension MockUser {
         updatedValues.add(value)
         richProfile = updatedValues
     }
+}
+
+// MARK: - Legal Hold
+
+extension MockUser {
+
+    public var legalHoldState: LegalHoldState {
+        if userClients.any(\.isLegalHoldDevice) {
+            return .enabled
+        } else if let pendingDevice = pendingLegalHoldClient {
+            return .pending(pendingDevice)
+        } else {
+            return .disabled
+        }
+    }
+
 }
 
 // MARK: - Broadcasting

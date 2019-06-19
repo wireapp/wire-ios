@@ -24,7 +24,7 @@ import CoreData
     
     /// User that owns the client
     @NSManaged public var user : MockUser?
-    
+
     /// Remote identifier
     @NSManaged public var identifier : String?
     
@@ -84,9 +84,19 @@ extension MockUserClient {
     }
 }
 
+// MARK: - Legal Hold
+
+extension MockUserClient {
+
+    public var isLegalHoldDevice: Bool {
+        return type == "legalhold" || deviceClass == "legalhold"
+    }
+
+}
+
 // MARK: - JSON de/serialization
 @objc extension MockUserClient {
-    
+
     /// Creates a new client from JSON payload
     public static func insertClient(payload: [String:Any], context: NSManagedObjectContext) -> MockUserClient? {
         
@@ -139,7 +149,7 @@ extension MockUserClient {
     public static func insertClient(label: String, type: String = "permanent", deviceClass: String = "phone", for user: MockUser, in context: NSManagedObjectContext) -> MockUserClient?
     {
         let newClient = NSEntityDescription.insertNewObject(forEntityName: "UserClient", into: context) as! MockUserClient
-    
+
         newClient.user = user
         newClient.identifier = NSString.createAlphanumerical() as String
         newClient.label = label;
@@ -202,13 +212,17 @@ extension MockUserClient {
     @objc public static var mockEncryptionSessionDirectory: URL {
         return FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!.appendingPathComponent("mocktransport-encryptionDirectory")
     }
-    
-    fileprivate var encryptionContext: EncryptionContext {
+
+    static func encryptionContext(for user: MockUser?, clientId: String?) -> EncryptionContext {
         let directory = MockUserClient.mockEncryptionSessionDirectory
-            .appendingPathComponent("mockclient_\(self.user?.identifier ?? "USER")_\(self.identifier ?? "IDENTIFIER")")
+            .appendingPathComponent("mockclient_\(user?.identifier ?? "USER")_\(clientId ?? "IDENTIFIER")")
         try! FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true, attributes: [:])
         let encryptionContext = EncryptionContext(path: directory)
-        return encryptionContext;
+        return encryptionContext
+    }
+
+    fileprivate var encryptionContext: EncryptionContext {
+        return MockUserClient.encryptionContext(for: user, clientId: identifier)
     }
     
     /// Make sure that there is a session established between this client and the given client
@@ -264,5 +278,5 @@ extension MockUserClient {
 }
 
 /// Allowed client types
-private let validClientTypes = Set(["temporary", "permanent"])
+private let validClientTypes = Set(["temporary", "permanent", "legalhold"])
 
