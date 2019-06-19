@@ -66,7 +66,7 @@ extension OTREntity {
         // If we receive a missing payload that includes users that are not part of the conversation,
         // we need to refetch the conversation before recreating the message payload.
         // Otherwise we end up in an endless loop receiving missing clients error
-        if conversation.needsToBeUpdatedFromBackend {
+        if conversation.needsToBeUpdatedFromBackend || conversation.needsToVerifyLegalHold {
             zmLog.debug("conversation needs to be update from backend")
             return conversation
         }

@@ -28,6 +28,14 @@ public final class ClientMessageRequestFactory: NSObject {
     
     let protobufContentType = "application/x-protobuf"
     let octetStreamContentType = "application/octet-stream"
+    
+    public func upstreamRequestForFetchingClients(conversationId: UUID, selfClient: UserClient) -> ZMTransportRequest? {
+        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
+        let newOtrMessage = ZMNewOtrMessage.message(withSender: selfClient, nativePush: false, recipients: [])
+        let path = originalPath.pathWithMissingClientStrategy(strategy: .doNotIgnoreAnyMissingClient)
+        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: newOtrMessage.data(), type: protobufContentType, contentDisposition: nil)
+        return request
+    }
 
     public func upstreamRequestForMessage(_ message: ZMClientMessage) -> ZMTransportRequest? {
         return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!);
@@ -54,6 +62,7 @@ public final class ClientMessageRequestFactory: NSObject {
         request.forceToBackgroundSession()
         return request
     }
+    
 }
 
 // MARK: - Downloading
