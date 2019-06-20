@@ -235,6 +235,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
 
+    public var oneToOneConversation: ZMConversation? {
+        return user?.oneToOneConversation
+    }
+
     public var isBlocked: Bool {
         return user?.isBlocked == true
     }

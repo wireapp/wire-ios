@@ -37,28 +37,27 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         let request = LegalHoldRequest.mockRequest(for: selfUser)
         selfUser.userDidReceiveLegalHoldRequest(request)
 
-        let legalHoldClient = UserClient.insertNewObject(in: uiMOC)
-        legalHoldClient.deviceClass = .legalHold
-        legalHoldClient.type = .legalHold
-        legalHoldClient.user = selfUser
-
-        selfUser.userDidAcceptLegalHoldRequest(request)
-
         // THEN
-        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
+        XCTAssertEqual(selfUser.legalHoldStatus, .pending(request))
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
 
     func testThatLegalHoldStatusIsEnabled_AfterAcceptingRequest() {
         // GIVEN
         let selfUser = ZMUser.selfUser(in: uiMOC)
+        createSelfClient(onMOC: uiMOC)
 
         // WHEN
         let request = LegalHoldRequest.mockRequest(for: selfUser)
         selfUser.userDidReceiveLegalHoldRequest(request)
 
+        performPretendingUiMocIsSyncMoc {
+            _ = selfUser.addLegalHoldClient(from: request)
+            selfUser.userDidAcceptLegalHoldRequest(request)
+        }
+
         // THEN
-        XCTAssertEqual(selfUser.legalHoldStatus, .pending(request))
+        XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
 
