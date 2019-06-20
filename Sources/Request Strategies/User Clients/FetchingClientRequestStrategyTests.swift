@@ -51,8 +51,8 @@ class FetchClientRequestStrategyTests : MessagingTestBase {
     
 }
 
-
 // MARK: Fetching client based on needsToBeUpdatedFromBackend flag
+
 extension FetchClientRequestStrategyTests {
     
     func testThatItCreatesARequest_WhenUserClientNeedsToBeUpdatedFromBackend() {
@@ -92,6 +92,27 @@ extension FetchClientRequestStrategyTests {
         // THEN
         syncMOC.performGroupedBlockAndWait {
             XCTAssertEqual(client.deviceClass, .phone)
+        }
+    }
+    
+    func testThatItDeletesTheClient_WhenReceivingPermanentErrorResponse() {
+        var client: UserClient!
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            let request = self.sut.nextRequest()
+            request?.complete(with: ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(client.isZombieObject)
         }
     }
     
