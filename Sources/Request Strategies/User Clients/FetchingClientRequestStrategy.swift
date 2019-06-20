@@ -142,15 +142,18 @@ fileprivate final class UserClientByUserClientIDTranscoder: IdentifierObjectSync
     public func didReceive(response: ZMTransportResponse, for identifiers: Set<UserClientID>) {
 
         guard let identifier = identifiers.first,
-              let payload = response.payload as? [String: AnyObject],
               let user = ZMUser(remoteID: identifier.userId, createIfNeeded: true, in: managedObjectContext),
               let client = UserClient.fetchUserClient(withRemoteId: identifier.clientId, forUser:user, createIfNeeded: true) else { return }
         
-        client.update(with: payload)
-        
-        let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
-        
-        selfClient?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: client))
+        if response.result == .permanentError {
+            client.deleteClientAndEndSession()
+        } else if let payload = response.payload as? [String: AnyObject] {
+            client.update(with: payload)
+            
+            let selfClient = ZMUser.selfUser(in: managedObjectContext).selfClient()
+            
+            selfClient?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: client))
+        }
     }
 }
 
