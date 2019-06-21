@@ -182,6 +182,17 @@ extension ZMUser: SelfLegalHoldSubject {
         }
 
         legalHoldRequest = nil
+
+        // Add the legal hold enabled system message locally
+        if let legalHoldClient = clients.filter(\.isLegalHoldDevice).first {
+            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
+            fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
+            let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
+
+            conversations.forEach {
+                $0.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [self])
+            }
+        }
     }
 
     /**

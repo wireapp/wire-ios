@@ -47,6 +47,9 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         createSelfClient(onMOC: uiMOC)
 
+        let conversation = createConversation(in: uiMOC)
+        conversation.internalAddParticipants([selfUser])
+
         // WHEN
         let request = LegalHoldRequest.mockRequest(for: selfUser)
         selfUser.userDidReceiveLegalHoldRequest(request)
@@ -59,6 +62,10 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
+
+        let lastMessage = conversation.lastMessage as? ZMSystemMessage
+        XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
+        XCTAssertTrue(conversation.isUnderLegalHold)
     }
 
     func testThatItDoesntClearPendingStatus_AfterAcceptingWrongRequest() {

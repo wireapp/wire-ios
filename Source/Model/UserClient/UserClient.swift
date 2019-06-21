@@ -234,7 +234,7 @@ private let zmLog = ZMSLog(tag: "UserClient")
     public func deleteClientAndEndSession() {
         assert(self.managedObjectContext!.zm_isSyncContext, "clients can only be deleted on syncContext")
         // hold on to the conversations that are affected by removing this client
-        let conversations = activeConversationsForUserOfClients(Set(arrayLiteral: self))
+        let conversations = activeConversationsForUserOfClients([self])
         let user = self.user
         
         self.failedToEstablishSession = false
@@ -672,15 +672,15 @@ extension UserClient {
     }
     
     func activeConversationsForUserOfClients(_ clients: Set<UserClient>) -> Set<ZMConversation> {
-        let conversations : Set<ZMConversation> = clients.map{$0.user}.reduce(Set()){
-            guard let user = $1 else {return Set()}
+        let conversations : Set<ZMConversation> = clients.map(\.user).reduce(into: []) {
+            guard let user = $1 else { return }
             guard user.isSelfUser else {
-                return $0.union(user.lastServerSyncedActiveConversations.array as! [ZMConversation])
+                return $0.formUnion(user.lastServerSyncedActiveConversations.array as! [ZMConversation])
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
             let conversations = managedObjectContext!.fetchOrAssert(request: fetchRequest)
-            return $0.union(conversations)
+            return $0.formUnion(conversations)
         }
         return conversations
     }

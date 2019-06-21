@@ -47,7 +47,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
+            conversation.internalAddParticipants([otherUser])
             XCTAssertTrue(self.syncMOC.saveOrRollback())
             
             // when

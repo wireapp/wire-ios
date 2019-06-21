@@ -674,7 +674,7 @@ class ConversationObserverTests : NotificationDispatcherTestBase {
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, _ in
                                                         let user = ZMUser.insertNewObject(in: self.uiMOC)
-                                                        conversation.internalAddParticipants(Set(arrayLiteral: user))
+                                                        conversation.internalAddParticipants([user])
         },
                                                      expectedChangedFields: ["securityLevelChanged", "messagesChanged", "nameChanged", "participantsChanged"],
                                                      expectedChangedKeys: ["displayName", "allMessages", "lastServerSyncedActiveParticipants", "securityLevel"])

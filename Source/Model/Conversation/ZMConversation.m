@@ -783,8 +783,10 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     conversation.creator = selfUser;
     conversation.team = team;
 
-    [conversation internalAddParticipants:[NSSet setWithObject:participant]];
-    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date]];
+    NSSet<ZMUser *> *participants = [NSSet setWithObject:participant];
+
+    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date] users:participants];
+    [conversation internalAddParticipants:@[participant]];
 
     // We need to check if we should add a 'secure' system message in case all participants are trusted
     [conversation increaseSecurityLevelIfNeededAfterTrustingClients:participant.clients];
@@ -873,24 +875,29 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         conversation.allowGuests = allowGuests;
         conversation.hasReadReceiptsEnabled = readReceipts;
     }
-    
-    for (ZMUser *participant in participants) {
+
+    NSMutableSet<ZMUser *> *participantsSet = [NSMutableSet setWithArray:participants];
+    [participantsSet addObject:selfUser];
+
+    NSArray<ZMUser *> *filteredParticipants = [participants filterWithBlock:^BOOL(ZMUser * participant) {
         Require([participant isKindOfClass:[ZMUser class]]);
         const BOOL isSelf = (participant == selfUser);
         RequireString(!isSelf, "Can't pass self user as a participant of a group conversation");
-        if(!isSelf) {
-            [conversation internalAddParticipants:[NSSet setWithObject:participant]];
-        }
-    }
-    
+        return !isSelf;
+    }];
+
+    // Add the new conversation system message
+    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date] users:participantsSet];
+
+    // Add the participants
+    [conversation internalAddParticipants:filteredParticipants];
+
+    // We need to check if we should add a 'secure' system message in case all participants are trusted
     NSMutableSet *allClients = [NSMutableSet set];
     for (ZMUser *user in conversation.activeParticipants) {
         [allClients unionSet:user.clients];
     }
-    
-    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date]];
-    
-    // We need to check if we should add a 'secure' system message in case all participants are trusted
+
     [conversation increaseSecurityLevelIfNeededAfterTrustingClients:allClients];
     
     return conversation;
@@ -1090,16 +1097,15 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return result;
 }
 
-- (void)internalAddParticipants:(NSSet<ZMUser *> *)participants
+- (void)internalAddParticipants:(NSArray<ZMUser *> *)participants
 {
     VerifyReturn(participants != nil);
-    
-    NSSet<ZMUser *>* selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-    
-    NSMutableSet<ZMUser *>* otherUsers = [participants mutableCopy];
-    [otherUsers minusSet:selfUserSet];
-    
-    if ([participants intersectsSet:selfUserSet]) {
+    NSSet<ZMUser *> *selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
+    NSMutableOrderedSet<ZMUser *> *otherUsers = [NSMutableOrderedSet orderedSetWithArray:participants];
+
+    if ([otherUsers intersectsSet:selfUserSet]) {
+        [otherUsers minusSet:selfUserSet];
+
         self.isSelfAnActiveMember = YES;
         self.needsToBeUpdatedFromBackend = YES;
         
@@ -1110,30 +1116,31 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     
     if (otherUsers.count > 0) {
         NSSet *existingUsers = [self.lastServerSyncedActiveParticipants.set copy];
-        [self.mutableLastServerSyncedActiveParticipants addObjectsFromArray:otherUsers.allObjects];
+        [self.mutableLastServerSyncedActiveParticipants unionOrderedSet:otherUsers];
         
         [otherUsers minusSet:existingUsers];
         if (otherUsers.count > 0) {
-            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsers] causedByAddedUsers:otherUsers];
+            NSSet<ZMUser *> *otherUsersSet = otherUsers.set;
+            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsersSet] causedByAddedUsers:otherUsersSet];
         }
     }
 }
 
-- (void)internalRemoveParticipants:(NSSet<ZMUser *> *)participants sender:(ZMUser *)sender
+- (void)internalRemoveParticipants:(NSArray<ZMUser *> *)participants sender:(ZMUser *)sender
 {
     VerifyReturn(participants != nil);
     
     NSSet<ZMUser *>* selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-    NSMutableSet<ZMUser *>* otherUsers = [participants mutableCopy];
-    [otherUsers minusSet:selfUserSet];
-    
-    if ([participants intersectsSet:selfUserSet]) {
+    NSMutableOrderedSet<ZMUser *> *otherUsers = [NSMutableOrderedSet orderedSetWithArray:participants];
+
+    if ([otherUsers intersectsSet:selfUserSet]) {
+        [otherUsers minusSet:selfUserSet];
         self.isSelfAnActiveMember = NO;
         self.isArchived = sender.isSelfUser;
     }
     
-    [self.mutableLastServerSyncedActiveParticipants removeObjectsInArray:otherUsers.allObjects];
-    [self increaseSecurityLevelIfNeededAfterRemovingUsers:otherUsers];
+    [self.mutableLastServerSyncedActiveParticipants minusOrderedSet:otherUsers];
+    [self increaseSecurityLevelIfNeededAfterRemovingUsers:otherUsers.set];
 }
 
 @dynamic isSelfAnActiveMember;

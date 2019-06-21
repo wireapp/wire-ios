@@ -37,11 +37,11 @@ extension ZMConversation {
                             timestamp: timestamp)
     }
     
-    @objc(appendNewConversationSystemMessageAtTimestamp:)
-    public func appendNewConversationSystemMessage(at timestamp: Date) {
+    @objc(appendNewConversationSystemMessageAtTimestamp:users:)
+    public func appendNewConversationSystemMessage(at timestamp: Date, users: Set<ZMUser>) {
         let systemMessage = appendSystemMessage(type: .newConversation,
                                                 sender: creator,
-                                                users: activeParticipants,
+                                                users: users,
                                                 clients: nil,
                                                 timestamp: timestamp)
         
@@ -51,9 +51,9 @@ extension ZMConversation {
         if let context = managedObjectContext, let selfUserTeam = ZMUser.selfUser(in: context).team, team == selfUserTeam {
             
             let members = selfUserTeam.members.compactMap { $0.user }
-            let guests = activeParticipants.filter { $0.isGuest(in: self) }
+            let guests = users.filter { !$0.isServiceUser && $0.membership == nil }
             
-            systemMessage.allTeamUsersAdded = activeParticipants.isSuperset(of: members)
+            systemMessage.allTeamUsersAdded = users.isSuperset(of: members)
             systemMessage.numberOfGuestsAdded = Int16(guests.count)
         }
         

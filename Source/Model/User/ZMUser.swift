@@ -295,7 +295,7 @@ extension ZMUser {
                 conversation.appendParticipantRemovedSystemMessage(user: self, at: timestamp)
             }
             
-            conversation.internalRemoveParticipants(Set(arrayLiteral: self), sender: self)
+            conversation.internalRemoveParticipants([self], sender: self)
         }
     }
 }

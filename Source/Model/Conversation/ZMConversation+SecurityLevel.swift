@@ -307,7 +307,7 @@ extension ZMConversation {
         switch conversationType {
         case .group:
             appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
-            internalAddParticipants(Set(arrayLiteral: user))
+            internalAddParticipants([user])
         case .oneOnOne, .connection:
             if user.connection == nil {
                 user.connection = connection ?? ZMConnection.insertNewObject(in: managedObjectContext!)
