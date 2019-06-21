@@ -409,6 +409,33 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         }
     }
 
+    func testThatLegalHoldSystemMessageIsInstertedAtProperPosition_WhenCreatingGroup() {
+        syncMOC.performGroupedBlock {
+            // GIVEN
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            let otherUserB = ZMUser.insertNewObject(in: self.syncMOC)
+
+            self.createSelfClient(onMOC: self.syncMOC)
+            self.createClient(ofType: .legalHold, class: .legalHold, for: selfUser)
+            self.createClient(ofType: .permanent, class: .phone, for: otherUser)
+            self.createClient(ofType: .permanent, class: .phone, for: otherUserB)
+
+            // WHEN
+            let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [otherUser, otherUserB], in: nil)!
+
+            // THEN
+            XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
+            let messages = conversation.lastMessages()
+
+            let firstMessage = messages.last as? ZMSystemMessage
+            XCTAssertTrue(firstMessage?.systemMessageType == .newConversation)
+
+            let lastMessage = messages.first as? ZMSystemMessage
+            XCTAssertTrue(lastMessage?.systemMessageType == .legalHoldEnabled)
+        }
+    }
+
 
     // MARK - Discovering legal hold
     

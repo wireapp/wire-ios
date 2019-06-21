@@ -315,9 +315,9 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants(Set([user1, user2]))
-        conversation2.internalAddParticipants(Set([user1]))
-        conversation3.internalAddParticipants(Set([user2]))
+        conversation1.internalAddParticipants([user1, user2])
+        conversation2.internalAddParticipants([user1])
+        conversation3.internalAddParticipants([user2])
         self.moc.saveOrRollback()
         
         // sanity check
@@ -341,9 +341,9 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants(Set([user1, user2]))
-        conversation2.internalAddParticipants(Set([user1]))
-        conversation3.internalAddParticipants(Set([user2]))
+        conversation1.internalAddParticipants([user1, user2])
+        conversation2.internalAddParticipants([user1])
+        conversation3.internalAddParticipants([user2])
         self.moc.saveOrRollback()
         
         // sanity check

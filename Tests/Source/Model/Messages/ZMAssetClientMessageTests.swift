@@ -703,7 +703,7 @@ extension ZMAssetClientMessageTests {
         let otherClient = createClient(for: otherUser, createSessionWithSelfUser: true)
         let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
         conversation.conversationType = .group
-        conversation.internalAddParticipants(Set(arrayLiteral: otherUser))
+        conversation.internalAddParticipants([otherUser])
         XCTAssertTrue(self.syncMOC.saveOrRollback())
         
         return (otherClient, conversation)
