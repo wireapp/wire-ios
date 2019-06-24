@@ -34,6 +34,28 @@ import WireCryptobox
     }
 }
 
+/**
+ * Represents a set of client changes in a conversation.
+ */
+
+public struct ZMConversationRemoteClientChangeSet: OptionSet {
+    public let rawValue: Int
+
+    public init(rawValue: Int) {
+        self.rawValue = rawValue
+    }
+
+    /// Deleted clients were detected.
+    public static let deleted = ZMConversationRemoteClientChangeSet(rawValue: 1 << 0)
+
+    /// Missing clients were detected.
+    public static let missing = ZMConversationRemoteClientChangeSet(rawValue: 1 << 1)
+
+    /// Redundant clients were detected.
+    public static let redundant = ZMConversationRemoteClientChangeSet(rawValue: 1 << 2)
+}
+
+
 extension ZMConversation {
 
     /// Contains current security level of conversation.
@@ -85,10 +107,12 @@ extension ZMConversation {
     }
     
     /// Should be called if we need to verify the legal hold status after fetching the clients in a conversation.
-    @objc(updateSecurityLevelIfNeededAfterFetchingClients)
-    public func updateSecurityLevelIfNeededAfterFetchingClients() {
-        applySecurityChanges(cause: .verifyLegalHold)
+    public func updateSecurityLevelIfNeededAfterFetchingClients(changes: ZMConversationRemoteClientChangeSet) {
         needsToVerifyLegalHold = false
+
+        if changes.isEmpty {
+            applySecurityChanges(cause: .verifyLegalHold)
+        }
     }
 
     /// Should be called when client is trusted.
@@ -137,19 +161,20 @@ extension ZMConversation {
     }
 
     private func updateLegalHoldState(cause: SecurityChangeCause) {
-        switch cause {
-        case .addedUsers, .addedClients:
-            enableLegalHoldIfNeeded(cause: cause)
+        let detectedParticipantsUnderLegalHold = activeParticipants.any(\.isUnderLegalHold)
 
-        case .removedClients, .removedUsers:
-            disableLegalHoldIfNeeded(cause: cause)
-            
-        case .verifyLegalHold:
-            enableLegalHoldIfNeeded(cause: cause)
-            disableLegalHoldIfNeeded(cause: cause)
+        switch (legalHoldStatus, detectedParticipantsUnderLegalHold) {
+        case (.disabled, true):
+            legalHoldStatus = .pendingApproval
+            appendLegalHoldEnabledSystemMessageForConversation(cause: cause)
+            expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
 
-        case .verifiedClients, .ignoredClients:
-            // no-op: verification does not impact legal hold because no clients are added or removed
+        case (.pendingApproval, false), (.enabled, false):
+            legalHoldStatus = .disabled
+            appendLegalHoldDisabledSystemMessageForConversation()
+
+        default:
+            // no changes required
             break
         }
     }
@@ -194,27 +219,6 @@ extension ZMConversation {
         default:
             break
         }
-    }
-
-    /// Check whether the conversation became under legal hold and disable it if needed.
-    private func enableLegalHoldIfNeeded(cause: SecurityChangeCause) {
-        guard !legalHoldStatus.denotesEnabledComplianceDevice && activeParticipants.any(\.isUnderLegalHold) else {
-            return
-        }
-
-        legalHoldStatus = .pendingApproval
-        appendLegalHoldEnabledSystemMessageForConversation(cause: cause)
-        expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
-    }
-
-    /// Check whether the conversation is still under legal hold and disable it if needed.
-    private func disableLegalHoldIfNeeded(cause: SecurityChangeCause) {
-        guard legalHoldStatus.denotesEnabledComplianceDevice && !activeParticipants.any(\.isUnderLegalHold) else {
-            return
-        }
-
-        legalHoldStatus = .disabled
-        appendLegalHoldDisabledSystemMessageForConversation()
     }
 
     /// Update the legal hold status based on the hint of a message.
