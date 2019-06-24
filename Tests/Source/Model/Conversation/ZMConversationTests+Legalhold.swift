@@ -196,9 +196,10 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             conversation.conversationType = .group
             conversation.internalAddParticipants([selfUser, otherUser, otherUserB])
             conversation.legalHoldStatus = .disabled
-            
+
             // WHEN
-            conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+            let noChanges: ZMConversationRemoteClientChangeSet = []
+            conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
             
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
@@ -222,7 +223,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             conversation.legalHoldStatus = .enabled
             
             // WHEN
-            conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+            let noChanges: ZMConversationRemoteClientChangeSet = []
+            conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
             
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
@@ -247,7 +249,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
             
             // WHEN
-            conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+            let noChanges: ZMConversationRemoteClientChangeSet = []
+            conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
             
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .pendingApproval)
@@ -271,7 +274,8 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
             
             // WHEN
-            conversation.updateSecurityLevelIfNeededAfterFetchingClients()
+            let noChanges: ZMConversationRemoteClientChangeSet = []
+            conversation.updateSecurityLevelIfNeededAfterFetchingClients(changes: noChanges)
             
             // THEN
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
