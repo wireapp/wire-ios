@@ -31,6 +31,9 @@ public protocol SelfLegalHoldSubject {
 
     /// Whether the user needs to acknowledge the current legal hold status.
     var needsToAcknowledgeLegalHoldStatus: Bool { get }
+    
+    /// Call this method a pending legal hold request was cancelled
+    func legalHoldRequestWasCancelled()
 
     /// Call this method when the user received a legal hold request.
     func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest)
@@ -83,12 +86,6 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     }
 
-    /// The ID of the admin who sent the request.
-    public let requesterIdentifier: UUID
-
-    /// The ID of the user that should receive legal hold.
-    public let targetUserIdentifier: UUID
-
     /// The ID of the legal hold client.
     public let clientIdentifier: String
 
@@ -97,9 +94,7 @@ public struct LegalHoldRequest: Codable, Hashable {
 
     // MARK: Initialization
 
-    public init(requesterIdentifier: UUID, targetUserIdentifier: UUID, clientIdentifier: String, lastPrekey: Prekey) {
-        self.requesterIdentifier = requesterIdentifier
-        self.targetUserIdentifier = targetUserIdentifier
+    public init(clientIdentifier: String, lastPrekey: Prekey) {
         self.clientIdentifier = clientIdentifier
         self.lastPrekey = lastPrekey
     }
@@ -107,8 +102,6 @@ public struct LegalHoldRequest: Codable, Hashable {
     // MARK: Codable
 
     private enum CodingKeys: String, CodingKey {
-        case requesterIdentifier = "requester"
-        case targetUserIdentifier = "target_user"
         case clientIdentifier = "client_id"
         case lastPrekey = "last_prekey"
     }
@@ -169,6 +162,15 @@ extension ZMUser: SelfLegalHoldSubject {
             didChangeValue(forKey: ZMUserKeys.legalHoldRequest)
         }
     }
+    
+    /**
+     * Call this method a pending legal hold request was cancelled
+     */
+    
+    public func legalHoldRequestWasCancelled() {
+        legalHoldRequest = nil
+        needsToAcknowledgeLegalHoldStatus = false
+    }
 
     /**
      * Call this method when the user accepted the legal hold request.
@@ -225,11 +227,6 @@ extension ZMUser: SelfLegalHoldSubject {
      */
 
     public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
-        guard request.targetUserIdentifier == self.remoteIdentifier else {
-            // Do not handle requests if the user ID doesn't match the self user ID
-            return
-        }
-
         legalHoldRequest = request
         needsToAcknowledgeLegalHoldStatus = true
     }
