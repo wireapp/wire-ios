@@ -39,6 +39,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case readReceiptsEnabledChangedRemotely = "readReceiptsEnabledChangedRemotelyChanged"
         case richProfile = "richProfileChanged"
         case legalHoldStatus = "legalHoldStatusChanged"
+        case isUnderLegalHold = "isUnderLegalHoldChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -57,8 +58,12 @@ class UserObserverTests : NotificationDispatcherTestBase {
 }
 
 extension UserObserverTests {
-
+    
     func checkThatItNotifiesTheObserverOfAChange(_ user : ZMUser, modifier: (ZMUser) -> Void, expectedChangedField: UserInfoChangeKey) {
+        checkThatItNotifiesTheObserverOfAChange(user, modifier: modifier, expectedChangedFields: [expectedChangedField])
+    }
+    
+    func checkThatItNotifiesTheObserverOfAChange(_ user : ZMUser, modifier: (ZMUser) -> Void, expectedChangedFields: [UserInfoChangeKey]) {
 
         // given
         self.uiMOC.saveOrRollback()
@@ -85,7 +90,7 @@ extension UserObserverTests {
         
         guard let changes = userObserver.notifications.first else { return }
         changes.checkForExpectedChangeFields(userInfoKeys: Set(userInfoChangeKeys.map{$0.rawValue}),
-                                             expectedChangedFields: [expectedChangedField.rawValue])
+                                             expectedChangedFields: Set(expectedChangedFields.map{$0.rawValue}))
     }
     
     
@@ -584,7 +589,7 @@ extension UserObserverTests {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: { _ in UserClient.createMockLegalHoldSelfUserClient(in: uiMOC) },
-                                                     expectedChangedField: .legalHoldStatus)
+                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
     }
@@ -605,9 +610,22 @@ extension UserObserverTests {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: modifier,
-                                                     expectedChangedField: .legalHoldStatus)
+                                                     expectedChangedFields: [.legalHoldStatus, .isUnderLegalHold])
 
         XCTAssertTrue(user.needsToAcknowledgeLegalHoldStatus)
+    }
+    
+    func testThatItNotifiesTheObserverOfIsUnderLegalHoldChange_DeviceClassIsAssigned() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        let client = UserClient.insertNewObject(in: uiMOC)
+        client.remoteIdentifier = "123"
+        client.user = user
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { _ in client.deviceClass = .legalHold },
+                                                     expectedChangedField: .isUnderLegalHold)
     }
 
 }
