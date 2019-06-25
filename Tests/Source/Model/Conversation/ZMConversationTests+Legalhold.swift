@@ -509,6 +509,19 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertTrue(conversation.messagesThatCausedSecurityLevelDegradation.isEmpty)
         }
     }
+    
+    func testItUpdatesNeedsToVerifyLegalHold_WhenCallingVerifyLegalHoldSubjects() {
+        syncMOC.performGroupedBlock {
+            // GIVEN
+            let conversation = self.createConversation(in: self.syncMOC)
+            
+            // WHEN
+            conversation.verifyLegalHoldSubjects()
+            
+            // THEN
+            XCTAssertTrue(conversation.needsToVerifyLegalHold)
+        }
+    }
 
     // MARK: - Message Status Hints
 

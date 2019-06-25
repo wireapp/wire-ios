@@ -73,7 +73,7 @@ extension ZMUser: UserType {
     }
 
     @objc class func keyPathsForValuesAffectingIsUnderLegalHold() -> Set<String> {
-        return [UserClientsKey]
+        return [UserClientsKey, "clients.deviceClass"]
     }
     
     public var allClients: [UserClientType] {

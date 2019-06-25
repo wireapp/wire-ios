@@ -95,6 +95,12 @@ extension ZMConversation {
     @objc public var selfUserCanSendMessages: Bool {
         return !isReadOnly && securityLevel != .secureWithIgnored && legalHoldStatus != .pendingApproval
     }
+    
+    /// Verify the legal hold subjects in the conversation. This will synchronize with the backend on who's currently under legal hold.
+    @objc public func verifyLegalHoldSubjects() {
+        needsToVerifyLegalHold = true
+        managedObjectContext?.saveOrRollback()
+    }
 
     // MARK: - Events
 
