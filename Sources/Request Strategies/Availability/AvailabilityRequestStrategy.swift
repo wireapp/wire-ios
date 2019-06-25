@@ -73,7 +73,7 @@ extension AvailabilityRequestStrategy : ZMUpstreamTranscoder {
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
         guard let clientRegistrationDelegate = applicationStatus?.clientRegistrationDelegate else { return false }
         
-        return parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
+        return parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate).contains(.missing)
     }
     
     public func shouldProcessUpdatesBeforeInserts() -> Bool {
