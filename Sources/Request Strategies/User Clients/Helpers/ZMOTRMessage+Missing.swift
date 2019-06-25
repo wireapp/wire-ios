@@ -31,7 +31,7 @@ import WireDataModel
 public extension ZMOTRMessage {
 
     @objc func parseMissingClientsResponse(_ response: ZMTransportResponse, clientRegistrationDelegate: ClientRegistrationDelegate) -> Bool {
-        return self.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate)
+        return self.parseUploadResponse(response, clientRegistrationDelegate: clientRegistrationDelegate).contains(.missing)
     }
 
 }

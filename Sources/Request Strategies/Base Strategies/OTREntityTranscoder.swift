@@ -39,7 +39,7 @@ open class OTREntityTranscoder<Entity : OTREntity & Hashable> : NSObject, Entity
     
     /// If you override this method in your subclass you must call super.
     open func shouldTryToResend(entity: Entity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
-        return entity.parseUploadResponse(response, clientRegistrationDelegate: self.clientRegistrationDelegate)
+        return entity.parseUploadResponse(response, clientRegistrationDelegate: self.clientRegistrationDelegate).contains(.missing)
     }
     
 }
