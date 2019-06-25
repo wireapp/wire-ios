@@ -28,6 +28,20 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
     }
+    
+    func testThatLegalHoldStatusIsDisabled_AfterCancelingRequest() {
+        // GIVEN
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let request = LegalHoldRequest.mockRequest(for: selfUser)
+        selfUser.userDidReceiveLegalHoldRequest(request)
+        
+        // WHEN
+        selfUser.legalHoldRequestWasCancelled()
+        
+        // THEN
+        XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
+        XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
+    }
 
     func testThatLegalHoldStatusIsPending_AfterReceivingRequest() {
         // GIVEN
@@ -67,27 +81,6 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
         XCTAssertTrue(conversation.isUnderLegalHold)
     }
-
-    func testThatItDoesntClearPendingStatus_AfterAcceptingWrongRequest() {
-        // GIVEN
-        let selfUser = ZMUser.selfUser(in: uiMOC)
-
-        let otherUser = ZMUser.insert(in: uiMOC, name: "Bob the Other User")
-        otherUser.remoteIdentifier = UUID()
-
-        // WHEN
-        let selfRequest = LegalHoldRequest.mockRequest(for: selfUser)
-        selfUser.userDidReceiveLegalHoldRequest(selfRequest)
-
-        let otherRequest = LegalHoldRequest.mockRequest(for: otherUser)
-        selfUser.userDidReceiveLegalHoldRequest(otherRequest)
-        selfUser.userDidAcceptLegalHoldRequest(otherRequest)
-
-        // THEN
-        XCTAssertFalse(selfRequest == otherRequest)
-        XCTAssertEqual(selfUser.legalHoldStatus, .pending(selfRequest))
-    }
-
 
     func testThatLegalHoldStatusIsEnabled_AfterAddingClient() {
         // GIVEN
@@ -159,7 +152,7 @@ extension LegalHoldRequest {
 
     static func mockRequest(for user: ZMUser) -> LegalHoldRequest {
         let prekey = LegalHoldRequest.Prekey(id: 65535, key: Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!)
-        return LegalHoldRequest(requesterIdentifier: UUID(), targetUserIdentifier: user.remoteIdentifier!, clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
+        return LegalHoldRequest(clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
     }
 
 }
