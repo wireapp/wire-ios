@@ -170,7 +170,7 @@ extension MockTransportSession {
 
         // 3) Check the password
         guard let password = payload?.asDictionary()?["password"] as? String, password == member.user.password else {
-            return errorResponse(withCode: 409, reason: "missing-auth")
+            return errorResponse(withCode: 403, reason: "access-denied")
         }
 
         // 4) Check the legal hold state of the team and user
