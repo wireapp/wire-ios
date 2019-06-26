@@ -56,6 +56,7 @@
              @"user.update" : @(ZMUpdateEventTypeUserUpdate),
              @"user.delete" : @(ZMUpdateEventTypeUserDelete),
              @"user.contact-join" : @(ZMUpdateEventTypeUserContactJoin),
+             @"user.legalhold-disabled": @(ZMUpdateEventTypeUserLegalHoldDisabled),
              @"user.client-add" : @(ZMUpdateEventTypeUserClientAdd),
              @"user.client-remove" : @(ZMUpdateEventTypeUserClientRemove),
              @"user.client-legal-hold-request" : @(ZMUpdateEventTypeUserClientLegalHoldRequest),
