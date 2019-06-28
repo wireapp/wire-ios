@@ -835,3 +835,49 @@ extension UserClientTests {
     }
 }
 
+// MARK: - Update from payload
+
+extension UserClientTests {
+    
+    func testThatItUpdatesDeviceClassFromPayload() {
+        // given
+        let allCases: [DeviceClass] = [.desktop, .phone, .tablet, .legalHold]
+        let client = UserClient.insertNewObject(in: uiMOC)
+        client.user = createUser(in: uiMOC)
+        
+        for deviceClass in allCases {
+            // when
+            client.update(with: ["class": deviceClass.rawValue])
+            
+            // then
+            XCTAssertEqual(client.deviceClass, deviceClass)
+        }
+    }
+    
+    func testThatItSelfClientsAreNotUpdatedFromPayload() {
+        // given
+        let deviceClass = DeviceClass.desktop
+        let selfClient = createSelfClient()
+        
+        // when
+        selfClient.update(with: ["class": deviceClass.rawValue])
+        
+        // then
+        XCTAssertNotEqual(selfClient.deviceClass, deviceClass)
+    }
+    
+    func testThatItResetsNeedsToBeUpdatedFromBackend() {
+        // given
+        let client = UserClient.insertNewObject(in: uiMOC)
+        client.user = createUser(in: uiMOC)
+        client.needsToBeUpdatedFromBackend = true
+        
+        // when
+        client.update(with: [:])
+        
+        // then
+        XCTAssertFalse(client.needsToBeUpdatedFromBackend)
+    }
+        
+}
+
