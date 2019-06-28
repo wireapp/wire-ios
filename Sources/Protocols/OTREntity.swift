@@ -58,6 +58,7 @@ private let UnknownClientLabel = "unknown-client"
 /// Error label
 private let ErrorLabel = "label"
 
+
 extension OTREntity {
     
     /// Which object this message depends on when sending
@@ -131,9 +132,9 @@ extension OTREntity {
         var allMissingClients: Set<UserClient> = []
 
         for (userID, remoteClientIdentifiers) in missingMap {
-            guard let userID = UUID(uuidString: userID) else { continue }
-            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.context)!
-
+            guard let userID = UUID(uuidString: userID),
+                  let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.context), !user.isSelfUser else { continue }
+            
             let remoteIdentifiers = Set(remoteClientIdentifiers)
             let localIdentifiers = Set(user.clients.compactMap(\.remoteIdentifier))
 

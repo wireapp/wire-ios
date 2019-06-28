@@ -18,6 +18,21 @@
 import XCTest
 @testable import WireRequestStrategy
 
+struct ClientUpdateResponse: Codable {
+    
+    typealias ClientList = [String: [String]]
+    
+    enum ErrorLabel: String, Codable {
+        case unknownClient = "unknown-client"
+    }
+    
+    var label: ErrorLabel?
+    var missing: ClientList?
+    var deleted: ClientList?
+    var redundant: ClientList?
+    
+}
+
 class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
 
     var sut: VerifyLegalHoldRequestStrategy!
@@ -36,8 +51,13 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         super.tearDown()
     }
     
+    func missingClientsResponse(_ clientUpdateResponse: ClientUpdateResponse) -> ZMTransportData {
+        let encoder = JSONEncoder()
+        let encoded = try! encoder.encode(clientUpdateResponse)
+        return try! JSONSerialization.jsonObject(with: encoded, options: []) as! ZMTransportData
+    }
     
-    // MARK: Fetching client based on needsToBeUpdatedFromBackend flag
+    // MARK: Request generation
     
     func testThatItCreatesARequest_WhenConversationNeedsToVerifyLegalHold() {
         syncMOC.performGroupedBlockAndWait {
@@ -52,6 +72,8 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(self.sut.nextRequest()?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages")
         }
     }
+    
+    // MARK: Response handling
     
     func testThatItResetsNeedsToVerifyLegalHoldFlag_WhenReceivingTheResponse() {
         var conversation: ZMConversation!
@@ -70,6 +92,92 @@ class VerifyLegalHoldRequestStrategyTests: MessagingTestBase {
         // THEN
         syncMOC.performGroupedBlockAndWait {
             XCTAssertFalse(conversation.needsToVerifyLegalHold)
+        }
+    }
+    
+    func testThatItRegistersMissingClients() {
+        var conversation: ZMConversation!
+        let userID = UUID()
+        let clientID = "client123"
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            conversation = self.createGroupConversation(with: self.otherUser)
+            conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
+            self.sut.objectsDidChange(Set(arrayLiteral: conversation))
+            let request = self.sut.nextRequest()
+            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [userID.transportString(): [clientID]], deleted: nil, redundant: nil))
+
+            // WHEN
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            guard let user = ZMUser.fetch(withRemoteIdentifier: userID, in: self.syncMOC) else { return XCTFail() }
+            guard let client = UserClient.fetchUserClient(withRemoteId: clientID, forUser: user, createIfNeeded: false) else { return XCTFail() }
+            
+            XCTAssertEqual(client.remoteIdentifier, clientID)
+        }
+    }
+    
+    func testThatItDeletesDeletedClients() {
+        var conversation: ZMConversation!
+        let userID = UUID()
+        let deletedClientID = "client1"
+        let existingClientID = "client2"
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            guard let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMOC) else { return XCTFail() }
+            XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: user, createIfNeeded: true))
+            XCTAssertNotNil(UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: user, createIfNeeded: true))
+            
+            conversation = self.createGroupConversation(with: self.otherUser)
+            conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
+            self.sut.objectsDidChange(Set(arrayLiteral: conversation))
+            
+            let request = self.sut.nextRequest()
+            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [userID.transportString(): [existingClientID]], deleted: nil, redundant: nil))
+            
+            // WHEN
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            guard let user = ZMUser.fetch(withRemoteIdentifier: userID, in: self.syncMOC) else { return XCTFail() }
+            guard let existingClient = UserClient.fetchUserClient(withRemoteId: existingClientID, forUser: user, createIfNeeded: false) else { return XCTFail() }
+            
+            XCTAssertNil(UserClient.fetchUserClient(withRemoteId: deletedClientID, forUser: user, createIfNeeded: false))
+            XCTAssertEqual(existingClient.remoteIdentifier, existingClientID)
+        }
+    }
+    
+    func testThatItIgnoresMissingSelfClients() {
+        var conversation: ZMConversation!
+        let selfClientID = "selfClient1"
+    
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            conversation = self.createGroupConversation(with: self.otherUser)
+            conversation.setValue(true, forKey: #keyPath(ZMConversation.needsToVerifyLegalHold))
+            self.sut.objectsDidChange(Set(arrayLiteral: conversation))
+            
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let request = self.sut.nextRequest()
+            let payload = self.missingClientsResponse(ClientUpdateResponse(label: nil, missing: [selfUser.remoteIdentifier.transportString(): [selfClientID]], deleted: nil, redundant: nil))
+            
+            // WHEN
+            request?.complete(with: ZMTransportResponse(payload: payload, httpStatus: 412, transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            
+            XCTAssertNotNil(selfUser.selfClient())
         }
     }
 
