@@ -223,10 +223,11 @@ private let zmLog = ZMSLog(tag: "UserClient")
     /// If called on a client belonging to the self user this method does nothing.
     
     public func update(with payload: [String: Any]) {
+        self.needsToBeUpdatedFromBackend = false
+        
         guard user?.isSelfUser == false, let deviceClass = payload["class"] as? String else { return }
         
         self.deviceClass = DeviceClass(rawValue: deviceClass)
-        self.needsToBeUpdatedFromBackend = false
     }
 
     /// Resets releationships and ends an exisiting session before deleting the object
