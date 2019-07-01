@@ -80,7 +80,10 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
     self.conversationType = [self conversationTypeFromTransportData:[transportData numberForKey:ConversationInfoTypeKey]];
     
     if (serverTimeStamp != nil) {
-        [self updateLastModified:serverTimeStamp];
+         // If the lastModifiedDate is non-nil, e.g. restore from backup, do not update the lastModifiedDate
+        if (self.lastModifiedDate == nil) {
+            [self updateLastModified:serverTimeStamp];
+        }
         [self updateServerModified:serverTimeStamp];
     }
     

@@ -21,9 +21,6 @@
 #import "ZMConversation+Transport.h"
 #import "WireDataModelTests-Swift.h"
 
-@interface ZMConversationTransportTests : ZMConversationTestsBase
-@end
-
 @implementation ZMConversationTransportTests
 
 - (NSDictionary *)payloadForMetaDataOfConversation:(ZMConversation *)conversation
