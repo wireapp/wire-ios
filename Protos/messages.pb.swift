@@ -1849,12 +1849,23 @@ public struct Reaction {
   /// Clears the value of `messageID`. Subsequent reads from it will return its default value.
   public mutating func clearMessageID() {self._messageID = nil}
 
+  /// whether this message was sent to legal hold
+  public var legalHoldStatus: LegalHoldStatus {
+    get {return _legalHoldStatus ?? .disabled}
+    set {_legalHoldStatus = newValue}
+  }
+  /// Returns true if `legalHoldStatus` has been explicitly set.
+  public var hasLegalHoldStatus: Bool {return self._legalHoldStatus != nil}
+  /// Clears the value of `legalHoldStatus`. Subsequent reads from it will return its default value.
+  public mutating func clearLegalHoldStatus() {self._legalHoldStatus = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _emoji: String? = nil
   fileprivate var _messageID: String? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
 }
 
 public struct Calling {
@@ -3936,6 +3947,7 @@ extension Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .same(proto: "emoji"),
     2: .standard(proto: "message_id"),
+    3: .standard(proto: "legal_hold_status"),
   ]
 
   public var isInitialized: Bool {
@@ -3948,6 +3960,7 @@ extension Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       switch fieldNumber {
       case 1: try decoder.decodeSingularStringField(value: &self._emoji)
       case 2: try decoder.decodeSingularStringField(value: &self._messageID)
+      case 3: try decoder.decodeSingularEnumField(value: &self._legalHoldStatus)
       default: break
       }
     }
@@ -3960,12 +3973,16 @@ extension Reaction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if let v = self._messageID {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     }
+    if let v = self._legalHoldStatus {
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Reaction, rhs: Reaction) -> Bool {
     if lhs._emoji != rhs._emoji {return false}
     if lhs._messageID != rhs._messageID {return false}
+    if lhs._legalHoldStatus != rhs._legalHoldStatus {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
