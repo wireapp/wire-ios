@@ -167,6 +167,11 @@ extension ZMConversation {
     }
 
     private func updateLegalHoldState(cause: SecurityChangeCause) {
+        guard !needsToVerifyLegalHold, !activeParticipants.any({ $0.clients.any(\.needsToBeUpdatedFromBackend) }) else {
+            // We don't update the legal hold status if we are still gathering information about which clients were added/deleted
+            return
+        }
+        
         let detectedParticipantsUnderLegalHold = activeParticipants.any(\.isUnderLegalHold)
 
         switch (legalHoldStatus, detectedParticipantsUnderLegalHold) {
