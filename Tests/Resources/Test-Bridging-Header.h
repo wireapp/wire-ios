@@ -31,3 +31,4 @@
 #import "NSString+RandomString.h"
 #import "ZMConversationTests.h"
 #import "ZMUserTests.h"
+#import "ZMConversationTests+Transport.h"
