@@ -2450,17 +2450,22 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 
 #define Reaction_emoji @"emoji"
 #define Reaction_message_id @"messageId"
+#define Reaction_legal_hold_status @"legalHoldStatus"
 @interface ZMReaction : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasEmoji_:1;
   BOOL hasMessageId_:1;
+  BOOL hasLegalHoldStatus_:1;
   NSString* emoji;
   NSString* messageId;
+  ZMLegalHoldStatus legalHoldStatus;
 }
 - (BOOL) hasEmoji;
 - (BOOL) hasMessageId;
+- (BOOL) hasLegalHoldStatus;
 @property (readonly, strong) NSString* emoji;
 @property (readonly, strong) NSString* messageId;
+@property (readonly) ZMLegalHoldStatus legalHoldStatus;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -2506,6 +2511,11 @@ NSString *NSStringFromZMAssetNotUploaded(ZMAssetNotUploaded value);
 - (NSString*) messageId;
 - (ZMReactionBuilder*) setMessageId:(NSString*) value;
 - (ZMReactionBuilder*) clearMessageId;
+
+- (BOOL) hasLegalHoldStatus;
+- (ZMLegalHoldStatus) legalHoldStatus;
+- (ZMReactionBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value;
+- (ZMReactionBuilder*) clearLegalHoldStatus;
 @end
 
 #define Calling_content @"content"
