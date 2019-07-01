@@ -522,6 +522,56 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertTrue(conversation.needsToVerifyLegalHold)
         }
     }
+    
+    func testThatItDoesntUpdateLegalHoldStatus_WhenNeedsToVerifyLegalHoldStatusIsTrue() {
+        syncMOC.performGroupedBlock {
+            // GIVEN
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            
+            self.createSelfClient(onMOC: self.syncMOC)
+            self.createClient(ofType: .permanent, class: .phone, for: otherUser)
+            
+            let conversation = self.createConversation(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.internalAddParticipants([selfUser, otherUser])
+            conversation.needsToVerifyLegalHold = true
+            
+            XCTAssertEqual(conversation.legalHoldStatus, .disabled)
+            
+            // WHEN
+            let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [otherUser])
+            
+            // THEN
+            XCTAssertEqual(conversation.legalHoldStatus, .disabled)
+        }
+    }
+    
+    func testThatItDoesntUpdateLegalHoldStatus_WhenAnyClientStillNeedsToBeFetchedFromTheBackend() {
+        syncMOC.performGroupedBlock {
+            // GIVEN
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
+            
+            self.createSelfClient(onMOC: self.syncMOC)
+            self.createClient(ofType: .permanent, class: .phone, for: otherUser)
+            
+            let conversation = self.createConversation(in: self.syncMOC)
+            conversation.conversationType = .group
+            conversation.internalAddParticipants([selfUser, otherUser])
+            
+            XCTAssertEqual(conversation.legalHoldStatus, .disabled)
+            
+            // WHEN
+            let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
+            legalHoldClient.needsToBeUpdatedFromBackend = true
+            conversation.decreaseSecurityLevelIfNeededAfterDiscovering(clients: [legalHoldClient], causedBy: [otherUser])
+            
+            // THEN
+            XCTAssertEqual(conversation.legalHoldStatus, .disabled)
+        }
+    }
 
     // MARK: - Message Status Hints
 
