@@ -1002,20 +1002,14 @@ extension ZMReaction: MessageContentType {
         return false
     }
 
-    public func hasLegalHoldStatus() -> Bool {
-        return false
-    }
-
-    public var legalHoldStatus: ZMLegalHoldStatus {
-        return .DISABLED
-    }
-
     public func updateExpectsReadConfirmation(_ value: Bool) -> MessageContentType? {
         return nil
     }
 
     public func updateLegalHoldStatus(_ value: ZMLegalHoldStatus) -> MessageContentType? {
-       return nil
+        let builder = toBuilder()
+        builder?.setLegalHoldStatus(value)
+        return builder?.build()
     }
 
 }
