@@ -130,10 +130,15 @@ extension OTREntity {
 
         var changes: ZMConversationRemoteClientChangeSet = []
         var allMissingClients: Set<UserClient> = []
-
+        var redundantUsers = conversation.activeParticipants
+        
+        redundantUsers.remove(ZMUser.selfUser(in: context))
+        
         for (userID, remoteClientIdentifiers) in missingMap {
             guard let userID = UUID(uuidString: userID),
                   let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.context), !user.isSelfUser else { continue }
+            
+            redundantUsers.remove(user)
             
             let remoteIdentifiers = Set(remoteClientIdentifiers)
             let localIdentifiers = Set(user.clients.compactMap(\.remoteIdentifier))
@@ -164,8 +169,16 @@ extension OTREntity {
                 allMissingClients.formUnion(userMissingClients)
             }
         }
+        
+        for redundantUser in redundantUsers {
+            // Users no longer present in the list of missing clients are either no longer in the group
+            // or have deleted all their clients. Both cases are edges cases which should only happen
+            // after missing events.
+            redundantUser.clients.forEach({ $0.deleteClientAndEndSession() })
+        }
 
         registersNewMissingClients(allMissingClients)
+        
         return changes
     }
 
