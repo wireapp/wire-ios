@@ -210,10 +210,10 @@ extension MockTransportSession {
 
     private func pushEventForPendingLegalHoldDevice(_ device: MockPendingLegalHoldClient) -> MockPushEvent {
         let payload: NSDictionary = [
-            "type": "user.client-legal-hold-request",
+            "id": device.user!.identifier,
+            "type": "user.legalhold-request",
             "requester": UUID().transportString(),
-            "target_user": device.user!.identifier,
-            "client_id": device.identifier!,
+            "client": ["id": device.identifier!],
             "last_prekey": [
                 "id": device.lastPrekey.identifier,
                 "key": device.lastPrekey.value
