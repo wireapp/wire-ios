@@ -42,6 +42,20 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
         XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
     }
+    
+    func testThatLegalHoldStatusIsDisabled_AfterReceivingRequestTargetingAnotherUser() {
+        // GIVEN
+        let otherUser = createUser(in: uiMOC)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        
+        // WHEN
+        let request = LegalHoldRequest.mockRequest(for: otherUser)
+        selfUser.userDidReceiveLegalHoldRequest(request)
+        
+        // THEN
+        XCTAssertEqual(selfUser.legalHoldStatus, .disabled)
+        XCTAssertFalse(selfUser.needsToAcknowledgeLegalHoldStatus)
+    }
 
     func testThatLegalHoldStatusIsPending_AfterReceivingRequest() {
         // GIVEN
@@ -152,7 +166,7 @@ extension LegalHoldRequest {
 
     static func mockRequest(for user: ZMUser) -> LegalHoldRequest {
         let prekey = LegalHoldRequest.Prekey(id: 65535, key: Data(base64Encoded: "pQABARn//wKhAFggHsa0CszLXYLFcOzg8AA//E1+Dl1rDHQ5iuk44X0/PNYDoQChAFgg309rkhG6SglemG6kWae81P1HtQPx9lyb6wExTovhU4cE9g==")!)
-        return LegalHoldRequest(clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
+        return LegalHoldRequest(target: user.remoteIdentifier!, requester: UUID(), clientIdentifier: "eca3c87cfe28be49", lastPrekey: prekey)
     }
 
 }

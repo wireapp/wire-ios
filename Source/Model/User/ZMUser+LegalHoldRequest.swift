@@ -85,24 +85,48 @@ public struct LegalHoldRequest: Codable, Hashable {
         }
 
     }
-
+    
+    /**
+     * Represent a client in the legal hold request.
+     */
+    
+    private struct Client: Codable, Hashable {
+        
+        /// The ID of the client
+        let id: String
+    }
+    
+    private let client: Client
+    
     /// The ID of the legal hold client.
-    public let clientIdentifier: String
+    public var clientIdentifier: String {
+        get {
+            return client.id
+        }
+    }
 
     /// The last prekey for the legal hold client.
     public let lastPrekey: Prekey
+    /// The user id of the user receiving the legal hold request
+    public let target: UUID?
+    /// The user id of the admin that issued the the legal hold request
+    public let requester: UUID?
 
     // MARK: Initialization
 
-    public init(clientIdentifier: String, lastPrekey: Prekey) {
-        self.clientIdentifier = clientIdentifier
+    public init(target: UUID, requester: UUID, clientIdentifier: String, lastPrekey: Prekey) {
+        self.target = target
+        self.requester = requester
+        self.client = Client(id: clientIdentifier)
         self.lastPrekey = lastPrekey
     }
 
     // MARK: Codable
 
     private enum CodingKeys: String, CodingKey {
-        case clientIdentifier = "client_id"
+        case target = "id"
+        case requester
+        case client
         case lastPrekey = "last_prekey"
     }
 
@@ -227,6 +251,11 @@ extension ZMUser: SelfLegalHoldSubject {
      */
 
     public func userDidReceiveLegalHoldRequest(_ request: LegalHoldRequest) {
+        guard request.target == nil || request.target == self.remoteIdentifier else {
+            // Do not handle requests if the user ID doesn't match the self user ID
+            return
+        }
+
         legalHoldRequest = request
         needsToAcknowledgeLegalHoldStatus = true
     }
