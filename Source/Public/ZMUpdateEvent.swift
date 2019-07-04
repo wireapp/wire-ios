@@ -55,11 +55,12 @@ import WireUtilities
     case userUpdate = 18
     case userDelete = 35
     case userPushRemove = 19
+    case userLegalHoldEnabled = 38
     case userLegalHoldDisabled = 37
+    case userLegalHoldRequest = 36
     case userContactJoin = 20
     case userClientAdd = 21
     case userClientRemove = 22
-    case userClientLegalHoldRequest = 36
     case userPropertiesSet = 32
     case userPropertiesDelete = 33
     case teamCreate = 23
@@ -71,7 +72,7 @@ import WireUtilities
     case teamConversationDelete = 29
     case teamMemberUpdate = 30
 
-    // Current max value: conversationReceiptModeUpdate = 37
+    // Current max value: conversationReceiptModeUpdate = 38
 }
 
 extension ZMUpdateEventType {
@@ -124,14 +125,16 @@ extension ZMUpdateEventType {
             return "user.push-remove"
         case .userContactJoin:
             return "user.contact-join"
+        case .userLegalHoldEnabled:
+            return "user.legalhold-enabled"
         case .userLegalHoldDisabled:
             return "user.legalhold-disabled"
+        case .userLegalHoldRequest:
+            return "user.legalhold-request"
         case .userClientAdd:
             return "user.client-add"
         case .userClientRemove:
             return "user.client-remove"
-        case .userClientLegalHoldRequest:
-            return "user.client-legal-hold-request"
         case .teamCreate:
             return "team.create"
         case .teamDelete:
