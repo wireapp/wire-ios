@@ -47,6 +47,9 @@ import Foundation
     
     /// Delete any existing session with client and establish a new one.
     func resetSession()
+    
+    /// Returns true if this is the active client of the self user
+    func isSelfClient() -> Bool
 
     /// Fetches the fingerprint or the prekeys of the device.
     func fetchFingerprintOrPrekeys()
