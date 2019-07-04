@@ -353,7 +353,8 @@ public extension UserClient {
         // TODO: could optimize: look into self user relationship before executing a fetch request
         let fetchedClient = fetchExistingUserClient(with: id, in: context)
         let client = fetchedClient ?? UserClient.insertNewObject(in: context)
-
+        let isNewClient = fetchedClient == nil
+        
         client.label = label
         client.type = DeviceType(rawValue: type)
         client.activationAddress = activationAddress
@@ -367,15 +368,13 @@ public extension UserClient {
         let selfUser = ZMUser.selfUser(in: context)
         client.user = client.user ?? selfUser
 
-        if client.isLegalHoldDevice {
+        if client.isLegalHoldDevice, isNewClient {
             selfUser.legalHoldRequest = nil
             selfUser.needsToAcknowledgeLegalHoldStatus = true
         }
 
         if let selfClient = selfUser.selfClient() {
-            if client.remoteIdentifier != selfClient.remoteIdentifier &&
-                fetchedClient == .none
-            {
+            if client.remoteIdentifier != selfClient.remoteIdentifier && isNewClient {
                 client.fetchFingerprintOrPrekeys()
                 
                 if let selfClientActivationdate = selfClient.activationDate , client.activationDate?.compare(selfClientActivationdate) == .orderedDescending {
