@@ -372,7 +372,7 @@ extension MockTransportSessionTeamEventsTests {
             return XCTFail("Expected one update event")
         }
 
-        XCTAssertEqual(firstEvent.type, .userClientLegalHoldRequest)
+        XCTAssertEqual(firstEvent.type, .userLegalHoldRequest)
     }
 
 }
