@@ -47,8 +47,10 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         super.tearDown()
     }
     
-    static var legalHoldRequest: LegalHoldRequest {
+    static func legalHoldRequest(for user: ZMUser) -> LegalHoldRequest {
         return LegalHoldRequest(
+            target: user.remoteIdentifier!,
+            requester: UUID(),
             clientIdentifier: "eca3c87cfe28be49",
             lastPrekey: LegalHoldRequest.Prekey(
                 id: 65535,
@@ -58,25 +60,46 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
     
     static func payloadForReceivingLegalHoldRequestStatus(request: LegalHoldRequest) -> ZMTransportData {
-        return [
+        var payload: [String: Any] = [
             "status": "pending",
-            "client_id": request.clientIdentifier,
+            "client": ["id": request.clientIdentifier],
             "last_prekey": [
                 "id": request.lastPrekey.id,
                 "key": request.lastPrekey.key.base64EncodedString()
             ]
-            ] as ZMTransportData
+        ]
+        
+        if let target = request.target {
+            payload["id"] = target.transportString()
+        }
+        
+        if let requester = request.requester {
+            payload["requester"] = requester.transportString()
+        }
+        
+        return payload as ZMTransportData
     }
     
     static func payloadForReceivingLegalHoldRequestEvent(request: LegalHoldRequest) -> ZMTransportData {
-        return [
-            "type": "user.client-legal-hold-request",
-            "client_id": request.clientIdentifier,
+        var payload: [String: Any] = [
+            "type": "user.legalhold-request",
+            "client": ["id": request.clientIdentifier],
             "last_prekey": [
                 "id": request.lastPrekey.id,
                 "key": request.lastPrekey.key.base64EncodedString()
             ]
-            ] as ZMTransportData
+        ]
+        
+        
+        if let target = request.target {
+            payload["id"] = target.transportString()
+        }
+        
+        if let requester = request.requester {
+            payload["requester"] = requester.transportString()
+        }
+        
+        return payload as ZMTransportData
     }
     
     // MARK: - Slow Sync
@@ -129,7 +152,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
     }
     
     func testThatItCreatesALegalHoldRequest_WhenLegalHoldStatusIsPending() {
-        let expectedLegalHoldRequest = type(of: self).legalHoldRequest
+        var expectedLegalHoldRequest: LegalHoldRequest!
         
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
@@ -139,6 +162,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = .create()
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
+            expectedLegalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             
             let payload = type(of: self).payloadForReceivingLegalHoldRequestStatus(request: expectedLegalHoldRequest)
             guard let request = self.sut.nextRequest() else { return XCTFail() }
@@ -164,7 +188,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             team.remoteIdentifier = .create()
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
             
-            let legalHoldRequest = type(of: self).legalHoldRequest
+            let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
             
             let payload: [AnyHashable: Any] = [
@@ -193,7 +217,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
         
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        let legalHoldRequest = type(of: self).legalHoldRequest
+        let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
         let payload = type(of: self).payloadForReceivingLegalHoldRequestEvent(request: legalHoldRequest)
         let event = ZMUpdateEvent(fromEventStreamPayload: payload, uuid: UUID())!
         
@@ -217,7 +241,7 @@ class LegalHoldRequestStrategyTests: MessagingTest {
             team.remoteIdentifier = .create()
             _ = Member.getOrCreateMember(for: selfUser, in: team, context: self.syncMOC)
             
-            let legalHoldRequest = type(of: self).legalHoldRequest
+            let legalHoldRequest = type(of: self).legalHoldRequest(for: selfUser)
             selfUser.userDidReceiveLegalHoldRequest(legalHoldRequest)
             XCTAssertEqual(selfUser.legalHoldStatus, .pending(legalHoldRequest))
         }
