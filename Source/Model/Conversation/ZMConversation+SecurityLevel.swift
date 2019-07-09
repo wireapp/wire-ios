@@ -289,9 +289,8 @@ extension ZMConversation {
                                                      timestamp: timestamp)
         systemMessage.needsUpdatingUsers = true
         
-        if let previousLastMessage = previousLastMessage as? ZMSystemMessage,
-            previousLastMessage.systemMessageType == .potentialGap,
-            previousLastMessage.serverTimestamp < timestamp {
+        if let previousLastMessage = previousLastMessage as? ZMSystemMessage, previousLastMessage.systemMessageType == .potentialGap,
+           let previousLastMessageTimestamp = previousLastMessage.serverTimestamp, previousLastMessageTimestamp <= timestamp {
             // In case the message before the new system message was also a system message of
             // the type ZMSystemMessageTypePotentialGap, we delete the old one and update the
             // users property of the new one to use old users and calculate the added / removed users
