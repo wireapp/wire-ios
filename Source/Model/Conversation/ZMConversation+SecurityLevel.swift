@@ -342,7 +342,7 @@ extension ZMConversation {
     private func appendLegalHoldEnabledSystemMessageForConversation(cause: SecurityChangeCause) {
         var timestamp : Date?
         
-        if case .addedClients(_, let message) = cause, message?.conversation == self {
+        if case .addedClients(_, let message) = cause, message?.conversation == self, message?.isUpdatingExistingMessage == false {
             timestamp = self.timestamp(before: message)
         }
         
@@ -456,11 +456,10 @@ extension ZMConversation {
         
         let timeoutLimit = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime())
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        let undeliveredMessagesPredicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == NO AND %K > %@",
+        let undeliveredMessagesPredicate = NSPredicate(format: "%K == %@ AND %K == %@ AND %K == NO",
                                                        ZMMessageConversationKey, self,
                                                        ZMMessageSenderKey, selfUser,
-                                                       DeliveredKey,
-                                                       ZMMessageServerTimestampKey, timeoutLimit as NSDate)
+                                                       DeliveredKey)
         
         let fetchRequest = NSFetchRequest<ZMClientMessage>(entityName: ZMClientMessage.entityName())
         fetchRequest.predicate = undeliveredMessagesPredicate
@@ -472,7 +471,9 @@ extension ZMConversation {
         undeliveredMessages += managedObjectContext.fetchOrAssert(request: fetchRequest) as [ZMOTRMessage]
         undeliveredMessages += managedObjectContext.fetchOrAssert(request: assetFetchRequest) as [ZMOTRMessage]
         
-        return undeliveredMessages
+        return undeliveredMessages.filter { message in
+            return message.serverTimestamp > timeoutLimit || message.updatedAt > timeoutLimit
+        }
     }
     
 }
@@ -697,6 +698,15 @@ extension ZMSystemMessage {
         let fetchRequest = ZMSystemMessage.sortedFetchRequest(with: compound)!
         let result = conversation.managedObjectContext!.executeFetchRequestOrAssert(fetchRequest)!
         return result.first as? ZMSystemMessage
+    }
+}
+
+extension ZMOTRMessage {
+    
+    fileprivate var isUpdatingExistingMessage: Bool {
+        guard let genericMessage = genericMessage else { return false }
+        
+        return genericMessage.hasEdited() || genericMessage.hasReaction()
     }
 }
 

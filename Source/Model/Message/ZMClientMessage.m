@@ -237,6 +237,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     if (self.genericMessage.hasEdited) {
         // Re-apply the edit since we've restored the orignal nonce when the message expired
         [self editText:self.textMessageData.messageText mentions:self.textMessageData.mentions fetchLinkPreview:YES];
+        [super resend];
     } else {
         [super resend];
     }

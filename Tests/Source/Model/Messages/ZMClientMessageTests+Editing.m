@@ -259,6 +259,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    XCTAssertFalse(message.isExpired);
     XCTAssertNotEqualObjects(editNonce2, editNonce1);
     XCTAssertEqualObjects(message.genericMessage.edited.replacingMessageId, originalNonce.transportString);
 }
