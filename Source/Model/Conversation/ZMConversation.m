@@ -755,7 +755,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     } else if (create) {
         ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:moc];
         conversation.remoteIdentifier = UUID;
-        conversation.lastModifiedDate = [NSDate dateWithTimeIntervalSince1970:0];
         conversation.lastServerTimeStamp = [NSDate dateWithTimeIntervalSince1970:0];
         if (nil != created) {
             *created = YES;
