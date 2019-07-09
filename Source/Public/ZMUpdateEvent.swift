@@ -55,8 +55,8 @@ import WireUtilities
     case userUpdate = 18
     case userDelete = 35
     case userPushRemove = 19
-    case userLegalHoldEnabled = 38
-    case userLegalHoldDisabled = 37
+    case userLegalHoldEnable = 38
+    case userLegalHoldDisable = 37
     case userLegalHoldRequest = 36
     case userContactJoin = 20
     case userClientAdd = 21
@@ -125,10 +125,10 @@ extension ZMUpdateEventType {
             return "user.push-remove"
         case .userContactJoin:
             return "user.contact-join"
-        case .userLegalHoldEnabled:
-            return "user.legalhold-enabled"
-        case .userLegalHoldDisabled:
-            return "user.legalhold-disabled"
+        case .userLegalHoldEnable:
+            return "user.legalhold-enable"
+        case .userLegalHoldDisable:
+            return "user.legalhold-disable"
         case .userLegalHoldRequest:
             return "user.legalhold-request"
         case .userClientAdd:
