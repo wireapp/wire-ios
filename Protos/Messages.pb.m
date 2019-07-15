@@ -76,6 +76,7 @@ NSString *NSStringFromZMEncryptionAlgorithm(ZMEncryptionAlgorithm value) {
 
 BOOL ZMLegalHoldStatusIsValidValue(ZMLegalHoldStatus value) {
   switch (value) {
+    case ZMLegalHoldStatusUNKNOWN:
     case ZMLegalHoldStatusDISABLED:
     case ZMLegalHoldStatusENABLED:
       return YES;
@@ -85,6 +86,8 @@ BOOL ZMLegalHoldStatusIsValidValue(ZMLegalHoldStatus value) {
 }
 NSString *NSStringFromZMLegalHoldStatus(ZMLegalHoldStatus value) {
   switch (value) {
+    case ZMLegalHoldStatusUNKNOWN:
+      return @"ZMLegalHoldStatusUNKNOWN";
     case ZMLegalHoldStatusDISABLED:
       return @"ZMLegalHoldStatusDISABLED";
     case ZMLegalHoldStatusENABLED:
@@ -2497,7 +2500,7 @@ static ZMEphemeral* defaultZMEphemeralInstance = nil;
     self.content = @"";
     self.quote = [ZMQuote defaultInstance];
     self.expectsReadConfirmation = NO;
-    self.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   }
   return self;
 }
@@ -2978,7 +2981,7 @@ static ZMText* defaultZMTextInstance = nil;
 }
 - (ZMTextBuilder*) clearLegalHoldStatus {
   resultText.hasLegalHoldStatus = NO;
-  resultText.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+  resultText.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   return self;
 }
 @end
@@ -3026,7 +3029,7 @@ static ZMText* defaultZMTextInstance = nil;
   if ((self = [super init])) {
     self.hotKnock = NO;
     self.expectsReadConfirmation = NO;
-    self.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   }
   return self;
 }
@@ -3300,7 +3303,7 @@ static ZMKnock* defaultZMKnockInstance = nil;
 }
 - (ZMKnockBuilder*) clearLegalHoldStatus {
   resultKnock.hasLegalHoldStatus = NO;
-  resultKnock.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+  resultKnock.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   return self;
 }
 @end
@@ -6841,7 +6844,7 @@ NSString *NSStringFromZMConfirmationType(ZMConfirmationType value) {
     self.name = @"";
     self.zoom = 0;
     self.expectsReadConfirmation = NO;
-    self.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   }
   return self;
 }
@@ -7238,7 +7241,7 @@ static ZMLocation* defaultZMLocationInstance = nil;
 }
 - (ZMLocationBuilder*) clearLegalHoldStatus {
   resultLocation.hasLegalHoldStatus = NO;
-  resultLocation.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+  resultLocation.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   return self;
 }
 @end
@@ -8025,7 +8028,7 @@ static ZMImageAsset* defaultZMImageAssetInstance = nil;
     self.uploaded = [ZMAssetRemoteData defaultInstance];
     self.preview = [ZMAssetPreview defaultInstance];
     self.expectsReadConfirmation = NO;
-    self.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   }
   return self;
 }
@@ -10859,7 +10862,7 @@ static ZMAssetRemoteData* defaultZMAssetRemoteDataInstance = nil;
 }
 - (ZMAssetBuilder*) clearLegalHoldStatus {
   resultAsset.hasLegalHoldStatus = NO;
-  resultAsset.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+  resultAsset.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   return self;
 }
 @end
@@ -11209,7 +11212,7 @@ static ZMExternal* defaultZMExternalInstance = nil;
   if ((self = [super init])) {
     self.emoji = @"";
     self.messageId = @"";
-    self.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   }
   return self;
 }
@@ -11483,7 +11486,7 @@ static ZMReaction* defaultZMReactionInstance = nil;
 }
 - (ZMReactionBuilder*) clearLegalHoldStatus {
   resultReaction.hasLegalHoldStatus = NO;
-  resultReaction.legalHoldStatus = ZMLegalHoldStatusDISABLED;
+  resultReaction.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
   return self;
 }
 @end
