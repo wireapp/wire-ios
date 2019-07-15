@@ -234,17 +234,13 @@ extension ZMConversation {
 
     /// Update the legal hold status based on the hint of a message.
     private func updateLegalHoldIfNeededWithHint(from message: ZMGenericMessage, timestamp: Date) {
-        guard let statusHint = message.content?.legalHoldStatusHint else {
-            return
-        }
-
-        switch statusHint {
-        case .ENABLED where !legalHoldStatus.denotesEnabledComplianceDevice:
+        switch message.content?.legalHoldStatus {
+        case .ENABLED? where !legalHoldStatus.denotesEnabledComplianceDevice:
             needsToVerifyLegalHold = true
             legalHoldStatus = .pendingApproval
             appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
-        case .DISABLED where legalHoldStatus.denotesEnabledComplianceDevice:
+        case .DISABLED? where legalHoldStatus.denotesEnabledComplianceDevice:
             needsToVerifyLegalHold = true
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)

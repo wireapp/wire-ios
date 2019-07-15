@@ -32,19 +32,6 @@ public protocol EphemeralMessageContentType: MessageContentType {
     func setEphemeralContent(on builder: ZMEphemeralBuilder)
 }
 
-extension MessageContentType {
-
-    /// An optional hint that indicates the state of legal hold on the sender's side.
-    var legalHoldStatusHint: ZMLegalHoldStatus? {
-        guard hasLegalHoldStatus() else {
-            return nil
-        }
-
-        return legalHoldStatus
-    }
-
-}
-
 @objc public extension ZMGenericMessage {
 
     var v3_isImage: Bool {

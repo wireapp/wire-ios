@@ -645,9 +645,9 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
         })
     }
 
-    func testThatItDoesNotUpdateFromMessageHint_EnabledReceivingMessageWithoutHint() {
-        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
-            ZMAvailability.availability(.busy)
+    func testThatItDoesNotUpdateFromMessageHint_EnabledReceivingMessageWithUnknownLegalHoldStatus() {
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .UNKNOWN, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
+            ZMText.text(with: "I know nothing")
         })
     }
     
