@@ -138,8 +138,9 @@ BOOL ZMEncryptionAlgorithmIsValidValue(ZMEncryptionAlgorithm value);
 NSString *NSStringFromZMEncryptionAlgorithm(ZMEncryptionAlgorithm value);
 
 typedef NS_ENUM(SInt32, ZMLegalHoldStatus) {
-  ZMLegalHoldStatusDISABLED = 0,
-  ZMLegalHoldStatusENABLED = 1,
+  ZMLegalHoldStatusUNKNOWN = 0,
+  ZMLegalHoldStatusDISABLED = 1,
+  ZMLegalHoldStatusENABLED = 2,
 };
 
 BOOL ZMLegalHoldStatusIsValidValue(ZMLegalHoldStatus value);

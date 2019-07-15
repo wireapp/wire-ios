@@ -104,25 +104,28 @@ extension EncryptionAlgorithm: CaseIterable {
 
 public enum LegalHoldStatus: SwiftProtobuf.Enum {
   public typealias RawValue = Int
-  case disabled // = 0
-  case enabled // = 1
+  case unknown // = 0
+  case disabled // = 1
+  case enabled // = 2
 
   public init() {
-    self = .disabled
+    self = .unknown
   }
 
   public init?(rawValue: Int) {
     switch rawValue {
-    case 0: self = .disabled
-    case 1: self = .enabled
+    case 0: self = .unknown
+    case 1: self = .disabled
+    case 2: self = .enabled
     default: return nil
     }
   }
 
   public var rawValue: Int {
     switch self {
-    case .disabled: return 0
-    case .enabled: return 1
+    case .unknown: return 0
+    case .disabled: return 1
+    case .enabled: return 2
     }
   }
 
@@ -543,7 +546,7 @@ public struct Text {
 
   /// whether this message was sent to legal hold
   public var legalHoldStatus: LegalHoldStatus {
-    get {return _storage._legalHoldStatus ?? .disabled}
+    get {return _storage._legalHoldStatus ?? .unknown}
     set {_uniqueStorage()._legalHoldStatus = newValue}
   }
   /// Returns true if `legalHoldStatus` has been explicitly set.
@@ -584,7 +587,7 @@ public struct Knock {
 
   /// whether this message was sent to legal hold
   public var legalHoldStatus: LegalHoldStatus {
-    get {return _legalHoldStatus ?? .disabled}
+    get {return _legalHoldStatus ?? .unknown}
     set {_legalHoldStatus = newValue}
   }
   /// Returns true if `legalHoldStatus` has been explicitly set.
@@ -1169,7 +1172,7 @@ public struct Location {
 
   /// whether this message was sent to legal hold
   public var legalHoldStatus: LegalHoldStatus {
-    get {return _legalHoldStatus ?? .disabled}
+    get {return _legalHoldStatus ?? .unknown}
     set {_legalHoldStatus = newValue}
   }
   /// Returns true if `legalHoldStatus` has been explicitly set.
@@ -1371,7 +1374,7 @@ public struct Asset {
 
   /// whether this message was sent to legal hold
   public var legalHoldStatus: LegalHoldStatus {
-    get {return _storage._legalHoldStatus ?? .disabled}
+    get {return _storage._legalHoldStatus ?? .unknown}
     set {_uniqueStorage()._legalHoldStatus = newValue}
   }
   /// Returns true if `legalHoldStatus` has been explicitly set.
@@ -1851,7 +1854,7 @@ public struct Reaction {
 
   /// whether this message was sent to legal hold
   public var legalHoldStatus: LegalHoldStatus {
-    get {return _legalHoldStatus ?? .disabled}
+    get {return _legalHoldStatus ?? .unknown}
     set {_legalHoldStatus = newValue}
   }
   /// Returns true if `legalHoldStatus` has been explicitly set.
@@ -1906,8 +1909,9 @@ extension EncryptionAlgorithm: SwiftProtobuf._ProtoNameProviding {
 
 extension LegalHoldStatus: SwiftProtobuf._ProtoNameProviding {
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
-    0: .same(proto: "DISABLED"),
-    1: .same(proto: "ENABLED"),
+    0: .same(proto: "UNKNOWN"),
+    1: .same(proto: "DISABLED"),
+    2: .same(proto: "ENABLED"),
   ]
 }
 
