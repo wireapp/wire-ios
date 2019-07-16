@@ -491,16 +491,13 @@ NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
         return;
     }
     
-    BOOL updatedTimestamp = NO;
     NSDate *timestamp = [payload dateForKey:@"time"];
     if (timestamp == nil) {
         ZMLogWarn(@"No time in message post response from backend.");
-    } else if( ! [timestamp isEqualToDate:self.serverTimestamp]) {
+    } else {
         self.serverTimestamp = timestamp;
-        updatedTimestamp = YES;
     }
     
-    [self.conversation updateServerModified:timestamp];
     [self.conversation updateTimestampsAfterUpdatingMessage:self];
 }
 
