@@ -27,7 +27,6 @@ public protocol TeamType: class {
 
 }
 
-
 @objcMembers public class Team: ZMManagedObject, TeamType {
 
     @NSManaged public var conversations: Set<ZMConversation>
