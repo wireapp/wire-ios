@@ -53,6 +53,47 @@ public protocol UserSessionSource: class {
     var isSelectedAccountAuthenticated: Bool { get }
 }
 
+/// SessionManagerConfiguration is configuration class which can be used when initializing a SessionManager configure
+/// change the default behaviour.
+
+@objcMembers
+public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
+    
+    /// If set to true then the session manager will delete account data instead of just asking the user to re-authenticate when the cookie or client gets invalidated.
+    ///
+    /// The default value of this property is `false`.
+    public var deleteAccountOnAuthenticationFailure: Bool
+    
+    /// The `blacklistDownloadInterval` configures at which rate we update the client blacklist
+    ///
+    /// The default value of this property is `6 hours`
+    public var blacklistDownloadInterval: TimeInterval
+    
+    public init(deleteAccountOnAuthentictionFailure: Bool = false,
+                blacklistDownloadInterval: TimeInterval = 6 * 60 * 60) {
+        self.deleteAccountOnAuthenticationFailure = deleteAccountOnAuthentictionFailure
+        self.blacklistDownloadInterval = blacklistDownloadInterval
+    }
+    
+    public func copy(with zone: NSZone? = nil) -> Any {
+        let copy = SessionManagerConfiguration(deleteAccountOnAuthentictionFailure: deleteAccountOnAuthenticationFailure,
+                                               blacklistDownloadInterval: blacklistDownloadInterval)
+        
+        return copy
+    }
+    
+    public static var defaultConfiguration: SessionManagerConfiguration {
+        return SessionManagerConfiguration()
+    }
+    
+    public static func load(from URL: URL) -> SessionManagerConfiguration? {
+        guard let data = try? Data(contentsOf: URL) else { return nil }
+        
+        let decoder = JSONDecoder()
+        
+        return  try? decoder.decode(SessionManagerConfiguration.self, from: data)
+    }
+}
 
 @objc
 public protocol SessionManagerType : class {
@@ -211,6 +252,7 @@ public protocol ForegroundNotificationResponder: class {
     let reachability: ReachabilityProvider & TearDownCapable
     var pushRegistry: PushRegistry
     let notificationsTracker: NotificationsTracker?
+    let configuration: SessionManagerConfiguration
     
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
     
@@ -238,7 +280,7 @@ public protocol ForegroundNotificationResponder: class {
         guard let selectedAccount = accountManager.selectedAccount else {
             return false
         }
-
+        
         return environment.isAuthenticated(selectedAccount)
     }
 
@@ -255,7 +297,7 @@ public protocol ForegroundNotificationResponder: class {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
-        blacklistDownloadInterval: TimeInterval,
+        configuration: SessionManagerConfiguration,
         completion: @escaping (SessionManager) -> Void
         ) {
         
@@ -267,7 +309,7 @@ public protocol ForegroundNotificationResponder: class {
                 delegate: delegate,
                 application: application,
                 environment: environment,
-                blacklistDownloadInterval: blacklistDownloadInterval
+                configuration: configuration
             ))
         }
     }
@@ -283,7 +325,7 @@ public protocol ForegroundNotificationResponder: class {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
-        blacklistDownloadInterval: TimeInterval
+        configuration: SessionManagerConfiguration = SessionManagerConfiguration()
         ) {
         
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Session manager reachability")!
@@ -311,11 +353,12 @@ public protocol ForegroundNotificationResponder: class {
             delegate: delegate,
             application: application,
             pushRegistry: PKPushRegistry(queue: nil),
-            environment: environment
+            environment: environment,
+            configuration: configuration
         )
         
-        if blacklistDownloadInterval > 0 {
-            self.blacklistVerificator = ZMBlacklistVerificator(checkInterval: blacklistDownloadInterval,
+        if configuration.blacklistDownloadInterval > 0 {
+            self.blacklistVerificator = ZMBlacklistVerificator(checkInterval: configuration.blacklistDownloadInterval,
                                                                version: appVersion,
                                                                environment: environment,
                                                                working: nil,
@@ -357,7 +400,8 @@ public protocol ForegroundNotificationResponder: class {
         application: ZMApplication,
         pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup? = nil,
-        environment: BackendEnvironmentProvider
+        environment: BackendEnvironmentProvider,
+        configuration: SessionManagerConfiguration = SessionManagerConfiguration()
         ) {
 
         SessionManager.enableLogsByEnvironmentVariable()
@@ -366,6 +410,7 @@ public protocol ForegroundNotificationResponder: class {
         self.application = application
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
+        self.configuration = configuration.copy() as! SessionManagerConfiguration
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
@@ -514,6 +559,18 @@ public protocol ForegroundNotificationResponder: class {
         }
     }
     
+    fileprivate func logout(account: Account, error: Error? = nil) {
+        log.debug("Logging out account \(account.userIdentifier)...")
+        
+        if let session = backgroundUserSessions[account.userIdentifier] {
+            if session == activeUserSession {
+                logoutCurrentSession(deleteCookie: true, error: error)
+            } else {
+                tearDownBackgroundSession(for: account.userIdentifier)
+            }
+        }
+    }
+    
     public func logoutCurrentSession(deleteCookie: Bool = true) {
         logoutCurrentSession(deleteCookie: deleteCookie, error: nil)
     }
@@ -558,7 +615,7 @@ public protocol ForegroundNotificationResponder: class {
         activateSession(for: authenticatedAccount, completion: completion)
     }
  
-    public func deleteAccountData(for account: Account) {
+    fileprivate func deleteAccountData(for account: Account) {
         log.debug("Deleting the data for \(account.userName) -- \(account.userIdentifier)")
         
         environment.cookieStorage(for: account).deleteKeychainItems()
@@ -872,9 +929,8 @@ extension SessionManager: PostLoginAuthenticationObserver {
     }
     
     public func authenticationInvalidated(_ error: NSError, accountId: UUID) {
-        guard let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)) else {
-            return
-        }
+        guard let userSessionErrorCode = ZMUserSessionErrorCode(rawValue: UInt(error.code)),
+              let account = accountManager.account(with: accountId) else { return }
         
         log.debug("Authentication invalidated for \(accountId): \(error.code)")
         
@@ -882,13 +938,10 @@ extension SessionManager: PostLoginAuthenticationObserver {
         case .clientDeletedRemotely,
              .accessTokenExpired:
             
-            if let session = self.backgroundUserSessions[accountId] {
-                if session == activeUserSession {
-                    logoutCurrentSession(deleteCookie: true, error: error)
-                }
-                else {
-                    self.tearDownBackgroundSession(for: accountId)
-                }
+            if configuration.deleteAccountOnAuthenticationFailure {
+                delete(account: account)
+            } else {
+                logout(account: account, error: error)
             }
             
         default:
