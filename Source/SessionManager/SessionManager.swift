@@ -44,6 +44,7 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey : Any]
     func sessionManagerWillMigrateAccount(_ account: Account)
     func sessionManagerWillMigrateLegacyAccount()
     func sessionManagerDidBlacklistCurrentVersion()
+    func sessionManagerDidBlacklistJailbrokenDevice()
 }
 
 @objc
@@ -69,15 +70,31 @@ public class SessionManagerConfiguration: NSObject, NSCopying, Codable {
     /// The default value of this property is `6 hours`
     public var blacklistDownloadInterval: TimeInterval
     
+    /// The `blacklistAccountOnJailbreakDetection` configures if app should lock when the device is jailbroken
+    ///
+    /// The default value of this property is `false`
+    public var blacklistAccountOnJailbreakDetection: Bool
+    
+    /// If set to true then the session manager will delete account data on a jailbroken device.
+    ///
+    /// The default value of this property is `false`
+    public var deleteAccountOnJailbreakDetection: Bool
+    
     public init(deleteAccountOnAuthentictionFailure: Bool = false,
-                blacklistDownloadInterval: TimeInterval = 6 * 60 * 60) {
+                blacklistDownloadInterval: TimeInterval = 6 * 60 * 60,
+                blacklistAccountOnJailbreakDetection: Bool = false,
+                deleteAccountOnJailbreakDetection: Bool = false) {
         self.deleteAccountOnAuthenticationFailure = deleteAccountOnAuthentictionFailure
         self.blacklistDownloadInterval = blacklistDownloadInterval
+        self.blacklistAccountOnJailbreakDetection = blacklistAccountOnJailbreakDetection
+        self.deleteAccountOnJailbreakDetection = deleteAccountOnJailbreakDetection
     }
     
     public func copy(with zone: NSZone? = nil) -> Any {
         let copy = SessionManagerConfiguration(deleteAccountOnAuthentictionFailure: deleteAccountOnAuthenticationFailure,
-                                               blacklistDownloadInterval: blacklistDownloadInterval)
+                                               blacklistDownloadInterval: blacklistDownloadInterval,
+                                               blacklistAccountOnJailbreakDetection: blacklistAccountOnJailbreakDetection,
+                                               deleteAccountOnJailbreakDetection: deleteAccountOnJailbreakDetection)
         
         return copy
     }
@@ -270,6 +287,7 @@ public protocol ForegroundNotificationResponder: class {
     
     let sharedContainerURL: URL
     let dispatchGroup: ZMSDispatchGroup?
+    let jailbreakDetector: JailbreakDetectorProtocol?
     fileprivate var accountTokens : [UUID : [Any]] = [:]
     fileprivate var memoryWarningObserver: NSObjectProtocol?
     fileprivate var isSelectingAccount : Bool = false
@@ -298,6 +316,7 @@ public protocol ForegroundNotificationResponder: class {
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
         configuration: SessionManagerConfiguration,
+        detector: JailbreakDetectorProtocol = JailbreakDetector(),
         completion: @escaping (SessionManager) -> Void
         ) {
         
@@ -309,7 +328,8 @@ public protocol ForegroundNotificationResponder: class {
                 delegate: delegate,
                 application: application,
                 environment: environment,
-                configuration: configuration
+                configuration: configuration,
+                detector: detector
             ))
         }
     }
@@ -325,7 +345,8 @@ public protocol ForegroundNotificationResponder: class {
         delegate: SessionManagerDelegate?,
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
-        configuration: SessionManagerConfiguration = SessionManagerConfiguration()
+        configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
+        detector: JailbreakDetectorProtocol = JailbreakDetector()
         ) {
         
         let group = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Session manager reachability")!
@@ -354,7 +375,8 @@ public protocol ForegroundNotificationResponder: class {
             application: application,
             pushRegistry: PKPushRegistry(queue: nil),
             environment: environment,
-            configuration: configuration
+            configuration: configuration,
+            detector: detector
         )
         
         if configuration.blacklistDownloadInterval > 0 {
@@ -372,6 +394,11 @@ public protocol ForegroundNotificationResponder: class {
                         self.delegate?.sessionManagerDidBlacklistCurrentVersion()
                     }
             })
+        }
+        
+        if configuration.blacklistAccountOnJailbreakDetection
+            && jailbreakDetector?.isJailbroken() ?? false {
+            self.delegate?.sessionManagerDidBlacklistJailbrokenDevice()
         }
      
         self.memoryWarningObserver = NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification,
@@ -401,7 +428,8 @@ public protocol ForegroundNotificationResponder: class {
         pushRegistry: PushRegistry,
         dispatchGroup: ZMSDispatchGroup? = nil,
         environment: BackendEnvironmentProvider,
-        configuration: SessionManagerConfiguration = SessionManagerConfiguration()
+        configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
+        detector: JailbreakDetectorProtocol = JailbreakDetector()
         ) {
 
         SessionManager.enableLogsByEnvironmentVariable()
@@ -411,6 +439,7 @@ public protocol ForegroundNotificationResponder: class {
         self.delegate = delegate
         self.dispatchGroup = dispatchGroup
         self.configuration = configuration.copy() as! SessionManagerConfiguration
+        self.jailbreakDetector = detector
 
         guard let sharedContainerURL = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory) else {
             preconditionFailure("Unable to get shared container URL")
