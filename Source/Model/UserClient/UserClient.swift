@@ -344,7 +344,7 @@ public extension UserClient {
         let activationAddress = payloadAsDictionary.optionalString(forKey: "address")?.removingExtremeCombiningCharacters
         let model = payloadAsDictionary.optionalString(forKey: "model")?.removingExtremeCombiningCharacters
         let deviceClass = payloadAsDictionary.optionalString(forKey: "class")
-        let activationDate = payloadAsDictionary.date(forKey: "time")
+        let activationDate = payloadAsDictionary.date(for: "time")
         
         let locationCoordinates = payloadData["location"] as? [String: Double]
         let latitude = (locationCoordinates?["lat"] as NSNumber?) ?? 0

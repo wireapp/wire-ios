@@ -217,7 +217,7 @@ NSString *const ZMConversationInfoOTRArchivedReferenceKey = @"otr_archived_ref";
 - (BOOL)updateIsArchivedWithPayload:(NSDictionary *)dictionary
 {
     if (dictionary[ZMConversationInfoOTRArchivedReferenceKey] != nil && dictionary[ZMConversationInfoOTRArchivedReferenceKey] != [NSNull null]) {
-        NSDate *silencedRef = [dictionary dateForKey:ZMConversationInfoOTRArchivedReferenceKey];
+        NSDate *silencedRef = [dictionary dateFor:ZMConversationInfoOTRArchivedReferenceKey];
         if (silencedRef != nil && [self updateArchived:silencedRef synchronize:NO]) {
             NSNumber *archived = [dictionary optionalNumberForKey:ZMConversationInfoOTRArchivedValueKey];
             self.internalIsArchived = [archived isEqual:@1];

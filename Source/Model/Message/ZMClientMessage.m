@@ -287,7 +287,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
             ZMLogWarn(@"send message response nonce does not match");
             return;
         }
-        NSDate *serverTimestamp = [payload dateForKey:@"time"];
+        NSDate *serverTimestamp = [payload dateFor:@"time"];
         if (serverTimestamp != nil) {
             self.updatedTimestamp = serverTimestamp;
         }
