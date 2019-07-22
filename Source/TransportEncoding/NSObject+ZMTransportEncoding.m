@@ -41,6 +41,7 @@ static locale_t posixLocale()
 
 @implementation NSDate (ZMTransportEncoding)
 
+///TODO: review this method for iOS 13 beta, can we retire below 2 methods?
 + (instancetype)dateWithTransportString:(NSString *)transportString;
 {
     struct {

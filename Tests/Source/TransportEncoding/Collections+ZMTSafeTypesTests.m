@@ -86,9 +86,9 @@
 
 - (void)testThatItReadsADate {
     NSString *key = @"date";
-    XCTAssertEqualObjects([NSDate dateWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateForKey:key]);
-    XCTAssertNil([self.sampleDictionary dateForKey:@"baz"]);
-    XCTAssertNil([self.sampleDictionary dateForKey:@"string"]);
+    XCTAssertEqualObjects([NSDate dateWithTransportString:self.sampleDictionary[key]], [self.sampleDictionary dateFor:key]);
+    XCTAssertNil([self.sampleDictionary dateFor:@"baz"]);
+    XCTAssertNil([self.sampleDictionary dateFor:@"string"]);
 }
 
 - (void)testThatItReadsAUUID {
@@ -390,10 +390,13 @@
     NSDictionary *dict = @{ @"foo" : dateString };
     
     // when
-    id value = [dict dateForKey:@"foo"];
-    
+//    id value = [dict optionaldateFor:@"foo"]; ///TODO: optional?
+    id value = [dict dateFor:@"foo"]; ///TODO: can not jump in?
+//    id value = [
+
     // then
     XCTAssertNotNil(value);
+//    XCTAssertNotNil(value);
     XCTAssertEqualObjects(value, testValue);
 }
 
@@ -405,7 +408,7 @@
     NSDictionary *dict = @{ @"foo" : testValue };
     
     // when
-    id value = [dict dateForKey:@"foo"];
+    id value = [dict dateFor:@"foo"];
     
     // then
     XCTAssertNotNil(value);
@@ -418,7 +421,7 @@
     NSDictionary *dict = @{ @"foo" : @"dog" };
     
     // when
-    id value = [dict dateForKey:@"foo"];
+    id value = [dict dateFor:@"foo"];
     
     // then
     XCTAssertNil(value);
@@ -430,7 +433,7 @@
     NSDictionary *dict = @{ @"foo" : @3 };
     
     // when
-    id value = [dict dateForKey:@"foo"];
+    id value = [dict dateFor:@"foo"];
     
     // then
     XCTAssertNil(value);
@@ -442,7 +445,7 @@
     NSDictionary *dict = @{ };
     
     // when
-    id value = [dict dateForKey:@"bar"];
+    id value = [dict dateFor:@"bar"];
     
     // then
     XCTAssertNil(value);

@@ -102,10 +102,11 @@ extension NSDictionary {
         return optionalObjectWhichIsKindOfClass(dictionary: self, key: key){UUID(uuidString:$0)}
     }
     
-    @objc public func date(forKey key: String) -> Date? {
+    @objc
+    public func date(for key: String) -> Date? {
         return requiredObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
     }
-    
+
     @objc public func optionalDate(forKey key: String) -> Date? {
         return optionalObjectWhichIsKindOfClass(dictionary: self, key: key) { NSDate(transport: $0) as Date? }
     }
