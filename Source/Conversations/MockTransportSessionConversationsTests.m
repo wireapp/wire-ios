@@ -200,8 +200,8 @@
     XCTAssertEqualObjects(responsePayload[@"conversation"], oneOnOneConversationID);
     XCTAssertEqualObjects(responsePayload[@"from"], selfUserID);
     XCTAssertEqualObjects(responsePayload[@"type"], expectedEventType);
-    XCTAssertNotNil([responsePayload dateForKey:@"time"]);
-    AssertDateIsRecent([responsePayload dateForKey:@"time"]);
+    XCTAssertNotNil([responsePayload dateFor:@"time"]);
+    AssertDateIsRecent([responsePayload dateFor:@"time"]);
     
     path = @"/notifications";
     ZMTransportResponse *eventsResponse = [self responseForPayload:nil path:path method:ZMMethodGET];
@@ -222,8 +222,8 @@
     XCTAssertEqualObjects(messageRoundtripPayload[@"conversation"], oneOnOneConversationID);
     XCTAssertEqualObjects(messageRoundtripPayload[@"from"], selfUserID);
     XCTAssertEqualObjects(messageRoundtripPayload[@"type"], expectedEventType);
-    XCTAssertNotNil([messageRoundtripPayload dateForKey:@"time"]);
-    XCTAssertEqualObjects([responsePayload dateForKey:@"time"], [messageRoundtripPayload dateForKey:@"time"]);
+    XCTAssertNotNil([messageRoundtripPayload dateFor:@"time"]);
+    XCTAssertEqualObjects([responsePayload dateFor:@"time"], [messageRoundtripPayload dateFor:@"time"]);
     
     return response;
 }
