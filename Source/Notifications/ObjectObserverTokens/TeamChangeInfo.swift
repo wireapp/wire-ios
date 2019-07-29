@@ -26,6 +26,8 @@ extension Team : ObjectInSnapshot {
         return [
             #keyPath(Team.name),
             #keyPath(Team.members),
+            #keyPath(Team.imageData),
+            #keyPath(Team.pictureAssetId),
         ]
     }
     
@@ -59,6 +61,10 @@ extension Team : ObjectInSnapshot {
     public var nameChanged : Bool {
         return changedKeys.contains(#keyPath(Team.name))
     }
+    
+    public var imageDataChanged : Bool {
+        return changedKeysContain(keys: #keyPath(Team.imageData), #keyPath(Team.pictureAssetId))
+    }
 
 }
 
@@ -72,7 +78,17 @@ extension Team : ObjectInSnapshot {
 extension TeamChangeInfo {
     
     // MARK: Registering TeamObservers
+    
+    /// Adds an observer for a team
+    ///
+    /// You must hold on to the token and use it to unregister
+    @objc(addTeamObserver:forTeam:)
+    public static func add(observer: TeamObserver, for team: Team) -> NSObjectProtocol {
+        return add(observer: observer, for: team, managedObjectContext: team.managedObjectContext!)
+    }
+    
     /// Adds an observer for the team if one specified or to all Teams is none is specified
+    ///
     /// You must hold on to the token and use it to unregister
     @objc(addTeamObserver:forTeam:managedObjectContext:)
     public static func add(observer: TeamObserver, for team: Team?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
@@ -84,7 +100,8 @@ extension TeamChangeInfo {
             
             observer.teamDidChange(changeInfo)
         }
-    }    
+    }
+    
 }
 
 

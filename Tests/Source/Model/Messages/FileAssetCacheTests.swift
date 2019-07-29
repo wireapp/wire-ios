@@ -43,7 +43,7 @@ class FileAssetCacheTests: BaseZMMessageTests
     }
     
     fileprivate func testData() -> Data {
-        return Data.secureRandomData(ofLength: 2000);
+        return Data.secureRandomData(ofLength: 2000)
     }
     
 }
@@ -390,4 +390,99 @@ extension FileAssetCacheTests {
             XCTAssertNil(data)
         }
     }
+
+
+    // MARK: - FileAssetCache
+
+    func testThatItReturnsCorrectEncryptionTeamLogoResultWithSHA256() {
+
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let sut = FileAssetCache()
+            let team = Team.mockTeam(context: self.syncMOC)
+
+            let userId = UUID.create()
+            let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
+            let payload = [
+                "name": "Wire GmbH",
+                "creator": userId.transportString(),
+                "icon": assetId,
+                "icon_key": assetKey
+            ]
+
+            team.update(with: payload)
+
+            let plainData = self.testData()
+
+            sut.storeAssetData(for: team, format: .medium, encrypted: false, data: plainData)
+
+            // when
+            let encryptionKeys = sut.encryptImageAndComputeSHA256Digest(for: team, format: .medium)
+
+            // then
+            let encryptedData = sut.assetData(for: team, format: .medium, encrypted: true)
+            AssertOptionalNotNil(encryptionKeys, "Result") { result in
+                AssertOptionalNotNil(encryptedData, "Encrypted data") { encryptedData in
+                    let decodedData = encryptedData.zmDecryptPrefixedPlainTextIV(key: result.otrKey)
+                    XCTAssertEqual(decodedData, plainData)
+                    let sha = encryptedData.zmSHA256Digest()
+                    XCTAssertEqual(sha, result.sha256)
+                }
+            }
+
+            // when
+            let decryptResult = sut.decryptImageIfItMatchesDigest(for: team, format: .medium, encryptionKey: encryptionKeys!.otrKey)
+
+            // then
+            XCTAssert(decryptResult)
+        }
+    }
+
+    func testThatHasDataOnDiskForTeam() {
+
+        // given
+        let sut = FileAssetCache()
+        syncMOC.performGroupedBlockAndWait {
+
+            let team = Team.mockTeam(context: self.syncMOC)
+
+            sut.storeAssetData(for: team,
+                               format: .medium,
+                               encrypted: false,
+                               data: self.testData())
+
+            // when
+            let data = sut.hasDataOnDisk(for: team,
+                                         format: .medium,
+                                         encrypted: false)
+
+            // then
+            XCTAssert(data)
+        }
+    }
+
+    func testThatItDeletesAnExistingAssetDataForTeam() {
+
+        syncMOC.performGroupedBlockAndWait {
+            // given
+            let team = Team.mockTeam(context: self.syncMOC)
+            let sut = FileAssetCache()
+            sut.storeAssetData(for: team,
+                               format: .medium,
+                               encrypted: false,
+                               data: self.testData())
+
+            // when
+            sut.deleteAssetData(for: team,
+                                format: .medium,
+                                encrypted: false)
+            let extractedData = sut.assetData(for: team,
+                                              format: .medium,
+                                              encrypted: false)
+
+            // then
+            XCTAssertNil(extractedData)
+        }
+    }
+
 }
