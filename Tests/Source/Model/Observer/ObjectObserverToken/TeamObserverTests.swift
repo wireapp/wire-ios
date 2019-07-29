@@ -37,7 +37,8 @@ class TeamObserverTests: NotificationDispatcherTestBase {
     var userInfoKeys : Set<String> {
         return [
             #keyPath(TeamChangeInfo.membersChanged),
-            #keyPath(TeamChangeInfo.nameChanged)
+            #keyPath(TeamChangeInfo.nameChanged),
+            #keyPath(TeamChangeInfo.imageDataChanged)
         ]
     }
     
@@ -50,6 +51,7 @@ class TeamObserverTests: NotificationDispatcherTestBase {
         
         // when
         modifier(team)
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         self.uiMOC.saveOrRollback()
         
         // then
@@ -79,6 +81,18 @@ class TeamObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.nameChanged)]
         )
         
+    }
+    
+    func testThatItNotifiesTheObserverOfChangedImageData() {
+        // given
+        let team = Team.insertNewObject(in: self.uiMOC)
+        self.uiMOC.saveOrRollback()
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(team,
+                                                     modifier: { $0.imageData = "image".data(using: .utf8)! },
+                                                     expectedChangedFields: [#keyPath(TeamChangeInfo.imageDataChanged)]
+        )
     }
 
     func testThatItNotifiesTheObserverOfInsertedMembers() {
@@ -114,5 +128,6 @@ class TeamObserverTests: NotificationDispatcherTestBase {
                                                      expectedChangedFields: [#keyPath(TeamChangeInfo.membersChanged)]
         )
     }
+    
 }
 
