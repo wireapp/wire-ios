@@ -45,6 +45,7 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey : Any]
     func sessionManagerWillMigrateLegacyAccount()
     func sessionManagerDidBlacklistCurrentVersion()
     func sessionManagerDidBlacklistJailbrokenDevice()
+    func sessionManagerDidWipeJailbrokenDevice()
 }
 
 @objc
@@ -396,11 +397,6 @@ public protocol ForegroundNotificationResponder: class {
             })
         }
         
-        if configuration.blockOnJailbreakOrRoot
-            && jailbreakDetector?.isJailbroken() ?? false {
-            self.delegate?.sessionManagerDidBlacklistJailbrokenDevice()
-        }
-     
         self.memoryWarningObserver = NotificationCenter.default.addObserver(forName: UIApplication.didReceiveMemoryWarningNotification,
                                                                             object: nil,
                                                                             queue: nil,
@@ -482,6 +478,7 @@ public protocol ForegroundNotificationResponder: class {
         
         super.init()
         
+        
         // register for voIP push notifications
         self.pushRegistry.delegate = self
         self.pushRegistry.desiredPushTypes = Set(arrayLiteral: PKPushType.voIP)
@@ -489,6 +486,8 @@ public protocol ForegroundNotificationResponder: class {
 
         postLoginAuthenticationToken = PostLoginAuthenticationNotification.addObserver(self, queue: self.groupQueue)
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
+        
+        guard !checkJailbreakIfNeeded() else { return }
     }
     
     public func start(launchOptions: LaunchOptions) {
@@ -575,17 +574,20 @@ public protocol ForegroundNotificationResponder: class {
         if let secondAccount = accountManager.accounts.first(where: { $0.userIdentifier != account.userIdentifier }) {
             // Deleted an account but we can switch to another account
             select(secondAccount, tearDownCompletion: { [weak self] in
-                self?.tearDownBackgroundSession(for: account.userIdentifier)
-                self?.deleteAccountData(for: account)
+                self?.tearDownSessionAndDelete(account: account)
             })
         } else if accountManager.selectedAccount != account {
             // Deleted an inactive account, there's no need notify the UI
-            tearDownBackgroundSession(for: account.userIdentifier)
-            deleteAccountData(for: account)
+            self.tearDownSessionAndDelete(account: account)
         } else {
             // Deleted the last account so we need to return to the logged out area
             logoutCurrentSession(deleteCookie: true, deleteAccount:true, error: NSError(code: .addAccountRequested, userInfo: nil))
         }
+    }
+    
+    public func tearDownSessionAndDelete(account: Account) {
+        self.tearDownBackgroundSession(for: account.userIdentifier)
+        self.deleteAccountData(for: account)
     }
     
     fileprivate func logout(account: Account, error: Error? = nil) {
@@ -826,6 +828,24 @@ public protocol ForegroundNotificationResponder: class {
         didSet {
             activeUserSession?.useConstantBitRateAudio = useConstantBitRateAudio
         }
+    }
+
+    @objc public func checkJailbreakIfNeeded() -> Bool {
+        if jailbreakDetector?.isJailbroken() == true {
+            if configuration.blockOnJailbreakOrRoot {
+                self.delegate?.sessionManagerDidBlacklistJailbrokenDevice()
+                return true
+            } else if configuration.wipeOnJailbreakOrRoot {
+                logoutCurrentSession()
+                accountManager.accounts.forEach {
+                    self.tearDownSessionAndDelete(account: $0)
+                }
+                
+                self.delegate?.sessionManagerDidWipeJailbrokenDevice()
+                return true
+            }
+        }
+        return false
     }
 }
 
