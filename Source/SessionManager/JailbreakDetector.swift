@@ -133,11 +133,10 @@ public final class JailbreakDetector: NSObject, JailbreakDetectorProtocol {
     
 }
 
-@objcMembers public class MockJailbreakDetector: NSObject, JailbreakDetectorProtocol {
+public final class MockJailbreakDetector: JailbreakDetectorProtocol {
     
-    public var jailbroken: Bool = false
+    var jailbroken: Bool = false
     
-    @objc(initAsJailbroken:)
     public init(jailbroken: Bool = false) {
         self.jailbroken = jailbroken
     }

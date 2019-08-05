@@ -55,9 +55,7 @@ class SessionManagerTests: IntegrationTest {
             application: application,
             pushRegistry: pushRegistry,
             dispatchGroup: dispatchGroup,
-            environment: environment,
-            configuration: sessionManagerConfiguration,
-            detector: jailbreakDetector
+            environment: environment
         )
         
         sessionManager.start(launchOptions: [:])
@@ -294,24 +292,6 @@ class SessionManagerTests: IntegrationTest {
     
         XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
     }
-    
-    func testThatJailbrokenDeviceDeletesAccount() {
-        //GIVEN
-        sut = createManager()
-        (sut?.jailbreakDetector as! MockJailbreakDetector).jailbroken = true
-        sut?.configuration.wipeOnJailbreakOrRoot = true
-        
-        //WHEN
-        sut?.accountManager.addAndSelect(createAccount())
-        XCTAssertEqual(sut?.accountManager.accounts.count, 1)
-        
-        //THEN
-        performIgnoringZMLogError {
-            XCTAssertTrue(self.sut!.checkJailbreakIfNeeded())
-            XCTAssertEqual(self.sut?.accountManager.accounts.count, 0)
-        }
-    }
-
 
 }
 
@@ -1294,14 +1274,8 @@ class SessionManagerTestDelegate: SessionManagerDelegate {
     }
     
     var jailbroken = false
-    var wiped = false
-    
     func sessionManagerDidBlacklistJailbrokenDevice() {
         jailbroken = true
-    }
-    
-    func sessionManagerDidWipeJailbrokenDevice() {
-        wiped = true
     }
     
     var userSession : ZMUserSession?
