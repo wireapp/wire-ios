@@ -177,6 +177,6 @@ extension AppLockViewController {
     }
     
     @objc func applicationDidBecomeActive() {
-        self.showUnlockIfNeeded()
+        showUnlockIfNeeded()
     }
 }
