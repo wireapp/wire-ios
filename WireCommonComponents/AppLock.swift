@@ -56,15 +56,6 @@ final public class AppLock {
         case unavailable
     }
     
-    public enum AuthenticationResult {
-        /// User sucessfully authenticated
-        case granted
-        /// User failed to authenticate or cancelled the request
-        case denied
-        /// There's no authenticated method available (no passcode is set)
-        case unavailable
-    }
-    
     // Creates a new LAContext and evaluates the authentication settings of the user.
     public static func evaluateAuthentication(description: String, with callback: @escaping (AuthenticationResult) -> Void) {
     
