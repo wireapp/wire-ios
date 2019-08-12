@@ -131,6 +131,9 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @property (nonatomic, readonly, copy, nullable) NSString *text;
 @property (nonatomic) BOOL needsUpdatingUsers;
 @property (nonatomic) NSTimeInterval duration;
+/**
+  Only filled for .performedCall & .missedCall
+ */
 @property (nonatomic, nonnull) NSSet<id <ZMSystemMessageData>>  *childMessages;
 @property (nonatomic, nullable) id <ZMSystemMessageData> parentMessage;
 @property (nonatomic, readonly) BOOL userIsTheSender;
