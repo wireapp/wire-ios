@@ -108,6 +108,10 @@ extension IntegrationTest {
     static let SelfUserEmail = "myself@user.example.com"
     static let SelfUserPassword = "fgf0934';$@#%"
     
+    var jailbreakDetector: JailbreakDetectorProtocol {
+        return MockJailbreakDetector()
+    }
+    
     @objc
     func _setUp() {
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
@@ -244,7 +248,8 @@ extension IntegrationTest {
             pushRegistry: pushRegistry,
             dispatchGroup: self.dispatchGroup,
             environment: mockEnvironment,
-            configuration: sessionManagerConfiguration
+            configuration: sessionManagerConfiguration,
+            detector: jailbreakDetector
         )
         
         sessionManager?.start(launchOptions: [:])
@@ -631,7 +636,7 @@ extension IntegrationTest : SessionManagerDelegate {
     public func sessionManagerDidBlacklistJailbrokenDevice() {
         // no-op
     }
-    
+        
     public func sessionManagerWillOpenAccount(_ account: Account, userSessionCanBeTornDown: @escaping () -> Void) {
         self.userSession = nil
         userSessionCanBeTornDown()
