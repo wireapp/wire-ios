@@ -39,6 +39,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 /// Delete all keychain items for current the user and server
 - (void)deleteKeychainItems;
+    
+/// Date and time when the authentication cookie is no longer valid
+@property (nonatomic, nullable) NSDate *authenticationCookieExpirationDate;
 
 /// Authentication cookie available in the storage
 @property (nonatomic, nullable) NSData *authenticationCookieData;
