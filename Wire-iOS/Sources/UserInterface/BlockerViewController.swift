@@ -50,19 +50,13 @@ class BlockerViewController : LaunchImageViewController {
     }
     
     func showBlacklistMessage() {
-        let alertController = UIAlertController(title: "force.update.title".localized, message: "force.update.message".localized, preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "force.update.ok_button".localized, style: .default) { (_) in
+        presentAlertWithOKButton(title: "force.update.title".localized, message: "force.update.message".localized) { _ in
             UIApplication.shared.open(URL.wr_wireAppOnItunes)
         }
-        
-        alertController.addAction(alertAction)
-        present(alertController, animated: true, completion: nil)
     }
     
     func showJailbrokenMessage() {
-        let alertController = UIAlertController(title: "jailbrokendevice.alert.title".localized, message: "jailbrokendevice.alert.message".localized, preferredStyle: .alert)
-        
-        present(alertController, animated: true, completion: nil)
+        presentAlertWithOKButton(title: "jailbrokendevice.alert.title".localized, message: "jailbrokendevice.alert.message".localized)
     }
     
 }
