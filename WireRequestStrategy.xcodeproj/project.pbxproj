@@ -1078,10 +1078,9 @@
 			};
 			buildConfigurationList = 166901641D707509000FE4AF /* Build configuration list for PBXProject "WireRequestStrategy" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
