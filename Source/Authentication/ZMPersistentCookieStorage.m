@@ -27,6 +27,7 @@
 #import <CommonCrypto/CommonCrypto.h>
 #import "ZMKeychain.h"
 
+static NSString * const CookieName = @"zuid";
 static NSString * const LegacyAccountName = @"User";
 static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
 static BOOL KeychainDisabled = NO;
@@ -48,6 +49,7 @@ static dispatch_queue_t isolationQueue()
 @interface ZMPersistentCookieStorage ()
 
 @property (nonatomic, readonly) NSString *serverName;
+@property (nonatomic, readonly) NSArray<NSHTTPCookie *> *authenticationCookies;
 
 @end
 
@@ -113,6 +115,17 @@ static dispatch_queue_t isolationQueue()
     } else {
         [self setItem:data];
     }
+}
+    
+- (NSDate *)authenticationCookieExpirationDate
+{
+    for (NSHTTPCookie *cookie in self.authenticationCookies) {
+        if ([cookie.name isEqualToString:CookieName]) {
+            return cookie.expiresDate;
+        }
+    }
+    
+    return nil;
 }
 
 - (NSString *)cookieKey
@@ -318,7 +331,7 @@ static dispatch_queue_t isolationQueue()
         return cookie.properties;
     }];
     
-    if (![[properties.firstObject valueForKey:@"Name"] isEqual:@"zuid"]) {
+    if (![[properties.firstObject valueForKey:@"Name"] isEqual:CookieName]) {
         return;
     }
     
@@ -338,13 +351,27 @@ static dispatch_queue_t isolationQueue()
 
 - (void)setRequestHeaderFieldsOnRequest:(NSMutableURLRequest *)request;
 {
+    NSArray *cookies = [self authenticationCookies];
+    
+    if (cookies == nil) {
+        return;
+    }
+    
+    [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
+        NOT_USED(stop);
+        [request addValue:value forHTTPHeaderField:field];
+    }];
+}
+    
+- (NSArray<NSHTTPCookie *> *)authenticationCookies
+{
     NSData *data = self.authenticationCookieData;
     if (data == nil) {
-        return;
+        return nil;
     }
     data = [[NSData alloc] initWithBase64EncodedData:data options:0];
     if (data == nil) {
-        return;
+        return nil;
     }
     if (TARGET_OS_IPHONE) {
         NSData *secretKey = [NSUserDefaults cookiesKey];
@@ -354,28 +381,29 @@ static dispatch_queue_t isolationQueue()
     @try {
         unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
     } @catch (id) {
-    
+        
         ZMLogError(@"Unable to parse stored cookie data.");
         self.authenticationCookieData = nil;
-        return;
+        return nil;
     }
     if (unarchiver == nil) {
         ZMLogError(@"Unable to parse stored cookie data.");
         self.authenticationCookieData = nil;
-        return;
+        return nil;
     }
     
     unarchiver.requiresSecureCoding = YES;
     NSArray *properties = [unarchiver decodePropertyListForKey:@"properties"];
-    VerifyReturn([properties isKindOfClass:[NSArray class]]);
+    
+    if (![properties isKindOfClass:[NSArray class]]) {
+        return nil;
+    }
+    
     NSArray *cookies = [properties mapWithBlock:^id(NSDictionary *p) {
         return [[NSHTTPCookie alloc] initWithProperties:p];
     }];
-
-    [[NSHTTPCookie requestHeaderFieldsWithCookies:cookies] enumerateKeysAndObjectsUsingBlock:^(NSString *field, NSString *value, BOOL *stop) {
-        NOT_USED(stop);
-        [request addValue:value forHTTPHeaderField:field];
-    }];
+    
+    return cookies;
 }
 
 @end
