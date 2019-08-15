@@ -353,11 +353,11 @@ private struct FileCache : Cache {
     }
 
     public static func cacheKeyForAsset(for team : Team, identifier: String? = nil, encrypted: Bool = false) -> String? {
-        guard let teamID = team.remoteIdentifier?.uuidString else {
+        guard let teamID = team.remoteIdentifier?.uuidString, let assetID = team.pictureAssetId else {
             return nil
         }
-
-        let key = [teamID, identifier, encrypted ? "encrypted" : nil].compactMap({ $0 }).joined(separator: "_")
+        
+        let key = [teamID, assetID, identifier, encrypted ? "encrypted" : nil].compactMap({ $0 }).joined(separator: "_")
 
         return key.data(using: .utf8)?.zmSHA256Digest().zmHexEncodedString()
     }

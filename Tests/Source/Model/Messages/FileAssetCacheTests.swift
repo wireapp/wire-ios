@@ -445,6 +445,7 @@ extension FileAssetCacheTests {
         syncMOC.performGroupedBlockAndWait {
 
             let team = Team.mockTeam(context: self.syncMOC)
+            team.pictureAssetId = "abc123"
 
             sut.storeAssetData(for: team,
                                format: .medium,
@@ -466,6 +467,7 @@ extension FileAssetCacheTests {
         syncMOC.performGroupedBlockAndWait {
             // given
             let team = Team.mockTeam(context: self.syncMOC)
+            team.pictureAssetId = "abc123"
             let sut = FileAssetCache()
             sut.storeAssetData(for: team,
                                format: .medium,
