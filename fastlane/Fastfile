@@ -32,8 +32,8 @@ platform :ios do
             # We need to update the AVS version before running setup script
             build.update_avs_version()
 
-            setup_sctipt = "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o ""wire-ios-build-assets/#{override_folder}/#{build_type}"""
-            puts "#{setup_sctipt}"
+            setup_sctipt = "cd .. && ./setup.sh -c #{config_repo} -b #{config_branch} -o \'wire-ios-build-assets/#{override_folder}/#{build_type}\'"
+            puts "setup_sctipt: #{setup_sctipt}"
             sh "#{setup_sctipt}"
             # Adding extra information to the icon must be done after we check them out in setup script
             build.process_icon()
