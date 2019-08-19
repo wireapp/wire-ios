@@ -39,10 +39,12 @@ usage()
 }
 
 
+echo "🔘 OPTIONs: $@"
+
 while [ "$1" != "" ]; do
     OPTION=$1    
     shift
-    
+
     echo "🔘 OPTION: ${OPTION}"
 
     case $OPTION in
