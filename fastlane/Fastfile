@@ -13,7 +13,7 @@ platform :ios do
         else
             override_folder = options[:override_folder]
             if override_folder.nil? 
-                override_folder = "CI\ configuration"
+                override_folder = "CI\\\\ configuration"
             end
 
 
