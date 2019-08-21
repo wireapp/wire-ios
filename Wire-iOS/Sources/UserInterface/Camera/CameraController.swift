@@ -226,14 +226,7 @@ class CameraController {
             connection.automaticallyAdjustsVideoMirroring = false
             connection.isVideoMirrored = false
             
-            let jpegType: Any
-            if #available(iOS 11.0, *) {
-                jpegType = AVVideoCodecType.jpeg
-            } else {
-                jpegType = AVVideoCodecJPEG
-            }
-            
-            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: jpegType,
+            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecJPEG,
                                                            AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9]])
             
             let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
@@ -265,25 +258,6 @@ class CameraController {
             self.completion = completion
         }
         
-        @available(iOS 11.0, *)
-        func photoOutput(_ output: AVCapturePhotoOutput, didFinishProcessingPhoto photo: AVCapturePhoto, error: Error?) {
-            guard #available(iOS 11, *) else { return }
-
-            defer { completion() }
-            
-            if let error = error {
-                zmLog.error("PhotoCaptureDelegate encountered error while processing photo:\(error.localizedDescription)")
-                handler(PhotoResult(nil, error))
-                return
-            }
-            
-            
-            let imageData = photo.fileDataRepresentation()
-            
-            handler(PhotoResult(imageData, nil))
-        }
-
-        @available(iOS, introduced: 10.0, deprecated: 11.0, message: "Use -captureOutput:didFinishProcessingPhoto:error: instead.")
         func photoOutput(_ output: AVCapturePhotoOutput,
                          didFinishProcessingPhoto photoSampleBuffer: CMSampleBuffer?,
                          previewPhoto previewPhotoSampleBuffer: CMSampleBuffer?,
@@ -291,8 +265,6 @@ class CameraController {
                          bracketSettings: AVCaptureBracketedStillImageSettings?,
                          error: Error?)
         {
-            if #available(iOS 11, *) { return }
-
             defer { completion() }
             
             if let error = error {
@@ -304,8 +276,8 @@ class CameraController {
             guard let buffer = photoSampleBuffer else { return }
             
             let imageData = AVCapturePhotoOutput.jpegPhotoDataRepresentation(
-                    forJPEGSampleBuffer: buffer,
-                    previewPhotoSampleBuffer: previewPhotoSampleBuffer)
+                forJPEGSampleBuffer: buffer,
+                previewPhotoSampleBuffer: previewPhotoSampleBuffer)
             
             handler(PhotoResult(imageData, nil))
         }
