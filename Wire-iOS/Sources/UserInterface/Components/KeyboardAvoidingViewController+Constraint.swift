@@ -28,7 +28,7 @@ extension KeyboardAvoidingViewController {
         topEdgeConstraint?.constant = topInset
 
         if #available(iOS 11.0, *) {
-            bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: bottomLayoutGuide.bottomAnchor, constant: 0)
+            bottomEdgeConstraint = viewController.view.safeAreaLayoutGuide.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 0)
         } else {
             bottomEdgeConstraint = viewController.bottomLayoutGuide.bottomAnchor.constraint(equalTo: bottomLayoutGuide.bottomAnchor, constant: 0)
         }
