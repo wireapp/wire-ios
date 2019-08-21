@@ -54,11 +54,11 @@ extension ZMSLog {
         }
     }
 
-    private static var dateFormatter: DateFormatter {
+    private static var dateFormatter: DateFormatter = {
         let df = DateFormatter()
         df.dateFormat = "yyyy-MM-dd HH:mm:ss.SSSS Z"
         return df
-    }
+    }()
     
     private static var isRunningSystemTests: Bool {
         guard let path = ProcessInfo.processInfo.environment["XCTestConfigurationFilePath"]
