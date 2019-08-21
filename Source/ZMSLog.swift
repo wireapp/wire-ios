@@ -241,16 +241,15 @@ extension ZMSLog {
 
     static private func readFile(at url: URL) -> Data? {
         guard let handle = try? FileHandle(forReadingFrom: url) else { return nil }
+        
+        try? handle.wr_synchronizeFile()
+        
         return handle.readDataToEndOfFile()
     }
     
-    @objc static public var previousLogPath: URL? {
-        return cachesDirectory?.appendingPathComponent("previous.log")
-    }
+    @objc static public let previousLogPath: URL? = cachesDirectory?.appendingPathComponent("previous.log")
     
-    @objc static public var currentLogPath: URL? {
-        return cachesDirectory?.appendingPathComponent("current.log")
-    }
+    @objc static public let currentLogPath: URL? = cachesDirectory?.appendingPathComponent("current.log")
     
     @objc public static func clearLogs() {
         guard let previousLogPath = previousLogPath, let currentLogPath = currentLogPath else { return }
@@ -294,6 +293,7 @@ extension ZMSLog {
     }
 
     static public func appendToCurrentLog(_ string: String) {
+        
         guard let currentLogURL = self.currentLogPath else { return }
         let currentLogPath = currentLogURL.path
 
@@ -314,7 +314,6 @@ extension ZMSLog {
 
             do {
                 try updatingHandle?.wr_write(data)
-                try updatingHandle?.wr_synchronizeFile()
             } catch {
                 updatingHandle = nil
             }
