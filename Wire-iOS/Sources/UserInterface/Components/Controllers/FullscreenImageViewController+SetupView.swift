@@ -48,10 +48,9 @@ extension FullscreenImageViewController {
 
         if #available(iOS 11, *) {
             scrollView.contentInsetAdjustmentBehavior = .never
-        } else {
-            automaticallyAdjustsScrollViewInsets = false
         }
-        
+
+        automaticallyAdjustsScrollViewInsets = false
         scrollView.delegate = self
         scrollView.accessibilityIdentifier = "fullScreenPage"
 
