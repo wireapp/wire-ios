@@ -226,7 +226,14 @@ class CameraController {
             connection.automaticallyAdjustsVideoMirroring = false
             connection.isVideoMirrored = false
             
-            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecJPEG,
+            let jpegType: Any
+            if #available(iOS 11.0, *) {
+                jpegType = AVVideoCodecType.jpeg
+            } else {
+                jpegType = AVVideoCodecJPEG
+            }
+            
+            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: jpegType,
                                                            AVVideoCompressionPropertiesKey: [AVVideoQualityKey: 0.9]])
             
             let delegate = PhotoCaptureDelegate(settings: settings, handler: handler) {
