@@ -1053,17 +1053,6 @@ NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
     }
 }
 
-- (NSDate *)lastChildMessageDate
-{
-    NSDate *date = self.serverTimestamp;
-    for (ZMSystemMessage *message in self.childMessages) {
-        if ([message.serverTimestamp compare:date] == NSOrderedDescending) {
-            date = message.serverTimestamp;
-        }
-    }
-    return date;
-}
-
 - (BOOL)userIsTheSender
 {
     BOOL onlyOneUser = self.users.count == 1;
