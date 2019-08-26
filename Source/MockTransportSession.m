@@ -79,6 +79,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @property (nonatomic) NSMutableDictionary <NSNumber *, ZMTransportRequest *> *taskIdentifierMapping;
 
 @property (nonatomic, readwrite) NSDictionary <NSString *, NSDictionary *> *pushTokens;
+
 @property (nonatomic, weak) id <ZMNetworkStateDelegate> networkStateDelegate;
 
 - (ZMTransportResponse *)errorResponseWithCode:(NSInteger)code reason:(NSString *)reason;
@@ -97,7 +98,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
                                                  updatedObjects:(NSSet *)updated
                                                  deletedObjects:(NSSet *)deleted
                                      shouldSendEventsToSelfUser:(BOOL)shouldSendSelfEvents;
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
 
 @end
 
@@ -353,6 +353,25 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [connections firstObject];
 }
 
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+{
+    LogNetwork(@"---> Request: (fake) /access");
+    
+    self.pushChannelConsumer = consumer;
+    self.pushChannelGroupQueue = groupQueue;
+}
+
+- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler
+{
+    self->_accessTokenFailureHandler = [handler copy];
+}
+
+
+- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler
+{
+    self->_accessTokenSuccessHandler = [handler copy];
+}
+
 @end
 
 
@@ -488,7 +507,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             completionHandler(response);
         }
     }
-
+    
 }
 
 
@@ -709,17 +728,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return asset;
 }
 
-- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler
-{
-    self->_accessTokenFailureHandler = [handler copy];
-}
-
-
-- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler
-{
-    self->_accessTokenSuccessHandler = [handler copy];
-}
-
 - (void)simulatePushChannelClosed;
 {
     [self.pushChannelGroupQueue performGroupedBlock:^{
@@ -909,14 +917,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 @end
 
 @implementation MockTransportSession (PushEvents)
-
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
-{
-    LogNetwork(@"---> Request: (fake) /access");
-    
-    self.pushChannelConsumer = consumer;
-    self.pushChannelGroupQueue = groupQueue;
-}
 
 - (void)managedObjectContextPropagateChangesWithInsertedObjects:(NSSet *)inserted
                                                  updatedObjects:(NSSet *)updated

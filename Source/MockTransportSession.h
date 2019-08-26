@@ -40,7 +40,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTransportRequest * _Nonnull request);
 
-@interface MockTransportSession : NSObject <ZMRequestCancellation>
+@interface MockTransportSession : NSObject <ZMRequestCancellation, ZMBackgroundable>
 
 - (instancetype)initWithDispatchGroup:(nullable ZMSDispatchGroup *)group NS_DESIGNATED_INITIALIZER;
 
@@ -75,6 +75,13 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (void)addPushToken:(NSString *)token payload:(NSDictionary *)payload;
 - (void)removePushToken:(NSString *)token;
 
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue NS_SWIFT_NAME(configurePushChannel(consumer:groupQueue:));
+
+- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler NS_SWIFT_NAME(setAccessTokenRenewalFailureHandler(handler:));
+- (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
+
+- (void)setNetworkStateDelegate:(nullable id<ZMNetworkStateDelegate>)delegate;
+
 - (BOOL)waitForAllRequestsToCompleteWithTimeout:(NSTimeInterval)timeout;
 
 /// A list on transport requests received by client
@@ -101,7 +108,8 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @interface MockTransportSession (Mock)
 
 - (void)completeRequest:(ZMTransportRequest *)originalRequest completionHandler:(ZMCompletionHandlerBlock)completionHandler;
-- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(__attribute__((noescape)) ZMTransportRequestGenerator)generator;
+- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator;
+- (void)enqueueOneTimeRequest:(ZMTransportRequest *)request NS_SWIFT_NAME(enqueueOneTime(_:));
 
 @end
 
@@ -135,9 +143,6 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;
-
-- (void)setAccessTokenRenewalFailureHandler:(nullable ZMCompletionHandlerBlock)handler;
-- (void)setAccessTokenRenewalSuccessHandler:(nullable ZMAccessTokenHandlerBlock)handler;
 
 - (void)simulatePushChannelClosed;
 - (void)simulatePushChannelOpened;
