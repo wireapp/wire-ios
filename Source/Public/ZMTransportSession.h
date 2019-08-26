@@ -86,13 +86,14 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 - (void)tearDown;
 
 /// Sets the access token failure callback. This can be called only before the first request is fired
-- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler; //TODO accesstoken // move this out of here?
+- (void)setAccessTokenRenewalFailureHandler:(ZMCompletionHandlerBlock)handler NS_SWIFT_NAME(setAccessTokenRenewalFailureHandler(handler:)); //TODO accesstoken // move this out of here?
 
 /// Sets the access token success callback
 - (void)setAccessTokenRenewalSuccessHandler:(ZMAccessTokenHandlerBlock)handler;
 
-- (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest;
-- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(ZMTransportRequestGenerator)requestGenerator;
+- (void)enqueueOneTimeRequest:(ZMTransportRequest *)searchRequest NS_SWIFT_NAME(enqueueOneTime(_:));
+
+- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator NS_SWIFT_NAME(attemptToEnqueueSyncRequest(generator:));
 
 - (void)setNetworkStateDelegate:(nullable id<ZMNetworkStateDelegate>)delegate;
 
@@ -103,7 +104,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
  *   and passed the identifier and completionHandler to store after recreating the background session with the given identifier.
  *   We need to store the handler to call it as soon as the background download completed (in @c URLSessionDidFinishEventsForBackgroundURLSession(session:))
  */
-- (void)addCompletionHandlerForBackgroundSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler;
+- (void)addCompletionHandlerForBackgroundSessionWithIdentifier:(NSString *)identifier handler:(dispatch_block_t)handler NS_SWIFT_NAME(addCompletionHandlerForBackgroundSession(identifier:handler:));
 
 /**
  *   Asynchronically gets all current @c NSURLSessionTasks for the background session and calls the completionHandler
@@ -120,7 +121,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 
 @property (nonatomic, readonly) id<ZMPushChannel> pushChannel;
 
-- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue;
+- (void)configurePushChannelWithConsumer:(id<ZMPushChannelConsumer>)consumer groupQueue:(id<ZMSGroupQueue>)groupQueue NS_SWIFT_NAME(configurePushChannel(consumer:groupQueue:));
 
 @end
 
