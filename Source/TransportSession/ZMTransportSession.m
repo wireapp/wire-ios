@@ -346,7 +346,7 @@ static NSInteger const DefaultMaximumRequests = 6;
     [self enqueueTransportRequest:searchRequest];
 }
 
-- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(ZMTransportRequestGenerator)requestGenerator;
+- (ZMTransportEnqueueResult *)attemptToEnqueueSyncRequestWithGenerator:(NS_NOESCAPE ZMTransportRequestGenerator)requestGenerator;
 {
     //
     // N.B.: This method needs to be thread safe!
