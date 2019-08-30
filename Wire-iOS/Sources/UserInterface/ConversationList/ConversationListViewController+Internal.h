@@ -18,14 +18,11 @@
 
 @class PermissionDeniedViewController;
 @class ConversationActionController;
-@class ArchivedListViewController;
 
 @interface ConversationListViewController ()
 
 @property (nonatomic, nonnull) UILabel *noConversationLabel;
 @property (nonatomic, nullable) PermissionDeniedViewController *pushPermissionDeniedViewController;
 @property (nonatomic, nullable) ConversationActionController *actionsController;
-
-- (ArchivedListViewController *)createArchivedListViewController;
 
 @end
