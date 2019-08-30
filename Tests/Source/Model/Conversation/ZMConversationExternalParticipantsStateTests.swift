@@ -44,7 +44,7 @@ import XCTest
  * +---------------------------------------------------------------------------------+
  */
 
-class ZMConversationExternalParticipantsStateTests: BaseTeamTests {
+class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
 
     enum RelativeUserState {
         case personal
