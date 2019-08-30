@@ -93,11 +93,6 @@
 
 @property (nonatomic) CGFloat contentControllerBottomInset;
 
-/// for data usage dialog
-@property (nonatomic) BOOL viewDidAppearCalled;
-
-@property (nonatomic) BOOL dataUsagePermissionDialogDisplayed;
-
 @end
 
 
@@ -129,7 +124,6 @@
 {
     [super viewDidLoad];
     self.viewDidAppearCalled = NO;
-    self.dataUsagePermissionDialogDisplayed = NO;
 
     self.contentControllerBottomInset = 16;
     self.shouldAnimateNetworkStatusView = NO;
@@ -193,29 +187,6 @@
     }];
 
     [self requestSuggestedHandlesIfNeeded];
-}
-
-- (void)viewDidAppear:(BOOL)animated
-{
-    [super viewDidAppear:animated];
-
-    if (! IS_IPAD_FULLSCREEN) {
-        [Settings sharedSettings].lastViewedScreen = SettingsLastScreenList;
-    }
-    
-    _state = ConversationListStateConversationList;
-    
-    [self updateBottomBarSeparatorVisibilityWithContentController:self.listContentController];
-    [self closePushPermissionDialogIfNotNeeded];
-
-    self.shouldAnimateNetworkStatusView = YES;
-
-    if (! self.viewDidAppearCalled) {
-        self.viewDidAppearCalled = YES;
-
-        [self showDataUsagePermissionDialogIfNeeded];
-        [self showAvailabilityBehaviourChangeAlertIfNeeded];
-    }
 }
 
 - (void)requestSuggestedHandlesIfNeeded
