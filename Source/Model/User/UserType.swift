@@ -143,12 +143,28 @@ public protocol UserType: NSObjectProtocol {
     
     /// Determines whether the user profile is managed by Wire or other services (SCIM)
     var managedByWire: Bool { get }
-
+    
+    // MARK: - Permissions
+    
     /// Whether the user can create conversations.
     var canCreateConversation: Bool { get }
+    
+    /// Whether the user can create services
+    var canCreateService: Bool { get }
+    
+    /// Wheather the user can administate the team
+    var canManageTeam: Bool { get }
 
     /// Whether the user can access the private company information of the other given user.
     func canAccessCompanyInformation(of user: UserType) -> Bool
+    
+    /// Wheather the user can add services to the conversation
+    @objc(canAddServiceToConversation:)
+    func canAddService(to conversation: ZMConversation) -> Bool
+    
+    /// Wheather the user can remove services from the conversation
+    @objc(canRemoveServiceFromConversation:)
+    func canRemoveService(from conversation: ZMConversation) -> Bool
 
     /// Whether the user can add another user to the conversation.
     @objc(canAddUserToConversation:)
@@ -157,5 +173,25 @@ public protocol UserType: NSObjectProtocol {
     /// Whether the user can remove another user from the conversation.
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool
+    
+    /// Whether the user can toggle the read receipts setting in the conversation.
+    @objc(canModifyReadReceiptSettingsInConversation:)
+    func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool
+    
+    /// Whether the user can toggle the emphemeral setting in the conversation.
+    @objc(canModifyEphemeralSettingsInConversation:)
+    func canModifyEphemeralSettings(in conversation: ZMConversation) -> Bool
+    
+    /// Whether the user can change the notification level setting in the conversation.
+    @objc(canModifyNotificationSettingsInConversation:)
+    func canModifyNotificationSettings(in conversation: ZMConversation) -> Bool
+    
+    /// Whether the user can toggle the access level setting in the conversation.
+    @objc(canModifyAccessControlSettingsInConversation:)
+    func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool
+    
+    /// Whether the user can update the title of the conversation.
+    @objc(canModifyTitleInConversation:)
+    func canModifyTitle(in conversation: ZMConversation) -> Bool
 
 }

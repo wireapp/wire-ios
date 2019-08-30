@@ -21,7 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 
-class MemberTests: BaseTeamTests {
+class MemberTests: ZMConversationTestsBase {
 
     func testThatItStoresThePermissionsOfAMember() {
         // given

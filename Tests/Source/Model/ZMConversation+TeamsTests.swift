@@ -21,7 +21,7 @@ import WireTesting
 @testable import WireDataModel
 
 
-class ZMConversationTests_Teams: BaseTeamTests {
+class ZMConversationTests_Teams: ZMConversationTestsBase {
 
     var team: Team!
     var conversation: ZMConversation!
@@ -38,121 +38,6 @@ class ZMConversationTests_Teams: BaseTeamTests {
         team = nil
         conversation = nil
         super.tearDown()
-    }
-
-    func testThatItDoesNotReportIsGuestForANonTeamConversation() {
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
-    }
-
-    func testThatItDoesNotReportIsGuestForATeamConversation() {
-        // given
-        conversation.team = team
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
-    }
-
-    func testThatItReportsIsGuestWhenAConversationDoesNotHaveATeam() {
-        // given
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-
-        // then
-        XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))
-    }
-
-    func testThatAUserCanAddUsersToAConversationWithoutTeamAndWithoutTeamRemoteIdentifier() {
-        // when & then
-        XCTAssert(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-
-    func testThatAUserCantAddUsersToAConversationWhereHeIsGuest() {
-        // when
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-
-    func testThatAUserCantAddUsersToAConversationWhereHeIsNotAnActiveMember() {
-        // when
-        conversation.isSelfAnActiveMember = false
-
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-
-    func testThatAUserCantAddUsersToAConversationWhereHeIsMemberWithUnsufficientPermissions() {
-        self.performPretendingUiMocIsSyncMoc {
-            // when
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
-            let member = Member.getOrCreateMember(for: selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = Permissions.none
-            self.conversation.team = self.team
-            
-            // then
-            XCTAssertFalse(selfUser.canAddUser(to: self.conversation))
-        }
-    }
-
-    func testThatAUserCanAddUsersToAConversationWhereHeIsMemberWithSufficientPermissions() {
-        self.performPretendingUiMocIsSyncMoc {
-            // when
-            self.conversation.team = self.team
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
-            let member = Member.getOrCreateMember(for: selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = .member
-            
-            // then
-            XCTAssert(selfUser.canAddUser(to: self.conversation))
-        }
-    }
-
-    func testThatAUserCanRemoveUsersToAConversationWithoutTeamAndWithoutTeamRemoteIdentifier() {
-        // when & then
-        XCTAssert(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
-    }
-
-    func testThatAUserCantRemoveUsersToAConversationWhereHeIsGuest() {
-        // when
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
-    }
-
-    func testThatAUserCantRemoveUsersToAConversationWhereHeIsNotAnActiveMember() {
-        // when
-        conversation.isSelfAnActiveMember = false
-
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canRemoveUser(from: conversation))
-    }
-
-    func testThatAUserCantRemoveUsersToAConversationWhereHeIsMemberWithUnsufficientPermissions() {
-        self.performPretendingUiMocIsSyncMoc {
-            // when
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
-            let member = Member.getOrCreateMember(for: selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = Permissions.none
-            self.conversation.team = self.team
-            
-            // then
-            XCTAssertFalse(selfUser.canRemoveUser(from: self.conversation))
-        }
-    }
-
-    func testThatAUserCanRemoveUsersToAConversationWhereHeIsMemberWithSufficientPermissions() {
-        self.performPretendingUiMocIsSyncMoc {
-            // when
-            self.conversation.team = self.team
-            let selfUser = ZMUser.selfUser(in: self.uiMOC)
-            let member = Member.getOrCreateMember(for: self.selfUser, in: self.team, context: self.uiMOC)
-            member.permissions = .member
-            
-            // then
-            XCTAssert(selfUser.canRemoveUser(from: self.conversation))
-        }
     }
 
     func testThatItSetsTheConversationTeamRemoteIdentifierWhenUpdatingWithTransportData() {

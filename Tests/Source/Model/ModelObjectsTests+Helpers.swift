@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2019 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,13 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import Foundation
 
-import WireTesting
-@testable import WireDataModel
-
-
-class BaseTeamTests: ZMConversationTestsBase {
-
+extension ModelObjectsTests {
+    
     @discardableResult func createTeamAndMember(for user: ZMUser, with permissions: Permissions? = nil) -> (Team, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.team = .insertNewObject(in: uiMOC)
@@ -33,7 +30,7 @@ class BaseTeamTests: ZMConversationTestsBase {
         }
         return (member.team!, member)
     }
-
+    
     @discardableResult func createUserAndAddMember(to team: Team) -> (ZMUser, Member) {
         let member = Member.insertNewObject(in: uiMOC)
         member.user = .insertNewObject(in: uiMOC)
@@ -41,5 +38,5 @@ class BaseTeamTests: ZMConversationTestsBase {
         member.team = team
         return (member.user!, member)
     }
-
+    
 }

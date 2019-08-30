@@ -325,6 +325,22 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     public var canCreateConversation: Bool {
         return user?.canCreateConversation ?? false
     }
+    
+    public var canCreateService: Bool {
+        return user?.canCreateService ?? false
+    }
+    
+    public var canManageTeam: Bool {
+        return user?.canManageTeam ?? false
+    }
+    
+    public func canAddService(to conversation: ZMConversation) -> Bool {
+        return user?.canAddService(to: conversation) == true
+    }
+    
+    public func canRemoveService(from conversation: ZMConversation) -> Bool {
+        return user?.canRemoveService(from: conversation) == true
+    }
 
     public func canAddUser(to conversation: ZMConversation) -> Bool {
         return user?.canAddUser(to: conversation) == true
@@ -332,6 +348,26 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
 
     public func canRemoveUser(from conversation: ZMConversation) -> Bool {
         return user?.canRemoveUser(from: conversation) == true
+    }
+    
+    public func canModifyTitle(in conversation: ZMConversation) -> Bool {
+        return user?.canModifyTitle(in: conversation) == true
+    }
+    
+    public func canModifyEphemeralSettings(in conversation: ZMConversation) -> Bool {
+        return user?.canModifyEphemeralSettings(in: conversation) == true
+    }
+    
+    public func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool {
+        return user?.canModifyReadReceiptSettings(in: conversation) == true
+    }
+    
+    public func canModifyNotificationSettings(in conversation: ZMConversation) -> Bool {
+        return user?.canModifyNotificationSettings(in: conversation) == true
+    }
+    
+    public func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool {
+        return user?.canModifyAccessControlSettings(in: conversation) == true
     }
     
     public override func isEqual(_ object: Any?) -> Bool {
