@@ -49,7 +49,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (void)removeUserProfileObserver;
 - (void)updateBottomBarSeparatorVisibilityWithContentController:(ConversationListContentController *)controller;
-
+- (void)setStateValue: (ConversationListState)newState;
 @end
 
 NS_ASSUME_NONNULL_END

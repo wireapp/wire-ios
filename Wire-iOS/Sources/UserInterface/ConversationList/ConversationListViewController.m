@@ -166,6 +166,11 @@
     [self setupStyle];
 }
 
+- (void)setStateValue: (ConversationListState)newState
+{
+    _state = newState;
+}
+
 - (void)updateObserverTokensForActiveTeam
 {
     if ([ZMUserSession sharedSession] != nil) {
