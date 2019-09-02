@@ -25,7 +25,9 @@ extension ConversationListViewController {
     }
 
     @objc
-    func setState(_ state: ConversationListState, animated: Bool, completion: (() -> ())?) {
+    func setState(_ state: ConversationListState,
+                  animated: Bool,
+                  completion: (() -> ())?) {
         if self.state == state {
             completion?()
             return
