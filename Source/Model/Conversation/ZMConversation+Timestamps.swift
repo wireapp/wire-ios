@@ -272,7 +272,7 @@ extension ZMConversation {
     }
     
     @objc
-    func savePendingLastRead() {
+    public func savePendingLastRead() {
         guard let timestamp = pendingLastReadServerTimestamp else { return }
         confirmUnreadMessagesAsRead(until: timestamp)
         updateLastRead(timestamp, synchronize: false)
