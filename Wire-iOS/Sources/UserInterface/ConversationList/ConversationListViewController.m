@@ -53,15 +53,6 @@
 @interface ConversationListViewController (Archive) <ArchivedListViewControllerDelegate>
 @end
 
-@interface ConversationListViewController (InitialSyncObserver) <ZMInitialSyncCompletionObserver>
-@end
-
-@interface ConversationListViewController (ConversationListObserver) <ZMConversationListObserver>
-
-- (void)updateArchiveButtonVisibility;
-
-@end
-
 
 @interface ConversationListViewController ()
 
@@ -70,10 +61,6 @@
 
 @property (nonatomic, weak) id<UserProfile> userProfile;
 @property (nonatomic) NSObject *userProfileObserverToken;
-@property (nonatomic) id userObserverToken;
-@property (nonatomic) id allConversationsObserverToken;
-@property (nonatomic) id connectionRequestsObserverToken;
-@property (nonatomic) id initialSyncObserverToken;
 
 @property (nonatomic) ConversationListContentController *listContentController;
 @property (nonatomic) ConversationListBottomBarController *bottomBarController;
@@ -84,7 +71,6 @@
 /// for NetworkStatusViewDelegate
 @property (nonatomic) BOOL shouldAnimateNetworkStatusView;
 
-@property (nonatomic) UIView *contentContainer;
 @property (nonatomic, nullable) UIView *conversationListContainer;
 @property (nonatomic) ConversationListOnboardingHint *onboardingHint;
 
@@ -109,12 +95,6 @@
     self.userProfileObserverToken = nil;
 }
 
-- (void)loadView
-{
-    self.view = [[PassthroughTouchesView alloc] initWithFrame:[UIScreen mainScreen].bounds];
-    self.view.backgroundColor = [UIColor clearColor];
-}
-
 - (void)setSelectedConversation:(ZMConversation *)conversation
 {
     _selectedConversation = conversation;
@@ -124,6 +104,7 @@
 {
     [super viewDidLoad];
     self.viewDidAppearCalled = NO;
+    self.definesPresentationContext = YES;
 
     self.contentControllerBottomInset = 16;
     self.shouldAnimateNetworkStatusView = NO;
@@ -133,11 +114,9 @@
     [self.view addSubview:self.contentContainer];
 
     self.userProfile = ZMUserSession.sharedSession.userProfile;
-    if ([ZMUserSession sharedSession] != nil) {
-        self.userObserverToken = [UserChangeInfo addObserver:self forUser:[ZMUser selfUser] userSession:[ZMUserSession sharedSession]];
-        self.initialSyncObserverToken = [ZMUserSession addInitialSyncCompletionObserver:self userSession:[ZMUserSession sharedSession]];
-    }
-    
+
+    [self setupObservers];
+
     self.onboardingHint = [[ConversationListOnboardingHint alloc] init];
     [self.contentContainer addSubview:self.onboardingHint];
 
@@ -171,29 +150,6 @@
     _state = newState;
 }
 
-- (void)updateObserverTokensForActiveTeam
-{
-    if ([ZMUserSession sharedSession] != nil) {
-        self.allConversationsObserverToken = [ConversationListChangeInfo addObserver:self
-                                                                             forList:[ZMConversationList conversationsIncludingArchivedInUserSession:[ZMUserSession sharedSession]]
-                                                                         userSession:[ZMUserSession sharedSession]];
-        self.connectionRequestsObserverToken = [ConversationListChangeInfo addObserver:self
-                                                                               forList:[ZMConversationList pendingConnectionConversationsInUserSession:[ZMUserSession sharedSession]]
-                                                                           userSession:[ZMUserSession sharedSession]];
-    }
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
-    [super viewWillAppear:animated];
-    
-    [[ZMUserSession sharedSession] enqueueChanges:^{
-        [self.selectedConversation savePendingLastRead];
-    }];
-
-    [self requestSuggestedHandlesIfNeeded];
-}
-
 - (void)requestSuggestedHandlesIfNeeded
 {
     if (nil == ZMUser.selfUser.handle &&
@@ -205,21 +161,6 @@
     }
 }
 
-- (BOOL)prefersStatusBarHidden
-{
-    return YES;
-}
-
-- (UIStatusBarStyle)preferredStatusBarStyle
-{
-    if (self.presentedViewController != nil) {
-        if (![self.presentedViewController isKindOfClass:UIAlertController.class]) {
-            return self.presentedViewController.preferredStatusBarStyle;
-        }
-    }
-
-    return UIStatusBarStyleLightContent;
-}
 
 - (void)createNoConversationLabel;
 {
@@ -279,32 +220,6 @@
     [self.listContentController didMoveToParentViewController:self];
 }
 
-- (void)viewWillTransitionToSize:(CGSize)size withTransitionCoordinator:(id<UIViewControllerTransitionCoordinator>)coordinator
-{
-    [coordinator animateAlongsideTransition:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-        // we reload on rotation to make sure that the list cells lay themselves out correctly for the new
-        // orientation
-        [self.listContentController reload];
-    } completion:^(id<UIViewControllerTransitionCoordinatorContext> context) {
-    }];
-    
-    [super viewWillTransitionToSize:size withTransitionCoordinator:coordinator];
-}
-
-- (BOOL)shouldAutorotate
-{
-    return YES;
-}
-
-- (BOOL)definesPresentationContext
-{
-    return YES;
-}
-
-- (UIInterfaceOrientationMask)supportedInterfaceOrientations
-{
-    return UIInterfaceOrientationMaskPortrait;
-}
 
 - (void)setBackgroundColorPreference:(UIColor *)color
 {
@@ -483,41 +398,6 @@
             [self.listContentController selectConversation:conversation scrollToMessage:nil focusOnView:YES animated:YES];
         }];
     }];
-}
-
-@end
-
-@implementation ConversationListViewController (ConversationListObserver)
-
-- (void)conversationListDidChange:(ConversationListChangeInfo *)changeInfo
-{
-    [self updateNoConversationVisibility];
-    [self updateArchiveButtonVisibility];
-}
-
-- (void)updateArchiveButtonVisibility
-{
-    BOOL showArchived = self.hasArchivedConversations;
-    if (showArchived == self.bottomBarController.showArchived) {
-        return;
-    }
-
-    [UIView transitionWithView:self.bottomBarController.view
-                      duration:0.35
-                       options:UIViewAnimationOptionTransitionCrossDissolve
-                    animations:^{
-                        self.bottomBarController.showArchived = showArchived;
-                    } completion:nil];
-}
-
-@end
-
-
-@implementation ConversationListViewController (InitialSyncObserver)
-
-- (void)initialSyncCompleted
-{
-    [self requestSuggestedHandlesIfNeeded];
 }
 
 @end
