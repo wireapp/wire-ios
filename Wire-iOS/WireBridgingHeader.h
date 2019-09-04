@@ -102,10 +102,6 @@
 #import "SketchColorPickerController.h"
 #import "SketchColorPickerController+Internal.h"
 
-#import "ConversationListViewController.h"
-#import "ConversationListViewController+Private.h"
-#import "ConversationListViewController+Internal.h"
-
 #import "FullscreenImageViewController.h"
 #import "FullscreenImageViewController+PullToDismiss.h"
 #import "FullscreenImageViewController+internal.h"
@@ -132,7 +128,6 @@
 #import "VerticalTransition.h"
 #import "MediaAsset.h"
 #import "PassthroughWindow.h"
-#import "PassthroughTouchesView.h"
 #import "ZMUserSession+RequestProxy.h"
 #import "URLSchemeHelper.h"
 #import "AuthenticationCoordinatedViewController.h"

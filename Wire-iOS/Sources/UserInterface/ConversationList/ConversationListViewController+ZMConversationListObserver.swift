@@ -26,7 +26,6 @@ extension ConversationListViewController: ZMConversationListObserver {
 }
 
 extension ConversationListViewController {
-    @objc
     func updateObserverTokensForActiveTeam() {
         if let userSession = ZMUserSession.shared() {
             allConversationsObserverToken = ConversationListChangeInfo.add(observer:self, for: ZMConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
@@ -35,9 +34,8 @@ extension ConversationListViewController {
         }
     }
 
-    @objc
     func updateArchiveButtonVisibility() {
-        let showArchived = hasArchivedConversations()
+        let showArchived = ZMConversationList.hasArchivedConversations
         if showArchived == bottomBarController.showArchived {
             return
         }

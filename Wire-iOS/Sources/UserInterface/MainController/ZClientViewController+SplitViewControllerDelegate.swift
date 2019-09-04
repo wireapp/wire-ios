@@ -18,14 +18,9 @@
 
 import Foundation
 
-extension ConversationListViewController {
-    @objc
-    func setupObservers() {
-        if let userSession = ZMUserSession.shared(),
-            let selfUser = ZMUser.selfUser() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, userSession: userSession) as Any
+extension ZClientViewController: SplitViewControllerDelegate {
+    public func splitViewControllerShouldMoveLeftViewController(_ splitViewController: SplitViewController) -> Bool {
+        return splitViewController.rightViewController != nil && splitViewController.leftViewController == backgroundViewController && conversationListViewController.state == .conversationList && (conversationListViewController.presentedViewController == nil || splitViewController.isLeftViewControllerRevealed == false)
 
-            initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-        }
     }
 }
