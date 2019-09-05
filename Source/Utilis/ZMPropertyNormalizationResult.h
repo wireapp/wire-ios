@@ -36,26 +36,7 @@ NS_ASSUME_NONNULL_BEGIN
 /// The error that reprsents the reason why the property is not valid.
 @property (nonatomic, readonly, nullable) NSError* validationError;
 
-- (instancetype)initWithResult:(BOOL)valid normalizedValue:(Value)normalizedValue validationError:(NSError *)validationError;
-
-@end
-
-@interface ZMUser (RichPropertyNormalization)
-
-/// Normalizes the name string for use with a user.
-+ (ZMPropertyNormalizationResult<NSString *> *)normalizeName:(NSString *)name;
-
-/// Normalizes the email address string for use with a user.
-+ (ZMPropertyNormalizationResult<NSString *> *)normalizeEmailAddress:(NSString *)emailAddress;
-
-/// Normalizes the password string for use with a user.
-+ (ZMPropertyNormalizationResult<NSString *> *)normalizePassword:(NSString *)password;
-
-/// Normalizes the phone number string for use with a user.
-+ (ZMPropertyNormalizationResult<NSString *> *)normalizePhoneNumber:(NSString *)phoneNumber;
-
-/// Normalizes the e-mail/phone verification string for use with a user.
-+ (ZMPropertyNormalizationResult<NSString *> *)normalizeVerificationCode:(NSString *)verificationCode;
+- (instancetype)initWithResult:(BOOL)valid normalizedValue:(Value)normalizedValue validationError:(NSError * _Nullable )validationError;
 
 @end
 

@@ -63,8 +63,8 @@ class UnregisteredUserTests: XCTestCase {
         let normalizedShortPhoneWithLetters = UnregisteredUser.normalizedPhoneNumber(shortPhoneWithLetters)
 
         // THEN
-        assertNormalizationErrorCode(normalizedPhoneWithLetters, .objectValidationErrorCodePhoneNumberContainsInvalidCharacters)
-        assertNormalizationErrorCode(normalizedShortPhoneWithLetters, .objectValidationErrorCodePhoneNumberContainsInvalidCharacters)
+        assertNormalizationErrorCode(normalizedPhoneWithLetters, .phoneNumberContainsInvalidCharacters)
+        assertNormalizationErrorCode(normalizedShortPhoneWithLetters, .phoneNumberContainsInvalidCharacters)
     }
 
     func testThatItDoesNotValidateAShortPhoneNumberWithTheRightError() {
@@ -75,7 +75,7 @@ class UnregisteredUserTests: XCTestCase {
         let normalizedPhone = UnregisteredUser.normalizedPhoneNumber(shortPhone)
 
         // THEN
-        assertNormalizationErrorCode(normalizedPhone, .objectValidationErrorCodeStringTooShort)
+        assertNormalizationErrorCode(normalizedPhone, .tooShort)
     }
 
     func testThatItDoesNotValidateALongPhoneNumberWithTheRightError() {
@@ -86,7 +86,7 @@ class UnregisteredUserTests: XCTestCase {
         let normalizedPhone = UnregisteredUser.normalizedPhoneNumber(longPhone)
 
         // THEN
-        assertNormalizationErrorCode(normalizedPhone, .objectValidationErrorCodeStringTooLong)
+        assertNormalizationErrorCode(normalizedPhone, .tooLong)
     }
 
     func testThatItNormalizesThePhoneNumber() {
