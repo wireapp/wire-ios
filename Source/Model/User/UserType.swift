@@ -174,6 +174,10 @@ public protocol UserType: NSObjectProtocol {
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool
     
+    /// Wheather the user can delete the conversation
+    @objc(canDeleteConversation:)
+    func canDeleteConversation(_ conversation: ZMConversation) -> Bool
+    
     /// Whether the user can toggle the read receipts setting in the conversation.
     @objc(canModifyReadReceiptSettingsInConversation:)
     func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool

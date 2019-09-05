@@ -350,6 +350,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canRemoveUser(from: conversation) == true
     }
     
+    public func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
+        return user?.canDeleteConversation(conversation) == true
+    }
+    
     public func canModifyTitle(in conversation: ZMConversation) -> Bool {
         return user?.canModifyTitle(in: conversation) == true
     }

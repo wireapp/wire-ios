@@ -50,6 +50,11 @@ public extension ZMUser {
         return canAddUser(to: conversation)
     }
     
+    @objc(canDeleteConversation:)
+    func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
+        return conversation.teamRemoteIdentifier != nil && conversation.isSelfAnActiveMember && conversation.creator == self
+    }
+    
     @objc(canModifyReadReceiptSettingsInConversation:)
     func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool {
         guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }

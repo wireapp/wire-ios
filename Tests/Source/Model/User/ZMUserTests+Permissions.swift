@@ -126,6 +126,37 @@ class ZMUserTests_Permissions: ModelObjectsTests {
         XCTAssertTrue(selfUser.canAddUser(to: self.conversation))
     }
     
+    // MARK: Deleting conversation
+    
+    func testThatConversationCanBeDeleted_ByItsCreator() {
+        // when
+        makeSelfUserTeamMember(withPermissions: .member)
+        conversation.creator = selfUser
+        
+        // then
+        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
+    }
+    
+    func testThatConversationCantBeDeleted_ByItsCreatorIfNotAnActiveParticipant() {
+        // when
+        makeSelfUserTeamMember(withPermissions: .member)
+        conversation.isSelfAnActiveMember = false
+        conversation.creator = selfUser
+        
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
+    }
+    
+    func testThatConversationCantBeDeleted_ByItsCreatorIfANonTeamConversation() {
+        // when
+        makeSelfUserTeamMember(withPermissions: .member)
+        conversation.creator = selfUser
+        conversation.teamRemoteIdentifier = nil
+        
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
+    }
+    
     // MARK: Guests
     
     func testThatItDoesNotReportIsGuest_ForANonTeamConversation() {
