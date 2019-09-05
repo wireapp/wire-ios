@@ -32,16 +32,22 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
     override func tearDown() {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 2))
         if let url = currentTestURL {
-            removeTestFile(url)
+            removeTestFile(at: url)
         }
         currentTestURL = nil
         message = nil
         super.tearDown()
     }
     
+    override func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
+        let metadata = super.createFileMetadata()
+        currentTestURL = metadata.fileURL
+        return metadata
+    }
+    
     func appendFileMessage(to conversation: ZMConversation, fileMetaData: ZMFileMetadata? = nil) -> ZMAssetClientMessage? {
         let nonce = UUID.create()
-        let data = fileMetaData ?? addFile()
+        let data = fileMetaData ?? createFileMetadata()
         
         return conversation.append(file: data, nonce: nonce) as? ZMAssetClientMessage
     }
@@ -75,44 +81,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
         return message
     }
     
-    
-    func addFile(filename: String? = nil) -> ZMFileMetadata {
-        if let fileName = filename {
-            currentTestURL = testURLWithFilename(fileName)
-        } else {
-            currentTestURL = testURLWithFilename("file.dat")
-        }
-        _ = createTestFile(currentTestURL!)
-        let fileMetadata = ZMFileMetadata(fileURL: currentTestURL!)
-        return fileMetadata
-    }
-    
-    func testURLWithFilename(_ filename: String) -> URL {
-        let documents = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
-        let documentsURL = URL(fileURLWithPath: documents)
-        return documentsURL.appendingPathComponent(filename)
-    }
-    
-    func createTestFile(_ url: URL) -> Data {
-        let data: Data! = "Some other data".data(using: String.Encoding.utf8)
-        try! data.write(to: url, options: [])
-        return data
-    }
-    
-    func removeTestFile(_ url: URL) {
-        do {
-            let fm = FileManager.default
-            if !fm.fileExists(atPath: url.path) {
-                return
-            }
-            try fm.removeItem(at: url)
-        } catch {
-            XCTFail("Error removing file: \(error)")
-        }
-    }
-
 }
-
 
 class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
     
@@ -226,8 +195,8 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         let filename = "document.txt"
         let url = testURLWithFilename(filename)
-        let data = createTestFile(url)
-        defer { removeTestFile(url) }
+        let data = createTestFile(at: url)
+        defer { removeTestFile(at: url) }
         let size = UInt64(data.count)
         let fileMetadata = ZMFileMetadata(fileURL: url)
         
@@ -257,7 +226,8 @@ extension ZMAssetClientMessageTests {
         let mimeType = "text/plain"
         let filename = "document.txt"
         let url = testURLWithFilename(filename)
-        let data = createTestFile(url)
+        let data = createTestFile(at: url)
+        defer { removeTestFile(at: url) }
         let fileMetadata = ZMFileMetadata(fileURL: url)
         
         // when
