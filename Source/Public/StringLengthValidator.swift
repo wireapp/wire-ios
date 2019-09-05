@@ -29,20 +29,29 @@ import Foundation
     
     public class StringLengthError: NSError {
         static let tooShort = StringLengthError(domain: ZMObjectValidationErrorDomain,
-                                                code: Int(ZMManagedObjectValidationErrorCode.objectValidationErrorCodeStringTooShort.rawValue),
+                                                code: ZMManagedObjectValidationErrorCode.tooShort.rawValue,
                                                 userInfo: nil)
         
         static let tooLong = StringLengthError(domain: ZMObjectValidationErrorDomain,
-                                               code: Int(ZMManagedObjectValidationErrorCode.objectValidationErrorCodeStringTooLong.rawValue),
+                                               code: ZMManagedObjectValidationErrorCode.tooLong.rawValue,
                                                userInfo: nil)
     }
     
     @objc(validateValue:minimumStringLength:maximumStringLength:maximumByteLength:error:)
-    static public func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>,
+    public static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!,
                                      minimumStringLength: UInt32,
                                      maximumStringLength: UInt32,
                                      maximumByteLength: UInt32) throws {
-        guard let string = ioValue.pointee as? String else {
+        var pointee = ioValue.pointee as Any?
+        defer { ioValue.pointee = pointee as AnyObject? }
+        try validateStringValue(&pointee, minimumStringLength: minimumStringLength, maximumStringLength: maximumStringLength, maximumByteLength: maximumByteLength)
+    }
+    
+    @discardableResult static public func validateStringValue(_ ioValue: inout Any?,
+                                     minimumStringLength: UInt32,
+                                     maximumStringLength: UInt32,
+                                     maximumByteLength: UInt32) throws -> Bool {
+        guard let string = ioValue as? String else {
             throw StringLengthError.tooShort
         }
 
@@ -67,8 +76,10 @@ import Foundation
         }
         
         if string != trimmedString {
-            ioValue.pointee = trimmedString as AnyObject
+            ioValue = trimmedString
         }
+        
+        return true
     }
     
 }
