@@ -37,6 +37,7 @@
              @"conversation.asset-add" : @(ZMUpdateEventTypeConversationAssetAdd),
              @"conversation.connect-request" : @(ZMUpdateEventTypeConversationConnectRequest),
              @"conversation.create" : @(ZMUpdateEventTypeConversationCreate),
+             @"conversation.delete" : @(ZMUpdateEventTypeConversationDelete),
              @"conversation.knock" : @(ZMUpdateEventTypeConversationKnock),
              @"conversation.member-join" : @(ZMUpdateEventTypeConversationMemberJoin),
              @"conversation.member-leave" : @(ZMUpdateEventTypeConversationMemberLeave),
