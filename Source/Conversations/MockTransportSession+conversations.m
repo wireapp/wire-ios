@@ -298,8 +298,11 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 - (ZMTransportResponse *)processConversationsGetConversation:(NSString *)conversationId;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
+    
     if (conversation == nil) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    } else if (![conversation.activeUsers containsObject:self.selfUser]) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
     }
     
     return [ZMTransportResponse responseWithPayload:conversation.transportData HTTPStatus:200 transportSessionError:nil];

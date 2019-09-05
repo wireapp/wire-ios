@@ -27,9 +27,70 @@
 
 @implementation MockTransportSessionConversationsTests
 
+- (void)testThatWeReceive_200_WhenRequestingConversationWhichExists
+{
+    __block MockUser *selfUser;
+    __block MockUser *otherUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        otherUser = [session insertUserWithName:@"Foo"];
+        groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[selfUser] type:ZMTConversationTypeGroup];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 200);
+    [self checkThatTransportData:response.payload matchesConversation:groupConversation];
+}
 
+- (void)testThatWeReceive_403_WhenRequestingConversationWhichExistsButWeAreNotAMemberOf
+{
+    __block MockUser *selfUser;
+    __block MockUser *otherUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        otherUser = [session insertUserWithName:@"Foo"];
+        groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[] type:ZMTConversationTypeGroup];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 403);
+}
 
-- (void)testThatWeCanManuallyCreateAndRequestConversations;
+- (void)testThatWeReceive_404_WhenRequestingConversationWhichDoesntExists
+{
+    __block MockUser *selfUser;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:NSUUID.createUUID.transportString];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertEqual(response.HTTPStatus, 404);
+}
+
+- (void)testThatWeCanManuallyCreateAndRequestAllConversations;
 {
     // GIVEN
     __block MockUser *selfUser;
@@ -59,50 +120,25 @@
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
-    // (1)
-    {
-        // WHEN
-        ZMTransportResponse *response = [self responseForPayload:nil path:@"/conversations/" method:ZMMethodGET];
-        
-        // THEN
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 200);
-        XCTAssertNil(response.transportSessionError);
-        XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
-        
-        NSArray *data = [[response.payload asDictionary] arrayForKey:@"conversations"];
-        XCTAssertNotNil(data);
-        XCTAssertEqual(data.count, (NSUInteger) 3);
-        
-        [self checkThatTransportData:data[0] matchesConversation:selfConversation];
-        [self checkThatTransportData:data[1] matchesConversation:oneOnOneConversation];
-        [self checkThatTransportData:data[2] matchesConversation:groupConversation];
-    }
+    // WHEN
+    ZMTransportResponse *response = [self responseForPayload:nil path:@"/conversations/" method:ZMMethodGET];
     
-    // (2)
-    for (MockConversation *conversation in @[selfConversation, oneOnOneConversation, groupConversation]) {
-        return; // 1 TODO: Fix threading violation here
-        // -com.apple.CoreData.SQLDebug 1
-        
-        // WHEN
-        NSString *path = [@"/conversations/" stringByAppendingPathComponent:conversation.identifier];
-        ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
-        
-        // THEN
-        XCTAssertNotNil(response);
-        if (!response) {
-            return;
-        }
-        XCTAssertEqual(response.HTTPStatus, 200);
-        XCTAssertNil(response.transportSessionError);
-        XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
-        NSDictionary *data = (id) response.payload;
-        
-        [self checkThatTransportData:data matchesConversation:conversation];
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
     }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    
+    NSArray *data = [[response.payload asDictionary] arrayForKey:@"conversations"];
+    XCTAssertNotNil(data);
+    XCTAssertEqual(data.count, (NSUInteger) 3);
+    
+    [self checkThatTransportData:data[0] matchesConversation:selfConversation];
+    [self checkThatTransportData:data[1] matchesConversation:oneOnOneConversation];
+    [self checkThatTransportData:data[2] matchesConversation:groupConversation];
 }
 
 - (void)testThatWeCanCreateAConversationWithAPostRequest
