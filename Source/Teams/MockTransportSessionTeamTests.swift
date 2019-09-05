@@ -250,7 +250,57 @@ extension MockTransportSessionTeamTests {
 }
 
 // MARK: - Conversation
+
 extension MockTransportSessionTeamTests {
+    
+    func testThatTeamConversationCantBeDeleted_ByNonTeamUser() {
+        // Given
+        var team: MockTeam!
+        var creator: MockUser!
+        var selfUser: MockUser!
+        var conversation: MockConversation!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name", isBound: true)
+            selfUser = session.insertSelfUser(withName: "Self User")
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+            conversation = session.insertTeamConversation(to: team, with: [creator, selfUser], creator: creator)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let response = self.response(forPayload: nil, path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)", method: .methodDELETE)
+        
+        // Then
+        XCTAssertEqual(response?.httpStatus, 403)
+    }
+    
+    func testThatTeamConversationCanBeDeleted() {
+        // Given
+        var team: MockTeam!
+        var creator: MockUser!
+        var selfUser: MockUser!
+        var conversation: MockConversation!
+        
+        sut.performRemoteChanges { session in
+            team = session.insertTeam(withName: "name", isBound: true)
+            selfUser = session.insertSelfUser(withName: "Self User")
+            creator = session.insertUser(withName: "creator")
+            team.creator = creator
+            session.insertMember(with: selfUser, in: team)
+            conversation = session.insertTeamConversation(to: team, with: [creator, selfUser], creator: creator)
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let response = self.response(forPayload: nil, path: "/teams/\(team.identifier)/conversations/\(conversation.identifier)", method: .methodDELETE)
+        
+        // Then
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertTrue(conversation.isFault)
+    }
+    
     func testThatConversationReturnsTeamInPayload() {
         // Given
         var team: MockTeam!
@@ -277,6 +327,7 @@ extension MockTransportSessionTeamTests {
 }
 
 // MARK: - Members
+
 extension MockTransportSessionTeamTests {
     
     func testMembersPayload() {
