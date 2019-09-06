@@ -267,4 +267,13 @@ extension ZClientViewController {
         conversationListViewController.select(conversation)
     }
 
+    @objc
+    var isConversationViewVisible: Bool {
+        return splitViewController.isConversationViewVisible
+    }
+
+    var isConversationListVisible: Bool {
+        return (splitViewController.layoutSize == .regularLandscape) || (splitViewController.isLeftViewControllerRevealed && conversationListViewController.presentedViewController == nil)
+    }
+
 }
