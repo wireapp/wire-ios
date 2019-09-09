@@ -52,6 +52,10 @@
     if (self.type == ZMUpdateEventTypeUserConnection) {
         return  [[self.payload optionalDictionaryForKey:@"connection"] optionalUuidForKey:@"conversation"];
     }
+    if (self.type == ZMUpdateEventTypeTeamConversationDelete) {
+        return [[self.payload optionalDictionaryForKey:@"data"] optionalUuidForKey:@"conv"];
+    }
+    
     return [self.payload optionalUuidForKey:@"conversation"];
 }
 
