@@ -23,10 +23,12 @@ extension ZClientViewController {
 
     // MARK: - Setup methods
 
-    ///TODO: caller to Swift
+    ///TODO: caller to Swift and accept SelfUserType as paramenter
     @objc
     func setupConversationListViewController(account: Account, selfUser: UserType) {
-        conversationListViewController = ConversationListViewController(account: account, selfUser: selfUser as! SelfUserType)
+        guard let selfUser = selfUser as? SelfUserType else { return }
+        
+        conversationListViewController = ConversationListViewController(account: account, selfUser: selfUser)
     }
 
     override open var supportedInterfaceOrientations: UIInterfaceOrientationMask {
@@ -258,7 +260,7 @@ extension ZClientViewController {
                 animated: Bool,
                 completion: Completion?) {
         dismissAllModalControllers(callback: { [weak self] in
-            self?.conversationListViewController.select(conversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
+            self?.conversationListViewController.viewModel.select(conversation, scrollTo: message, focusOnView: focus, animated: animated, completion: completion)
         })
     }
 

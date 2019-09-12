@@ -18,7 +18,6 @@
 
 import Foundation
 
-typealias Completion = ()->()
 
 extension ConversationListViewController {
     func setState(_ state: ConversationListState,
@@ -49,14 +48,7 @@ extension ConversationListViewController {
             }
         case .archived:
             show(createArchivedListViewController(), animated: animated, completion: completion)
-        @unknown default:
-            break
         }
-    }
-
-    @objc(dismissPeoplePickerWithCompletionBlock:)
-    func dismissPeoplePicker(with block: @escaping Completion) {
-        setState(.conversationList, animated:true, completion:block)
     }
 
     @objc(selectInboxAndFocusOnView:)

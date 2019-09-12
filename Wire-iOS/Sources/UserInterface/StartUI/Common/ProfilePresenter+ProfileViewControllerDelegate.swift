@@ -18,22 +18,10 @@
 
 import Foundation
 
-extension ConversationListViewController: ConversationListBottomBarControllerDelegate {
-
-    func conversationListBottomBar(_ bar: ConversationListBottomBarController, didTapButtonWithType buttonType: ConversationListButtonType) {
-        switch buttonType {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        default:
-            break
+extension ProfilePresenter: ProfileViewControllerDelegate {
+    public func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation) {
+        dismiss(controller) {
+            ZClientViewController.shared()?.select(conversation, focusOnView: true, animated: true)
         }
-    }
-}
-
-extension ConversationListViewController {
-    func presentPeoplePicker() {
-        setState(.peoplePicker, animated: true)
     }
 }

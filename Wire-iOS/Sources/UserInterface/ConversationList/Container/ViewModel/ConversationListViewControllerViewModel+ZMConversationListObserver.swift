@@ -18,14 +18,22 @@
 
 import Foundation
 
-extension ConversationListViewController: ZMConversationListObserver {
+extension ConversationListViewController.ViewModel: ZMConversationListObserver {
     public func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         updateNoConversationVisibility()
         updateArchiveButtonVisibility()
     }
 }
 
-extension ConversationListViewController {
+extension ConversationListViewController.ViewModel {
+    func updateNoConversationVisibility() {
+        if !ZMConversationList.hasConversations {
+            viewController?.showNoContactLabel()
+        } else {
+            viewController?.hideNoContactLabel(animated: true)
+        }
+    }
+
     func updateObserverTokensForActiveTeam() {
         if let userSession = ZMUserSession.shared() {
             allConversationsObserverToken = ConversationListChangeInfo.add(observer:self, for: ZMConversationList.conversationsIncludingArchived(inUserSession: userSession), userSession: userSession)
@@ -35,13 +43,22 @@ extension ConversationListViewController {
     }
 
     func updateArchiveButtonVisibility() {
-        let showArchived = ZMConversationList.hasArchivedConversations
-        if showArchived == bottomBarController.showArchived {
-            return
-        }
-
-        UIView.transition(with: bottomBarController.view, duration: 0.35, options: .transitionCrossDissolve, animations: {
-            self.bottomBarController.showArchived = showArchived
-        })
+        viewController?.updateArchiveButtonVisibilityIfNeeded(showArchived: ZMConversationList.hasArchivedConversations)
     }
+}
+
+extension ZMConversationList {
+    static var hasConversations: Bool {
+        guard let session = ZMUserSession.shared() else { return false }
+
+        let conversationsCount = ZMConversationList.conversations(inUserSession: session).count + ZMConversationList.pendingConnectionConversations(inUserSession: session).count
+        return conversationsCount > 0
+    }
+
+    static var hasArchivedConversations: Bool {
+        guard let session = ZMUserSession.shared() else { return false }
+
+        return ZMConversationList.archivedConversations(inUserSession: session).count > 0
+    }
+
 }

@@ -24,11 +24,11 @@ enum ConversationListState {
     case archived
 }
 
+
 final class ConversationListViewController: UIViewController {
+    let viewModel: ViewModel
     /// internal View Model
     var state: ConversationListState = .conversationList
-    var selectedConversation: ZMConversation?
-    let account: Account
 
     /// private
     private var viewDidAppearCalled = false
@@ -37,19 +37,7 @@ final class ConversationListViewController: UIViewController {
     /// for NetworkStatusViewDelegate
     var shouldAnimateNetworkStatusView = false
 
-    var isComingFromSetUsername = false
     var startCallToken: Any?
-
-    var actionsController: ConversationActionController?
-
-    /// observer tokens which are assigned when viewDidLoad
-    fileprivate var userObserverToken: Any?
-    fileprivate var initialSyncObserverToken: Any?
-    var allConversationsObserverToken: Any?
-    var connectionRequestsObserverToken: Any?
-    var userProfileObserverToken: Any?
-
-    weak var userProfile: UserProfile? = ZMUserSession.shared()?.userProfile
 
     var pushPermissionDeniedViewController: PermissionDeniedViewController?
     var usernameTakeoverViewController: UserNameTakeOverViewController?
@@ -102,10 +90,19 @@ final class ConversationListViewController: UIViewController {
         return conversationListOnboardingHint
     }()
 
-    required init(account: Account,
-                  selfUser: SelfUserType = ZMUser.selfUser()) {
-        self.account = account
-        topBarViewController = ConversationListTopBarViewController(account: account, selfUser: selfUser)
+    convenience init(account: Account, selfUser: SelfUserType) {
+        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: selfUser)
+        
+        self.init(viewModel: viewModel)
+
+        viewModel.viewController = self
+    }
+    
+    required init(viewModel: ViewModel) {
+
+        self.viewModel = viewModel
+
+        topBarViewController = ConversationListTopBarViewController(account: viewModel.account, selfUser: viewModel.selfUser)
 
         super.init(nibName:nil, bundle:nil)
 
@@ -131,10 +128,6 @@ final class ConversationListViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    deinit {
-        removeUserProfileObserver()
-    }
-
     override func loadView() {
         view = PassthroughTouchesView(frame: UIScreen.main.bounds)
         view.backgroundColor = .clear
@@ -145,12 +138,8 @@ final class ConversationListViewController: UIViewController {
 
         /// update
         hideNoContactLabel(animated: false)
-        updateNoConversationVisibility()
-        updateArchiveButtonVisibility()
-        updateObserverTokensForActiveTeam()
-        showPushPermissionDeniedDialogIfNeeded()
 
-        setupObservers()
+        viewModel.setupObservers()
 
         listContentController.collectionView.scrollRectToVisible(CGRect(x: 0, y: 0, width: view.bounds.size.width, height: 1), animated: false)
     }
@@ -158,11 +147,8 @@ final class ConversationListViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        ZMUserSession.shared()?.enqueueChanges({
-            self.selectedConversation?.savePendingLastRead()
-        })
-
-        requestSuggestedHandlesIfNeeded()
+        viewModel.savePendingLastRead()
+        viewModel.requestSuggestedHandlesIfNeeded()
     }
 
     override func viewDidAppear(_ animated: Bool) {
@@ -219,38 +205,24 @@ final class ConversationListViewController: UIViewController {
 
     // MARK: - setup UI
 
-    fileprivate func setupObservers() {
-        if let userSession = ZMUserSession.shared(),
-            let selfUser = ZMUser.selfUser() {
-            userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, userSession: userSession) as Any
-
-            initialSyncObserverToken = ZMUserSession.addInitialSyncCompletionObserver(self, userSession: userSession)
-        }
-    }
-
     fileprivate func setupNoConversationLabel() {
         contentContainer.addSubview(noConversationLabel)
     }
 
     fileprivate func setupBottomBarController() {
         bottomBarController.delegate = self
-        addChild(bottomBarController)
-        conversationListContainer.addSubview(bottomBarController.view)
-        bottomBarController.didMove(toParent: self)
+        
+        add(bottomBarController, to: conversationListContainer)
     }
 
     fileprivate func setupListContentController() {
-        listContentController.contentDelegate = self
+        listContentController.contentDelegate = viewModel
 
-        addChild(listContentController)
-        conversationListContainer.addSubview(listContentController.view)
-        listContentController.didMove(toParent: self)
+        add(listContentController, to: conversationListContainer)
     }
     
     fileprivate func setupTopBar() {
-        addChild(topBarViewController)
-        contentContainer.addSubview(topBarViewController.view)
-        topBarViewController.didMove(toParent: self)
+        add(topBarViewController, to: contentContainer)
     }
     
     fileprivate func setupNetworkStatusBar() {
@@ -315,7 +287,7 @@ final class ConversationListViewController: UIViewController {
 
     func createArchivedListViewController() -> ArchivedListViewController {
         let archivedViewController = ArchivedListViewController()
-        archivedViewController.delegate = self
+        archivedViewController.delegate = viewModel
         return archivedViewController
     }
 
@@ -342,14 +314,6 @@ final class ConversationListViewController: UIViewController {
         })
     }
 
-    func updateNoConversationVisibility() {
-        if !ZMConversationList.hasConversations {
-            showNoContactLabel()
-        } else {
-            hideNoContactLabel(animated: true)
-        }
-    }
-
     func updateBottomBarSeparatorVisibility(with controller: ConversationListContentController) {
         let controllerHeight = controller.view.bounds.height
         let contentHeight = controller.collectionView.contentSize.height
@@ -361,22 +325,58 @@ final class ConversationListViewController: UIViewController {
         }
     }
 
-}
+    func scrollViewDidScroll(scrollView: UIScrollView!) {
+        guard let topBar = topBarViewController.topBar else { return }
 
-extension ZMConversationList {
-    static var hasConversations: Bool {
-        guard let session = ZMUserSession.shared() else { return false }
-        
-        let conversationsCount = ZMConversationList.conversations(inUserSession: session).count + ZMConversationList.pendingConnectionConversations(inUserSession: session).count
-        return conversationsCount > 0
-    }
-    
-    static var hasArchivedConversations: Bool {
-        guard let session = ZMUserSession.shared() else { return false }
-        
-        return ZMConversationList.archivedConversations(inUserSession: session).count > 0
+        topBar.leftSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
+        topBar.rightSeparatorLineView.scrollViewDidScroll(scrollView: scrollView)
     }
 
+
+    /// Scroll to the current selection
+    ///
+    /// - Parameter animated: perform animation or not
+    @objc(scrollToCurrentSelectionAnimated:)
+    func scrollToCurrentSelection(animated: Bool) {
+        listContentController.scrollToCurrentSelection(animated: animated)
+    }
+
+    func createPeoplePickerController() -> StartUIViewController {
+        let startUIViewController = StartUIViewController()
+        startUIViewController.delegate = viewModel
+        return startUIViewController
+    }
+
+    func updateArchiveButtonVisibilityIfNeeded(showArchived: Bool) {
+        if showArchived == bottomBarController.showArchived {
+            return
+        }
+
+        UIView.transition(with: bottomBarController.view, duration: 0.35, options: .transitionCrossDissolve, animations: {
+            self.bottomBarController.showArchived = showArchived
+        })
+    }
+
+    @objc
+    func hideArchivedConversations() {
+        setState(.conversationList, animated:true)
+    }
+
+    func presentPeoplePicker() {
+        setState(.peoplePicker, animated: true)
+    }
+
+    func selectOnListContentController(_ conversation: ZMConversation!, scrollTo message: ZMConversationMessage?, focusOnView focus: Bool, animated: Bool, completion: (() -> Void)?) -> Bool {
+        return listContentController.select(conversation,
+                                     scrollTo: message,
+                                     focusOnView: focus,
+                                     animated: animated,
+                                     completion: completion)
+    }
+
+    var hasUsernameTakeoverViewController: Bool {
+        return usernameTakeoverViewController != nil
+    }
 }
 
 fileprivate extension NSAttributedString {
