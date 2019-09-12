@@ -26,20 +26,10 @@ public extension ZMUser {
         
         var mutableName: Any? = name
         
-        do {
-            _ = try ExtremeCombiningCharactersValidator.validateCharactersValue(&mutableName)
-        } catch {
-            return false
-        }
+        try ExtremeCombiningCharactersValidator.validateCharactersValue(&mutableName)
         
-        var validate = false
-        
-        do {
-            // The backend limits to 128. We'll fly just a bit below the radar.
-            validate = try StringLengthValidator.validateStringValue(&mutableName, minimumStringLength: 2, maximumStringLength: 100, maximumByteLength: UInt32.max)
-        } catch {
-            return false
-        }
+        // The backend limits to 128. We'll fly just a bit below the radar.
+        let validate = try StringLengthValidator.validateStringValue(&mutableName, minimumStringLength: 2, maximumStringLength: 100, maximumByteLength: UInt32.max)
         
         name = mutableName as? String
         
@@ -50,42 +40,31 @@ public extension ZMUser {
     
     static func validate(accentColor: inout Int?) throws -> Bool {
         var mutableAccentColor: Any? = accentColor
-        do {
-            let result = try ZMAccentColorValidator.validateValue(&mutableAccentColor)
-            accentColor = mutableAccentColor as? Int
-            return result
-        } catch let error {
-            throw error
-        }
+        let result = try ZMAccentColorValidator.validateValue(&mutableAccentColor)
+        accentColor = mutableAccentColor as? Int
+        return result
     }
     
     // E-mail address
     
     static func validate(emailAddress: inout String?) throws -> Bool {
         var mutableEmailAddress: Any? = emailAddress
-        do {
-            let result = try ZMEmailAddressValidator.validateValue(&mutableEmailAddress)
-            emailAddress = mutableEmailAddress as? String
-            return result
-        } catch let error {
-            throw error
-        }
+        let result = try ZMEmailAddressValidator.validateValue(&mutableEmailAddress)
+        emailAddress = mutableEmailAddress as? String
+        return result
+
     }
     
     // Password
     
     static func validate(password: inout String?) throws -> Bool {
         var mutablePassword: Any? = password
-        do {
-            let result = try StringLengthValidator.validateStringValue(&mutablePassword,
+        let result = try StringLengthValidator.validateStringValue(&mutablePassword,
                                                                  minimumStringLength: 8,
                                                                  maximumStringLength: 120,
                                                                  maximumByteLength: UInt32.max)
-            password = mutablePassword as? String
-            return result
-        } catch let error {
-            throw error
-        }
+        password = mutablePassword as? String
+        return result
     }
     
     // Phone number
@@ -96,26 +75,18 @@ public extension ZMUser {
                 return false
         }
         
-        do {
-            let result = try ZMPhoneNumberValidator.validateValue(&mutableNumber)
-            phoneNumber = mutableNumber as? String
-            return result
-        } catch let error {
-            throw error
-        }
+        let result = try ZMPhoneNumberValidator.validateValue(&mutableNumber)
+        phoneNumber = mutableNumber as? String
+        return result
     }
     
     // Verification code
     
     static func validate(phoneVerificationCode: inout String?) throws -> Bool {
         var mutableCode: Any? = phoneVerificationCode
-        do {
-            let result = try StringLengthValidator.validateStringValue(&mutableCode, minimumStringLength: 6, maximumStringLength: 6, maximumByteLength: UInt32.max)
-            phoneVerificationCode = mutableCode as? String
-            return result
-        } catch let error {
-            throw error
-        }
+        let result = try StringLengthValidator.validateStringValue(&mutableCode, minimumStringLength: 6, maximumStringLength: 6, maximumByteLength: UInt32.max)
+        phoneVerificationCode = mutableCode as? String
+        return result
     }
 }
 
