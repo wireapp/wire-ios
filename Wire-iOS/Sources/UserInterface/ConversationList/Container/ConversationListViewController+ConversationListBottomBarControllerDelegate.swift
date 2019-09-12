@@ -18,8 +18,14 @@
 
 import Foundation
 
-extension ConversationListViewController: ZMInitialSyncCompletionObserver {
-    public func initialSyncCompleted() {
-        requestSuggestedHandlesIfNeeded()
+extension ConversationListViewController: ConversationListBottomBarControllerDelegate {
+
+    func conversationListBottomBar(_ bar: ConversationListBottomBarController, didTapButtonWithType buttonType: ConversationListButtonType) {
+        switch buttonType {
+        case .archive:
+            setState(.archived, animated: true)
+        case .startUI:
+            presentPeoplePicker()
+        }
     }
 }

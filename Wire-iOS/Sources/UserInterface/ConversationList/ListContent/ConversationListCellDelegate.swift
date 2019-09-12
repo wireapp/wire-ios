@@ -1,6 +1,6 @@
-//
+
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2019 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,9 +18,8 @@
 
 import Foundation
 
-extension ConversationListViewController {
-    func showActionMenu(for conversation: ZMConversation!, from view: UIView!) {
-        actionsController = ConversationActionController(conversation: conversation, target: self)
-        actionsController?.presentMenu(from: view, context: .list)
-    }
+@objc
+protocol ConversationListCellDelegate: NSObjectProtocol {
+    func conversationListCellOverscrolled(_ cell: ConversationListCell?)
+    func conversationListCellJoinCallButtonTapped(_ cell: ConversationListCell?)
 }

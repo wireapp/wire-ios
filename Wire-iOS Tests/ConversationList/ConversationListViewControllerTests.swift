@@ -16,19 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ConversationListViewControllerTests: CoreDataSnapshotTestCase {
+final class ConversationListViewControllerTests: XCTestCase {
     
     var sut: ConversationListViewController!
     
     override func setUp() {
         super.setUp()
 
-        MockUser.mockSelf()?.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
+        let mockSelf = MockUser.mockSelf()!
+        mockSelf.name = "Johannes Chrysostomus Wolfgangus Theophilus Mozart"
         let account = Account.mockAccount(imageData: mockImageData)
-        sut = ConversationListViewController(account: account)
+        let viewModel = ConversationListViewController.ViewModel(account: account, selfUser: mockSelf)
+        sut = ConversationListViewController(viewModel: viewModel)
+        viewModel.viewController = sut
 
         sut.view.backgroundColor = .black
     }
@@ -36,33 +40,19 @@ final class ConversationListViewControllerTests: CoreDataSnapshotTestCase {
     override func tearDown() {
         sut = nil
         super.tearDown()
+
     }
 
     //MARK: - View controller
 
     func testForNoConversations() {
-        verify(view: sut.view)
+        verify(matching: sut)
     }
 
     //MARK: - PermissionDeniedViewController
     func testForPremissionDeniedViewController() {
         sut.showPermissionDeniedViewController()
 
-        verify(view: sut.view)
-    }
-
-    //MARK: - Action menu
-    func testForActionMenu() {
-        teamTest {
-            sut.showActionMenu(for: otherUserConversation, from: sut.view)
-            verifyAlertController((sut?.actionsController?.alertController)!)
-        }
-    }
-
-    func testForActionMenu_NoTeam() {
-        nonTeamTest {
-            sut.showActionMenu(for: otherUserConversation, from: sut.view)
-            verifyAlertController((sut?.actionsController?.alertController)!)
-        }
+        verify(matching: sut)
     }
 }
