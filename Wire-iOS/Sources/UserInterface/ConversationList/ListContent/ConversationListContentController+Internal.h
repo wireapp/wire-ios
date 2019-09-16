@@ -20,19 +20,21 @@
 
 @protocol ConversationListViewModelDelegate;
 
-static NSString * const CellReuseIdConnectionRequests = @"CellIdConnectionRequests";
-static NSString * const CellReuseIdConversation = @"CellId";
+static NSString * _Nullable const CellReuseIdConnectionRequests = @"CellIdConnectionRequests";
+static NSString * _Nullable const CellReuseIdConversation = @"CellId";
+
+NS_ASSUME_NONNULL_BEGIN
 
 @interface ConversationListContentController () <ConversationListViewModelDelegate, UICollectionViewDelegateFlowLayout>
 
 @property (nonatomic, strong) ConversationListViewModel *listViewModel;
 
-@property (nonatomic) NSObject *activeMediaPlayerObserver;
-@property (nonatomic) MediaPlaybackManager *mediaPlaybackManager;
+@property (nonatomic, nullable) NSObject *activeMediaPlayerObserver;
+@property (nonatomic, nullable) MediaPlaybackManager *mediaPlaybackManager;
 @property (nonatomic) BOOL focusOnNextSelection;
 @property (nonatomic) BOOL animateNextSelection;
-@property (nonatomic) id<ZMConversationMessage> scrollToMessageOnNextSelection;
-@property (nonatomic, copy) dispatch_block_t selectConversationCompletion;
+@property (nonatomic, nullable) id<ZMConversationMessage> scrollToMessageOnNextSelection;
+@property (nonatomic, copy, nullable) dispatch_block_t selectConversationCompletion;
 @property (nonatomic) ConversationListCell *layoutCell;
 @property (nonatomic) ConversationCallController *startCallController;
 
@@ -42,3 +44,5 @@ static NSString * const CellReuseIdConversation = @"CellId";
 @interface ConversationListContentController (PeekAndPop) <UIViewControllerPreviewingDelegate>
 
 @end
+
+NS_ASSUME_NONNULL_END

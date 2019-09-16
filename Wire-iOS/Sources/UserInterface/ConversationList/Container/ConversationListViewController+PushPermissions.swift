@@ -19,7 +19,7 @@
 import Foundation
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
-    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController!) {
+    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
         closePushPermissionDeniedDialog()
     }
 }
@@ -49,17 +49,17 @@ extension ConversationListViewController {
     func showPermissionDeniedViewController() {
         observeApplicationDidBecomeActive()
 
-        if let permissions = PermissionDeniedViewController.push() {
-            permissions.delegate = self
+        let permissions = PermissionDeniedViewController.push()
 
-            addToSelf(permissions)
+        permissions.delegate = self
 
-            permissions.view.translatesAutoresizingMaskIntoConstraints = false
-            permissions.view.fitInSuperview()
-            pushPermissionDeniedViewController = permissions
+        addToSelf(permissions)
 
-            concealContentContainer()
-        }
+        permissions.view.translatesAutoresizingMaskIntoConstraints = false
+        permissions.view.fitInSuperview()
+        pushPermissionDeniedViewController = permissions
+
+        concealContentContainer()
     }
 
     @objc func applicationDidBecomeActive(_ notif: Notification) {
