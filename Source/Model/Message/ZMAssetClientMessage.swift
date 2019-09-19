@@ -67,13 +67,6 @@ import Foundation
         return genericAssetMessage?.hashOfContent(with: serverTimestamp)
     }
     
-    public override func prepareForDeletion() {
-        super.prepareForDeletion()
-        self.dataSet.map { $0 as! ZMGenericMessageData } .forEach {
-            $0.managedObjectContext?.delete($0)
-        }
-    }
-    
     /// Remote asset ID
     @objc public var assetId: UUID? {
         get { return self.transientUUID(forKey: #keyPath(ZMAssetClientMessage.assetId)) }

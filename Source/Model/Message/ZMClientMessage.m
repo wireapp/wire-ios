@@ -81,14 +81,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return self.updatedTimestamp;
 }
 
-- (void)prepareForDeletion
-{
-    [super prepareForDeletion];
-    for (ZMGenericMessageData *messageData in self.dataSet) {
-        [messageData.managedObjectContext deleteObject:messageData];
-    }
-}
-
 - (NSData *)hashOfContent
 {
     if (self.serverTimestamp == nil) {

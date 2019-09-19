@@ -20,12 +20,17 @@
 import Foundation
 import WireProtos
 
-extension Cache {
+fileprivate extension Cache {
     
     /// Decrypts an encrypted asset in the asset cache to a decrypted version in the cache. Upon completion of the decryption, deletes the encrypted
     /// original. In case of error (the digest doesn't match, or any other error), deletes the original and does not create a decrypted version.
     /// Returns whether the decryption was successful and the digest matched
-    func decryptAssetIfItMatchesDigest(_ plaintextEntryKey: String, encryptedEntryKey: String, encryptionKey: Data, macKey: Data, macDigest: Data) -> Bool {
+    func decryptAssetIfItMatchesDigest(_ plaintextEntryKey: String,
+                                       encryptedEntryKey: String,
+                                       encryptionKey: Data,
+                                       macKey: Data,
+                                       macDigest: Data,
+                                       createdAt creationDate: Date) -> Bool {
         let encryptedData = self.assetData(encryptedEntryKey)
         if encryptedData == nil {
             return false
@@ -38,7 +43,7 @@ extension Cache {
         }
         let plainData = encryptedData!.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
         if let plainData = plainData {
-            self.storeAssetData(plainData, key: plaintextEntryKey)
+            self.storeAssetData(plainData, key: plaintextEntryKey, createdAt: creationDate)
         }
         self.deleteAssetData(encryptedEntryKey)
         return true
@@ -57,7 +62,8 @@ extension Cache {
     func decryptAssetIfItMatchesDigest(_ plaintextEntryKey: String,
                                        encryptedEntryKey: String,
                                        encryptionKey: Data,
-                                       sha256Digest: Data? = nil) -> Bool {
+                                       sha256Digest: Data? = nil,
+                                       createdAt creationDate: Date) -> Bool {
         let encryptedData = self.assetData(encryptedEntryKey)
         if encryptedData == nil {
             return false
@@ -73,7 +79,7 @@ extension Cache {
 
         let plainData = encryptedData!.zmDecryptPrefixedPlainTextIV(key: encryptionKey)
         if let plainData = plainData {
-            self.storeAssetData(plainData, key: plaintextEntryKey)
+            self.storeAssetData(plainData, key: plaintextEntryKey, createdAt: creationDate)
         }
         self.deleteAssetData(encryptedEntryKey)
         return true
@@ -88,7 +94,7 @@ extension Cache {
         let encryptionKey = Data.randomEncryptionKey()
         let encryptedData = plainData.zmEncryptPrefixingPlainTextIV(key: encryptionKey)
         let hash = encryptedData.zmSHA256Digest()
-        self.storeAssetData(encryptedData, key: encryptedEntryKey)
+        self.storeAssetData(encryptedData, key: encryptedEntryKey, createdAt: Date())
         
         return ZMImageAssetEncryptionKeys(otrKey: encryptionKey, sha256: hash)
     }
@@ -103,7 +109,7 @@ extension FileAssetCache {
         guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: true),
             let encryptedCacheKey = type(of: self).cacheKeyForAsset(for: team, format: format, encrypted: true) else { return false }
 
-        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey)
+        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, sha256Digest: nil, createdAt: Date())
     }
 
     public func encryptImageAndComputeSHA256Digest(for team: Team, format: ZMImageFormat) -> ZMImageAssetEncryptionKeys? {
@@ -120,7 +126,11 @@ extension FileAssetCache {
         guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: false),
               let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, format: format, encrypted: true) else { return false }
         
-        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, sha256Digest: sha256Digest)
+        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey,
+                                                        encryptedEntryKey: encryptedCacheKey,
+                                                        encryptionKey: encryptionKey,
+                                                        sha256Digest: sha256Digest,
+                                                        createdAt: message.serverTimestamp ?? Date())
     }
     
     /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
@@ -138,7 +148,11 @@ extension FileAssetCache {
         guard let plaintextCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: false),
               let encryptedCacheKey = type(of: self).cacheKeyForAsset(message, encrypted: true) else { return false }
         
-        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey, encryptedEntryKey: encryptedCacheKey, encryptionKey: encryptionKey, sha256Digest: sha256Digest)
+        return self.cache.decryptAssetIfItMatchesDigest(plaintextCacheKey,
+                                                        encryptedEntryKey: encryptedCacheKey,
+                                                        encryptionKey: encryptionKey,
+                                                        sha256Digest: sha256Digest,
+                                                        createdAt: message.serverTimestamp ?? Date())
     }
     
     /// Encrypts a plaintext cache entry to an encrypted one, also computing the digest of the encrypted entry
