@@ -1,4 +1,4 @@
-//
+
 // Wire
 // Copyright (C) 2019 Wire Swiss GmbH
 //
@@ -17,21 +17,15 @@
 //
 
 import Foundation
-@testable import Wire
 
-final class MockZMUserSession: NSObject, ZMUserSessionInterface {
-    func performChanges(_ block: @escaping () -> Swift.Void) {
-        block()
+extension ZMConversation {
+
+    func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
+                                 completionHandler: Completion? = nil) {
+        guard let userSession = userSession else { return }
+
+        userSession.enqueueChanges({
+            self.isArchived = false
+        }, completionHandler: completionHandler)
     }
-
-    func enqueueChanges(_ block: @escaping () -> Swift.Void) {
-        block()
-    }
-
-    func enqueueChanges(_ block: @escaping () -> Void, completionHandler: (() -> Void)!) {
-        block()
-        completionHandler()
-    }
-
-    var isNotificationContentHidden: Bool = false
 }

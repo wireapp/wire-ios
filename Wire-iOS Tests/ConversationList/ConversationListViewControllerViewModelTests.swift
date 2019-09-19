@@ -66,5 +66,4 @@ final class ConversationListViewControllerViewModelTests: XCTestCase {
         /// THEN
         XCTAssert(result)
     }
-
 }

@@ -41,7 +41,9 @@ extension ConversationListViewController.ViewModel: StartUIDelegate {
     }
 
     func startUI(_ startUI: StartUIViewController, didSelect conversation: ZMConversation) {
-        ZClientViewController.shared()?.select(conversation, focusOnView: true, animated: true)
+        conversation.unarchive() {
+            ZClientViewController.shared()?.select(conversation, focusOnView: true, animated: true)
+        }
     }
     
     private func withConversationForUsers(_ users: Set<ZMUser>?, callback onConversationCreated: @escaping ConversationCreatedBlock) {

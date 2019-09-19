@@ -23,14 +23,12 @@ extension ConversationListViewController.ViewModel: ArchivedListViewControllerDe
         viewController?.setState(.conversationList, animated: true, completion: nil)
     }
 
-    func archivedListViewController(_ controller: ArchivedListViewController, didSelectConversation conversation: ZMConversation) {
-        ZMUserSession.shared()?.enqueueChanges({
-            conversation.isArchived = false
-        }, completionHandler: { [weak self] in
-
+    func archivedListViewController(_ controller: ArchivedListViewController,
+                                    didSelectConversation conversation: ZMConversation) {
+        conversation.unarchive() { [weak self] in
             self?.viewController?.setState(.conversationList, animated: true, completion:{
                 self?.viewController?.selectOnListContentController(conversation, scrollTo: nil, focusOnView: true, animated: true, completion: nil)
             })
-        })
+        }
     }
 }
