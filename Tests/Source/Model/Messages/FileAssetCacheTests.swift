@@ -79,6 +79,21 @@ extension FileAssetCacheTests {
         XCTAssertTrue(sut.hasDataOnDisk(message2, encrypted: true))
     }
     
+    func testThatCreationDateIsLinkedToMessageServerTimestamp() throws {
+        // given
+        let sut = FileAssetCache()
+        let message = createMessageForCaching() as! ZMClientMessage
+        message.serverTimestamp = Date(timeIntervalSinceReferenceDate: 1000)
+        
+        // when
+        sut.storeAssetData(message, encrypted: false, data: "data1_plain".data(using: String.Encoding.utf8)!)
+        
+        // then
+        let attributes = try FileManager.default.attributesOfItem(atPath: sut.accessAssetURL(message)!.path)
+        let creationDate = attributes[.creationDate] as? Date
+        XCTAssertEqual(creationDate, message.serverTimestamp)
+    }
+    
     func testThatHasDataOnDisk() {
         
         // given
@@ -186,6 +201,32 @@ extension FileAssetCacheTests {
         // then
         XCTAssertNil(expectedNilData)
         AssertOptionalEqual(expectedNotNilData, expression2: data)
+    }
+    
+    func testThatItDeletesAssets_WhenAssetIsOlderThanGivenDate() {
+        let message = createMessageForCaching()
+        let data = testData()
+        let sut = FileAssetCache()
+        sut.storeAssetData(message, encrypted: false, data: data)
+        
+        // when
+        sut.deleteAssetsOlderThan(Date())
+        
+        // then
+        XCTAssertNil(sut.assetData(message, encrypted: false))
+    }
+    
+    func testThatItKeepsAssets_WhenAssetIsNewerThanGivenDate() {
+        let message = createMessageForCaching()
+        let data = testData()
+        let sut = FileAssetCache()
+        sut.storeAssetData(message, encrypted: false, data: data)
+        
+        // when
+        sut.deleteAssetsOlderThan(Date.distantPast)
+        
+        // then
+        XCTAssertNotNil(sut.assetData(message, encrypted: false))
     }
 }
 
