@@ -769,7 +769,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     VerifyReturnNil(team != nil);
     VerifyReturnNil(!participant.isSelfUser);
     ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-    VerifyReturnNil(selfUser.canCreateConversation);
 
     ZMConversation *conversation = [self existingTeamConversationInManagedObjectContext:moc withParticipant:participant team:team];
     if (nil != conversation) {
