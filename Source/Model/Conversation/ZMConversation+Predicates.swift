@@ -78,7 +78,7 @@ extension ZMConversation {
         
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, pendingConversationPredicate])
     }
-
+    
     @objc(predicateForClearedConversations)
     class func predicateForClearedConversations() -> NSPredicate {
         let cleared = NSPredicate(format: "\(ZMConversationClearedTimeStampKey) != NULL AND \(ZMConversationIsArchivedKey) == YES")
@@ -92,7 +92,44 @@ extension ZMConversation {
         
         return NSCompoundPredicate(andPredicateWithSubpredicates: [notClearedTimestamp, predicateForValidConversations()])
     }
-
+    
+    @objc(predicateForGroupConversations)
+    class func predicateForGroupConversations() -> NSPredicate {
+        let groupConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), groupConversationPredicate])
+    }
+    
+    class func predicateForUnconnectedConversations() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.connection.rawValue)")
+    }
+    
+    class func predicateForOneToOneConversation() -> NSPredicate {
+        return NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.oneOnOne.rawValue)")
+    }
+    
+    class func predicateForTeamOneToOneConversation() -> NSPredicate {
+        // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
+        //  1. It is a conversation inside a team
+        //  2. The only participants are the current user and the selected user
+        //  3. It does not have a custom display name
+        
+        let isTeamConversation = NSPredicate(format: "team != NULL")
+        let isGroupConversation = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let hasNoUserDefinedName = NSPredicate(format: "\(ZMConversationUserDefinedNameKey) == NULL")
+        let hasOnlyOneParticipant = NSPredicate(format: "\(ZMConversationLastServerSyncedActiveParticipantsKey).@count == 1")
+        
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [isTeamConversation, isGroupConversation, hasNoUserDefinedName, hasOnlyOneParticipant])
+    }
+    
+    @objc(predicateForOneToOneConversations)
+    class func predicateForOneToOneConversations() -> NSPredicate {
+        // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
+        let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForTeamOneToOneConversation(), predicateForUnconnectedConversations()])
+        
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate])
+    }
+    
     @objc(predicateForArchivedConversations)
     class func predicateForArchivedConversations() -> NSPredicate {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsIncludingArchived(), NSPredicate(format: "\(ZMConversationIsArchivedKey) == YES")])
