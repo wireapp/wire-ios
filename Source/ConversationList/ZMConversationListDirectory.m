@@ -38,8 +38,11 @@ static NSString * const PendingKey = @"Pending";
 @property (nonatomic) ZMConversationList* archivedConversations;
 @property (nonatomic) ZMConversationList* pendingConnectionConversations;
 @property (nonatomic) ZMConversationList* clearedConversations;
+@property (nonatomic) ZMConversationList* oneToOneConversations;
+@property (nonatomic) ZMConversationList* groupConversations;
 
 @property (nonatomic) Team *team;
+@property (nonatomic) NSManagedObjectContext *managedObjectContext;
 
 @end
 
@@ -51,6 +54,8 @@ static NSString * const PendingKey = @"Pending";
 {
     self = [super init];
     if (self) {
+        self.managedObjectContext = moc;
+        
         NSArray *allConversations = [self fetchAllConversations:moc];
 
         self.unarchivedConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
@@ -73,6 +78,16 @@ static NSString * const PendingKey = @"Pending";
                                                                       filteringPredicate:ZMConversation.predicateForClearedConversations
                                                                                      moc:moc
                                                                              description:@"clearedConversations"];
+        
+        self.oneToOneConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                       filteringPredicate:ZMConversation.predicateForOneToOneConversations
+                                                                                      moc:moc
+                                                                              description:@"oneToOneConversations"];
+        
+        self.groupConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                    filteringPredicate:ZMConversation.predicateForGroupConversations
+                                                                                   moc:moc
+                                                                           description:@"groupConversations"];
     }
     return self;
 }
@@ -106,7 +121,9 @@ static NSString * const PendingKey = @"Pending";
              self.archivedConversations,
              self.conversationsIncludingArchived,
              self.unarchivedConversations,
-             self.clearedConversations
+             self.clearedConversations,
+             self.oneToOneConversations,
+             self.groupConversations
              ];
 }
 
