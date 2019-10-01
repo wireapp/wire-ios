@@ -51,9 +51,6 @@ extension ConversationListContentController {
         switch kind {
         case UICollectionView.elementKindSectionHeader:
             if let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: ConversationListHeaderView.reuseIdentifier, for: indexPath) as? ConversationListHeaderView {
-                header.desiredWidth = collectionView.frame.width
-                header.desiredHeight = listViewModel.sectionVisible(section: indexPath.section) ? headerDesiredHeight: 0
-                
                 header.titleLabel.text = listViewModel.sectionHeaderTitle(sectionIndex: indexPath.section)?.uppercased()
 
                 header.collapsed = listViewModel.collapsed(at: indexPath.section)
@@ -77,16 +74,12 @@ extension ConversationListContentController {
             UICollectionView.elementKindSectionHeader, withReuseIdentifier: ConversationListHeaderView.reuseIdentifier)
 
     }
-
-    var headerDesiredHeight: CGFloat {
-        return listViewModel.folderEnabled ? CGFloat.ConversationListSectionHeader.height : 0
-    }
 }
 
 
 extension ConversationListContentController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return CGSize(width: collectionView.bounds.size.width, height: listViewModel.sectionVisible(section: section) ? headerDesiredHeight: 0)
+        return CGSize(width: collectionView.bounds.size.width, height: listViewModel.sectionHeaderVisible(section: section) ? CGFloat.ConversationListSectionHeader.height: 0)
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
