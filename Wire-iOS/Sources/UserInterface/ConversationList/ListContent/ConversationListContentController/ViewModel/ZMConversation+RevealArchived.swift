@@ -18,18 +18,14 @@
 
 import Foundation
 
-extension ConversationListViewController: ConversationListBottomBarControllerDelegate {
+extension ZMConversation {
 
-    func conversationListBottomBar(_ bar: ConversationListBottomBarController, didTapButtonWithType buttonType: ConversationListButtonType) {
-        switch buttonType {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
-        }
+    func unarchive(userSession: ZMUserSessionInterface? = ZMUserSession.shared(),
+                   completionHandler: Completion? = nil) {
+        guard let userSession = userSession else { return }
+
+        userSession.enqueueChanges({
+            self.isArchived = false
+        }, completionHandler: completionHandler)
     }
 }
