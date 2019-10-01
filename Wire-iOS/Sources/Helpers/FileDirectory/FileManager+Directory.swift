@@ -18,18 +18,11 @@
 
 import Foundation
 
-extension ConversationListViewController: ConversationListBottomBarControllerDelegate {
+private let zmLog = ZMSLog(tag: "FileManager")
 
-    func conversationListBottomBar(_ bar: ConversationListBottomBarController, didTapButtonWithType buttonType: ConversationListButtonType) {
-        switch buttonType {
-        case .archive:
-            setState(.archived, animated: true)
-        case .startUI:
-            presentPeoplePicker()
-        case .folder:
-            listContentController.listViewModel.folderEnabled = true
-        case .list:
-            listContentController.listViewModel.folderEnabled = false
-        }
+extension URL {
+    static func directoryURL(_ pathComponent: String) -> URL? {
+        let url = try? FileManager.default.url(for: .applicationSupportDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        return url?.appendingPathComponent(pathComponent)
     }
 }
