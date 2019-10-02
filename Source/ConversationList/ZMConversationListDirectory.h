@@ -37,8 +37,9 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* clearedConversations; /// conversations with deleted messages (clearedTimestamp is set)
 @property (nonatomic, readonly, nonnull) ZMConversationList* oneToOneConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
+@property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
 
-- (nonnull NSArray *)allConversationLists;
+- (nonnull NSArray<ZMConversationList *> *)allConversationLists;
 
 /// Refetches all conversation lists and resets the snapshots
 /// Call this when the app re-enters the foreground

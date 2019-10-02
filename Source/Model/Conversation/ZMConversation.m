@@ -69,13 +69,11 @@ NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTim
 NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipantsState";
 NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
 NSString *const ZMConversationNeedsToVerifyLegalHoldKey = @"needsToVerifyLegalHold";
-
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
-
 NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
-
 NSString *const SecurityLevelKey = @"securityLevel";
+NSString *const LabelsKey = @"labels";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -160,6 +158,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic archivedChangedTimestamp;
 @dynamic silencedChangedTimestamp;
 @dynamic team;
+@dynamic labels;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize lastReadTimestampSaveDelay;
@@ -374,7 +373,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             LanguageKey,
             HasReadReceiptsEnabledKey,
             ZMConversationLegalHoldStatusKey,
-            ZMConversationNeedsToVerifyLegalHoldKey
+            ZMConversationNeedsToVerifyLegalHoldKey,
+            LabelsKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
