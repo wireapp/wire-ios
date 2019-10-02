@@ -109,24 +109,23 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
     
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
         let updatedLists: [ConversationListType]
-        
-        switch changeInfo.conversationList {
-        case directory.oneToOneConversations:
+
+        if changeInfo.conversationList === directory.oneToOneConversations {
             updatedLists = [.contacts]
-        case directory.groupConversations:
+        } else if changeInfo.conversationList === directory.groupConversations {
             updatedLists = [.groups]
-        case directory.archivedConversations:
+        } else if changeInfo.conversationList === directory.archivedConversations {
             updatedLists = [.archived]
-        case directory.pendingConnectionConversations:
+        } else if changeInfo.conversationList === directory.pendingConnectionConversations {
             updatedLists = [.pending]
-        case directory.unarchivedConversations:
+        } else if changeInfo.conversationList === directory.unarchivedConversations {
             updatedLists = [.unarchived]
-        case directory.favoriteConversations:
+        } else if changeInfo.conversationList === directory.favoriteConversations {
             updatedLists = [.favorites]
-        default:
+        } else {
             updatedLists = []
         }
-        
+
         observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists))
     }
     
