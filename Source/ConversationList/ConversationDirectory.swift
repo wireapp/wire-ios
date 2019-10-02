@@ -19,7 +19,7 @@
 import Foundation
 
 public enum ConversationListType {
-    case archived, unarchived, pending, contacts, groups
+    case archived, unarchived, pending, contacts, groups, favorites
 }
 
 public struct ConversationDirectoryChangeInfo {
@@ -69,6 +69,8 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return oneToOneConversations as! [ZMConversation]
         case .groups:
             return groupConversations as! [ZMConversation]
+        case .favorites:
+            return favoriteConversations as! [ZMConversation]
         }
     }
     
@@ -80,7 +82,7 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
         let observerProxy = ConversationListObserverProxy(observer: observer, directory: self)
 
         var tokens:[Any] = []
-        [archivedConversations, unarchivedConversations, pendingConnectionConversations, oneToOneConversations, groupConversations].forEach() {
+        allConversationLists().forEach() {
             let token = ConversationListChangeInfo.add(observer: observerProxy, for: $0, managedObjectContext: managedObjectContext)
             tokens.append(token)
         }
@@ -119,6 +121,8 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
             updatedLists = [.pending]
         case directory.unarchivedConversations:
             updatedLists = [.unarchived]
+        case directory.favoriteConversations:
+            updatedLists = [.favorites]
         default:
             updatedLists = []
         }

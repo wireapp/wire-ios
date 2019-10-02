@@ -167,7 +167,7 @@
     // given
     ZMConversation *c1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     c1.conversationType = ZMConversationTypeGroup;
-    c1.lastModifiedDate = [c1.lastModifiedDate dateByAddingTimeInterval:10];
+    c1.lastModifiedDate = [[NSDate date] dateByAddingTimeInterval:10];
     
     NSArray *list = [ZMConversation conversationsIncludingArchivedInContext:self.uiMOC];
     XCTAssert([self.uiMOC saveOrRollback]);

@@ -81,6 +81,7 @@ extern NSString *const ZMConversationLastReadLocalTimestampKey;
 extern NSString *const ZMConversationLegalHoldStatusKey;
 
 extern NSString *const SecurityLevelKey;
+extern NSString *const LabelsKey;
 
 NS_ASSUME_NONNULL_END
 

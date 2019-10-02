@@ -40,6 +40,7 @@ static NSString * const PendingKey = @"Pending";
 @property (nonatomic) ZMConversationList* clearedConversations;
 @property (nonatomic) ZMConversationList* oneToOneConversations;
 @property (nonatomic) ZMConversationList* groupConversations;
+@property (nonatomic) ZMConversationList* favoriteConversations;
 
 @property (nonatomic) Team *team;
 @property (nonatomic) NSManagedObjectContext *managedObjectContext;
@@ -88,6 +89,10 @@ static NSString * const PendingKey = @"Pending";
                                                                     filteringPredicate:ZMConversation.predicateForGroupConversations
                                                                                    moc:moc
                                                                            description:@"groupConversations"];
+        
+        self.favoriteConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
+                                                                       filteringPredicate:[ZMConversation predicateForLabeledConversations:[Label fetchOrCreateFavoriteLabelIn:moc]]
+                                                                                      moc:moc description:@"favorites"];
     }
     return self;
 }
@@ -123,7 +128,8 @@ static NSString * const PendingKey = @"Pending";
              self.unarchivedConversations,
              self.clearedConversations,
              self.oneToOneConversations,
-             self.groupConversations
+             self.groupConversations,
+             self.favoriteConversations
              ];
 }
 
