@@ -235,7 +235,7 @@ final class ConversationListViewModelTests: XCTestCase {
         XCTAssertFalse(sut.collapsed(at: 1))
 
         ///WHEN
-        sut.setCollapsed(sectionIndex: 1, collapsed: true, presistent: true)
+        sut.setCollapsed(sectionIndex: 1, collapsed: true)
 
         ///THEN
         XCTAssert(sut.collapsed(at: 1))
@@ -261,7 +261,7 @@ final class ConversationListViewModelTests: XCTestCase {
         /// GIVEN
 
         /// state is initial value when first run
-        XCTAssertEqual(sut.jsonString, #"{"folderEnabled":false,"sections":[{"kind":"contactRequests","collapsed":false},{"kind":"conversations","collapsed":false}]}"#)
+        XCTAssertEqual(sut.jsonString, #"{"collapsed":[],"folderEnabled":false}"#)
 
         sut.folderEnabled = true
 
@@ -270,10 +270,10 @@ final class ConversationListViewModelTests: XCTestCase {
         fillDummyConversations(mockConversation: mockConversation)
 
         /// WHEN
-        sut.setCollapsed(sectionIndex: 1, collapsed: true, presistent: true)
+        sut.setCollapsed(sectionIndex: 1, collapsed: true)
 
         /// THEN
-        XCTAssertEqual(sut.jsonString, "{\"folderEnabled\":true,\"sections\":[{\"kind\":\"contactRequests\",\"collapsed\":false},{\"kind\":\"group\",\"collapsed\":true},{\"kind\":\"contacts\",\"collapsed\":false}]}")
+        XCTAssertEqual(sut.jsonString, #"{"collapsed":["group"],"folderEnabled":true}"#)
     }
 
     func testForRestorationDelegateMethodCalledOnceAfterItIsSet() {
