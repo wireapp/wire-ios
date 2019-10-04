@@ -19,17 +19,19 @@
 import Foundation
 
 public enum ConversationListType {
-    case archived, unarchived, pending, contacts, groups, favorites
+    case archived, unarchived, pending, contacts, groups, favorites, folder(_ folder: LabelType)
 }
 
 public struct ConversationDirectoryChangeInfo {
     
     public var reloaded: Bool
     public var updatedLists: [ConversationListType]
+    public var updatedFolders: Bool
 
-    public init(reloaded: Bool, updatedLists: [ConversationListType]) {
+    public init(reloaded: Bool, updatedLists: [ConversationListType], updatedFolders: Bool) {
         self.reloaded = reloaded
         self.updatedLists = updatedLists
+        self.updatedFolders = updatedFolders
     }
     
 }
@@ -37,20 +39,23 @@ public struct ConversationDirectoryChangeInfo {
 public protocol ConversationDirectoryObserver {
     
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
-    
-}
 
-public protocol FolderType {
-    var name: String { get }
-    var conversations: [ZMConversation] { get }
 }
 
 public protocol ConversationDirectoryType {
     
-    var folders: [FolderType] { get }
+    /// All folder created by the user
+    var allFolders: [LabelType] { get }
     
+    /// Create a new folder with a given name
+    func createFolder(_ name: String) -> LabelType?
+    
+    /// Retrive a conversation list by a given type
     func conversations(by: ConversationListType) -> [ZMConversation]
     
+    /// Observe changes to the conversation lists & folders
+    ///
+    /// NOTE that returned token must be retained for as long you want the observer to be active
     func addObserver(_ observer: ConversationDirectoryObserver) -> Any
     
 }
@@ -71,29 +76,33 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return groupConversations as! [ZMConversation]
         case .favorites:
             return favoriteConversations as! [ZMConversation]
+        case .folder(let label):
+            guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
+            return listsByFolder[objectID] as! [ZMConversation]
         }
     }
-    
-    public var folders: [FolderType] {
-        return []
-    }
-    
+        
     public func addObserver(_ observer: ConversationDirectoryObserver) -> Any {
         let observerProxy = ConversationListObserverProxy(observer: observer, directory: self)
-
-        var tokens:[Any] = []
-        allConversationLists().forEach() {
-            let token = ConversationListChangeInfo.add(observer: observerProxy, for: $0, managedObjectContext: managedObjectContext)
-            tokens.append(token)
-        }
-
-        let token = ConversationListChangeInfo.add(observer: observerProxy, managedObjectContext: managedObjectContext)
-        return tokens + [token, observerProxy]
+        let listToken = ConversationListChangeInfo.addListObserver(observerProxy, for: nil, managedObjectContext: managedObjectContext)
+        let reloadToken = ConversationListChangeInfo.addReloadObserver(observerProxy, managedObjectContext: managedObjectContext)
+        let folderToken = ConversationListChangeInfo.addFolderObserver(observerProxy, managedObjectContext: managedObjectContext)
+        
+        return [folderToken, listToken, reloadToken, observerProxy]
+    }
+    
+    @objc
+    public func createFolder(_ name: String) -> LabelType? {
+        var created = false
+        let label = Label.fetchOrCreate(remoteIdentifier: UUID(), create: true, in: managedObjectContext, created: &created)
+        label?.name = name
+        label?.kind = .folder
+        return label
     }
     
 }
 
-fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver  {
+fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver  {
     
     var observer: ConversationDirectoryObserver
     var directory: ZMConversationListDirectory
@@ -104,7 +113,11 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
     }
     
     func conversationListsDidReload() {
-        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: []))
+        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
+    }
+    
+    func conversationListsDidChangeFolders() {
+        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
     }
     
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -122,11 +135,13 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
             updatedLists = [.unarchived]
         } else if changeInfo.conversationList === directory.favoriteConversations {
             updatedLists = [.favorites]
+        } else if let label = changeInfo.conversationList.label, label.kind == .folder {
+            updatedLists = [.folder(label)]
         } else {
             updatedLists = []
         }
 
-        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists))
+        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
     }
     
 }

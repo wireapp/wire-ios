@@ -39,6 +39,7 @@ extension Notification.Name {
     static let VoiceChannelStateChange = Notification.Name("ZMVoiceChannelStateChangeNotification")
     static let VoiceChannelParticipantStateChange = Notification.Name("ZMVoiceChannelParticipantStateChangeNotification")
     static let TeamChange = Notification.Name("TeamChangeNotification")
+    static let LabelChange = Notification.Name("LabelChangeNotification")
 
     public static let NonCoreDataChangeInManagedObject = Notification.Name("NonCoreDataChangeInManagedObject")
     
@@ -186,7 +187,8 @@ extension ZMManagedObject {
                                            Reaction.classIdentifier,
                                            ZMGenericMessageData.classIdentifier,
                                            Team.classIdentifier,
-                                           Member.classIdentifier]
+                                           Member.classIdentifier,
+                                           Label.classIdentifier]
         self.affectingKeysStore = DependencyKeyStore(classIdentifiers : classIdentifiers)
         self.snapshotCenter = SnapshotCenter(managedObjectContext: managedObjectContext)
         super.init()
@@ -276,10 +278,13 @@ extension ZMManagedObject {
     internal func forwardChangesToConversationListObserver(note: Notification) {
         guard let userInfo = note.userInfo as? [String: Any] else { return }
         
-        let insertedObjects = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
-        let deletedObjects = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
-        self.conversationListObserverCenter.conversationsChanges(inserted: insertedObjects,
-                                                            deleted: deletedObjects)
+        let insertedLabels = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? Label} ?? []
+        let deletedLabels = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? Label} ?? []
+        self.conversationListObserverCenter.folderChanges(inserted: insertedLabels, deleted: deletedLabels)
+        
+        let insertedConversations = (userInfo[NSInsertedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
+        let deletedConversations = (userInfo[NSDeletedObjectsKey] as? Set<NSManagedObject>)?.compactMap{$0 as? ZMConversation} ?? []
+        self.conversationListObserverCenter.conversationsChanges(inserted: insertedConversations, deleted: deletedConversations)
     }
     
     /// Call this from syncStrategy AFTER merging the changes from syncMOC into uiMOC

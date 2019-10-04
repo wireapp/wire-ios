@@ -18,9 +18,18 @@
 
 import Foundation
 
-@objcMembers
-public class Label: ZMManagedObject {
+@objc
+public protocol LabelType: NSObjectProtocol {
     
+    var kind: Label.Kind { get }
+    var name: String? { get }
+    
+}
+
+@objcMembers
+public class Label: ZMManagedObject, LabelType {
+    
+    @objc
     public enum Kind: Int16 {
         case folder, favorite
     }

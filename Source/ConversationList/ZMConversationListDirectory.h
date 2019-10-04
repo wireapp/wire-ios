@@ -20,7 +20,9 @@
 @import Foundation;
 @import CoreData;
 
-@class Team;
+@protocol LabelType;
+
+@class Label;
 @class ZMConversationList;
 @class ZMSharableConversations;
 @class NSManagedObjectContext;
@@ -39,11 +41,18 @@
 @property (nonatomic, readonly, nonnull) ZMConversationList* groupConversations;
 @property (nonatomic, readonly, nonnull) ZMConversationList* favoriteConversations;
 
+@property (nonatomic, readonly, nonnull) NSMutableDictionary<NSManagedObjectID *, ZMConversationList *> *listsByFolder;
+@property (nonatomic, readonly, nonnull) NSArray<id<LabelType>> *allFolders;
+
 - (nonnull NSArray<ZMConversationList *> *)allConversationLists;
+
+
 
 /// Refetches all conversation lists and resets the snapshots
 /// Call this when the app re-enters the foreground
 - (void)refetchAllListsInManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc;
+- (void)insertFolders:(NSArray<Label *> * _Nonnull)labels;
+- (void)deleteFolders:(NSArray<Label *> * _Nonnull)labels;
 
 @end
 

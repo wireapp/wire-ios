@@ -25,6 +25,7 @@
 @interface ZMConversationList : NSArray
 
 @property (nonatomic, readonly, nonnull) NSString *identifier;
+@property (nonatomic, readonly, nullable) Label *label;
 
 - (void)resort;
 
