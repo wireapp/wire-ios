@@ -34,6 +34,7 @@
 @property (nonatomic) NSPredicate *filteringPredicate;
 @property (nonatomic) NSArray *sortDescriptors;
 @property (nonatomic, copy) NSString *customDebugDescription;
+@property (nonatomic) Label *label;
 
 @end
 
@@ -71,9 +72,19 @@
                                      moc:(NSManagedObjectContext *)moc
                              description:(NSString *)description
 {
+    return [self initWithAllConversations:conversations filteringPredicate:filteringPredicate moc:moc description:description label:NULL];
+}
+
+- (instancetype)initWithAllConversations:(NSArray *)conversations
+                      filteringPredicate:(NSPredicate *)filteringPredicate
+                                     moc:(NSManagedObjectContext *)moc
+                             description:(NSString *)description
+                                   label:(Label *)label
+{
     self = [super init];
     if (self) {
         self.moc = moc;
+        _label = label;
         _identifier = description;
         self.customDebugDescription = self.identifier;
         self.filteringPredicate = filteringPredicate;

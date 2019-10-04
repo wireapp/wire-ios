@@ -39,11 +39,11 @@ extension ZMConversation {
     }
     
     @objc
-    public func moveToFolder(_ folder: Label) {
-        guard folder.kind == .folder else { return }
+    public func moveToFolder(_ folder: LabelType) {
+        guard let label = folder as? Label, label.kind == .folder else { return }
         
         removeFromFolder()
-        assignLabel(folder)
+        assignLabel(label)
     }
     
     @objc

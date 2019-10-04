@@ -41,15 +41,27 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     }
     var testConversationListReloadObserver : TestConversationListReloadObserver!
     
+    class TestConversationListFolderObserver: NSObject, ZMConversationListFolderObserver {
+        
+        var conversationListsFolderChangeCount = 0
+        
+        func conversationListsDidChangeFolders() {
+            conversationListsFolderChangeCount += 1
+        }
+    }
+    var testConversationListFolderObserver : TestConversationListFolderObserver!
+    
     override func setUp() {
         testObserver = TestObserver()
         testConversationListReloadObserver = TestConversationListReloadObserver()
+        testConversationListFolderObserver = TestConversationListFolderObserver()
         super.setUp()
     }
     
     override func tearDown() {
         self.testObserver = nil
         self.testConversationListReloadObserver = nil
+        self.testConversationListFolderObserver = nil
         super.tearDown()
     }
     
@@ -76,7 +88,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     func testThatItNotifiesObserversWhenConversationListsAreReloaded() {
         // given
         sut.isDisabled = true
-        self.token = ConversationListChangeInfo.add(observer: testConversationListReloadObserver, managedObjectContext: uiMOC)
+        self.token = ConversationListChangeInfo.addReloadObserver(testConversationListReloadObserver, managedObjectContext: uiMOC)
         
         // when
         sut.isDisabled = false
@@ -91,7 +103,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.pendingConversations(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         syncMOC.performGroupedBlockAndWait {
@@ -121,7 +133,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
@@ -141,7 +153,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.isArchived = true
@@ -165,7 +177,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.isArchived = true
@@ -202,7 +214,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.isArchived = false
@@ -227,7 +239,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.isArchived = false
@@ -278,7 +290,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(conversationList.map{ ($0 as! ZMConversation).objectID},
                        [conversation3, conversation2, conversation1].map{$0.objectID}, file: file, line: line)
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         XCTAssertEqual(conversationList.count, 3, file: file, line: line)
 
         // when
@@ -318,7 +330,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         let testObserver = TestObserver()
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         XCTAssertEqual(conversationList.count, 2, file: file, line: line)
 
         // when
@@ -344,7 +356,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
         self.uiMOC.saveOrRollback()
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         XCTAssertEqual(conversationList.count, 1)
         XCTAssertEqual(testObserver.changes.count, 0)
@@ -376,10 +388,10 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let pendingObserver = TestObserver()
         var tokenArray: [Any] = []
         self.token = tokenArray
-        tokenArray.append(ConversationListChangeInfo.add(observer: pendingObserver, for: pendingList, managedObjectContext: self.uiMOC))
+        tokenArray.append(ConversationListChangeInfo.addListObserver( pendingObserver, for: pendingList, managedObjectContext: self.uiMOC))
         
         let normalObserver = TestObserver()
-        tokenArray.append(ConversationListChangeInfo.add(observer: normalObserver, for: normalList, managedObjectContext: self.uiMOC))
+        tokenArray.append(ConversationListChangeInfo.addListObserver( normalObserver, for: normalList, managedObjectContext: self.uiMOC))
         
         self.uiMOC.saveOrRollback()
         
@@ -420,7 +432,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.isArchived = true
@@ -445,7 +457,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.userDefinedName = "Soap"
@@ -475,7 +487,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         user.name = "Foo"
         self.uiMOC.saveOrRollback()
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         user.name = "Soap"
@@ -502,7 +514,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         self.simulateUnreadMissedKnock(in: conversation, merge: mergeLastChanges)
@@ -537,7 +549,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssert(uiMOC.saveOrRollback(), file: file, line: line)
 
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         XCTAssertEqual(conversation.estimatedUnreadCount, 0, file: file, line: line)
 
@@ -566,7 +578,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         conversation.mutableMessages.add(ZMTextMessage(nonce: UUID(), managedObjectContext: uiMOC))
@@ -585,7 +597,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         let message = conversation.append(text: "hello")
@@ -614,7 +626,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
         
-        self.token = ConversationListChangeInfo.add(observer:testObserver, for:normalList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for:normalList, managedObjectContext: self.uiMOC)
         
         XCTAssertEqual(normalList.count, 1)
         
@@ -645,7 +657,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         message.expire()
@@ -669,7 +681,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         self.simulateUnreadMissedCall(in: conversation, merge: mergeLastChanges)
@@ -695,7 +707,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
         self.token = nil
@@ -724,7 +736,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         //
         XCTAssertEqual(conversationList.count, 0)
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         syncMOC.performGroupedBlockAndWait {
             conversation.userDefinedName = "foo"
@@ -757,7 +769,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         let testObserver = TestObserver()
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         XCTAssertEqual(conversationList.count, 1, file: file, line: line)
 
         // when
@@ -790,8 +802,79 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         guard let changes2 = testObserver.changes.last else { return XCTFail("Did not sent notification")}
         XCTAssertEqual(changes2.orderedSetState, OrderedSetState(array: [conversation1, conversation2, conversation3]), file: file, line: line)
     }
+    
+    // MARK: Folders
+    
+    func testThatItNotifiesTheObserver_WhenAFolderIsCreated() {
+        // given
+        var token: Any? = ConversationListChangeInfo.addFolderObserver(testConversationListFolderObserver, managedObjectContext: uiMOC)
+        XCTAssertNotNil(token)
+        
+        // when
+        _ = uiMOC.conversationListDirectory().createFolder("Folder 1")
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(testConversationListFolderObserver.conversationListsFolderChangeCount, 1)
+        token = nil
+    }
+    
+    func testThatItNotifiesTheObserver_WhenAFolderIsDeleted() {
+        // given
+        let folder = uiMOC.conversationListDirectory().createFolder("Folder 1") as! Label
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        var token: Any? = ConversationListChangeInfo.addFolderObserver(testConversationListFolderObserver, managedObjectContext: uiMOC)
+        XCTAssertNotNil(token)
+        
+        // when
+        uiMOC.delete(folder)
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(testConversationListFolderObserver.conversationListsFolderChangeCount, 1)
+        token = nil
+    }
+    
+    func testThatItUpdatesTheFolderList_WhenAFolderIsCreated() {
+        // given
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 0)
+        
+        // when
+        _ = uiMOC.conversationListDirectory().createFolder("Folder 1")
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 1)
+    }
+    
+    func testThatItUpdatesTheFolderList_WhenAFolderIsDeleted() {
+        // given
+        let label = uiMOC.conversationListDirectory().createFolder("Folder 1") as! Label
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 1)
+        
+        // when
+        uiMOC.delete(label)
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 0)
+    }
+    
+    func testThatItThatTheFolderListIsSortedByName() {
+        // given
+        _ = uiMOC.conversationListDirectory().createFolder("B")
+        _ = uiMOC.conversationListDirectory().createFolder("F")
+        _ = uiMOC.conversationListDirectory().createFolder("C")
+        _ = uiMOC.conversationListDirectory().createFolder("A")
+        
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.map(\.name), ["A", "B", "C", "F"])
+    }
 
-    // MARK: - Teams
+    // MARK: Teams
 
     func testThatItNotifiesTheObserverIfAConversationGetsArchived() {
         // given
@@ -805,7 +888,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.conversationsIncludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         conversation.isArchived = true
@@ -838,7 +921,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         syncMOC.performGroupedBlockAndWait {
@@ -878,7 +961,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         conversation.userDefinedName = "New Name"
@@ -909,7 +992,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         user.name = "Old Name"
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         user.name = "New Name"
@@ -935,7 +1018,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         conversation.team = team
@@ -961,7 +1044,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         XCTAssert(uiMOC.saveOrRollback())
 
-        self.token = ConversationListChangeInfo.add(observer: testObserver, for: conversationList, managedObjectContext: self.uiMOC)
+        self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
 
         // when
         conversation.team = nil

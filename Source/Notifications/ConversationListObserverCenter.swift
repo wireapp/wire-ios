@@ -23,6 +23,7 @@ private var zmLog = ZMSLog(tag: "ConversationListObserverCenter")
 extension Notification.Name {
     static let conversationListsDidReload = Notification.Name("conversationListsDidReloadNotification")
     static let conversationListDidChange = Notification.Name("conversationListDidChangeNotification")
+    static let conversationListDidChangeFolders = Notification.Name("conversationListDidChangeFoldersNotification")
 }
 
 
@@ -52,6 +53,8 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     var isTornDown : Bool = false
     var insertedConversations = [ZMConversation]()
     var deletedConversations = [ZMConversation]()
+    var insertedLabels = [Label]()
+    var deletedLabels = [Label]()
     
     weak var managedObjectContext: NSManagedObjectContext!
     
@@ -87,17 +90,32 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     
     // MARK: Forwarding updates
     public func objectsDidChange(changes: [ClassIdentifier : [ObjectChangeInfo]]) {
+        
+        let insertedLabels = self.insertedLabels
+        let deletedLabels = self.deletedLabels
+        self.insertedLabels = []
+        self.deletedLabels = []
+        
+        managedObjectContext.conversationListDirectory().insertFolders(insertedLabels.filter({ $0.kind == .folder }))
+        managedObjectContext.conversationListDirectory().deleteFolders(deletedLabels.filter({ $0.kind == .folder }))
+        
+        if !insertedLabels.isEmpty || !deletedLabels.isEmpty {
+            NotificationInContext.init(name: .conversationListDidChangeFolders, context: managedObjectContext.notificationContext).post()
+        }
+
         if let convChanges = changes[ZMConversation.classIdentifier] as? [ConversationChangeInfo] {
             convChanges.forEach{conversationDidChange($0)}
         } else if let messageChanges = changes[ZMClientMessage.classIdentifier] as? [MessageChangeInfo] {
             messageChanges.forEach {messagesDidChange($0)}
         }
-        let inserted = insertedConversations
-        let deleted = deletedConversations
-        insertedConversations = []
-        deletedConversations = []
+        
+        let insertedConversations = self.insertedConversations
+        let deletedConversations = self.deletedConversations
+        self.insertedConversations = []
+        self.deletedConversations = []
+        
         forwardToSnapshots{
-            $0.conversationsChanges(inserted: inserted, deleted: deleted)
+            $0.conversationsChanges(inserted: insertedConversations, deleted: deletedConversations)
             $0.recalculateListAndNotify()
         }
     }
@@ -122,7 +140,17 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         forwardToSnapshots{$0.processConversationChanges(changes)}
     }
     
-    /// Processes conversationChanges and stores inserted or deleted conversations temporarily until save / merge completes
+    /// Stores inserted or deleted folders temporarily until save / merge completes
+    func folderChanges(inserted: [Label], deleted: [Label]) {
+        guard !inserted.isEmpty || !deleted.isEmpty else { return }
+        
+        zmLog.debug("\(inserted.count) folder(s) inserted - \(deleted.count) folder(s) deleted")
+        
+        insertedLabels.append(contentsOf: inserted)
+        deletedLabels.append(contentsOf: deleted)
+    }
+    
+    /// Stores inserted or deleted conversations temporarily until save / merge completes
     func conversationsChanges(inserted: [ZMConversation], deleted: [ZMConversation]) {
         if deleted.count == 0 && inserted.count == 0 { return }
         zmLog.debug("\(inserted.count) conversation inserted - \(deleted.count) conversation deleted")
