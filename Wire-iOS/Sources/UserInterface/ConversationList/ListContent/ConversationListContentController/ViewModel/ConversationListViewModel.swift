@@ -406,14 +406,18 @@ final class ConversationListViewModel: NSObject {
 
     /// Create the section structure
     private func createSections(replaceKind: Section.Kind, withReplaceItems replaceItems: [AnyHashable]?) {
+        let kinds: [Section.Kind]
         if folderEnabled {
-            sections = [Section(kind: .contactRequests, userSession: userSession),
-                        Section(kind: .groups, userSession: userSession),
-                        Section(kind: .contacts, userSession: userSession)]
+            kinds = [.contactRequests,
+                     .favorites,
+                     .groups,
+                     .contacts]
         } else {
-            sections = [Section(kind: .contactRequests, userSession: userSession),
-                        Section(kind: .conversations, userSession: userSession)]
+            kinds = [.contactRequests,
+                     .conversations]
         }
+
+        sections = kinds.map{ Section(kind: $0, userSession: userSession) }
 
         if let sectionNumber = self.sectionNumber(for: replaceKind) {
             sections[sectionNumber].items = replaceItems ?? []
@@ -457,8 +461,9 @@ final class ConversationListViewModel: NSObject {
         let newConversationList = ConversationListViewModel.newList(for: kind, userSession: userSession)
 
         /// no need to update collapsed section's cells but the section header, update the stored list
-
-        if collapsed(at: sectionNumber), newConversationList.count > 0 {
+        /// hide section header if no items
+        if (collapsed(at: sectionNumber) && newConversationList.count > 0) ||
+           newConversationList.count == 0 {
             update(kind: kind, with: newConversationList)
             delegate?.listViewModel(self, didUpdateSectionForReload: UInt(sectionNumber))
             return true
@@ -691,7 +696,12 @@ extension ConversationListViewModel: ConversationDirectoryObserver {
             kind = .contactRequests
         case .groups:
             kind = .groups
-        default: ///TODO: favourite and custom folder
+        case .favorites:
+            kind = .favorites
+        case .folder(_):
+            ///TODO: Bill - folder
+            kind = nil
+        case .archived:
             kind = nil
         }
 
