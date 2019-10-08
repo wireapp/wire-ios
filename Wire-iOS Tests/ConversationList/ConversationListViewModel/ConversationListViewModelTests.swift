@@ -227,7 +227,23 @@ final class ConversationListViewModelTests: XCTestCase {
     }
 
     // MARK: - state
+    func testThatSectionIsExpendedAfterSelected() {
+        ///GIVEN
+        sut.folderEnabled = true
+        let mockConversation = ZMConversation()
+        fillDummyConversations(mockConversation: mockConversation)
+        sut.setCollapsed(sectionIndex: Int(sectionGroups), collapsed: true)///todo
+
+        ///WHEN
+        XCTAssert(sut.collapsed(at: Int(sectionGroups)))
+        XCTAssert(sut.select(itemToSelect: mockConversation))
+
+        ///THEN
+        XCTAssertFalse(sut.collapsed(at: Int(sectionGroups)))
+    }
+
     func testThatCollapseStateCanBeRestoredAfterFolderDisabled() {
+        ///GIVEN
         sut.folderEnabled = true
 
         let mockConversation = ZMConversation()
@@ -239,18 +255,12 @@ final class ConversationListViewModelTests: XCTestCase {
         ///WHEN
         sut.setCollapsed(sectionIndex: 1, collapsed: true)
 
-        ///THEN
         XCTAssert(sut.collapsed(at: 1))
-
-        ///WHEN
 
         /// all folder are not collapsed when folder disabled
         sut.folderEnabled = false
 
-        ///THEN
         XCTAssertFalse(sut.collapsed(at: 1))
-
-        ///WHEN
         sut.folderEnabled = true
 
         ///THEN
