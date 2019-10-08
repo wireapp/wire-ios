@@ -435,6 +435,7 @@ class ZMUserTests_Permissions: ModelObjectsTests {
     func testThatConversationAccessControlCanBeModified_ByTeamMemberWithSufficientPermissions() {
         // given
         makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        conversation.conversationType = .group
         
         // then
         XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))

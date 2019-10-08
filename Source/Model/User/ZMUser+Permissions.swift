@@ -75,7 +75,23 @@ public extension ZMUser {
     
     @objc(canModifyAccessControlSettingsInConversation:)
     func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool {
-        guard !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
+        
+        // Check conversation
+        guard conversation.conversationType == .group,
+            let moc = self.managedObjectContext,
+            team?.remoteIdentifier != nil
+            else { return false }
+        
+        // Check user
+        let selfUser = ZMUser.selfUser(in: moc)
+        guard selfUser.isTeamMember,
+            !selfUser.isGuest(in: conversation),
+            selfUser.team == self.team,
+            isTeamMember,
+            conversation.isSelfAnActiveMember else {
+                return false
+        }
+        
         return permissions?.contains(.modifyConversationMetaData) ?? false
     }
     
