@@ -80,6 +80,7 @@ extension ManagedObjectContextDirectory {
             moc.markAsUIContext()
             moc.configure(with: persistentStoreCoordinator)
             ZMUser.selfUser(in: moc)
+            Label.fetchOrCreateFavoriteLabel(in: moc, create: true)
             dispatchGroup.apply(moc.add)
         }
         moc.mergePolicy = NSMergePolicy(merge: .rollbackMergePolicyType)
@@ -143,4 +144,5 @@ extension NSManagedObjectContext {
         self.userInfo[SessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
     }
+    
 }

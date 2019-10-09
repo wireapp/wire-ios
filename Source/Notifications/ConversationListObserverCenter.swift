@@ -107,6 +107,8 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
             convChanges.forEach{conversationDidChange($0)}
         } else if let messageChanges = changes[ZMClientMessage.classIdentifier] as? [MessageChangeInfo] {
             messageChanges.forEach {messagesDidChange($0)}
+        } else if let labelChanges = changes[Label.classIdentifier] as? [LabelChangeInfo] {
+            labelChanges.forEach {labelDidChange($0)}
         }
         
         let insertedConversations = self.insertedConversations
@@ -117,6 +119,20 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         forwardToSnapshots{
             $0.conversationsChanges(inserted: insertedConversations, deleted: deletedConversations)
             $0.recalculateListAndNotify()
+        }
+    }
+    
+    private func labelDidChange(_ changes: LabelChangeInfo) {
+        if changes.markedForDeletion, let label = changes.label as? Label, label.kind == .folder {
+            managedObjectContext.conversationListDirectory().deleteFolders([label])
+        }
+        
+        if changes.conversationsChanged, let label = changes.label as? Label {
+            for conversation in label.conversations {
+                let changeInfo = ConversationChangeInfo(object: conversation)
+                changeInfo.changedKeys.insert(#keyPath(ZMConversation.labels))
+                conversationDidChange(changeInfo)
+            }
         }
     }
     

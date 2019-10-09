@@ -28,7 +28,7 @@ extension NSManagedObjectContext {
 
 
 extension NSManagedObjectContext {
-    func batchDeleteEntities(named entityName: String, matching predicate: NSPredicate) throws {
+    public func batchDeleteEntities(named entityName: String, matching predicate: NSPredicate) throws {
         // will skip this during test unless on disk
         guard self.persistentStoreCoordinator!.persistentStores.first!.type != NSInMemoryStoreType else { return }
         

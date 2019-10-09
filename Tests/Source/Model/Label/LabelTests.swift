@@ -17,12 +17,13 @@
 //
 
 import Foundation
+@testable import WireDataModel
 
 class LabelTests: ZMBaseManagedObjectTest {
     
     func testThatFetchOrCreateFavoriteLabel_ReturnsLabelOfKindFavorite() {
         // given
-        let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC)
+        let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true)
         
         // then
         XCTAssertEqual(favoriteLabel.kind, .favorite)
@@ -30,10 +31,10 @@ class LabelTests: ZMBaseManagedObjectTest {
     
     func testThatFetchOrCreateFavoriteLabel_ReturnsTheSameObject_WhenCalledTwice() {
         // given
-        let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC)
+        let favoriteLabel = Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true)
         
         // then
-        XCTAssertEqual(Label.fetchOrCreateFavoriteLabel(in: uiMOC), favoriteLabel)
+        XCTAssertEqual(Label.fetchOrCreateFavoriteLabel(in: uiMOC, create: true), favoriteLabel)
     }
     
     func testThatFetchOrCreate_ReturnsANewLabel_WhenCreateIsTrue() {

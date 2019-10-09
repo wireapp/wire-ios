@@ -21,6 +21,7 @@ import Foundation
 @objc
 public protocol LabelType: NSObjectProtocol {
     
+    var remoteIdentifier: UUID? { get }
     var kind: Label.Kind { get }
     var name: String? { get }
     
@@ -36,9 +37,18 @@ public class Label: ZMManagedObject, LabelType {
     
     @NSManaged public var name: String?
     @NSManaged public var conversations: Set<ZMConversation>
+    @NSManaged public private(set) var markedForDeletion: Bool
     
     @NSManaged private var remoteIdentifier_data: Data?
     @NSManaged private var type: Int16
+    
+    public override var ignoredKeys: Set<AnyHashable>? {
+        var ignoredKeys = super.ignoredKeys
+        
+        _ = ignoredKeys?.insert((#keyPath(Label.type)))
+        
+        return ignoredKeys
+    }
     
     public var remoteIdentifier: UUID? {
         get {
@@ -59,6 +69,10 @@ public class Label: ZMManagedObject, LabelType {
         }
     }
     
+    public func markForDeletion() {
+        markedForDeletion = true
+    }
+    
     public override static func entityName() -> String {
         return "Label"
     }
@@ -67,11 +81,21 @@ public class Label: ZMManagedObject, LabelType {
         return #keyPath(Label.name)
     }
     
-    public override static func isTrackingLocalModifications() -> Bool {
-        return false
+    public override static func predicateForFilteringResults() -> NSPredicate? {
+        return NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
     }
     
-    public static func fetchOrCreateFavoriteLabel(in context: NSManagedObjectContext) -> Label {
+    
+    public override static func isTrackingLocalModifications() -> Bool {
+        return true
+    }
+    
+    public static func fetchFavoriteLabel(in context: NSManagedObjectContext) -> Label {
+        return fetchOrCreateFavoriteLabel(in: context, create: false)
+    }
+    
+    @discardableResult
+    static func fetchOrCreateFavoriteLabel(in context: NSManagedObjectContext, create: Bool) -> Label {
         
         // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through
         // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.
@@ -99,12 +123,20 @@ public class Label: ZMManagedObject, LabelType {
         
         if let label = results.first {
             return label
-        } else {
+        } else if create {
             let label = Label.insertNewObject(in: context)
             label.remoteIdentifier = UUID()
             label.kind = .favorite
             
+            do {
+                try context.save()
+            } catch {
+                fatal("Failure creating favorite label")
+            }
+            
             return label
+        } else {
+            fatal("The favorite label is always expected to exist at all times")
         }
     }
     
