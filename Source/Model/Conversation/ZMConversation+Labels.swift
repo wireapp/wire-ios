@@ -39,7 +39,7 @@ extension ZMConversation {
     }
     
     @objc
-    var folder: LabelType? {
+    public var folder: LabelType? {
         return labels.first(where: { $0.kind == .folder })
     }
     
