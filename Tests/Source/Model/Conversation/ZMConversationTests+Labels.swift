@@ -97,4 +97,45 @@ class ZMConversationTests_Labels: ZMConversationTestsBase {
         XCTAssertTrue(sut.isFavorite)
     }
     
+    func testThatConversationCanBeRemovedFromFolder() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
+        let folder = createFolder(name: "folder1")
+        sut.moveToFolder(folder)
+        
+        // WHEN
+        sut.removeFromFolder()
+        
+        // THEN
+        XCTAssertTrue(sut.labels.isEmpty)
+    }
+    
+    func testThatFolderIsMarkedForDeletion_WhenLastConversationIsRemoved() {
+        // GIVEN
+        let sut = createConversation(in: uiMOC)
+        let folder = createFolder(name: "folder1")
+        sut.moveToFolder(folder)
+        
+        // WHEN
+        sut.removeFromFolder()
+        
+        // THEN
+        XCTAssertTrue(folder.markedForDeletion)
+    }
+    
+    func testThatFolderIsNotMarkedForDeletion_WhenSecondToLastConversationIsRemoved() {
+        // GIVEN
+        let conversation1 = createConversation(in: uiMOC)
+        let conversation2 = createConversation(in: uiMOC)
+        let folder = createFolder(name: "folder1")
+        conversation1.moveToFolder(folder)
+        conversation2.moveToFolder(folder)
+        
+        // WHEN
+        conversation1.removeFromFolder()
+        
+        // THEN
+        XCTAssertFalse(folder.markedForDeletion)
+    }
+    
 }

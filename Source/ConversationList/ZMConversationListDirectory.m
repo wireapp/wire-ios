@@ -97,7 +97,7 @@ static NSString * const PendingKey = @"Pending";
                                                                            description:@"groupConversations"];
         
         self.favoriteConversations = [[ZMConversationList alloc] initWithAllConversations:allConversations
-                                                                       filteringPredicate:[ZMConversation predicateForLabeledConversations:[Label fetchOrCreateFavoriteLabelIn:moc]]
+                                                                       filteringPredicate:[ZMConversation predicateForLabeledConversations:[Label fetchFavoriteLabelIn:moc]]
                                                                                       moc:moc description:@"favorites"];
     }
     return self;
@@ -119,11 +119,7 @@ static NSString * const PendingKey = @"Pending";
 
 - (NSArray *)fetchAllFolders:(NSManagedObjectContext *)context
 {
-    NSFetchRequest *allFoldersRequest = [Label sortedFetchRequest];
-    allFoldersRequest.predicate = [NSPredicate predicateWithFormat:@"type = 0"];
-    
-    NSError *error;
-    return [context executeFetchRequest:allFoldersRequest error:&error];
+    return [context executeFetchRequestOrAssert:[Label sortedFetchRequest]];
 }
 
 - (NSMutableDictionary *)createListsFromFolders:(NSArray<Label *> *)folders allConversations:(NSArray<ZMConversation *> *)allConversations

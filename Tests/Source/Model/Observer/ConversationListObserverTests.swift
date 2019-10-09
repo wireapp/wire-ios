@@ -847,6 +847,20 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 1)
     }
     
+    func testThatItUpdatesTheFolderList_WhenAFolderIsMarkedForDeletion() {
+        // given
+        let label = uiMOC.conversationListDirectory().createFolder("Folder 1") as! Label
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 1)
+        
+        // when
+        label.markForDeletion()
+        XCTAssertTrue(uiMOC.saveOrRollback())
+        
+        // then
+        XCTAssertEqual(uiMOC.conversationListDirectory().allFolders.count, 0)
+    }
+    
     func testThatItUpdatesTheFolderList_WhenAFolderIsDeleted() {
         // given
         let label = uiMOC.conversationListDirectory().createFolder("Folder 1") as! Label
