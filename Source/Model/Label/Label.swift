@@ -40,7 +40,7 @@ public class Label: ZMManagedObject, LabelType {
     @NSManaged public private(set) var markedForDeletion: Bool
     
     @NSManaged private var remoteIdentifier_data: Data?
-    @NSManaged private var type: Int16
+    @NSManaged public private(set) var type: Int16
     
     public override var ignoredKeys: Set<AnyHashable>? {
         var ignoredKeys = super.ignoredKeys
