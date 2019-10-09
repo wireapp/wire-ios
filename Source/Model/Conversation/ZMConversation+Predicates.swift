@@ -96,15 +96,20 @@ extension ZMConversation {
     @objc(predicateForGroupConversations)
     class func predicateForGroupConversations() -> NSPredicate {
         let groupConversationPredicate = NSPredicate(format: "\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue)")
+        let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), groupConversationPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), groupConversationPredicate, notInFolderPredicate])
     }
     
     @objc(predicateForLabeledConversations:)
     class func predicateForLabeledConversations(_ label: Label) -> NSPredicate {
-        let labelPredicate = NSPredicate(format: "%@ IN \(LabelsKey)", label)
+        let labelPredicate = NSPredicate(format: "%@ IN \(ZMConversationLabelsKey)", label)
         
         return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), labelPredicate])
+    }
+    
+    class func predicateForConversationsInFolders() -> NSPredicate {
+        return NSPredicate(format: "ANY %K.%K == \(Label.Kind.folder.rawValue)", ZMConversationLabelsKey, #keyPath(Label.type))
     }
     
     class func predicateForUnconnectedConversations() -> NSPredicate {
@@ -133,8 +138,9 @@ extension ZMConversation {
     class func predicateForOneToOneConversations() -> NSPredicate {
         // We consider a conversation to be one-to-one if it's of type .oneToOne, is a team 1:1 or an outgoing connection request.
         let oneToOneConversationPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: [predicateForOneToOneConversation(), predicateForTeamOneToOneConversation(), predicateForUnconnectedConversations()])
+        let notInFolderPredicate = NSCompoundPredicate(notPredicateWithSubpredicate: predicateForConversationsInFolders())
         
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [predicateForConversationsExcludingArchived(), oneToOneConversationPredicate, notInFolderPredicate])
     }
     
     @objc(predicateForArchivedConversations)

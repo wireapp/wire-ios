@@ -73,7 +73,7 @@ NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey"
 NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 NSString *const SecurityLevelKey = @"securityLevel";
-NSString *const LabelsKey = @"labels";
+NSString *const ZMConversationLabelsKey = @"labels";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -374,7 +374,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             HasReadReceiptsEnabledKey,
             ZMConversationLegalHoldStatusKey,
             ZMConversationNeedsToVerifyLegalHoldKey,
-            LabelsKey
+            ZMConversationLabelsKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
