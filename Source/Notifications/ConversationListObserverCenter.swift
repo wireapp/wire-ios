@@ -123,11 +123,13 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     }
     
     private func labelDidChange(_ changes: LabelChangeInfo) {
-        if changes.markedForDeletion, let label = changes.label as? Label, label.kind == .folder {
+        guard let label = changes.label as? Label else { return }
+        
+        if changes.markedForDeletion, label.kind == .folder, label.markedForDeletion {
             managedObjectContext.conversationListDirectory().deleteFolders([label])
         }
         
-        if changes.conversationsChanged, let label = changes.label as? Label {
+        if changes.conversationsChanged {
             for conversation in label.conversations {
                 let changeInfo = ConversationChangeInfo(object: conversation)
                 changeInfo.changedKeys.insert(#keyPath(ZMConversation.labels))
