@@ -138,7 +138,7 @@ static NSString * const PendingKey = @"Pending";
     return [[ZMConversationList alloc] initWithAllConversations:allConversations
                                              filteringPredicate:[ZMConversation predicateForLabeledConversations:folder]
                                                             moc:self.managedObjectContext
-                                                    description:folder.name
+                                                    description:folder.objectIDURLString
                                                           label:folder];
 }
 
@@ -175,9 +175,9 @@ static NSString * const PendingKey = @"Pending";
         [list recreateWithAllConversations:allConversations];
     }
     
-    for (ZMConversationList *list in self.listsByFolder.allValues) {
-        [list recreateWithAllConversations:allConversations];
-    }
+    NSArray *allFolders = [self fetchAllFolders:moc];
+    self.folderList = [[FolderList alloc] initWithLabels:allFolders];
+    self.listsByFolder = [self createListsFromFolders:allFolders allConversations:allConversations];
 }
 
 - (NSArray *)allConversationLists;

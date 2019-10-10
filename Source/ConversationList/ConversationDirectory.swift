@@ -78,7 +78,7 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
             return favoriteConversations as! [ZMConversation]
         case .folder(let label):
             guard let objectID = (label as? Label)?.objectID else { return [] } // TODO jacob make optional?
-            return listsByFolder[objectID] as! [ZMConversation]
+            return listsByFolder[objectID] as? [ZMConversation] ?? []
         }
     }
         

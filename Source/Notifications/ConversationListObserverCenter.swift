@@ -62,21 +62,17 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
         self.managedObjectContext = managedObjectContext
     }
     
-    /// Adds a conversationList to the objects to observe
+    /// Adds a conversationList to the objects to observe or replace any existing snapshot
     @objc public func startObservingList(_ conversationList: ZMConversationList)
     {
         if listSnapshots[conversationList.identifier] == nil {
             zmLog.debug("Adding conversationList with identifier \(conversationList.identifier)")
-            listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList, managedObjectContext: self.managedObjectContext)
-        }
-    }
-    
-    /// Overwrites the current snapshot of the specified conversationList
-    @objc public func recreateSnapshot(for conversationList: ZMConversationList) {
-        zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
-        zmLog.ifDebug {
-            (conversationList as Array).forEach{
-                zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)")
+        } else {
+            zmLog.debug("Recreating snapshot for conversationList with identifier \(conversationList.identifier)")
+            zmLog.ifDebug {
+                (conversationList as Array).forEach{
+                    zmLog.debug("Conversation in \(conversationList.identifier) includes: \(String(describing: $0.objectID)) with type: \($0.conversationType.rawValue)")
+                }
             }
         }
         listSnapshots[conversationList.identifier] = ConversationListSnapshot(conversationList: conversationList, managedObjectContext: self.managedObjectContext)
