@@ -104,7 +104,7 @@
 - (void)recreateWithAllConversations:(NSArray *)conversations
 {
     [self createBackingList:conversations];
-    [self.moc.conversationListObserverCenter recreateSnapshotFor:self];
+    [self.moc.conversationListObserverCenter startObservingList:self];
 }
 
 - (void)calculateKeysAffectingPredicateAndSort;
