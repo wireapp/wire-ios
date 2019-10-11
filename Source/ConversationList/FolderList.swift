@@ -37,7 +37,7 @@ public class FolderList: NSObject { // TODO jacob turn into struct and make gene
                 let result = sortDesriptor.compare(lhs, to: rhs)
                 
                 if result != .orderedSame {
-                    return result == .orderedDescending
+                    return result == .orderedAscending
                 }
             }
             
@@ -51,7 +51,7 @@ public class FolderList: NSObject { // TODO jacob turn into struct and make gene
             return
         }
         
-        let index = backingList.firstIndex(where: { return FolderList.comparator($0, label) }) ?? backingList.count
+        let index = backingList.firstIndex(where: { return FolderList.comparator(label, $0) }) ?? backingList.count
         
         backingList.insert(label, at: index)
     }
