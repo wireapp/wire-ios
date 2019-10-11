@@ -173,6 +173,9 @@ extension ZMUser {
     
     @NSManaged public var usesCompanyLogin: Bool
     
+    /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
+    @NSManaged public var needsToRefetchLabels: Bool
+    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         guard let imageData = data else {
