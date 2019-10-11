@@ -38,8 +38,10 @@
 @property (nonatomic) ZMConversation *groupConversationInFolder;
 @property (nonatomic) ZMConversation *oneToOneConversation;
 @property (nonatomic) ZMConversation *oneToOneConversationInFolder;
+@property (nonatomic) ZMConversation *oneToOneConversationInTeam;
 @property (nonatomic) ZMConversation *clearedConversation;
 @property (nonatomic) ZMConversation *favoritedConversation;
+@property (nonatomic) ZMConversation *serviceConversation;
 
 @end
 
@@ -60,8 +62,16 @@
 {
     [super setUp];
     
+    Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
+    team.remoteIdentifier = [NSUUID createUUID];
+    
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser.remoteIdentifier = [NSUUID createUUID];
+    
+    ZMUser *serviceUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    serviceUser.serviceIdentifier = @"serviceA";
+    serviceUser.providerIdentifier = @"providerA";
+    serviceUser.remoteIdentifier = [NSUUID createUUID];
     
     Label *folder = [Label insertNewObjectInManagedObjectContext:self.uiMOC];
     folder.name = @"folder A";
@@ -112,6 +122,12 @@
     self.oneToOneConversationInFolder.userDefinedName = @"oneToOneConversationInFolder";
     self.oneToOneConversationInFolder.labels = [NSSet setWithObject:folder];
     
+    self.oneToOneConversationInTeam = [self createConversation];
+    self.oneToOneConversationInTeam.conversationType = ZMConversationTypeGroup;
+    self.oneToOneConversationInTeam.userDefinedName = nil;
+    self.oneToOneConversationInTeam.team = team;
+    [self.oneToOneConversationInTeam.mutableLastServerSyncedActiveParticipants addObject:otherUser];
+    
     self.invalidConversation = [self createConversation];
     self.invalidConversation.conversationType = ZMConversationTypeInvalid;
     self.invalidConversation.userDefinedName = @"invalidConversation";
@@ -128,6 +144,12 @@
     self.favoritedConversation.conversationType = ZMConversationTypeGroup;
     self.favoritedConversation.userDefinedName = @"favoritedConversation";
     self.favoritedConversation.isFavorite = YES;
+    
+    self.serviceConversation = [self createConversation];
+    self.serviceConversation.conversationType = ZMConversationTypeGroup;
+    self.serviceConversation.userDefinedName = nil;
+    self.serviceConversation.team = team;
+    [self.serviceConversation.mutableLastServerSyncedActiveParticipants addObject:serviceUser];
 
     [self.uiMOC saveOrRollback];
 }
@@ -143,7 +165,10 @@
     self.archivedOneToOneConversation = nil;
     self.archivedGroupConversation = nil;
     self.oneToOneConversation = nil;
+    self.oneToOneConversationInTeam = nil;
     self.clearedConversation = nil;
+    self.favoritedConversation = nil;
+    self.serviceConversation = nil;
     self.conversations = nil;
     
     [super tearDown];
@@ -159,8 +184,10 @@
                                             self.groupConversationInFolder,
                                             self.oneToOneConversation,
                                             self.oneToOneConversationInFolder,
+                                            self.oneToOneConversationInTeam,
                                             self.outgoingPendingConnectionConversation,
-                                            self.favoritedConversation]];
+                                            self.favoritedConversation,
+                                            self.serviceConversation]];
     // then
     
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
@@ -175,7 +202,9 @@
                                             self.outgoingPendingConnectionConversation,
                                             self.favoritedConversation,
                                             self.groupConversationInFolder,
-                                            self.oneToOneConversationInFolder]];
+                                            self.oneToOneConversationInFolder,
+                                            self.oneToOneConversationInTeam,
+                                            self.serviceConversation]];
     
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
@@ -246,7 +275,7 @@
 {
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
-    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.outgoingPendingConnectionConversation]];
+    NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.oneToOneConversationInTeam, self.outgoingPendingConnectionConversation, self.serviceConversation]];
     
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
