@@ -81,6 +81,10 @@ public class Label: ZMManagedObject, LabelType {
         return #keyPath(Label.name)
     }
     
+    override public static func defaultSortDescriptors() -> [NSSortDescriptor]? {
+        return [NSSortDescriptor(key: sortKey(), ascending: true, selector: #selector(NSString.localizedStandardCompare(_:)))]
+    }
+    
     public override static func predicateForFilteringResults() -> NSPredicate? {
         return NSPredicate(format: "\(#keyPath(Label.type)) == \(Label.Kind.folder.rawValue) AND \(#keyPath(Label.markedForDeletion)) == NO")
     }
