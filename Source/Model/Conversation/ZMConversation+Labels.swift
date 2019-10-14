@@ -45,7 +45,7 @@ extension ZMConversation {
     
     @objc
     public func moveToFolder(_ folder: LabelType) {
-        guard let label = folder as? Label, label.kind == .folder else { return }
+        guard let label = folder as? Label, !label.isZombieObject, label.kind == .folder else { return }
         
         removeFromFolder()
         assignLabel(label)
