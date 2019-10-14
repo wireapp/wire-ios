@@ -177,6 +177,7 @@ static NSString * const PendingKey = @"Pending";
     
     NSArray *allFolders = [self fetchAllFolders:moc];
     self.folderList = [[FolderList alloc] initWithLabels:allFolders];
+    self.listsByFolder = nil;
     self.listsByFolder = [self createListsFromFolders:allFolders allConversations:allConversations];
 }
 
