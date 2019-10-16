@@ -81,7 +81,7 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
         self.environment = environment
         self.reachability = reachability
         super.init()
-        self.session = urlSession ?? URLSession(configuration: .default, delegate: self, delegateQueue: nil)
+        self.session = urlSession ?? URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
     }
 
     /// Creates and resumes a request on the internal `URLSession`.
