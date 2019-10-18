@@ -18,19 +18,28 @@
 
 import XCTest
 @testable import Wire
+import DifferenceKit
 
-final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate {
+
+final class MockConversationListViewModelDelegate: NSObject, ConversationListViewModelDelegate, ConversationListViewModelStateDelegate {
+    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
+        //no-op
+    }
+
+    func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {
+        //no-op
+    }
+    
+    func reload<C>(
+        using stagedChangeset: StagedChangeset<C>,
+        interrupt: ((Changeset<C>) -> Bool)?,
+        setData: (C?) -> Void
+        ) {
+        setData(stagedChangeset.first?.data)
+    }
+    
     func listViewModelShouldBeReloaded() {
         //no-op
-    }
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: UInt) {
-        //no-op
-    }
-
-    func listViewModel(_ model: ConversationListViewModel?, didUpdateSection section: UInt, usingBlock updateBlock: () -> (), with changedIndexes: ZMChangedIndexes?) {
-        //no-op
-        updateBlock()
     }
 
     func listViewModel(_ model: ConversationListViewModel?, didSelectItem item: Any?) {
@@ -59,8 +68,10 @@ final class ConversationListViewModelTests: XCTestCase {
         mockBar = MockBar()
         mockUserSession = MockZMUserSession()
         sut = ConversationListViewModel(userSession: mockUserSession)
+        
         mockConversationListViewModelDelegate = MockConversationListViewModelDelegate()
         sut.delegate = mockConversationListViewModelDelegate
+        sut.stateDelegate = mockConversationListViewModelDelegate
     }
     
     override func tearDown() {

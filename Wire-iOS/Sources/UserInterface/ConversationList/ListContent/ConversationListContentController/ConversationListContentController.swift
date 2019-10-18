@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import DifferenceKit
 
 extension ConversationListContentController {
     override open func loadView() {
@@ -121,7 +122,33 @@ extension ConversationListContentController: UICollectionViewDelegateFlowLayout 
 }
 
 extension ConversationListContentController: ConversationListViewModelStateDelegate {
+    func listViewModel(_ model: ConversationListViewModel?, didUpdateSectionForReload section: Int, animated: Bool) {
+        // do not reload if section is not visible
+        guard collectionView.indexPathsForVisibleItems.map({$0.section}).contains(section) else { return }
+
+        let reloadClosure = {
+            self.collectionView.reloadSections(IndexSet(integer: section))
+            self.ensureCurrentSelection()
+        }
+
+        if animated {
+            reloadClosure()
+        } else {
+            UIView.performWithoutAnimation {
+                reloadClosure()
+            }
+        }
+    }
+
     func listViewModel(_ model: ConversationListViewModel?, didChangeFolderEnabled folderEnabled: Bool) {
         collectionView.accessibilityValue = folderEnabled ? "folders" : "recent"
+    }
+
+    func reload<C>(
+        using stagedChangeset: StagedChangeset<C>,
+        interrupt: ((Changeset<C>) -> Bool)? = nil,
+        setData: (C?) -> Void
+        ) {
+        collectionView.reload(using: stagedChangeset, interrupt: interrupt, setData: setData)
     }
 }
