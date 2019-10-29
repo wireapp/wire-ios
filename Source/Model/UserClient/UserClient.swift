@@ -39,7 +39,8 @@ public let ZMUserClientRemoteIdentifierKey = "remoteIdentifier"
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
-@objcMembers public class UserClient: ZMManagedObject, UserClientType {
+@objcMembers
+public class UserClient: ZMManagedObject, UserClientType {
     public var activationLatitude: Double {
         get {
             return activationLocationLatitude?.doubleValue ?? 0.0
@@ -167,10 +168,23 @@ private let zmLog = ZMSLog(tag: "UserClient")
         return ZMUserClientLabelKey
     }
     
-    public override static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate {
+    public override static func predicateForObjectsThatNeedToBeInsertedUpstream() -> NSPredicate? {
         return NSPredicate(format: "%K == NULL", ZMUserClientRemoteIdentifierKey)
     }
-    
+
+    public override static func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate? {
+        let baseModifiedPredicate = super.predicateForObjectsThatNeedToBeUpdatedUpstream()
+        let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
+        let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")
+
+        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:[
+            baseModifiedPredicate!,
+            notDeletedPredicate,
+            remoteIdentifierPresentPredicate
+            ])
+        return modifiedPredicate
+    }
+
     /// Insert a new client of the local self user.
     
     @discardableResult
