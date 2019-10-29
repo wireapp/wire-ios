@@ -56,9 +56,6 @@
 
 #import <WireDataModel/UserClientTypes.h>
 
-#import <WireDataModel/ZMChangedIndexes.h>
-#import <WireDataModel/ZMOrderedSetState.h>
-
 #import <WireDataModel/ZMUpdateEvent+WireDataModel.h>
 #import <WireDataModel/NSFetchRequest+ZMRelationshipKeyPaths.h>
 
