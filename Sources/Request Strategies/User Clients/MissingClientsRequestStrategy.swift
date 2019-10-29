@@ -25,22 +25,6 @@ struct MissingClientsRequestUserInfoKeys {
     static let clients = "clients"
 }
 
-public extension UserClient {
-    override class func predicateForObjectsThatNeedToBeUpdatedUpstream() -> NSPredicate {
-        let baseModifiedPredicate = super.predicateForObjectsThatNeedToBeUpdatedUpstream()
-        let remoteIdentifierPresentPredicate = NSPredicate(format: "\(ZMUserClientRemoteIdentifierKey) != nil")
-        let notDeletedPredicate = NSPredicate(format: "\(ZMUserClientMarkedToDeleteKey) == NO")
-
-        let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:[
-            baseModifiedPredicate!,
-            notDeletedPredicate,
-            remoteIdentifierPresentPredicate
-            ])
-        return modifiedPredicate
-    }
-}
-
-
 // Register new client, update it with new keys, deletes clients.
 @objc
 public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUpstreamTranscoder, ZMContextChangeTrackerSource {
@@ -60,7 +44,9 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
     }
     
     func modifiedPredicate() -> NSPredicate {
-        let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream()
+        guard let baseModifiedPredicate = UserClient.predicateForObjectsThatNeedToBeUpdatedUpstream() else {
+            fatal("predicateForObjectsThatNeedToBeUpdatedUpstream is nil!")
+        }
         let missingClientsPredicate = NSPredicate(format: "\(ZMUserClientMissingKey).@count > 0")
         
         let modifiedPredicate = NSCompoundPredicate(andPredicateWithSubpredicates:[
