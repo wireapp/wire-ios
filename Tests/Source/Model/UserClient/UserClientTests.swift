@@ -67,8 +67,8 @@ class UserClientTests: ZMBaseManagedObjectTest {
         let syncedClient = UserClient.insertNewObject(in: self.uiMOC)
         syncedClient.remoteIdentifier = "synced"
         
-        XCTAssertTrue(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluate(with: unsyncedClient))
-        XCTAssertFalse(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream().evaluate(with: syncedClient))
+        XCTAssertTrue(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream()!.evaluate(with: unsyncedClient))
+        XCTAssertFalse(UserClient.predicateForObjectsThatNeedToBeInsertedUpstream()!.evaluate(with: syncedClient))
     }
     
     func testThatClientCanBeMarkedForDeletion() {
