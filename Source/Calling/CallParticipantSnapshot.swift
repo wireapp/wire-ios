@@ -39,20 +39,10 @@ class CallParticipantsSnapshot {
         self.members = type(of: self).removeDuplicateMembers(members)
     }
     
+    // Remove duplicates see: https://wearezeta.atlassian.net/browse/ZIOS-8610
     static func removeDuplicateMembers(_ members: [AVSCallMember]) -> OrderedSetState<AVSCallMember> {
-        // remove duplicates see: https://wearezeta.atlassian.net/browse/ZIOS-8610
-        // When a user joins with two devices, we would have a duplicate entry for this user in the member array returned from AVS
-        // For now, we will keep the one with "the highest state", meaning if one entry has `audioEstablished == false` and the other one `audioEstablished == true`, we keep the one with `audioEstablished == true`
         let callMembers = members.reduce([AVSCallMember]()){ (filtered, member) in
-            var newFiltered = filtered
-            if let idx = newFiltered.firstIndex(of: member) {
-                if !newFiltered[idx].audioEstablished && member.audioEstablished {
-                    newFiltered[idx] = member
-                }
-            } else {
-                newFiltered.append(member)
-            }
-            return newFiltered
+            filtered + (filtered.contains(member) ? [] : [member])
         }
         
         return callMembers.toOrderedSetState()
@@ -62,11 +52,18 @@ class CallParticipantsSnapshot {
         members = type(of:self).removeDuplicateMembers(participants)
         notifyChange()
     }
-    
-    func callParticpantVideoStateChanged(userId: UUID, videoState: VideoState) {
-        guard let callMember = members.array.first(where: { $0.remoteId == userId }) else { return }
-        
-        update(updatedMember: AVSCallMember(userId: userId, clientId: callMember.clientId, audioEstablished: callMember.audioEstablished, videoState: videoState))
+
+    // TODO: We should be finding the call member solely by userId and clientId. However the clientId isn't set for
+    // 1:1 calls... yet. To work around this we return the first found user in case the cliendId is nil.
+    // AVS 5.4 will solve this as we will get the clientId on the established call handler. We need only to
+    // update the call member once we know their client id.
+    func callParticpantVideoStateChanged(userId: UUID, clientId: String, videoState: VideoState) {
+        let participantsByUser = members.array.filter { $0.remoteId == userId }
+        let participant = participantsByUser.first { $0.clientId == clientId } ?? participantsByUser.first
+
+        guard let callMember = participant else { return }
+
+        update(updatedMember: AVSCallMember(userId: userId, clientId: clientId, audioEstablished: callMember.audioEstablished, videoState: videoState))
     }
     
     func callParticpantAudioEstablished(userId: UUID) {
@@ -83,11 +80,7 @@ class CallParticipantsSnapshot {
     
     func update(updatedMember: AVSCallMember) {
         members = OrderedSetState(array: members.array.map({ member in
-            if member.remoteId == updatedMember.remoteId {
-                return updatedMember
-            } else {
-                return member
-            }
+            member == updatedMember ? updatedMember : member
         }))
         notifyChange()
     }
