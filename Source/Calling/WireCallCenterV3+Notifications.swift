@@ -150,7 +150,7 @@ public protocol WireCallCenterCallParticipantObserver : class {
      - parameter conversation: where the call is ongoing
      - parameter particpants: updated list of call participants
      */
-    func callParticipantsDidChange(conversation: ZMConversation, participants: [(UUID, CallParticipantState)])
+    func callParticipantsDidChange(conversation: ZMConversation, participants: [CallParticipant])
 }
 
 public struct WireCallCenterCallParticipantNotification : SelfPostingNotification {
@@ -158,9 +158,9 @@ public struct WireCallCenterCallParticipantNotification : SelfPostingNotificatio
     static let notificationName = Notification.Name("VoiceChannelParticipantNotification")
     
     let conversationId : UUID
-    let participants: [(UUID, CallParticipantState)]
+    let participants: [CallParticipant]
     
-    init(conversationId: UUID, participants: [(UUID, CallParticipantState)]) {
+    init(conversationId: UUID, participants: [CallParticipant]) {
         self.conversationId = conversationId
         self.participants = participants
     }
@@ -319,17 +319,14 @@ extension WireCallCenterV3 {
     /// Add observer of call particpants in a conversation. Returns a token which needs to be retained as long as the observer should be active.
     /// Returns a token which needs to be retained as long as the observer should be active.
     internal class func addCallParticipantObserver(observer: WireCallCenterCallParticipantObserver, for conversation: ZMConversation, context: NSManagedObjectContext) -> Any {
-        let remoteID = conversation.remoteIdentifier!
-        
         return NotificationInContext.addObserver(name: WireCallCenterCallParticipantNotification.notificationName, context: context.notificationContext, queue: .main) { [weak observer] note in
-            guard let note = note.userInfo[WireCallCenterCallParticipantNotification.userInfoKey] as? WireCallCenterCallParticipantNotification,
-                  let observer = observer,
-                  note.conversationId == conversation.remoteIdentifier
-            else { return }
-            
-            if note.conversationId == remoteID {
-                observer.callParticipantsDidChange(conversation: conversation, participants: note.participants)
-            }
+            guard
+                let note = note.userInfo[WireCallCenterCallParticipantNotification.userInfoKey] as? WireCallCenterCallParticipantNotification,
+                let observer = observer,
+                note.conversationId == conversation.remoteIdentifier
+                else { return }
+
+            observer.callParticipantsDidChange(conversation: conversation, participants: note.participants)
         }
     }
     
