@@ -16,7 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import SnapshotTesting
 import XCTest
 @testable import Wire
 
@@ -38,7 +37,7 @@ final class ColorSchemeTests: XCTestCase {
         ///GIVEN
         sut.accentColor = .black
         let alphaBlack = UIColor(displayP3Red: 0, green: 0, blue: 0, alpha: 0)
-        
+
         ///THEN
         XCTAssertEqual(sut.accentColor, .black)
         XCTAssert(sut.isCurrentAccentColor(.black))
@@ -47,3 +46,4 @@ final class ColorSchemeTests: XCTestCase {
         XCTAssertFalse(sut.isCurrentAccentColor(alphaBlack))
     }
 }
+
