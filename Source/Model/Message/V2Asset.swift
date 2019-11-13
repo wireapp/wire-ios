@@ -55,7 +55,9 @@ extension UTType {
     public init?(with message: ZMAssetClientMessage) {
         guard message.version < 3 else { return nil }
         assetClientMessage = message
-        moc = message.managedObjectContext!
+
+        guard let managedObjectContext = message.managedObjectContext else { return nil }
+        moc = managedObjectContext
     }
 
     public var imageMessageData: ZMImageMessageData? {
