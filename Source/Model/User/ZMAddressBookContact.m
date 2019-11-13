@@ -18,7 +18,6 @@
 
 
 #import "ZMAddressBookContact.h"
-#import "ZMManagedObjectContextProvider.h"
 #import "ZMUser.h"
 
 @implementation ZMAddressBookContact
