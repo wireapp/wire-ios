@@ -26,7 +26,6 @@
 @import WireImages;
 
 #import "ZMManagedObject+Internal.h"
-#import "ZMManagedObjectContextProvider.h"
 #import "ZMConversation+Internal.h"
 #import "ZMConversation+UnreadCount.h"
 

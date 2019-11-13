@@ -21,8 +21,6 @@
 
 #import "ZMManagedObject.h"
 #import "ZMMessage.h"
-#import "ZMManagedObjectContextProvider.h"
-
 
 @class ZMUser;
 @class ZMMessage;
