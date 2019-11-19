@@ -272,5 +272,27 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssertEqual(result, [membership])
     }
     
-
+    func testThatItShouldntCommunicateStatusIfTeamLimitIsReached() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        
+        for _ in 1...Team.membersOptimalLimit {
+            team.members.insert(Member.insertNewObject(in: uiMOC))
+        }
+        
+        // then
+        XCTAssertFalse(team.shouldCommunicateStatus)
+    }
+    
+    func testThatItShouldCommunicateStatusIfTeamLimitIsntReached() {
+        // given
+        let team = Team.insertNewObject(in: uiMOC)
+        
+        for _ in 1...(Team.membersOptimalLimit - 1) {
+            team.members.insert(Member.insertNewObject(in: uiMOC))
+        }
+        
+        // then
+        XCTAssertTrue(team.shouldCommunicateStatus)
+    }
 }
