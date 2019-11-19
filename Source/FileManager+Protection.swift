@@ -48,7 +48,7 @@ extension FileManager {
         self.setProtectionUntilFirstUserAuthentication(url)
         
         // Make sure this is not backed up:
-        url.excludeFromBackup()
+        try? url.excludeFromBackup()
     }
 
     /// Sets the protection to FileProtectionType.completeUntilFirstUserAuthentication
@@ -67,21 +67,30 @@ extension FileManager {
 public extension URL {
     
     /// Sets the resource value to exclude this entry from backups
-    func excludeFromBackup() {
+    func excludeFromBackup() throws {
         var mutableCopy = self
         do {
             var resourceValues = URLResourceValues()
             resourceValues.isExcludedFromBackup = true
             try mutableCopy.setResourceValues(resourceValues)
-        }
-        catch let error {
-            fatal("Error excluding: \(mutableCopy), from backup: \(error)")
+        } catch let error {
+            throw error
         }
     }
     
+    func excludeFromBackupIfExists() throws {
+        if FileManager.default.fileExists(atPath: path) {
+            try excludeFromBackup()
+        }
+    }
+
     /// Returns whether the item is excluded from backups
     var isExcludedFromBackup : Bool {
         guard let values = try? resourceValues(forKeys: Set(arrayLiteral: .isExcludedFromBackupKey)) else { return false }
         return values.isExcludedFromBackup ?? false
+    }
+
+    static func directory(for searchPathDirectory: FileManager.SearchPathDirectory) -> URL {
+        return URL(fileURLWithPath: NSSearchPathForDirectoriesInDomains(searchPathDirectory, .userDomainMask, true).first!)
     }
 }
