@@ -74,7 +74,7 @@ extension FileManagerProtectionTests {
         try self.createTestFolder()
         
         // WHEN
-        self.testFolder.excludeFromBackup()
+        try! self.testFolder.excludeFromBackup()
         
         // THEN
         XCTAssertTrue(try self.existingLocalURLIsExcludedFromBackup(self.testFolder))
