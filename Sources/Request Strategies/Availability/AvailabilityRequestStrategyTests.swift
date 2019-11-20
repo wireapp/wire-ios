@@ -60,6 +60,60 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
         }
     }
     
+    func testThatItDoesntGenerateARequestWhenAvailabilityIsModifiedAndGuestShouldntCommunicateStatus() {
+        self.syncMOC.performGroupedAndWait { moc in
+            
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsToBeUpdatedFromBackend = false
+            selfUser.setLocallyModifiedKeys(Set(arrayLiteral: AvailabilityKey))
+            
+            let team = Team.insertNewObject(in: moc)
+            for _ in 1...(Team.membersOptimalLimit - 1) { // Saving one user to add selfuser later on
+                team.members.insert(Member.insertNewObject(in: moc))
+            }
+            
+            let membership = Member.insertNewObject(in: moc)
+            membership.user = selfUser
+            membership.team = team
+            
+            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            
+            // when
+            let request = self.sut.nextRequest()
+            
+            // then
+            XCTAssertNil(request)
+        }
+    }
+    
+    func testThatItGeneratesARequestWhenAvailabilityIsModifiedAndGuestShouldCommunicateStatus() {
+        self.syncMOC.performGroupedAndWait { moc in
+            
+            // given
+            let selfUser = ZMUser.selfUser(in: moc)
+            selfUser.needsToBeUpdatedFromBackend = false
+            selfUser.setLocallyModifiedKeys(Set(arrayLiteral: AvailabilityKey))
+            
+            let team = Team.insertNewObject(in: moc)
+            for _ in 1...(Team.membersOptimalLimit - 2) { // Saving one user to add selfuser later on
+                team.members.insert(Member.insertNewObject(in: moc))
+            }
+            
+            let membership = Member.insertNewObject(in: moc)
+            membership.user = selfUser
+            membership.team = team
+            
+            self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: selfUser)) })
+            
+            // when
+            let request = self.sut.nextRequest()
+            
+            // then
+            XCTAssertNotNil(request)
+        }
+    }
+    
     func testThatItDoesntGenerateARequestWhenAvailabilityIsModifiedForOtherUsers() {
         self.syncMOC.performGroupedAndWait { moc in
             // given
