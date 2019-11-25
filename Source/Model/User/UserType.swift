@@ -49,6 +49,9 @@ public protocol UserType: NSObjectProtocol {
     /// The availability of the user
     var availability: Availability { get set }
     
+    /// Wether or not the availability should be display for the user
+    var shouldHideAvailability: Bool { get }
+    
     /// The name of the team the user belongs to.
     var teamName: String? { get }
     
