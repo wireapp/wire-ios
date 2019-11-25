@@ -96,6 +96,21 @@ extension ZMUser {
         }
     }
     
+    public var shouldHideAvailability: Bool {
+        guard let moc = managedObjectContext, !isSelfUser else { return false }
+        
+        let selfUserTeam = ZMUser.selfUser(in: moc).team
+        
+        guard let userTeamId = self.team?.remoteIdentifier, let selfUserTeamId = selfUserTeam?.remoteIdentifier else {
+            return false
+        }
+        
+        let userIsTeammate = userTeamId == selfUserTeamId
+        let communicateStatus = selfUserTeam?.shouldCommunicateStatus ?? true
+        
+        return userIsTeammate && !communicateStatus
+    }
+    
     internal func updateAvailability(_ newValue : Availability) {
         self.willChangeValue(forKey: AvailabilityKey)
         self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)
