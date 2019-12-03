@@ -235,7 +235,7 @@ extension EncryptionSessionsDirectoryTests {
         // GIVEN
         // WHEN
         // THEN
-        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(rawValue: "aa228899")))
+        XCTAssertNil(statusAlice.fingerprint(for: EncryptionSessionIdentifier(userId: "aa22", clientId: "8899")))
     }
 }
 
@@ -519,7 +519,7 @@ extension EncryptionSessionsDirectoryTests {
         
         
         // THEN
-        XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
+        XCTAssertTrue(checkThatAMessageCanBeSent(.Alice))
     }
     
     func testThatItWontMigrateIfNewSessionAlreadyExists() {
@@ -605,9 +605,9 @@ extension EncryptionSessionsDirectoryTests {
         var identifier : EncryptionSessionIdentifier {
             switch(self) {
             case .Alice:
-                return EncryptionSessionIdentifier(rawValue: "234ab2e4c45-a11c30")
+                return EncryptionSessionIdentifier(userId: "234ab2e4", clientId: "c45-a11c30")
             case .Bob:
-                return EncryptionSessionIdentifier(rawValue: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
+                return EncryptionSessionIdentifier(fromLegacyV1Identifier: bobIdentifierOverride ?? "a34affe3366-b0b0b0b")
             }
         }
         

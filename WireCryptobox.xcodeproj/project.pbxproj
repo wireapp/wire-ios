@@ -31,6 +31,11 @@
 		54B949941D2541350041CC55 /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54B949931D2541350041CC55 /* TestHelper.swift */; };
 		54C69DDA1D216A6B0060FBEC /* EncryptionContext.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */; };
 		54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */; };
+		638792A623956F9300FD23CF /* Data+SafeForLogging.swift in Sources */ = {isa = PBXBuildFile; fileRef = 638792A523956F9300FD23CF /* Data+SafeForLogging.swift */; };
+		638792AE23957A7D00FD23CF /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638792AC23957A7D00FD23CF /* WireSystem.framework */; };
+		638792AF23957A7D00FD23CF /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 638792AD23957A7D00FD23CF /* WireUtilities.framework */; };
+		638792C223957C3F00FD23CF /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 638792AC23957A7D00FD23CF /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		638792C323957C3F00FD23CF /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 638792AD23957A7D00FD23CF /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		870121FD20F4D2FE001E6342 /* GenericHashBuilderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */; };
 		87AE8D0A207BB3380058715E /* crypto_stream_salsa2012.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8CC9207BB3370058715E /* crypto_stream_salsa2012.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87AE8D0B207BB3380058715E /* crypto_auth.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8CCA207BB3370058715E /* crypto_auth.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -93,8 +98,6 @@
 		87AE8D4A207BB3380058715E /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D09207BB3370058715E /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87B43C2F20F3973F0031DE41 /* EncryptionContextCachingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */; };
 		87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C5820F4AAA00031DE41 /* GenericHash.swift */; };
-		F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; };
-		F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F10C8E231E9296BA00020408 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 /* End PBXBuildFile section */
@@ -123,7 +126,8 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F10C8E251E92977000020408 /* WireSystem.framework in CopyFiles */,
+				638792C223957C3F00FD23CF /* WireSystem.framework in CopyFiles */,
+				638792C323957C3F00FD23CF /* WireUtilities.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -174,6 +178,9 @@
 		54B949931D2541350041CC55 /* TestHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestHelper.swift; sourceTree = "<group>"; };
 		54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EncryptionContext.swift; sourceTree = "<group>"; };
 		54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CryptoBoxError.swift; sourceTree = "<group>"; };
+		638792A523956F9300FD23CF /* Data+SafeForLogging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+SafeForLogging.swift"; sourceTree = "<group>"; };
+		638792AC23957A7D00FD23CF /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
+		638792AD23957A7D00FD23CF /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
 		870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHashBuilderTests.swift; sourceTree = "<group>"; };
 		87AE8CC9207BB3370058715E /* crypto_stream_salsa2012.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_stream_salsa2012.h; sourceTree = "<group>"; };
 		87AE8CCA207BB3370058715E /* crypto_auth.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = crypto_auth.h; sourceTree = "<group>"; };
@@ -240,7 +247,6 @@
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		EFF7A46D2271DBB100F1AC33 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
-		F10C8E231E9296BA00020408 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
 		F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F1E148D3207D06EF00F81833 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
@@ -254,9 +260,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F10C8E241E9296BA00020408 /* WireSystem.framework in Frameworks */,
 				0928E2601BA0785F0057232E /* libcryptobox.a in Frameworks */,
 				0928E2611BA0785F0057232E /* libsodium.a in Frameworks */,
+				638792AE23957A7D00FD23CF /* WireSystem.framework in Frameworks */,
+				638792AF23957A7D00FD23CF /* WireUtilities.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -448,6 +455,7 @@
 				54C69DD91D216A6B0060FBEC /* EncryptionContext.swift */,
 				5471A6771D242F8C0092A9A9 /* EncryptionSessionsDirectory.swift */,
 				5421C5F81D2C152C00048251 /* NSData+CBox.swift */,
+				638792A523956F9300FD23CF /* Data+SafeForLogging.swift */,
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
@@ -493,7 +501,8 @@
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F10C8E231E9296BA00020408 /* WireSystem.framework */,
+				638792AC23957A7D00FD23CF /* WireSystem.framework */,
+				638792AD23957A7D00FD23CF /* WireUtilities.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -727,7 +736,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash curl || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h";
+			shellScript = "DIRECTORY=\"${PROJECT_DIR}/../build\"\nexport PATH=$PATH:/usr/local/bin\nhash curl || exit 1 # if this fires, you don't have wget installed!\nmake cryptobox-\"${CRYPTOBOX_VERSION}\"\ncp build/include/cbox.h WireCryptobox/cbox.h\n";
 		};
 		5459C4B81C0FB0F600F4963F /* Placeholder Carthage folder */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -741,7 +750,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "mkdir -p Carthage/Build/iOS";
+			shellScript = "mkdir -p Carthage/Build/iOS\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -751,6 +760,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				16460B81206D46CA0096B616 /* ChaCha20Encryption.swift in Sources */,
+				638792A623956F9300FD23CF /* Data+SafeForLogging.swift in Sources */,
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
@@ -842,6 +852,7 @@
 			baseConfigurationReference = F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "test-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -852,6 +863,7 @@
 			baseConfigurationReference = F1E148D1207D06EF00F81833 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "test-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.marco83.test-host";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
