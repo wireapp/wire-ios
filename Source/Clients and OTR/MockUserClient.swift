@@ -73,7 +73,7 @@ extension MockUserClient {
         guard let identifier = self.identifier, let userIdentifier = self.user?.identifier else {
             return nil
         }
-        return EncryptionSessionIdentifier(rawValue: "\(identifier)_\(userIdentifier)")
+        return EncryptionSessionIdentifier(userId: userIdentifier, clientId: identifier)
     }
   
     /// Returns a fetch request to fetch MockUserClients with the given predicate
