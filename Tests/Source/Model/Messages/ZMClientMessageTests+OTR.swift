@@ -443,7 +443,7 @@ extension ClientMessageTests_OTR {
         let identifier = client.sessionIdentifier
         
         // THEN
-        XCTAssertEqual(identifier, EncryptionSessionIdentifier(rawValue: "\(user.remoteIdentifier!)_\(client.remoteIdentifier!)"))
+        XCTAssertEqual(identifier, EncryptionSessionIdentifier(userId: user.remoteIdentifier.uuidString, clientId: client.remoteIdentifier!))
     }
 }
 
