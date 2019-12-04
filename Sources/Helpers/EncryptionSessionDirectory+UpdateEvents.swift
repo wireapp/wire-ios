@@ -119,7 +119,7 @@ extension EncryptionSessionsDirectory {
         
         /// Check if it's the "bomb" message (gave encrypting on the sender)
         guard encryptedData != ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8) else {
-            zmLog.error("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionIdentifier). Current device might have invalid prekeys on the BE.")
+            zmLog.safePublic("Received 'failed to encrypt for your client' special payload (bomb) from \(sessionIdentifier). Current device might have invalid prekeys on the BE.")
             return nil
         }
 

@@ -346,7 +346,7 @@ extension FetchClientRequestStrategyTests {
         let remoteIdentifier = "aabbccdd0011"
         var sessionIdentifier: EncryptionSessionIdentifier!
         self.syncMOC.performGroupedBlockAndWait {
-            sessionIdentifier = EncryptionSessionIdentifier(rawValue: "\(self.otherUser.remoteIdentifier!)_\(remoteIdentifier)")
+            sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
             payload = [["id" : remoteIdentifier]] as NSArray
             self.selfClient.keysStore.encryptionContext.perform {
