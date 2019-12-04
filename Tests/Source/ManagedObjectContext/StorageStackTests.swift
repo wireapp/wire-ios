@@ -198,7 +198,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         let testValue = "12345678"
         let testKey = "aassddffgg"
-        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        let sessionID = EncryptionSessionIdentifier(userId: "test", clientId: "session")
         
         zip(previousDatabaseLocations, previousKeyStoreLocations).forEach { oldDatabasePath, oldKeystorePath in
 
@@ -258,7 +258,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         let testKey = "aassddffgg"
         let testValue = "eggplant"
-        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        let sessionID = EncryptionSessionIdentifier(userId: "test", clientId: "session")
         
         let oldPath = self.previousDatabaseLocations.first!
         
@@ -362,7 +362,7 @@ class StorageStackTests: DatabaseBaseTest {
         
         let testKey = "aassddffgg"
         let testValue = "eggplant"
-        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        let sessionID = EncryptionSessionIdentifier(userId: "test", clientId: "session")
         
         let oldPath = self.previousDatabaseLocations.first!
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer)
@@ -431,7 +431,7 @@ class StorageStackTests: DatabaseBaseTest {
         // migrate the keystore immediately, recreate the legacy keystore, then restart 
         // the migration from this inconsistent state.
         
-        let sessionID = EncryptionSessionIdentifier(rawValue: "testSession")
+        let sessionID = EncryptionSessionIdentifier(userId: "test", clientId: "session")
         
         let oldPath = self.previousDatabaseLocations.first!
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountID, applicationContainer: self.applicationContainer)

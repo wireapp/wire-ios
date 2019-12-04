@@ -315,7 +315,7 @@ extension UserClient {
         guard let userIdentifier = self.user?.remoteIdentifier,
             let clientIdentifier = self.remoteIdentifier
         else { return nil }
-        return EncryptionSessionIdentifier(rawValue: "\(userIdentifier)_\(clientIdentifier)")
+        return EncryptionSessionIdentifier(userId: userIdentifier.uuidString, clientId: clientIdentifier)
     }
     
     /// Previous (V1) session identifier
