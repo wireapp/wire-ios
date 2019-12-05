@@ -50,6 +50,92 @@
     [self checkThatTransportData:response.payload matchesConversation:groupConversation];
 }
 
+- (void)testReceivedPayloadWhenSelfUserIsAdmin
+{
+    __block MockUser *selfUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        groupConversation = [session insertConversationWithCreator:selfUser otherUsers:@[] type:ZMTConversationTypeGroup];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    [self checkThatTransportData:response.payload selfUserHasGroupRole:@"wire_admin"];
+}
+
+- (void)testReceivedPayloadWhenSelfUserIsMember
+{
+    __block MockUser *selfUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        groupConversation = [session insertConversationWithCreator:selfUser otherUsers:@[] type:ZMTConversationTypeGroup];
+        groupConversation.selfRole = @"wire_member";
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    [self checkThatTransportData:response.payload selfUserHasGroupRole:@"wire_member"];
+}
+
+- (void)testReceivedPayloadWhenOtherUserIsAdmin
+{
+    __block MockUser *selfUser;
+    __block MockUser *otherUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        otherUser = [session insertUserWithName:@"Foo"];
+        groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[selfUser] type:ZMTConversationTypeGroup];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    [self checkThatTransportData:response.payload firstOtherUserHasGroupRole:@"wire_admin"];
+}
+
+- (void)testReceivedPayloadWhenOtherUserIsMember
+{
+    __block MockUser *selfUser;
+    __block MockUser *otherUser;
+    __block MockConversation *groupConversation;
+    
+    // GIVEN
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        otherUser = [session insertUserWithName:@"Foo"];
+        otherUser.role = @"wire_member";
+        groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[selfUser] type:ZMTConversationTypeGroup];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/conversations/" stringByAppendingPathComponent:groupConversation.identifier];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    [self checkThatTransportData:response.payload firstOtherUserHasGroupRole:@"wire_member"];
+}
+
 - (void)testThatWeReceive_403_WhenRequestingConversationWhichExistsButWeAreNotAMemberOf
 {
     __block MockUser *selfUser;

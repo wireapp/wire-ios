@@ -63,6 +63,8 @@
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesUser:(MockUser *)user isSelfUser:(BOOL)isSelfUser failureRecorder:(ZMTFailureRecorder *)fr;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConnection:(MockConnection *)connection;
 - (void)checkThatTransportData:(id <ZMTransportData>)dict matchesConversation:(MockConversation *)conversation;
+- (void)checkThatTransportData:(id <ZMTransportData>)dict selfUserHasGroupRole:(NSString *)role;
+- (void)checkThatTransportData:(id <ZMTransportData>)data firstOtherUserHasGroupRole:(NSString *)role;
 - (ZMTransportRequestGenerator)createGeneratorForPayload:(id<ZMTransportData>)payload path:(NSString *)path method:(ZMTransportRequestMethod)method handler:(ZMCompletionHandler *)handler;
 - (TestPushChannelEvent *)popEvent;
 - (TestPushChannelEvent *)popEventMatchingWithBlock:(BOOL(^)(TestPushChannelEvent *event))block;

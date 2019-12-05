@@ -477,7 +477,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     }];
 }
 
-- (void)checkThatTransportData:(id <ZMTransportData>)data matchesConversation:(MockConversation *)conversation;
+- (void) checkThatTransportData:(id <ZMTransportData>)data matchesConversation:(MockConversation *)conversation;
 {
     [conversation.managedObjectContext performBlockAndWait:^{
         NSDictionary *dict = (id) data;
@@ -494,7 +494,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         
         NSDictionary *selfMember = members[@"self"];
         XCTAssertTrue([selfMember isKindOfClass:[NSDictionary class]]);
-        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_muted_status", @"otr_archived", @"otr_archived_ref"];
+        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_muted_status", @"otr_archived", @"otr_archived_ref", @"role"];
         AssertDictionaryHasKeys(selfMember, keys);
         
         XCTAssertEqualObjects(selfMember[@"otr_muted"], @(conversation.otrMuted));
@@ -513,7 +513,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         XCTAssertTrue([others isKindOfClass:[NSArray class]]);
         for (NSDictionary *otherDict in others) {
             XCTAssertTrue([otherDict isKindOfClass:[NSDictionary class]]);
-            keys = @[@"id"];
+            keys = @[@"id", @"role"];
             AssertDictionaryHasKeys(otherDict, keys);
             NSString *uuidString = otherDict[@"id"];
             XCTAssertTrue([activeOtherIDs containsObject:uuidString], @"id %@ not found", uuidString);
@@ -525,6 +525,22 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         ZMTConversationType t = (ZMTConversationType) ((NSNumber *)dict[@"type"]).intValue;
         XCTAssertEqual(t, conversation.type);
     }];
+}
+
+- (void) checkThatTransportData:(id <ZMTransportData>)data selfUserHasGroupRole:(NSString *)role;
+{
+    NSDictionary *dict = (id) data;
+    NSDictionary *members = dict[@"members"];
+    NSDictionary *selfMember = members[@"self"];
+    XCTAssertEqualObjects(selfMember[@"role"], role);
+}
+
+- (void) checkThatTransportData:(id <ZMTransportData>)data firstOtherUserHasGroupRole:(NSString *)role;
+{
+    NSDictionary *dict = (id) data;
+    NSDictionary *members = dict[@"members"];
+    NSArray *others = members[@"others"];
+    XCTAssertEqualObjects(others[0][@"role"], role);
 }
 
 @end

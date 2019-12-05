@@ -59,6 +59,8 @@ import Foundation
     @NSManaged public var serviceIdentifier: String?
     @NSManaged public var richProfile: NSArray?
     @NSManaged public var pendingLegalHoldClient: MockPendingLegalHoldClient?
+    
+    @NSManaged public var role: String
 
     public var userClients: Set<MockUserClient> {
         return clients as! Set<MockUserClient>
