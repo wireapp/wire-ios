@@ -282,6 +282,59 @@
         
         NSDictionary *expectedPayload = (NSDictionary *)[storedConversation transportData];
         XCTAssertEqualObjects(expectedPayload, responsePayload);
+        XCTAssertEqualObjects(user1.role, MockConversation.admin);
+        XCTAssertEqualObjects(user2.role, MockConversation.admin);
+    }];
+}
+
+- (void)testThatWeCanCreateAConversationWithAllMembers
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    __block MockUser *user2;
+    __block NSString *user1ID;
+    __block NSString *user2ID;
+    
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"The Great Quux"];
+        user1 = [session insertUserWithName:@"Foo"];
+        user1ID = user1.identifier;
+        user2 = [session insertUserWithName:@"Bar"];
+        user2ID = user2.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSDictionary *payload = @{ @"users": @[user1ID, user2ID],
+                               @"conversation_role" : @"wire_member"
+                               };
+    
+    ZMTransportResponse *response = [self responseForPayload:payload path:@"/conversations/" method:ZMMethodPOST];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    
+    NSDictionary *responsePayload = (id) response.payload;
+    NSString *conversationID = [responsePayload stringForKey:@"id"];
+    
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"identifier == %@", conversationID];
+    NSFetchRequest *fetchRequest = [MockConversation sortedFetchRequestWithPredicate:predicate];
+    [self.sut.managedObjectContext performBlockAndWait:^{
+        NSArray *conversations = [self.sut.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+        
+        XCTAssertNotNil(conversations);
+        XCTAssertEqual(1u, conversations.count);
+        
+        MockConversation *storedConversation = conversations[0];
+        
+        NSDictionary *expectedPayload = (NSDictionary *)[storedConversation transportData];
+        XCTAssertEqualObjects(expectedPayload, responsePayload);
+        XCTAssertEqualObjects(user1.role, MockConversation.member);
+        XCTAssertEqualObjects(user1.role, MockConversation.member);
+        XCTAssertEqualObjects(storedConversation.creator.role, MockConversation.admin);
     }];
 }
 
@@ -1144,6 +1197,50 @@
     }];
 }
 
+- (void)testThatWeCanChangeAParticipantGroupRoleInAConversation
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    __block MockUser *user2;
+    
+    __block MockConversation *groupConversation;
+    __block NSString *groupConversationID;
+    __block NSString *user1ID;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        user1 = [session insertUserWithName:@"Foo"];
+        user1ID = user1.identifier;
+        user2 = [session insertUserWithName:@"Bar"];
+        
+        groupConversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1, user2]];
+        groupConversation.creator = user2;
+        groupConversationID = groupConversation.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", groupConversationID, @"members", user1ID]];
+    NSDictionary *payload = @{
+                              @"conversation_role": MockConversation.member
+                              };
+    
+    //WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPUT];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    
+    [self.sut.managedObjectContext performBlockAndWait:^{
+        XCTAssertEqualObjects(user1.role, MockConversation.member);
+        XCTAssertEqualObjects(user2.role, MockConversation.admin);
+    }];
+}
+
 
 - (void)testThatWeCanAddParticipantsToAConversation
 {
@@ -1178,6 +1275,7 @@
                               @"users": @[user3ID.lowercaseString]
                               };
     
+    //WHEN
     ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
     
     // THEN
@@ -1191,6 +1289,50 @@
     [self.sut.managedObjectContext performGroupedBlock:^{
         NSOrderedSet *activeUsers = groupConversation.activeUsers;
         XCTAssertEqualObjects(activeUsers, ([NSOrderedSet orderedSetWithObjects:selfUser, user1, user2, user3, nil]) );
+        XCTAssertEqualObjects(user3.role, MockConversation.admin);
+    }];
+}
+
+- (void)testThatWeCanAddNewParticipantsToAConversationWithSpecificGroupRole
+{
+    // GIVEN
+    __block MockUser *selfUser;
+    __block MockUser *user1;
+    __block MockUser *user2;
+    __block MockUser *user3;
+    
+    __block MockConversation *groupConversation;
+    __block NSString *groupConversationID;
+    __block NSString *user3ID;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        selfUser = [session insertSelfUserWithName:@"Me Myself"];
+        user1 = [session insertUserWithName:@"Foo"];
+        user2 = [session insertUserWithName:@"Bar"];
+        user3 = [session insertUserWithName:@"H.P. Baxxter"];
+        user3ID = user3.identifier;
+        
+        groupConversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1, user2]];
+        groupConversation.creator = user2;
+        groupConversationID = groupConversation.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    NSString *path = [NSString pathWithComponents:@[@"/", @"conversations", groupConversationID, @"members"]];
+    NSDictionary *payload = @{
+                              @"users": @[user3ID.lowercaseString],
+                              @"conversation_role": MockConversation.member
+                              };
+
+    //WHEN
+    ZMTransportResponse *response = [self responseForPayload:payload path:path method:ZMMethodPOST];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    [self.sut.managedObjectContext performGroupedBlock:^{
+        XCTAssertEqualObjects(user3.role, MockConversation.member);
     }];
 }
 
