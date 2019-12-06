@@ -115,7 +115,7 @@ extension MockTransportSession {
             newServiceUser.providerIdentifier = service.provider
         }
         
-        conversation.addUsers(by: selfUser, addedUsers: [newServiceUser])
+        conversation.addUsers(by: selfUser, addedUsers: [newServiceUser!])
         
         let responsePayload: [String: Any?] = [
             "id": newServiceUser.identifier,
