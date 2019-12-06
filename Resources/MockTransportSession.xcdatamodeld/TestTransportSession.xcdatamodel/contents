@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="19B88" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Action" representedClassName=".MockAction" syncable="YES">
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="roles" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
+    </entity>
     <entity name="Asset" representedClassName="MockAsset" syncable="YES">
         <attribute name="contentType" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="conversation" optional="YES" attributeType="String" syncable="YES"/>
@@ -80,6 +84,11 @@
         <relationship name="lastPrekeyOfPendingLegalHoldClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PendingLegalHoldClient" inverseName="lastPrekey" inverseEntity="PendingLegalHoldClient" syncable="YES"/>
         <relationship name="pendingLegalHoldClient" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="PendingLegalHoldClient" inverseName="prekeys" inverseEntity="PendingLegalHoldClient" syncable="YES"/>
     </entity>
+    <entity name="Role" representedClassName=".MockRole" syncable="YES">
+        <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="actions" toMany="YES" deletionRule="Nullify" destinationEntity="Action" inverseName="roles" inverseEntity="Action" syncable="YES"/>
+        <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="roles" inverseEntity="Team" syncable="YES"/>
+    </entity>
     <entity name="Service" representedClassName=".MockService" syncable="YES">
         <attribute name="accentID" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
@@ -106,6 +115,7 @@
         <relationship name="conversations" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="team" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdTeams" inverseEntity="User" syncable="YES"/>
         <relationship name="members" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="team" inverseEntity="Member" syncable="YES"/>
+        <relationship name="roles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="team" inverseEntity="Role" syncable="YES"/>
     </entity>
     <entity name="User" representedClassName=".MockUser" syncable="YES">
         <attribute name="accentID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -153,6 +163,7 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="clients" inverseEntity="User" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Action" positionX="9" positionY="153" width="128" height="75"/>
         <element name="Asset" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="330"/>
@@ -163,8 +174,9 @@
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
-        <element name="Team" positionX="9" positionY="153" width="128" height="195"/>
+        <element name="Team" positionX="9" positionY="153" width="128" height="210"/>
         <element name="User" positionX="0" positionY="0" width="128" height="450"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
+        <element name="Role" positionX="18" positionY="162" width="128" height="90"/>
     </elements>
 </model>

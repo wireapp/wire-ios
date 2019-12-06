@@ -37,6 +37,8 @@ extension MockTransportSession {
             response = fetchTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/conversations/*" where request.method == .methodDELETE:
             response = deleteTeamConversation(teamId: request.RESTComponents(index: 1), conversationId: request.RESTComponents(index: 3))
+        case "/teams/*/conversations/roles"/* where request.method == .methodGET*/:
+            response = fetchRolesForTeam(with: request.RESTComponents(index: 1))
         case "/teams/*/services/whitelisted":
             response = fetchWhitelistedServicesForTeam(with: request.RESTComponents(index: 1), query: request.queryParameters)
         case "/teams/*/invitations":
@@ -155,6 +157,18 @@ extension MockTransportSession {
             "members" : team.members.map { $0.payload }
         ]
 
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
+    private func fetchRolesForTeam(with identifier: String?) -> ZMTransportResponse? {
+        guard let identifier = identifier else { return nil }
+        let predicate = MockTeam.predicateWithIdentifier(identifier: identifier)
+        guard let team: MockTeam = MockTeam.fetch(in: managedObjectContext, withPredicate: predicate) else { return .teamNotFound }
+        
+        let payload: [String : Any] = [
+            "conversation_roles" : team.roles.map { $0.payload }
+        ]
+        
         return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     

@@ -22,6 +22,7 @@ import CoreData
 @objc public final class MockTeam: NSManagedObject, EntityNamedProtocol {
     @NSManaged public var conversations: Set<MockConversation>?
     @NSManaged public var members: Set<MockMember>
+    @NSManaged public var roles: Set<MockRole>
     @NSManaged public var creator: MockUser?
     @NSManaged public var name: String?
     @NSManaged public var pictureAssetKey: String?
@@ -58,6 +59,11 @@ extension MockTeam {
         team.pictureAssetId = assetId ?? ""
         team.pictureAssetKey = assetKey
         team.isBound = isBound
+        team.roles = Set(
+            [
+                MockRole.insert(in: context, name: MockConversation.admin, actions: createAdminActions(context: context)),
+                MockRole.insert(in: context, name: MockConversation.member, actions: createMemberActions(context: context))
+            ])
         return team
     }
     
@@ -74,5 +80,23 @@ extension MockTeam {
     
     var payload: ZMTransportData {
         return payloadValues as NSDictionary
+    }
+    
+    private static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
+        
+        return  Set(["add_conversation_member",
+                 "remove_conversation_member",
+                 "modify_conversation_name",
+                 "modify_conversation_message_timer",
+                 "modify_conversation_receipt_mode",
+                 "modify_conversation_access",
+                 "modify_other_conversation_member",
+                 "leave_conversation",
+                 "delete_convesation"].map{MockAction.insert(in: context, name: $0)})
+    }
+    
+    private static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
+        
+        return  Set(["leave_conversation"].map{MockAction.insert(in: context, name: $0)})
     }
 }
