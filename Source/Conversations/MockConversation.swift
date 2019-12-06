@@ -19,6 +19,9 @@
 import Foundation
 
 extension MockConversation {
+    @objc public static let admin = "wire_admin"
+    @objc public static let member = "wire_member"
+
     @objc public static func insertConversationInto(context: NSManagedObjectContext, withCreator creator: MockUser, forTeam team: MockTeam, users:[MockUser]) -> MockConversation {
         let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
         conversation.type = .group

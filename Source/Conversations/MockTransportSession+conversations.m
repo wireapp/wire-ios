@@ -74,6 +74,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     {
         return [self processPutConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
+    else if ([request matchesWithPath:@"/conversations/*/members/*" method:ZMMethodPUT])
+    {
+        return [self processPutMembersInConversation:[request RESTComponentAtIndex:1] member:[request RESTComponentAtIndex:3] payload:[request.payload asDictionary]];
+    }
     else if ([request matchesWithPath:@"/conversations/*/self" method:ZMMethodPUT])
     {
         return [self processPutConversationSelf:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
@@ -217,6 +221,35 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
 }
 
+- (ZMTransportResponse *)processPutMembersInConversation:(NSString *)conversationId member:(NSString *)memberId payload:(NSDictionary *)payload;
+{
+    MockConversation *conversation = [self conversationByIdentifier:conversationId];
+    if (conversation == nil) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
+    }
+    
+    NSString *conversationRole = [payload optionalStringForKey:@"conversation_role"];
+    if (conversationRole == nil) {
+        return [ZMTransportResponse responseWithPayload:@{@"error":@"no conversation_role in payload"} HTTPStatus:400 transportSessionError:nil];
+    }
+    
+    MockUser *user = [self fetchUserWithIdentifier:memberId];
+    if(user == nil) {
+        return [ZMTransportResponse responseWithPayload:@{
+                                                          @"code" : @400,
+                                                          @"message": @"Unknown user",
+                                                          @"label": @""
+                                                          } HTTPStatus:400 transportSessionError:nil];
+    }
+    
+    if (![conversation.activeUsers containsObject:user]) {
+        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
+    }
+    user.role = conversationRole;
+
+    return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
+}
+
 
 // returns YES if the payload contains "muted" information
 - (BOOL)updateConversation:(MockConversation *)conversation isOTRMutedFromPutSelfConversationPayload:(NSDictionary *)payload
@@ -312,6 +345,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
 {
     NSArray *participantIDs = request.payload.asDictionary[@"users"];
     NSString *name = request.payload.asDictionary[@"name"];
+    NSString *conversationRole = request.payload.asDictionary[@"conversation_role"];
+
     
     NSMutableArray *otherUsers = [NSMutableArray array];
     
@@ -323,6 +358,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         
         if (results.count == 1) {
             MockUser *user = results[0];
+            if (conversationRole != nil) {
+                user.role = conversationRole;
+            }
             [otherUsers addObject:user];
         }
     }
@@ -331,6 +369,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
     }
+    self.selfUser.role = MockConversation.admin;
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -354,12 +393,16 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockConversation *conversation = [self fetchConversationWithIdentifier:conversationId];
     
     NSArray *addedUserIDs = payload[@"users"];
+    NSString *conversationRole = payload[@"conversation_role"];
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
     
     for (NSString *userID in addedUserIDs) {
         MockUser *user = [self fetchUserWithIdentifier:userID];
+        if (conversationRole != nil) {
+            user.role = conversationRole;
+        }
         if(user == nil) {
             return [ZMTransportResponse responseWithPayload:@{
                                                               @"code" : @403,
@@ -378,7 +421,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         }
         [addedUsers addObject:user];
     }
-    
     
     MockEvent *event = [conversation addUsersByUser:self.selfUser addedUsers:addedUsers];
     return [ZMTransportResponse responseWithPayload:event.transportData HTTPStatus:200 transportSessionError:nil];
