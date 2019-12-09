@@ -82,7 +82,7 @@ extension MockTeam {
         return payloadValues as NSDictionary
     }
     
-    private static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
+    public static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
         
         return  Set(["add_conversation_member",
                  "remove_conversation_member",
@@ -95,7 +95,7 @@ extension MockTeam {
                  "delete_convesation"].map{MockAction.insert(in: context, name: $0)})
     }
     
-    private static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
+    public static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
         
         return  Set(["leave_conversation"].map{MockAction.insert(in: context, name: $0)})
     }

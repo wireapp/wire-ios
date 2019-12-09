@@ -161,4 +161,93 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertNotNil(data["access_role"])
 
     }
+    
+    func testThatItReturnsConversationRolesIfConversationIsNotPartOfATeam() {
+        // given
+        var conversation: MockConversation!
+        var user1: MockUser!
+        var user2: MockUser!
+        
+        sut.performRemoteChanges { session in
+            user1 = session.insertUser(withName: "one")
+            user2 = session.insertUser(withName: "two")
+            conversation = session.insertConversation(withSelfUserAndGroupRoles: self.selfUser, otherUsers: [user1!, user2!])
+        }
+       
+        // when
+        let path = "/conversations/\(conversation.identifier)/roles"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+        
+        // then
+        let payload = response?.payload?.asDictionary() as? [String : Any?]
+        guard let conversationRoles = payload?["conversation_roles"] as? [[String : Any]] else {
+            XCTFail("Should have conversation roles array")
+            return
+        }
+        XCTAssertNil(conversation.team)
+        XCTAssertEqual(conversationRoles.count, conversation.roles!.count)
+        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
+        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+            "add_conversation_member",
+            "remove_conversation_member",
+            "modify_conversation_name",
+            "modify_conversation_message_timer",
+            "modify_conversation_receipt_mode",
+            "modify_conversation_access",
+            "modify_other_conversation_member",
+            "leave_conversation","delete_convesation"
+            ]))
+        
+        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
+    }
+    
+    func testThatItReturnsTeamRolesIfConversationIsPartOfATeam() {
+        // given
+        var conversation: MockConversation!
+        var user1: MockUser!
+        var user2: MockUser!
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            user1 = session.insertUser(withName: "one")
+            user2 = session.insertUser(withName: "two")
+            team = session.insertTeam(withName: "Name", isBound: true)
+            conversation = session.insertTeamConversation(to: team, with: [user1, user2], creator: self.selfUser)
+        }
+        
+        // when
+        let path = "/conversations/\(conversation.identifier)/roles"
+        let response = self.response(forPayload: nil, path: path, method: .methodGET)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+        
+        // then
+        let payload = response?.payload?.asDictionary() as? [String : Any?]
+        guard let conversationRoles = payload?["conversation_roles"] as? [[String : Any]] else {
+            XCTFail("Should have conversation roles array")
+            return
+        }
+        XCTAssertNotNil(conversation.team)
+        XCTAssertEqual(conversationRoles.count, team.roles.count)
+        let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
+        XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
+            "add_conversation_member",
+            "remove_conversation_member",
+            "modify_conversation_name",
+            "modify_conversation_message_timer",
+            "modify_conversation_receipt_mode",
+            "modify_conversation_access",
+            "modify_other_conversation_member",
+            "leave_conversation","delete_convesation"
+            ]))
+        
+        let member = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.member})
+        XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
+    }
+    
 }

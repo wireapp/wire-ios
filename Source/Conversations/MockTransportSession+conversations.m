@@ -119,6 +119,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     else if ([request matchesWithPath:@"/conversations/*/receipt-mode" method:ZMMethodPUT]) {
         return [self processReceiptModeUpdateForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
     }
+    else if ([request matchesWithPath:@"/conversations/*/roles" method:ZMMethodGET]) {
+        return [self processFetchRolesForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
 

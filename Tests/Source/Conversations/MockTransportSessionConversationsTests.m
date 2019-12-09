@@ -1412,9 +1412,6 @@
     
 }
 
-
-
-
 - (void)testThatItReturnsConversationsForSpecificIDs
 {
     // GIVEN

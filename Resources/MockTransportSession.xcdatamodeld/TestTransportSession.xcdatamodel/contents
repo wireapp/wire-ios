@@ -39,6 +39,7 @@
         <relationship name="connection" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Connection" inverseName="conversation" inverseEntity="Connection" syncable="YES"/>
         <relationship name="creator" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="createdConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="events" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Event" inverseName="conversation" inverseEntity="Event" syncable="YES"/>
+        <relationship name="roles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="conversation" inverseEntity="Role" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team" syncable="YES"/>
     </entity>
     <entity name="Event" representedClassName="MockEvent" syncable="YES">
@@ -87,6 +88,7 @@
     <entity name="Role" representedClassName=".MockRole" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="actions" toMany="YES" deletionRule="Nullify" destinationEntity="Action" inverseName="roles" inverseEntity="Action" syncable="YES"/>
+        <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="roles" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="roles" inverseEntity="Team" syncable="YES"/>
     </entity>
     <entity name="Service" representedClassName=".MockService" syncable="YES">
@@ -166,17 +168,17 @@
         <element name="Action" positionX="9" positionY="153" width="128" height="75"/>
         <element name="Asset" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="135"/>
-        <element name="Conversation" positionX="0" positionY="0" width="128" height="330"/>
+        <element name="Conversation" positionX="0" positionY="0" width="128" height="345"/>
         <element name="Event" positionX="0" positionY="0" width="128" height="150"/>
         <element name="Member" positionX="18" positionY="162" width="128" height="90"/>
         <element name="PendingLegalHoldClient" positionX="18" positionY="162" width="128" height="105"/>
         <element name="PersonalInvitation" positionX="0" positionY="0" width="128" height="135"/>
         <element name="Picture" positionX="0" positionY="0" width="128" height="120"/>
         <element name="PreKey" positionX="0" positionY="0" width="128" height="135"/>
+        <element name="Role" positionX="18" positionY="162" width="128" height="105"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="210"/>
         <element name="User" positionX="0" positionY="0" width="128" height="450"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
-        <element name="Role" positionX="18" positionY="162" width="128" height="90"/>
     </elements>
 </model>

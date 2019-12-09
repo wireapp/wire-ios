@@ -709,6 +709,11 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return [MockConversation insertConversationIntoContext:self.managedObjectContext withSelfUser:selfUser creator:creator otherUsers:otherUsers type:conversationType];
 }
 
+- (MockConversation *)insertConversationWithSelfUserAndGroupRoles:(MockUser *)selfUser otherUsers:(NSArray *)otherUsers;
+{
+    return [MockConversation insertConversationWithRolesIntoContext:self.managedObjectContext withCreator:selfUser otherUsers:otherUsers ];
+}
+
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 {
     return [MockConversation insertConversationIntoContext:self.managedObjectContext creator:creator otherUsers:otherUsers type:conversationType];
