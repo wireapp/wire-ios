@@ -32,6 +32,23 @@ extension MockConversation {
         conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: users)
         return conversation
     }
+    
+    @objc(insertConversationWithRolesIntoContext:withCreator:otherUsers:)
+    public static func insertConversationWithRolesInto(context: NSManagedObjectContext, creator: MockUser, otherUsers:[MockUser]) -> MockConversation {
+        let conversation = NSEntityDescription.insertNewObject(forEntityName: "Conversation", into: context) as! MockConversation
+        conversation.type = .group
+        conversation.team = nil
+        conversation.identifier = UUID.create().transportString()
+        conversation.creator = creator
+        conversation.mutableOrderedSetValue(forKey: #keyPath(MockConversation.activeUsers)).addObjects(from: otherUsers)
+        let roles = Set([
+                MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context)),
+                MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
+            ])
+        conversation.roles = roles
+
+        return conversation
+    }
 
     @objc public static func defaultAccessMode(conversationType: ZMTConversationType, team: MockTeam?) -> [String] {
         let (accessMode, _) = defaultAccess(conversationType: conversationType, team: team)

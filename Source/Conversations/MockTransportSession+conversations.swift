@@ -99,6 +99,19 @@ extension MockTransportSession {
                                              "code": "test-code"] as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
     
+    @objc(processFetchRolesForConversation:payload:)
+    public func processFetchRoles(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
+        guard let conversation = fetchConversation(with: conversationId) else {
+            return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
+        }
+        
+        let roles = conversation.team?.roles ?? conversation.roles!
+        let payload: [String : Any] = [
+            "conversation_roles" : roles.map { $0.payload }
+        ]
+        return ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
+    }
+    
     @objc(processCreateLinkForConversation:payload:)
     public func processCreateLink(for conversationId: String, payload: [String: AnyHashable]) -> ZMTransportResponse {
         guard let conversation = fetchConversation(with: conversationId) else {

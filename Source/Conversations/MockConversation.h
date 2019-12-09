@@ -25,6 +25,7 @@
 @class MockUser;
 @class MockEvent;
 @class MockUserClient;
+@class MockRole;
 
 typedef NS_ENUM(int16_t, ZMTConversationType) {
     ZMTConversationTypeGroup = 0,
@@ -59,6 +60,8 @@ typedef NS_ENUM(int16_t, ZMTConversationType) {
 @property (nonatomic, readonly, nonnull) NSOrderedSet *activeUsers;
 
 @property (nonatomic, readonly, nonnull) NSOrderedSet *events;
+
+@property (nonatomic, nullable) NSSet<MockRole *> *roles;
 
 @property (nonatomic, nullable) MockTeam *team;
 

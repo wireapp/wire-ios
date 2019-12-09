@@ -140,6 +140,7 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 - (MockConversation *)insertOneOnOneConversationWithSelfUser:(MockUser *)selfUser otherUser:(MockUser *)otherUser;
 - (MockConversation *)insertGroupConversationWithSelfUser:(MockUser *)selfUser otherUsers:(NSArray *)otherUsers;
 - (MockConversation *)insertConversationWithSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(nullable NSArray *)otherUsers type:(ZMTConversationType)conversationType;
+- (MockConversation *)insertConversationWithSelfUserAndGroupRoles:(MockUser *)selfUser otherUsers:(nullable NSArray *)otherUsers;
 - (MockConversation *)insertConversationWithCreator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)conversationType;
 
 - (MockAsset *)insertAssetWithID:(NSUUID *)assetID assetToken:(NSUUID *)assetToken assetData:(NSData *)assetData contentType:(NSString *)contentType;

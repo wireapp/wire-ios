@@ -54,6 +54,7 @@
 @dynamic accessMode;
 @dynamic link;
 @dynamic receiptMode;
+@dynamic roles;
 
 + (instancetype)insertConversationIntoContext:(NSManagedObjectContext *)moc withSelfUser:(MockUser *)selfUser creator:(MockUser *)creator otherUsers:(NSArray *)otherUsers type:(ZMTConversationType)type
 {
