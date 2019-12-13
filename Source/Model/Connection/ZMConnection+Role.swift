@@ -20,11 +20,10 @@ import Foundation
 
 extension ZMConnection {
     
-    @objc
     
     /// add a user to connection's conversation
-    ///
     /// - Parameter user: the user to insert
+    @objc
     public func add(user: ZMUser) {
         conversation?.addParticipantAndUpdateConversationState(user: user, role: nil)
     }
