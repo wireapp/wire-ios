@@ -139,7 +139,7 @@ extension MessageExpirationTimerTests {
         let message = self.clientMessage(expirationTime: 0.1)
         
         // WHEN
-        ZMChangeTrackerBootstrap.bootStrapChangeTrackers([self.sut], on: self.uiMOC)
+        ZMChangeTrackerBootstrap.bootStrapChangeTrackers([self.sut!], on: self.uiMOC)
         self.waitForExpiration(of: message)
         
         // THEN

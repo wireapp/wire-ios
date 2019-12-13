@@ -84,21 +84,17 @@ class AssetRequestFactoryTests: ZMTBaseTest {
     }
     
     func testThatItReturnsEternalInfrequentAccessForAConversationWithAParticipantsWithTeam() {
-        guard let moc = testSession.syncMOC else { return XCTFail() }
-        moc.performGroupedBlock {
-            // given
-            let user = ZMUser.insertNewObject(in: moc)
-            user.remoteIdentifier = UUID()
-            user.teamIdentifier = .init()
-            
-            // when
-            guard let conversation = ZMConversation.insertGroupConversation(into: moc, withParticipants: [user]) else { return XCTFail("no conversation") }
-            
-            // then
-            XCTAssert(conversation.containsTeamUser)
-            XCTAssertEqual(AssetRequestFactory.Retention(conversation: conversation), .eternalInfrequentAccess)
-        }
+
+        // given
+        let user = ZMUser.insertNewObject(in: self.testSession.managedObjectContext)
+        user.remoteIdentifier = UUID()
+        user.teamIdentifier = .init()
         
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+        // when
+        guard let conversation = ZMConversation.insertGroupConversation(session: self.testSession!, participants: [user]) else { return XCTFail("no conversation") }
+            
+        // then
+        XCTAssert(conversation.containsTeamUser)
+        XCTAssertEqual(AssetRequestFactory.Retention(conversation: conversation), .eternalInfrequentAccess)
     }
 }
