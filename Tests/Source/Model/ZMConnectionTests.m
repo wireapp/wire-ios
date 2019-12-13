@@ -44,7 +44,7 @@
     connection.lastUpdateDate = [NSDate date];
     connection.status = ZMConnectionStatusPending;
     connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
-    [connection.conversation.mutableLastServerSyncedActiveParticipants addObject:user];
+    [connection.conversation addParticipantAndUpdateConversationStateWithUser:user role:nil];
     connection.conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
     connection.conversation.conversationType = ZMConversationTypeConnection;
     connection.conversation.lastModifiedDate = connection.lastUpdateDate;
@@ -795,8 +795,8 @@
     XCTAssertEqual(connection.conversation.conversationType, ZMConversationTypeConnection);
     XCTAssertEqual(connection.conversation.creator, selfUser);
     AssertDateIsRecent(connection.conversation.lastModifiedDate);
-    NSOrderedSet *participants = [NSOrderedSet orderedSetWithObject:user];
-    XCTAssertEqualObjects(connection.conversation.lastServerSyncedActiveParticipants, participants);
+    NSSet *participants = [NSSet setWithObject:user];
+    XCTAssertEqualObjects(connection.conversation.localParticipants, participants);
     XCTAssertFalse(connection.existsOnBackend);
     XCTAssertEqual(connection.status, ZMConnectionStatusSent);
     XCTAssertEqual(connection.to, user);
@@ -1058,6 +1058,32 @@
         
         // then
         XCTAssertEqualObjects(connection.conversation.remoteIdentifier.transportString, payload[@"conversation"]);
+    }];
+}
+
+- (void)testThatItAddsUserToTheParticipantRoleFromPayload;
+{
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // given
+        NSUUID *remoteID = NSUUID.createUUID;
+        NSDictionary *payload =     // expected JSON response
+        @{
+          @"conversation": remoteID.transportString,
+          @"status": @"pending",
+          @"from": @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
+          @"to": @"c3308f1d-82ee-49cd-897f-2a32ed9ae1d9",
+          @"last_update": @"2014-04-16T15:01:45.762Z",
+          @"conversation": @"fef60427-3c53-4ac5-b971-ad5088f5a4c2",
+          @"message": @"Hi Marco C,\n\nLet's connect in Zeta.\n\nJohn"
+          };
+        
+        // when
+        (void) [ZMConnection connectionFromTransportData:payload managedObjectContext:self.syncMOC];
+        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.syncMOC];
+        
+        // then
+        XCTAssertNotNil(conversation);
+        XCTAssertEqual(conversation.participantRoles.count, 1);
     }];
 }
 

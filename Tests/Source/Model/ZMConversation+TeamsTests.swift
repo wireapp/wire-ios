@@ -49,7 +49,7 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
 
         // when
         performPretendingUiMocIsSyncMoc {
-            self.conversation.update(withTransportData: payload, serverTimeStamp: nil)
+            self.conversation.update(transportData: payload, serverTimeStamp: nil)
         }
 
         // then
@@ -64,9 +64,9 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
     private func payloadForConversationMetaData(_ conversation: ZMConversation, activeUsers: [ZMUser], teamId: UUID?) -> [String: Any] {
         var payload: [String: Any] = [
             "name": NSNull(),
-            "type": NSNumber(value: ZMBackendConversationType.convTypeGroup.rawValue),
+            "type": NSNumber(value: WireDataModel.BackendConversationType.group.rawValue),
             "id": conversation.remoteIdentifier!.transportString(),
-            "creator": UUID.create(),
+            "creator": UUID.create().transportString(),
             "members": [
                 "others": activeUsers.map { ["id": $0.remoteIdentifier!.transportString()] },
                 "self": [
@@ -80,7 +80,7 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
         ]
 
         if let teamId = teamId {
-            payload["team"] = teamId
+            payload["team"] = teamId.transportString()
         } else {
             payload["team"] = NSNull()
         }

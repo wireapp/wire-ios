@@ -84,7 +84,7 @@ extension ZMConversation {
     }
     
     @objc
-    func updateCleared(_ timestamp: Date, synchronize: Bool = false) {
+    public func updateCleared(_ timestamp: Date, synchronize: Bool = false) {
         guard let managedObjectContext = managedObjectContext else { return }
         
         if timestamp > clearedTimeStamp {
@@ -119,16 +119,15 @@ extension ZMConversation {
         return false
     }
     
-    @objc(updateMutedStatusWithPayload:)
-    func updateMuted(with payload: [String: Any]) {
-        guard let referenceDateAsString = payload[ZMConversationInfoOTRMutedReferenceKey] as? String,
+    func updateMuted(with payload: [String: Any?]) {
+        guard let referenceDateAsString = payload[PayloadKeys.OTRMutedReferenceKey] as? String,
               let referenceDate = NSDate(transport: referenceDateAsString),
               updateMuted(referenceDate as Date, synchronize: false) else {
             return
         }
         
-        let mutedStatus = payload[ZMConversationInfoOTRMutedStatusValueKey] as? Int32
-        let mutedLegacyFlag = payload[ZMConversationInfoOTRMutedValueKey] as? Int
+        let mutedStatus = payload[PayloadKeys.OTRMutedStatusValueKey] as? Int32
+        let mutedLegacyFlag = payload[PayloadKeys.OTRMutedValueKey] as? Int
         
         if let legacyFlag = mutedLegacyFlag {
             // In case both flags are set we want to respect the legacy one and only read the second bit from the new status.

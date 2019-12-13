@@ -79,7 +79,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let otherUser = ZMUser.insertNewObject(in: self.uiMOC)
         otherUser.remoteIdentifier = UUID()
         
-        conversation.mutableLastServerSyncedActiveParticipants.add(otherUser)
+        conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
         
         conversation.isArchived = true
         conversation.mutedMessageTypes = mutedMessageTypes
@@ -96,7 +96,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         
         let dataString = message.data()!.base64EncodedString()
         
-        let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: dataString)!
+        let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: dataString)
         
         return ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID())!
     }

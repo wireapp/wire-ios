@@ -20,6 +20,6 @@ import Foundation
 
 @objc
 public protocol ZMManagedObjectContextProvider: NSObjectProtocol {
-    var managedObjectContext: NSManagedObjectContext? { get }
-    var syncManagedObjectContext: NSManagedObjectContext? { get }
+    var managedObjectContext: NSManagedObjectContext! { get }
+    var syncManagedObjectContext: NSManagedObjectContext! { get }
 }

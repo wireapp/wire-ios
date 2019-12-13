@@ -76,7 +76,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         createSelfClient(onMOC: uiMOC)
 
         let conversation = createConversation(in: uiMOC)
-        conversation.internalAddParticipants([selfUser])
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
 
         // WHEN
         let request = LegalHoldRequest.mockRequest(for: selfUser)

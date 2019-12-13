@@ -33,6 +33,8 @@
 @class LinkMetadata;
 @class Team;
 @class Label;
+@class ParticipantRole;
+@class Role;
 
 @protocol ZMConversationMessage;
 
@@ -70,7 +72,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (readonly, nonatomic) ZMConversationType conversationType;
 @property (readonly, nonatomic, nullable) NSDate *lastModifiedDate;
 @property (readonly, nonatomic, nonnull) NSSet<ZMMessage *> *allMessages;
-@property (readonly, nonatomic, nonnull) NSSet<ZMUser *> *activeParticipants;
 @property (readonly, nonatomic, nonnull) NSArray<ZMUser *> *sortedActiveParticipants;
 @property (readonly, nonatomic, nonnull) ZMUser *creator;
 @property (nonatomic, readonly) BOOL isPendingConnectionConversation;
@@ -81,6 +82,8 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 @property (nonatomic, readonly) BOOL hasDraftMessage;
 @property (nonatomic, nullable) Team *team;
 @property (nonatomic, nonnull) NSSet<Label *> *labels;
+@property (nonatomic, nonnull) NSSet<ParticipantRole *> *participantRoles;
+@property (nonatomic, nonnull) NSSet<Role *> *nonTeamRoles;
 
 /// This will return @c nil if the last added by self user message has not yet been sync'd to this device, or if the conversation has no self editable message.
 @property (nonatomic, readonly, nullable) ZMMessage *lastEditableMessage;
@@ -95,32 +98,6 @@ extern NSString * _Null_unspecified const ZMIsDimmedKey; ///< Specifies that a r
 
 - (BOOL)canMarkAsUnread;
 - (void)markAsUnread;
-
-///// Insert a new group conversation into the user session
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                        inTeam:(nullable Team *)team;
-
-/// Insert a new group conversation with name into the user session
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team;
-
-/// Insert a new group conversation with name into the user session
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team
-                                                   allowGuests:(BOOL)allowGuests;
-
-/// Insert a new group conversation with name into the user session
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team
-                                                   allowGuests:(BOOL)allowGuests
-                                                  readReceipts:(BOOL)readReceipts;
 
 /// If that conversation exists, it is returned, @c nil otherwise.
 + (nullable instancetype)existingOneOnOneConversationWithUser:(nonnull ZMUser *)otherUser inUserSession:(nonnull id<ZMManagedObjectContextProvider> )session;

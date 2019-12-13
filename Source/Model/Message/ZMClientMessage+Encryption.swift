@@ -149,7 +149,7 @@ extension ZMGenericMessage {
     }
 
     func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
-        let (services, otherUsers) = (conversation.lastServerSyncedActiveParticipants.set as! Set<ZMUser>).categorize()
+        let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
             guard self.hasConfirmation(), self.confirmation.firstMessageId != nil else { return nil }
@@ -215,7 +215,7 @@ extension ZMGenericMessage {
 
         let hasRestrictions: Bool = {
             if conversation.connectedUser != nil { return recipientUsers.count != 2 }
-            return recipientUsers.count != conversation.activeParticipants.count
+            return recipientUsers.count != conversation.localParticipants.count
         }()
 
         let strategy : MissingClientsStrategy = hasRestrictions ? .ignoreAllMissingClientsNotFromUsers(users: recipientUsers)

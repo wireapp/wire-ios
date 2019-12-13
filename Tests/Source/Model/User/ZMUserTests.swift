@@ -579,32 +579,32 @@ extension ZMUserTests {
         let sut = createUser(in: uiMOC)
         let conversation1 = createConversation(in: uiMOC)
         conversation1.conversationType = .group
-        conversation1.mutableLastServerSyncedActiveParticipants.add(sut)
+        conversation1.addParticipantAndUpdateConversationState(user: sut, role: nil)
         
         let conversation2 = createConversation(in: uiMOC)
         conversation2.conversationType = .group
-        conversation2.mutableLastServerSyncedActiveParticipants.add(sut)
+        conversation2.addParticipantAndUpdateConversationState(user: sut, role: nil)
         
         // when
         sut.markAccountAsDeleted(at: Date())
         
         // then
-        XCTAssertFalse(conversation1.lastServerSyncedActiveParticipants.contains(sut))
-        XCTAssertFalse(conversation2.lastServerSyncedActiveParticipants.contains(sut))
+        XCTAssertNil(conversation1.participantRoles.first(where: { $0.user == sut })) //FIXME -> It was XCTAssertNotNil
+        XCTAssertNil(conversation2.participantRoles.first(where: { $0.user == sut })) //FIXME -> It was XCTAssertNotNil
     }
     
     func testThatUserIsNotRemovedFromTeamOneToOneConversationsWhenAccountIsDeleted() {
         // given
         let team = createTeam(in: uiMOC)
         let sut = createTeamMember(in: uiMOC, for: team)
-        let teamOneToOneConversation = ZMConversation.fetchOrCreateTeamConversation(in: uiMOC, withParticipant: sut, team: team)!
+        let teamOneToOneConversation = ZMConversation.fetchOrCreateOneToOneTeamConversation(moc: uiMOC, participant: sut, team: team)!
         teamOneToOneConversation.teamRemoteIdentifier = team.remoteIdentifier
         
         // when
         sut.markAccountAsDeleted(at: Date())
         
         // then
-        XCTAssertTrue(teamOneToOneConversation.lastServerSyncedActiveParticipants.contains(sut))
+        XCTAssertTrue(teamOneToOneConversation.localParticipants.contains(sut))
     }
     
 }
@@ -617,17 +617,18 @@ extension ZMUserTests {
         // given
         let sut = ZMUser.selfUser(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.isSelfAnActiveMember = true
+        conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
+        let selfConversation = ZMConversation.fetch(withRemoteIdentifier: self.selfUser.remoteIdentifier, in: uiMOC)
         
         // then
-        XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))
+        XCTAssertEqual(sut.activeConversations, [conversation, selfConversation])
     }
     
     func testActiveConversationsForOtherUser() {
         // given
         let sut = ZMUser.insertNewObject(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.mutableLastServerSyncedActiveParticipants.add(sut)
+        conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
         
         // then
         XCTAssertEqual(sut.activeConversations, Set(arrayLiteral: conversation))

@@ -31,7 +31,6 @@
 #import "ZMMessageTests.h"
 #import "MessagingTest+EventFactory.h"
 #import <OCMock/OCMock.h>
-#import "ZMConversation+Transport.h"
 #import "ZMUpdateEvent+WireDataModel.h"
 #import "NSString+RandomString.h"
 

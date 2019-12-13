@@ -21,7 +21,7 @@ import XCTest
 import WireTesting
 @testable import WireDataModel
 
-public final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
+final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     
 
     func appendSystemMessage(conversation: ZMConversation,
@@ -79,7 +79,7 @@ public final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
 // MARK: - Merge tests
 extension DuplicatedEntityRemovalTests {
     
-    public func testThatItMergesTwoUserClients() {
+    func testThatItMergesTwoUserClients() {
         
         // GIVEN
         let user = createUser()
@@ -123,7 +123,7 @@ extension DuplicatedEntityRemovalTests {
         }
     }
 
-    public func testThatItMergesTwoUsers() {
+    func testThatItMergesTwoUsers() {
         // GIVEN
         let conversation = createConversation()
         let user1 = createUser()
@@ -135,7 +135,7 @@ extension DuplicatedEntityRemovalTests {
         let reaction = Reaction.insertNewObject(in: self.moc)
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
 
-        let lastServerSyncedActiveConversations = NSOrderedSet(object: conversation)
+        let lastServerSyncedActiveConversations = Set<ZMConversation>([conversation])
         let conversationsCreated = Set<ZMConversation>([conversation])
         let createdTeams = Set<Team>([team])
         let reactions = Set<Reaction>([reaction])
@@ -143,7 +143,7 @@ extension DuplicatedEntityRemovalTests {
         let showingUserRemoved = Set<ZMMessage>([systemMessage])
         let systemMessages = Set<ZMSystemMessage>([systemMessage])
 
-        user2.lastServerSyncedActiveConversations = lastServerSyncedActiveConversations
+        user2.lastServerSyncedActiveConversations = lastServerSyncedActiveConversations ///TODO: not use lastServerSyncedActiveConversations setter
         user2.conversationsCreated = conversationsCreated
         user2.createdTeams = createdTeams
         user2.membership = membership
@@ -154,8 +154,10 @@ extension DuplicatedEntityRemovalTests {
 
         // WHEN
         user1.merge(with: user2)
-        self.moc.delete(user2)
-        self.moc.saveOrRollback()
+        
+        user2.delete(from: moc)
+        
+        moc.saveOrRollback()
 
         // THEN
         XCTAssertEqual(user1.lastServerSyncedActiveConversations, lastServerSyncedActiveConversations)
@@ -169,7 +171,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertTrue(user1.needsToBeUpdatedFromBackend)
     }
     
-    public func testThatItMergesUsers_Connection_user1HasIt() {
+    func testThatItMergesUsers_Connection_user1HasIt() {
     
         // GIVEN
         let user1 = createUser()
@@ -179,7 +181,7 @@ extension DuplicatedEntityRemovalTests {
         conversation.conversationType = .oneOnOne
         let connection = createConnection(to: user1, conversation: conversation)
         user1.connection = connection
-        conversation.mutableLastServerSyncedActiveParticipants.add(user1)
+        conversation.addParticipantAndUpdateConversationState(user: user1, role: nil)
         self.moc.saveOrRollback()
         
         // WHEN
@@ -192,7 +194,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(connection.isZombieObject)
     }
     
-    public func testThatItMergesUsers_Connection_user2HasIt() {
+    func testThatItMergesUsers_Connection_user2HasIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -202,7 +204,7 @@ extension DuplicatedEntityRemovalTests {
         conversation.conversationType = .oneOnOne
         let connection = createConnection(to: user2, conversation: conversation)
         user2.connection = connection
-        conversation.mutableLastServerSyncedActiveParticipants.add(user2)
+        conversation.addParticipantAndUpdateConversationState(user: user2, role: nil)
         self.moc.saveOrRollback()
         
         // WHEN
@@ -215,7 +217,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(connection.isZombieObject)
     }
     
-    public func testThatItMergesUsers_Connection_bothUserHaveIt() {
+    func testThatItMergesUsers_Connection_bothUserHaveIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -223,10 +225,10 @@ extension DuplicatedEntityRemovalTests {
         user2.remoteIdentifier = user1.remoteIdentifier
         let conversation1 = createConversation()
         conversation1.conversationType = .oneOnOne
-        conversation1.mutableLastServerSyncedActiveParticipants.add(user1)
+        conversation1.addParticipantAndUpdateConversationState(user: user1, role: nil)
         let conversation2 = createConversation()
         conversation2.conversationType = .oneOnOne
-        conversation2.mutableLastServerSyncedActiveParticipants.add(user2)
+        conversation2.addParticipantAndUpdateConversationState(user: user2, role: nil)
         let connection1 = createConnection(to: user1, conversation: conversation1)
         user1.connection = connection1
         let connection2 = createConnection(to: user2, conversation: conversation2)
@@ -244,7 +246,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertTrue(connection2.isZombieObject)
     }
     
-    public func testThatItMergesUsers_ABEntry_user1HasIt() {
+    func testThatItMergesUsers_ABEntry_user1HasIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -264,7 +266,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(ABEntry.isZombieObject)
     }
     
-    public func testThatItMergesUsers_ABEntry_user2HasIt() {
+    func testThatItMergesUsers_ABEntry_user2HasIt() {
         
         let user1 = createUser()
         let user2 = createUser()
@@ -283,7 +285,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(ABEntry.isZombieObject)
     }
     
-    public func testThatItMergesUsers_ABEntry_bothUserHaveIt() {
+    func testThatItMergesUsers_ABEntry_bothUserHaveIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -306,7 +308,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertTrue(ABEntry2.isZombieObject)
     }
     
-    public func testThatItMergesUsers_LastServerSynchedActiveConversations() {
+    func testThatItMergesUsers_LastServerSynchedActiveConversations() {
         
         // GIVEN
         let user1 = createUser()
@@ -315,24 +317,24 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants([user1, user2])
-        conversation2.internalAddParticipants([user1])
-        conversation3.internalAddParticipants([user2])
+        conversation1.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
+        conversation2.addParticipantAndUpdateConversationState(user: user1, role: nil)
+        conversation3.addParticipantAndUpdateConversationState(user: user2, role: nil)
         self.moc.saveOrRollback()
         
         // sanity check
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.lastServerSyncedActiveConversations.set, Set([conversation1, conversation3]))
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2]))
+        XCTAssertEqual(user2.lastServerSyncedActiveConversations, Set([conversation1, conversation3]))
         
         // WHEN
         user1.merge(with: user2)
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2, conversation3]))
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2, conversation3]))
     }
     
-    public func testThatItMergesUsers_ActiveConversations() {
+    func testThatItMergesUsers_ActiveConversations() {
         
         // GIVEN
         let user1 = createUser()
@@ -341,24 +343,24 @@ extension DuplicatedEntityRemovalTests {
         let conversation1 = createConversation()
         let conversation2 = createConversation()
         let conversation3 = createConversation()
-        conversation1.internalAddParticipants([user1, user2])
-        conversation2.internalAddParticipants([user1])
-        conversation3.internalAddParticipants([user2])
+        conversation1.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
+        conversation2.addParticipantAndUpdateConversationState(user: user1, role: nil)
+        conversation3.addParticipantAndUpdateConversationState(user: user2, role: nil)
         self.moc.saveOrRollback()
         
         // sanity check
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.lastServerSyncedActiveConversations.set, Set([conversation1, conversation3]))
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2]))
+        XCTAssertEqual(user2.lastServerSyncedActiveConversations, Set([conversation1, conversation3]))
         
         // WHEN
         user1.merge(with: user2)
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations.set, Set([conversation1, conversation2, conversation3]))
+        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2, conversation3]))
     }
     
-    public func testThatItMergesUsers_ConversationCreated() {
+    func testThatItMergesUsers_ConversationCreated() {
         
         // GIVEN
         let user1 = createUser()
@@ -378,7 +380,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(user1.conversationsCreated, Set([conversation1, conversation2]))
     }
     
-    public func testThatItMergesUsers_CreatedTeams() {
+    func testThatItMergesUsers_CreatedTeams() {
         
         // GIVEN
         let user1 = createUser()
@@ -399,7 +401,7 @@ extension DuplicatedEntityRemovalTests {
         
     }
     
-    public func testThatItMergesUsers_Membership_user1HasIt() {
+    func testThatItMergesUsers_Membership_user1HasIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -419,7 +421,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(membership.isZombieObject)
     }
     
-    public func testThatItMergesUsers_Membership_user2HasIt() {
+    func testThatItMergesUsers_Membership_user2HasIt() {
         
         let user1 = createUser()
         let user2 = createUser()
@@ -438,7 +440,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(membership.isZombieObject)
     }
     
-    public func testThatItMergesUsers_Membership_bothUserHaveIt() {
+    func testThatItMergesUsers_Membership_bothUserHaveIt() {
         
         // GIVEN
         let user1 = createUser()
@@ -460,7 +462,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertTrue(membership2.isZombieObject)
     }
     
-    public func testThatItMergesUsers_Reactions() {
+    func testThatItMergesUsers_Reactions() {
         
         // GIVEN
         let user1 = createUser()
@@ -480,7 +482,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(user1.reactions, Set([reaction1, reaction2]))
     }
 
-    public func testThatItMergesUsers_DeletesClients() throws {
+    func testThatItMergesUsers_DeletesClients() throws {
 
         // GIVEN
         let user1 = createUser()
@@ -500,7 +502,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(allClients.count, 0)
     }
     
-    public func testThatItMergesUsers_ShowingUserAdded() {
+    func testThatItMergesUsers_ShowingUserAdded() {
         
         // GIVEN
         let user1 = createUser()
@@ -533,7 +535,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(user1.showingUserAdded, Set([showingUserAdded1, showingUserAdded2]))
     }
     
-    public func testThatItMergesUsers_ShowingUserRemoved() {
+    func testThatItMergesUsers_ShowingUserRemoved() {
         
         // GIVEN
         let user1 = createUser()
@@ -566,7 +568,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(user1.showingUserRemoved, Set([showingUserRemoved1, showingUserRemoved2]))
     }
     
-    public func testThatItMergesUsers_SystemMessages() {
+    func testThatItMergesUsers_SystemMessages() {
         
         // GIVEN
         let user1 = createUser()
@@ -599,7 +601,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(user1.systemMessages, Set([showingUserRemoved1, showingUserRemoved2]))
     }
     
-    public func testThatItMergesConversations_messages() {
+    func testThatItMergesConversations_messages() {
         // GIVEN
         let conversation1 = createConversation()
         let conversation2 = createConversation()
@@ -620,7 +622,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(Set(conversation1.allMessages), Set([message1, message2]))
     }
     
-    public func testThatItMergesConversations_hiddenMessages() {
+    func testThatItMergesConversations_hiddenMessages() {
         // GIVEN
         let conversation1 = createConversation()
         let conversation2 = createConversation()
@@ -641,7 +643,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(conversation1.hiddenMessages, Set([message1, message2]))
     }
     
-    public func testThatItMergesConversations_team_convo1HasIt() {
+    func testThatItMergesConversations_team_convo1HasIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -659,7 +661,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(conversation1.team, team)
     }
     
-    public func testThatItMergesConversations_team_convo2HasIt() {
+    func testThatItMergesConversations_team_convo2HasIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -677,7 +679,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(conversation1.team, team)
     }
     
-    public func testThatItMergesConversations_team_bothHaveIt() {
+    func testThatItMergesConversations_team_bothHaveIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -698,7 +700,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertFalse(team2.isZombieObject)
     }
     
-    public func testThatItMergesConversations_connection_convo1HasIt() {
+    func testThatItMergesConversations_connection_convo1HasIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -716,7 +718,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(conversation1.connection, connection)
     }
     
-    public func testThatItMergesConversations_connection_convo2HasIt() {
+    func testThatItMergesConversations_connection_convo2HasIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -734,7 +736,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(conversation1.connection, connection)
     }
     
-    public func testThatItMergesConversations_connection_bothHaveIt() {
+    func testThatItMergesConversations_connection_bothHaveIt() {
         
         // GIVEN
         let conversation1 = createConversation()
@@ -759,7 +761,7 @@ extension DuplicatedEntityRemovalTests {
 // MARK: - Testing deletion from patch
 extension DuplicatedEntityRemovalTests {
 
-    public func testThatItRemovesDuplicatedClients() {
+    func testThatItRemovesDuplicatedClients() {
         // GIVEN
         let user = createUser()
         let client1 = createClient(user: user)
@@ -783,7 +785,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(totalDeleted, 5)
     }
 
-    public func testThatItRemovesDuplicatedUsers() {
+    func testThatItRemovesDuplicatedUsers() {
         // GIVEN
         let user1 = createUser()
         let duplicates: [ZMUser] = (0..<5).map { _ in
@@ -806,7 +808,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(totalDeleted, 5)
     }
 
-    public func testThatItRemovesDuplicatedConversations() {
+    func testThatItRemovesDuplicatedConversations() {
         // GIVEN
         let conversation1 = createConversation()
         let duplicates: [ZMConversation] = (0..<5).map { _ in
@@ -829,7 +831,7 @@ extension DuplicatedEntityRemovalTests {
         XCTAssertEqual(totalDeleted, 5)
     }
 
-    public func testThatItRemovesAllDuplicates() {
+    func testThatItRemovesAllDuplicates() {
 
         // GIVEN
         let userA1 = ZMUser.insertNewObject(in: self.moc)
@@ -852,42 +854,42 @@ extension DuplicatedEntityRemovalTests {
         let convoA1 = ZMConversation.insertNewObject(in: self.moc)
         convoA1.remoteIdentifier = UUID()
         convoA1.conversationType = .oneOnOne
-        convoA1.mutableLastServerSyncedActiveParticipants.add(userA1)
+        convoA1.addParticipantAndUpdateConversationState(user: userA1, role: nil)
         convoA1.creator = userA1
         convoA1.userDefinedName = "convoA1"
         convoA1.needsToBeUpdatedFromBackend = false
         let convoA2 = ZMConversation.insertNewObject(in: self.moc)
         convoA2.remoteIdentifier = convoA1.remoteIdentifier
         convoA2.conversationType = .oneOnOne
-        convoA2.mutableLastServerSyncedActiveParticipants.add(userA2)
+        convoA2.addParticipantAndUpdateConversationState(user: userA2, role: nil)
         convoA2.creator = userA2
         convoA2.userDefinedName = "convoA2"
         convoA2.needsToBeUpdatedFromBackend = false
         let convoB1 = ZMConversation.insertNewObject(in: self.moc)
         convoB1.remoteIdentifier = UUID()
         convoB1.conversationType = .group
-        convoB1.mutableLastServerSyncedActiveParticipants.add(userA1)
-        convoB1.mutableLastServerSyncedActiveParticipants.add(userB)
+        convoB1.addParticipantAndUpdateConversationState(user: userA1, role: nil)
+        convoB1.addParticipantAndUpdateConversationState(user: userB, role: nil)
         convoB1.creator = userB
-        convoB1.mutableLastServerSyncedActiveParticipants.add(userA1) // missing userB
+        convoB1.addParticipantAndUpdateConversationState(user: userA1, role: nil) // missing userB
         convoB1.userDefinedName = "convoB1"
         convoB1.needsToBeUpdatedFromBackend = false
         let convoB2 = ZMConversation.insertNewObject(in: self.moc)
         convoB2.remoteIdentifier = convoB1.remoteIdentifier
         convoB2.conversationType = .group
-        convoB2.mutableLastServerSyncedActiveParticipants.add(userC)
-        convoB2.mutableLastServerSyncedActiveParticipants.add(userB)
+        convoB2.addParticipantAndUpdateConversationState(user: userC, role: nil)
+        convoB2.addParticipantAndUpdateConversationState(user: userB, role: nil)
         convoB2.creator = userB
-        convoB2.mutableLastServerSyncedActiveParticipants.add(userC)
+        convoB2.addParticipantAndUpdateConversationState(user: userC, role: nil)
         convoB2.userDefinedName = "convoB2"
         convoB2.needsToBeUpdatedFromBackend = false
         let convoC = ZMConversation.insertNewObject(in: self.moc)
         convoC.remoteIdentifier = UUID()
         convoC.conversationType = .group
-        convoC.mutableLastServerSyncedActiveParticipants.add(userA2)
-        convoC.mutableLastServerSyncedActiveParticipants.add(userC)
+        convoC.addParticipantAndUpdateConversationState(user: userA2, role: nil)
+        convoC.addParticipantAndUpdateConversationState(user: userC, role: nil)
         convoC.creator = userC
-        convoC.mutableLastServerSyncedActiveParticipants.add(userA2) // missing user C
+        convoC.addParticipantAndUpdateConversationState(user: userA2, role: nil) // missing user C
         convoC.userDefinedName = "convoC"
         convoC.needsToBeUpdatedFromBackend = false
 
@@ -901,7 +903,7 @@ extension DuplicatedEntityRemovalTests {
         connectionA2.conversation = convoA2
         connectionA2.status = .accepted
 
-        self.moc.saveOrRollback()
+        moc.saveOrRollback()
         
         // WHEN
         WireDataModel.DuplicatedEntityRemoval.removeDuplicated(in: self.moc)
@@ -928,9 +930,9 @@ extension DuplicatedEntityRemovalTests {
             return XCTFail("Both deleted!")
         }
         
-        XCTAssertEqual(convoA.lastServerSyncedActiveParticipants.set, Set([userA]))
-        XCTAssertEqual(convoB.lastServerSyncedActiveParticipants.set, Set([userA, userB, userC]))
-        XCTAssertEqual(convoC.lastServerSyncedActiveParticipants.set, Set([userA, userC]))
+        XCTAssertEqual(convoA.localParticipants, Set([userA]))
+        XCTAssertEqual(convoB.localParticipants, Set([userA, userB, userC]))
+        XCTAssertEqual(convoC.localParticipants, Set([userA, userC]))
         
         XCTAssertTrue(convoA.needsToBeUpdatedFromBackend)
         XCTAssertTrue(convoB.needsToBeUpdatedFromBackend)

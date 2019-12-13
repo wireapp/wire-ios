@@ -167,12 +167,12 @@ extension ZMConversation {
     }
 
     private func updateLegalHoldState(cause: SecurityChangeCause) {
-        guard !needsToVerifyLegalHold, !activeParticipants.any({ $0.clients.any(\.needsToBeUpdatedFromBackend) }) else {
+        guard !needsToVerifyLegalHold, !localParticipants.any({ $0.clients.any(\.needsToBeUpdatedFromBackend) }) else {
             // We don't update the legal hold status if we are still gathering information about which clients were added/deleted
             return
         }
         
-        let detectedParticipantsUnderLegalHold = activeParticipants.any(\.isUnderLegalHold)
+        let detectedParticipantsUnderLegalHold = localParticipants.any(\.isUnderLegalHold)
 
         switch (legalHoldStatus, detectedParticipantsUnderLegalHold) {
         case (.disabled, true):
@@ -205,7 +205,9 @@ extension ZMConversation {
     }
 
     private func increaseSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
-        guard securityLevel != .secure && allUsersTrusted && allParticipantsHaveClients else {
+        guard securityLevel != .secure &&
+              allUsersTrusted &&
+              allParticipantsHaveClients else {
             return
         }
 
@@ -314,27 +316,27 @@ extension ZMConversation {
     /// - Parameters:
     ///   - user: the participant to add
     ///   - dateOptional: if provide a nil, current date will be used
-    @objc(addParticipantIfMissing:date:)
-    public func addParticipantIfMissing(_ user: ZMUser, date dateOptional: Date?) {
+    public func addParticipantAndSystemMessageIfMissing(_ user: ZMUser, date dateOptional: Date?) {
         let date = dateOptional ?? Date()
 
-        guard !activeParticipants.contains(user) else { return }
+        guard !localParticipants.contains(user) else { return }
         
         switch conversationType {
         case .group:
             appendSystemMessage(type: .participantsAdded, sender: user, users: Set(arrayLiteral: user), clients: nil, timestamp: date)
-            internalAddParticipants([user])
         case .oneOnOne, .connection:
             if user.connection == nil {
                 user.connection = connection ?? ZMConnection.insertNewObject(in: managedObjectContext!)
             } else if connection == nil {
                 connection = user.connection
             }
-            
             user.connection?.needsToBeUpdatedFromBackend = true
         default:
             break
         }
+        
+        // we will fetch the role once we fetch the entire convo metadata
+        self.addParticipantAndUpdateConversationState(user: user, role: nil)
         
         // A missing user indicate that we are out of sync with the BE so we'll re-sync the conversation
         needsToBeUpdatedFromBackend = true
@@ -650,10 +652,16 @@ extension ZMConversation {
 extension ZMConversation {
     
     /// Returns true if all participants are connected to the self user and all participants are trusted
-    @objc public var allUsersTrusted : Bool {
-        guard self.lastServerSyncedActiveParticipants.count > 0, self.isSelfAnActiveMember else { return false }
-        let hasOnlyTrustedUsers = self.activeParticipants.first { !$0.trusted() } == nil
-        return hasOnlyTrustedUsers && !self.containsUnconnectedOrExternalParticipant
+    @objc
+    public var allUsersTrusted : Bool {
+        guard !localParticipants.isEmpty,
+              isSelfAnActiveMember else { return false }
+        
+        let hasOnlyTrustedUsers = localParticipants.first {
+            !$0.trusted()
+        } == nil
+        
+        return hasOnlyTrustedUsers && !containsUnconnectedOrExternalParticipant
     }
     
     fileprivate var containsUnconnectedOrExternalParticipant : Bool {
@@ -662,11 +670,10 @@ extension ZMConversation {
         }
         
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
-        return (self.lastServerSyncedActiveParticipants.array as! [ZMUser]).first {
-            if $0.isConnected {
+        return localParticipants.first {
+            if $0.isConnected || $0 == selfUser {
                 return false
-            }
-            else if $0.isWirelessUser {
+            } else if $0.isWirelessUser {
                 return false
             }
             else {
@@ -676,12 +683,12 @@ extension ZMConversation {
     }
     
     fileprivate var allParticipantsHaveClients : Bool {
-        return self.activeParticipants.first { $0.clients.count == 0 } == nil
+        return self.localParticipants.first { $0.clients.count == 0 } == nil
     }
     
     /// If true the conversation might still be trusted / ignored
     @objc public var hasUntrustedClients : Bool {
-        return self.activeParticipants.first { $0.untrusted() } != nil
+        return self.localParticipants.first { $0.untrusted() } != nil
     }
 }
 

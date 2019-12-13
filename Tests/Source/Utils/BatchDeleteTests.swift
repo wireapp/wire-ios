@@ -150,6 +150,8 @@ class BatchDeleteTests: ZMTBaseTest {
                     break
                 case .update:
                     break
+                @unknown default:
+                    fatalError()
                 }
             }
         }

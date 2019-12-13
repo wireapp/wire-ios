@@ -20,7 +20,6 @@
 #import "ZMOTRMessage.h"
 #import "ZMGenericMessage+UpdateEvent.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversation+Transport.h"
 #import <WireDataModel/WireDataModel-Swift.h>
 #import "ZMGenericMessageData.h"
 

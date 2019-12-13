@@ -31,7 +31,8 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "103.0.2", block: InvalidGenericMessageDataRemoval.removeInvalid),
         PersistedDataPatch(version: "145.0.3", block: InvalidConversationRemoval.removeInvalid),
         PersistedDataPatch(version: "161.0.1", block: TransferStateMigration.migrateLegacyTransferState),
-        PersistedDataPatch(version: "167.3.0", block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange)
+        PersistedDataPatch(version: "167.3.0", block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange),
+        PersistedDataPatch(version: "197.0.0", block: ZMConversation.addUsersToTheParticipantRoles)
     ]
 
 }

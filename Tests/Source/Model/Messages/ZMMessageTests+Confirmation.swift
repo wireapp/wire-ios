@@ -451,6 +451,9 @@ extension ZMMessageTests_Confirmation {
         }
         
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
+        let sender = ZMUser.insertNewObject(in: uiMOC)
+        sender.remoteIdentifier = UUID.create()
+        conversation.addParticipantAndUpdateConversationState(user: sender, role: nil)
         conversation.remoteIdentifier = .create()
         let lastModified = Date(timeIntervalSince1970: 1234567890)
         conversation.lastModifiedDate = lastModified
@@ -467,7 +470,9 @@ extension ZMMessageTests_Confirmation {
         }
         
         // when
-        let updateEvent = createMessageDeliveryConfirmationUpdateEvent(sut.nonce!, conversationID: conversation.remoteIdentifier!)
+        let updateEvent = createMessageDeliveryConfirmationUpdateEvent(
+            sut.nonce!,
+            conversationID: conversation.remoteIdentifier!, senderID: sender.remoteIdentifier!)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.createOrUpdate(from: updateEvent, in: self.uiMOC, prefetchResult: nil)
         }

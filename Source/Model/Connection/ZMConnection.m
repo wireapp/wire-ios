@@ -71,11 +71,14 @@ static NSString * const LastUpdateDateInGMTKey = @"lastUpdateDateInGMT";
     connection.status = ZMConnectionStatusSent;
     if (conversation == nil) {
         connection.conversation = [ZMConversation insertNewObjectInManagedObjectContext:user.managedObjectContext];
-        [connection.conversation.mutableLastServerSyncedActiveParticipants addObject:user];
+       
+        [connection addWithUser:user];
+        
         connection.conversation.creator = [ZMUser selfUserInContext:user.managedObjectContext];
     }
     else {
         connection.conversation = conversation;
+        ///TODO: add user if not exists in participantRoles??
     }
     connection.conversation.conversationType = ZMConversationTypeConnection;
     connection.conversation.lastModifiedDate = connection.lastUpdateDate;
@@ -337,6 +340,9 @@ struct stringAndStatus {
         if (connection.to.isInserted || status == ZMConnectionStatusPending) {
             connection.to.needsToBeUpdatedFromBackend = YES;
         }
+        
+        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:moc];
+        [conversation addParticipantAndUpdateConversationStateWithUser:connection.to role:nil];
     }
 
     ZMConnectionStatus const oldStatus = connection.status;

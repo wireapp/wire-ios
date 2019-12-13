@@ -22,7 +22,7 @@ import WireUtilities
 import WireCryptobox
 @testable import WireDataModel
 
-class UserClientTests: ZMBaseManagedObjectTest {
+final class UserClientTests: ZMBaseManagedObjectTest {
         
     func clientWithTrustedClientCount(_ trustedCount: UInt, ignoredClientCount: UInt, missedClientCount: UInt) -> UserClient
     {
@@ -215,7 +215,10 @@ class UserClientTests: ZMBaseManagedObjectTest {
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
-            conversation.mutableLastServerSyncedActiveParticipants.add(otherUser)
+           
+            conversation.addParticipantsAndUpdateConversationState(
+                users: Set([otherUser, ZMUser.selfUser(in: self.syncMOC)]),
+                role: nil)
             
             selfClient.trustClient(otherClient1)
             

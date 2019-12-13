@@ -64,7 +64,7 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
-            result.remove(at: result.index(of: item)!)
+            result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
         }
         XCTAssertEqual(result, ["A", "F", "D", "C", "E"])
@@ -111,7 +111,7 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         sut.insertedIndexes.forEach{result.insert(endState.array[$0], at: $0)}
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
-            result.remove(at: result.index(of: item)!)
+            result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
         }
         XCTAssertEqual(result, ["A", "D", "E", "F", "C"])
@@ -149,7 +149,7 @@ class ChangedIndexesTests : ZMBaseManagedObjectTest {
         var result = ["A", "B", "C"]
         sut.enumerateMovedIndexes { (from, to) in
             let item = startState.array[from]
-            result.remove(at: result.index(of: item)!)
+            result.remove(at: result.firstIndex(of: item)!)
             result.insert(item, at: to)
         }
         XCTAssertEqual(result, ["C", "B", "A"])
