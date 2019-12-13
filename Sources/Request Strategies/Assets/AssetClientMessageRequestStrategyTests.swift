@@ -357,7 +357,9 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
+            guard let request = self.sut.assertCreatesValidRequestForAsset(in: self.groupConversation) else {
+                return XCTFail()
+            }
             request.complete(withHttpStatus: 400)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -380,7 +382,8 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            let request = self.sut.assertCreatesValidRequestForAsset(in: self.groupConversation)!
+            guard let request = self.sut.assertCreatesValidRequestForAsset(in: self.groupConversation)
+                else { return XCTFail("No request generated") }
             request.complete(withHttpStatus: 200)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -403,7 +406,8 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
         
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
-            guard let request = self.sut.nextRequest() else { return XCTFail("No request generated") }
+            guard let request = self.sut.nextRequest()
+                else { return XCTFail("No request generated") }
             request.complete(withHttpStatus: 200)
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))

@@ -85,7 +85,7 @@ extension OTREntity {
             return conversation
         }
     
-        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.activeParticipants)
+        return dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: conversation.localParticipants)
     }
     
     /// Which objects this message depends on when sending it to a list recipients
@@ -130,7 +130,7 @@ extension OTREntity {
 
         var changes: ZMConversationRemoteClientChangeSet = []
         var allMissingClients: Set<UserClient> = []
-        var redundantUsers = conversation.activeParticipants
+        var redundantUsers = conversation.localParticipants
         
         redundantUsers.remove(ZMUser.selfUser(in: context))
         

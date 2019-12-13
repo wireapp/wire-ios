@@ -31,8 +31,8 @@ class MockDependencyEntity : DependencyEntity, Hashable {
 
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject?
 
-    var hashValue: Int {
-        return self.uuid.hashValue
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(self.uuid)
     }
 }
 

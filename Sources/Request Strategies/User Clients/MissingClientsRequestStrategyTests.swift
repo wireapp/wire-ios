@@ -93,7 +93,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestToFetchMissedKeysIfClientHasMissingClientsAndMissingKeyIsNotModified() {
         self.syncMOC.performGroupedAndWait { syncMOC in
             // GIVEN
-            self.selfClient.mutableSetValue(forKey: ZMUserClientMissingKey).add(self.otherClient)
+            self.selfClient.mutableSetValue(forKey: ZMUserClientMissingKey).add(self.otherClient!)
             self.sut.notifyChangeTrackers(self.selfClient)
 
             // WHEN
@@ -503,7 +503,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             // WHEN
             let shouldCreateRequest = self.sut.shouldCreateRequest(toSyncObject: self.selfClient,
                                                               forKeys: Set(arrayLiteral: ZMUserClientMissingKey),
-                                                              withSync: self.sut.modifiedSync)
+                                                              withSync: self.sut.modifiedSync!)
 
             // THEN
             XCTAssertFalse(shouldCreateRequest)
@@ -521,7 +521,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
             // WHEN
             let shouldCreateRequest = self.sut.shouldCreateRequest(toSyncObject: self.selfClient,
                                                               forKeys: Set(arrayLiteral: ZMUserClientMissingKey),
-                                                              withSync: self.sut.modifiedSync)
+                                                              withSync: self.sut.modifiedSync!)
 
             // THEN
             XCTAssertTrue(shouldCreateRequest)

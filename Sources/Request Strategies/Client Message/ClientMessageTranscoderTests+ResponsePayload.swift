@@ -43,7 +43,6 @@ extension ClientMessageTranscoderTests {
             // WHEN
             request.complete(with: response)
             self.syncMOC.saveOrRollback()
-            print(message.missingRecipients)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         

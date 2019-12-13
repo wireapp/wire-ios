@@ -53,7 +53,7 @@ import Foundation
     }
     
     public func detectedMissingClient(for user: ZMUser) {
-        conversation?.addParticipantIfMissing(user, date: nil)
+        conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
     }
     
     public func expire() {
