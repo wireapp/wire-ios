@@ -922,7 +922,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					09F028CD1B78BE2700BADDB6 = {
 						CreatedOnToolsVersion = 6.4;
@@ -950,7 +950,6 @@
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -1263,6 +1262,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
@@ -1272,6 +1272,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C1B0FB1B31A1E400CB8CF3 /* WireUtilities.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireUtilities-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};

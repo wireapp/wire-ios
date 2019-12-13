@@ -38,7 +38,7 @@ final class UUIDtoDataConversionTests: XCTestCase {
     func testThatDataisConvertedToUUID() {
         //GIVEN
         let bytes: [UInt8] = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]
-        let data = Data(bytes: bytes)
+        let data = Data(bytes)
 
         //WHEN
         let uuid = UUID(data: data)
@@ -49,7 +49,7 @@ final class UUIDtoDataConversionTests: XCTestCase {
 
 
     func testThatDataWithIncorrectLengthIsNotConverted() {
-        XCTAssertNil(UUID(data: Data(bytes: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17])))
-        XCTAssertNil(UUID(data: Data(bytes: [0,1,2])))
+        XCTAssertNil(UUID(data: Data([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17])))
+        XCTAssertNil(UUID(data: Data([0,1,2])))
     }
 }
