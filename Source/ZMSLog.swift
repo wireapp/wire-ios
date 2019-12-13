@@ -49,7 +49,11 @@ public class ZMSLogEntry: NSObject {
 @objc public class ZMSLog : NSObject {
 
     public typealias LogHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: String) -> (Void)
-    public typealias LogEntryHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: ZMSLogEntry) -> (Void)
+    public typealias LogEntryHook = (
+        _ level: ZMLogLevel_t,
+        _ tag: String?,
+        _ message: ZMSLogEntry,
+        _ isSafe: Bool) -> (Void)
 
     /// Tag to use for this logging facility
     fileprivate let tag: String
@@ -78,9 +82,12 @@ public class ZMSLogEntry: NSObject {
 // MARK: - Emit logs
 extension ZMSLog {
     
-    public func safePublic(_ message: @autoclosure () -> SanitizedString, file: String = #file, line: UInt = #line) {
+    public func safePublic(_ message: @autoclosure () -> SanitizedString,
+                           level: ZMLogLevel_t = .info,
+                           file: String = #file,
+                           line: UInt = #line) {
         let entry = ZMSLogEntry(text: message().value, timestamp: Date())
-        ZMSLog.logEntry(entry, level: .public, tag: tag, file: file, line: line)
+        ZMSLog.logEntry(entry, level: level, isSafe: true, tag: tag, file: file, line: line)
     }
     
     public func error(_ message: @autoclosure () -> String, file: String = #file, line: UInt = #line) {
@@ -148,9 +155,12 @@ extension ZMSLog {
     }
     
     /// Notify all hooks of a new log
-    fileprivate static func notifyHooks(level: ZMLogLevel_t, tag: String?, entry: ZMSLogEntry) {
+    fileprivate static func notifyHooks(level: ZMLogLevel_t,
+                                        tag: String?,
+                                        entry: ZMSLogEntry,
+                                        isSafe: Bool) {
         self.logHooks.forEach { (_, hook) in
-            hook(level, tag, entry)
+            hook(level, tag, entry, isSafe)
         }
     }
 
@@ -209,10 +219,17 @@ extension ZMSLog {
     
     @objc static public func logWithLevel(_ level: ZMLogLevel_t, message:  @autoclosure () -> String, tag: String?, file: String = #file, line: UInt = #line) {
         let entry = ZMSLogEntry(text: message(), timestamp: Date())
-        logEntry(entry, level: level, tag: tag, file: file, line: line)
+        logEntry(entry, level: level, isSafe: false, tag: tag, file: file, line: line)
     }
     
-    static private func logEntry(_ entry: ZMSLogEntry, level: ZMLogLevel_t, tag: String?, file: String = #file, line: UInt = #line) {
+    static private func logEntry(
+        _ entry: ZMSLogEntry,
+        level: ZMLogLevel_t,
+        isSafe: Bool,
+        tag: String?,
+        file: String = #file,
+        line: UInt = #line)
+    {
         logQueue.async {
             if let tag = tag {
                 self.register(tag: tag)
@@ -220,7 +237,7 @@ extension ZMSLog {
         
             if tag == nil || level.rawValue <= ZMSLog.getLevelNoLock(tag: tag!).rawValue {
                 os_log("%{public}@", log: self.logger(tag: tag), type: level.logLevel, entry.text)
-                self.notifyHooks(level: level, tag: tag, entry: entry)
+                self.notifyHooks(level: level, tag: tag, entry: entry, isSafe: isSafe)
             }
         }
     }

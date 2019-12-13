@@ -204,7 +204,7 @@ extension ZMLogTests {
         let message = "PANIC!"
         
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -228,7 +228,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.info
         let message = "PANIC!"
         
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -252,7 +252,7 @@ extension ZMLogTests {
         let message = "PANIC!"
         
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -276,7 +276,7 @@ extension ZMLogTests {
         let level = ZMLogLevel_t.debug
         let message = "PANIC!"
         
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -301,7 +301,7 @@ extension ZMLogTests {
         let message = "PANIC!"
         
         let expectation = self.expectation(description: "Log received")
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -325,7 +325,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
 
-        let token = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTFail()
         }
         ZMSLog.removeLogHook(token: token)
@@ -342,7 +342,7 @@ extension ZMLogTests {
         let tag = "Network"
         let message = "PANIC!"
         
-        let _ = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let _ = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTFail()
         }
         ZMSLog.removeAllLogHooks()
@@ -362,13 +362,13 @@ extension ZMLogTests {
         let expectation1 = self.expectation(description: "Log received")
         let expectation2 = self.expectation(description: "Log received")
 
-        let token1 = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token1 = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
             expectation1.fulfill()
         }
-        let token2 = ZMSLog.addEntryHook { (_level, _tag, entry) in
+        let token2 = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
             XCTAssertEqual(level, _level)
             XCTAssertEqual(tag, _tag)
             XCTAssertEqual(entry.text, message)
@@ -441,7 +441,7 @@ extension ZMLogTests {
         XCTAssertTrue(lines.last!.hasSuffix("[1] [foo] HELP"))
     }
     
-    func testThatItRecordsPublicLogs() {
+    func testThatItDoesNotRecordsPublicLogsWhenLevelIsTooLow() {
         struct Item: SafeForLoggingStringConvertible {
             var name: String
             var safeForLoggingDescription: String {
@@ -457,13 +457,35 @@ extension ZMLogTests {
         // WHEN
         sut.safePublic("Item: \(item)")
         
+        // THEN
+        let currentLog = ZMSLog.currentLog
+        XCTAssertNil(currentLog)
+    }
+    
+    func testThatItRecordsPublicLogsWhenLevelIsEnabled() {
+        struct Item: SafeForLoggingStringConvertible {
+            var name: String
+            var safeForLoggingDescription: String {
+                return "hidden"
+            }
+        }
+        
+        // GIVEN
+        let sut = ZMSLog(tag: "foo")
+        ZMSLog.set(level: .debug, tag: "foo")
+        let item = Item(name: "Secret")
+        ZMSLog.startRecording()
+        
+        // WHEN
+        sut.safePublic("Item: \(item)")
+        
         Thread.sleep(forTimeInterval: 0.2)
         
         // THEN
         let lines = getLinesFromCurrentLog()
         
         XCTAssertEqual(lines.count, 1)
-        XCTAssertTrue(lines.first!.hasSuffix("[0] [foo] Item: hidden"))
+        XCTAssertTrue(lines.first!.hasSuffix("[3] [foo] Item: hidden"))
     }
     
     func testThatItDiscardsLogsWhenStopped() {
@@ -540,7 +562,7 @@ extension ZMLogTests {
         //when
         ZMSLog.startRecording(isInternal: false)
         
-        sut.safePublic("PUBLIC")
+        sut.safePublic("PUBLIC", level: .public)
         
         ZMSLog.set(level: .error, tag: tag)
         sut.error("ERROR")
@@ -571,6 +593,7 @@ extension ZMLogTests {
         
         //when
         ZMSLog.startRecording(isInternal: true)
+        ZMSLog.set(level: .debug, tag: "tag")
         
         sut.safePublic("PUBLIC")
         
@@ -592,7 +615,7 @@ extension ZMLogTests {
         
         //then
         XCTAssertEqual(lines.count, 5)
-        XCTAssertTrue(lines[0].hasSuffix("[0] [tag] PUBLIC"))
+        XCTAssertTrue(lines[0].hasSuffix("[3] [tag] PUBLIC"))
         XCTAssertTrue(lines[1].hasSuffix("[1] [tag] ERROR"))
         XCTAssertTrue(lines[2].hasSuffix("[2] [tag] WARN"))
         XCTAssertTrue(lines[3].hasSuffix("[3] [tag] INFO"))
@@ -600,11 +623,11 @@ extension ZMLogTests {
     }
     
     
-    func getLinesFromCurrentLog() -> [String] {
+    func getLinesFromCurrentLog(file: StaticString = #file, line: UInt = #line) -> [String] {
         
         guard let currentLog = ZMSLog.currentLog,
             let logContent = String(data: currentLog, encoding: .utf8) else {
-                XCTFail()
+                XCTFail(file: file, line: line)
                 return []
         }
         

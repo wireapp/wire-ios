@@ -26,10 +26,8 @@ extension ZMSLog {
     @objc public static func startRecording(isInternal: Bool = true) {
         logQueue.sync {
             if recordingToken == nil {
-                recordingToken = self.nonLockingAddEntryHook(logHook: { (level, tag, entry) -> (Void) in
-                    ///TODO: @Nicola some tests such as testThatItRecordsLogs checks about log files. If want to have logs when running the app, the condition should be isRunningSystemTests == false
-//                    guard !isRunningSystemTests else { return }
-                    guard isInternal || level == .public else { return }
+                recordingToken = self.nonLockingAddEntryHook(logHook: { (level, tag, entry, isSafe) -> (Void) in
+                    guard isInternal || isSafe else { return }
                     let tagString = tag.flatMap { "[\($0)] "} ?? ""
                     let date = dateFormatter.string(from: entry.timestamp)
                     // Add newline if it does not have it yet
