@@ -22,7 +22,7 @@ public enum TeamOrConversation {
     case team(Team)
     case conversation(ZMConversation)
     
-    /// Creates a team or a conversation. One must be nil, the other not nil
+    /// Creates a team or a conversation. One between team and conversation must be nil, the other not nil
     static func fromTeamOrConversation(team: Team?,
                                        conversation: ZMConversation?) -> TeamOrConversation {
         require(team != nil || conversation != nil) // one must be not nil
