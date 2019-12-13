@@ -317,7 +317,37 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         
     }
     
-    func testThatItNotifiesTheObserverOfAParticipantIsDeleted() {
+    func testThatItNotifiesTheObserverOfARemovedParticipant()
+    {
+        // given
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation.conversationType = ZMConversationType.group
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+        user.name = "Foo"
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        uiMOC.saveOrRollback()
+        guard let role = conversation.participantRoles.first else {
+            return XCTFail()
+        }
+        
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(
+            conversation,
+            modifier:{ conversation, _ in
+                // This is simulating a backend removal. If I call `remove...` it will just mark as
+                // logically deleted
+                conversation.participantRoles.remove(role)
+                self.uiMOC.delete(role)
+            },
+            expectedChangedFields: ["participantsChanged",
+                                    "nameChanged",
+                                    "activeParticipantsChanged"],
+            expectedChangedKeys: ["displayName", "localParticipantRoles"]
+        )
+        
+    }
+    
+    func testThatItNotifiesTheObserverOfAParticipantOperationSetToDelete() {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.conversationType = ZMConversationType.group
