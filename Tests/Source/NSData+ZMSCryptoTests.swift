@@ -278,7 +278,7 @@ extension NSData_ZMSCryptoTests {
     func testThatDataCanBeEncodedIntoHexString() {
         // given
         let array : Array<UInt8> = Array(0...255)
-        let data = Data(bytes: array)
+        let data = Data(array)
         
         // when
         let encoded = data.zmHexEncodedString()
