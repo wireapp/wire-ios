@@ -37,7 +37,7 @@ class ZMConversationTests_Mute : ZMConversationTestsBase {
             XCTAssertEqual(ZMConversation.unreadConversationCount(in: self.syncMOC), 0)
             
             let conversation = self.insertConversation(withUnread: true)
-            conversation?.mutedMessageTypes = .all
+            conversation.mutedMessageTypes = .all
             
             // when
             XCTAssertTrue(self.syncMOC.saveOrRollback())

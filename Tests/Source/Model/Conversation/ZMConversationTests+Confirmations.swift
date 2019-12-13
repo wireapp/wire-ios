@@ -27,8 +27,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation.append(text: "text1") as! ZMClientMessage
         let message2 = conversation.append(text: "text2") as! ZMClientMessage
@@ -66,8 +66,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation.append(text: "text1") as! ZMClientMessage
         let message2 = conversation.append(text: "text2") as! ZMClientMessage
@@ -96,8 +96,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation.append(text: "text1") as! ZMClientMessage
         let message2 = conversation.append(text: "text2") as! ZMClientMessage
@@ -142,8 +142,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let conversation2 = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation2.remoteIdentifier = UUID.create()
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation1.append(text: "text1") as! ZMClientMessage
         let message2 = conversation2.append(text: "text2") as! ZMClientMessage
@@ -182,8 +182,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation.append(text: "text1") as! ZMClientMessage
         let message2 = conversation.append(text: "text2") as! ZMClientMessage
@@ -220,8 +220,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let user1 = createUser()!
-        let user2 = createUser()!
+        let user1 = createUser()
+        let user2 = createUser()
         
         let message1 = conversation.append(text: "text1") as! ZMClientMessage
         let message2 = conversation.append(text: "text2") as! ZMClientMessage

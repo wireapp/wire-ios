@@ -689,7 +689,7 @@ extension UserClient {
         let conversations : Set<ZMConversation> = clients.map(\.user).reduce(into: []) {
             guard let user = $1 else { return }
             guard user.isSelfUser else {
-                return $0.formUnion(user.lastServerSyncedActiveConversations.array as! [ZMConversation])
+                return $0.formUnion(user.lastServerSyncedActiveConversations)
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()
@@ -705,7 +705,7 @@ extension UserClient {
             if !conversation.isReadOnly {
                 let clientsInConversation = clients.filter() { client in
                     guard let user = client.user else { return false }
-                    return conversation.activeParticipants.contains(user)
+                    return conversation.localParticipants.contains(user)
                 }
                 securityChangeType.changeSecurityLevel(conversation, clients: Set(clientsInConversation), causedBy: causedBy)
             }

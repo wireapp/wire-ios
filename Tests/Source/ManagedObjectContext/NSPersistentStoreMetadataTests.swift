@@ -190,7 +190,7 @@ extension NSPersistentStoreMetadataTests {
     }
     
     func testThatItCanStoreData() {
-        self.checkThatItCanSave(data: Data(bytes: [21,3]))
+        self.checkThatItCanSave(data: Data([21,3]))
     }
         
     func testThatItCanStoreArrayOfString() {

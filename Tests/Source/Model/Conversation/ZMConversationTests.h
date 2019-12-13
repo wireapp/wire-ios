@@ -25,10 +25,14 @@
 
 @interface ZMConversationTestsBase : ModelObjectsTests
 
-@property(nonatomic) NSNotification *lastReceivedNotification;
+@property(nonatomic) NSNotification * _Nullable lastReceivedNotification;
 
-- (void)didReceiveWindowNotification:(NSNotification *)notification;
-- (ZMUser *)createUser; ///< creates user on the UI moc
-- (ZMUser *)createUserOnMoc:(NSManagedObjectContext *)moc;
-- (ZMConversation *)insertConversationWithUnread:(BOOL)hasUnread;
+- (void)didReceiveWindowNotification:(NSNotification * _Nullable)notification;
+- (ZMUser * _Nonnull)createUser; ///< creates user on the UI moc
+- (ZMUser * _Nonnull)createUserOnMoc:(NSManagedObjectContext * _Nonnull)moc;
+- (ZMConversation * _Nonnull)insertConversationWithUnread:(BOOL)hasUnread;
+@end
+
+@interface ZMConversationTests : ZMConversationTestsBase
+
 @end

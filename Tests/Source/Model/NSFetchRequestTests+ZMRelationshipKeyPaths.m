@@ -163,7 +163,7 @@
 {
     // given
     NSString *relationship1 = @"user";
-    NSString *relationship2 = @"conversation.activeParticipants";
+    NSString *relationship2 = @"conversation.localParticipants";
     
     NSString *keyPath1 = [relationship1 stringByAppendingPathExtension:@"name"];
     NSString *keyPath2 = [relationship2 stringByAppendingPathExtension:@"name"];
@@ -255,7 +255,7 @@
 {
     // given
     NSString *keyPath1 = @"user.name";
-    NSString *keyPath2 = @"conversation.activeParticipants.name";
+    NSString *keyPath2 = @"conversation.localParticipants.name";
     
     NSFetchRequest *request = [NSFetchRequest fetchRequestWithEntityName:@"EntityName"];
     request.predicate = [NSPredicate predicateWithFormat:@"(%K == nil) AND (ANY %K CONTAINS %K)",

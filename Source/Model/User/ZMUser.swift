@@ -41,17 +41,7 @@ extension ZMUser: UserType {
     }
     
     public var activeConversations: Set<ZMConversation> {
-        if isSelfUser {
-            guard let managedObjectContext = managedObjectContext else { return Set() }
-            
-            let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
-            fetchRequest.predicate = ZMConversation.predicateForConversationsWhereSelfUserIsActive()
-            var result = Set(managedObjectContext.fetchOrAssert(request: fetchRequest))
-            result.remove(ZMConversation.selfConversation(in: managedObjectContext))
-            return result
-        } else {
-            return lastServerSyncedActiveConversations.set as? Set<ZMConversation> ?? Set()
-        }
+        return Set(self.participantRoles.filter{!$0.markedForDeletion}.map{$0.conversation})
     }
 
     // MARK: Legal Hold
@@ -151,9 +141,6 @@ extension ZMUser {
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?
     
-    /// Conversation in which the user is active, according to the server
-    @NSManaged var lastServerSyncedActiveConversations: NSOrderedSet
-    
     /// Conversations created by this user
     @NSManaged var conversationsCreated: Set<ZMConversation>
     
@@ -175,6 +162,50 @@ extension ZMUser {
     
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
+    
+    
+    /// Conversation in which the user is active, according to the server
+    public var lastServerSyncedActiveConversations: Set<ZMConversation> {
+        get {
+            ///TODO: review
+            return Set(participantRoles.compactMap {
+                if !$0.markedForDeletion {
+                    return $0.conversation
+                } else {
+                    return nil
+                }
+            })
+        }
+        
+        set {
+            participantRoles = Set()
+            union(conversationSet: newValue)
+        }
+    }
+    
+    @objc
+    func add(conversation: ZMConversation) {
+        guard let moc = self.managedObjectContext else { return }
+        
+        ParticipantRole.create(managedObjectContext: moc, user: self, conversation: conversation)
+    }
+    
+    /// union a ZMConversation set to participantRoles
+    ///
+    /// - Parameter conversationSet: conversations to union
+    @objc
+    func union(conversationSet: Set<ZMConversation>) {
+        let currentConversationSet = lastServerSyncedActiveConversations
+        
+        conversationSet.forEach() { conversation in
+            if !currentConversationSet.contains(conversation) {
+                add(conversation: conversation)
+            } else if currentConversationSet.contains(conversation) {
+                ///if mark for delete, set markedForDeletion to false
+                participantRoles.first(where: {$0.markedForDeletion})?.operationToSync = .none
+            }
+        }
+    }
     
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
@@ -275,8 +306,8 @@ extension ZMUser {
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = lastServerSyncedActiveConversations.compactMap {
-            guard let conversation = $0 as? ZMConversation, conversation.conversationType == .group else { return nil}
-            return conversation
+            guard $0.conversationType == .group else { return nil}
+            return $0
         }
         
         allGroupConversations.forEach { conversation in
@@ -285,8 +316,7 @@ extension ZMUser {
             } else {
                 conversation.appendParticipantRemovedSystemMessage(user: self, at: timestamp)
             }
-            
-            conversation.internalRemoveParticipants([self], sender: self)
+            conversation.removeParticipantAndUpdateConversationState(user: self, initiatingUser: self)
         }
     }
 }
@@ -296,6 +326,13 @@ extension ZMUser {
     public func displayName(in conversation: ZMConversation?) -> String {
         guard let conversation = conversation, let nameGenerator = self.managedObjectContext?.zm_displayNameGenerator else { return self.displayName }
         return nameGenerator.displayName(for: self, in: conversation)
+    }
+    
+    // MARK: - Participant role
+    
+    @objc
+    public var conversations: Set<ZMConversation> {
+        return Set(participantRoles.compactMap{ return $0.conversation })
     }
 }
 

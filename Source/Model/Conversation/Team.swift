@@ -37,6 +37,7 @@ public class Team: ZMManagedObject, TeamType {
 
     @NSManaged public var conversations: Set<ZMConversation>
     @NSManaged public var members: Set<Member>
+    @NSManaged public var roles: Set<Role>
     @NSManaged public var name: String?
     @NSManaged public var pictureAssetId: String?
     @NSManaged public var pictureAssetKey: String?

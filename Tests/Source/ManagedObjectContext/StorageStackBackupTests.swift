@@ -60,7 +60,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
     func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) -> URL? {
         // create populated account database
         let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
-        _ = ZMConversation.insertGroupConversation(into: directory.uiContext, withParticipants: [])
+        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [ZMUser]())
         directory.uiContext.saveOrRollback()
         
         guard let result = createBackup(accountIdentifier: accountIdentifier) else { return nil }
@@ -135,7 +135,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(into: directory.uiContext, withParticipants: [])
+        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [])
         directory.uiContext.saveOrRollback()
 
         // when
@@ -151,7 +151,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(into: directory.uiContext, withParticipants: [])
+        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [])
         directory.uiContext.saveOrRollback()
         StorageStack.reset()
 
@@ -169,7 +169,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         // given
         let uuid = UUID()
         var directory: ManagedObjectContextDirectory? = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(into: directory!.uiContext, withParticipants: [])
+        _ = ZMConversation.insertGroupConversation(moc: directory!.uiContext, participants: [])
         directory!.uiContext.saveOrRollback()
 
         // when

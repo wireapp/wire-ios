@@ -106,13 +106,17 @@
         [conversation internalAddParticipants:@[newUnconnectedUser]];
         
         // then the conversation should degrade
+        XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 4);
+        XCTAssertEqual(conversation.activeParticipants.count, 4);
         XCTAssertFalse(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecureWithIgnored);
         
         // when
         [conversation internalRemoveParticipants:@[newUnconnectedUser] sender:self.selfUser];
-        
+
         // then
+        XCTAssertEqual(conversation.lastServerSyncedActiveParticipants.count, 2);
+        XCTAssertEqual(conversation.activeParticipants.count, 3);
         XCTAssertTrue(conversation.allUsersTrusted);
         XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     }];
@@ -393,7 +397,7 @@
     
     UserClient *selfClient = [ZMUser selfUserInContext:moc].selfClient;
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:moc];
-    [[conversation mutableLastServerSyncedActiveParticipants] addObject:user];
+    [conversation addWithUser:user isFromLocal:NO];
     UserClient *client = [UserClient insertNewObjectInManagedObjectContext:moc];
     client.user  = user;
     if (trusted) {
@@ -439,8 +443,8 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    [[conversation mutableLastServerSyncedActiveParticipants] addObject:user];
-    
+    [conversation addWithUser:user isFromLocal:NO];
+
     // when
     BOOL hasUntrustedClients = conversation.hasUntrustedClients;
     
@@ -552,6 +556,7 @@
         conversation.conversationType = ZMConversationTypeGroup;
         
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
+        [conversation addWithUser:selfUser isFromLocal:YES];
         
         Team *mainTeam = [Team fetchOrCreateTeamWithRemoteIdentifier:[[NSUUID alloc] init]
                                                       createIfNeeded:YES
@@ -625,8 +630,8 @@
         conversation.securityLevel = ZMConversationSecurityLevelSecure;
         
         ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.syncMOC];
-        [[conversation mutableLastServerSyncedActiveParticipants] addObject:user];
-
+        [conversation addWithUser:user isFromLocal:NO];
+        
         ZMOTRMessage *message1 = (ZMOTRMessage *)[conversation appendMessageWithImageData:[self verySmallJPEGData]];
         [NSThread sleepForTimeInterval:0.05]; // cause system time to advance
         ZMOTRMessage *message2 = (ZMOTRMessage *)[conversation appendMessageWithText:@"foo 2" fetchLinkPreview:NO];
@@ -875,7 +880,7 @@
     __block ZMSystemMessage *result = nil;
     [self performPretendingUiMocIsSyncMoc:^{
         [usersToAdd enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
-            [conv.mutableLastServerSyncedActiveParticipants addObject:obj];
+            [conv addWithUser:obj isFromLocal:NO];
         }];
         result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
                                                 inManagedObjectContext:conv.managedObjectContext
@@ -897,7 +902,7 @@
     __block ZMSystemMessage *result = nil;
     [self performPretendingUiMocIsSyncMoc:^{
         [usersToRemove enumerateObjectsUsingBlock:^(ZMUser * _Nonnull obj, BOOL * _Nonnull stop __unused) {
-            [conv.mutableLastServerSyncedActiveParticipants removeObject:obj];
+            [conv minusWithUserSet: [NSSet setWithObject:obj] isFromLocal:NO];
         }];
         result = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event
                                                 inManagedObjectContext:conv.managedObjectContext
@@ -916,6 +921,7 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.remoteIdentifier = [NSUUID new];
+    [conversation addWithUser:selfUser isFromLocal:YES];
     
     ZMUser *verifiedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     verifiedUser.remoteIdentifier = [NSUUID new];
@@ -953,6 +959,7 @@
     // GIVEN
     ZMConversation *conversation = [self setupVerifiedConversation];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addWithUser:selfUser isFromLocal:YES];
 
     // WHEN
     ZMUser *verifiedUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -1010,7 +1017,7 @@
     
     // given
     ZMConversation *conversation = [self setupVerifiedConversation];
-    ZMUser *participant = [conversation.lastServerSyncedActiveParticipants firstObject];
+    ZMUser *participant = [conversation.lastServerSyncedActiveParticipants anyObject];
     XCTAssertNotNil(participant);
     XCTAssertEqual(conversation.securityLevel, ZMConversationSecurityLevelSecure);
     [participant block];

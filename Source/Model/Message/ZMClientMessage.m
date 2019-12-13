@@ -28,7 +28,6 @@
 
 #import "ZMClientMessage.h"
 #import "ZMConversation+Internal.h"
-#import "ZMConversation+Transport.h"
 #import "ZMUpdateEvent+WireDataModel.h"
 #import "ZMGenericMessage+UpdateEvent.h"
 

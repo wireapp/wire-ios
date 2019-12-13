@@ -20,6 +20,19 @@
 import XCTest
 @testable import WireDataModel
 
+class TestTeamObserver : NSObject, TeamObserver {
+    
+    var notifications = [TeamChangeInfo]()
+    
+    func clearNotifications(){
+        notifications = []
+    }
+    
+    func teamDidChange(_ changeInfo: TeamChangeInfo) {
+        notifications.append(changeInfo)
+    }
+}
+
 class TeamObserverTests: NotificationDispatcherTestBase {
     
     var teamObserver : TestTeamObserver!

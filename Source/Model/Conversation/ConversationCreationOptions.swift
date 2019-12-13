@@ -34,10 +34,11 @@ public struct ConversationCreationOptions {
 
 public extension ZMManagedObjectContextProvider {
     func insertGroup(with options: ConversationCreationOptions) -> ZMConversation {
-        return ZMConversation.insertGroupConversation(intoUserSession: self,
-                                                      withParticipants: options.participants,
-                                                      name: options.name,
-                                                      in: options.team,
-                                                      allowGuests: options.allowGuests)
+        return ZMConversation.insertGroupConversation(session: self,
+                                               participants: options.participants,
+                                               name: options.name,
+                                               team: options.team,
+                                               allowGuests: options.allowGuests,
+                                               participantsRole: nil)!
     }
 }

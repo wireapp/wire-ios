@@ -19,73 +19,84 @@
 
 #import "ZMBaseManagedObjectTest.h"
 
-extern NSString * const EventConversationAdd;
-extern NSString * const EventConversationAddClientMessage;
-extern NSString * const EventConversationAddOTRMessage;
-extern NSString * const EventConversationAddAsset;
-extern NSString * const EventConversationAddOTRAsset;
-extern NSString * const EventConversationKnock;
-extern NSString * const EventConversationHotKnock;
-extern NSString * const IsExpiredKey;
-extern NSString * const EventCallState;
-extern NSString * const EventConversationTyping;
-extern NSString * const EventConversationMemberJoin;
-extern NSString * const EventConversationMemberLeave;
-extern NSString * const EventConversationRename;
-extern NSString * const EventConversationCreate;
-extern NSString * const EventUserConnection;
-extern NSString * const EventConversationConnectionRequest;
-extern NSString * const EventConversationEncryptedMessage;
-extern NSString * const EventNewConnection;
+extern NSString * _Nonnull const EventConversationAdd;
+extern NSString * _Nonnull const EventConversationAddClientMessage;
+extern NSString * _Nonnull const EventConversationAddOTRMessage;
+extern NSString * _Nonnull const EventConversationAddAsset;
+extern NSString * _Nonnull const EventConversationAddOTRAsset;
+extern NSString * _Nonnull const EventConversationKnock;
+extern NSString * _Nonnull const EventConversationHotKnock;
+extern NSString * _Nonnull const IsExpiredKey;
+extern NSString * _Nonnull const EventCallState;
+extern NSString * _Nonnull const EventConversationTyping;
+extern NSString * _Nonnull const EventConversationMemberJoin;
+extern NSString * _Nonnull const EventConversationMemberLeave;
+extern NSString * _Nonnull const EventConversationRename;
+extern NSString * _Nonnull const EventConversationCreate;
+extern NSString * _Nonnull const EventUserConnection;
+extern NSString * _Nonnull const EventConversationConnectionRequest;
+extern NSString * _Nonnull const EventConversationEncryptedMessage;
+extern NSString * _Nonnull const EventNewConnection;
 
 @interface ZMBaseManagedObjectTest (EventFactory)
 
 /// Creates a call.state event payload for conversation with callParticipants and selfUser as active member
 /// To use this method, set remoteIdentifiers on all managedObjects
-- (NSDictionary *)payloadForCallStateEventInConversation:(ZMConversation *)conversation
+- (NSDictionary * _Nonnull)payloadForCallStateEventInConversation:(ZMConversation * _Nonnull)conversation
                                          othersAreJoined:(BOOL)othersAreJoined
                                             selfIsJoined:(BOOL)selfIsJoined
-                                                sequence:(NSNumber *)sequence;
+                                                sequence:(NSNumber * _Nonnull)sequence;
 
-- (NSDictionary *)payloadForCallStateEventInConversation:(ZMConversation *)conversation
+- (NSDictionary * _Nonnull)payloadForCallStateEventInConversation:(ZMConversation * _Nonnull)conversation
                                          othersAreJoined:(BOOL)othersAreJoined
                                             selfIsJoined:(BOOL)selfIsJoined
                                      otherIsSendingVideo:(BOOL)otherIsSendingVideo
                                       selfIsSendingVideo:(BOOL)selfIsSendingVideo
-                                                sequence:(NSNumber *)sequence;
+                                                sequence:(NSNumber * _Nonnull)sequence;
 
-- (NSDictionary *)payloadForCallStateEventInConversation:(ZMConversation *)conversation
-                                             joinedUsers:(NSArray *)joinedUsers
-                                       videoSendingUsers:(NSArray *)videoSendingUsers
-                                                sequence:(NSNumber *)sequence;
+- (NSDictionary * _Nonnull)payloadForCallStateEventInConversation:(ZMConversation * _Nonnull)conversation
+                                             joinedUsers:(NSArray * _Nonnull)joinedUsers
+                                       videoSendingUsers:(NSArray * _Nonnull)videoSendingUsers
+                                                sequence:(NSNumber * _Nonnull)sequence;
 
-- (ZMUpdateEvent *)callStateEventInConversation:(ZMConversation *)conversation
+- (ZMUpdateEvent * _Nonnull)callStateEventInConversation:(ZMConversation * _Nonnull)conversation
                                 othersAreJoined:(BOOL)othersAreJoined
                                    selfIsJoined:(BOOL)selfIsJoined
                             otherIsSendingVideo:(BOOL)otherIsSendingVideo
                              selfIsSendingVideo:(BOOL)selfIsSendingVideo
-                                       sequence:(NSNumber *)sequence;
+                                       sequence:(NSNumber * _Nonnull)sequence;
 
-- (ZMUpdateEvent *)callStateEventInConversation:(ZMConversation *)conversation
-                                    joinedUsers:(NSArray *)joinedUsers
-                              videoSendingUsers:(NSArray *)videoSendingUsers
-                                       sequence:(NSNumber *)sequence;
+- (ZMUpdateEvent * _Nonnull)callStateEventInConversation:(ZMConversation * _Nonnull)conversation
+                                    joinedUsers:(NSArray * _Nonnull)joinedUsers
+                              videoSendingUsers:(NSArray * _Nonnull)videoSendingUsers
+                                       sequence:(NSNumber * _Nonnull)sequence;
 
-- (ZMUpdateEvent *)callStateEventInConversation:(ZMConversation *)conversation
-                                    joinedUsers:(NSArray *)joinedUsers
-                              videoSendingUsers:(NSArray *)videoSendingUsers
-                                       sequence:(NSNumber *)sequence
-                                        session:(NSString *)session;
+- (ZMUpdateEvent * _Nonnull)callStateEventInConversation:(ZMConversation * _Nonnull)conversation
+                                    joinedUsers:(NSArray * _Nonnull)joinedUsers
+                              videoSendingUsers:(NSArray * _Nonnull)videoSendingUsers
+                                       sequence:(NSNumber * _Nonnull)sequence
+                                        session:(NSString * _Nullable)session;
 
-- (ZMUpdateEvent *)eventWithPayload:(NSDictionary *)data inConversation:(ZMConversation *)conversation type:(NSString *)type;
+- (ZMUpdateEvent * _Nonnull)eventWithPayload:(NSDictionary * _Nonnull)data
+                              inConversation:(ZMConversation * _Nonnull)conversation
+                                        type:(NSString * _Nonnull)type;
 
-- (NSMutableDictionary *)payloadForMessageInConversation:(ZMConversation *)conversation
-                                                  sender:(ZMUser *)sender
-                                                    type:(NSString *)type
-                                                    data:(NSDictionary *)data;
+- (NSMutableDictionary * _Nonnull)payloadForMessageInConversation:(ZMConversation * _Nonnull)conversation
+                                                  sender:(ZMUser * _Nonnull)sender
+                                                    type:(NSString * _Nonnull)type
+                                                    data:(NSDictionary * _Nonnull)data;
 
-- (NSMutableDictionary *)payloadForMessageInConversation:(ZMConversation *)conversation type:(NSString *)type data:(id)data;
-- (NSMutableDictionary *)payloadForMessageInConversation:(ZMConversation *)conversation type:(NSString *)type data:(id)data time:(NSDate *)date;
-- (NSMutableDictionary *)payloadForMessageInConversation:(ZMConversation *)conversation type:(NSString *)type data:(id)data time:(NSDate *)date fromUser:(ZMUser *)fromUser;
+- (NSMutableDictionary * _Nonnull)payloadForMessageInConversation:(ZMConversation * _Nonnull)conversation
+                                                    type:(NSString * _Nonnull)type
+                                                    data:(id _Nonnull)data;
+- (NSMutableDictionary * _Nonnull)payloadForMessageInConversation:(ZMConversation * _Nonnull)conversation
+                                                    type:(NSString * _Nonnull)type
+                                                    data:(id _Nonnull)data
+                                                    time:(NSDate * _Nullable)date;
+- (NSMutableDictionary * _Nonnull)payloadForMessageInConversation:(ZMConversation * _Nonnull)conversation
+                                                             type:(NSString * _Nonnull)type
+                                                             data:(id _Nonnull)data
+                                                             time:(NSDate * _Nonnull)date
+                                                         fromUser:(ZMUser * _Nonnull)fromUser;
 
 @end

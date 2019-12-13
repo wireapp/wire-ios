@@ -20,6 +20,16 @@
 import XCTest
 @testable import WireDataModel
 
+
+class TestUserClientObserver : NSObject, UserClientObserver {
+    
+    var receivedChangeInfo : [UserClientChangeInfo] = []
+    
+    func userClientDidChange(_ changes: UserClientChangeInfo) {
+        receivedChangeInfo.append(changes)
+    }
+}
+
 class UserClientObserverTests: NotificationDispatcherTestBase {
     
     var clientObserver : TestUserClientObserver!

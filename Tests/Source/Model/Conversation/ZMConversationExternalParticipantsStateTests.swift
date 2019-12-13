@@ -85,8 +85,8 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
 
     func createConversationWithSelfUser() -> ZMConversation {
         let conversation = createConversation(in: uiMOC)
-        conversation.internalAddParticipants([selfUser])
-        conversation.isSelfAnActiveMember = true
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
         return conversation
     }
 
@@ -120,16 +120,16 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
                 }
 
                 let otherTeamUser = createUser(in: uiMOC)
-                conversation.internalAddParticipants([otherTeamUser])
+                conversation.addParticipantAndUpdateConversationState(user: otherTeamUser, role: nil)
                 createMembership(in: uiMOC, user: otherTeamUser, team: hostingTeam!)
 
             case .personal:
                 let otherUser = createUser(in: uiMOC)
-                conversation.internalAddParticipants([otherUser])
+                conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
 
             case .service:
                 let service = createService(in: uiMOC, named: "Bob the Robot")
-                conversation.internalAddParticipants([service as! ZMUser])
+                conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
             }
         }
 

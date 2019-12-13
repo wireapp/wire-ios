@@ -19,7 +19,7 @@
 import Foundation
 @testable import WireDataModel
 
-class ZMConversationTests_Services : BaseZMMessageTests {
+final class ZMConversationTests_Services : BaseZMMessageTests {
 
     var team: Team!
     var service: ServiceUser!
@@ -43,8 +43,8 @@ class ZMConversationTests_Services : BaseZMMessageTests {
         let conversation = createConversation(in: uiMOC)
         conversation.team = team
         conversation.conversationType = .group
-        conversation.isSelfAnActiveMember = true
-        conversation.internalAddParticipants([service as! ZMUser])
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC), role: nil)
+        conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
         return conversation
     }
 
@@ -79,7 +79,7 @@ class ZMConversationTests_Services : BaseZMMessageTests {
     func testThatItDoesNotFindConversationWithMoreMembers() {
         // given
         let existingConversation = createConversation(with: service)
-        existingConversation.internalAddParticipants([createUser(in: uiMOC)])
+        existingConversation.addParticipantAndUpdateConversationState(user: createUser(in: uiMOC), role: nil)
 
         // when
         let conversation = ZMConversation.existingConversation(in: uiMOC, service: service, team: team)
@@ -93,7 +93,7 @@ class ZMConversationTests_Services : BaseZMMessageTests {
         let existingConversation = createConversation(with: service)
 
         // when
-        existingConversation.isSelfAnActiveMember = false
+        existingConversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
         let conversation = ZMConversation.existingConversation(in: uiMOC, service: service, team: team)
 
         // then

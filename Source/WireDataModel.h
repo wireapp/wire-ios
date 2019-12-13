@@ -38,7 +38,6 @@
 #import <WireDataModel/ZMConversation.h>
 #import <WireDataModel/ZMConversation+Internal.h>
 #import <WireDataModel/ZMConversation+UnreadCount.h>
-#import <WireDataModel/ZMConversation+Transport.h>
 #import <WireDataModel/ZMConversationSecurityLevel.h>
 
 #import <WireDataModel/ZMConnection+Internal.h>

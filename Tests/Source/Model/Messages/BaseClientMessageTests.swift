@@ -76,7 +76,8 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncUser3 = ZMUser.insertNewObject(in: self.syncMOC)
             self.syncUser3Client1 = self.createClient(for: self.syncUser3, createSessionWithSelfUser: false, onMOC: self.syncMOC)
             
-            self.syncConversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [self.syncUser1, self.syncUser2, self.syncUser3])
+            self.syncConversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [self.syncUser1!, self.syncUser2!, self.syncUser3!])
+            
             self.syncConversation.remoteIdentifier = UUID.create()
             
             self.expectedRecipients = [
@@ -170,10 +171,10 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         XCTAssertEqual(recipients.count, expectedRecipients.count, file: file, line: line)
         
         for recipientEntry in recipients {
-            var uuid : NSUUID!
-            recipientEntry.user.uuid.withUnsafeBytes({ bytes in
-                uuid = NSUUID(uuidBytes: bytes)
-            })
+            guard let uuid = UUID(data: recipientEntry.user.uuid) else {
+                XCTFail("Missing user UUID", file: file, line: line)
+                return
+            }
             guard let expectedClientsIds : [String] = self.expectedRecipients[uuid.transportString()]?.sorted() else {
                 XCTFail("Unexpected otr client in recipients", file: file, line: line)
                 return

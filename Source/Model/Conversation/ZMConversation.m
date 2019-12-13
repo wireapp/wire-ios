@@ -49,11 +49,11 @@ NSString *const ZMConversationConnectionKey = @"connection";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
 NSString *const ZMConversationIsArchivedKey = @"internalIsArchived";
-NSString *const ZMConversationIsSelfAnActiveMemberKey = @"isSelfAnActiveMember";
 NSString *const ZMConversationMutedStatusKey = @"mutedStatus";
 NSString *const ZMConversationAllMessagesKey = @"allMessages";
 NSString *const ZMConversationHiddenMessagesKey = @"hiddenMessages";
-NSString *const ZMConversationLastServerSyncedActiveParticipantsKey = @"lastServerSyncedActiveParticipants";
+NSString *const ZMConversationParticipantRolesKey = @"participantRoles";
+NSString *const ZMConversationNonTeamRolesKey = @"nonTeamRoles";
 NSString *const ZMConversationHasUnreadKnock = @"hasUnreadKnock";
 NSString *const ZMConversationUserDefinedNameKey = @"userDefinedName";
 NSString *const ZMIsDimmedKey = @"zmIsDimmed";
@@ -114,7 +114,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 @property (nonatomic) NSString *normalizedUserDefinedName;
 @property (nonatomic) ZMConversationType conversationType;
-@property (nonatomic, readonly) ZMConversationType internalConversationType;
 
 @property (nonatomic) NSTimeInterval lastReadTimestampSaveDelay;
 @property (nonatomic) int64_t lastReadTimestampUpdateCounter;
@@ -158,6 +157,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic silencedChangedTimestamp;
 @dynamic team;
 @dynamic labels;
+@dynamic participantRoles;
+@dynamic nonTeamRoles;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize lastReadTimestampSaveDelay;
@@ -254,32 +255,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
 }
 
--(NSSet <ZMUser *> *)activeParticipants
-{
-    
-    NSMutableSet *activeParticipants = [NSMutableSet set];
-    
-    if (self.internalConversationType != ZMConversationTypeGroup) {
-        [activeParticipants addObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-        if (self.connectedUser != nil) {
-            [activeParticipants addObject:self.connectedUser];
-        }
-    }
-    else if(self.isSelfAnActiveMember) {
-        [activeParticipants addObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-        [activeParticipants unionSet:[self.lastServerSyncedActiveParticipants set]];
-    }
-    else
-    {
-        [activeParticipants unionSet:[self.lastServerSyncedActiveParticipants set]];
-    }
-    
-    return activeParticipants;
-}
-
 -(NSArray <ZMUser *> *)sortedActiveParticipants
 {
-    return [self sortedUsers:[self activeParticipants]];
+    return [self sortedUsers:[self localParticipants]];
 }
 
 - (NSArray *)sortedUsers:(NSSet *)users
@@ -290,11 +268,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return sortedUser;
 }
 
-+ (NSSet *)keyPathsForValuesAffectingActiveParticipants
-{
-    return [NSSet setWithObjects:ZMConversationLastServerSyncedActiveParticipantsKey, ZMConversationIsSelfAnActiveMemberKey, nil];
-}
-
 - (ZMUser *)connectedUser
 {
     ZMConversationType internalConversationType = self.internalConversationType;
@@ -303,7 +276,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         return self.connection.to;
     }
     else if (self.conversationType == ZMConversationTypeOneOnOne) {
-        return self.lastServerSyncedActiveParticipants.firstObject;
+        return self.localParticipantsExcludingSelf.anyObject;
     }
     
     return nil;
@@ -341,7 +314,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             DraftMessageDataKey,
             LastModifiedDateKey,
             ZMNormalizedUserDefinedNameKey,
-            ZMConversationLastServerSyncedActiveParticipantsKey,
+            ZMConversationParticipantRolesKey,
+            ZMConversationNonTeamRolesKey,
             VoiceChannelKey,
             ZMConversationHasUnreadMissedCallKey,
             ZMConversationHasUnreadUnsentMessageKey,
@@ -373,7 +347,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             HasReadReceiptsEnabledKey,
             ZMConversationLegalHoldStatusKey,
             ZMConversationNeedsToVerifyLegalHoldKey,
-            ZMConversationLabelsKey
+            ZMConversationLabelsKey,
+            @"isSelfAnActiveMember"
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -393,63 +368,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 
 + (NSSet *)keyPathsForValuesAffectingIsReadOnly;
 {
-    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationIsSelfAnActiveMemberKey, nil];
-}
-
-+ (NSSet *)keyPathsForValuesAffectingDisplayName;
-{
-    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationLastServerSyncedActiveParticipantsKey, @"lastServerSyncedActiveParticipants.name", @"connection.to.name", @"connection.to.availability", ZMConversationUserDefinedNameKey, nil];
-}
-
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                        inTeam:(nullable Team *)team;
-{
-
-    return [self insertGroupConversationIntoUserSession:session withParticipants:participants name:nil inTeam:team];
-}
-
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team
-{
-    return [self insertGroupConversationIntoUserSession:session
-                                       withParticipants:participants
-                                                   name:name
-                                                 inTeam:team
-                                            allowGuests:YES];
-}
-
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team
-                                                   allowGuests:(BOOL)allowGuests
-{
-    return [self insertGroupConversationIntoUserSession:session
-                                       withParticipants:participants
-                                                   name:name
-                                                 inTeam:team
-                                            allowGuests:allowGuests
-                                           readReceipts:NO];
-}
-
-
-+ (nonnull instancetype)insertGroupConversationIntoUserSession:(nonnull id<ZMManagedObjectContextProvider> )session
-                                              withParticipants:(nonnull NSArray<ZMUser *> *)participants
-                                                          name:(nullable NSString*)name
-                                                        inTeam:(nullable Team *)team
-                                                   allowGuests:(BOOL)allowGuests
-                                                  readReceipts:(BOOL)readReceipts
-{
-    VerifyReturnNil(session != nil);
-    return [self insertGroupConversationIntoManagedObjectContext:session.managedObjectContext
-                                                withParticipants:participants
-                                                            name:name
-                                                          inTeam:team
-                                                     allowGuests:allowGuests
-                                                    readReceipts:readReceipts];
+    return [NSSet setWithObjects:ZMConversationConversationTypeKey, ZMConversationParticipantRolesKey, nil];
 }
 
 + (instancetype)existingOneOnOneConversationWithUser:(ZMUser *)otherUser inUserSession:(id<ZMManagedObjectContextProvider>)session;
@@ -525,20 +444,12 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     // 4. This participant is not a service user (bot).
     if (conversationType == ZMConversationTypeGroup &&
         self.teamRemoteIdentifier != nil &&
-        self.lastServerSyncedActiveParticipants.count == 1 &&
-        !self.lastServerSyncedActiveParticipants.firstObject.isServiceUser &&
+        self.localParticipantsExcludingSelf.count == 1 &&
+        !self.localParticipantsExcludingSelf.anyObject.isServiceUser &&
         self.userDefinedName.length == 0) {
         conversationType = ZMConversationTypeOneOnOne;
     }
     
-    return conversationType;
-}
-
-- (ZMConversationType)internalConversationType
-{
-    [self willAccessValueForKey:ZMConversationConversationTypeKey];
-    ZMConversationType conversationType =  (ZMConversationType)[[self primitiveConversationType] shortValue];
-    [self didAccessValueForKey:ZMConversationConversationTypeKey];
     return conversationType;
 }
 
@@ -620,11 +531,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     }
     
     return newKeys;
-}
-
-- (NSMutableOrderedSet *)mutableLastServerSyncedActiveParticipants
-{
-    return [self mutableOrderedSetValueForKey:ZMConversationLastServerSyncedActiveParticipantsKey];
 }
 
 - (BOOL)canMarkAsUnread
@@ -715,6 +621,14 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return moc.conversationListDirectory.pendingConnectionConversations;
 }
 
+- (ZMConversationType)internalConversationType
+{
+    [self willAccessValueForKey:ZMConversationConversationTypeKey];
+    ZMConversationType conversationType =  (ZMConversationType)[[self primitiveConversationType] shortValue];
+    [self didAccessValueForKey:ZMConversationConversationTypeKey];
+    return conversationType;
+}
+
 - (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
 {
     ZMConversation *existingConversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.managedObjectContext];
@@ -763,148 +677,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return nil;
 }
 
-+ (instancetype)fetchOrCreateTeamConversationInManagedObjectContext:(NSManagedObjectContext *)moc withParticipant:(ZMUser *)participant team:(Team *)team
-{
-    VerifyReturnNil(team != nil);
-    VerifyReturnNil(!participant.isSelfUser);
-    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-
-    ZMConversation *conversation = [self existingTeamConversationInManagedObjectContext:moc withParticipant:participant team:team];
-    if (nil != conversation) {
-        return conversation;
-    }
-
-    conversation = (ZMConversation *)[super insertNewObjectInManagedObjectContext:moc];
-    conversation.lastModifiedDate = [NSDate date];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.creator = selfUser;
-    conversation.team = team;
-
-    NSSet<ZMUser *> *participants = [NSSet setWithObject:participant];
-
-    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date] users:participants];
-    [conversation internalAddParticipants:@[participant]];
-
-    // We need to check if we should add a 'secure' system message in case all participants are trusted
-    [conversation increaseSecurityLevelIfNeededAfterTrustingClients:participant.clients];
-    
-    return conversation;
-}
-
-+ (instancetype)existingTeamConversationInManagedObjectContext:(NSManagedObjectContext *)moc withParticipant:(ZMUser *)participant team:(Team *)team
-{
-    // We consider a conversation being an existing 1:1 team conversation in case the following point are true:
-    //  1. It is a conversation inside the team
-    //  2. The only participants are the current user and the selected user
-    //  3. It does not have a custom display name
-
-    NSPredicate *sameTeam = [ZMConversation predicateForConversationsInTeam:team];
-    NSPredicate *groupConversation = [NSPredicate predicateWithFormat:@"%K == %d", ZMConversationConversationTypeKey, ZMConversationTypeGroup];
-    NSPredicate *noUserDefinedName = [NSPredicate predicateWithFormat:@"%K == NULL", ZMConversationUserDefinedNameKey];
-    NSPredicate *sameParticipant = [NSPredicate predicateWithFormat:@"%K.@count == 1 AND %@ IN %K ", ZMConversationLastServerSyncedActiveParticipantsKey, participant, ZMConversationLastServerSyncedActiveParticipantsKey];
-    NSCompoundPredicate *compoundPredicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[sameTeam, groupConversation,noUserDefinedName, sameParticipant]];
-    NSFetchRequest *request = [self sortedFetchRequestWithPredicate:compoundPredicate];
-    return [moc executeFetchRequestOrAssert:request].firstObject;
-}
-
-+ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc withParticipants:(NSArray *)participants
-{
-    return [self insertGroupConversationIntoManagedObjectContext:moc withParticipants:participants inTeam:nil];
-}
-
-+ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc
-                                               withParticipants:(NSArray *)participants
-                                                         inTeam:(nullable Team *)team
-{
-    return [self insertGroupConversationIntoManagedObjectContext:moc
-                                                withParticipants:participants
-                                                            name:nil
-                                                          inTeam:team];
-}
-
-+ (instancetype)insertGroupConversationIntoManagedObjectContext:(NSManagedObjectContext *)moc
-                                               withParticipants:(NSArray *)participants
-                                                           name:(NSString *)name
-                                                         inTeam:(nullable Team *)team
-{
-    return [self insertGroupConversationIntoManagedObjectContext:moc
-                                                withParticipants:participants
-                                                            name:name
-                                                          inTeam:team
-                                                     allowGuests:YES];
-}
-
-+ (nullable instancetype)insertGroupConversationIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc
-                                                        withParticipants:(nonnull NSArray <ZMUser *>*)participants
-                                                                    name:(nullable NSString *)name
-                                                                  inTeam:(nullable Team *)team
-                                                             allowGuests:(BOOL)allowGuests
-{
-    return [self insertGroupConversationIntoManagedObjectContext:moc
-                                                withParticipants:participants
-                                                            name:name
-                                                          inTeam:team
-                                                     allowGuests:allowGuests
-                                                    readReceipts:NO];
-}
-
-
-+ (nullable instancetype)insertGroupConversationIntoManagedObjectContext:(nonnull NSManagedObjectContext *)moc
-                                                        withParticipants:(nonnull NSArray <ZMUser *>*)participants
-                                                                    name:(nullable NSString *)name
-                                                                  inTeam:(nullable Team *)team
-                                                             allowGuests:(BOOL)allowGuests
-                                                            readReceipts:(BOOL)readReceipts
-{
-    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-
-    if (nil != team && !selfUser.canCreateConversation) {
-        return nil;
-    }
-
-    ZMConversation *conversation = (ZMConversation *)[super insertNewObjectInManagedObjectContext:moc];
-    conversation.lastModifiedDate = [NSDate date];
-    conversation.conversationType = ZMConversationTypeGroup;
-    conversation.creator = selfUser;
-    conversation.team = team;
-    conversation.userDefinedName = name;
-    if (nil != team) {
-        conversation.allowGuests = allowGuests;
-        conversation.hasReadReceiptsEnabled = readReceipts;
-    }
-
-    NSMutableSet<ZMUser *> *participantsSet = [NSMutableSet setWithArray:participants];
-    [participantsSet addObject:selfUser];
-
-    NSArray<ZMUser *> *filteredParticipants = [participants filterWithBlock:^BOOL(ZMUser * participant) {
-        Require([participant isKindOfClass:[ZMUser class]]);
-        const BOOL isSelf = (participant == selfUser);
-        RequireString(!isSelf, "Can't pass self user as a participant of a group conversation");
-        return !isSelf;
-    }];
-
-    // Add the new conversation system message
-    [conversation appendNewConversationSystemMessageAtTimestamp:[NSDate date] users:participantsSet];
-
-    // Add the participants
-    [conversation internalAddParticipants:filteredParticipants];
-
-    // We need to check if we should add a 'secure' system message in case all participants are trusted
-    NSMutableSet *allClients = [NSMutableSet set];
-    for (ZMUser *user in conversation.activeParticipants) {
-        [allClients unionSet:user.clients];
-    }
-
-    [conversation increaseSecurityLevelIfNeededAfterTrustingClients:allClients];
-    
-    return conversation;
-}
-
-+ (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team
++ (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team moc:(NSManagedObjectContext *)moc
 {
     NSPredicate *teamPredicate = [NSPredicate predicateWithFormat:@"(%K == %@)", TeamKey, team];
     
-    return [NSCompoundPredicate andPredicateWithSubpredicates:@[[ZMConversation predicateForSearchQuery:searchQuery], teamPredicate]];
+    return [NSCompoundPredicate andPredicateWithSubpredicates:@[[ZMConversation predicateForSearchQuery:searchQuery selfUser: [ZMUser selfUserInContext:moc]], teamPredicate]];
 }
 
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
@@ -1081,71 +858,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @end
 
 
-
-
-@implementation ZMConversation (ParticipantsInternal)
-
-+ (NSSet<UserClient *>*)clientsOfUsers:(NSSet<ZMUser *> *)users
-{
-    NSMutableSet *result = [NSMutableSet set];
-    [users enumerateObjectsUsingBlock:^(ZMUser * _Nonnull user, BOOL * _Nonnull stop __unused) {
-        [result addObjectsFromArray:user.clients.allObjects];
-    }];
-    return result;
-}
-
-- (void)internalAddParticipants:(NSArray<ZMUser *> *)participants
-{
-    VerifyReturn(participants != nil);
-    NSSet<ZMUser *> *selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-    NSMutableOrderedSet<ZMUser *> *otherUsers = [NSMutableOrderedSet orderedSetWithArray:participants];
-
-    if ([otherUsers intersectsSet:selfUserSet]) {
-        [otherUsers minusSet:selfUserSet];
-
-        self.isSelfAnActiveMember = YES;
-        self.needsToBeUpdatedFromBackend = YES;
-        
-        if (self.mutedStatus == MutedMessageOptionValueNone) {
-            self.isArchived = NO;
-        }
-    }
-    
-    if (otherUsers.count > 0) {
-        NSSet *existingUsers = [self.lastServerSyncedActiveParticipants.set copy];
-        [self.mutableLastServerSyncedActiveParticipants unionOrderedSet:otherUsers];
-        
-        [otherUsers minusSet:existingUsers];
-        if (otherUsers.count > 0) {
-            NSSet<ZMUser *> *otherUsersSet = otherUsers.set;
-            [self decreaseSecurityLevelIfNeededAfterDiscoveringClients:[ZMConversation clientsOfUsers:otherUsersSet] causedByAddedUsers:otherUsersSet];
-        }
-    }
-}
-
-- (void)internalRemoveParticipants:(NSArray<ZMUser *> *)participants sender:(ZMUser *)sender
-{
-    VerifyReturn(participants != nil);
-    
-    NSSet<ZMUser *>* selfUserSet = [NSSet setWithObject:[ZMUser selfUserInContext:self.managedObjectContext]];
-    NSMutableOrderedSet<ZMUser *> *otherUsers = [NSMutableOrderedSet orderedSetWithArray:participants];
-
-    if ([otherUsers intersectsSet:selfUserSet]) {
-        [otherUsers minusSet:selfUserSet];
-        self.isSelfAnActiveMember = NO;
-        self.isArchived = sender.isSelfUser;
-    }
-    
-    [self.mutableLastServerSyncedActiveParticipants minusOrderedSet:otherUsers];
-    [self increaseSecurityLevelIfNeededAfterRemovingUsers:otherUsers.set];
-}
-
-@dynamic isSelfAnActiveMember;
-@dynamic lastServerSyncedActiveParticipants;
-
-@end
-
-
 @implementation ZMConversation (KeyValueValidation)
 
 - (BOOL)validateUserDefinedName:(NSString **)ioName error:(NSError **)outError
@@ -1207,7 +919,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
                 
                 if(conversation.shouldNotBeRefreshed) {
                     [conversationsToKeep addObject:conversation];
-                    [usersToKeep unionSet:conversation.lastServerSyncedActiveParticipants.set];
+                    [usersToKeep unionSet:conversation.participantRoles];
                 }
             } else if ([obj isKindOfClass:ZMOTRMessage.class]) {
                 ZMOTRMessage *message = (ZMOTRMessage *)obj;

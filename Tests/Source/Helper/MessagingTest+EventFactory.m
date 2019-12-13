@@ -71,7 +71,7 @@ NSString * const EventNewConnection = @"user.contact-join";
     NSMutableArray *joinedUsers = [NSMutableArray array];
     if (othersAreJoined) {
         if (conversation.conversationType == ZMConversationTypeGroup) {
-            [joinedUsers addObjectsFromArray:conversation.lastServerSyncedActiveParticipants.array];
+            [joinedUsers addObjectsFromArray:conversation.localParticipants.allObjects];
         } else {
             [joinedUsers addObject:conversation.connectedUser];
         }
@@ -82,7 +82,7 @@ NSString * const EventNewConnection = @"user.contact-join";
     NSMutableArray *usersSendingVideo = [NSMutableArray array];
     if (otherIsSendingVideo) {
         if (conversation.conversationType == ZMConversationTypeGroup) {
-            [usersSendingVideo addObjectsFromArray:conversation.lastServerSyncedActiveParticipants.array];
+            [usersSendingVideo addObjectsFromArray:conversation.localParticipants.allObjects];
         } else {
             [usersSendingVideo addObject:conversation.connectedUser];
         }

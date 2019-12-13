@@ -28,7 +28,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         syncMOC.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let user = self.createUser(onMoc: self.syncMOC)!
+            let user = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
 
             // when
@@ -52,7 +52,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         syncMOC.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let user = self.createUser(onMoc: self.syncMOC)!
+            let user = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
 
@@ -83,7 +83,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         syncMOC.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let user = self.createUser(onMoc: self.syncMOC)!
+            let user = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
 
@@ -118,7 +118,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         syncMOC.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let user = self.createUser(onMoc: self.syncMOC)!
+            let user = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
             let intermediate = conversation.append(text: "Answer the call, please!") as! ZMMessage
@@ -141,7 +141,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         syncMOC.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let firstUser = self.createUser(onMoc: self.syncMOC)!, secondUser = self.createUser(onMoc: self.syncMOC)!
+            let firstUser = self.createUser(onMoc: self.syncMOC), secondUser = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: firstUser, at: timestamp)
 
@@ -163,7 +163,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
     func testThatItInsertAPerformedCallSystemMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()!
+        let user = createUser()
 
         // when
         conversation.appendPerformedCallMessage(with: 42, caller: user)
@@ -182,7 +182,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
     func testThatItUpdatesAPerformedCallSystemMessageIfAnotherOneIsInsertedSubsequently() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()!
+        let user = createUser()
         let first = conversation.appendPerformedCallMessage(with: 42, caller: user)
 
         // when
@@ -209,7 +209,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
     func testThatItDoesNotUpdateAPerformedCallSystemMessageIfAnotherOneIsInsertedIntermediateMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let user = createUser()!
+        let user = createUser()
         let first = conversation.appendPerformedCallMessage(with: 42, caller: user)
         let intermediate = conversation.append(text: "Answer the call, please!") as! ZMMessage
 
@@ -227,7 +227,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
     func testThatItDoesNotUpdatePreviousPerformedCallMessageWhenCallerIsDifferent() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        let firstUser = createUser()!, secondUser = createUser()!
+        let firstUser = createUser(), secondUser = createUser()
         let first = conversation.appendPerformedCallMessage(with: 42, caller: firstUser)
 
         // when

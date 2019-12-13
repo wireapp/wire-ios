@@ -473,12 +473,11 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         }
     }
     
-    func testThatItNotifiesObserversWhenAUserInAConversationChangesTheirName()
-    {
+    func testThatItNotifiesObserversWhenAUserInAConversationChangesTheirName() {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         let user = ZMUser.insertNewObject(in:self.uiMOC)
-        conversation.mutableLastServerSyncedActiveParticipants.add(user)
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         conversation.conversationType = .group
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
@@ -594,6 +593,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
         conversation.lastReadServerTimeStamp = Date()
         conversation.conversationType = .group
+        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: self.uiMOC), role: nil)
         self.uiMOC.saveOrRollback()
         
         let conversationList = ZMConversation.conversationsExcludingArchived(in: self.uiMOC)
@@ -603,7 +603,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         let message = conversation.append(text: "hello")
         self.uiMOC.saveOrRollback()
         
-        guard let user = conversation.activeParticipants.first else { XCTFail(); return }
+        guard let user = conversation.participantRoles.first?.user else { XCTFail(); return }
         
         message?.textMessageData?.editText(user.displayName, mentions: [Mention(range: NSRange(location: 0, length: user.displayName.count), user: user)], fetchLinkPreview: false)
         self.uiMOC.saveOrRollback()
@@ -999,7 +999,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         conversation.conversationType = .group
         conversation.team = team
         let user = ZMUser.insertNewObject(in: uiMOC)
-        conversation.mutableLastServerSyncedActiveParticipants.add(user)
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         let conversationList = ZMConversation.conversationsExcludingArchived(in: uiMOC)
         XCTAssert(uiMOC.saveOrRollback())
 

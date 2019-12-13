@@ -26,6 +26,7 @@
 @class AddressBookEntry;
 @class Member;
 @class Team;
+@class ParticipantRole;
 
 extern NSString * _Nonnull const ZMPersistedClientIdKey;
 
@@ -41,6 +42,8 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 @property (nonatomic, readonly) NSSet<UserClient *> * _Nonnull clientsRequiringUserAttention;
 
 @property (nonatomic, readonly, nullable) NSString *connectionRequestMessage;
+
+@property (nonatomic, nonnull) NSSet<ParticipantRole *> *  participantRoles;
 
 /// The full name
 @property (nonatomic, readonly, nullable) NSString *name;

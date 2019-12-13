@@ -70,7 +70,7 @@ public extension ZMUser {
     // Phone number
     
     static func validate(phoneNumber: inout String?) throws -> Bool {
-        guard var mutableNumber = phoneNumber as? Any?,
+        guard var mutableNumber: Any? = phoneNumber,
             phoneNumber?.count ?? 0 >= 1 else {
                 return false
         }

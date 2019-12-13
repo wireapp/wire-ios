@@ -47,7 +47,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.remoteIdentifier = UUID.create()
-            conversation.internalAddParticipants([otherUser])
+            conversation.addParticipantAndUpdateConversationState(user: otherUser, role: nil)
             XCTAssertTrue(self.syncMOC.saveOrRollback())
             
             // when
@@ -310,7 +310,7 @@ extension ClientMessageTests_OTR {
             connection.to = self.syncUser1
             connection.status = .accepted
             conversation.connection = connection
-            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
             
             self.syncMOC.saveOrRollback()
                         
@@ -359,7 +359,8 @@ extension ClientMessageTests_OTR {
             connection.to = self.syncUser1
             connection.status = .accepted
             conversation.connection = connection
-            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
+
             
             self.syncMOC.saveOrRollback()
                                     
@@ -408,7 +409,7 @@ extension ClientMessageTests_OTR {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.conversationType = .oneOnOne
             conversation.remoteIdentifier = UUID.create()
-            conversation.mutableLastServerSyncedActiveParticipants.add(self.syncUser1)
+            conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
             
             let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)

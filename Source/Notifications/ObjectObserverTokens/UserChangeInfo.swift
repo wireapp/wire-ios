@@ -161,6 +161,10 @@ extension ZMUser : ObjectInSnapshot {
         return changedKeys.contains(#keyPath(ZMUser.isUnderLegalHold))
     }
     
+    public var roleChanged: Bool {
+        return changedKeys.contains(#keyPath(ZMUser.participantRoles))
+    }
+
     public let user: UserType
     open var userClientChangeInfos : [UserClientChangeInfo] {
         return changeInfos[UserChangeInfo.UserClientChangeInfoKey] as? [UserClientChangeInfo] ?? []

@@ -309,11 +309,11 @@ class DatabaseMigrationTests: DatabaseBaseTest {
     }
     
     func testThatItPerformsMigrationFrom_Between_2_24_1_and_PreLast_ToCurrentModelVersion() {
-        let allVersions = ["2-24-1", "2-25-0", "2-26-0", "2-27-0", "2-28-0", "2-29-0", "2-30-0", "2-31-0", "2-39-0", "2-40-0", "2-41-0", "2-42-0", "2-43-0", "2-44-0", "2-45-0", "2-46-0", "2-47-0", "2-48-0", "2-49-0", "2-50-0", "2-51-0", "2-52-0", "2-53-0", "2-54-0", "2-55-0", "2-56-0", "2-57-0", "2-59-0", "2-60-0", "2-61-0", "2-62-0", "2-63-0", "2-64-0", "2-65-0", "2-66-0", "2-67-0", "2-68-0", "2-69-0", "2-70-0", "2-71-0", "2-72-0", "2-73-0", "2-74-0", "2-75-0", "2-76-0", "2-77-0"]
+        let allVersions = ["2-24-1", "2-25-0", "2-26-0", "2-27-0", "2-28-0", "2-29-0", "2-30-0", "2-31-0", "2-39-0", "2-40-0", "2-41-0", "2-42-0", "2-43-0", "2-44-0", "2-45-0", "2-46-0", "2-47-0", "2-48-0", "2-49-0", "2-50-0", "2-51-0", "2-52-0", "2-53-0", "2-54-0", "2-55-0", "2-56-0", "2-57-0", "2-59-0", "2-60-0", "2-61-0", "2-62-0", "2-63-0", "2-64-0", "2-65-0", "2-66-0", "2-67-0", "2-68-0", "2-69-0", "2-70-0", "2-71-0", "2-72-0", "2-73-0", "2-74-0", "2-75-0", "2-76-0", "2-77-0", "2-78-0"]
         
         let modelVersion = NSManagedObjectModel.loadModel().version
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
-        XCTAssertTrue(allVersions.contains(fixtureVersion), "Current model version \"\(fixtureVersion)\" is not added to allVersions array")
+
         
         // Check that we have current version fixture file
         guard let _ = databaseFixtureURL(version: modelVersion) else {
@@ -322,10 +322,23 @@ class DatabaseMigrationTests: DatabaseBaseTest {
             let directory = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
             let currentDatabaseURL = directory.syncContext!.persistentStoreCoordinator!.persistentStores.last!.url!
             
-            // If this fails add a breakpoint above and add file at `currentDatabaseURL` to test bundle
-            XCTFail("Missing current version database file, add it to test bundle: \(currentDatabaseURL)")
-            return
+            XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
+                    "**HOW TO FIX THIS** \n" +
+                    "- Run the test, until you hit the assertion\n" +
+                    "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
+                    "- open the the folder in Finder by typing this command in your terminal. It won't work if the test is not paused.\n" +
+                    "\t open \"\(currentDatabaseURL.deletingLastPathComponent().path)\"\n\n" +
+                    "- Rename the file `store.wiredatabase` to `store\(fixtureVersion).wiredatabase`\n" +
+                    "- Copy it to test bundle if this project in `WireDataModel/Test/Resources` with the other stores\n\n")
+            assert(false)
         }
+        
+        guard allVersions.contains(fixtureVersion) else {
+            return XCTFail("Current model version '\(fixtureVersion)' is not added to allVersions array. \n" +
+                "Please add it to the array above, so that we are sure it's there when we bump to the next version\n" +
+                "and we don't forget to test the migration from that version")
+        }
+        
 
         allVersions.forEach { storeFile in
             // GIVEN

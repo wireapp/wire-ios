@@ -17,26 +17,18 @@
 //
 
 import Foundation
+@testable import WireDataModel
 
-final class ClientMessageTests_Cleared: DatabaseBaseTest {
+final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
     
     
     func testThatItCreatesPayloadForZMClearedMessages() {
-        let contextDirectory: ManagedObjectContextDirectory = self.createStorageStackAndWaitForCompletion()
         
-        contextDirectory.syncContext.performGroupedBlockAndWait {
-            let _ = self.createSelfUser(in: contextDirectory.syncContext)
-            
-            let syncSelfClient1 = self.createSelfClient(on: contextDirectory.syncContext)
-            contextDirectory.syncContext.setPersistentStoreMetadata(syncSelfClient1.remoteIdentifier!, key: "PersistedClientId")
-            
-            let syncConversation = ZMConversation.insertGroupConversation(into: contextDirectory.syncContext, withParticipants: [])!
-            syncConversation.remoteIdentifier = UUID.create()
-            
+        self.syncMOC.performGroupedBlockAndWait {
             // given
-            syncConversation.clearedTimeStamp = Date()
-            syncConversation.remoteIdentifier = UUID()
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: syncConversation) else { return XCTFail() }
+            self.syncConversation.clearedTimeStamp = Date()
+            self.syncConversation.remoteIdentifier = UUID()
+            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
             
             // when
             guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
@@ -52,58 +44,43 @@ final class ClientMessageTests_Cleared: DatabaseBaseTest {
     }
     
     func testThatLastClearedUpdatesInSelfConversationDontExpire() {
-        let contextDirectory: ManagedObjectContextDirectory = self.createStorageStackAndWaitForCompletion()
-        
-        contextDirectory.syncContext.performGroupedBlockAndWait {
-            let _ = self.createSelfUser(in: contextDirectory.syncContext)
-            
-            let syncSelfClient1 = self.createSelfClient(on: contextDirectory.syncContext)
-            contextDirectory.syncContext.setPersistentStoreMetadata(syncSelfClient1.remoteIdentifier!, key: "PersistedClientId")
-            
+
+        self.syncMOC.performGroupedBlockAndWait {
             // given
-            let conversation = ZMConversation.insertNewObject(in: contextDirectory.syncContext)
-            conversation.remoteIdentifier = UUID()
-            conversation.clearedTimeStamp = Date()
-            
+            self.syncConversation.remoteIdentifier = UUID()
+            self.syncConversation.clearedTimeStamp = Date()
+
             // when
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: conversation) else {
+            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else {
                 XCTFail()
                 return
             }
-            
+
             // then
             XCTAssertNil(message.expirationDate)
         }
     }
-    
+
     func testThatClearingMessageHistoryDeletesAllMessages() {
-        let contextDirectory: ManagedObjectContextDirectory = self.createStorageStackAndWaitForCompletion()
-        
-        contextDirectory.syncContext.performGroupedBlockAndWait {
-            
-            let _ = self.createSelfUser(in: contextDirectory.syncContext)
-            
-            let syncSelfClient1 = self.createSelfClient(on: contextDirectory.syncContext)
-            contextDirectory.syncContext.setPersistentStoreMetadata(syncSelfClient1.remoteIdentifier!, key: "PersistedClientId")
-            
-            let syncConversation = ZMConversation.insertGroupConversation(into: contextDirectory.syncContext, withParticipants: [])!
-            syncConversation.remoteIdentifier = UUID.create()
-            
-            let message1 = syncConversation.append(text: "B") as! ZMMessage
+
+        self.syncMOC.performGroupedBlockAndWait {
+
+            self.syncConversation.remoteIdentifier = UUID()
+            let message1 = self.syncConversation.append(text: "B") as! ZMMessage
             message1.expire()
-            
-            syncConversation.append(text: "A")
-            
-            let message3 = syncConversation.append(text: "B") as! ZMMessage
+
+            self.syncConversation.append(text: "A")
+
+            let message3 = self.syncConversation.append(text: "B") as! ZMMessage
             message3.expire()
-    
-            syncConversation.lastServerTimeStamp = message3.serverTimestamp
-    
+
+            self.syncConversation.lastServerTimeStamp = message3.serverTimestamp
+
             // when
-            syncConversation.clearedTimeStamp = syncConversation.lastServerTimeStamp
-            contextDirectory.syncContext.processPendingChanges()
+            self.syncConversation.clearedTimeStamp = self.syncConversation.lastServerTimeStamp
+            self.syncMOC.processPendingChanges()
             // then
-            for message in syncConversation.allMessages {
+            for message in self.syncConversation.allMessages {
                 XCTAssertTrue(message.isDeleted)
             }
         }

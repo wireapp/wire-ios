@@ -40,6 +40,7 @@ extension Notification.Name {
     static let VoiceChannelParticipantStateChange = Notification.Name("ZMVoiceChannelParticipantStateChangeNotification")
     static let TeamChange = Notification.Name("TeamChangeNotification")
     static let LabelChange = Notification.Name("LabelChangeNotification")
+    static let ParticipantRoleChange = Notification.Name("ParticipantRoleChange")
 
     public static let NonCoreDataChangeInManagedObject = Notification.Name("NonCoreDataChangeInManagedObject")
     
@@ -91,6 +92,11 @@ struct Changes : Mergeable {
             return self
         }
         return Changes(changedKeys: changedKeys.union(other.changedKeys), originalChanges: originalChanges.updated(other: other.originalChanges))
+    }
+    
+    var hasChangeInfo: Bool {
+        return !changedKeys.isEmpty ||
+               !originalChanges.isEmpty
     }
 }
 
@@ -188,7 +194,8 @@ extension ZMManagedObject {
                                            ZMGenericMessageData.classIdentifier,
                                            Team.classIdentifier,
                                            Member.classIdentifier,
-                                           Label.classIdentifier]
+                                           Label.classIdentifier,
+                                           ParticipantRole.classIdentifier]
         self.affectingKeysStore = DependencyKeyStore(classIdentifiers : classIdentifiers)
         self.snapshotCenter = SnapshotCenter(managedObjectContext: managedObjectContext)
         super.init()
