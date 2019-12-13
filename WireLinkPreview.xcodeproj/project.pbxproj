@@ -472,7 +472,7 @@
 			attributes = {
 				DefaultBuildSystemTypeForWorkspace = Latest;
 				LastSwiftUpdateCheck = 1000;
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1020;
 				TargetAttributes = {
 					5E2BEC50214BA4A600E65B53 = {
 						CreatedOnToolsVersion = 10.0;
@@ -795,6 +795,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
@@ -807,6 +808,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = BF3DD2801D25445600D51DED /* WireLinkPreview.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				HEADER_SEARCH_PATHS = "${SDKROOT}/usr/include/libxml2";
 				INFOPLIST_FILE = "$(SRCROOT)/WireLinkPreview/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireLinkPreview;
