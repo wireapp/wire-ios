@@ -206,12 +206,12 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = .group
         conversation.isArchived = true
+        conversation.remoteIdentifier = UUID.create()
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         selfUser.remoteIdentifier =  UUID.create()
         
         // when
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
         XCTAssertFalse(conversation.isArchived)
@@ -285,6 +285,36 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         
         // then
         XCTAssertFalse(conversation.localParticipantsExcludingSelf.contains(selfUser))
+    }
+    
+    func testThatAddingSelfToExistingConversationMarksItAsNeedingToUpdate() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID.create() // this makes it "exists"
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        
+        // when
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertTrue(conversation.needsToBeUpdatedFromBackend)
+    }
+    
+    func testThatAddingSelfToNonExistingConversationDoesNotNeedUpdate() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = nil // this makes it as local only
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        
+        // when
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        self.uiMOC.saveOrRollback()
+        
+        // then
+        XCTAssertFalse(conversation.needsToBeUpdatedFromBackend)
     }
 
     //MARK: - Sorting

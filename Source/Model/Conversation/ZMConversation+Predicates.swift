@@ -28,12 +28,14 @@ extension ZMConversation {
 
     @objc
     public class func predicate(forSearchQuery searchQuery: String, selfUser: ZMUser) -> NSPredicate! {
-        var predicateWithSubpredicates: [NSPredicate] = []
-        normalize(searchQuery).forEach { (strSearchQuery) in
-            predicateWithSubpredicates.append(NSPredicate(format: "(ANY %K.user != %@ AND ANY %K.user.normalizedName MATCHES %@) OR %K MATCHES %@", ZMConversationParticipantRolesKey, selfUser, ZMConversationParticipantRolesKey, strSearchQuery,  ZMNormalizedUserDefinedNameKey, strSearchQuery))
+        
+        let convoNamePredicate = NSPredicate(formatDictionary: [ZMNormalizedUserDefinedNameKey: "%K MATCHES %@"], matchingSearch: searchQuery)!
+        let usersPredicates = normalize(searchQuery).map { (strSearchQuery) in
+            NSPredicate(format: "ANY %K.user != %@ AND ANY %K.user.normalizedName MATCHES %@", ZMConversationParticipantRolesKey, selfUser, ZMConversationParticipantRolesKey, strSearchQuery)
         }
-
-        let searchPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: predicateWithSubpredicates)
+        let usersPredicate = NSCompoundPredicate(orPredicateWithSubpredicates: usersPredicates)
+        let searchPredicate = NSCompoundPredicate(
+            orPredicateWithSubpredicates: [usersPredicate, convoNamePredicate])
         let activeMemberPredicate = NSPredicate(format: "%K == NULL OR (ANY %K.user == %@)", ZMConversationClearedTimeStampKey, ZMConversationParticipantRolesKey, selfUser)
         let basePredicate = NSPredicate(format: "(\(ZMConversationConversationTypeKey) == \(ZMConversationType.group.rawValue))")
 

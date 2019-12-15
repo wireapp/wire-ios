@@ -125,10 +125,10 @@ extension ZMConversation {
         }
         
         if let members = transportData[PayloadKeys.membersKey] as? [String: Any] {
-            if let selfStatus = members[PayloadKeys.selfKey] as? [String: Any?] {
+            self.updateMembers(payload: members)
+            if let selfStatus = members[PayloadKeys.selfKey] as? [String: Any] {
                 self.updateSelfStatus(dictionary: selfStatus, timeStamp: nil, previousLastServerTimeStamp: nil)
             }
-            self.updateMembers(payload: members)
             self.updatePotentialGapSystemMessagesIfNeeded(users: self.localParticipants)
         } else {
             zmLog.error("Invalid members in conversation JSON: \(transportData)")
@@ -199,7 +199,7 @@ extension ZMConversation {
     }
     
     /// Pass timestamp when the timestamp equals the time of the lastRead / cleared event, otherwise pass nil
-    public func updateSelfStatus(dictionary: [String: Any?], timeStamp: Date?, previousLastServerTimeStamp: Date?) {
+    public func updateSelfStatus(dictionary: [String: Any], timeStamp: Date?, previousLastServerTimeStamp: Date?) {
         self.updateMuted(with: dictionary)
         if  self.updateIsArchived(payload: dictionary) && self.isArchived,
             let previousLastServerTimeStamp = previousLastServerTimeStamp,
@@ -211,7 +211,7 @@ extension ZMConversation {
         }
     }
     
-    private func updateIsArchived(payload: [String: Any?]) -> Bool {
+    private func updateIsArchived(payload: [String: Any]) -> Bool {
         if let silencedRef = payload.date(fromKey: PayloadKeys.OTRArchivedReferenceKey),
             self.updateArchived(silencedRef, synchronize: false) {
             self.internalIsArchived = (payload[PayloadKeys.OTRArchivedValueKey] as? Int) == 1
