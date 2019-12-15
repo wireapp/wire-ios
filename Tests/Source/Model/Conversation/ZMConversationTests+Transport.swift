@@ -47,6 +47,37 @@ extension ZMConversationTransportTests {
         }
     }
     
+    func testThatItDoesNotUpdateArchivedChangedWhenParsingSelfUser() {
+        // Test that, if the conversation is new (self user is not there yet)
+        // and we parse the payload, this won't alter the `archivedChangedTimestamp`
+        // like it would normally do when adding the self user to a conversation
+        // that the self user did not belong to
+        syncMOC.performGroupedAndWait() {_ in
+            // given
+            ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let uuid = UUID.create()
+            conversation.remoteIdentifier = uuid
+            conversation.archivedChangedTimestamp = nil
+            
+            let payload = self.payloadForMetaData(
+                of: conversation,
+                conversationType: .group,
+                isArchived: false,
+                archivedRef: nil,
+                isSilenced: false,
+                silencedRef: nil,
+                silencedStatus: nil)
+            
+            // when
+            conversation.update(transportData: payload as! [String: Any], serverTimeStamp: Date())
+            
+            // then
+            XCTAssertFalse(conversation.isArchived)
+            XCTAssertNil(conversation.archivedChangedTimestamp)
+        }
+    }
+    
     func testThatItParserRolesFromConversationMetadataNotInTeam() {
         
         syncMOC.performGroupedAndWait() { _ -> () in

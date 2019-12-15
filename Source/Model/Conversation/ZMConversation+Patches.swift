@@ -50,7 +50,7 @@ extension ZMConversation {
     static func migrateIsSelfAnActiveMemberToTheParticipantRoles(in moc: NSManagedObjectContext) {
         let selfUser = ZMUser.selfUser(in: moc)
         
-        let request = ZMConversation.fetchRequest()
+        let request = ZMConversation.sortedFetchRequest()
         let allConversations = moc.executeFetchRequestOrAssert(request) as! [ZMConversation]
         
         for conversation in allConversations {

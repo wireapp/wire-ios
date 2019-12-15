@@ -119,7 +119,7 @@ extension ZMConversation {
         return false
     }
     
-    func updateMuted(with payload: [String: Any?]) {
+    func updateMuted(with payload: [String: Any]) {
         guard let referenceDateAsString = payload[PayloadKeys.OTRMutedReferenceKey] as? String,
               let referenceDate = NSDate(transport: referenceDateAsString),
               updateMuted(referenceDate as Date, synchronize: false) else {

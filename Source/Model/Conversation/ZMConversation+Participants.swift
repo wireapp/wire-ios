@@ -135,6 +135,9 @@ extension ZMConversation {
     /// status, etc.
     public func addParticipantsAndUpdateConversationState(usersAndRoles: [(ZMUser, Role?)]) {
         
+        // Is this a new conversation, or an existing one that is being updated?
+        let doesExistsOnBackend = self.remoteIdentifier != nil
+        
         let addedRoles = usersAndRoles.compactMap { (user, role) -> ParticipantRole? in
             
             // make sure the role is the right team/conversation role
@@ -147,7 +150,7 @@ extension ZMConversation {
             return (result == .created) ? pr : nil
         }
         
-        let addedSelfUser = addedRoles.contains(where: {$0.user.isSelfUser})
+        let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user.isSelfUser})
         if addedSelfUser {
             self.needsToBeUpdatedFromBackend = true
         }
@@ -195,7 +198,10 @@ extension ZMConversation {
     }
     
     private func checkIfArchivedStatusChanged(addedSelfUser: Bool) {
-        if addedSelfUser && self.mutedStatus == MutedMessageOptionValue.none.rawValue {
+        if addedSelfUser &&
+            self.mutedStatus == MutedMessageOptionValue.none.rawValue &&
+            self.isArchived
+        {
             self.isArchived = false
         }
     }
