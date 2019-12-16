@@ -163,50 +163,6 @@ extension ZMUser {
     /// If `needsToRefetchLabels` is true we need to refetch the conversation labels (favorites & folders)
     @NSManaged public var needsToRefetchLabels: Bool
     
-    
-    /// Conversation in which the user is active, according to the server
-    public var lastServerSyncedActiveConversations: Set<ZMConversation> {
-        get {
-            ///TODO: review
-            return Set(participantRoles.compactMap {
-                if !$0.markedForDeletion {
-                    return $0.conversation
-                } else {
-                    return nil
-                }
-            })
-        }
-        
-        set {
-            participantRoles = Set()
-            union(conversationSet: newValue)
-        }
-    }
-    
-    @objc
-    func add(conversation: ZMConversation) {
-        guard let moc = self.managedObjectContext else { return }
-        
-        ParticipantRole.create(managedObjectContext: moc, user: self, conversation: conversation)
-    }
-    
-    /// union a ZMConversation set to participantRoles
-    ///
-    /// - Parameter conversationSet: conversations to union
-    @objc
-    func union(conversationSet: Set<ZMConversation>) {
-        let currentConversationSet = lastServerSyncedActiveConversations
-        
-        conversationSet.forEach() { conversation in
-            if !currentConversationSet.contains(conversation) {
-                add(conversation: conversation)
-            } else if currentConversationSet.contains(conversation) {
-                ///if mark for delete, set markedForDeletion to false
-                participantRoles.first(where: {$0.markedForDeletion})?.operationToSync = .none
-            }
-        }
-    }
-    
     @objc(setImageData:size:)
     public func setImage(data: Data?, size: ProfileImageSize) {
         guard let imageData = data else {
@@ -305,9 +261,10 @@ extension ZMUser {
     
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
-        let allGroupConversations: [ZMConversation] = lastServerSyncedActiveConversations.compactMap {
-            guard $0.conversationType == .group else { return nil}
-            return $0
+        let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
+            let convo = $0.conversation
+            guard convo.conversationType == .group else { return nil}
+            return convo
         }
         
         allGroupConversations.forEach { conversation in

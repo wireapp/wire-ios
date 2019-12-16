@@ -135,7 +135,7 @@ extension DuplicatedEntityRemovalTests {
         let reaction = Reaction.insertNewObject(in: self.moc)
         let systemMessage = ZMSystemMessage(nonce: UUID(), managedObjectContext: moc)
 
-        let lastServerSyncedActiveConversations = Set<ZMConversation>([conversation])
+        let conversations = Set<ZMConversation>([conversation])
         let conversationsCreated = Set<ZMConversation>([conversation])
         let createdTeams = Set<Team>([team])
         let reactions = Set<Reaction>([reaction])
@@ -143,7 +143,9 @@ extension DuplicatedEntityRemovalTests {
         let showingUserRemoved = Set<ZMMessage>([systemMessage])
         let systemMessages = Set<ZMSystemMessage>([systemMessage])
 
-        user2.lastServerSyncedActiveConversations = lastServerSyncedActiveConversations ///TODO: not use lastServerSyncedActiveConversations setter
+        conversations.forEach {
+            $0.addParticipantAndUpdateConversationState(user: user2, role: nil)
+        }
         user2.conversationsCreated = conversationsCreated
         user2.createdTeams = createdTeams
         user2.membership = membership
@@ -160,7 +162,7 @@ extension DuplicatedEntityRemovalTests {
         moc.saveOrRollback()
 
         // THEN
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations, lastServerSyncedActiveConversations)
+        XCTAssertEqual(Set(user1.participantRoles.map { $0.conversation }), conversations)
         XCTAssertEqual(user1.conversationsCreated, conversationsCreated)
         XCTAssertEqual(user1.createdTeams, createdTeams)
         XCTAssertEqual(user1.membership, membership)
@@ -323,15 +325,15 @@ extension DuplicatedEntityRemovalTests {
         self.moc.saveOrRollback()
         
         // sanity check
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.lastServerSyncedActiveConversations, Set([conversation1, conversation3]))
+        XCTAssertEqual(Set(user1.participantRoles.map { $0.conversation }), Set([conversation1, conversation2]))
+        XCTAssertEqual(Set(user2.participantRoles.map { $0.conversation }), Set([conversation1, conversation3]))
         
         // WHEN
         user1.merge(with: user2)
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2, conversation3]))
+        XCTAssertEqual(Set(user1.participantRoles.map { $0.conversation }), Set([conversation1, conversation2, conversation3]))
     }
     
     func testThatItMergesUsers_ActiveConversations() {
@@ -349,15 +351,15 @@ extension DuplicatedEntityRemovalTests {
         self.moc.saveOrRollback()
         
         // sanity check
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2]))
-        XCTAssertEqual(user2.lastServerSyncedActiveConversations, Set([conversation1, conversation3]))
+        XCTAssertEqual(Set(user1.participantRoles.map { $0.conversation }), Set([conversation1, conversation2]))
+        XCTAssertEqual(Set(user2.participantRoles.map { $0.conversation }), Set([conversation1, conversation3]))
         
         // WHEN
         user1.merge(with: user2)
         self.moc.saveOrRollback()
         
         // THEN
-        XCTAssertEqual(user1.lastServerSyncedActiveConversations, Set([conversation1, conversation2, conversation3]))
+        XCTAssertEqual(Set(user1.participantRoles.map { $0.conversation }), Set([conversation1, conversation2, conversation3]))
     }
     
     func testThatItMergesUsers_ConversationCreated() {
