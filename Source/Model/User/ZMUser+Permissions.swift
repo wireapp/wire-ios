@@ -18,6 +18,32 @@
 
 import Foundation
 
+enum ConversationAction {
+    case addConversationMember
+    case removeConversationMember
+    case modifyConversationName
+    case modifyConversationMessageTimer
+    case modifyConversationReceiptMode
+    case modifyConversationAccess
+    case modifyOtherConversationMember
+    case leaveConversation
+    case deleteConvesation
+    
+    var name: String {
+        switch self {
+        case .addConversationMember: return "add_conversation_member"
+        case .removeConversationMember: return "remove_conversation_member"
+        case .modifyConversationName: return "modify_conversation_name"
+        case .modifyConversationMessageTimer: return "modify_conversation_message_timer"
+        case .modifyConversationReceiptMode: return "modify_conversation_receipt_mode"
+        case .modifyConversationAccess: return "modify_conversation_access"
+        case .modifyOtherConversationMember: return "modify_other_conversation_member"
+        case .leaveConversation: return "leave_conversation"
+        case .deleteConvesation: return "delete_convesation"
+        }
+    }
+}
+
 public extension ZMUser {
     
     var teamRole: TeamRole {
@@ -41,18 +67,36 @@ public extension ZMUser {
     
     @objc(canAddUserToConversation:)
     func canAddUser(to conversation: ZMConversation) -> Bool {
-        guard conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
-        return permissions?.contains(.addRemoveConversationMember) ?? true
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.addConversationMember.name, conversation: conversation)
+        } else {
+            guard conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
+            return permissions?.contains(.addRemoveConversationMember) ?? true
+        }
     }
     
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool {
-        return canAddUser(to: conversation)
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.removeConversationMember.name, conversation: conversation)
+        } else {
+            return canAddUser(to: conversation)
+        }
     }
     
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
-        return conversation.teamRemoteIdentifier != nil && conversation.isSelfAnActiveMember && conversation.creator == self
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.deleteConvesation.name, conversation: conversation)
+        } else {
+            return conversation.teamRemoteIdentifier != nil && conversation.isSelfAnActiveMember && conversation.creator == self
+        }
+    }
+    
+    @objc(canModifyOtherMemberInConversation:)
+    func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
+        guard conversation.conversationType == .group else { return false }
+        return hasRoleWithAction(actionName: ConversationAction.modifyOtherConversationMember.name, conversation: conversation)
     }
     
     @objc(canModifyReadReceiptSettingsInConversation:)
@@ -63,8 +107,18 @@ public extension ZMUser {
     
     @objc(canModifyEphemeralSettingsInConversation:)
     func canModifyEphemeralSettings(in conversation: ZMConversation) -> Bool {
-        guard  conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
-        return permissions?.contains(.modifyConversationMetaData) ?? true
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.modifyConversationMessageTimer.name, conversation: conversation)
+        } else {
+            guard  conversation.teamRemoteIdentifier == nil || !isGuest(in: conversation), conversation.isSelfAnActiveMember else { return false }
+            return permissions?.contains(.modifyConversationMetaData) ?? true
+        }
+    }
+    
+    @objc(canModifyReceiptModeInConversation:)
+    func canModifyReceiptMode(in conversation: ZMConversation) -> Bool {
+        guard conversation.conversationType == .group else { return true }
+        return hasRoleWithAction(actionName: ConversationAction.modifyConversationReceiptMode.name, conversation: conversation)
     }
     
     @objc(canModifyNotificationSettingsInConversation:)
@@ -76,29 +130,43 @@ public extension ZMUser {
     @objc(canModifyAccessControlSettingsInConversation:)
     func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool {
         
-        // Check conversation
-        guard conversation.conversationType == .group,
-            let moc = self.managedObjectContext,
-            team?.remoteIdentifier != nil
-            else { return false }
-        
-        // Check user
-        let selfUser = ZMUser.selfUser(in: moc)
-        guard selfUser.isTeamMember,
-            !selfUser.isGuest(in: conversation),
-            selfUser.team == self.team,
-            isTeamMember,
-            conversation.isSelfAnActiveMember else {
-                return false
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.modifyConversationAccess.name, conversation: conversation)
+        } else {
+            // Check conversation
+            guard conversation.conversationType == .group,
+                let moc = self.managedObjectContext,
+                team?.remoteIdentifier != nil
+                else { return false }
+            
+            // Check user
+            let selfUser = ZMUser.selfUser(in: moc)
+            guard selfUser.isTeamMember,
+                !selfUser.isGuest(in: conversation),
+                selfUser.team == self.team,
+                isTeamMember,
+                conversation.isSelfAnActiveMember else {
+                    return false
+            }
+            
+            return permissions?.contains(.modifyConversationMetaData) ?? false
         }
-        
-        return permissions?.contains(.modifyConversationMetaData) ?? false
     }
     
     @objc(canModifyTitleInConversation:)
     func canModifyTitle(in conversation: ZMConversation) -> Bool {
-        guard conversation.isSelfAnActiveMember else { return false }
-        return permissions?.contains(.modifyConversationMetaData) ?? true
+        if conversation.conversationType == .group {
+            return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
+        } else {
+            guard conversation.isSelfAnActiveMember else { return false }
+            return permissions?.contains(.modifyConversationMetaData) ?? true
+        }
+    }
+    
+    @objc(canLeave:)
+    func canLeave(_ conversation: ZMConversation) -> Bool {
+        guard conversation.conversationType == .group else { return true }
+        return hasRoleWithAction(actionName: ConversationAction.leaveConversation.name, conversation: conversation)
     }
     
     @objc var canCreateConversation: Bool {
@@ -147,4 +215,8 @@ public extension ZMUser {
         }
     }
     
+    private func hasRoleWithAction(actionName: String, conversation: ZMConversation) -> Bool {
+        let canModifyConversation = self.participantRoles.filter({$0.conversation == conversation}).first?.role?.actions.contains(where: {$0.name == actionName})
+        return canModifyConversation ?? false
+    }
 }
