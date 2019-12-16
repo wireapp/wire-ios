@@ -326,9 +326,9 @@ class DatabaseMigrationTests: DatabaseBaseTest {
                     "**HOW TO FIX THIS** \n" +
                     "- Run the test, until you hit the assertion\n" +
                     "- **WHILE THE TEST IS PAUSED** on the assertion, do the following:\n" +
-                    "- open the the folder in Finder by typing this command in your terminal. It won't work if the test is not paused.\n" +
-                    "\t open \"\(currentDatabaseURL.deletingLastPathComponent().path)\"\n\n" +
-                    "- Rename the file `store.wiredatabase` to `store\(fixtureVersion).wiredatabase`\n" +
+                    "- open the the folder in Finder by typing this command in your terminal. IT WILL NOT WORK IF THE TEST IS NOT PAUSED!!!.\n" +
+                    "\t cp \"\(currentDatabaseURL.path)\" ~/Desktop/store\(fixtureVersion).wiredatabase\n\n" +
+                    "- The command will copy a file on your desktop called `store\(fixtureVersion).wiredatabase`\n" +
                     "- Copy it to test bundle if this project in `WireDataModel/Test/Resources` with the other stores\n\n")
             assert(false)
         }

@@ -21,6 +21,9 @@ import WireProtos
 
 extension ZMConversation {
     
+    /// Whether the roles defined for this conversation should be re-downloaded
+    @NSManaged public var needsToDownloadRoles: Bool
+    
     @objc
     public var isSelfAnActiveMember: Bool {
         return self.participantRoles.contains(where: { (role) -> Bool in
