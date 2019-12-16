@@ -67,4 +67,8 @@ final public class Action: ZMManagedObject {
         }
     }
 
+    public override static func isTrackingLocalModifications() -> Bool {
+        return false
+    }
+
 }
