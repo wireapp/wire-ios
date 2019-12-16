@@ -40,9 +40,10 @@ extension ZMConversation {
     }
     
     // Migration rules for the Model version 2.78.0
-    static func addUsersToTheParticipantRoles(in moc: NSManagedObjectContext) {
+    static func introduceParticipantRoles(in moc: NSManagedObjectContext) {
         migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
         addUserFromTheConnectionToTheParticipantRoles(in: moc)
+        forceToFetchConversationRoles(in: moc)
     }
     
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity.
@@ -87,5 +88,28 @@ extension ZMConversation {
         for connection in allConnections {
             connection.conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
         }
+    }
+    
+    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity,
+    // and `Role` to `Team` and `ZMConversation`. All group conversation memberships need to be refetched
+    // in order to get which roles the users have. Additionally, we need to download the roles
+    // definitions for teams and conversations.
+    static func forceToFetchConversationRoles(in moc: NSManagedObjectContext) {
+        
+        // Mark group conversation membership to be refetched
+        let groupConversationsFetch = ZMConversation.sortedFetchRequest(
+            with: NSPredicate(format: "%K == %d",
+                              ZMConversationConversationTypeKey,
+                              ZMConversationType.group.rawValue
+            )
+        )
+        (moc.executeFetchRequestOrAssert(groupConversationsFetch) as! [ZMConversation]).forEach {
+            guard $0.isSelfAnActiveMember else { return }
+            $0.needsToBeUpdatedFromBackend = true
+            $0.needsToDownloadRoles = true
+        }
+        
+        // Mark team as need to download roles
+        ZMUser.selfUser(in: moc).team?.needsToDownloadRoles = true
     }
 }

@@ -44,6 +44,8 @@ public class Team: ZMManagedObject, TeamType {
     @NSManaged public var creator: ZMUser?
 
     @NSManaged public var needsToRedownloadMembers: Bool
+    @NSManaged public var needsToDownloadRoles: Bool
+
     @NSManaged private var remoteIdentifier_data: Data?
 
     public var remoteIdentifier: UUID? {

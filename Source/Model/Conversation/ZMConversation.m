@@ -66,6 +66,7 @@ NSString *const ZMConversationClearedTimeStampKey = @"clearedTimeStamp";
 NSString *const ZMConversationArchivedChangedTimeStampKey = @"archivedChangedTimestamp";
 NSString *const ZMConversationSilencedChangedTimeStampKey = @"silencedChangedTimestamp";
 NSString *const ZMConversationExternalParticipantsStateKey = @"externalParticipantsState";
+NSString *const ZMConversationNeedsToDownloadRolesKey = @"needsToDownloadRoles";
 NSString *const ZMConversationLegalHoldStatusKey = @"legalHoldStatus";
 NSString *const ZMConversationNeedsToVerifyLegalHoldKey = @"needsToVerifyLegalHold";
 NSString *const ZMNotificationConversationKey = @"ZMNotificationConversationKey";
@@ -348,6 +349,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationLegalHoldStatusKey,
             ZMConversationNeedsToVerifyLegalHoldKey,
             ZMConversationLabelsKey,
+            ZMConversationNeedsToDownloadRolesKey,
             @"isSelfAnActiveMember"
         };
         
