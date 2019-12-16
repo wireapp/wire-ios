@@ -689,7 +689,9 @@ extension UserClient {
         let conversations : Set<ZMConversation> = clients.map(\.user).reduce(into: []) {
             guard let user = $1 else { return }
             guard user.isSelfUser else {
-                return $0.formUnion(user.lastServerSyncedActiveConversations)
+                return $0.formUnion(user.participantRoles
+                    .filter { !$0.markedForDeletion}
+                    .map { $0.conversation})
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())
             fetchRequest.predicate = ZMConversation.predicateForConversationsIncludingArchived()

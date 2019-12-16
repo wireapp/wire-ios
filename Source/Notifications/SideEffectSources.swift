@@ -81,7 +81,7 @@ extension ZMManagedObject {
 extension ZMUser : SideEffectSource {
     
     var allConversations : [ZMConversation] {
-        var conversations = Array(lastServerSyncedActiveConversations)
+        var conversations = self.participantRoles.filter { !$0.markedForDeletion }.map { $0.conversation }
         if let connectedConversation = connection?.conversation {
             conversations.append(connectedConversation)
         }
