@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMConversation {
-    static let defaultAdminRoleName = "wire_admin"
+    public static let defaultAdminRoleName = "wire_admin"
 
     static func predicateSecureWithIgnored() -> NSPredicate {
         return NSPredicate(format: "%K == %d", #keyPath(ZMConversation.securityLevel), ZMConversationSecurityLevel.secureWithIgnored.rawValue)
