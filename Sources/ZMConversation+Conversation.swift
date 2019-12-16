@@ -89,7 +89,7 @@ class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
     
     private func processSaveNotification() {
         if !self.conversation.messagesThatCausedSecurityLevelDegradation.isEmpty {
-            let untrustedUsers = self.conversation.activeParticipants.filter {
+            let untrustedUsers = self.conversation.localParticipants.filter {
                 $0.clients.first { !$0.verified } != nil
             }
             
