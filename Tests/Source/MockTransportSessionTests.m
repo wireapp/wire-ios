@@ -494,7 +494,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         
         NSDictionary *selfMember = members[@"self"];
         XCTAssertTrue([selfMember isKindOfClass:[NSDictionary class]]);
-        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_muted_status", @"otr_archived", @"otr_archived_ref", @"role"];
+        keys = @[@"id", @"otr_muted", @"otr_muted_ref", @"otr_muted_status", @"otr_archived", @"otr_archived_ref", @"conversation_role"];
         AssertDictionaryHasKeys(selfMember, keys);
         
         XCTAssertEqualObjects(selfMember[@"otr_muted"], @(conversation.otrMuted));
@@ -513,7 +513,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         XCTAssertTrue([others isKindOfClass:[NSArray class]]);
         for (NSDictionary *otherDict in others) {
             XCTAssertTrue([otherDict isKindOfClass:[NSDictionary class]]);
-            keys = @[@"id", @"role"];
+            keys = @[@"id", @"conversation_role"];
             AssertDictionaryHasKeys(otherDict, keys);
             NSString *uuidString = otherDict[@"id"];
             XCTAssertTrue([activeOtherIDs containsObject:uuidString], @"id %@ not found", uuidString);
@@ -532,7 +532,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     NSDictionary *dict = (id) data;
     NSDictionary *members = dict[@"members"];
     NSDictionary *selfMember = members[@"self"];
-    XCTAssertEqualObjects(selfMember[@"role"], role);
+    XCTAssertEqualObjects(selfMember[@"conversation_role"], role);
 }
 
 - (void) checkThatTransportData:(id <ZMTransportData>)data firstOtherUserHasGroupRole:(NSString *)role;
@@ -540,7 +540,7 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     NSDictionary *dict = (id) data;
     NSDictionary *members = dict[@"members"];
     NSArray *others = members[@"others"];
-    XCTAssertEqualObjects(others[0][@"role"], role);
+    XCTAssertEqualObjects(others[0][@"conversation_role"], role);
 }
 
 @end

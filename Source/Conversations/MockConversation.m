@@ -187,7 +187,7 @@
             continue;
         }
         [others addObject:@{ @"id": activeUser.identifier,
-                             @"role": activeUser.role }];
+                             @"conversation_role": activeUser.role }];
     }
     
     members[@"others"] = others;
@@ -199,7 +199,7 @@
 {
     NSMutableDictionary *selfInfo = [NSMutableDictionary dictionary];
     selfInfo[@"id"] = self.selfIdentifier;
-    selfInfo[@"role"] = self.selfRole;
+    selfInfo[@"conversation_role"] = self.selfRole;
     selfInfo[@"otr_muted_ref"] = self.otrMutedRef ?: [NSNull null];
     selfInfo[@"otr_muted"] = @(self.otrMuted);
     selfInfo[@"otr_muted_status"] = self.otrMutedStatus ?: [NSNull null];
