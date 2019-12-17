@@ -45,8 +45,7 @@ extension ZMManagedObject {
                               knownKeys: Set<String>,
                               keyStore: DependencyKeyStore,
                               originalChangeKey: String? = nil,
-                              keyMapping: ((String) -> String)) -> ObjectAndChanges
-    {
+                              keyMapping: ((String) -> String)) -> ObjectAndChanges {
         guard let object = object else { return [:]}
         let classIdentifier = type(of: object).entityName()
         
@@ -55,7 +54,9 @@ extension ZMManagedObject {
         let allKeys = knownKeys.union(changes.keys)
         
         let mappedKeys : [String] = Array(allKeys).map(keyMapping)
-        let keys = mappedKeys.map{keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)}.reduce(Set()){$0.union($1)}
+        let keys = mappedKeys.map {
+            keyStore.observableKeysAffectedByValue(classIdentifier, key: $0)
+            }.reduce(Set()){$0.union($1)}
         
         guard !keys.isEmpty ||
             originalChangeKey != nil else { return [:] }

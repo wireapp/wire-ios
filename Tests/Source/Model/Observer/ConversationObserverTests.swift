@@ -972,6 +972,38 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
                                                      expectedChangedFields: [#keyPath(ConversationChangeInfo.legalHoldStatusChanged), #keyPath(ConversationChangeInfo.messagesChanged)],
                                                      expectedChangedKeys: [#keyPath(ZMConversation.legalHoldStatus), #keyPath(ZMConversation.allMessages)])
     }
+    
+    // MARK: - Role
+    
+    func testThatItNotifiesOfParticipantRoleChanges() {
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.conversationType = .group
+        
+        let user = createUser(in: uiMOC)
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        
+        let role = Role.create(managedObjectContext: uiMOC, name: "dummy role", conversation: conversation)
+        
+        uiMOC.saveOrRollback()
+        
+        let modifier: (ZMConversation, ConversationObserver) -> Void = { conversation, _ in
+            self.performPretendingUiMocIsSyncMoc {
+                user.participantRole(in: conversation)?.role = role
+            }
+        }
+        
+        checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                modifier: modifier,
+                                                expectedChangedFields: [#keyPath(ConversationChangeInfo.participantsChanged)],
+                                                expectedChangedKeys: [#keyPath(ZMConversation.localParticipantRoles)])
+    }
+
+}
+
+extension ZMUser {
+    func participantRole(in conversation: ZMConversation?) -> ParticipantRole? {
+        return zmUser?.participantRoles.first(where: { $0.conversation == conversation })
+    }
 }
 
 // MARK: Performance
