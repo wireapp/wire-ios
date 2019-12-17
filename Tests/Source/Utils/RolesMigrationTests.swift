@@ -26,12 +26,22 @@ class RolesMigrationTests: DiskDatabaseTest {
         
         // Given
         let selfUser = ZMUser.selfUser(in: moc)
+        let team = createTeam()
+        _ = createMembership(user: selfUser, team: team)
+        team.needsToDownloadRoles = false
         
         let groupConvo = createConversation()
         groupConvo.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
         groupConvo.userDefinedName = "Group"
         groupConvo.needsToDownloadRoles = false
         groupConvo.needsToBeUpdatedFromBackend = false
+        
+        let groupConvoInTeam = createConversation()
+        groupConvoInTeam.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        groupConvoInTeam.userDefinedName = "Group"
+        groupConvoInTeam.needsToDownloadRoles = false
+        groupConvoInTeam.needsToBeUpdatedFromBackend = false
+        groupConvoInTeam.team = team
         
         let groupConvoThatUserLeft = createConversation()
         groupConvoThatUserLeft.needsToDownloadRoles = false
@@ -60,9 +70,7 @@ class RolesMigrationTests: DiskDatabaseTest {
         connectionConvo.needsToDownloadRoles = false
         connectionConvo.needsToBeUpdatedFromBackend = false
         
-        let team = createTeam()
-        _ = createMembership(user: selfUser, team: team)
-        team.needsToDownloadRoles = false
+        
         self.moc.saveOrRollback()
         
         // When
@@ -77,6 +85,8 @@ class RolesMigrationTests: DiskDatabaseTest {
         XCTAssertFalse(selfConvo.needsToBeUpdatedFromBackend)
         XCTAssertFalse(connectionConvo.needsToDownloadRoles)
         XCTAssertFalse(connectionConvo.needsToBeUpdatedFromBackend)
+        XCTAssertFalse(groupConvoInTeam.needsToDownloadRoles)
+        XCTAssertTrue(groupConvoInTeam.needsToBeUpdatedFromBackend)
         XCTAssertTrue(groupConvo.needsToDownloadRoles)
         XCTAssertTrue(groupConvo.needsToBeUpdatedFromBackend)
         XCTAssertTrue(team.needsToDownloadRoles)
