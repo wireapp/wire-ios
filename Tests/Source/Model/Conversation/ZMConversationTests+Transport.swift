@@ -164,6 +164,7 @@ extension ZMConversationTransportTests {
         
         syncMOC.performGroupedAndWait() { _ -> () in
             // given
+            
             ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
@@ -295,8 +296,29 @@ extension ZMConversationTransportTests {
             XCTAssertEqual(selfRole.conversation, conversation)
             XCTAssertEqual(selfRole.name, "test_role")
             XCTAssertEqual(conversation.participantRoles.map { $0.role }, [selfRole])
-            
         }
+    }
+    
+    func testThatItParsesSelfUserFragmentWithRole() {
+        
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        selfUser.remoteIdentifier = UUID.create()
+        conversation.remoteIdentifier = UUID.create()
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        
+        // when
+        conversation.updateSelfStatus(
+            dictionary: [
+                "id": selfUser.remoteIdentifier.transportString(),
+                "conversation_role": "boss"
+            ],
+            timeStamp: nil,
+            previousLastServerTimeStamp: nil)
+        
+        // then
+        XCTAssertEqual(conversation.participantRoles.first?.role?.name, "boss")
     }
 }
 
