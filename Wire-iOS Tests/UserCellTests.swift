@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class UserCellTests: ZMSnapshotTestCase {
+final class UserCellTests: ZMSnapshotTestCase {
     
     var mockConversation: MockConversation!
     
@@ -126,6 +126,16 @@ class UserCellTests: ZMSnapshotTestCase {
             let config = CallParticipantsCellConfiguration.callParticipant(user: user, sendsVideo: true)
             cell.configure(with: config, variant: .dark)
         }))
+    }
+    
+    func testThatAccessIDIsGenerated() {
+        let user = MockUser.mockUsers().map(ParticipantsRowType.init)[0]
+        
+        let cell = UserCell(frame: CGRect(x: 0, y: 0, width: 320, height: 56))
+        cell.sectionName = "Members"
+        cell.cellIdentifier = "participants.section.participants.cell"
+        cell.configure(with: user, conversation: conversation, showSeparator: true)
+        XCTAssertEqual(cell.accessibilityIdentifier, "Members - participants.section.participants.cell")
     }
     
 }

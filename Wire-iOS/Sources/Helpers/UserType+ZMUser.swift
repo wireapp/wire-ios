@@ -31,4 +31,18 @@ extension UserType {
         }
     }
 
+    func canManagedGroupRole(of user: UserType, conversation: ZMConversation?) -> Bool {
+        guard isAdminGroup(conversation: conversation) else { return false }
+        
+        return !user.isSelfUser &&
+            (user.isConnected || /// in case not belongs to the same team
+                isOnSameTeam(otherUser: user) /// in case in the same team
+        )
+    }
+
+    
+    func isAdminGroup(conversation: ZMConversation?) -> Bool {
+        let roleName = zmUser?.participantRoles.first(where: { $0.conversation == conversation })?.role?.name
+        return roleName == ZMConversation.defaultAdminRoleName
+    }
 }

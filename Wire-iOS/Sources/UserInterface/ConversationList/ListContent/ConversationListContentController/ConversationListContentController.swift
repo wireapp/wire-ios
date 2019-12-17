@@ -271,7 +271,8 @@ final class ConversationListContentController: UICollectionViewController {
         }
 
         (cell as? SectionListCellType)?.sectionName = listViewModel.sectionCanonicalName(of: indexPath.section)
-
+        (cell as? SectionListCellType)?.cellIdentifier = "conversation_list_cell"
+        
         cell.autoresizingMask = .flexibleWidth
 
         return cell
