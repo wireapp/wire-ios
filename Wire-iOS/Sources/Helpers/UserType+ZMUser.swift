@@ -40,7 +40,6 @@ extension UserType {
         )
     }
 
-    
     ///TODO: mv to data model
     func isAdminGroup(conversation: ZMConversation?) -> Bool {
         let roleName = zmUser?.participantRoles.first(where: { $0.conversation == conversation })?.role?.name
