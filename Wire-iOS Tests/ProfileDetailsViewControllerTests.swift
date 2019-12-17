@@ -16,10 +16,11 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import SnapshotTesting
 import XCTest
 @testable import Wire
 
-final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
+final class ProfileDetailsViewControllerTests: XCTestCase {
 
     var selfUserTeam: UUID!
     var selfUser: MockUser!
@@ -477,9 +478,10 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         // THEN
         verifyProfile(user: otherUser, viewer: selfUser, conversation: group, context: .groupConversation)
-        verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [
-            richProfileItemWithEmailAndDefaultData(for: otherUser)
-        ])
+        verifyContents(user: otherUser,
+                       viewer: selfUser,
+                       conversation: group,
+                       expectedContents: [richProfileItemWithEmailAndDefaultData(for: otherUser)])
     }
 
     func test_Group_OtherUser_NoSCIM() {
@@ -500,6 +502,8 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
             ])
     }
 
+    ///TODO: add test for viewer is admin and other user is/isn't a admin
+    
     func test_Group_OtherUser_NoSCIM_NoEmail() {
         // GIVEN
         let otherUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)
@@ -573,7 +577,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         verifyContents(user: otherUser, viewer: selfUser, conversation: group, expectedContents: [])
     }
     
-    func test_Group_SelfUser_SCIM() {
+    func test_Group_SelfUser_SCIM() {///FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
         // GIVEN
         selfUser.availability = .busy
         selfUser.readReceiptsEnabled = true
@@ -589,6 +593,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         ])
     }
 
+    ///FIXME: can self user disable myself as admin? In this test since self user.isConnected == false we do not show it.
     func test_Group_SelfUser_NoSCIM() {
         // GIVEN
         selfUser.availability = .busy
@@ -738,6 +743,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
+        guest.teamRole = .admin
         
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
@@ -759,7 +765,8 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
-        
+        guest.teamRole = .admin
+
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
         
@@ -778,10 +785,33 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
 
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
+        guest.teamRole = .admin
 
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
 
+        // THEN
+        verifyProfile(user: otherUser, viewer: guest, conversation: group, context: .groupConversation)
+        verifyContents(user: otherUser, viewer: guest, conversation: group, expectedContents: [
+            .richProfile([richProfileFieldWithEmail(for: otherUser)])]
+        )
+    }
+    
+    func test_Group_OtherUserIsAdmin_ViewerIsGuest_SCIM() {
+        // GIVEN
+        let otherUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: selfUserTeam)
+        otherUser.availability = .busy
+        otherUser.readReceiptsEnabled = true
+        otherUser.richProfile = defaultRichProfile
+        otherUser.teamRole = .admin
+        
+        let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
+        guest.isGuestInConversation = true
+        guest.teamRole = .admin
+
+        let group = MockConversation.groupConversation()
+        group.activeParticipants = [otherUser, guest]
+        
         // THEN
         verifyProfile(user: otherUser, viewer: guest, conversation: group, context: .groupConversation)
         verifyContents(user: otherUser, viewer: guest, conversation: group, expectedContents: [
@@ -800,7 +830,8 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
-        
+        guest.teamRole = .admin
+
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
         
@@ -819,6 +850,7 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
 
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: nil)
         guest.isGuestInConversation = true
+        guest.teamRole = .admin
 
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
@@ -837,7 +869,8 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
 
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: UUID())
         guest.isGuestInConversation = true
-        
+        guest.teamRole = .admin
+
         let group = MockConversation.groupConversation()
         group.activeParticipants = [selfUser, otherUser, guest]
 
@@ -852,11 +885,12 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         let otherUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: otherTeamID)
         otherUser.isGuestInConversation = true
+        otherUser.teamRole = .admin
 
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: otherTeamID)
         guest.isGuestInConversation = true
         guest.richProfile = defaultRichProfile
-        
+
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
         
@@ -873,12 +907,13 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         
         let otherUser = MockUser.createConnectedUser(name: "Catherine Jackson", inTeam: otherTeamID)
         otherUser.isGuestInConversation = true
-        
+        otherUser.teamRole = .admin
+
         let guest = MockUser.createConnectedUser(name: "Bob the Guest", inTeam: otherTeamID)
         guest.isGuestInConversation = true
         guest.richProfile = defaultRichProfile
         guest.emailAddress = nil
-        
+
         let group = MockConversation.groupConversation()
         group.activeParticipants = [otherUser, guest]
         
@@ -928,13 +963,17 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
                                conversation: MockConversation?,
                                context: ProfileViewControllerContext,
                                file: StaticString = #file,
+                               testName: String = #function,
                                line: UInt = #line) {
         let details = ProfileDetailsViewController(user: user,
                                                    viewer: viewer,
                                                    conversation: conversation?.convertToRegularConversation(),
                                                    context: context)
 
-        verify(view: details.view, file: file, line: line)
+        verify(matching: details,
+               file: file,
+               testName: testName,
+               line: line)
     }
     
     private func richProfileFieldWithEmail(for user: UserType) -> UserRichProfileField {
@@ -947,8 +986,14 @@ final class ProfileDetailsViewControllerTests: ZMSnapshotTestCase {
         return .richProfile(items)
     }
 
-    private func verifyContents(user: UserType, viewer: UserType, conversation: MockConversation, expectedContents: [ProfileDetailsContentController.Content], file: StaticString = #file, line: UInt = #line) {
-        let controller = ProfileDetailsContentController(user: user, viewer: viewer,
+    private func verifyContents(user: UserType,
+                                viewer: UserType,
+                                conversation: MockConversation,
+                                expectedContents: [ProfileDetailsContentController.Content],
+                                file: StaticString = #file,
+                                line: UInt = #line) {
+        let controller = ProfileDetailsContentController(user: user,
+                                                         viewer: viewer,
                                                          conversation: conversation.convertToRegularConversation())
 
         XCTAssertEqual(controller.contents, expectedContents, file: file, line: line)
