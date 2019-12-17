@@ -45,8 +45,7 @@ public extension ZMConversation {
     /// Whether the conversation includes at least 1 service user.
     @objc
     var includesServiceUser: Bool {
-        guard let participants = lastServerSyncedActiveParticipants.array as? [UserType] else { return false }
-        return participants.any { $0.isServiceUser }
+        return localParticipants.any { $0.isServiceUser }
     }
 }
 

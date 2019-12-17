@@ -212,12 +212,7 @@
 }
 
 
-@end
-
-
-
-
-@implementation ZMHotFixTests (CurrentFixes)
+#pragma mark - CurrentFixes
 
 - (void)testThatItSendsOutResetPushTokenNotificationVersion_40_4
 {
@@ -501,7 +496,7 @@
         }];
     }];
 
-    [self.syncMOC performGroupedBlockAndWait:^{
+    [self.syncMOC performGroupedBlockAndWait:^{///TODO: crash for this class is not key value coding-compliant for the key localParticipants.'
         NSString *newVersion = [self.syncMOC persistentStoreMetadataForKey:@"lastSavedVersion"];
         XCTAssertEqualObjects(newVersion, @"44.4");
 

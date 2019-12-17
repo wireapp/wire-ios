@@ -54,7 +54,7 @@
     }
 
     NSMutableSet *activeUsersUUID = [NSMutableSet set];
-    for(ZMUser *user in self.lastServerSyncedActiveParticipants) {
+    for(ZMUser *user in self.localParticipantsExcludingSelf) {
         [activeUsersUUID addObject:user.remoteIdentifier.transportString];
     }
     

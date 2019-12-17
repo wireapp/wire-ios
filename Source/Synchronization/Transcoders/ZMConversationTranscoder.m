@@ -220,23 +220,6 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     }
 }
 
-- (ZMConversation *)createConversationFromTransportData:(NSDictionary *)transportData
-                                        serverTimeStamp:(NSDate *)serverTimeStamp
-                                                 source:(ZMConversationSource)source
-{
-    // If the conversation is not a group conversation, we need to make sure that we check if there's any existing conversation without a remote identifier for that user.
-    // If it is a group conversation, we don't need to.
-    
-    NSNumber *typeNumber = [transportData numberForKey:@"type"];
-    VerifyReturnNil(typeNumber != nil);
-    ZMConversationType const type = [ZMConversation conversationTypeFromTransportData:typeNumber];
-    if (type == ZMConversationTypeGroup || type == ZMConversationTypeSelf) {
-        return [self createGroupOrSelfConversationFromTransportData:transportData serverTimeStamp:serverTimeStamp source:source];
-    } else {
-        return [self createOneOnOneConversationFromTransportData:transportData type:type serverTimeStamp:serverTimeStamp];
-    }
-}
-
 - (ZMConversation *)createOneOnOneConversationFromTransportData:(NSDictionary *)transportData
                                                            type:(ZMConversationType const)type
                                                 serverTimeStamp:(NSDate *)serverTimeStamp;
@@ -335,6 +318,10 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     if (conversation == nil) {
         conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
         // if we did not have this conversation before, refetch it
+        if (conversation.conversationType == ZMConversationTypeGroup && conversation.teamRemoteIdentifier == nil) {
+            conversation.needsToDownloadRoles = YES;
+        }
+
         conversation.needsToBeUpdatedFromBackend = YES;
     }
     return conversation;
@@ -344,16 +331,6 @@ static NSString *const ConversationTeamManagedKey = @"managed";
 {
     NSUUID * const conversationID = event.conversationUUID;
     return [conversationID isSelfConversationRemoteIdentifierInContext:self.managedObjectContext];
-}
-
-- (void)createConversationFromEvent:(ZMUpdateEvent *)event {
-    NSDictionary *payloadData = [event.payload dictionaryForKey:@"data"];
-    if(payloadData == nil) {
-        ZMLogError(@"Missing conversation payload in ZMUpdateEventConversationCreate");
-        return;
-    }
-    NSDate *serverTimestamp = [event.payload dateFor:@"time"];
-    [self createConversationFromTransportData:payloadData serverTimeStamp:serverTimestamp source:ZMConversationSourceUpdateEvent];
 }
 
 - (void)deleteConversationFromEvent:(ZMUpdateEvent *)event
@@ -490,21 +467,6 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     conversation.userDefinedName = newName;
 }
 
-- (void)processMemberJoinEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation
-{
-    NSSet *users = [event usersFromUserIDsInManagedObjectContext:self.managedObjectContext createIfNeeded:YES];
-    
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    
-    if (![users isSubsetOfSet:conversation.activeParticipants] || (selfUser && [users intersectsSet:[NSSet setWithObject:selfUser]])) {
-        [self appendSystemMessageForUpdateEvent:event inConversation:conversation];
-    }
-    
-    for (ZMUser *user in users) {
-        [conversation internalAddParticipants:@[user]];
-    }
-}
-
 - (void)processMemberLeaveEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation
 {
     NSUUID *senderUUID = event.senderUUID;
@@ -513,38 +475,16 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     
     ZMLogDebug(@"processMemberLeaveEvent (%@) leaving users.count = %lu", conversation.remoteIdentifier.transportString, (unsigned long)users.count);
     
-    if ([users intersectsSet:conversation.activeParticipants]) {
+    if ([users intersectsSet:conversation.localParticipants]) {
         [self appendSystemMessageForUpdateEvent:event inConversation:conversation];
     }
-
-    for (ZMUser *user in users) {
-        [conversation internalRemoveParticipants:@[user] sender:sender];
-    }
-}
-
-- (void)processMemberUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation previousLastServerTimeStamp:(NSDate *)previousLastServerTimestamp
-{
-    NSDictionary *dataPayload = [event.payload.asDictionary dictionaryForKey:@"data"];
- 
-    if(dataPayload) {
-        [conversation updateSelfStatusFromDictionary:dataPayload
-                                           timeStamp:event.timeStamp
-                         previousLastServerTimeStamp:previousLastServerTimestamp];
-    }
-}
-
-- (void)appendSystemMessageForUpdateEvent:(ZMUpdateEvent *)event inConversation:(ZMConversation * ZM_UNUSED)conversation
-{
-    ZMSystemMessage *systemMessage = [ZMSystemMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.managedObjectContext];
     
-    if (systemMessage != nil) {
-        [self.localNotificationDispatcher processMessage:systemMessage];
-    }
+    [conversation removeParticipantsAndUpdateConversationStateWithUsers:users initiatingUser:sender];
 }
+
+
 
 @end
-
-
 
 @implementation ZMConversationTranscoder (UpstreamTranscoder)
 
@@ -588,7 +528,7 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     ZMTransportRequest *request = nil;
     ZMConversation *insertedConversation = (ZMConversation *) managedObject;
     
-    NSArray *participantUUIDs = [[insertedConversation.lastServerSyncedActiveParticipants array] mapWithBlock:^id(ZMUser *user) {
+    NSArray *participantUUIDs = [[insertedConversation.localParticipantsExcludingSelf allObjects] mapWithBlock:^id(ZMUser *user) {
         return [user.remoteIdentifier transportString];
     }];
     
@@ -772,7 +712,7 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     // Self user has been removed from the group conversation but missed the conversation.member-leave event.
     if (response.HTTPStatus == 403 && conversation.conversationType == ZMConversationTypeGroup && conversation.isSelfAnActiveMember) {
         ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-        [conversation internalRemoveParticipants:@[selfUser] sender:selfUser];
+        [conversation removeParticipantAndUpdateConversationStateWithUser:selfUser initiatingUser:selfUser];
     }
     
     // Conversation has been permanently deleted
