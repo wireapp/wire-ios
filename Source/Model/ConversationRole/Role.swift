@@ -116,7 +116,7 @@ public final class Role: ZMManagedObject {
         return context.fetchOrAssert(request: fetchRequest).first
     }
     
-    static func fetchOrCreateRole(with name: String,
+    public static func fetchOrCreateRole(with name: String,
                                   teamOrConversation: TeamOrConversation,
                                   in context: NSManagedObjectContext) -> Role {
         let existingRole = self.fetchExistingRole(with: name,
