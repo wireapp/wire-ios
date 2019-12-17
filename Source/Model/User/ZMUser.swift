@@ -44,6 +44,10 @@ extension ZMUser: UserType {
         return Set(self.participantRoles.filter{!$0.markedForDeletion}.map{$0.conversation})
     }
 
+    public func role(in conversation: ZMConversation) -> Role? {
+        return participantRoles.first(where: { $0.conversation == conversation })?.role
+    }
+
     // MARK: Legal Hold
 
     @objc public var isUnderLegalHold: Bool {
