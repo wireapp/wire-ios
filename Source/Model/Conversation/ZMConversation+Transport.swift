@@ -162,18 +162,16 @@ extension ZMConversation {
     /// Parse the "members" section
     private func updateMembers(payload: [String: Any]) {
         
-        guard let otherUsersInfos = payload[PayloadKeys.othersKey] as? [[String: Any]],
-            let selfInfo = payload[PayloadKeys.selfKey] as? [String: Any],
+        guard let usersInfos = payload[PayloadKeys.othersKey] as? [[String: Any]],
             let moc = self.managedObjectContext else {
                 return
         }
-        let usersInfos = otherUsersInfos + [selfInfo]
         
         let usersAndRoles = self.usersPayloadToUserAndRole(
             payload: usersInfos,
             userIdKey: PayloadKeys.IDKey)
         let allParticipants = Set(usersAndRoles.map { $0.0 })
-        let removedParticipants = self.localParticipants.subtracting(allParticipants)
+        let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
   
         self.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
         self.removeParticipantsAndUpdateConversationState(users: removedParticipants, initiatingUser: ZMUser.selfUser(in: moc))
@@ -201,6 +199,18 @@ extension ZMConversation {
     /// Pass timestamp when the timestamp equals the time of the lastRead / cleared event, otherwise pass nil
     public func updateSelfStatus(dictionary: [String: Any], timeStamp: Date?, previousLastServerTimeStamp: Date?) {
         self.updateMuted(with: dictionary)
+        
+        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+        if let roleName = dictionary[ZMConversation.PayloadKeys.conversationRoleKey] as? String {
+            let role = Role.fetchOrCreateRole(
+                with: roleName,
+                teamOrConversation: TeamOrConversation.matching(self),
+                in: self.managedObjectContext!)
+            self.addParticipantAndUpdateConversationState(user: selfUser, role: role)
+        } else if !self.isSelfAnActiveMember {
+            self.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        }
+        
         if  self.updateIsArchived(payload: dictionary) && self.isArchived,
             let previousLastServerTimeStamp = previousLastServerTimeStamp,
             let timeStamp = timeStamp,
