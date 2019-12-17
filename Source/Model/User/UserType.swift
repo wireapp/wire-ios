@@ -155,17 +155,17 @@ public protocol UserType: NSObjectProtocol {
     /// Whether the user can create services
     var canCreateService: Bool { get }
     
-    /// Wheather the user can administate the team
+    /// Whether the user can administate the team
     var canManageTeam: Bool { get }
 
     /// Whether the user can access the private company information of the other given user.
     func canAccessCompanyInformation(of user: UserType) -> Bool
     
-    /// Wheather the user can add services to the conversation
+    /// Whether the user can add services to the conversation
     @objc(canAddServiceToConversation:)
     func canAddService(to conversation: ZMConversation) -> Bool
     
-    /// Wheather the user can remove services from the conversation
+    /// Whether the user can remove services from the conversation
     @objc(canRemoveServiceFromConversation:)
     func canRemoveService(from conversation: ZMConversation) -> Bool
 
@@ -177,7 +177,7 @@ public protocol UserType: NSObjectProtocol {
     @objc(canRemoveUserFromConversation:)
     func canRemoveUser(from conversation: ZMConversation) -> Bool
     
-    /// Wheather the user can delete the conversation
+    /// Whether the user can delete the conversation
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool
     
@@ -201,4 +201,7 @@ public protocol UserType: NSObjectProtocol {
     @objc(canModifyTitleInConversation:)
     func canModifyTitle(in conversation: ZMConversation) -> Bool
 
+    /// The role in the given conversation.
+    @objc(roleInConversation:)
+    func role(in conversation: ZMConversation) -> Role?
 }

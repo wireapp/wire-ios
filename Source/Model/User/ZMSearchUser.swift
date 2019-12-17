@@ -379,6 +379,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     public func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool {
         return user?.canModifyAccessControlSettings(in: conversation) == true
     }
+
+    public func role(in conversation: ZMConversation) -> Role? {
+        return user?.role(in: conversation)
+    }
     
     public override func isEqual(_ object: Any?) -> Bool {
         guard let otherSearchUser = object as? ZMSearchUser else { return false }
