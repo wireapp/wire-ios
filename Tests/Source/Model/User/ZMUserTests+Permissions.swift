@@ -634,7 +634,7 @@ extension ZMUserTests_Permissions {
         // given
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         conversation.conversationType = .group
-        createARoleForSelfUserWith("delete_convesation")
+        createARoleForSelfUserWith("delete_conversation")
         
         // then
         XCTAssertTrue(selfUser.canDeleteConversation(conversation))
