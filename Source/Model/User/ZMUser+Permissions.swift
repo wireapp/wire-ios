@@ -39,7 +39,7 @@ enum ConversationAction {
         case .modifyConversationAccess: return "modify_conversation_access"
         case .modifyOtherConversationMember: return "modify_other_conversation_member"
         case .leaveConversation: return "leave_conversation"
-        case .deleteConvesation: return "delete_convesation"
+        case .deleteConvesation: return "delete_conversation"
         }
     }
 }
