@@ -49,7 +49,7 @@ extension ZMConversation {
     
     @objc
     public class func keyPathsForValuesAffectingLocalParticipantRoles() -> Set<String> {
-        return Set(participantRolesKeys)
+        return Set(participantRolesKeys + [#keyPath(ZMConversation.participantRoles.role)])
     }
     
     @objc
