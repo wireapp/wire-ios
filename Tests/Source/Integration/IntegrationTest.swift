@@ -114,6 +114,9 @@ extension IntegrationTest {
     
     @objc
     func _setUp() {
+        
+        UserClientRequestFactory._test_overrideNumberOfKeys = 1
+        
         sharedContainerDirectory = Bundle.main.appGroupIdentifier.map(FileManager.sharedContainerDirectory)
         deleteSharedContainerContent()
         ZMPersistentCookieStorage.setDoNotPersistToKeychain(!useRealKeychain)
@@ -146,6 +149,7 @@ extension IntegrationTest {
     
     @objc
     func _tearDown() {
+        UserClientRequestFactory._test_overrideNumberOfKeys = nil
         destroyTimers()
         sharedSearchDirectory?.tearDown()
         sharedSearchDirectory = nil
@@ -386,7 +390,7 @@ extension IntegrationTest {
             user2.accentID = 1
             self.teamUser2 = user2
 
-            let team = session.insertTeam(withName: "A Team", isBound: true, users: [user1, user2])
+            let team = session.insertTeam(withName: "A Team", isBound: true, users: [self.selfUser, user1, user2])
             self.team = team
 
             let bot = session.insertUser(withName: "Botty the Bot")
@@ -406,6 +410,8 @@ extension IntegrationTest {
             teamConversation.creator = self.selfUser
             teamConversation.changeName(by:self.selfUser, name:"Team Group conversation")
             self.groupConversationWithWholeTeam = teamConversation
+            self.selfUser.role = "wire_admin"
+            
         })
     }
     

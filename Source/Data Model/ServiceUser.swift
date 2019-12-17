@@ -115,7 +115,7 @@ public extension ServiceUserData {
         
         let payload: NSDictionary = ["provider": self.provider.transportString(),
                                      "service": self.service.transportString(),
-                                     "locale": NSLocale.formattedLocaleIdentifier()]
+                                     "locale": NSLocale.formattedLocaleIdentifier()!]
         
         return ZMTransportRequest(path: path, method: .methodPOST, payload: payload as ZMTransportData)
     }

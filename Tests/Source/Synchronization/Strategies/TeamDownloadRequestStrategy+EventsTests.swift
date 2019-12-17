@@ -508,9 +508,9 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             let teamConversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
             teamConversation1.remoteIdentifier = teamConversationId
             teamConversation1.conversationType = .group
-            teamConversation1.internalAddParticipants([user])
+            teamConversation1.addParticipantAndUpdateConversationState(user: user, role: nil)
             teamConversation1.team = team
-            let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user, otherUser])
+            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user, otherUser])
             conversation?.remoteIdentifier = conversationId
             let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
@@ -533,8 +533,8 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             XCTAssertNil(user.membership)
             guard let teamConversation = ZMConversation.fetch(withRemoteIdentifier: teamConversationId, in: self.syncMOC) else { return XCTFail("No Team Conversation") }
             guard let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationId, in: self.syncMOC) else { return XCTFail("No Conversation") }
-            XCTAssertFalse(teamConversation.lastServerSyncedActiveParticipants.contains(user))
-            XCTAssertFalse(conversation.lastServerSyncedActiveParticipants.contains(user))
+            XCTAssertFalse(teamConversation.localParticipants.contains(user))
+            XCTAssertFalse(conversation.localParticipants.contains(user))
         }
     }
     
@@ -556,17 +556,17 @@ class TeamDownloadRequestStrategy_EventsTests: MessagingTest {
             let teamConversation1 = ZMConversation.insertNewObject(in: self.syncMOC)
             teamConversation1.remoteIdentifier = teamConversationId
             teamConversation1.conversationType = .group
-            teamConversation1.internalAddParticipants([user])
+            teamConversation1.addParticipantAndUpdateConversationState(user: user, role: nil)
             teamConversation1.team = team
             
             let teamConversation2 = ZMConversation.insertNewObject(in: self.syncMOC)
             teamConversation2.remoteIdentifier = teamAnotherConversationId
             teamConversation2.conversationType = .group
-            teamConversation2.internalAddParticipants([user])
+            teamConversation2.addParticipantAndUpdateConversationState(user: user, role: nil)
             teamConversation2.team = team
 
             
-            let conversation = ZMConversation.insertGroupConversation(into: self.syncMOC, withParticipants: [user, otherUser])
+            let conversation = ZMConversation.insertGroupConversation(moc: self.syncMOC, participants: [user, otherUser])
             conversation?.remoteIdentifier = conversationId
             let member = Member.getOrCreateMember(for: user, in: team, context: self.syncMOC)
             XCTAssertNotNil(member)
