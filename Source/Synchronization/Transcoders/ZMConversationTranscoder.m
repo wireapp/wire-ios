@@ -531,8 +531,11 @@ static NSString *const ConversationTeamManagedKey = @"managed";
     NSArray *participantUUIDs = [[insertedConversation.localParticipantsExcludingSelf allObjects] mapWithBlock:^id(ZMUser *user) {
         return [user.remoteIdentifier transportString];
     }];
-    
+
     NSMutableDictionary *payload = [@{ @"users" : participantUUIDs } mutableCopy];
+
+    payload[@"conversation_role"] = ZMConversation.defaultMemberRoleName;
+
     if (insertedConversation.userDefinedName != nil) {
         payload[@"name"] = insertedConversation.userDefinedName;
     }
