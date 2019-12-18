@@ -118,7 +118,7 @@ extension ZMUser {
             $0.delete(from: context)
         }
         firstUser.needsToBeUpdatedFromBackend = true
-        firstUser.participantRoles.forEach { $0.conversation.needsToBeUpdatedFromBackend = true }
+        firstUser.participantRoles.forEach { $0.conversation?.needsToBeUpdatedFromBackend = true }
         return firstUser
     }
 
@@ -136,7 +136,7 @@ extension ZMUser {
         self.addressBookEntry = ZMManagedObject.firstNonNullAndDeleteSecond(self.addressBookEntry, user.addressBookEntry)
        
         user.participantRoles.forEach {
-            $0.conversation.addParticipantAndUpdateConversationState(user: self, role: $0.role)
+            $0.conversation?.addParticipantAndUpdateConversationState(user: self, role: $0.role)
         }
     
         self.conversationsCreated = self.conversationsCreated.union(user.conversationsCreated)
