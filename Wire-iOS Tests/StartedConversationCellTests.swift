@@ -21,7 +21,7 @@ import XCTest
 @testable import Wire
 
 
-class StartedConversationCellTests: ConversationCellSnapshotTestCase {
+final class StartedConversationCellTests: ConversationCellSnapshotTestCase {
     
     override func setUp() {
         super.setUp()
@@ -164,6 +164,7 @@ class StartedConversationCellTests: ConversationCellSnapshotTestCase {
     func testThatItRendersNewConversationCellWithParticipantsAndName_AllowGuests() {
         teamTest {
             let message = cell(for: .newConversation, text: "Italy Trip", fillUsers: .many, allowGuests: true)
+            createARoleForSelfUserWith(["add_conversation_member"], conversation: message.conversation!)
             verify(message: message)
         }
     }
@@ -178,6 +179,7 @@ class StartedConversationCellTests: ConversationCellSnapshotTestCase {
     func testThatItRendersNewConversationCellWithoutParticipants_AllowGuests() {
         teamTest {
             let message = cell(for: .newConversation, text: "Italy Trip", allowGuests: true)
+            createARoleForSelfUserWith(["add_conversation_member"], conversation: message.conversation!)
             verify(message: message)
         }
     }
