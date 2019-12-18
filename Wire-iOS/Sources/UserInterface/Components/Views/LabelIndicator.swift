@@ -19,10 +19,41 @@
 import Foundation
 
 enum LabelIndicatorContext {
-    case guest, groupRole
+    case guest,
+         groupRole,
+         external
+    
+    var icon: StyleKitIcon {
+        switch self {
+        case .guest:
+            return .guest
+        case .groupRole:
+            return .groupAdmin
+        case .external:
+            return .externalPartner
+        }
+    }
+    
+    var title: String {
+        switch self {
+        case .guest:
+            return "profile.details.guest"
+        case .groupRole:
+            return "profile.details.group_admin"
+        case .external:
+            return "profile.details.partner"
+        }
+
+    }
 }
 
 final class LabelIndicator: UIView, Themeable {
+    
+    private let indicatorIcon = UIImageView()
+    private let titleLabel = UILabel()
+    private let containerView = UIView()
+    private let context: LabelIndicatorContext
+
     @objc dynamic var colorSchemeVariant: ColorSchemeVariant = ColorScheme.default.variant {
         didSet {
             guard oldValue != colorSchemeVariant else { return }
@@ -33,18 +64,11 @@ final class LabelIndicator: UIView, Themeable {
     
     func applyColorScheme(_ colorSchemeVariant: ColorSchemeVariant) {
         titleLabel.textColor = UIColor.from(scheme: .textForeground, variant: colorSchemeVariant)
-        switch context {
-        case .guest:
-            indicatorIcon.setIcon(.guest, size: .nano, color: UIColor.from(scheme: .textForeground, variant: colorSchemeVariant))
-        case .groupRole:
-            indicatorIcon.setIcon(.groupAdmin, size: .nano, color: UIColor.from(scheme: .textForeground, variant: colorSchemeVariant))
-        }
+        
+        indicatorIcon.setIcon(context.icon,
+                              size: .nano,
+                              color: UIColor.from(scheme: .textForeground, variant: colorSchemeVariant))
     }
-    
-    private let indicatorIcon = UIImageView()
-    private let titleLabel = UILabel()
-    private let containerView = UIView()
-    private let context: LabelIndicatorContext
     
     init(context: LabelIndicatorContext) {
         self.context = context
@@ -59,28 +83,24 @@ final class LabelIndicator: UIView, Themeable {
     
     private func setupViews() {
         var accessibilityString: String
-        var title: String
-        var icon: StyleKitIcon
         
         switch context {
         case .guest:
             accessibilityString = "guest"
-            title = "profile.details.guest".localized(uppercased: true)
-            icon = .guest
         case .groupRole:
             accessibilityString = "group_role"
-            title = "profile.details.group_admin".localized(uppercased: true)
-            icon = .groupAdmin
+        case .external:
+            accessibilityString = "team_role"
         }
         titleLabel.accessibilityIdentifier = "label." + accessibilityString
         titleLabel.numberOfLines = 0
         titleLabel.textAlignment = .left
         titleLabel.font = FontSpec(.medium, .semibold, .inputText).font
         titleLabel.textColor = UIColor.from(scheme: .textForeground, variant: colorSchemeVariant)
-        titleLabel.text = title
+        titleLabel.text = context.title.localized(uppercased: true)
         
         indicatorIcon.accessibilityIdentifier =  "img." + accessibilityString
-        indicatorIcon.setIcon(icon, size: .nano, color: UIColor.from(scheme: .textForeground, variant: colorSchemeVariant))
+        indicatorIcon.setIcon(context.icon, size: .nano, color: UIColor.from(scheme: .textForeground, variant: colorSchemeVariant))
         
         containerView.addSubview(titleLabel)
         containerView.addSubview(indicatorIcon)
