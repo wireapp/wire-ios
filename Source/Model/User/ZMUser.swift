@@ -41,7 +41,7 @@ extension ZMUser: UserType {
     }
     
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.filter{!$0.markedForDeletion}.map{$0.conversation})
+        return Set(self.participantRoles.filter{!$0.markedForDeletion}.compactMap {$0.conversation})
     }
 
     public func role(in conversation: ZMConversation) -> Role? {
@@ -266,8 +266,8 @@ extension ZMUser {
     /// Remove user from all group conversations he is a participant of
     fileprivate func removeFromAllConversations(at timestamp: Date) {
         let allGroupConversations: [ZMConversation] = participantRoles.compactMap {
-            let convo = $0.conversation
-            guard convo.conversationType == .group else { return nil}
+            guard let convo = $0.conversation,
+                convo.conversationType == .group else { return nil}
             return convo
         }
         

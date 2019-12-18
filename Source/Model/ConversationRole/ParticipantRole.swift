@@ -26,7 +26,7 @@ let ZMParticipantRoleModificationToSyncKey  = #keyPath(ParticipantRole.rawOperat
 final public class ParticipantRole: ZMManagedObject {
     
     @objc @NSManaged var rawOperationToSync: Int16
-    @NSManaged public var conversation: ZMConversation
+    @NSManaged public var conversation: ZMConversation?
     @NSManaged public var user: ZMUser
     @NSManaged public var role: Role?
     
