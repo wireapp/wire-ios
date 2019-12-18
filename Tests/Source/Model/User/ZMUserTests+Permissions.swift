@@ -630,14 +630,25 @@ extension ZMUserTests_Permissions {
         XCTAssertFalse(selfUser.canModifyOtherMember(in: conversation))
     }
     
-    func testThatGroupParticipantCanDeleteConvesation() {
+    func testThatConvesationCreatorWithAdminRoleCanDeleteConvesation() {
+        // given
+        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
+        conversation.conversationType = .group
+        conversation.creator = selfUser
+        createARoleForSelfUserWith("delete_conversation")
+        
+        // then
+        XCTAssertTrue(selfUser.canDeleteConversation(conversation))
+    }
+    
+    func testThatNoConvesationCreatorWithAdminRoleCantDeleteConvesation() {
         // given
         makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
         conversation.conversationType = .group
         createARoleForSelfUserWith("delete_conversation")
         
         // then
-        XCTAssertTrue(selfUser.canDeleteConversation(conversation))
+        XCTAssertFalse(selfUser.canDeleteConversation(conversation))
     }
     
     func testThatGroupParticipantCantDeleteConvesation() {
