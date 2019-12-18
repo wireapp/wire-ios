@@ -660,6 +660,17 @@ extension ZMUserTests_Permissions {
         XCTAssertFalse(selfUser.canDeleteConversation(conversation))
     }
     
+    func testThatAccessControlInNonTeamConversationCantBeModified_ByAnyTeamMember() {
+        // given
+        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
+        conversation.conversationType = .group
+        createARoleForSelfUserWith("modify_conversation_access")
+        conversation.team?.remoteIdentifier = nil
+        
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
+    }
+    
     private func createARoleForSelfUserWith(_ actionName: String) {
         let participantRole = ParticipantRole.insertNewObject(in: uiMOC)
         participantRole.conversation = conversation
