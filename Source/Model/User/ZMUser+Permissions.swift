@@ -87,7 +87,7 @@ public extension ZMUser {
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool {
         if conversation.conversationType == .group {
-            return hasRoleWithAction(actionName: ConversationAction.deleteConvesation.name, conversation: conversation)
+            return hasRoleWithAction(actionName: ConversationAction.deleteConvesation.name, conversation: conversation) && conversation.creator == self
         } else {
             return conversation.teamRemoteIdentifier != nil && conversation.isSelfAnActiveMember && conversation.creator == self
         }
@@ -216,7 +216,7 @@ public extension ZMUser {
     }
     
     private func hasRoleWithAction(actionName: String, conversation: ZMConversation) -> Bool {
-        let canModifyConversation = self.participantRoles.filter({$0.conversation == conversation}).first?.role?.actions.contains(where: {$0.name == actionName})
+        let canModifyConversation = self.role(in: conversation)?.actions.contains(where: {$0.name == actionName})
         return canModifyConversation ?? false
     }
 }
