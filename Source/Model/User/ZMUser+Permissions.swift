@@ -172,7 +172,7 @@ public extension ZMUser {
     }
     
     @objc var canCreateConversation: Bool {
-        return permissions?.contains(.member) ?? true
+        return permissions?.contains(.createConversation) ?? true
     }
     
     @objc var canCreateService: Bool {
