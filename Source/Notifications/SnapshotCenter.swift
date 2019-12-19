@@ -22,7 +22,7 @@ import WireUtilities
 struct Snapshot {
     let attributes : [String : NSObject?]
     let toManyRelationships : [String : Int]
-    let toOneRelationships : [String : Bool]
+    let toOneRelationships : [String : NSManagedObjectID]
 }
 
 protocol Countable {
@@ -65,9 +65,9 @@ public class SnapshotCenter {
             return (object.primitiveValue(forKey: key) as? Countable)?.count
         })
 
-        let toOneRelationshipsDict : [String : Bool] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationshipDescription) in
+        let toOneRelationshipsDict : [String : NSManagedObjectID] = relationships.mapKeysAndValues(keysMapping: {$0}, valueMapping: { (key, relationshipDescription) in
             guard !relationshipDescription.isToMany else { return nil }
-            return object.primitiveValue(forKey: key) != nil
+            return (object.primitiveValue(forKey: key) as? NSManagedObject)?.objectID
         })
 
         return Snapshot(
@@ -88,7 +88,9 @@ public class SnapshotCenter {
             let newSnapshot = createSnapshot(for: object)
             snapshots[object.objectID] = newSnapshot
             // return all keys as changed
-            return Set(newSnapshot.attributes.keys).union(newSnapshot.toManyRelationships.keys)
+            return Set(newSnapshot.attributes.keys)
+                .union(newSnapshot.toManyRelationships.keys)
+                .union(newSnapshot.toOneRelationships.keys)
         }
         
         var changedKeys = Set<String>()
@@ -103,7 +105,7 @@ public class SnapshotCenter {
             changedKeys.insert($0)
         }
         snapshot.toOneRelationships.forEach {
-            guard (object.value(forKey: $0) != nil) != $1 else { return }
+            guard (object.value(forKey: $0) as? NSManagedObject)?.objectID != $1 else { return }
             changedKeys.insert($0)
         }
         // Update snapshot
