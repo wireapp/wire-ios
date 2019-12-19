@@ -68,6 +68,9 @@
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser.remoteIdentifier = [NSUUID createUUID];
     
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    selfUser.remoteIdentifier = [NSUUID createUUID];
+    
     ZMUser *serviceUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     serviceUser.serviceIdentifier = @"serviceA";
     serviceUser.providerIdentifier = @"providerA";
@@ -127,6 +130,7 @@
     self.oneToOneConversationInTeam.userDefinedName = nil;
     self.oneToOneConversationInTeam.team = team;
     [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:otherUser role:nil];
+    [self.oneToOneConversationInTeam addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
     self.invalidConversation = [self createConversation];
     self.invalidConversation.conversationType = ZMConversationTypeInvalid;
@@ -150,6 +154,7 @@
     self.serviceConversation.userDefinedName = nil;
     self.serviceConversation.team = team;
     [self.serviceConversation addParticipantAndUpdateConversationStateWithUser:serviceUser role:nil];
+    [self.serviceConversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
     [self.uiMOC saveOrRollback];
 }
