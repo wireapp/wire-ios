@@ -27,6 +27,7 @@ class RolesMigrationTests: DiskDatabaseTest {
         // Given
         let selfUser = ZMUser.selfUser(in: moc)
         let team = createTeam()
+        team.remoteIdentifier = UUID.create()
         _ = createMembership(user: selfUser, team: team)
         team.needsToDownloadRoles = false
         
@@ -42,6 +43,13 @@ class RolesMigrationTests: DiskDatabaseTest {
         groupConvoInTeam.needsToDownloadRoles = false
         groupConvoInTeam.needsToBeUpdatedFromBackend = false
         groupConvoInTeam.team = team
+        
+        let groupConvoInAnotherTeam = createConversation()
+        groupConvoInAnotherTeam.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+        groupConvoInAnotherTeam.userDefinedName = "Group"
+        groupConvoInAnotherTeam.needsToDownloadRoles = false
+        groupConvoInAnotherTeam.needsToBeUpdatedFromBackend = false
+        groupConvoInAnotherTeam.teamRemoteIdentifier = UUID.create()
         
         let groupConvoThatUserLeft = createConversation()
         groupConvoThatUserLeft.needsToDownloadRoles = false
@@ -89,6 +97,8 @@ class RolesMigrationTests: DiskDatabaseTest {
         XCTAssertTrue(groupConvoInTeam.needsToBeUpdatedFromBackend)
         XCTAssertTrue(groupConvo.needsToDownloadRoles)
         XCTAssertTrue(groupConvo.needsToBeUpdatedFromBackend)
+        XCTAssertTrue(groupConvoInAnotherTeam.needsToDownloadRoles)
+        XCTAssertTrue(groupConvoInAnotherTeam.needsToBeUpdatedFromBackend)
         XCTAssertTrue(team.needsToDownloadRoles)
     }
     

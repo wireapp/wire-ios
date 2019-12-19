@@ -105,6 +105,7 @@ extension ZMConversation {
     static func forceToFetchConversationRoles(in moc: NSManagedObjectContext) {
         
         // Mark group conversation membership to be refetched
+        let selfUser = ZMUser.selfUser(in: moc)
         let groupConversationsFetch = ZMConversation.sortedFetchRequest(
             with: NSPredicate(format: "%K == %d",
                               ZMConversationConversationTypeKey,
@@ -114,11 +115,11 @@ extension ZMConversation {
         (moc.executeFetchRequestOrAssert(groupConversationsFetch) as! [ZMConversation]).forEach {
             guard $0.isSelfAnActiveMember else { return }
             $0.needsToBeUpdatedFromBackend = true
-            $0.needsToDownloadRoles = $0.team == nil
+            $0.needsToDownloadRoles = $0.team == nil || $0.team != selfUser.team
         }
         
         // Mark team as need to download roles
-        ZMUser.selfUser(in: moc).team?.needsToDownloadRoles = true
+        selfUser.team?.needsToDownloadRoles = true
     }
     
     // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the `lastServerSyncedActiveParticipants`.
