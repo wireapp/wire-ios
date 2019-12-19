@@ -82,6 +82,7 @@
         <relationship name="labels" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Label" inverseName="conversations" inverseEntity="Label" syncable="YES"/>
         <relationship name="nonTeamRoles" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="conversation" inverseEntity="Role" syncable="YES"/>
         <relationship name="participantRoles" toMany="YES" deletionRule="Nullify" destinationEntity="ParticipantRole" inverseName="conversation" inverseEntity="ParticipantRole" syncable="YES"/>
+        <relationship name="lastServerSyncedActiveParticipants" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="User" inverseName="lastServerSyncedActiveConversations" inverseEntity="User" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="conversations" inverseEntity="Team" syncable="YES"/>
         <compoundIndexes>
             <compoundIndex>
@@ -265,6 +266,7 @@
         <relationship name="conversationsCreated" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Conversation" inverseName="creator" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="createdTeamMembers" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Member" inverseName="createdBy" inverseEntity="Member" syncable="YES"/>
         <relationship name="createdTeams" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Team" inverseName="creator" inverseEntity="Team" syncable="YES"/>
+        <relationship name="lastServerSyncedActiveConversations" optional="YES" toMany="YES" deletionRule="Nullify" ordered="YES" destinationEntity="Conversation" inverseName="lastServerSyncedActiveParticipants" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="membership" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Member" inverseName="user" inverseEntity="Member" syncable="YES"/>
         <relationship name="participantRoles" toMany="YES" deletionRule="Nullify" destinationEntity="ParticipantRole" inverseName="user" inverseEntity="ParticipantRole" syncable="YES"/>
         <relationship name="reactions" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Reaction" inverseName="users" inverseEntity="Reaction" syncable="YES"/>

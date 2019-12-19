@@ -420,7 +420,8 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
                                            CreatedTeamMembersKey,
                                            LegalHoldRequestKey,
                                            NeedsToAcknowledgeLegalHoldStatusKey,
-                                           NeedsToRefetchLabelsKey
+                                           NeedsToRefetchLabelsKey,
+                                           @"lastServerSyncedActiveConversations" // OBSOLETE
                                            ]];
         keys = [ignoredKeys copy];
     });

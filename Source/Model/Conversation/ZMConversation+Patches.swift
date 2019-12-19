@@ -42,6 +42,7 @@ extension ZMConversation {
     
     // Migration rules for the Model version 2.78.0
     static func introduceParticipantRoles(in moc: NSManagedObjectContext) {
+        migrateUsersToParticipants(in: moc)
         migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
         addUserFromTheConnectionToTheParticipantRoles(in: moc)
         forceToFetchConversationRoles(in: moc)
@@ -112,5 +113,23 @@ extension ZMConversation {
         
         // Mark team as need to download roles
         ZMUser.selfUser(in: moc).team?.needsToDownloadRoles = true
+    }
+    
+    // Model version 2.78.0 adds a `participantRoles` attribute to the `Conversation` entity, and deprecates the `lastServerSyncedActiveParticipants`.
+    // Those need to be migrated to the new relationship
+    static func migrateUsersToParticipants(in moc: NSManagedObjectContext) {
+        
+        let oldKey = "lastServerSyncedActiveParticipants"
+        
+        (moc.executeFetchRequestOrAssert(ZMConversation.sortedFetchRequest()) as! [ZMConversation]).forEach { convo in
+            let users = (convo.value(forKey: oldKey) as! NSOrderedSet).array as? [ZMUser]
+            users?.forEach { user in
+                let participantRole = ParticipantRole.insertNewObject(in: moc)
+                participantRole.conversation = convo
+                participantRole.user = user
+                participantRole.role = nil
+            }
+            convo.setValue(NSOrderedSet(), forKey: oldKey)
+        }
     }
 }
