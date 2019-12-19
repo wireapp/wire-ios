@@ -149,7 +149,7 @@ extension ZMConversation {
                 "Tried to add a role that does not belong to the conversation"
             )
             
-            guard let (result, pr) = fetchOrCreateParticipantRole(user: user, role: role) else { return nil }
+            guard let (result, pr) = updateExistingOrCreateParticipantRole(for: user, with: role) else { return nil }
             return (result == .created) ? pr : nil
         }
         
@@ -168,10 +168,10 @@ extension ZMConversation {
         case fetched
         case created
     }
-    
+
     // Fetch an existing role or create a new one if needed
     // Returns whether it was created or found
-    private func fetchOrCreateParticipantRole(user: ZMUser, role: Role?) -> (FetchOrCreation, ParticipantRole)? {
+    private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
         
         guard let moc = self.managedObjectContext else { return nil }
         let shouldSyncToBackend = moc.zm_isUserInterfaceContext
@@ -186,7 +186,9 @@ extension ZMConversation {
             if shouldSyncToBackend && current.markedForDeletion {
                 current.operationToSync = .none
             }
+
             return (.fetched, current)
+
         } else {
             // A new participant role
             let participantRole = ParticipantRole.insertNewObject(in: moc)
@@ -196,6 +198,7 @@ extension ZMConversation {
             if shouldSyncToBackend {
                 participantRole.operationToSync = .insert
             }
+
             return (.created, participantRole)
         }
     }
