@@ -82,7 +82,8 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                            "participantRoles": 0,
                                            "allMessages": 0,
                                            "labels": 0,
-                                           "nonTeamRoles": 0]
+                                           "nonTeamRoles": 0,
+                                           "lastServerSyncedActiveParticipants": 0]
         
         expectedAttributes.forEach {
             XCTAssertEqual(snapshot.attributes[$0] ?? nil, $1)
@@ -139,7 +140,8 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                            "participantRoles": 0,
                                            "allMessages": 1,
                                            "labels": 0,
-                                           "nonTeamRoles": 0]
+                                           "nonTeamRoles": 0,
+                                           "lastServerSyncedActiveParticipants": 0]
         
         let expectedToOneRelationships = ["team": false,
                                           "connection": false,
@@ -194,7 +196,8 @@ class SnapshotCenterTests : BaseZMMessageTests {
                                                                                   "participantRoles",
                                                                                   "allMessages",
                                                                                   "labels",
-                                                                                  "nonTeamRoles"]))
+                                                                                  "nonTeamRoles",
+                                                                                  "lastServerSyncedActiveParticipants"]))
     }
 
 }
