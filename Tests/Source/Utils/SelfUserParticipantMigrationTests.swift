@@ -23,9 +23,13 @@ import XCTest
 class SelfUserParticipantMigrationTests: DiskDatabaseTest {
     
     func testMigrationIsSelfAnActiveMemberToTheParticipantRoles() {
+        
         // Given
+        let oldKey = "isSelfAnActiveMember"
         let conversation = createConversation()
-        conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: moc), role: nil)
+        conversation.willAccessValue(forKey: oldKey)
+        conversation.setPrimitiveValue(NSNumber(value: true), forKey: oldKey)
+        conversation.didAccessValue(forKey: oldKey)
         self.moc.saveOrRollback()
         
         // When

@@ -57,7 +57,13 @@ extension ZMConversation {
         let allConversations = moc.executeFetchRequestOrAssert(request) as! [ZMConversation]
         
         for conversation in allConversations {
-            if conversation.isSelfAnActiveMember {
+            
+            let oldKey = "isSelfAnActiveMember"
+            conversation.willAccessValue(forKey: oldKey)
+            let isSelfAnActiveMember = (conversation.primitiveValue(forKey: oldKey) as! NSNumber).boolValue
+            conversation.didAccessValue(forKey: oldKey)
+            
+            if isSelfAnActiveMember {
                 var participantRoleForSelfUser: ParticipantRole
                 let adminRole = conversation.getRoles().first(where: {$0.name == defaultAdminRoleName} )
                 
