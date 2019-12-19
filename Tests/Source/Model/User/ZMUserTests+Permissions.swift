@@ -218,14 +218,22 @@ class ZMUserTests_Permissions: ModelObjectsTests {
         XCTAssertTrue(selfUser.canCreateConversation)
     }
     
+    func testThatConversationCanBeCreated_ByPartner() {
+        // given
+        makeSelfUserTeamMember(withPermissions: .partner)
+        
+        // then
+        XCTAssert(selfUser.canCreateConversation)
+    }
+
     func testThatConversationCantBeCreated_ByTeamMemberWithInsufficientPermissions() {
         // given
         makeSelfUserTeamMember(withPermissions: .partner)
         
         // then
-        XCTAssertFalse(selfUser.canCreateConversation)
+        XCTAssertFalse(selfUser.canDeleteConversation(conversation))
     }
-    
+
     // MARK: Manage team
     
     func testThatTeamCantBeManaged_ByNonTeamUser() {
