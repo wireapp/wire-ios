@@ -419,6 +419,73 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
                                                 expectedChangedKeys: ["displayName",
                                                                       "localParticipantRoles"])
     }
+
+    func testThatItNotifiesTheObserverOfAParticipantRoleAdded() {
+        // given
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.name = "Foo"
+
+        let newRole = Role.insertNewObject(in: self.uiMOC)
+        newRole.name = "New Role"
+
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = ZMConversationType.group
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        conversation.participantRoles.forEach { $0.operationToSync = .none }
+
+        uiMOC.saveOrRollback()
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        let modifier: (ZMConversation, ZMConversationObserver) -> Void = { conversation, _ in
+            conversation.participantRoles.forEach {
+                $0.role = newRole
+            }
+        }
+
+        // then
+        checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                modifier: modifier,
+                                                expectedChangedFields: ["participantsChanged"],
+                                                expectedChangedKeys: ["localParticipantRoles"])
+
+    }
+
+    func testThatItNotifiesTheObserverOfAParticipantRoleChanged() {
+        // given
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        user.name = "Foo"
+
+        let oldRole = Role.insertNewObject(in: self.uiMOC)
+        oldRole.name = "Old Role"
+
+        let newRole = Role.insertNewObject(in: self.uiMOC)
+        newRole.name = "New Role"
+
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = ZMConversationType.group
+        conversation.addParticipantAndUpdateConversationState(user: user, role: oldRole)
+        conversation.participantRoles.forEach { $0.operationToSync = .none }
+
+        uiMOC.saveOrRollback()
+
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // when
+        let modifier: (ZMConversation, ZMConversationObserver) -> Void = { conversation, _ in
+            conversation.participantRoles.forEach {
+                $0.role = newRole
+            }
+        }
+
+        // then
+        checkThatItNotifiesTheObserverOfAChange(conversation,
+                                                modifier: modifier,
+                                                expectedChangedFields: ["participantsChanged"],
+                                                expectedChangedKeys: ["localParticipantRoles"])
+
+    }
     
     func testThatItNotifiesTheObserverIfTheSelfUserIsAdded()
     {
