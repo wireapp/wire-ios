@@ -50,15 +50,37 @@ extension ZMConversation {
     
     @objc
     static public func insertGroupConversation(moc: NSManagedObjectContext,
+                                               participants: [ZMUser],
+                                               name: String? = nil,
+                                               team: Team? = nil,
+                                               allowGuests: Bool = true,
+                                               readReceipts: Bool = false,
+                                               participantsRole: Role? = nil) -> ZMConversation? {
+        return insertGroupConversation(moc: moc, participants: participants, name: name, team: team, allowGuests: allowGuests, readReceipts: readReceipts, participantsRole: participantsRole, type: .group)
+    }
+    
+    /// insert a conversation with group type
+    ///
+    /// - Parameters:
+    ///   - moc: the NSManagedObjectContext
+    ///   - participants: the participants
+    ///   - name: the name of the convo
+    ///   - team: the team of the convo
+    ///   - allowGuests: allow guest or not
+    ///   - readReceipts: allow read receipts or not
+    ///   - participantsRole: the participants' role
+    ///   - type: the convo type want to be created (for permission check)
+    /// - Returns: the created conversation, nullable
+    static public func insertGroupConversation(moc: NSManagedObjectContext,
                                        participants: [ZMUser],
                                        name: String? = nil,
                                        team: Team? = nil,
                                        allowGuests: Bool = true,
                                        readReceipts: Bool = false,
-                                       participantsRole: Role? = nil) -> ZMConversation?
-    {
+                                       participantsRole: Role? = nil,
+                                       type: ZMConversationType = .group) -> ZMConversation? {
         let selfUser = ZMUser.selfUser(in: moc)
-        if (team != nil && !selfUser.canCreateConversation) {
+        if (team != nil && !selfUser.canCreateConversation(type: type)) {
             return nil
         }
         
@@ -88,12 +110,12 @@ extension ZMConversation {
         return conversation
     }
     
-    @objc static func fetchOrCreateOneToOneTeamConversation(
+    @objc
+    static func fetchOrCreateOneToOneTeamConversation(
         moc: NSManagedObjectContext,
         participant: ZMUser,
         team: Team?,
-        participantRole: Role? = nil) -> ZMConversation?
-    {
+        participantRole: Role? = nil) -> ZMConversation? {
         guard let team = team,
             !participant.isSelfUser
         else { return nil }
@@ -106,7 +128,8 @@ extension ZMConversation {
                                        participants: [participant],
                                        name: nil,
                                        team: team,
-                                       participantsRole: participantRole)
+                                       participantsRole: participantRole,
+                                       type:.oneOnOne)
     }
     
     private static func existingTeamConversation(moc: NSManagedObjectContext,

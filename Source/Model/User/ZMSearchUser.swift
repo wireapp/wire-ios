@@ -328,8 +328,8 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canAccessCompanyInformation(of: otherUser) ?? false
     }
 
-    public var canCreateConversation: Bool {
-        return user?.canCreateConversation ?? false
+    public func canCreateConversation(type: ZMConversationType) -> Bool {
+        return user?.canCreateConversation(type: type) ?? false
     }
     
     public var canCreateService: Bool {

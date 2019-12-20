@@ -150,7 +150,8 @@ public protocol UserType: NSObjectProtocol {
     // MARK: - Permissions
     
     /// Whether the user can create conversations.
-    var canCreateConversation: Bool { get }
+    @objc
+    func canCreateConversation(type: ZMConversationType) -> Bool
     
     /// Whether the user can create services
     var canCreateService: Bool { get }

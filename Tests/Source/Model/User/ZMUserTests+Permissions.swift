@@ -18,7 +18,7 @@
 
 import XCTest
 
-class ZMUserTests_Permissions: ModelObjectsTests {
+final class ZMUserTests_Permissions: ModelObjectsTests {
     
     let defaultAdminRoleName = "wire_admin"
     var team: Team!
@@ -206,26 +206,30 @@ class ZMUserTests_Permissions: ModelObjectsTests {
     
     // MARK: Create conversation
     
-    func testThatConversationCanBeCreated_ByNonTeamUser() {
-        XCTAssertTrue(selfUser.canCreateConversation)
+    func testThatOneOnOneConversationCanBeCreated_ByNonTeamUser() {
+        XCTAssert(selfUser.canCreateConversation(type: .oneOnOne))
     }
-    
+
+    func testThatGroupConversationCanBeCreated_ByNonTeamUser() {
+        XCTAssert(selfUser.canCreateConversation(type: .group))
+    }
+
+    func testThatGroupConversationCanNotCreated_ByPartner() {
+        // given
+        makeSelfUserTeamMember(withPermissions: .partner)
+        
+        // then
+        XCTAssertFalse(selfUser.canCreateConversation(type: .group))
+    }
+
     func testThatConversationCanBeCreated_ByTeamMemberWithSufficientPermissions() {
         // given
         makeSelfUserTeamMember(withPermissions: .member)
         
         // then
-        XCTAssertTrue(selfUser.canCreateConversation)
+        XCTAssert((selfUser?.canCreateConversation(type: .group))!)
     }
     
-    func testThatConversationCanBeCreated_ByPartner() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .partner)
-        
-        // then
-        XCTAssert(selfUser.canCreateConversation)
-    }
-
     func testThatConversationCantBeCreated_ByTeamMemberWithInsufficientPermissions() {
         // given
         makeSelfUserTeamMember(withPermissions: .partner)
