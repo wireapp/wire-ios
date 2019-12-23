@@ -512,4 +512,68 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
         XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
     }
+    
+    func testThatItRefetchesRolesIfNoRoles() {
+        
+        syncMOC.performGroupedAndWait() { _ -> () in
+            // given
+            
+            ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            
+            // when
+            conversation.markToDownloadRolesIfNeeded()
+            
+            // then
+            XCTAssertTrue(conversation.needsToDownloadRoles)
+        }
+    }
+    
+    func testThatItRefetchesRolesIfRolesAreEmpty() {
+        
+        syncMOC.performGroupedAndWait() { _ -> () in
+            // given
+            
+            ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            let role = Role.create(managedObjectContext: self.syncMOC, name: "foo", conversation: conversation)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: role)
+            
+            // when
+            conversation.markToDownloadRolesIfNeeded()
+            
+            // then
+            XCTAssertTrue(conversation.needsToDownloadRoles)
+        }
+    }
+    
+    func testThatItDoesNotRefetchRolesIfRolesAreNotEmpty() {
+        
+        syncMOC.performGroupedAndWait() { _ -> () in
+            // given
+            
+            ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.conversationType = .group
+            let role = Role.create(managedObjectContext: self.syncMOC, name: "foo", conversation: conversation)
+            var created = false
+            _ = Action.fetchOrCreate(with: "delete", role: role, in: self.syncMOC, created: &created)
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: role)
+            
+            // when
+            conversation.markToDownloadRolesIfNeeded()
+            
+            // then
+            XCTAssertFalse(conversation.needsToDownloadRoles)
+        }
+    }
 }

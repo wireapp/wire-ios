@@ -155,6 +155,7 @@ extension ZMConversation {
         
         let addedSelfUser = doesExistsOnBackend && addedRoles.contains(where: {$0.user.isSelfUser})
         if addedSelfUser {
+            self.markToDownloadRolesIfNeeded()
             self.needsToBeUpdatedFromBackend = true
         }
         
@@ -292,6 +293,23 @@ extension ZMConversation {
             return team.roles
         }
         return nonTeamRoles
+    }
+    
+    /// Check if roles are missing, and mark them to download if needed
+    @objc public func markToDownloadRolesIfNeeded() {
+        guard self.conversationType == .group else { return }
+        
+        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
+        let notInMyTeam = self.teamRemoteIdentifier == nil ||
+            selfUser.team?.remoteIdentifier != self.teamRemoteIdentifier
+        
+        guard notInMyTeam else { return }
+        
+        if self.nonTeamRoles.isEmpty ||
+            self.nonTeamRoles.first(where: {!$0.actions.isEmpty}) == nil // there are no roles with actions
+        {
+            self.needsToDownloadRoles = true
+        }
     }
 }
 

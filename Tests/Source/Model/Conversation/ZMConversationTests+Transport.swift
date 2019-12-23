@@ -320,6 +320,31 @@ extension ZMConversationTransportTests {
         // then
         XCTAssertEqual(conversation.participantRoles.first?.role?.name, "boss")
     }
+    
+    func testThatItRefetchesRolesIfNoRolesAfterUpdate() {
+        
+        syncMOC.performGroupedAndWait() { _ -> () in
+            // given
+            
+            ZMUser.selfUser(in: self.syncMOC).teamIdentifier = UUID()
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            let payload = self.simplePayload(
+                conversation: conversation,
+                team: nil,
+                selfRole: "test_role"
+            )
+            
+            // when
+            conversation.update(transportData: payload, serverTimeStamp: Date())
+            
+            // then
+            XCTAssertTrue(conversation.needsToDownloadRoles)
+        }
+    }
+    
 }
 
 extension ZMConversation {

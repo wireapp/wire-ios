@@ -144,6 +144,7 @@ extension ZMConversation {
             // Backend is sending the miliseconds, we need to convert to seconds.
             self.syncedMessageDestructionTimeout = messageTimerNumber / 1000;
         }
+        self.markToDownloadRolesIfNeeded()
     }
     
     private func updateReceiptMode(_ receiptMode: Int?) {
@@ -219,6 +220,7 @@ extension ZMConversation {
         {
             self.updateCleared(timeStamp, synchronize: false)
         }
+        self.markToDownloadRolesIfNeeded()
     }
     
     private func updateIsArchived(payload: [String: Any]) -> Bool {
