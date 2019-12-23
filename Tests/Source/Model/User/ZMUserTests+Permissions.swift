@@ -48,95 +48,34 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         }
     }
     
-    // MARK: Adding & Removing services
-    
-    func testThatUserCantAddOrRemoveServicesToAConversation_ByNonTeamUser() {
-        // when & then
-        XCTAssert(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveServicesToAConversation_ByGuest() {
-        // when
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveServicesToAConversation_ByInactiveParticipant() {
-        // when
-        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveServicesToAConversation_ByATeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.addRemoveConversationMember))
-        
-        // then
-        XCTAssertFalse(selfUser.canAddUser(to: self.conversation))
-    }
-    
-    func testThatUserCanAddOrRemoveServicesToAConversation_ByATeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
-        
-        // then
-        XCTAssertTrue(selfUser.canAddUser(to: self.conversation))
-    }
-
-    // MARK: Adding & Rmoving users
-    
-    func testThatUserCanAddOrRemoveUsersToAConversation_ByNonTeamUser() {
-        // when & then
-        XCTAssert(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveUsersToAConversation_ByGuest() {
-        // when
-        conversation.teamRemoteIdentifier = team.remoteIdentifier
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveUsersToAConversation_ByInactiveParticipant() {
-        // when
-        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canAddUser(to: conversation))
-    }
-    
-    func testThatUserCantAddOrRemoveUsersToAConversation_ByATeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.addRemoveConversationMember))
-        
-        // then
-        XCTAssertFalse(selfUser.canAddUser(to: self.conversation))
-    }
-    
-    func testThatUserCanAddOrRemoveUsersToAConversation_ByATeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .addRemoveConversationMember)
-        
-        // then
-        XCTAssertTrue(selfUser.canAddUser(to: self.conversation))
-    }
-    
     // MARK: Deleting conversation
     
     func testThatConversationCanBeDeleted_ByItsCreator() {
         // when
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.creator = selfUser
+        conversation.team = self.team
+        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        selfUser.teamIdentifier = conversation.teamRemoteIdentifier
+        selfUser.teamIdentifier = conversation.teamRemoteIdentifier
+        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        createARoleForSelfUserWith("delete_conversation")
         
         // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
+    }
+    
+    func testThatConversationCantBeDeleted_ByItsCreatorIfNotInTeam() {
+        // when
+        makeSelfUserTeamMember(withPermissions: .member)
+        conversation.creator = selfUser
+        conversation.team = self.team
+        conversation.teamRemoteIdentifier = self.team.remoteIdentifier
+        createARoleForSelfUserWith("delete_conversation")
+        
+        // then
+        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
     }
     
     func testThatConversationCantBeDeleted_ByItsCreatorIfNotAnActiveParticipant() {
@@ -144,6 +83,8 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
         conversation.creator = selfUser
+        createARoleForSelfUserWith("delete_conversation")
+
         
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
@@ -154,6 +95,7 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         makeSelfUserTeamMember(withPermissions: .member)
         conversation.creator = selfUser
         conversation.teamRemoteIdentifier = nil
+        createARoleForSelfUserWith("delete_conversation")
         
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canDeleteConversation(conversation))
@@ -317,93 +259,6 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         XCTAssertFalse(user2CanSeeUser1)
     }
     
-    // MARK: Read Receipts Setting
-    
-    func testThatReadReceiptSettingsCantBeModified_ByNonTeamMember() {
-        // when & then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyReadReceiptSettings(in: conversation))
-    }
-    
-    func testThatReadReceiptSettingsCantBeModified_ByGuest() {
-        // given
-        conversation.teamRemoteIdentifier = UUID()
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyReadReceiptSettings(in: conversation))
-    }
-    
-    func testThatReadReceiptSettingsCanBeModified_ByTeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyReadReceiptSettings(in: conversation))
-    }
-    
-    func testThatReadReceiptSettingsCantBeModified_ByTeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.modifyConversationMetaData))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyReadReceiptSettings(in: conversation))
-    }
-    
-    func testThatReadReceiptSettingsCantBeModified_ByInactiveParticipant() {
-        // given
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyReadReceiptSettings(in: conversation))
-    }
-    
-    // MARK: Ephermeral Setting
-    
-    func testThatEphemeralSettingsCanBeModified_ByActiveParticipant() {
-        // when & then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
-    func testThatEphemeralSettingsCantBeModified_ByGuest() {
-        // given
-        conversation.teamRemoteIdentifier = UUID()
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
-    func testThatEphemeralSettingsCanBeModified_ByTeamGuest() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
-        conversation.teamRemoteIdentifier = nil
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
-    func testThatEphemeralSettingsCanBeModified_ByTeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
-    func testThatEphemeralSettingsCantBeModified_ByTeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.modifyConversationMetaData))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
-    func testThatEphemeralSettingsCantBeModified_ByInactiveParticipant() {
-        // given
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyEphemeralSettings(in: conversation))
-    }
-    
     // MARK: Notifications Setting
     
     func testThatConversationNotificationSettingsCanBeModified_ByAnyTeamMember() {
@@ -444,88 +299,9 @@ final class ZMUserTests_Permissions: ModelObjectsTests {
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyNotificationSettings(in: conversation))
     }
     
-    // MARK: Access Control
-    
-    func testThatConversationAccessControlCanBeModified_ByTeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
-        conversation.conversationType = .group
-        createARoleForSelfUserWith("modify_conversation_access")
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
-    }
-    
-    func testThatConversationAccessControlCantBeModified_ByNonTeamMember() {
-        // when & then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
-    }
-    
-    func testThatConversationAccessControlCantBeModified_ByGuest() {
-        // given
-        conversation.teamRemoteIdentifier = UUID()
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
-    }
-    
-    func testThatConversationAccessControlCantBeModified_ByTeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.modifyConversationMetaData))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
-    }
-    
-    func testThatConversationAccessControlCantBeModified_ByInactiveParticipant() {
-        // given
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
-    }
-    
-    // MARK: Conversation Title
-    
-    func testThatConversationTitleCanBeModified_ByActiveParticipant() {
-        // when & then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyTitle(in: conversation))
-    }
-    
-    func testThatConversationTitleCanBeModified_ByGuest() {
-        // given
-        conversation.teamRemoteIdentifier = UUID()
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyTitle(in: conversation))
-    }
-    
-    func testThatConversationTitleCanBeModified_ByTeamMemberWithSufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
-        
-        // then
-        XCTAssertTrue(ZMUser.selfUser(in: uiMOC).canModifyTitle(in: conversation))
-    }
-    
-    func testThatConversationTitleCantBeModified_ByTeamMemberWithInsufficientPermissions() {
-        // given
-        makeSelfUserTeamMember(withPermissions: Permissions.admin.subtracting(.modifyConversationMetaData))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyTitle(in: conversation))
-    }
-    
-    func testThatConversationTitleCantBeModified_ByInactiveParticipant() {
-        // given
-        conversation.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        
-        // then
-        XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyTitle(in: conversation))
-    }
 }
 
- // MARK: New permissions for groups
+ // MARK: Conversation roles
 
 extension ZMUserTests_Permissions {
     func testThatConversationTitleCanBeModified_ByGroupParticipant() {
@@ -677,7 +453,8 @@ extension ZMUserTests_Permissions {
         makeSelfUserTeamMember(withPermissions: .modifyConversationMetaData)
         conversation.conversationType = .group
         createARoleForSelfUserWith("modify_conversation_access")
-        conversation.team?.remoteIdentifier = nil
+        conversation.teamRemoteIdentifier = nil
+        conversation.team = nil
         
         // then
         XCTAssertFalse(ZMUser.selfUser(in: uiMOC).canModifyAccessControlSettings(in: conversation))
