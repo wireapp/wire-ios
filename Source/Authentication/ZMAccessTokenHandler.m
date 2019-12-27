@@ -21,7 +21,6 @@
 @import WireUtilities;
 
 #import "ZMAccessTokenHandler.h"
-#import "ZMAccessToken.h"
 #import "ZMTransportResponse.h"
 #import "ZMTransportData.h"
 #import "ZMTransportCodec.h"

@@ -25,7 +25,6 @@
 #import "ZMTransportRequestScheduler.h"
 #import "ZMPushChannelConnection.h"
 #import "ZMTransportSession+internal.h"
-#import "ZMAccessToken.h"
 #import "Fakes.h"
 #import "ZMWebSocket.h"
 #import "WireTransport_ios_tests-Swift.h"

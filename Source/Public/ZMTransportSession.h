@@ -28,7 +28,6 @@
 NS_ASSUME_NONNULL_BEGIN
 
 @class UIApplication;
-@class ZMAccessToken;
 @class ZMTransportRequest;
 @class ZMPersistentCookieStorage;
 @class ZMTransportRequestScheduler;
@@ -40,6 +39,7 @@ NS_ASSUME_NONNULL_BEGIN
 @protocol BackendEnvironmentProvider;
 @protocol URLSessionsDirectory;
 @class ZMTransportRequest;
+@class ZMAccessToken;
 
 typedef ZMTransportRequest* _Nullable (^ZMTransportRequestGenerator)(void);
 
