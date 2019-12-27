@@ -22,7 +22,6 @@
 #import "ZMPushChannelConnection.h"
 #import "ZMPushChannelConnection+WebSocket.h"
 #import "ZMWebSocket.h"
-#import "ZMAccessToken.h"
 #import <libkern/OSAtomic.h>
 #import "ZMTLogging.h"
 #import <WireTransport/WireTransport-Swift.h>
@@ -76,7 +75,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         }
         
         if (webSocket == nil) {
-            NSMutableDictionary *headers = [accessToken.httpHeaders mutableCopy];
+            NSMutableDictionary *headers = [[accessToken httpHeaders] mutableCopy];
             if (0 < userAgentString.length) {
                 headers[@"User-Agent"] = [userAgentString copy];
             }

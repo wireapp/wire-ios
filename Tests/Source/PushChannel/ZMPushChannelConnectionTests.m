@@ -22,7 +22,6 @@
 @import OCMock;
 
 #import "ZMPushChannelConnection+WebSocket.h"
-#import "ZMAccessToken.h"
 #import "WireTransport_ios_tests-Swift.h"
 
 
