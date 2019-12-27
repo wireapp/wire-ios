@@ -21,13 +21,13 @@ import Foundation
 extension ConversationContentViewController {
     @objc
     func updateTableViewHeaderView() {
-        guard let userSession = ZMUserSession.shared() else { return }
-        
-        if dataSource?.hasOlderMessagesToLoad != nil, conversation.conversationType != .connection {
-            // Don't display the conversation header if the message window doesn't include the first message and it is not a connection
+        guard let userSession = ZMUserSession.shared(),
+              (dataSource?.hasOlderMessagesToLoad == false ||
+              conversation.conversationType == .connection) else {
+                // Don't display the conversation header if the message window doesn't include the first message and it is not a connection
             return
         }
-        
+
         var headerView: UIView? = nil
         
         let otherParticipant: ZMUser?
