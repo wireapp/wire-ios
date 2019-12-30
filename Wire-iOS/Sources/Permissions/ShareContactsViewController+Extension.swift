@@ -18,10 +18,68 @@
 
 import Foundation
 
+extension ShareContactsViewController: PermissionDeniedViewControllerDelegate {
+    public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {
+        AddressBookHelper.sharedHelper.addressBookSearchWasPostponed = true
+        delegate?.shareContactsViewControllerDidSkip(self)
+    }
+}
+
 extension ShareContactsViewController {
 
-    // MARK: - Constraints
+    override open func viewDidLoad() {
+        super.viewDidLoad()
+        let blurEffect = UIBlurEffect(style: .dark)
+        backgroundBlurView = UIVisualEffectView(effect: blurEffect)
+        view.addSubview(backgroundBlurView)
+        backgroundBlurView.isHidden = backgroundBlurDisabled
+        
+        shareContactsContainerView = UIView()
+        view.addSubview(shareContactsContainerView)
+        
+        createHeroLabel()
+        createNotNowButton()
+        createShareContactsButton()
+        createAddressBookAccessDeniedViewController()
+        createConstraints()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(applicationDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+        
+        if AddressBookHelper.sharedHelper.isAddressBookAccessDisabled {
+            displayContactsAccessDeniedMessage(animated: false)
+        }
+    }
+    
+    // MARK: - Actions
     @objc
+    func shareContacts(_ sender: Any?) {
+        AddressBookHelper.sharedHelper.requestPermissions({ [weak self] success in
+            guard let weakSelf = self else { return }
+            if success {
+                AddressBookHelper.sharedHelper.startRemoteSearch( weakSelf.uploadAddressBookImmediately)
+                weakSelf.delegate?.shareContactsViewControllerDidFinish(weakSelf)
+            } else {
+                weakSelf.displayContactsAccessDeniedMessage(animated: true)
+            }
+        })
+    }
+    
+    @objc
+    func shareContactsLater(_ sender: Any?) {
+        AddressBookHelper.sharedHelper.addressBookSearchWasPostponed = true
+        delegate?.shareContactsViewControllerDidSkip(self)
+    }
+
+    // MARK: - UIApplication notifications
+    @objc
+    func applicationDidBecomeActive(_ notification: Notification) {
+        if AddressBookHelper.sharedHelper.isAddressBookAccessGranted {
+            AddressBookHelper.sharedHelper.startRemoteSearch(true)
+            delegate?.shareContactsViewControllerDidFinish(self)
+        }
+    }
+
+    // MARK: - Constraints
     func createConstraints() {
         [backgroundBlurView,
          shareContactsContainerView,
