@@ -59,7 +59,7 @@ public struct ConversationDegradationInfo {
     }
 }
 
-class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
+final class DegradationObserver : NSObject, ZMConversationObserver, TearDownCapable {
     
     let callback : (ConversationDegradationInfo)->()
     let conversation : ZMConversation
