@@ -105,13 +105,6 @@
 #import "ContactsDataSource.h"
 #import "Button.h"
 
-#import "PermissionDeniedViewController.h"
-
-#import "ShareContactsViewController.h"
-#import "ShareContactsViewController+Internal.h"
-
-#import "PermissionDeniedViewController+Internal.h"
-
 // Helper objects
 #import "PushTransition.h"
 #import "PopTransition.h"
