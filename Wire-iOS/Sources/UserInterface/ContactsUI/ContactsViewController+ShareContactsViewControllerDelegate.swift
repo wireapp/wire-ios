@@ -1,4 +1,3 @@
-//
 // Wire
 // Copyright (C) 2019 Wire Swiss GmbH
 //
@@ -16,12 +15,18 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@interface PermissionDeniedViewController ()
+import Foundation
 
-@property (nonatomic) BOOL initialConstraintsCreated;
-@property (nonatomic) UILabel *heroLabel;
-@property (nonatomic) Button *settingsButton;
-@property (nonatomic) UIButton *laterButton;
-@property (nonatomic) UIVisualEffectView *backgroundBlurView;
-
-@end
+import Foundation
+extension ContactsViewController: ShareContactsViewControllerDelegate {
+    func shareDidFinish(_ viewController: UIViewController) {
+        // Reload data source
+        dataSource?.search(withQuery: "", searchDirectory: dataSource?.searchDirectory)
+        
+        dismissChildViewController(viewController)
+    }
+    
+    func shareDidSkip(_ viewController: UIViewController) {
+        delegate?.contactsViewControllerDidNotShareContacts?(self)
+    }
+}
