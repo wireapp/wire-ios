@@ -66,8 +66,9 @@ extension ZMConversation {
     
     @objc
     public class func normalize(_ string: String) -> [String] {
+        let trimmedString = string.trimmingCharacters(in: .whitespacesAndNewlines)
         var array: [String] = []
-        string.components(separatedBy: " ").forEach { (str) in
+        trimmedString.components(separatedBy: " ").forEach { (str) in
             array.append(String(format: ".*\\b%@.*", str.lowercased()))
         }
         return array
