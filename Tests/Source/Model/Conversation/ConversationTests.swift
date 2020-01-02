@@ -19,19 +19,56 @@
 import Foundation
 
 final class ConversationTests: ZMConversationTestsBase {
-    func testThatItFindsConversationWithQueryStringWithTrailingSpace() {
-        // given
+    
+    @discardableResult
+    private func insertMockGroupConversation(userDefinedName: String) -> ZMConversation {
         let selfUser = ZMUser.selfUser(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.userDefinedName = "Sömëbodÿ"
+        conversation.userDefinedName = userDefinedName
         conversation.conversationType = .group
         conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
         uiMOC.saveOrRollback()
         let _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
         
+        return conversation
+    }
+
+    func testThatItFindsConversationByUserDefinedNameDiacritics() {
+        // given
+        let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
+        
+        // when
+        
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy", selfUser: selfUser))
+        let result = uiMOC.executeFetchRequestOrAssert(request)
+        
+        // then
+        XCTAssertEqual(result?.count, 1)
+        XCTAssertEqual(result?.first as? ZMConversation, conversation)
+    }
+
+    func testThatItFindsConversationWithQueryStringWithTrailingSpace() {
+        // given
+        let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
+
         // when
         
         let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy ", selfUser: selfUser))
+        let result = uiMOC.executeFetchRequestOrAssert(request)
+        
+        // then
+        XCTAssertEqual(result?.count, 1)
+        XCTAssertEqual(result?.first as? ZMConversation, conversation)
+    }
+
+
+    func testThatItFindsConversationWithQueryStringWithWords() {
+        // given
+        let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ to")
+
+        // when
+        
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "Sømebôdy to", selfUser: selfUser))
         let result = uiMOC.executeFetchRequestOrAssert(request)
         
         // then

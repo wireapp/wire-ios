@@ -2775,27 +2775,6 @@
     XCTAssertEqualObjects(result.firstObject, conversation);
 }
 
-- (void)testThatItFindsConversationByUserDefinedNameDiacritics
-{
-    // given
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.userDefinedName = @"Sömëbodÿ";
-    conversation.conversationType = ZMConversationTypeGroup;
-    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // when
-    
-    NSFetchRequest *request = [ZMConversation sortedFetchRequestWithPredicate: [ZMConversation predicateForSearchQuery:@"Sømebôdy" selfUser:selfUser]];
-    NSArray *result = [self.uiMOC executeFetchRequestOrAssert:request];
-    
-    // then
-    XCTAssertEqual(result.count, 1u);
-    XCTAssertEqualObjects(result.firstObject, conversation);
-}
-
 - (void)testThatItOnlyFindsConversationsWithAllComponents
 {
     // given
