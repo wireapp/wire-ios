@@ -42,6 +42,31 @@ class SelfUserParticipantMigrationTests: DiskDatabaseTest {
         XCTAssertTrue(hasSelfUser)
     }
     
+    func testMigrationDoesntCreateDuplicateTeamRoles() {
+        // Given
+        let oldKey = "isSelfAnActiveMember"
+        let team = createTeam()
+        let selfUser = ZMUser.selfUser(in: self.moc)
+        _ = createMembership(user: selfUser, team: team)
+        let conversation1 = createConversation()
+        let conversation2 = createConversation()
+        
+        [conversation1, conversation2].forEach { conversation in
+            conversation.team = team
+            conversation.willAccessValue(forKey: oldKey)
+            conversation.setPrimitiveValue(NSNumber(value: true), forKey: oldKey)
+            conversation.didAccessValue(forKey: oldKey)
+        }
+
+        self.moc.saveOrRollback()
+        
+        // When
+        WireDataModel.ZMConversation.migrateIsSelfAnActiveMemberToTheParticipantRoles(in: moc)
+        
+        // Then
+        XCTAssertEqual(team.roles.count, 1)
+    }
+    
     func testAddUserFromTheConnectionToTheParticipantRoles() {
         // Given
         let conversation = createConversation()
