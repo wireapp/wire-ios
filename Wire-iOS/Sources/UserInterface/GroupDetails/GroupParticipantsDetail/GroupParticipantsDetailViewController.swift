@@ -77,8 +77,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
         
         if firstLayout {
             firstLayout = false
-            ///TODO: Katarina this need to be restored?
-//            scrollToFirstHighlightedUser()
+            scrollToFirstHighlightedUser()
         }
     }
     
@@ -136,8 +135,7 @@ final class GroupParticipantsDetailViewController: UIViewController {
     }
     
     private func scrollToFirstHighlightedUser() {
-        if let idx = viewModel.indexOfFirstSelectedParticipant {
-            let indexPath = IndexPath(row: idx, section: 0)
+        if let indexPath = viewModel.indexPathOfFirstSelectedParticipant {
             collectionView.scrollToItem(at: indexPath, at: .top, animated: false)
         }
     }
