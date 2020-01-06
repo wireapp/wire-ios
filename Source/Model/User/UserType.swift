@@ -181,6 +181,10 @@ public protocol UserType: NSObjectProtocol {
     /// Whether the user can delete the conversation
     @objc(canDeleteConversation:)
     func canDeleteConversation(_ conversation: ZMConversation) -> Bool
+
+    /// Wheter the user can modify roles of members in the conversation.
+    @objc(canModifyOtherMemberInConversation:)
+    func canModifyOtherMember(in conversation: ZMConversation) -> Bool
     
     /// Whether the user can toggle the read receipts setting in the conversation.
     @objc(canModifyReadReceiptSettingsInConversation:)
@@ -201,6 +205,10 @@ public protocol UserType: NSObjectProtocol {
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)
     func canModifyTitle(in conversation: ZMConversation) -> Bool
+
+    /// Whether the user can leave the conversation.
+    @objc(canLeave:)
+    func canLeave(_ conversation: ZMConversation) -> Bool
 
     /// The role in the given conversation.
     @objc(roleInConversation:)

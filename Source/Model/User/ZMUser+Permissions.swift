@@ -90,7 +90,7 @@ public extension ZMUser {
                                  conversation: conversation) && conversation.creator == self
             && selfUser.hasTeam && selfUser.teamIdentifier == self.teamIdentifier
     }
-    
+
     @objc(canModifyOtherMemberInConversation:)
     func canModifyOtherMember(in conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return false }
@@ -114,14 +114,7 @@ public extension ZMUser {
             return permissions?.contains(.modifyConversationMetaData) ?? true
         }
     }
-    
-    @objc(canModifyReceiptModeInConversation:)
-    func canModifyReceiptMode(in conversation: ZMConversation) -> Bool {
-        guard conversation.conversationType == .group else { return false }
-        return hasRoleWithAction(actionName: ConversationAction.modifyConversationReceiptMode.name,
-                                 conversation: conversation)
-    }
-    
+
     @objc(canModifyNotificationSettingsInConversation:)
     func canModifyNotificationSettings(in conversation: ZMConversation) -> Bool {
         guard conversation.isSelfAnActiveMember else { return false }
@@ -142,13 +135,13 @@ public extension ZMUser {
         guard conversation.conversationType == .group else { return false }
         return hasRoleWithAction(actionName: ConversationAction.modifyConversationName.name, conversation: conversation)
     }
-    
+
     @objc(canLeave:)
     func canLeave(_ conversation: ZMConversation) -> Bool {
         guard conversation.conversationType == .group else { return true }
         return hasRoleWithAction(actionName: ConversationAction.leaveConversation.name, conversation: conversation)
     }
-    
+
     @objc
     func canCreateConversation(type: ZMConversationType) -> Bool {
         switch type {

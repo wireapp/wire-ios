@@ -1015,7 +1015,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
 
 extension ZMUser {
     func participantRole(in conversation: ZMConversation?) -> ParticipantRole? {
-        return zmUser?.participantRoles.first(where: { $0.conversation == conversation })
+        return participantRoles.first(where: { $0.conversation == conversation })
     }
 }
 
