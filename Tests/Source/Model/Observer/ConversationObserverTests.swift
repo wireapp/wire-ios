@@ -347,58 +347,6 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         
     }
     
-    func testThatItNotifiesTheObserverOfAParticipantOperationSetToDelete() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        let user = ZMUser.insertNewObject(in:self.uiMOC)
-        user.name = "Foo"
-        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        
-        uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // when
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                modifier: { conversation, _ in
-                                                    conversation.participantRoles.forEach(){
-                                                        $0.operationToSync = .delete
-                                                    }
-                                                },
-                                                expectedChangedFields: ["participantsChanged",
-                                                     "nameChanged",
-                                                     "activeParticipantsChanged"],
-                                                expectedChangedKeys: ["displayName",
-                                                                      "localParticipantRoles"])
-        
-    }
-    
-    func testThatItNotifiesTheObserverOfAParticipantIsInserted() {
-        // given
-        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
-        conversation.conversationType = ZMConversationType.group
-        let user = ZMUser.insertNewObject(in:self.uiMOC)
-        user.name = "Foo"
-        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        conversation.participantRoles.forEach { $0.operationToSync = .none }
-        uiMOC.saveOrRollback()
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        // when
-        checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                        conversation.participantRoles.forEach(){
-                                                            $0.operationToSync = .insert
-                                                        }
-                                                     },
-                                                     expectedChangedFields: ["participantsChanged",
-                                                                             "nameChanged",
-                                                                             "activeParticipantsChanged"],
-                                                     expectedChangedKeys: ["displayName",
-                                                                            "localParticipantRoles"])
-        
-    }
-    
     func testThatItNotifiesTheObserverOfAnRemovedParticipant() {
         // given
         let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
@@ -431,7 +379,6 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
-        conversation.participantRoles.forEach { $0.operationToSync = .none }
 
         uiMOC.saveOrRollback()
 
@@ -466,7 +413,6 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.conversationType = ZMConversationType.group
         conversation.addParticipantAndUpdateConversationState(user: user, role: oldRole)
-        conversation.participantRoles.forEach { $0.operationToSync = .none }
 
         uiMOC.saveOrRollback()
 

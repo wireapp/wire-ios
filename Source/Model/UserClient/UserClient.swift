@@ -690,7 +690,6 @@ extension UserClient {
             guard let user = $1 else { return }
             guard user.isSelfUser else {
                 return $0.formUnion(user.participantRoles
-                    .filter { !$0.markedForDeletion}
                     .compactMap { $0.conversation})
             }
             let fetchRequest = NSFetchRequest<ZMConversation>(entityName: ZMConversation.entityName())

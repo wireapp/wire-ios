@@ -21,49 +21,6 @@ import Foundation
 
 final class ConversationParticipantsTests : ZMConversationTestsBase {
     
-    func testThatActiveParticipantsExcludesUsersMarkedForDeletion() {
-        // GIVEN
-        let sut = createConversation(in: uiMOC)
-        let user1 = createUser()
-        let user2 = createUser()
-        let selfUser = ZMUser.selfUser(in: self.uiMOC)
-        
-        sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
-        
-        XCTAssertEqual(sut.participantRoles.count, 2)
-        XCTAssertEqual(sut.localParticipants.count, 2)
-        sut.participantRoles.forEach { $0.operationToSync = .none }
-
-        // WHEN
-        sut.removeParticipantAndUpdateConversationState(user: user2, initiatingUser: selfUser)
-        
-        // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1, user2]))
-        XCTAssertEqual(sut.localParticipants, Set([user1]))
-
-        XCTAssert(user2.participantRoles.first!.markedForDeletion)
-        XCTAssertFalse(user2.participantRoles.first!.markedForInsertion)
-    }
-    
-    func testThatActiveParticipantsIncludesUsersMarkedForInsertion() {
-        // GIVEN
-        let sut = createConversation(in: uiMOC)
-        let user1 = createUser()
-        let user2 = createUser()
-        
-        sut.addParticipantAndUpdateConversationState(user: user1, role: nil)
-
-        // WHEN
-        sut.addParticipantAndUpdateConversationState(user: user2, role: nil)
-
-        // THEN
-        XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1, user2]))
-        XCTAssertEqual(sut.localParticipants, Set([user1, user2]))
-
-        XCTAssertFalse(user2.participantRoles.first!.markedForDeletion)
-        XCTAssert(user2.participantRoles.first!.markedForInsertion)
-    }
-    
     func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
@@ -101,7 +58,6 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         
         sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2]), role: nil)
-        sut.participantRoles.forEach { $0.operationToSync = .none }
         
         XCTAssertEqual(sut.participantRoles.count, 2)
         XCTAssertEqual(sut.localParticipants.count, 2)
@@ -113,9 +69,6 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         // THEN
         XCTAssertEqual(Set(sut.participantRoles.map { $0.user }), Set([user1, user2]))
         XCTAssertEqual(sut.localParticipants, Set([user1, user2]))
-        
-        XCTAssertFalse(user2.participantRoles.first!.markedForDeletion)
-        XCTAssertFalse(user2.participantRoles.first!.markedForInsertion)
     }
 
     func testThatAddThenRemoveParticipants() {

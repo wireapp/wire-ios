@@ -49,9 +49,7 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
     
     var userInfoKeys : Set<String> {
         return [
-            #keyPath(ParticipantRoleChangeInfo.roleChanged),
-            #keyPath(ParticipantRoleChangeInfo.markedForDeletion),
-            #keyPath(ParticipantRoleChangeInfo.markedForInsertion)
+            #keyPath(ParticipantRoleChangeInfo.roleChanged)
         ]
     }
     
@@ -88,52 +86,6 @@ final class ParticipantRoleObserverTests: NotificationDispatcherTestBase {
                                              expectedChangedFields: expectedChangedFields,
                                              file: file,
                                              line: line)
-    }
-    
-    func testThatItNotifiesTheObserverOfChangeOfMarkForDeletion() {
-        // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        let convo = ZMConversation.insertNewObject(in: uiMOC)
-
-        
-        let participantRole = ParticipantRole.create(managedObjectContext: uiMOC, user: user, conversation: convo)
-        participantRole.operationToSync = .none
-        uiMOC.saveOrRollback()
-        
-        // when
-        checkThatItNotifiesTheObserverOfAChange(participantRole,
-                                                     modifier: { participantRole in
-                                                        participantRole.operationToSync = .delete
-                                                     },
-                                                     expectedChangedFields: [
-                                                        #keyPath(ParticipantRoleChangeInfo.markedForDeletion),
-                                                        #keyPath(ParticipantRoleChangeInfo.markedForInsertion),
-            ]
-        )
-        
-    }
-    
-    func testThatItNotifiesTheObserverOfMarkForInsertion() {
-        // given
-        let user = ZMUser.insertNewObject(in: uiMOC)
-        let convo = ZMConversation.insertNewObject(in: uiMOC)
-        
-        
-        let participantRole = ParticipantRole.create(managedObjectContext: uiMOC, user: user, conversation: convo)
-        participantRole.operationToSync = .none
-        uiMOC.saveOrRollback()
-        
-        // when
-        checkThatItNotifiesTheObserverOfAChange(participantRole,
-                                                modifier: { participantRole in
-                                                    participantRole.operationToSync = .insert
-                                                },
-                                                expectedChangedFields: [
-                                                    #keyPath(ParticipantRoleChangeInfo.markedForInsertion),
-                                                    #keyPath(ParticipantRoleChangeInfo.markedForDeletion)
-            ]
-        )
-        
     }
 }
 

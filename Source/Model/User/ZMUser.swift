@@ -41,7 +41,7 @@ extension ZMUser: UserType {
     }
     
     public var activeConversations: Set<ZMConversation> {
-        return Set(self.participantRoles.filter{!$0.markedForDeletion}.compactMap {$0.conversation})
+        return Set(self.participantRoles.compactMap {$0.conversation})
     }
 
     public func role(in conversation: ZMConversation) -> Role? {
