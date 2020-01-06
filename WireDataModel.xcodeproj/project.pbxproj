@@ -2161,7 +2161,9 @@
 				F9C9A4FD1CAD5DF10039E10C /* Products */,
 				F9C9A6701CAD779E0039E10C /* Frameworks */,
 			);
+			indentWidth = 4;
 			sourceTree = "<group>";
+			tabWidth = 4;
 		};
 		F9C9A4FD1CAD5DF10039E10C /* Products */ = {
 			isa = PBXGroup;
