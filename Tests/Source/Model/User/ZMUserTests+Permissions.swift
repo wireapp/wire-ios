@@ -387,7 +387,7 @@ extension ZMUserTests_Permissions {
         createARoleForSelfUserWith("modify_conversation_receipt_mode")
         
         // then
-        XCTAssertTrue(selfUser.canModifyReceiptMode(in: conversation))
+        XCTAssertTrue(selfUser.canModifyReadReceiptSettings(in: conversation))
     }
     
     func testThatGroupParticipantCantModifyConversationReceiptMode() {
@@ -396,7 +396,7 @@ extension ZMUserTests_Permissions {
         conversation.conversationType = .group
         
         // then
-        XCTAssertFalse(selfUser.canModifyReceiptMode(in: conversation))
+        XCTAssertFalse(selfUser.canModifyReadReceiptSettings(in: conversation))
     }
     
     func testThatGroupParticipantCanModifyOtherConversationMember() {
