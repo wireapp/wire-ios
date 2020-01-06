@@ -52,13 +52,6 @@ extension ZMConversation {
             ])
     }
     
-    @available(*, deprecated)
-    @objc
-    public class func normalize(_ string: String) -> [String] {
-        return string.words
-    }
-
-    
     private class func predicateForConversationWithUsers(
         matchingQuery query: String,
         selfUser: ZMUser) -> NSPredicate
