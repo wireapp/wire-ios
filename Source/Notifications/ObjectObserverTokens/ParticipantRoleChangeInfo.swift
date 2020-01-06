@@ -24,9 +24,7 @@ extension ParticipantRole : ObjectInSnapshot {
     
     static public var observableKeys : Set<String> {
         return [
-            #keyPath(ParticipantRole.role),
-            #keyPath(ParticipantRole.markedForDeletion),
-            #keyPath(ParticipantRole.markedForInsertion)]
+            #keyPath(ParticipantRole.role)]
     }
     
     public var notificationName : Notification.Name {
@@ -58,14 +56,6 @@ final public class ParticipantRoleChangeInfo : ObjectChangeInfo {
     
     public var roleChanged : Bool {
         return changedKeys.contains(#keyPath(ParticipantRole.role))
-    }
-
-    public var markedForDeletion: Bool {
-        return changedKeys.contains(#keyPath(ParticipantRole.markedForDeletion))
-    }
-
-    public var markedForInsertion: Bool {
-        return changedKeys.contains(#keyPath(ParticipantRole.markedForInsertion))
     }
     
     // MARK: Registering ParticipantRoleObservers

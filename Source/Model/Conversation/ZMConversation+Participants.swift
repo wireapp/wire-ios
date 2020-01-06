@@ -33,8 +33,7 @@ extension ZMConversation {
     // MARK: - keyPathsForValuesAffecting
     
     static var participantRolesKeys: [String] {
-        return [#keyPath(ZMConversation.participantRoles),
-                #keyPath(ZMConversation.participantRoles.rawOperationToSync)]
+        return [#keyPath(ZMConversation.participantRoles)]
     }
     
     @objc
@@ -73,7 +72,7 @@ extension ZMConversation {
     /// even if that state is not yet synchronized with the backend
     @objc
     public var localParticipantRoles: Set<ParticipantRole> {
-        return participantRoles.filter { !$0.markedForDeletion }
+        return participantRoles
     }
     
     /// Participants that are in the conversation, according to the local state
@@ -175,31 +174,22 @@ extension ZMConversation {
     private func updateExistingOrCreateParticipantRole(for user: ZMUser, with role: Role?) -> (FetchOrCreation, ParticipantRole)? {
         
         guard let moc = self.managedObjectContext else { return nil }
-        let shouldSyncToBackend = moc.zm_isUserInterfaceContext
-
+        
         // If the user is already there, just change the role
         if let current = self.participantRoles.first(where: {$0.user == user}) {
             if let role = role {
                 current.role = role
             }
             
-            // If we are already trying to delete this user, abort the deletion
-            if shouldSyncToBackend && current.markedForDeletion {
-                current.operationToSync = .none
-            }
-
             return (.fetched, current)
-
+            
         } else {
             // A new participant role
             let participantRole = ParticipantRole.insertNewObject(in: moc)
             participantRole.conversation = self
             participantRole.user = user
             participantRole.role = role
-            if shouldSyncToBackend {
-                participantRole.operationToSync = .insert
-            }
-
+            
             return (.created, participantRole)
         }
     }
@@ -231,7 +221,6 @@ extension ZMConversation {
     public func removeParticipantsAndUpdateConversationState(users: Set<ZMUser>, initiatingUser: ZMUser? = nil) {
         
         guard let moc = self.managedObjectContext else { return }
-        let shouldSyncToBackend = moc.zm_isUserInterfaceContext
         let existingUsers = Set(self.participantRoles.map { $0.user })
         
         let removedUsers = Set(users.compactMap { user -> ZMUser? in
@@ -240,14 +229,8 @@ extension ZMConversation {
                 let existingRole = participantRoles.first(where: { $0.user == user })
                 else { return nil }
             
-            switch (shouldSyncToBackend, existingRole.markedForInsertion) {
-            case (true, true),
-                 (false, _):
-                participantRoles.remove(existingRole)
-                moc.delete(existingRole)
-            case (true, false):
-                existingRole.operationToSync = .delete
-            }
+            participantRoles.remove(existingRole)
+            moc.delete(existingRole)
             return user
         })
         

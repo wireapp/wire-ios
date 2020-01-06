@@ -82,7 +82,7 @@ extension ZMManagedObject {
 extension ZMUser : SideEffectSource {
     
     var allConversations : [ZMConversation] {
-        var conversations = self.participantRoles.filter { !$0.markedForDeletion }.compactMap { $0.conversation }
+        var conversations = self.participantRoles.compactMap { $0.conversation }
         if let connectedConversation = connection?.conversation {
             conversations.append(connectedConversation)
         }
