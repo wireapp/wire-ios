@@ -94,7 +94,9 @@ extension ZMConversation {
     static func addUserFromTheConnectionToTheParticipantRoles(in moc: NSManagedObjectContext) {
         let allConnections = ZMConnection.connections(inMangedObjectContext: moc) as! [ZMConnection]
         for connection in allConnections {
-            connection.conversation.addParticipantAndUpdateConversationState(user: connection.to, role: nil)
+            guard let conversation = connection.conversation, let user = connection.to else { continue }
+            
+            conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         }
     }
     
