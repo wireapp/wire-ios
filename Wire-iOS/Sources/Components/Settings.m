@@ -390,7 +390,7 @@ NSString * const UserDefaultDisableLinkPreviews = @"DisableLinkPreviews";
 {
     AVSIntensityLevel level = AVSMediaManager.sharedInstance.intensityLevel;
     if (level >= AVSIntensityLevelNone && level <= AVSIntensityLevelFull) {
-        [self.defaults setObject:[NSNumber numberWithInt:level] forKey:AVSMediaManagerPersistentIntensity];
+        [self.defaults setObject:[NSNumber numberWithInt:(int)level] forKey:AVSMediaManagerPersistentIntensity];
     }
 }
 
