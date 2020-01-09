@@ -49,12 +49,10 @@ extension Settings {
     var colorScheme: SettingsColorScheme {
         get {
             guard let string = defaults.string(forKey: UserDefaultColorScheme) else { return .light }
-            
             return settingsColorScheme(from: string)
         }
-
         set {            
-            defaults.set(string(for: colorScheme), forKey: UserDefaultColorScheme)
+            defaults.set(string(for: newValue), forKey: UserDefaultColorScheme)
             defaults.synchronize()
             notifyColorSchemeChanged()
         }
