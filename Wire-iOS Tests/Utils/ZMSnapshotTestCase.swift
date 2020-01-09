@@ -182,14 +182,18 @@ extension ZMSnapshotTestCase {
 
     private func snapshotVerify(view: UIView,
                                 identifier: String? = nil,
-                                suffix: NSOrderedSet? = FBSnapshotTestCaseDefaultSuffixes(),
+                                suffix: NSOrderedSet = FBSnapshotTestCaseDefaultSuffixes(),
                                 tolerance: CGFloat = 0,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
+
         if let errorDescription = snapshotVerifyViewOrLayer(view,
                                                             identifier: identifier,
                                                             suffixes: suffix,
-                                                            tolerance: tolerance, defaultReferenceDirectory: (FB_REFERENCE_IMAGE_DIR)) {
+                                                            perPixelTolerance: tolerance,
+                                                            overallTolerance: tolerance,
+                                                            defaultReferenceDirectory: FB_REFERENCE_IMAGE_DIR,
+                                                            defaultImageDiffDirectory: IMAGE_DIFF_DIR) {
 
             XCTFail("\(errorDescription)", file:file, line:line)
         } else {
