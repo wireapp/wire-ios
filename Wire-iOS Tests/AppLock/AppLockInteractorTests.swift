@@ -75,24 +75,28 @@ final class AppLockInteractorTests: XCTestCase {
         super.tearDown()
     }
     
-    func testThatIsTimeoutReachedReturnsFalseIfTimeoutNotReached() {
+    func testThatIsAuthenticationNeededReturnsTrueIfNeeded() {
         //given
-        AppLock.rules = AppLockRules(useBiometricsOrAccountPassword: false, forceAppLock: false, appLockTimeout: 900)
-        AppLock.isActive = true
-        AppLock.lastUnlockedDate = Date(timeIntervalSinceNow: -Double(AppLock.rules.appLockTimeout)-100)
+        set(appLockActive: true, timeoutReached: true)
         
-        //when/then
-        XCTAssertTrue(sut.isLockTimeoutReached)
+        //when / then
+        XCTAssertTrue(sut.isAuthenticationNeeded)
     }
     
-    func testThatIsTimeoutReachedReturnsTrueIfTimeoutReached() {
+    func testThatIsAuthenticationNeededReturnsFalseIfTimeoutNotReached() {
         //given
-        AppLock.rules = AppLockRules(useBiometricsOrAccountPassword: false, forceAppLock: false, appLockTimeout: 900)
-        AppLock.isActive = true
-        AppLock.lastUnlockedDate = Date(timeIntervalSinceNow: -10)
+        set(appLockActive: true, timeoutReached: false)
         
-        //when/then
-        XCTAssertFalse(sut.isLockTimeoutReached)
+        //when / then
+        XCTAssertFalse(sut.isAuthenticationNeeded)
+    }
+    
+    func testThatIsAuthenticationNeededReturnsFalseIfAppLockNotActive() {
+        //given - appLock not active
+        set(appLockActive: false, timeoutReached: true)
+        
+        //when / then
+        XCTAssertFalse(sut.isAuthenticationNeeded)
     }
     
     func testThatEvaluateAuthenticationCompletesWithCorrectResult() {
@@ -159,5 +163,14 @@ final class AppLockInteractorTests: XCTestCase {
 
         //then
         XCTAssertFalse(AppLockMock.didPersistBiometrics)
+    }
+}
+
+extension AppLockInteractorTests {
+    func set(appLockActive: Bool, timeoutReached: Bool) {
+        AppLock.isActive = appLockActive
+        AppLock.rules = AppLockRules(useBiometricsOrAccountPassword: false, forceAppLock: false, appLockTimeout: 900)
+        let timeInterval = timeoutReached ? -Double(AppLock.rules.appLockTimeout)-100 : -10
+        AppLock.lastUnlockedDate = Date(timeIntervalSinceNow: timeInterval)
     }
 }
