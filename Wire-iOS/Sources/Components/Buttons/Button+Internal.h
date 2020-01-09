@@ -19,7 +19,7 @@
 @interface Button ()
 
 @property (nonatomic, nullable) NSMutableDictionary *originalTitles;
-@property (nonatomic, readonly) NSMutableDictionary *borderColorByState;
+@property (nonatomic, nonnull, readonly) NSMutableDictionary *borderColorByState;
 
 - (void)updateBorderColor;
 
