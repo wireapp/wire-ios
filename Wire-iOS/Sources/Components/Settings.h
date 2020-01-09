@@ -37,6 +37,7 @@ typedef NS_CLOSED_ENUM (NSUInteger, SettingsCamera) {
     SettingsCameraBack
 };
 
+NS_ASSUME_NONNULL_BEGIN
 extern NSString * const SettingsColorSchemeChangedNotification;
 
 extern NSString * const UserDefaultDisableMarkdown;
@@ -72,6 +73,7 @@ extern NSString * const UserDefaultBrowserOpeningRawValue;
 extern NSString * const UserDefaultCallingConstantBitRate;
 
 extern NSString * const UserDefaultDisableLinkPreviews;
+NS_ASSUME_NONNULL_END
 
 /// Model object for locally stored (not in SE or AVS) user app settings
 @interface Settings : NSObject
@@ -87,16 +89,16 @@ extern NSString * const UserDefaultDisableLinkPreviews;
 
 @property (nonatomic) BOOL enableBatchCollections; // develop option
 
-@property (nonatomic) NSDate *lastPushAlertDate;
+@property (nonatomic, nullable)  NSDate *lastPushAlertDate;
 
 @property (nonatomic) SettingsLastScreen lastViewedScreen;
 @property (nonatomic) SettingsCamera preferredCamera;
 @property (nonatomic, readonly) NSTimeInterval blacklistDownloadInterval;
-@property (nonatomic) ZMLocationData *lastUserLocation;
+@property (nonatomic, nullable) ZMLocationData *lastUserLocation;
 
-@property (nonatomic) NSString *messageSoundName;
-@property (nonatomic) NSString *callSoundName;
-@property (nonatomic) NSString *pingSoundName;
+@property (nonatomic, nullable) NSString *messageSoundName;
+@property (nonatomic, nullable) NSString *callSoundName;
+@property (nonatomic, nullable) NSString *pingSoundName;
 
 @property (nonatomic) NSInteger twitterLinkOpeningOptionRawValue;
 @property (nonatomic) NSInteger browserLinkOpeningOptionRawValue;
