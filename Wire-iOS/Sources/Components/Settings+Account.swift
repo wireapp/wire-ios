@@ -41,7 +41,7 @@ extension Settings {
             defaults.synchronize()
         }
         
-        var accountPayload = self.payload(for: account)
+        let accountPayload = self.payload(for: account)
         return accountPayload[key] as? T
     }
     
