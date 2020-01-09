@@ -21,7 +21,6 @@
 #import "ContactsViewController.h"
 #import "ContactsViewController+Internal.h"
 #import "ContactsDataSource.h"
-#import "ContactsViewController+ShareContacts.h"
 #import "UIView+Zeta.h"
 
 #import "UITableView+RowCount.h"
@@ -278,7 +277,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
     }];
 }
 
-#pragma mark - Send Invite
+#pragma mark - Methods
 
 
 /**
@@ -382,6 +381,17 @@ static NSString* ZMLogTag ZM_UNUSED = @"UI";
     }
 
     return nil;
+}
+
+- (void)dismissChildViewController:(UIViewController *)viewController
+{
+  [UIView transitionWithView:viewController.view duration:0.35 options:UIViewAnimationOptionTransitionCrossDissolve animations:^{
+    viewController.view.alpha = 0;
+  } completion:^(BOOL finished) {
+    [viewController willMoveToParentViewController:nil];
+    [viewController.view removeFromSuperview];
+    [viewController removeFromParentViewController];
+  }];
 }
 
 @end
