@@ -105,7 +105,7 @@ extension MockTransportSession {
             return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
         }
         
-        let roles = conversation.team?.roles ?? conversation.roles!
+        let roles = conversation.team?.roles ?? conversation.nonTeamRoles!
         let payload: [String : Any] = [
             "conversation_roles" : roles.map { $0.payload }
         ]

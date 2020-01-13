@@ -248,8 +248,12 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     if (![conversation.activeUsers containsObject:user]) {
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:403 transportSessionError:nil];
     }
-    user.role = conversationRole;
-
+    MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+    participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
+    
+    MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
+    participantRoleSelfUser.role = MockRole.adminRole;
+    
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -361,9 +365,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
         
         if (results.count == 1) {
             MockUser *user = results[0];
-            if (conversationRole != nil) {
-                user.role = conversationRole;
-            }
             [otherUsers addObject:user];
         }
     }
@@ -371,8 +372,14 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     MockConversation *conversation = [self insertGroupConversationWithSelfUser:self.selfUser otherUsers:otherUsers];
     if(name != nil) {
         [conversation changeNameByUser:self.selfUser name:name];
+    }    
+    for (MockUser *user in otherUsers) {
+        MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
     }
-    self.selfUser.role = MockConversation.admin;
+    MockParticipantRole * participantRoleSelfUser = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:self.selfUser];
+    participantRoleSelfUser.role = MockRole.adminRole;
+    
     return [ZMTransportResponse responseWithPayload:[conversation transportData] HTTPStatus:200 transportSessionError:nil];
 }
 
@@ -400,12 +407,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     NSMutableArray *addedUsers = [NSMutableArray array];
     MockUser *selfUser = self.selfUser;
     NSAssert(selfUser != nil, @"Self not found");
-    
     for (NSString *userID in addedUserIDs) {
         MockUser *user = [self fetchUserWithIdentifier:userID];
-        if (conversationRole != nil) {
-            user.role = conversationRole;
-        }
         if(user == nil) {
             return [ZMTransportResponse responseWithPayload:@{
                                                               @"code" : @403,
@@ -413,6 +416,8 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
                                                               @"label": @""
                                                               } HTTPStatus:403 transportSessionError:nil];
         }
+        MockParticipantRole * participantRoleMember = [MockParticipantRole insertIn:self.managedObjectContext conversation:conversation user:user];
+        participantRoleMember.role = [conversationRole isEqualToString:MockConversation.member] ? MockRole.memberRole : MockRole.adminRole;
         
         MockConnection *connection = [self fetchConnectionFrom:selfUser to:user];
         if (connection == nil) {

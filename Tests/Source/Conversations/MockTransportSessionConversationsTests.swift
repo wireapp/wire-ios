@@ -188,7 +188,7 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
             return
         }
         XCTAssertNil(conversation.team)
-        XCTAssertEqual(conversationRoles.count, conversation.roles!.count)
+        XCTAssertEqual(conversationRoles.count, conversation.nonTeamRoles!.count)
         let admin = conversationRoles.first(where: {($0["conversation_role"] as? String) == MockConversation.admin})
         XCTAssertEqual((admin?["actions"] as? [String]).map({Set($0)}), Set([
             "add_conversation_member",

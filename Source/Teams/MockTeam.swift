@@ -82,6 +82,7 @@ extension MockTeam {
         return payloadValues as NSDictionary
     }
     
+    @objc
     public static func createAdminActions(context: NSManagedObjectContext) -> Set<MockAction> {
         
         return  Set(["add_conversation_member",
@@ -95,6 +96,7 @@ extension MockTeam {
                  "delete_conversation"].map{MockAction.insert(in: context, name: $0)})
     }
     
+    @objc
     public static func createMemberActions(context: NSManagedObjectContext) -> Set<MockAction> {
         
         return  Set(["leave_conversation"].map{MockAction.insert(in: context, name: $0)})
