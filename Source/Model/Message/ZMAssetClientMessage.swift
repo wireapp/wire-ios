@@ -25,40 +25,22 @@ import Foundation
     /// In memory cache
     var cachedGenericAssetMessage: ZMGenericMessage? = nil
     
-    /// Creates a new `ZMAssetClientMessage` with an attached `imageAssetStorage`
-    convenience internal init(originalImage imageData: Data,
-                              nonce: UUID,
-                              managedObjectContext: NSManagedObjectContext,
-                              expiresAfter timeout: TimeInterval = 0)
-    {
-        self.init(nonce: nonce, managedObjectContext: managedObjectContext)
-        
-        // mimeType is assigned first, to make sure UI can handle animated GIF file correctly
-        let mimeType = ZMAssetMetaDataEncoder.contentType(forImageData: imageData) ?? ""
-        // We update the size again when the the preprocessing is done
-        let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
-        let asset = ZMAsset.asset(originalWithImageSize: imageSize, mimeType: mimeType, size: UInt64(imageData.count))
-        let message = ZMGenericMessage.message(content: asset, nonce: nonce, expiresAfter: timeout)
-        
-        add(message)
-        transferState = .uploading
-        version = 3
-    }
-    
-    
-    /// Inserts a new `ZMAssetClientMessage` in the `moc` and updates it with the given file metadata
-    convenience internal init?(with metadata: ZMFileMetadata,
-                              nonce: UUID,
-                              managedObjectContext: NSManagedObjectContext,
-                              expiresAfter timeout: TimeInterval = 0) {
-        guard metadata.fileURL.isFileURL else { return nil } // just in case it tries to load from network!
-        
+    internal convenience init?(asset: WireProtos.Asset,
+                               nonce: UUID,
+                               managedObjectContext: NSManagedObjectContext,
+                               expiresAfter timeout: TimeInterval = 0) {
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
         
         transferState = .uploading
         version = 3
         
-        add(ZMGenericMessage.message(content: metadata.asset, nonce: nonce, expiresAfter: timeout))
+        let genericMessage = GenericMessage.message(content: asset, nonce: nonce, expiresAfter: timeout)
+        
+        do {
+            _ = mergeWithExistingData(data: try genericMessage.serializedData())
+        } catch {
+            return nil
+        }
     }
     
     public override var hashOfContent: Data? {
