@@ -60,7 +60,7 @@ import Foundation
     @NSManaged public var richProfile: NSArray?
     @NSManaged public var pendingLegalHoldClient: MockPendingLegalHoldClient?
     
-    @NSManaged public var role: String
+    @NSManaged public var participantRoles: Set<MockParticipantRole>
 
     public var userClients: Set<MockUserClient> {
         return clients as! Set<MockUserClient>
@@ -287,4 +287,12 @@ extension MockUser {
         }
     }
     
+}
+
+// MARK: - Participant Roles
+extension MockUser {
+    
+    @objc public func role(in conversation: MockConversation) -> MockRole? {
+        return participantRoles.first(where: { $0.conversation == conversation })?.role
+    }
 }

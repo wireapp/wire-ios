@@ -102,6 +102,10 @@
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         otherUser = [session insertUserWithName:@"Foo"];
         groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[selfUser] type:ZMTConversationTypeGroup];
+        
+        MockRole *roleAdmin = [MockRole insertIn:self.sut.managedObjectContext name:MockConversation.admin actions:[MockTeam createAdminActionsWithContext:self.sut.managedObjectContext]];
+        MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.sut.managedObjectContext conversation:groupConversation user:otherUser];
+        participantRole.role = roleAdmin;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -123,8 +127,10 @@
     [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
         selfUser = [session insertSelfUserWithName:@"Me Myself"];
         otherUser = [session insertUserWithName:@"Foo"];
-        otherUser.role = @"wire_member";
         groupConversation = [session insertConversationWithCreator:otherUser otherUsers:@[selfUser] type:ZMTConversationTypeGroup];
+        MockRole *roleMember = [MockRole insertIn:self.sut.managedObjectContext name:MockConversation.member actions:[MockTeam createMemberActionsWithContext:self.sut.managedObjectContext]];
+        MockParticipantRole * participantRole = [MockParticipantRole insertIn:self.sut.managedObjectContext conversation:groupConversation user:otherUser];
+        participantRole.role = roleMember;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -282,8 +288,8 @@
         
         NSDictionary *expectedPayload = (NSDictionary *)[storedConversation transportData];
         XCTAssertEqualObjects(expectedPayload, responsePayload);
-        XCTAssertEqualObjects(user1.role, MockConversation.admin);
-        XCTAssertEqualObjects(user2.role, MockConversation.admin);
+        XCTAssertEqualObjects([user1 roleIn:storedConversation].name, MockConversation.admin);
+        XCTAssertEqualObjects([user2 roleIn:storedConversation].name, MockConversation.admin);
     }];
 }
 
@@ -332,9 +338,9 @@
         
         NSDictionary *expectedPayload = (NSDictionary *)[storedConversation transportData];
         XCTAssertEqualObjects(expectedPayload, responsePayload);
-        XCTAssertEqualObjects(user1.role, MockConversation.member);
-        XCTAssertEqualObjects(user1.role, MockConversation.member);
-        XCTAssertEqualObjects(storedConversation.creator.role, MockConversation.admin);
+        XCTAssertEqualObjects([storedConversation.creator roleIn:storedConversation].name, MockConversation.admin);
+        XCTAssertEqualObjects([user1 roleIn:storedConversation].name, MockConversation.member);
+        XCTAssertEqualObjects([user2 roleIn:storedConversation].name, MockConversation.member);
     }];
 }
 
@@ -1214,7 +1220,6 @@
         user2 = [session insertUserWithName:@"Bar"];
         
         groupConversation = [session insertGroupConversationWithSelfUser:selfUser otherUsers:@[user1, user2]];
-        groupConversation.creator = user2;
         groupConversationID = groupConversation.identifier;
     }];
     WaitForAllGroupsToBeEmpty(0.5);
@@ -1236,8 +1241,8 @@
     XCTAssertNil(response.transportSessionError);
     
     [self.sut.managedObjectContext performBlockAndWait:^{
-        XCTAssertEqualObjects(user1.role, MockConversation.member);
-        XCTAssertEqualObjects(user2.role, MockConversation.admin);
+        XCTAssertEqualObjects([user1 roleIn:groupConversation].name, MockConversation.member);
+        XCTAssertEqualObjects([selfUser roleIn:groupConversation].name, MockConversation.admin);
     }];
 }
 
@@ -1289,7 +1294,7 @@
     [self.sut.managedObjectContext performGroupedBlock:^{
         NSOrderedSet *activeUsers = groupConversation.activeUsers;
         XCTAssertEqualObjects(activeUsers, ([NSOrderedSet orderedSetWithObjects:selfUser, user1, user2, user3, nil]) );
-        XCTAssertEqualObjects(user3.role, MockConversation.admin);
+        XCTAssertEqualObjects([user3 roleIn:groupConversation].name, MockConversation.admin);
     }];
 }
 
@@ -1332,7 +1337,7 @@
         return;
     }
     [self.sut.managedObjectContext performGroupedBlock:^{
-        XCTAssertEqualObjects(user3.role, MockConversation.member);
+        XCTAssertEqualObjects([user3 roleIn:groupConversation].name, MockConversation.member);
     }];
 }
 

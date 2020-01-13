@@ -133,6 +133,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         self.reachability = [[MockReachability alloc] init];
         self.pushTokens = [NSMutableDictionary dictionary];
         _nonCompletedRequests = [NSMutableArray array];
+        [MockRole createConversationRolesWithContext:self.managedObjectContext];
     }
     return self;
 }

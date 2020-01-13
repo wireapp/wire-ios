@@ -45,7 +45,7 @@ extension MockConversation {
                 MockRole.insert(in: context, name: MockConversation.admin, actions: MockTeam.createAdminActions(context: context)),
                 MockRole.insert(in: context, name: MockConversation.member, actions: MockTeam.createMemberActions(context: context))
             ])
-        conversation.roles = roles
+        conversation.nonTeamRoles = roles
 
         return conversation
     }

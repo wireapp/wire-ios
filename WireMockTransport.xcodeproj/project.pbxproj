@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06392CFB23C36D30003186E6 /* MockParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06392CFA23C36D30003186E6 /* MockParticipantRole.swift */; };
 		0641A8C4239A56E900B24621 /* MockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0641A8C3239A56E900B24621 /* MockAction.swift */; };
 		0641A8C6239A581A00B24621 /* MockRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0641A8C5239A581A00B24621 /* MockRole.swift */; };
 		09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */; };
@@ -154,6 +155,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		06392CFA23C36D30003186E6 /* MockParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockParticipantRole.swift; sourceTree = "<group>"; };
 		0641A8C3239A56E900B24621 /* MockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAction.swift; sourceTree = "<group>"; };
 		0641A8C5239A581A00B24621 /* MockRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRole.swift; sourceTree = "<group>"; };
 		0928E1FA1B975CCE0057232E /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -450,6 +452,7 @@
 			children = (
 				0641A8C3239A56E900B24621 /* MockAction.swift */,
 				0641A8C5239A581A00B24621 /* MockRole.swift */,
+				06392CFA23C36D30003186E6 /* MockParticipantRole.swift */,
 			);
 			path = ConversationRoles;
 			sourceTree = "<group>";
@@ -917,6 +920,7 @@
 				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
 				0641A8C4239A56E900B24621 /* MockAction.swift in Sources */,
 				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
+				06392CFB23C36D30003186E6 /* MockParticipantRole.swift in Sources */,
 				872A2EE01FFE761B00900B22 /* MockService.swift in Sources */,
 				54AE5A801B78FA43002757E9 /* MockAsset.m in Sources */,
 				F1782D701ED2E9E700486BE3 /* MockTeamEvent.swift in Sources */,
