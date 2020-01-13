@@ -742,27 +742,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return message;
 }
 
-- (ZMAssetClientMessage *)appendAssetClientMessageWithNonce:(NSUUID *)nonce imageData:(NSData *)imageData
-{
-    ZMAssetClientMessage *message =
-    [[ZMAssetClientMessage alloc] initWithOriginalImage:imageData
-                                                  nonce:nonce
-                                   managedObjectContext:self.managedObjectContext
-                                           expiresAfter:self.messageDestructionTimeoutValue];
-
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    
-    [message setExpirationDate];
-    [self appendMessage:message];
-
-    [self unarchiveIfNeeded];
-    [self.managedObjectContext.zm_fileAssetCache storeAssetData:message format:ZMImageFormatOriginal encrypted:NO data:imageData];
-    [message updateCategoryCache];
-    [message prepareToSend];
-    
-    return message;
-}
-
 - (void)appendMessage:(ZMMessage *)message;
 {
     Require(message != nil);

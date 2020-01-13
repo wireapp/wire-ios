@@ -44,13 +44,8 @@ private let zmLog = ZMSLog(tag: "ZMFileMetadata")
         self.init(fileURL: fileURL, thumbnail: thumbnail, name: nil)
     }
     
-    var asset : ZMAsset {
-        get {
-            return ZMAsset.asset(withOriginal: .original(withSize: size,
-                mimeType: mimeType,
-                name: filename)
-            )
-        }
+    var asset: WireProtos.Asset {
+        return WireProtos.Asset(self)
     }
 }
 
@@ -73,15 +68,8 @@ open class ZMAudioMetadata : ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
     
-    override var asset : ZMAsset {
-        get {
-            return ZMAsset.asset(withOriginal: .original(withSize: size,
-                mimeType: mimeType,
-                name: filename,
-                audioDurationInMillis: UInt(duration * 1000),
-                normalizedLoudness: normalizedLoudness)
-            )
-        }
+    override var asset: WireProtos.Asset {
+        return WireProtos.Asset(self)
     }
     
 }
@@ -105,15 +93,8 @@ open class ZMVideoMetadata : ZMFileMetadata {
         super.init(fileURL: fileURL, thumbnail: thumbnail, name: name)
     }
     
-    override var asset : ZMAsset {
-        get {
-            return ZMAsset.asset(withOriginal: .original(withSize: size,
-                mimeType: mimeType,
-                name: filename,
-                videoDurationInMillis: UInt(duration * 1000),
-                videoDimensions: dimensions)
-            )
-        }
+    override var asset: WireProtos.Asset {
+        return WireProtos.Asset(self)
     }
     
 }
