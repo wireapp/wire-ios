@@ -33,6 +33,20 @@ final class ConversationTests: ZMConversationTestsBase {
         return conversation
     }
 
+    func testThatItFindsConversationByUserDefinedNameDiacriticsWithSymbol() {
+        // given
+        let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
+        
+        // when
+        
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "@Sømebôdy", selfUser: selfUser))
+        let result = uiMOC.executeFetchRequestOrAssert(request)
+        
+        // then
+        XCTAssertEqual(result?.count, 1)
+        XCTAssertEqual(result?.first as? ZMConversation, conversation)
+    }
+
     func testThatItFindsConversationByUserDefinedNameDiacritics() {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
