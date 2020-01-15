@@ -44,6 +44,17 @@ extension ZMUser: UserType {
         return Set(self.participantRoles.compactMap {$0.conversation})
     }
 
+    // MARK: - Conversation Roles
+
+    public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {
+        guard isGroupAdmin(in: conversation) else { return false }
+        return !user.isSelfUser && (user.isConnected || isOnSameTeam(otherUser: user))
+    }
+
+    public func isGroupAdmin(in conversation: ZMConversation) -> Bool {
+        return role(in: conversation)?.name == ZMConversation.defaultAdminRoleName
+    }
+
     public func role(in conversation: ZMConversation) -> Role? {
         return participantRoles.first(where: { $0.conversation == conversation })?.role
     }

@@ -210,7 +210,7 @@ public protocol UserType: NSObjectProtocol {
     @objc(canLeave:)
     func canLeave(_ conversation: ZMConversation) -> Bool
 
-    /// The role in the given conversation.
-    @objc(roleInConversation:)
-    func role(in conversation: ZMConversation) -> Role?
+    /// Whether the user is group admin in the conversation.
+    @objc(isGroupAdminInConversation:)
+    func isGroupAdmin(in conversation: ZMConversation) -> Bool
 }
