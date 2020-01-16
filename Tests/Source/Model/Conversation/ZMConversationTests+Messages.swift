@@ -324,6 +324,21 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         XCTAssertFalse(fileMessage.fileMessageData!.isVideo)
         XCTAssertFalse(fileMessage.fileMessageData!.isAudio)
     }
+    
+    func testThatWeCanInsertATextMessageWithImageQuote() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        let imageMessage = conversation.append(imageFromData: verySmallJPEGData())
+        
+        // when
+        let textMessage = conversation.append(text: "Hello World", replyingTo: imageMessage)
+        
+        // then
+        XCTAssertNotNil(textMessage?.textMessageData?.quote)
+        XCTAssertEqual(textMessage?.textMessageData?.quote?.nonce, imageMessage?.nonce)
+        
+    }
 
     func testThatWeCanInsertAPassFileMessage() {
         // given

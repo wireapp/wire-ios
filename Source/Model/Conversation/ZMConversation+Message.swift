@@ -60,7 +60,7 @@ extension ZMConversation {
         
         guard !(text as NSString).zmHasOnlyWhitespaceCharacters() else { return nil }
         
-        let text = Text(content: text, mentions: mentions, replyingTo: quotedMessage as? ZMClientMessage)
+        let text = Text(content: text, mentions: mentions, replyingTo: quotedMessage as? ZMOTRMessage)
         let genericMessage = GenericMessage.message(content: text, nonce: nonce, expiresAfter: messageDestructionTimeoutValue)
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: managedObjectContext!)
         
