@@ -678,14 +678,6 @@ final class ZClientViewController: UIViewController {
 
     ///MARK: - select conversation
 
-    @objc(selectConversation:focusOnView:animated:)
-    func select(_ conversation: ZMConversation,
-                focusOnView focus: Bool,
-                animated: Bool) {
-        select(conversation, scrollTo: nil, focusOnView: focus, animated: animated, completion: nil)
-    }
-
-    
     /// Select a conversation and move the focus to the conversation view.
     ///
     /// - Parameters:
