@@ -55,16 +55,11 @@ final public class Action: ZMManagedObject {
     public static func fetchOrCreate(with name: String,
                                      role: Role,
                                      in context: NSManagedObjectContext, created: inout Bool) -> Action {
-        if let existing = fetchExistingAction(with: name, role: role, in: context) {
-            role.actions.insert(existing)
-            created = false
-            return existing
-        } else {
-            let action = Action.create(managedObjectContext: context, name: name)
-            role.actions.insert(action)
-            created = true
-            return action
-        }
+        let existingAction = fetchExistingAction(with: name, role: role, in: context)
+        let action = existingAction ?? Action.create(managedObjectContext: context, name: name)
+        created = (existingAction == nil)
+        role.actions.insert(action)
+        return action
     }
 
     public override static func isTrackingLocalModifications() -> Bool {

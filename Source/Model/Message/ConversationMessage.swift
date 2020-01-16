@@ -187,7 +187,7 @@ extension ZMMessage : ZMConversationMessage {
     }
 
     public var objectIdentifier: String {
-        return nonpersistedObjectIdentifer!
+        return nonpersistedObjectIdentifer
     }
     
     public var causedSecurityLevelDegradation : Bool {
