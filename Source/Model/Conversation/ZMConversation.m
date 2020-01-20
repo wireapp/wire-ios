@@ -777,22 +777,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return clientMessage;
 }
 
-
-+ (ZMClientMessage *)appendSelfConversationWithLastReadOfConversation:(ZMConversation *)conversation
-{
-    NSDate *lastRead = conversation.lastReadServerTimeStamp;
-    NSUUID *convID = conversation.remoteIdentifier;
-    if (convID == nil || lastRead == nil || [convID isEqual:[ZMConversation selfConversationIdentifierInContext:conversation.managedObjectContext]]) {
-        return nil;
-    }
-
-    NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMLastRead lastReadWithTimestamp:lastRead conversationRemoteID:convID] nonce:nonce];
-    VerifyReturnNil(message != nil);
-    
-    return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
-}
-
 + (void)updateConversationWithZMLastReadFromSelfConversation:(ZMLastRead *)lastRead inContext:(NSManagedObjectContext *)context
 {
     double newTimeStamp = lastRead.lastReadTimestamp;

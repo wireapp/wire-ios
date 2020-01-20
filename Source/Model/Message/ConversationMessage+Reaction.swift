@@ -35,7 +35,8 @@ extension ZMMessage {
         guard message.isSent else { return nil }
         
         let emoji = unicodeValue ?? ""
-        let genericMessage = ZMGenericMessage.message(content: ZMReaction(emoji: emoji, messageID: messageID))    
+        let reaction = WireProtos.Reaction(emoji: emoji, messageID: messageID)
+        let genericMessage = GenericMessage.message(content: reaction)
         let clientMessage = message.conversation?.appendClientMessage(with: genericMessage, expires: false, hidden: true)
         message.addReaction(unicodeValue, forUser: .selfUser(in: context))
         return clientMessage
@@ -58,28 +59,27 @@ extension ZMMessage {
     
     @objc public func addReaction(_ unicodeValue: String?, forUser user:ZMUser) {
         removeReaction(forUser:user)
-        if let unicodeValue = unicodeValue , unicodeValue.count > 0 {
-            for reaction in self.reactions {
-                if reaction.unicodeValue! == unicodeValue {
-                    reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
-                    return
-                }
-            }
-            
-            //we didn't find a reaction, need to add a new one
+        guard let unicodeValue = unicodeValue,
+            unicodeValue.count > 0 else {
+                updateCategoryCache()
+                return
+        }
+        
+        guard let reaction = self.reactions.first(where: {$0.unicodeValue! == unicodeValue}) else {
+            // we didn't find a reaction, need to add a new one
             let newReaction = Reaction.insertReaction(unicodeValue, users: [user], inMessage: self)
             self.mutableSetValue(forKey: "reactions").add(newReaction)
+            updateCategoryCache()
+            return
         }
-        updateCategoryCache()
+        reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).add(user)
     }
     
     fileprivate func removeReaction(forUser user: ZMUser) {
-        for reaction in self.reactions {
-            if reaction.users.contains(user) {
-                reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
-                break;
-            }
+        guard let reaction = self.reactions.first(where: {$0.users.contains(user)}) else {
+            return;
         }
+        reaction.mutableSetValue(forKey: ZMReactionUsersValueKey).remove(user)
     }
 
     @objc public func clearAllReactions() {
