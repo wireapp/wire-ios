@@ -41,6 +41,14 @@ public extension GenericMessage {
             messageContent.setContent(on: &$0)
         }
     }
+    
+    static func message(content: MessageCapable, nonce: UUID = UUID()) -> GenericMessage {
+        return GenericMessage.with() {
+            $0.messageID = nonce.transportString()
+            let messageContent = content
+            messageContent.setContent(on: &$0)
+        }
+    }
 }
 
 extension GenericMessage {
@@ -170,6 +178,74 @@ extension Text: EphemeralMessageCapable {
     
     public func setContent(on message: inout GenericMessage) {
         message.text = self
+    }
+}
+
+extension WireProtos.Reaction: MessageCapable {
+    
+    init(emoji: String, messageID: UUID) {
+        self = WireProtos.Reaction.with({
+            $0.emoji = emoji
+            $0.messageID = messageID.transportString()
+        })
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.reaction = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+            
+        }
+    }
+}
+
+extension LastRead: MessageCapable {
+    
+    init(conversationID: UUID, lastReadTimestamp: Date) {
+        self = LastRead.with {
+            $0.conversationID = conversationID.transportString()
+            $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
+        }
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.lastRead = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+            
+        }
+    }
+}
+
+extension Calling: MessageCapable {
+    
+    init(content: String) {
+        self = Calling.with {
+            $0.content = content
+        }
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.calling = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+           
+        }
     }
 }
 

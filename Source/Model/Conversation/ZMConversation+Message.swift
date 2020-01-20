@@ -42,6 +42,23 @@ extension ZMConversation {
         return appendClientMessage(with: GenericMessage.message(content: Knock.with({ $0.hotKnock = false }), nonce: nonce, expiresAfter: messageDestructionTimeoutValue))
     }
     
+    @discardableResult @objc(appendSelfConversationWithLastReadOf:nonce:)
+    static func appendSelfConversation(withLastReadOf conversation: ZMConversation,
+                                       nonce: UUID = UUID()) -> ZMClientMessage? {
+        guard let moc = conversation.managedObjectContext,
+              let lastReadTimeStamp = conversation.lastReadServerTimeStamp,
+              let convID = conversation.remoteIdentifier,
+              convID != ZMConversation.selfConversationIdentifier(in: moc)
+            else { return nil }
+        
+        let lastRead = LastRead(conversationID: convID, lastReadTimestamp: lastReadTimeStamp)
+        let genericMessage = GenericMessage.message(content: lastRead, nonce: nonce)
+        let selfConversation = ZMConversation.selfConversation(in: moc)
+        
+        let clientMessage = selfConversation.appendClientMessage(with: genericMessage, expires: false, hidden: false)
+        return clientMessage
+    }
+    
     @discardableResult @objc(appendText:mentions:fetchLinkPreview:nonce:)
     public func append(text: String,
                        mentions: [Mention] = [],
