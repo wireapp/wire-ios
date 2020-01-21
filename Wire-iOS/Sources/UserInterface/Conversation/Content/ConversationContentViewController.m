@@ -34,15 +34,12 @@
 // model
 
 // ui
-#import "ZClientViewController.h"
 
 // helpers
 
 
 #import "UIView+Zeta.h"
 #import "Analytics.h"
-#import "AppDelegate.h"
-#import "MediaPlaybackManager.h"
 #import "MessagePresenter.h"
 #import "UIViewController+WR_Additions.h"
 
@@ -153,7 +150,7 @@
     self.tableView.delegate = self;
     self.tableView.separatorStyle = UITableViewCellSeparatorStyleNone;
     self.tableView.delaysContentTouches = NO;
-    self.tableView.keyboardDismissMode = UIScrollViewKeyboardDismissModeInteractive;
+    self.tableView.keyboardDismissMode = AutomationHelper.sharedHelper.disableInteractiveKeyboardDismissal ? UIScrollViewKeyboardDismissModeNone : UIScrollViewKeyboardDismissModeInteractive;
     
     [UIView performWithoutAnimation:^{
         self.tableView.backgroundColor = [UIColor wr_colorFromColorScheme:ColorSchemeColorContentBackground];

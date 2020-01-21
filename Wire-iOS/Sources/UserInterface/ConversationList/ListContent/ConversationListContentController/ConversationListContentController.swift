@@ -77,7 +77,7 @@ final class ConversationListContentController: UICollectionViewController {
 
         scrollToCurrentSelection(animated: false)
 
-        if let mediaPlaybackManager = AppDelegate.shared().mediaPlaybackManager {
+        if let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager {
             activeMediaPlayerObserver = KeyValueObserver.observe(mediaPlaybackManager, keyPath: "activeMediaPlayer", target: self, selector: #selector(activeMediaPlayerChanged(_:)))
 
             self.mediaPlaybackManager = mediaPlaybackManager
@@ -318,8 +318,8 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
                     self.collectionView.deselectItem(at: obj, animated: false)
                 }
             })
-            ZClientViewController.shared()?.loadPlaceholderConversationController(animated: true)
-            ZClientViewController.shared()?.transitionToList(animated: true, completion: nil)
+            ZClientViewController.shared?.loadPlaceholderConversationController(animated: true)
+            ZClientViewController.shared?.transitionToList(animated: true, completion: nil)
 
             return
         }
@@ -327,12 +327,12 @@ extension ConversationListContentController: ConversationListViewModelDelegate {
         if let conversation = item as? ZMConversation {
 
             // Actually load the new view controller and optionally focus on it
-            ZClientViewController.shared()?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
+            ZClientViewController.shared?.load(conversation, scrollTo: scrollToMessageOnNextSelection, focusOnView: focusOnNextSelection, animated: animateNextSelection, completion: selectConversationCompletion)
             selectConversationCompletion = nil
 
             contentDelegate?.conversationList(self, didSelect: conversation, focusOnView: !focusOnNextSelection)
         } else if (item is ConversationListConnectRequestsItem) {
-            ZClientViewController.shared()?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
+            ZClientViewController.shared?.loadIncomingContactRequestsAndFocus(onView: focusOnNextSelection, animated: true)
         } else {
             assert(false, "Invalid item in conversation list view model!!")
         }

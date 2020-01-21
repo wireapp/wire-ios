@@ -19,9 +19,10 @@
 import Foundation
 
 protocol AppLockInteractorInput: class {
-    var isLockTimeoutReached: Bool { get }
+    var isAuthenticationNeeded: Bool { get }
     func evaluateAuthentication(description: String)
     func verify(password: String)
+    func appStateDidTransition(to newState: AppState)
 }
 
 protocol AppLockInteractorOutput: class {
@@ -42,17 +43,14 @@ class AppLockInteractor {
     private var userSession: UserSessionVerifyPasswordInterface? {
         return _userSession ?? ZMUserSession.shared()
     }
+    
+    var appState: AppState?
 }
 
 // MARK: - Interface
 extension AppLockInteractor: AppLockInteractorInput {
-    var isLockTimeoutReached: Bool {
-        let lastAuthDate = appLock.lastUnlockedDate
-        
-        // The app was authenticated at least N seconds ago
-        let timeSinceAuth = -lastAuthDate.timeIntervalSinceNow
-        let isWithinTimeoutWindow = (0..<Double(appLock.rules.appLockTimeout)).contains(timeSinceAuth)
-        return !isWithinTimeoutWindow
+    var isAuthenticationNeeded: Bool {
+        return appLock.isActive && isLockTimeoutReached && isAppStateAuthenticated
     }
     
     func evaluateAuthentication(description: String) {
@@ -73,6 +71,15 @@ extension AppLockInteractor: AppLockInteractorInput {
             }
         }
     }
+    
+    func appStateDidTransition(to newState: AppState) {
+        if let state = appState,
+            case AppState.unauthenticated(error: _) = state,
+            case AppState.authenticated(completedRegistration: _) = newState {
+            AppLock.lastUnlockedDate = Date()
+        }
+        appState = newState
+    }
 }
 
 // MARK: - Helpers
@@ -81,5 +88,22 @@ extension AppLockInteractor {
         self.dispatchQueue.async { [weak self] in
             self?.output?.passwordVerified(with: result)
         }
+    }
+    
+    private var isAppStateAuthenticated: Bool {
+        guard let state = appState else { return false }
+        if case AppState.authenticated(completedRegistration: _) = state {
+            return true
+        }
+        return false
+    }
+    
+    private var isLockTimeoutReached: Bool {
+        let lastAuthDate = appLock.lastUnlockedDate
+        
+        // The app was authenticated at least N seconds ago
+        let timeSinceAuth = -lastAuthDate.timeIntervalSinceNow
+        let isWithinTimeoutWindow = (0..<Double(appLock.rules.appLockTimeout)).contains(timeSinceAuth)
+        return !isWithinTimeoutWindow
     }
 }
