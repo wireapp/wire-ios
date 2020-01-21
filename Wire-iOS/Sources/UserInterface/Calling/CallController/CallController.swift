@@ -34,9 +34,9 @@ final class CallController: NSObject {
             if let conversation = topOverlayCall {
                 let callTopOverlayController = CallTopOverlayController(conversation: conversation)
                 callTopOverlayController.delegate = self
-                ZClientViewController.shared()?.setTopOverlay(to: callTopOverlayController)
+                ZClientViewController.shared?.setTopOverlay(to: callTopOverlayController)
             } else {
-                ZClientViewController.shared()?.setTopOverlay(to: nil)
+                ZClientViewController.shared?.setTopOverlay(to: nil)
             }
         }
     }
@@ -112,7 +112,7 @@ extension CallController: WireCallCenterCallStateObserver {
         
         // NOTE: We resign first reponder for the input bar since it will attempt to restore
         // first responder when the call overlay is interactively dismissed but canceled.
-        UIResponder.wr_currentFirst()?.resignFirstResponder()
+        UIResponder.currentFirst?.resignFirstResponder()
         
         let modalVC = ModalPresentationViewController(viewController: viewController)
         targetViewController?.present(modalVC, animated: animated)

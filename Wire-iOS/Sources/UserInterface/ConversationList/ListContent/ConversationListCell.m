@@ -25,12 +25,9 @@
 
 #import "Settings.h"
 
-#import "MediaPlaybackManager.h"
 #import "MediaPlayer.h"
-#import "AppDelegate.h"
 
 
-#import "ZClientViewController.h"
 #import "AnimatedListMenuView.h"
 #import "Wire-Swift.h"
 
@@ -116,33 +113,6 @@
 - (void)updateAppearance
 {
     [self.itemView updateForConversation:self.conversation];
-}
-
-- (void)onRightAccessorySelected:(UIButton *)sender
-{
-    MediaPlaybackManager *mediaPlaybackManager = [AppDelegate sharedAppDelegate].mediaPlaybackManager;
-    
-    if (mediaPlaybackManager.activeMediaPlayer != nil &&
-        mediaPlaybackManager.activeMediaPlayer.sourceMessage.conversation == self.conversation) {
-        [self toggleMediaPlayer];
-    }
-    else if (self.conversation.canJoinCall)
-    {
-        [self.delegate conversationListCellJoinCallButtonTapped:self];
-    }
-}
-    
-- (void)toggleMediaPlayer
-{
-    MediaPlaybackManager *mediaPlaybackManager = [AppDelegate sharedAppDelegate].mediaPlaybackManager;
-    
-    if (mediaPlaybackManager.activeMediaPlayer.state == MediaPlayerStatePlaying) {
-        [mediaPlaybackManager pause];
-    } else {
-        [mediaPlaybackManager play];
-    }
-    
-    [self updateAppearance];
 }
     
 - (BOOL)canOpenDrawer

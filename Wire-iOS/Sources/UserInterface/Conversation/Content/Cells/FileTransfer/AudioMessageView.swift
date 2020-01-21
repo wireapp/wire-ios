@@ -28,7 +28,7 @@ final class AudioMessageView: UIView, TransferView {
     var audioTrackPlayer: AudioTrackPlayer? {
         get {
             if _audioTrackPlayer == nil {
-                _audioTrackPlayer = AppDelegate.shared().mediaPlaybackManager?.audioTrackPlayer
+                _audioTrackPlayer = AppDelegate.shared.mediaPlaybackManager?.audioTrackPlayer
                 
                 setupAudioPlayerObservers()
             }
@@ -81,7 +81,7 @@ final class AudioMessageView: UIView, TransferView {
     private var expectingDownload: Bool = false
     
     private var proximityMonitorManager: ProximityMonitorManager? {
-        return ZClientViewController.shared()?.proximityMonitorManager
+        return ZClientViewController.shared?.proximityMonitorManager
     }
 
 
