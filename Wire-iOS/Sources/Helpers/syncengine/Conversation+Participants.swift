@@ -47,7 +47,7 @@ extension ZMConversation {
             return
         }
         
-        self.addParticipants(Array(participants),
+        addParticipants(Array(participants),
                              userSession: ZMUserSession.shared()!) { result in
                                 switch result {
                                 case .failure(let error):
