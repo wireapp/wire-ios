@@ -44,8 +44,8 @@ platform :ios do
             scheme: "Wire-iOS",
             configuration: "Debug",
             build_for_testing: true,
-            devices: ["iPhone 8"],
-            code_coverage: true,
+            devices: "iPhone 8",
+            code_coverage: true,1
             derived_data_path: "DerivedData",
             buildlog_path: "build",
             output_directory: "build",
@@ -59,7 +59,8 @@ platform :ios do
             scheme: "Wire-iOS",
             configuration: "Debug",
             test_without_building: true,
-            devices: ["iPhone 8"],
+            device: "iPhone 8",
+            destination: 'platform=iOS Simulator,name=iPhone 8,OS=12.4'
             code_coverage: true,
             derived_data_path: "DerivedData",
             buildlog_path: "test",
