@@ -59,7 +59,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
         
         // when
         searchUser.updateImageData(for: .preview, imageData: verySmallJPEGData())
@@ -80,7 +80,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, in: self.uiMOC)
         
         // when
         user.previewProfileAssetIdentifier = UUID.create().transportString()
@@ -101,7 +101,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
         
         // when
         self.token = nil
@@ -119,7 +119,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
 
         // when
         searchUser.connect(message: "Hey")
@@ -144,10 +144,10 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         let testObserver2 = TestSearchUserObserver()
         var tokens: [AnyObject] = []
         self.token = tokens
-        tokens.append(UserChangeInfo.add(observer: testObserver, for: user, managedObjectContext: self.uiMOC)!)
+        tokens.append(UserChangeInfo.add(observer: testObserver, for: user, in: self.uiMOC)!)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
-        tokens.append(UserChangeInfo.add(observer: testObserver2, for: searchUser, managedObjectContext: self.uiMOC)!)
+        tokens.append(UserChangeInfo.add(observer: testObserver2, for: searchUser, in: self.uiMOC)!)
         
         // when
         searchUser.connect(message: "Hey")

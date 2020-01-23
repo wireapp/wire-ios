@@ -69,7 +69,7 @@ extension UserObserverTests {
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
 
         // when
         modifier(user)
@@ -114,7 +114,7 @@ extension UserObserverTests {
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         self.uiMOC.saveOrRollback()
 
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
         
         // when
         user.name = "Foo"
@@ -282,7 +282,7 @@ extension UserObserverTests {
         self.setEmailAddress("foo@example.com", on: user)
         self.uiMOC.saveOrRollback()
         
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
         
         // when
         self.token = nil
@@ -346,7 +346,7 @@ extension UserObserverTests {
         let selfClient = UserClient.insertNewObject(in: self.uiMOC)
         selfUser.mutableSetValue(forKey: UserClientsKey).add(selfClient)
         self.uiMOC.saveOrRollback()
-        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: self.uiMOC)
         
         // when
         let otherClient = UserClient.insertNewObject(in: self.uiMOC)
@@ -372,7 +372,7 @@ extension UserObserverTests {
         self.uiMOC.saveOrRollback()
         XCTAssertEqual(selfUser.clients.count, 2)
         
-        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: selfUser, in: self.uiMOC)
         
         // when
         selfUser.mutableSetValue(forKey: UserClientsKey).remove(otherClient)
@@ -404,7 +404,7 @@ extension UserObserverTests {
             return XCTFail("Unable to get user with objectID in uiMOC")
         }
         
-        self.token = UserChangeInfo.add(observer: userObserver, for: uiMOCUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: uiMOCUser, in: self.uiMOC)
         
         // when adding a new client on the syncMOC
         syncMOC.performGroupedBlockAndWait {
@@ -433,7 +433,7 @@ extension UserObserverTests {
         uiMOC.saveOrRollback()
         uiMOC.refresh(user, mergeChanges: true)
         XCTAssertTrue(user.isFault)
-        self.token = UserChangeInfo.add(observer: userObserver, for: user, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: user, in: self.uiMOC)
         
         // when
         let client = UserClient.insertNewObject(in: uiMOC)
@@ -463,7 +463,7 @@ extension UserObserverTests {
         let otherClient = UserClient.insertNewObject(in: uiMOC)
         uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.token = UserChangeInfo.add(observer: userObserver, for: observedUser, managedObjectContext: self.uiMOC)
+        self.token = UserChangeInfo.add(observer: userObserver, for: observedUser, in: self.uiMOC)
         
         // when
         observedUser.mutableSetValue(forKey: UserClientsKey).add(otherClient)
