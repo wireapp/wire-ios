@@ -8791,7 +8791,6 @@
 			buildSettings = {
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				HEADER_SEARCH_PATHS = "$(SDKROOT)/usr/include/libxml2";
-				SWIFT_COMPILATION_MODE = wholemodule;
 			};
 			name = Release;
 		};
