@@ -19,7 +19,9 @@
 import XCTest
 @testable import Wire
 
-///TODO: test failed with XCode11
+///TODO: test failed with XCode11, may be due to image is not copied?
+///TODO: move to utilities
+
 final class NSData_ImageTypeTests: XCTestCase {
         
     func testThatItIdentifiesJPEG() {
