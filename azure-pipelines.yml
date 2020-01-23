@@ -7,10 +7,8 @@ trigger:
       - develop
 
 steps:
-- task: Xcode@5
-    inputs:
-    xcodeVersion: '11.3.1'
 - script: |
+    sudo xcode-select -switch /Applications/Xcode_11.3.app
     fastlane prepare 
   env:
     GITHUB_ACCESS_TOKEN: $(GITHUB_ACCESS_TOKEN)   
