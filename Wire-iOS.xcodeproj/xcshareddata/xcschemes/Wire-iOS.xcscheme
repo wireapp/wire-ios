@@ -71,6 +71,9 @@
                   Identifier = "LaunchImageViewControllerSnapshotTests">
                </Test>
                <Test
+                  Identifier = "NSData_ImageTypeTests">
+               </Test>
+               <Test
                   Identifier = "StartedConversationCellTests">
                </Test>
                <Test
