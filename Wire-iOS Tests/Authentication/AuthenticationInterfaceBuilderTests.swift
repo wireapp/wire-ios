@@ -19,7 +19,7 @@
 import XCTest
 @testable import Wire
 
-class AuthenticationInterfaceBuilderTests: ZMSnapshotTestCase {
+final class AuthenticationInterfaceBuilderTests: ZMSnapshotTestCase {
 
     var featureProvider: MockAuthenticationFeatureProvider!
     var builder: AuthenticationInterfaceBuilder!

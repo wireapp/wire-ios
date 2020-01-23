@@ -50,7 +50,31 @@
             </BuildableReference>
             <SkippedTests>
                <Test
+                  Identifier = "AppLockViewControllerSnapshotTests">
+               </Test>
+               <Test
+                  Identifier = "AppLockViewSnapshotTests">
+               </Test>
+               <Test
+                  Identifier = "AuthenticationInterfaceBuilderTests">
+               </Test>
+               <Test
+                  Identifier = "ConversationLinkAttachmentMessageCellTests">
+               </Test>
+               <Test
+                  Identifier = "ConversationTextMessageTests">
+               </Test>
+               <Test
+                  Identifier = "LandingViewControllerSnapshotTests">
+               </Test>
+               <Test
+                  Identifier = "LaunchImageViewControllerSnapshotTests">
+               </Test>
+               <Test
                   Identifier = "StartedConversationCellTests">
+               </Test>
+               <Test
+                  Identifier = "UIAlertControllerCompanyLoginSnapshotTests">
                </Test>
             </SkippedTests>
          </TestableReference>

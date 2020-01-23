@@ -20,6 +20,7 @@ import XCTest
 import SnapshotTesting
 @testable import Wire
 
+///TODO: fail when build with XCode11, cursor is visible, but ref image has no cursor.
 final class UIAlertControllerCompanyLoginSnapshotTests: XCTestCase {
     var sut: UIAlertController!
 
