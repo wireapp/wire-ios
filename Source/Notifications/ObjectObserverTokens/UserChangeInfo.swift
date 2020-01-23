@@ -180,54 +180,68 @@ extension ZMUser : ObjectInSnapshot {
 
 extension UserChangeInfo {
 
-    // MARK: Registering UserObservers
-    /// Adds an observer for the user if one specified or to all ZMUsers is none is specified
-    /// You must hold on to the token and use it to unregister
-    @objc(addUserObserver:forUser:managedObjectContext:)
-    public static func add(userObserver observer: ZMUserObserver, for user: ZMUser?, managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
-        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user)
-        { [weak observer] (note) in
-            guard let `observer` = observer,
-                let changeInfo = note.changeInfo as? UserChangeInfo
-                else { return }
-            
-            observer.userDidChange(changeInfo)
+    // MARK: Registering UserType
+
+    /// Adds an observer for a user conforming to UserType. You must hold on to the token and use it to unregister.
+    ///
+    @objc(addObserver:forUser:inManagedObjectContext:)
+    public static func add(observer: ZMUserObserver, for user: UserType, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol? {
+        if let user = user as? ZMSearchUser {
+            return add(searchUserObserver: observer, for: user, in: managedObjectContext)
         }
+        else if let user = user as? ZMUser {
+            return add(userObserver: observer, for:user, in: managedObjectContext)
+        }
+
+        return nil
     }
     
     // MARK: Registering SearchUserObservers
-    /// Adds an observer for the searchUser if one specified or to all ZMSearchUser is none is specified
-    /// You must hold on to the token and use it to unregister
-    @objc(addSearchUserObserver:forSearchUser:managedObjectContext:)
-    public static func add(searchUserObserver observer: ZMUserObserver,
-                           for user: ZMSearchUser?,
-                           managedObjectContext: NSManagedObjectContext
-                           ) -> NSObjectProtocol
-    {
-        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user)
-        { [weak observer] (note) in
-            guard let `observer` = observer,
+
+    /// Adds an observer for all ZMSearchUsers in the given context. You must hold on to the token and use it to unregister.
+    ///
+    public static func add(searchUserObserver observer: ZMUserObserver, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return add(searchUserObserver: observer, for: nil, in: managedObjectContext)
+    }
+
+    /// Adds an observer for the searchUser if one specified or to all ZMSearchUser is none is specified. You must
+    /// hold on to the token and use it to unregister.
+    ///
+    private static func add(searchUserObserver observer: ZMUserObserver, for user: ZMSearchUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return ManagedObjectObserverToken(name: .SearchUserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+            guard
+                let `observer` = observer,
                 let changeInfo = note.changeInfo as? UserChangeInfo
-                else { return }
+            else {
+                return
+            }
             
             observer.userDidChange(changeInfo)
         }
     }
-    
-    // MARK: Registering UserType
-    /// Adds an observer for the ZMUser or ZMSearchUser
-    /// You must hold on to the token and use it to unregister
-    @objc(addObserver:forUser:managedObjectContext:)
-    public static func add(observer: ZMUserObserver,
-                           for user: UserType,
-                           managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol?
-    {
-        if let user = user as? ZMSearchUser {
-            return add(searchUserObserver: observer, for: user, managedObjectContext: managedObjectContext)
-        }
-        else if let user = user as? ZMUser {
-            return add(userObserver: observer, for:user, managedObjectContext: managedObjectContext)
-        }
-        return nil
+
+    // MARK: Registering UserObservers
+
+    /// Adds an observer for all ZMUsers in the given context. You must hold on to the token and use it to unregister.
+    ///
+    public static func add(userObserver observer: ZMUserObserver, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return add(userObserver: observer, for: nil, in: managedObjectContext)
     }
+
+    /// Adds an observer for the user if one specified or to all ZMUsers is none is specified. You must hold on to
+    /// the token and use it to unregister.
+    ///
+    private static func add(userObserver observer: ZMUserObserver, for user: ZMUser?, in managedObjectContext: NSManagedObjectContext) -> NSObjectProtocol {
+        return ManagedObjectObserverToken(name: .UserChange, managedObjectContext: managedObjectContext, object: user) { [weak observer] (note) in
+            guard
+                let `observer` = observer,
+                let changeInfo = note.changeInfo as? UserChangeInfo
+            else {
+                return
+            }
+
+            observer.userDidChange(changeInfo)
+        }
+    }
+
 }

@@ -180,7 +180,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         XCTAssertTrue(user.isFault)
         XCTAssertEqual(user.displayName, "foo")
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
         
             // when
             syncMOC.performGroupedBlockAndWait {
@@ -209,7 +209,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         XCTAssertTrue(user!.isFault)
         let observer = UserObserver()
         
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user!, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user!, in: self.uiMOC)) { () -> () in
         
             // when
             user = nil
@@ -235,7 +235,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC))  { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC))  { () -> () in
         
             // when
             NotificationDispatcher.notifyNonCoreDataChanges(objectID: user.objectID, changedKeys: ["name"], uiContext: uiMOC)
@@ -256,7 +256,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
         
             // when
             user.name = "bar"
@@ -282,7 +282,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
         
             // when
             user.name = "bar"
@@ -311,7 +311,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
             
             // when
             sut.isDisabled = true
@@ -332,7 +332,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         sut.isDisabled = true
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
             
             // when
             sut.isDisabled = false
@@ -355,7 +355,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
         
             // when
             sut.applicationDidEnterBackground()
@@ -376,7 +376,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         sut.applicationDidEnterBackground()
         
         let observer = UserObserver()
-        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, managedObjectContext: self.uiMOC)) { () -> () in
+        withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
 
             // when
             sut.applicationWillEnterForeground()
