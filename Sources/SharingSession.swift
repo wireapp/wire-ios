@@ -280,7 +280,7 @@ public class SharingSession {
             environment: environment,
             cookieStorage: cookieStorage,
             reachability: reachability,
-            initialAccessToken: ZMAccessToken(),
+            initialAccessToken: nil,
             applicationGroupIdentifier: applicationGroupIdentifier
         )
         
