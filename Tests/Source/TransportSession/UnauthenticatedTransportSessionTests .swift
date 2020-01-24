@@ -97,6 +97,33 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         sut = nil
         super.tearDown()
     }
+    
+    func testThatEnqueueOneTime_IncrementsTheRequestCounter() {
+        // when
+        (0..<3).forEach { _ in
+            sut.enqueueOneTime(.init(getFromPath: "/"))
+        }
+        
+        // then
+        let result = sut.enqueueRequest { .init(getFromPath: "/") }
+        XCTAssertEqual(result, .maximumNumberOfRequests)
+    }
+    
+    func testThatEnqueueOneTime_IsNotLimitedByRequestLimit() {
+        // given
+        (0..<3).forEach { _ in
+            sut.enqueueOneTime(.init(getFromPath: "/"))
+        }
+        
+        let task = MockTask()
+        sessionMock.nextMockTask = task
+        
+        // when
+        sut.enqueueOneTime(.init(getFromPath: "/"))
+        
+        // then
+        XCTAssertEqual(task.resumeCallCount, 1)
+    }
 
     func testThatItEnqueuesANonNilRequestAndReturnsTheCorrectResult() {
         // given
