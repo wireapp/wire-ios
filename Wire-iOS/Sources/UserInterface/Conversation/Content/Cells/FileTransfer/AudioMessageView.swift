@@ -509,7 +509,7 @@ extension AudioMessageView : WireCallCenterCallStateObserver {
 
     func callCenterDidChange(callState: CallState,
                              conversation: ZMConversation,
-                             caller: UserType,
+                             caller: ZMUser,
                              timestamp: Date?,
                              previousCallState: CallState?) {
         guard let player = audioTrackPlayer else { return }
