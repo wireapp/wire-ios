@@ -52,7 +52,7 @@ public enum EnvironmentType: Equatable {
 }
 
 extension EnvironmentType {
-    private static let defaultsKey = "ZMBackendEnvironmentType"
+    static let defaultsKey = "ZMBackendEnvironmentType"
     
     public init(userDefaults: UserDefaults) {
         if let value = userDefaults.string(forKey: EnvironmentType.defaultsKey) {

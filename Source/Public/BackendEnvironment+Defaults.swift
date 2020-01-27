@@ -20,7 +20,7 @@ import Foundation
 
 extension BackendEnvironment {
 
-    private static let defaultsKey = "ZMBackendEnvironmentData"
+    static let defaultsKey = "ZMBackendEnvironmentData"
 
     public convenience init?(userDefaults: UserDefaults, configurationBundle: Bundle) {
         let environmentType = EnvironmentType(userDefaults: userDefaults)
@@ -68,4 +68,21 @@ extension BackendEnvironment {
             break
         }
     }
+    
+    public static func migrate(from: UserDefaults, to: UserDefaults) {
+        [EnvironmentType.defaultsKey, BackendEnvironment.defaultsKey].forEach { key in
+            UserDefaults.moveValue(forKey: key, from: from, to: to)
+        }
+    }
+}
+
+fileprivate extension UserDefaults {
+    
+    static func moveValue(forKey key: String, from: UserDefaults, to: UserDefaults) {
+        guard let value = from.value(forKey: key) else { return }
+        
+        to.setValue(value, forKey: key)
+        from.removeObject(forKey: key)
+    }
+    
 }
