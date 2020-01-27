@@ -43,6 +43,24 @@ class BackendEnvironmentTests: XCTestCase {
         super.tearDown()
     }
     
+    func createBackendEnvironment() -> BackendEnvironment {
+        let configURL = URL(string: "example.com/config.json")!
+        let baseURL = URL(string: "some.host.com")!
+        let title = "Example"
+        let endpoints = BackendEndpoints(
+            backendURL: baseURL.appendingPathComponent("backend"),
+            backendWSURL: baseURL.appendingPathComponent("backendWS"),
+            blackListURL: baseURL.appendingPathComponent("blacklist"),
+            teamsURL: baseURL.appendingPathComponent("teams"),
+            accountsURL: baseURL.appendingPathComponent("accounts"),
+            websiteURL: baseURL)
+        let trust = ServerCertificateTrust(trustData: [])
+        let environmentType = EnvironmentType.custom(url: configURL)
+        let backendEnvironment = BackendEnvironment(title: title, environmentType: environmentType, endpoints: endpoints, certificateTrust: trust)
+        
+        return backendEnvironment
+    }
+    
     func testThatWeCanLoadBackendEndpoints() {
         
         guard let environment = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle) else { XCTFail("Could not read environment data from Backend.bundle"); return }
@@ -83,31 +101,46 @@ class BackendEnvironmentTests: XCTestCase {
     }
     
     func testThatWeCanSaveCustomBackendInfoToUserDefaults() {
-        let configURL = URL(string: "example.com/config.json")!
-        let baseURL = URL(string: "some.host.com")!
-        let title = "Example"
-        let endpoints = BackendEndpoints(
-            backendURL: baseURL.appendingPathComponent("backend"),
-            backendWSURL: baseURL.appendingPathComponent("backendWS"),
-            blackListURL: baseURL.appendingPathComponent("blacklist"),
-            teamsURL: baseURL.appendingPathComponent("teams"),
-            accountsURL: baseURL.appendingPathComponent("accounts"),
-            websiteURL: baseURL)
-        let trust = ServerCertificateTrust(trustData: [])
-        let environmentType = EnvironmentType.custom(url: configURL)
-        let backendEnvironment = BackendEnvironment(title: title, environmentType: environmentType, endpoints: endpoints, certificateTrust: trust)
+        // given
+        let backendEnvironment = createBackendEnvironment()
         
+        // when
         backendEnvironment.save(in: defaults)
         
+        // then
         let loaded = BackendEnvironment(userDefaults: defaults, configurationBundle: backendBundle)
         
-        XCTAssertEqual(loaded?.endpoints.backendURL, endpoints.backendURL)
-        XCTAssertEqual(loaded?.endpoints.backendWSURL, endpoints.backendWSURL)
-        XCTAssertEqual(loaded?.endpoints.blackListURL, endpoints.blackListURL)
-        XCTAssertEqual(loaded?.endpoints.teamsURL, endpoints.teamsURL)
-        XCTAssertEqual(loaded?.endpoints.accountsURL, endpoints.accountsURL)
-        XCTAssertEqual(loaded?.endpoints.websiteURL, endpoints.websiteURL)
-        XCTAssertEqual(loaded?.title, title)
+        XCTAssertEqual(loaded?.endpoints.backendURL, backendEnvironment.endpoints.backendURL)
+        XCTAssertEqual(loaded?.endpoints.backendWSURL, backendEnvironment.endpoints.backendWSURL)
+        XCTAssertEqual(loaded?.endpoints.blackListURL, backendEnvironment.endpoints.blackListURL)
+        XCTAssertEqual(loaded?.endpoints.teamsURL, backendEnvironment.endpoints.teamsURL)
+        XCTAssertEqual(loaded?.endpoints.accountsURL, backendEnvironment.endpoints.accountsURL)
+        XCTAssertEqual(loaded?.endpoints.websiteURL, backendEnvironment.endpoints.websiteURL)
+        XCTAssertEqual(loaded?.title, backendEnvironment.title)
+    }
+    
+    func testThatWeCanMigrateCustomBackendInfoToAnotherUserDefaults() {
+        // given
+        let migrationUserDefaults = UserDefaults(suiteName: "migration")!
+        let backendEnvironment = createBackendEnvironment()
+        backendEnvironment.save(in: defaults)
+        
+        // when
+        BackendEnvironment.migrate(from: defaults, to: migrationUserDefaults)
+        
+        // then
+        XCTAssertNil(defaults.value(forKey: BackendEnvironment.defaultsKey))
+        XCTAssertNil(defaults.value(forKey: EnvironmentType.defaultsKey))
+        
+        let migrated = BackendEnvironment(userDefaults: migrationUserDefaults, configurationBundle: backendBundle)
+        
+        XCTAssertEqual(migrated?.endpoints.backendURL, backendEnvironment.endpoints.backendURL)
+        XCTAssertEqual(migrated?.endpoints.backendWSURL, backendEnvironment.endpoints.backendWSURL)
+        XCTAssertEqual(migrated?.endpoints.blackListURL, backendEnvironment.endpoints.blackListURL)
+        XCTAssertEqual(migrated?.endpoints.teamsURL, backendEnvironment.endpoints.teamsURL)
+        XCTAssertEqual(migrated?.endpoints.accountsURL, backendEnvironment.endpoints.accountsURL)
+        XCTAssertEqual(migrated?.endpoints.websiteURL, backendEnvironment.endpoints.websiteURL)
+        XCTAssertEqual(migrated?.title, backendEnvironment.title)
     }
 
 }
