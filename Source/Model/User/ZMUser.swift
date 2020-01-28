@@ -48,7 +48,7 @@ extension ZMUser: UserType {
         guard let selfUser = managedObjectContext.map(ZMUser.selfUser) else {
             return false
         }
-        return self.trusted() && selfUser.trusted()
+        return isTrusted && selfUser.isTrusted && !clients.isEmpty
     }
 
     // MARK: - Conversation Roles
@@ -325,25 +325,12 @@ extension NSManagedObject: SafeForLoggingStringConvertible {
 
 extension ZMUser {
     
-    @objc
-    public func trusted() -> Bool {
-        if self.clients.isEmpty {
-            return false
-        }
-        
+    /// Whether all user's devices are verified by the selfUser
+    @objc public var isTrusted: Bool {
         let selfUser = managedObjectContext.map(ZMUser.selfUser)
         let selfClient = selfUser?.selfClient()
         let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
         
         return !hasUntrustedClients
-    }
-    
-    @objc
-    public func untrusted() -> Bool {
-        let selfUser = managedObjectContext.map(ZMUser.selfUser)
-        let selfClient = selfUser?.selfClient()
-        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
-
-        return hasUntrustedClients
     }
 }

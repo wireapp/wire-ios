@@ -2359,7 +2359,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:0 trusted:NO];
     
     // when
-    BOOL isTrusted = user.trusted;
+    BOOL isTrusted = user.isTrusted;
     
     //then
     XCTAssertFalse(isTrusted);
@@ -2372,7 +2372,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:1 trusted:YES];
     
     // when
-    BOOL isTrusted = user.trusted;
+    BOOL isTrusted = user.isTrusted;
     
     //then
     XCTAssertTrue(isTrusted);
@@ -2384,7 +2384,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:1 trusted:NO];
     
     // when
-    BOOL isTrusted = user.trusted;
+    BOOL isTrusted = user.isTrusted;
     
     //then
     XCTAssertFalse(isTrusted);
@@ -2397,7 +2397,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:0 trusted:YES];
     
     // when
-    BOOL isTrusted = user.untrusted;
+    BOOL isTrusted = !user.isTrusted;
     
     //then
     XCTAssertFalse(isTrusted);
@@ -2410,7 +2410,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:1 trusted:NO];
     
     // when
-    BOOL untrusted = user.untrusted;
+    BOOL untrusted = !user.isTrusted;
     
     //then
     XCTAssertTrue(untrusted);
@@ -2422,7 +2422,7 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     ZMUser *user = [self userWithClients:1 trusted:YES];
     
     // when
-    BOOL untrusted = user.untrusted;
+    BOOL untrusted = !user.isTrusted;
     
     //then
     XCTAssertFalse(untrusted);
