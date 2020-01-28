@@ -945,37 +945,6 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
     }
 }
 
-- (BOOL)trusted
-{
-    if (self.clients.count == 0) {
-        return false;
-    }
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    __block BOOL hasOnlyTrustedClients = YES;
-    [self.clients enumerateObjectsUsingBlock:^(UserClient *client, BOOL * _Nonnull stop) {
-        if (client != selfClient && ![selfClient.trustedClients containsObject:client]) {
-            hasOnlyTrustedClients = NO;
-            *stop = YES;
-        }
-    }];
-    return hasOnlyTrustedClients;
-}
-
-- (BOOL)untrusted
-{
-    ZMUser *selfUser = [ZMUser selfUserInContext:self.managedObjectContext];
-    UserClient *selfClient = selfUser.selfClient;
-    __block BOOL hasUntrustedClients = NO;
-    [self.clients enumerateObjectsUsingBlock:^(UserClient *client, BOOL * _Nonnull stop) {
-        if (client != selfClient && ![selfClient.trustedClients containsObject:client]) {
-            hasUntrustedClients = YES;
-            *stop = YES;
-        }
-    }];
-    return hasUntrustedClients;
-}
-
 @end
 
 

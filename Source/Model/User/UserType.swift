@@ -126,6 +126,9 @@ public protocol UserType: NSObjectProtocol {
     /// All clients belonging to the user
     var allClients: [UserClientType] { get }
     
+    /// Whether the user verified all own devices plus others
+    var isVerified: Bool { get }
+    
     func requestPreviewProfileImage()
     func requestCompleteProfileImage()
     

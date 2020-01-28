@@ -110,9 +110,6 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 - (void)ignore;
 - (void)cancelConnectionRequest;
 
-- (BOOL)trusted;
-- (BOOL)untrusted;
-
 @end
 
 

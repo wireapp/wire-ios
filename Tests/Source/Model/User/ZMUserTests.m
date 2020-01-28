@@ -2353,25 +2353,6 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
 
 @implementation ZMUserTests (Trust)
 
-- (ZMUser *)userWithClients:(int)count trusted:(BOOL)trusted
-{
-    [self createSelfClient];
-    [self.uiMOC refreshAllObjects];
-    
-    UserClient *selfClient = [ZMUser selfUserInContext:self.uiMOC].selfClient;
-    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    for (int i = 0; i < count; i++) {
-        UserClient *client = [UserClient insertNewObjectInManagedObjectContext:self.uiMOC];
-        client.user = user;
-        if (trusted) {
-            [selfClient trustClient:client];
-        } else {
-            [selfClient ignoreClient:client];
-        }
-    }
-    return user;
-}
-
 - (void)testThatItReturns_Trusted_NO_WhenThereAreNoClients
 {
     // given

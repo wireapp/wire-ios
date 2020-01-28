@@ -216,6 +216,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.allClients ?? []
     }
     
+    public var isVerified: Bool {
+        return user?.isVerified ?? false
+    }
+    
     public var managedByWire: Bool {
         return user?.managedByWire != false
     }
