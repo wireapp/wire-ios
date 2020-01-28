@@ -718,3 +718,55 @@ extension ZMUserTests {
     }
 }
 
+// MARK: - Verifying user
+extension ZMUserTests {
+    
+    func testThatUserIsVerified_WhenSelfUserAndUserIsTrusted() {
+        // GIVEN
+        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        
+        // WHEN
+        XCTAssertTrue(user.trusted())
+        XCTAssertTrue(selfUser.trusted())
+        
+        // THEN
+        XCTAssertTrue(user.isVerified)
+    }
+    
+    func testThatUserIsNotVerified_WhenSelfUserIsNotTrustedButUserIsTrusted() {
+        // GIVEN
+        let user: ZMUser = self.userWithClients(count: 2, trusted: true)
+        let selfUser = ZMUser.selfUser(in: uiMOC)
+        let selfClient: UserClient? = selfUser.selfClient()
+        
+        // WHEN
+        let newClient: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+        newClient.user = selfUser
+        selfClient?.ignoreClient(newClient)
+        
+        // THEN
+        XCTAssertTrue(user.trusted())
+        XCTAssertFalse(selfUser.trusted())
+        XCTAssertFalse(user.isVerified)
+    }
+    
+    @objc(userWithClients:trusted:)
+    public func userWithClients(count: Int, trusted: Bool) -> ZMUser {
+        self.createSelfClient()
+        self.uiMOC.refreshAllObjects()
+        
+        let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
+        let user: ZMUser = ZMUser.insertNewObject(in: self.uiMOC)
+        [0...count].forEach({ _ in
+            let client: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+            client.user = user
+            if trusted {
+                selfClient?.trustClient(client)
+            } else {
+                selfClient?.ignoreClient(client)
+            }
+        })
+        return user
+    }
+}

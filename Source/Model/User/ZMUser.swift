@@ -43,6 +43,13 @@ extension ZMUser: UserType {
     public var activeConversations: Set<ZMConversation> {
         return Set(self.participantRoles.compactMap {$0.conversation})
     }
+    
+    public var isVerified: Bool {
+        guard let selfUser = managedObjectContext.map(ZMUser.selfUser) else {
+            return false
+        }
+        return self.trusted() && selfUser.trusted()
+    }
 
     // MARK: - Conversation Roles
 
@@ -313,5 +320,30 @@ extension NSManagedObject: SafeForLoggingStringConvertible {
         let moc: String = self.managedObjectContext?.description ?? "nil"
         
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
+    }
+}
+
+extension ZMUser {
+    
+    @objc
+    public func trusted() -> Bool {
+        if self.clients.isEmpty {
+            return false
+        }
+        
+        let selfUser = managedObjectContext.map(ZMUser.selfUser)
+        let selfClient = selfUser?.selfClient()
+        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
+        
+        return !hasUntrustedClients
+    }
+    
+    @objc
+    public func untrusted() -> Bool {
+        let selfUser = managedObjectContext.map(ZMUser.selfUser)
+        let selfClient = selfUser?.selfClient()
+        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
+
+        return hasUntrustedClients
     }
 }
