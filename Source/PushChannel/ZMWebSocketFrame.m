@@ -159,10 +159,16 @@ typedef union websocket_header_t {
             .rsv3    = 0,
             .fin     = 1, // single frame
             .payload = 0,
-            .mask    = 0,
+            .mask    = 1,
         }
     };
-    return dispatch_data_create(&wshead, sizeof(wshead), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    
+    uint32_t const maskingKey = 0; // Unused since we don't send any payload but included for conformance.
+    
+    dispatch_data_t h1 = dispatch_data_create(&wshead, sizeof(wshead), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t h2 = dispatch_data_create(&maskingKey, sizeof(maskingKey), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    
+    return dispatch_data_create_concat(h1, h2);
 }
 
 - (dispatch_data_t)pingFrameData;
@@ -175,10 +181,16 @@ typedef union websocket_header_t {
             .rsv3    = 0,
             .fin     = 1, // single frame
             .payload = 0,
-            .mask    = 0,
+            .mask    = 1,
         }
     };
-    return dispatch_data_create(&wshead, sizeof(wshead), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    
+    uint32_t const maskingKey = 0; // Unused since we don't send any payload but included for conformance.
+    
+    dispatch_data_t h1 = dispatch_data_create(&wshead, sizeof(wshead), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t h2 = dispatch_data_create(&maskingKey, sizeof(maskingKey), NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    
+    return dispatch_data_create_concat(h1, h2);
 }
 
 - (dispatch_data_t)frameData;
