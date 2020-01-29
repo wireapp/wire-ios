@@ -155,8 +155,8 @@
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5 handler:nil]);
     WaitForAllGroupsToBeEmpty(0.5);
     
-    dispatch_data_t pingData = dispatch_data_create(((uint8_t []){0x89, 0}), 2, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
-    dispatch_data_t pongData = dispatch_data_create(((uint8_t []){0x8a, 0}), 2, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t pingData = dispatch_data_create(((uint8_t []){0x89, 0x80, 0x00, 0x00, 0x00, 0x00}), 6, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t pongData = dispatch_data_create(((uint8_t []){0x8a, 0x80, 0x00, 0x00, 0x00, 0x00}), 6, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
     
     // expect
     [(NetworkSocket *)[(id) self.networkSocketMock expect] writeData:(NSData *)pongData];
@@ -184,7 +184,7 @@
     XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0.5]);
     WaitForAllGroupsToBeEmpty(0.5);
     
-    dispatch_data_t pingData = dispatch_data_create(((uint8_t []){0x89, 0}), 2, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
+    dispatch_data_t pingData = dispatch_data_create(((uint8_t []){0x89, 0x80, 0x00, 0x00, 0x00, 0x00}), 6, NULL, DISPATCH_DATA_DESTRUCTOR_DEFAULT);
     
     // expect
     [(NetworkSocket *)[(id) self.networkSocketMock expect] writeData:(NSData *)pingData];
