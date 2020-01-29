@@ -101,7 +101,6 @@
 #import "DeviceOrientationObserver.h"
 #import "MessagePresenter.h"
 #import "MessagePresenter+Internal.h"
-#import "UIApplication+StatusBar.h"
 #import "AVSLogObserver.h"
 #import "UIAlertController+Wire.h"
 #import "SoundEventRulesWatchDog.h"
