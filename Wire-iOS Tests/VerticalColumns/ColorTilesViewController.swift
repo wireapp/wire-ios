@@ -24,7 +24,7 @@ struct ColorTile {
     let size: CGSize
 }
 
-class ColorTilesViewController: VerticalColumnCollectionViewController {
+final class ColorTilesViewController: VerticalColumnCollectionViewController {
 
     let tiles: [ColorTile]
     var isTablet: Bool = false

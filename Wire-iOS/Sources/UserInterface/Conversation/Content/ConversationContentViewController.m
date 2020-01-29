@@ -191,6 +191,7 @@
 
     [self updateHeaderHeight];
     
+    [self setNeedsStatusBarAppearanceUpdate];
 }
 
 - (void)viewDidAppear:(BOOL)animated
