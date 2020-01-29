@@ -94,9 +94,6 @@
 #import "AuthenticationCoordinatedViewController.h"
 
 // Utils
-#import "Analytics.h"
-#import "Analytics+Internal.h"
-#import "AnalyticsDecryptionFailedObserver.h"
 
 #import "NSString+Fingerprint.h"
 #import "UIView+WR_ExtendedBlockAnimations.h"
