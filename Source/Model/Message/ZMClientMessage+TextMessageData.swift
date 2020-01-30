@@ -65,9 +65,14 @@ extension ZMClientMessage: ZMTextMessageData {
         guard let nonce = nonce, isEditableMessage else { return }
         
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
-        let editedText = ZMText.text(with: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
+        let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
         let editNonce = UUID()
-        add(ZMGenericMessage.message(content: ZMMessageEdit.edit(with: editedText, replacingMessageId: nonce), nonce: editNonce).data())
+        let updatedMessage = GenericMessage.message(content: MessageEdit(replacingMessageID: nonce, text: editedText), nonce: nonce)
+        do {
+            self.add(try updatedMessage.serializedData())
+        } catch {
+            return
+        }
         updateNormalizedText()
         
         self.nonce = editNonce
@@ -77,6 +82,6 @@ extension ZMClientMessage: ZMTextMessageData {
         self.linkAttachments = nil
         self.delivered = false
     }
-        
+    
 }
 
