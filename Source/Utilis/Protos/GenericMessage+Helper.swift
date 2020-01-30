@@ -156,10 +156,11 @@ extension Knock: EphemeralMessageCapable {
 
 extension Text: EphemeralMessageCapable {
     
-    init(content: String, mentions: [Mention], replyingTo: ZMOTRMessage?) {
+    public init(content: String, mentions: [Mention], linkPreviews: [LinkMetadata], replyingTo: ZMOTRMessage?) {
         self = Text.with {
             $0.content = content
             $0.mentions = mentions.compactMap { WireProtos.Mention($0) }
+            $0.linkPreview = linkPreviews.map { WireProtos.LinkPreview($0) }
             
             if let quotedMessage = replyingTo,
                let quotedMessageNonce = quotedMessage.nonce,
@@ -326,4 +327,54 @@ extension WireProtos.Mention {
         }
     }
     
+}
+
+public extension LinkPreview {
+
+    init(_ linkMetadata: LinkMetadata) {
+        if let articleMetadata = linkMetadata as? ArticleMetadata {
+            self = LinkPreview(articleMetadata: articleMetadata)
+        } else if let twitterMetadata = linkMetadata as? TwitterStatusMetadata {
+            self = LinkPreview(twitterMetadata: twitterMetadata)
+        } else {
+            self = LinkPreview.with {
+                $0.url = linkMetadata.originalURLString
+                $0.permanentURL = linkMetadata.permanentURL?.absoluteString ?? linkMetadata.resolvedURL?.absoluteString ?? linkMetadata.originalURLString
+                $0.urlOffset = Int32(linkMetadata.characterOffsetInText)
+            }
+        }
+    }
+    
+    init(articleMetadata: ArticleMetadata) {
+        self = LinkPreview.with {
+            $0.url = articleMetadata.originalURLString
+            $0.permanentURL = articleMetadata.permanentURL?.absoluteString ?? articleMetadata.resolvedURL?.absoluteString ?? articleMetadata.originalURLString
+            $0.urlOffset = Int32(articleMetadata.characterOffsetInText)
+            $0.title = articleMetadata.title ?? ""
+            $0.summary = articleMetadata.summary ?? ""
+            if let imageData = articleMetadata.imageData.first {
+                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+            }
+        }
+    }
+    
+    init(twitterMetadata: TwitterStatusMetadata) {
+        self = LinkPreview.with {
+            $0.url = twitterMetadata.originalURLString
+            $0.permanentURL = twitterMetadata.permanentURL?.absoluteString ?? twitterMetadata.resolvedURL?.absoluteString ?? twitterMetadata.originalURLString
+            $0.urlOffset = Int32(twitterMetadata.characterOffsetInText)
+            $0.title = twitterMetadata.message ?? ""
+            if let imageData = twitterMetadata.imageData.first {
+                $0.image = WireProtos.Asset(imageSize: CGSize(width: 0, height: 0), mimeType: "image/jpeg", size: UInt64(imageData.count))
+            }
+            
+            guard let author = twitterMetadata.author,
+                let username = twitterMetadata.username else { return }
+            
+            $0.tweet = WireProtos.Tweet.with({
+                $0.author = author
+                $0.username = username
+            })
+        }
+    }
 }
