@@ -22,16 +22,12 @@
 #import <WireSyncEngine/NSError+ZMUserSession.h>
 #import <WireSyncEngine/ZMCredentials.h>
 #import <WireSyncEngine/ZMUserSession.h>
-#import <WireSyncEngine/ZMUserSession+Registration.h>
-#import <WireSyncEngine/ZMUserSession+Authentication.h>
 #import <WireSyncEngine/ZMNetworkState.h>
 #import <WireSyncEngine/ZMCredentials.h>
-#import <WireSyncEngine/ZMUserSession+OTR.h>
 
 // PRIVATE
 #import <WireSyncEngine/ZMBlacklistVerificator.h>
 #import <WireSyncEngine/ZMUserSession+Private.h>
-#import <WireSyncEngine/ZMUserSession+Background.h>
 #import <WireSyncEngine/ZMAuthenticationStatus.h>
 #import <WireSyncEngine/ZMClientRegistrationStatus.h>
 #import <WireSyncEngine/ZMAPSMessageDecoder.h>
@@ -51,3 +47,4 @@
 #import <WireSyncEngine/ZMObjectStrategyDirectory.h>
 #import <WireSyncEngine/ZMUpdateEventsBuffer.h>
 #import <WireSyncEngine/ZMConversationTranscoder.h>
+#import <WireSyncEngine/ZMMissingUpdateEventsTranscoder.h>

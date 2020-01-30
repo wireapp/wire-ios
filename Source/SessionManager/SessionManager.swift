@@ -22,6 +22,7 @@ import WireTransport
 import WireUtilities
 import CallKit
 import PushKit
+import UserNotifications
 
 
 private let log = ZMSLog(tag: "SessionManager")
@@ -475,7 +476,7 @@ public protocol ForegroundNotificationResponder: class {
         loadSession(for: account) { [weak self] session in
             guard let `self` = self, let session = session else { return }
             self.updateCurrentAccount(in: session.managedObjectContext)
-            session.application(self.application, didFinishLaunchingWithOptions: launchOptions)
+            session.application(self.application, didFinishLaunching: launchOptions)
             (launchOptions[.url] as? URL).apply(session.didLaunch)
         }
     }
@@ -583,7 +584,7 @@ public protocol ForegroundNotificationResponder: class {
                 self?.environment.cookieStorage(for: account).deleteKeychainItems()
             }
             
-            self?.activeUserSession?.closeAndDeleteCookie(deleteCookie)
+            self?.activeUserSession?.close(deleteCookie: deleteCookie)
             self?.activeUserSession = nil
             StorageStack.reset()
             
@@ -750,7 +751,7 @@ public protocol ForegroundNotificationResponder: class {
             log.error("No session to tear down for \(accountId), known sessions: \(self.backgroundUserSessions)")
             return
         }
-        userSession.closeAndDeleteCookie(false)
+        userSession.close(deleteCookie: false)
         self.tearDownObservers(account: accountId)
         self.backgroundUserSessions[accountId] = nil
         notifyUserSessionDestroyed(accountId)
