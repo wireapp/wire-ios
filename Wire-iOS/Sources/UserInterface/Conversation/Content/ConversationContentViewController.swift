@@ -1,4 +1,3 @@
-
 // Wire
 // Copyright (C) 2020 Wire Swiss GmbH
 //
@@ -19,12 +18,49 @@
 import Foundation
 
 extension ConversationContentViewController {
-    override open func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
+    convenience init(conversation: ZMConversation,
+                     message: ZMConversationMessage? = nil,
+                     mediaPlaybackManager: MediaPlaybackManager?,
+                     session: ZMUserSessionInterface) {
+
+        self.init(nibName: nil, bundle: nil)
+
+        messageVisibleOnLoad = message ?? conversation.firstUnreadMessage
+        cachedRowHeights = NSMutableDictionary()
+        messagePresenter = MessagePresenter(mediaPlaybackManager: mediaPlaybackManager)
+
+        self.mediaPlaybackManager = mediaPlaybackManager
+        self.conversation = conversation
+
+        messagePresenter.targetViewController = self
+        messagePresenter.modalTargetController = parent
+        self.session = session
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        onScreen = true
+        activeMediaPlayerObserver = mediaPlaybackManager?.observe(\.activeMediaPlayer, options: [.initial, .new]) { [weak self] _, _ in
+            self?.updateMediaBar()
+        }
+
+        for cell in tableView.visibleCells {
+            cell.willDisplayCell()
+        }
+
+        messagePresenter.modalTargetController = parent
+
+        updateHeaderHeight()
+
         setNeedsStatusBarAppearanceUpdate()
     }
-    
+
+    override open func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        setNeedsStatusBarAppearanceUpdate()
+    }
+
     open override var preferredStatusBarStyle: UIStatusBarStyle {
         return ColorScheme.default.statusBarStyle
     }
