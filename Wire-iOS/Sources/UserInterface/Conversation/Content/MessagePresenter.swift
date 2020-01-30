@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,10 +18,25 @@
 
 import Foundation
 import AVKit
+import PassKit
 
-fileprivate let zmLog = ZMSLog(tag: "MessagePresenter")
+private let zmLog = ZMSLog(tag: "MessagePresenter")
 
-extension MessagePresenter {
+final class MessagePresenter: NSObject {
+
+    /// Container of the view that hosts popover controller.
+    weak var targetViewController: UIViewController?
+
+    /// Controller that would be the modal parent of message details.
+    weak var modalTargetController: UIViewController?
+    private(set) var waitingForFileDownload = false
+
+    var mediaPlayerController: MediaPlayerController?
+    var mediaPlaybackManager: MediaPlaybackManager?
+    var videoPlayerObserver: NSObjectProtocol?
+    var fileAvailabilityObserver: MessageKeyPathObserver?
+
+    private var documentInteractionController: UIDocumentInteractionController?
 
     /// init method for injecting MediaPlaybackManager for testing
     ///
@@ -32,10 +47,56 @@ extension MessagePresenter {
 
         self.mediaPlaybackManager = mediaPlaybackManager
     }
-}
+
+    func openDocumentController(for message: ZMConversationMessage,
+                                targetView: UIView,
+                                withPreview preview: Bool) {
+        guard let fileURL = message.fileMessageData?.fileURL,
+              fileURL.isFileURL,
+              !fileURL.path.isEmpty else {
+            let errorMessage = "File URL is missing: \(message.fileMessageData?.fileURL.debugDescription ?? "") (\(message.fileMessageData.debugDescription))"
+            assert(false, errorMessage)
+            
+            zmLog.error(errorMessage)
+            ZMUserSession.shared()?.enqueueChanges({
+                message.fileMessageData?.requestFileDownload()
+            })
+
+            return
+        }
+
+        // Need to create temporary hardlink to make sure the UIDocumentInteractionController shows the correct filename
+        var tmpPath = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent(message.fileMessageData?.filename ?? "").absoluteString
+
+        let path = fileURL.path
+
+        do {
+            try FileManager.default.linkItem(atPath: path, toPath: tmpPath)
+        } catch {
+            zmLog.error("Cannot symlink \(path) to \(tmpPath): \(error)")
+            tmpPath = path
+        }
+
+        documentInteractionController = UIDocumentInteractionController(url: URL(fileURLWithPath: tmpPath))
+        documentInteractionController?.delegate = self
+        if (!preview || false == documentInteractionController?.presentPreview(animated: true)),
+            let rect = targetViewController?.view.convert(targetView.bounds, from: targetView),
+        let view = targetViewController?.view {
+
+            documentInteractionController?.presentOptionsMenu(from: rect, in: view, animated: true)
+        }
+    }
+
+    func cleanupTemporaryFileLink() {
+        guard let url = documentInteractionController?.url else { return }
+        do {
+            try FileManager.default.removeItem(at: url)
+        } catch let linkDeleteError {
+            zmLog.error("Cannot delete temporary link \(url): \(linkDeleteError)")
+        }
+    }
 
 // MARK: - AVPlayerViewController dismissial
-extension MessagePresenter {
 
     fileprivate func observePlayerDismissial() {
         videoPlayerObserver = NotificationCenter.default.addObserver(forName: .dismissingAVPlayer, object: nil, queue: OperationQueue.main) { notification in
@@ -49,21 +110,20 @@ extension MessagePresenter {
             }
         }
     }
-}
 
-extension MessagePresenter {
+    // MARK: - File
 
-    @objc func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
-        
+    func openFileMessage(_ message: ZMConversationMessage, targetView: UIView) {
+
         if !message.isFileDownloaded() {
             message.fileMessageData?.requestFileDownload()
-            
+
             fileAvailabilityObserver = MessageKeyPathObserver(message: message, keypath: \.fileAvailabilityChanged) { [weak self] (message) in
                 guard message.isFileDownloaded() else { return }
-            
+
                 self?.openFileMessage(message, targetView: targetView)
             }
-            
+
             return
         }
 
@@ -72,11 +132,11 @@ extension MessagePresenter {
         _ = message.startSelfDestructionIfNeeded()
 
         if let fileMessageData = message.fileMessageData, fileMessageData.isPass,
-           let addPassesViewController = createAddPassesViewController(fileMessageData: fileMessageData) {
+            let addPassesViewController = createAddPassesViewController(fileMessageData: fileMessageData) {
             targetViewController?.present(addPassesViewController, animated: true)
 
         } else if let fileMessageData = message.fileMessageData, fileMessageData.isVideo,
-                  let mediaPlaybackManager = mediaPlaybackManager {
+            let mediaPlaybackManager = mediaPlaybackManager {
             let player = AVPlayer(url: fileURL)
             mediaPlayerController = MediaPlayerController(player: player, message: message, delegate: mediaPlaybackManager)
             let playerViewController = AVPlayerViewController()
@@ -128,8 +188,8 @@ extension MessagePresenter {
 
     func viewController(forImageMessage message: ZMConversationMessage, actionResponder delegate: MessageActionResponder) -> UIViewController? {
         guard Message.isImage(message),
-              message.imageMessageData != nil else {
-            return nil
+            message.imageMessageData != nil else {
+                return nil
         }
 
         return imagesViewController(for: message, actionResponder: delegate, isPreviewing: false)
@@ -142,6 +202,44 @@ extension MessagePresenter {
         }
 
         return imagesViewController(for: message, actionResponder: delegate, isPreviewing: true)
+    }
+
+    // MARK: - Pass
+
+    func createAddPassesViewController(fileMessageData: ZMFileMessageData) -> PKAddPassesViewController? {
+        guard let fileURL = fileMessageData.fileURL,
+            let passData = try? Data.init(contentsOf: fileURL) else {
+                return nil
+        }
+
+        guard let pass = try? PKPass.init(data: passData) else { return nil }
+
+        if PKAddPassesViewController.canAddPasses() {
+            return PKAddPassesViewController(pass: pass)
+        } else {
+            return nil
+        }
+    }
+}
+
+extension MessagePresenter: UIDocumentInteractionControllerDelegate {
+    func documentInteractionControllerViewControllerForPreview(_ controller: UIDocumentInteractionController) -> UIViewController {
+        return modalTargetController!
+    }
+
+    func documentInteractionControllerDidEndPreview(_ controller: UIDocumentInteractionController) {
+        cleanupTemporaryFileLink()
+        documentInteractionController = nil
+    }
+
+    func documentInteractionControllerDidDismissOpenInMenu(_ controller: UIDocumentInteractionController) {
+        cleanupTemporaryFileLink()
+        documentInteractionController = nil
+    }
+
+    func documentInteractionControllerDidDismissOptionsMenu(_ controller: UIDocumentInteractionController) {
+        cleanupTemporaryFileLink()
+        documentInteractionController = nil
     }
 
 }
