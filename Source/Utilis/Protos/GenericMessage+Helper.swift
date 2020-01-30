@@ -250,6 +250,29 @@ extension Calling: MessageCapable {
     }
 }
 
+extension WireProtos.MessageEdit: MessageCapable {
+    
+    init(replacingMessageID: UUID, text: Text) {
+        self = MessageEdit.with {
+            $0.replacingMessageID = replacingMessageID.transportString()
+            $0.text = text
+        }
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.edited = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+            
+        }
+    }
+}
+
 extension WireProtos.Asset: EphemeralMessageCapable {
     
     init(_ metadata: ZMFileMetadata) {
