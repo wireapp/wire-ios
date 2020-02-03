@@ -45,8 +45,6 @@ typedef NS_ENUM(int16_t, ZMConnectionStatus) {
 @property (readonly, nonatomic) ZMUser *to;
 @property (nonatomic,readonly) BOOL hasValidConversation;
 
-+ (NSArray *)connectionsInMangedObjectContext:(NSManagedObjectContext *)moc;
-
 @end
 
 

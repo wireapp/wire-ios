@@ -54,13 +54,6 @@ static NSString * const LastUpdateDateInGMTKey = @"lastUpdateDateInGMT";
     return LastUpdateDateInGMTKey;
 }
 
-+ (NSArray *)connectionsInMangedObjectContext:(NSManagedObjectContext *)moc;
-{
-    NSFetchRequest *request = [self sortedFetchRequest];
-    NSArray *result = [moc executeFetchRequestOrAssert:request];
-    return result;
-}
-
 + (instancetype)insertNewSentConnectionToUser:(ZMUser *)user existingConversation:(ZMConversation *)conversation
 {
     VerifyReturnValue(user.connection == nil, user.connection);
