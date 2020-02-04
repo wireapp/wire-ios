@@ -401,3 +401,30 @@ public extension LinkPreview {
         }
     }
 }
+
+extension WireProtos.Confirmation: MessageCapable {
+    
+    init?(messageIds: [UUID], type: Confirmation.TypeEnum) {
+        guard let firstMessageID = messageIds.first else {
+            return nil
+        }
+        let moreMessageIds = Array(messageIds.dropFirst())
+        self = WireProtos.Confirmation.with({
+            $0.firstMessageID = firstMessageID.transportString()
+            $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
+            $0.type = type
+        })
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.confirmation = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+        }
+    }
+}
