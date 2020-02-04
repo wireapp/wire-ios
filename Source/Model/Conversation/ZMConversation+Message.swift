@@ -204,4 +204,9 @@ extension ZMConversation {
         return appendClientMessage(with: ZMGenericMessage.message(content: message, nonce: nonce), expires: expires, hidden: hidden)
     }
     
+    @nonobjc
+    func append(message: MessageCapable, nonce: UUID = UUID(), hidden: Bool = false, expires: Bool = false) -> ZMClientMessage? {
+        return appendClientMessage(with: GenericMessage.message(content: message, nonce: nonce), expires: expires, hidden: hidden)
+    }
+    
 }
