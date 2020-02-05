@@ -34,7 +34,7 @@ public enum EnvironmentType: Equatable {
         }
     }
 
-    init(stringValue: String) {
+    public init(stringValue: String) {
         switch stringValue {
         case EnvironmentType.staging.stringValue:
             self = .staging
