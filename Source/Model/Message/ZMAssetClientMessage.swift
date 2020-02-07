@@ -24,6 +24,7 @@ import Foundation
 
     /// In memory cache
     var cachedGenericAssetMessage: ZMGenericMessage? = nil
+    var cachedUnderlyingAssetMessage: GenericMessage? = nil
     
     internal convenience init?(asset: WireProtos.Asset,
                                nonce: UUID,
@@ -233,21 +234,25 @@ extension ZMAssetClientMessage {
     override public func awakeFromInsert() {
         super.awakeFromInsert()
         self.cachedGenericAssetMessage = nil
+        self.cachedUnderlyingAssetMessage = nil
     }
     
     override public func awakeFromFetch() {
         super.awakeFromFetch()
         self.cachedGenericAssetMessage = nil
+        self.cachedUnderlyingAssetMessage = nil
     }
     
     override public func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
         self.cachedGenericAssetMessage = nil
+        self.cachedUnderlyingAssetMessage = nil
     }
     
     override public func didTurnIntoFault() {
         super.didTurnIntoFault()
         self.cachedGenericAssetMessage = nil
+        self.cachedUnderlyingAssetMessage = nil
     }
     
     public override static func entityName() -> String {
@@ -385,17 +390,20 @@ struct CacheAsset: Asset {
     }
     
     func updateWithAssetId(_ assetId: String, token: String?) {
-        guard let genericMessage = owner.genericMessage else { return }
+        guard var genericMessage = owner.underlyingMessage else { return }
         
-        var updatedGenericMessage: ZMGenericMessage
         switch type {
         case .thumbnail:
-            updatedGenericMessage = genericMessage.updatedPreview(withAssetId: assetId, token: token)!
+            genericMessage.updatedPreview(withAssetId: assetId, token: token)
         case .image, .file:
-            updatedGenericMessage = genericMessage.updatedUploaded(withAssetId: assetId, token: token)!
+            genericMessage.updatedUploaded(withAssetId: assetId, token: token)
         }
         
-        owner.add(updatedGenericMessage)
+        do {
+            _ = owner.mergeWithExistingData(data: try genericMessage.serializedData())
+        } catch {
+            return
+        }
         
         // Now that we've stored the assetId when can safely delete the encrypted data
         switch type {
