@@ -86,6 +86,22 @@ extension GenericMessage {
         }        
     }
 
+    var assetData: WireProtos.Asset? {
+        guard let content = content else { return nil }
+        switch content {
+        case .asset(let data):
+            return data
+        case .ephemeral(let data):
+            switch data.content {
+            case .asset(let data)?:
+                return data
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
 }
 
 extension Ephemeral: MessageCapable {
@@ -338,6 +354,47 @@ extension WireProtos.Asset: EphemeralMessageCapable {
     }
 }
 
+extension WireProtos.Confirmation: MessageCapable {
+    
+    init?(messageIds: [UUID], type: Confirmation.TypeEnum) {
+        guard let firstMessageID = messageIds.first else {
+            return nil
+        }
+        let moreMessageIds = Array(messageIds.dropFirst())
+        self = WireProtos.Confirmation.with({
+            $0.firstMessageID = firstMessageID.transportString()
+            $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
+            $0.type = type
+        })
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.confirmation = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get {
+            return false
+        }
+        set {
+        }
+    }
+}
+
+extension WireProtos.Asset.Preview {
+    
+    init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
+        self = WireProtos.Asset.Preview.with({
+            $0.size = size
+            $0.mimeType = mimeType
+            $0.image = imageMetadata
+            if let remoteData = remoteData {
+                $0.remote = remoteData
+            }
+        })
+    }
+}
+
 extension WireProtos.Mention {
     
     init?(_ mention: WireDataModel.Mention) {
@@ -349,7 +406,6 @@ extension WireProtos.Mention {
             $0.userID = userID
         }
     }
-    
 }
 
 public extension LinkPreview {
@@ -402,29 +458,51 @@ public extension LinkPreview {
     }
 }
 
-extension WireProtos.Confirmation: MessageCapable {
+extension GenericMessage {
     
-    init?(messageIds: [UUID], type: Confirmation.TypeEnum) {
-        guard let firstMessageID = messageIds.first else {
-            return nil
+    public mutating func updatedPreview(withAssetId assetId: String, token: String?) {
+        guard let content = content else { return }
+        switch content {
+        case .asset:
+            self.asset.preview.remote.assetID = assetId
+            if let token = token {
+                self.asset.preview.remote.assetToken = token
+            }
+        case .ephemeral(let data):
+            switch data.content {
+            case .asset?:
+                self.ephemeral.asset.preview.remote.assetID = assetId
+                if let token = token {
+                    self.ephemeral.asset.preview.remote.assetToken = token
+                }
+            default:
+                return
+            }
+        default:
+            return
         }
-        let moreMessageIds = Array(messageIds.dropFirst())
-        self = WireProtos.Confirmation.with({
-            $0.firstMessageID = firstMessageID.transportString()
-            $0.moreMessageIds = moreMessageIds.map { $0.transportString() }
-            $0.type = type
-        })
     }
     
-    public func setContent(on message: inout GenericMessage) {
-        message.confirmation = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
-        }
-        set {
+    public mutating func updatedUploaded(withAssetId assetId: String, token: String?) {
+        guard let content = content else { return }
+        switch content {
+        case .asset:
+            self.asset.uploaded.assetID = assetId
+            if let token = token {
+                self.asset.uploaded.assetToken = token
+            }
+        case .ephemeral(let data):
+            switch data.content {
+            case .asset?:
+                self.ephemeral.asset.uploaded.assetID = assetId
+                if let token = token {
+                    self.ephemeral.asset.uploaded.assetToken = token
+                }
+            default:
+                return
+            }
+        default:
+            return
         }
     }
 }

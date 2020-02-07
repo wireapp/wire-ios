@@ -18,6 +18,7 @@
 
 
 import XCTest
+@testable import WireDataModel
 
 class ProtobufUtilitiesTests: XCTestCase {
     
@@ -245,4 +246,103 @@ class ProtobufUtilitiesTests: XCTestCase {
             imageAsset: nil
         )
     }
+}
+
+// MARK:-  Using Swift protobuf API
+
+extension ProtobufUtilitiesTests {
+    
+    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_SwiftProtobufAPI() {
+        // given
+        let (assetId, token) = ("id", "token")
+        let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        var sut = GenericMessage.message(content: asset, nonce: UUID.create())
+        
+        // when
+        XCTAssertNotEqual(sut.asset.uploaded.assetID, assetId)
+        XCTAssertNotEqual(sut.asset.uploaded.assetToken, token)
+        sut.updatedUploaded(withAssetId: assetId, token: token)
+        
+        // then
+        XCTAssertEqual(sut.asset.uploaded.assetID, assetId)
+        XCTAssertEqual(sut.asset.uploaded.assetToken, token)
+    }
+    
+    func testThatItUpdatesAGenericMessageWithAssetUploadedWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() {
+        // given
+        let (assetId, token) = ("id", "token")
+        let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
+        var sut = GenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        
+        // when
+        XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
+        XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetToken, token)
+        sut.updatedUploaded(withAssetId: assetId, token: token)
+        
+        // then
+        XCTAssertEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
+        XCTAssertEqual(sut.ephemeral.asset.uploaded.assetToken, token)
+    }
+
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_SwiftProtobufAP() {
+        // given
+        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let remoteData = WireProtos.Asset.RemoteData.with {
+            $0.otrKey = otr
+            $0.sha256 = sha
+        }
+        let imageMetadata = WireProtos.Asset.ImageMetaData.with {
+            $0.width = 123
+            $0.height = 420
+        }
+        let previewAsset = WireProtos.Asset.Preview(size: 128, mimeType: "image/jpg", remoteData: remoteData, imageMetadata: imageMetadata)
+        let asset = WireProtos.Asset.with {
+            $0.preview = previewAsset
+        }
+        
+        let (assetId, token) = ("id", "token")
+        var sut = GenericMessage.message(content: asset, nonce: UUID.create())
+    
+        // when
+        XCTAssertNotEqual(sut.asset.preview.remote.assetID, assetId)
+        XCTAssertNotEqual(sut.asset.preview.remote.assetToken, token)
+        sut.updatedPreview(withAssetId: assetId, token: token)
+    
+        // then
+        XCTAssertEqual(sut.asset.preview.remote.assetID, assetId)
+        XCTAssertEqual(sut.asset.preview.remote.assetToken, token)
+        XCTAssertEqual(sut.asset.preview.remote.otrKey, otr)
+        XCTAssertEqual(sut.asset.preview.remote.sha256, sha)
+    }
+    
+    func testThatItUpdatesAGenericMessageWithAssetPreviewWithAssetIdAndToken_Ephemeral_SwiftProtobufAP() {
+        // given
+        let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
+        let remoteData = WireProtos.Asset.RemoteData.with {
+            $0.otrKey = otr
+            $0.sha256 = sha
+        }
+        let imageMetadata = WireProtos.Asset.ImageMetaData.with {
+            $0.width = 123
+            $0.height = 420
+        }
+        let previewAsset = WireProtos.Asset.Preview(size: 128, mimeType: "image/jpg", remoteData: remoteData, imageMetadata: imageMetadata)
+        let asset = WireProtos.Asset.with {
+            $0.preview = previewAsset
+        }
+        
+        let (assetId, token) = ("id", "token")
+        var sut = GenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        
+        // when
+        XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
+        XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetToken, token)
+        sut.updatedPreview(withAssetId: assetId, token: token)
+        
+        // then
+        XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
+        XCTAssertEqual(sut.ephemeral.asset.preview.remote.assetToken, token)
+        XCTAssertEqual(sut.ephemeral.asset.preview.remote.otrKey, otr)
+        XCTAssertEqual(sut.ephemeral.asset.preview.remote.sha256, sha)
+     }
 }
