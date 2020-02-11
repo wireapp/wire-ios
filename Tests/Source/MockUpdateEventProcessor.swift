@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,14 @@
 
 import Foundation
 
-extension SessionManager {
+@testable import WireSyncEngine
+
+class MockUpdateEventProcessor: WireSyncEngine.UpdateEventProcessor {
     
-    /// Forwards the Handoff/CallKit activity that user would like to continue in the app
-    @objc(continueUserActivity:restorationHandler:)
-    public func continueUserActivity(_ userActivity : NSUserActivity, restorationHandler: ([AnyObject]?) -> Void) -> Bool {
-        if #available(iOS 10.0, *) {
-            return callKitManager?.continueUserActivity(userActivity) ?? false
-        } else {
-            return false
-        }
+    var processedEvents: [ZMUpdateEvent] = []
+    
+    func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        processedEvents.append(contentsOf: updateEvents)
     }
     
 }
