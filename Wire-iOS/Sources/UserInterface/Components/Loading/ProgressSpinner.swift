@@ -16,32 +16,21 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
-@testable import Wire
-import SnapshotTesting
+import Foundation
 
-final class LaunchImageViewControllerSnapshotTests: XCTestCase {
-    
-    var sut: LaunchImageViewController!
-    
-    override func setUp() {
-        super.setUp()
-        sut = LaunchImageViewController()
-        sut.loadViewIfNeeded()
+extension ProgressSpinner {
+    @objc
+    func setupConstraints() {
+        spinner.translatesAutoresizingMaskIntoConstraints = false
+        spinner.centerInSuperview()
     }
     
-    override func tearDown() {
-        sut = nil
-        super.tearDown()
-    }
-
-    func testForInitState(){
-        verify(matching: sut)
-    }
-
-    func testForShowingSpinner(){
-        sut.showLoadingScreen()
-
-        verify(matching: sut)
+    @objc
+    func startAnimationInternal() {
+        isHidden = false
+        stopAnimationInternal()
+        if window != nil {
+            spinner.layer.add(CABasicAnimation(rotationSpeed: 1.4, beginTime: 0, delegate: self), forKey: "rotateAnimation")
+        }
     }
 }
