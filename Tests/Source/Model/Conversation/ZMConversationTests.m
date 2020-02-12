@@ -2463,8 +2463,8 @@
     [self.syncMOC performGroupedBlockAndWait:^{
         XCTAssertEqual([ZMConversation unreadConversationCountInContext:self.syncMOC], 0lu);
     
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-        conversation.conversationType = ZMConversationTypeConnection;
+        ZMConversation *conversation = [self insertConversationWithUnread:YES];
+        conversation.conversationType = ZMConversationTypeOneOnOne;
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.syncMOC];
         connection.conversation = conversation;
         connection.status = ZMConnectionStatusBlocked;
