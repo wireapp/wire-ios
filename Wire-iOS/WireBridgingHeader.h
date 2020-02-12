@@ -82,7 +82,3 @@
 #import "ProgressSpinner+Internal.h"
 
 #import "EmoticonSubstitutionConfiguration.h"
-
-// Audio player
-#import "AudioTrackPlayer.h"
-#import "AudioTrackPlayer+Private.h"
