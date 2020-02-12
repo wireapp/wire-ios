@@ -77,7 +77,6 @@
 #import "DeviceOrientationObserver.h"
 #import "AVSLogObserver.h"
 #import "SoundEventRulesWatchDog.h"
-#import "MessageType.h"
 #import "UIViewController+LoadingView.h"
 
 #import "ProgressSpinner.h"
@@ -89,6 +88,3 @@
 // Audio player
 #import "AudioTrackPlayer.h"
 #import "AudioTrackPlayer+Private.h"
-
-// Invite
-#import "ShareItemProvider.h"
