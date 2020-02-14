@@ -139,6 +139,12 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
 
+    public var phoneNumber: String? {
+        get {
+            return user?.phoneNumber
+        }
+    }
+
     public var name: String? {
         get {
             return user != nil ? user?.name : internalName
