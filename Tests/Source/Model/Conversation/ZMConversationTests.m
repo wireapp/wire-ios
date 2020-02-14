@@ -3530,6 +3530,7 @@
     NSDate *orginalDate = [NSDate dateWithTimeIntervalSinceNow:-20];
     NSDate *firstCallDate = [orginalDate dateByAddingTimeInterval:50];
     NSDate *secondCallDate = [orginalDate dateByAddingTimeInterval:100];
+    NSDate *thirdCallDate = [orginalDate dateByAddingTimeInterval:150];
 
     __block ZMMessage *message;
     __block ZMConversation *conversation;
@@ -3576,6 +3577,24 @@
     
     // then
     XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [secondCallDate timeIntervalSince1970], 0.5);
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        // and when
+        // (5) append third missed call (as childMessage)
+        [conversation appendMissedCallMessageFromUser:user at:thirdCallDate relevantForStatus:YES];
+        [self.syncMOC saveOrRollback];
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    [self.uiMOC refreshObject:uiMessage mergeChanges:YES];
+    [self.uiMOC refreshObject:uiConv mergeChanges:YES];
+    
+    // (6) set third call as read
+    [uiConv markMessagesAsReadUntil:uiMessage];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // then
+    XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [thirdCallDate timeIntervalSince1970], 0.5);
 }
 
 - (void)testThatItDoesReturnTheMissedCallMessageAsFirstUnreadMessageWhenItHasUnreadChildren

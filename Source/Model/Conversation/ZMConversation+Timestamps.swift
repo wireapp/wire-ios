@@ -234,19 +234,20 @@ extension ZMConversation {
     
     @objc(markMessagesAsReadUntil:)
     public func markMessagesAsRead(until message: ZMConversationMessage) {
+        guard let messageTimestamp = message.serverTimestampIncludingChildMessages else { return }
+        
         if let currentTimestamp = lastReadServerTimeStamp,
-           let messageTimestamp = message.serverTimestamp,
-           currentTimestamp.compare(messageTimestamp) == .orderedDescending {
+            currentTimestamp.compare(messageTimestamp) == .orderedDescending {
             // Current last read timestamp is newer than message we are marking as read
             return
         }
+        
         // Any unsent unread message is cleared when entering a conversation
         if hasUnreadUnsentMessage {
             hasUnreadUnsentMessage = false
         }
         
-        guard let messageTimestamp = message.serverTimestampIncludingChildMessages,
-              let unreadTimestamp = message.isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?.serverTimestamp else { return }
+        guard let unreadTimestamp = message.isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?.serverTimestamp else { return }
         
         enqueueUpdateLastRead(unreadTimestamp)
     }
