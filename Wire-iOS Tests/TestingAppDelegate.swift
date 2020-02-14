@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,8 +19,17 @@
 import Foundation
 @testable import Wire
 
-extension MockUser: SelfUserProviderUI {
-    public static var selfUser: EditableUser {
-        return (mockSelf() as Any as! ZMUser)
+/// The App Delegate to use for the test target.
+
+@objc(TestingAppDelegate)
+final class TestingAppDelegate: AppDelegate {
+
+    // We don't want the self user to be automatically configured as it is in production code.
+    // Explicit configuration (via `SelfUser.provider = someSelfUserProvider` ) helps clarify
+    // mocking scenarios by asserting that the test writer provides the self user themselves.
+    
+    override var shouldConfigureSelfUserProvider: Bool {
+        return false
     }
+
 }
