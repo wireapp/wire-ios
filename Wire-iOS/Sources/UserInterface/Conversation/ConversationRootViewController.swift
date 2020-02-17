@@ -76,15 +76,15 @@ final class ConversationRootViewController: UIViewController {
     }
 
     func configure() {
-        guard let conversationViewController = self.conversationViewController else {
+        guard let conversationViewController = conversationViewController else {
             return
         }
 
-        self.view.backgroundColor = UIColor.from(scheme: .barBackground)
+        view.backgroundColor = UIColor.from(scheme: .barBackground)
 
-        self.addToSelf(navBarContainer)
-        self.view.addSubview(self.contentView)
-        self.addToSelf(networkStatusViewController)
+        addToSelf(navBarContainer)
+        view.addSubview(self.contentView)
+        addToSelf(networkStatusViewController)
 
         networkStatusViewController.createConstraintsInParentController(bottomView: navBarContainer.view, controller: self)
 
@@ -101,7 +101,7 @@ final class ConversationRootViewController: UIViewController {
             conversationViewControllerView.edges == contentView.edges
         }
         
-        contentView.bottomAnchor.constraint(equalTo: self.safeBottomAnchor).isActive = true
+        contentView.bottomAnchor.constraint(equalTo: safeBottomAnchor).isActive = true
         
         navBarContainer.navigationBar.pushItem(conversationViewController.navigationItem, animated: false)
     }
