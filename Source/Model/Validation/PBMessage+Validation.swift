@@ -86,6 +86,36 @@ extension String {
 
 // MARK: Generic Message
 
+extension GenericMessage {
+    public func validatingFields() -> GenericMessage? {
+        guard UUID.isValid(object: messageID), let content = self.content else { return nil }
+        
+        switch content {
+        case .text:
+            guard text.validatingFields() != nil else { return nil }
+        case .lastRead:
+            guard lastRead.validatingFields() != nil else { return nil }
+        case .cleared:
+            guard cleared.validatingFields() != nil else { return nil }
+        case .hidden:
+            guard hidden.validatingFields() != nil else { return nil }
+        case .deleted:
+            guard deleted.validatingFields() != nil else { return nil }
+        case .edited:
+            guard edited.validatingFields() != nil else { return nil }
+        case .confirmation:
+            guard confirmation.validatingFields() != nil else { return nil }
+        case .reaction:
+            guard reaction.validatingFields() != nil else { return nil }
+        case .asset:
+            guard asset.validatingFields() != nil else { return nil }
+        default:
+            break
+        }
+        return self
+    }
+}
+
 extension ZMGenericMessage {
     @objc public func validatingFields() -> ZMGenericMessage? {
         // Validate the message itself
@@ -148,6 +178,14 @@ extension ZMGenericMessageBuilder {
 
 // MARK: - Text
 
+extension Text {
+    public func validatingFields() -> Text? {
+        let validMentions = mentions.compactMap { $0.validatingFields() }
+        guard validMentions.count == mentions.count else { return nil }
+        return self
+    }
+}
+
 extension ZMText {
     @objc public func validatingFields() -> ZMText? {
 
@@ -157,7 +195,6 @@ extension ZMText {
         }
 
         return self
-
     }
 }
 
@@ -172,6 +209,12 @@ extension ZMQuote {
 
 // MARK: Mention
 
+extension WireProtos.Mention {
+    public func validatingFields() -> WireProtos.Mention? {
+        return UUID.isValid(object: userID) ? self : nil
+    }
+}
+
 extension ZMMention {
     @objc public func validatingFields() -> ZMMention? {
         guard UUID.isValid(object: userId) else { return nil }
@@ -180,6 +223,12 @@ extension ZMMention {
 }
 
 // MARK: Last Read
+
+extension LastRead {
+    public func validatingFields() -> LastRead? {
+        return UUID.isValid(object: conversationID) ? self : nil
+    }
+}
 
 extension ZMLastRead {
     @objc public func validatingFields() -> ZMLastRead? {
@@ -190,6 +239,12 @@ extension ZMLastRead {
 
 // MARK: Cleared
 
+extension Cleared {
+    public func validatingFields() -> Cleared? {
+        return UUID.isValid(object: conversationID) ? self : nil
+    }
+}
+
 extension ZMCleared {
     @objc public func validatingFields() -> ZMCleared? {
         guard UUID.isValid(object: conversationId) else { return nil }
@@ -198,6 +253,14 @@ extension ZMCleared {
 }
 
 // MARK: Message Hide
+
+extension MessageHide {
+    public func validatingFields() -> MessageHide? {
+        guard UUID.isValid(object: conversationID) else { return nil }
+        guard UUID.isValid(object: messageID) else { return nil }
+        return self
+    }
+}
 
 extension ZMMessageHide {
     @objc public func validatingFields() -> ZMMessageHide? {
@@ -209,6 +272,12 @@ extension ZMMessageHide {
 
 // MARK: Message Delete
 
+extension MessageDelete {
+    public func validatingFields() -> MessageDelete? {
+        return UUID.isValid(object: messageID) ? self : nil
+    }
+}
+
 extension ZMMessageDelete {
     @objc public func validatingFields() -> ZMMessageDelete? {
         guard UUID.isValid(object: messageId) else { return nil }
@@ -218,6 +287,12 @@ extension ZMMessageDelete {
 
 // MARK: Message Edit
 
+extension MessageEdit {
+    public func validatingFields() -> MessageEdit? {
+        return UUID.isValid(object: replacingMessageID) ? self : nil
+    }
+}
+
 extension ZMMessageEdit {
     @objc public func validatingFields() -> ZMMessageEdit? {
         guard UUID.isValid(object: replacingMessageId) else { return nil }
@@ -226,6 +301,18 @@ extension ZMMessageEdit {
 }
 
 // MARK: Message Confirmation
+
+extension Confirmation {
+    public func validatingFields() -> Confirmation? {
+        guard UUID.isValid(object: firstMessageID) else { return nil }
+        
+        if !moreMessageIds.isEmpty {
+            guard UUID.isValid(array: moreMessageIds) else { return nil }
+        }
+        
+        return self
+    }
+}
 
 extension ZMConfirmation {
     @objc public func validatingFields() -> ZMConfirmation? {
@@ -241,6 +328,12 @@ extension ZMConfirmation {
 
 // MARK: Reaction
 
+extension WireProtos.Reaction {
+    public func validatingFields() -> WireProtos.Reaction? {
+        return UUID.isValid(object: messageID) ? self : nil
+    }
+}
+
 extension ZMReaction {
     @objc public func validatingFields() -> ZMReaction? {
         guard UUID.isValid(object: messageId) else { return nil }
@@ -250,6 +343,12 @@ extension ZMReaction {
 
 // MARK: User ID
 
+extension WireProtos.UserId {
+    public func validatingFields() -> WireProtos.UserId? {
+        return UUID.isValid(bytes: uuid) ? self : nil
+    }
+}
+
 extension ZMUserId {
     @objc public func validatingFields() -> ZMUserId? {
         guard UUID.isValid(bytes: uuid) else { return nil }
@@ -258,6 +357,20 @@ extension ZMUserId {
 }
 
 // MARK: - Asset
+
+extension WireProtos.Asset {
+    public func validatingFields() -> WireProtos.Asset? {
+        if hasPreview && preview.hasRemote {
+            guard preview.remote.validatingFields() != nil else { return nil }
+        }
+
+        if case .uploaded? = status {
+            guard uploaded.validatingFields() != nil else { return nil }
+        }
+        
+        return self
+    }
+}
 
 extension ZMAsset {
 
@@ -275,6 +388,14 @@ extension ZMAsset {
 
     }
 
+}
+
+extension WireProtos.Asset.RemoteData {
+    public func validatingFields() -> WireProtos.Asset.RemoteData? {
+        guard assetID.isValidAssetID else { return nil }
+        guard assetToken.isValidBearerToken else { return nil }
+        return self
+    }
 }
 
 extension ZMAssetRemoteData {

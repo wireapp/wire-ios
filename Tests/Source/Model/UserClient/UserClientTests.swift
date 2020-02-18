@@ -297,7 +297,7 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
     
     func testThatItPostsANotificationToSendASessionResetMessageWhenResettingSession() {
-        var (message, conversation): (ZMGenericMessage?, ZMConversation?)
+        var (message, conversation): (GenericMessage?, ZMConversation?)
 
         let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
         let token = GenericMessageScheduleNotification.addObserver(managedObjectContext:self.uiMOC)
@@ -335,14 +335,14 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             withExtendedLifetime(token) { () -> () in
                 XCTAssertNotNil(message)
                 XCTAssertNotNil(conversation)
-                XCTAssertEqual(message?.hasClientAction(), true)
-                XCTAssertEqual(message?.clientAction, .RESETSESSION)
+                if case .clientAction? = message?.content {} else { XCTFail() }
+                XCTAssertEqual(message?.clientAction, .resetSession)
             }
         }
     }
 
     func testThatItSendsASessionResetMessageForUserInTeamConversation() {
-        var (message, conversation): (ZMGenericMessage?, ZMConversation?)
+        var (message, conversation): (GenericMessage?, ZMConversation?)
 
         let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
         let token = GenericMessageScheduleNotification.addObserver(managedObjectContext: self.uiMOC)
@@ -391,8 +391,8 @@ final class UserClientTests: ZMBaseManagedObjectTest {
                 XCTAssertNotNil(message)
                 XCTAssertNotNil(conversation)
                 XCTAssertEqual(expectedConversation?.objectID, conversation?.objectID)
-                XCTAssertEqual(message?.hasClientAction(), true)
-                XCTAssertEqual(message?.clientAction, .RESETSESSION)
+                if case .clientAction? = message?.content {} else { XCTFail() }
+                XCTAssertEqual(message?.clientAction, .resetSession)
             }
         }
     }

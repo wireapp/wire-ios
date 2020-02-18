@@ -317,7 +317,8 @@ public class UserClient: ZMManagedObject, UserClientType {
                 guard
                     let user = (try? uiMOC.existingObject(with: userID)) as? ZMUser,
                     let conversation = self.conversation(for: user) else { return }
-                GenericMessageScheduleNotification.post(message: ZMGenericMessage.clientAction(ZMClientAction.RESETSESSION), conversation: conversation)
+                
+                GenericMessageScheduleNotification.post(message: GenericMessage(clientAction: .resetSession), conversation: conversation)
             }
         }
     }
