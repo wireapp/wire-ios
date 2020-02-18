@@ -33,7 +33,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
             $0.name = name
             $0.zoom = zoom
         }
-        let message = GenericMessage.message(content: location)
+        let message = GenericMessage(content: location)
         
         // when
         let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)

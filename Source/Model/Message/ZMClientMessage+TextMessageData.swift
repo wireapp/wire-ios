@@ -67,7 +67,7 @@ extension ZMClientMessage: ZMTextMessageData {
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
         let editNonce = UUID()
-        let updatedMessage = GenericMessage.message(content: MessageEdit(replacingMessageID: nonce, text: editedText), nonce: nonce)
+        let updatedMessage = GenericMessage(content: MessageEdit(replacingMessageID: nonce, text: editedText), nonce: nonce)
         do {
             self.add(try updatedMessage.serializedData())
         } catch {

@@ -29,8 +29,17 @@ public protocol EphemeralMessageCapable: MessageCapable {
 }
 
 public extension GenericMessage {
-    static func message(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: TimeInterval? = nil) -> GenericMessage {
-        return GenericMessage.with() {
+    init?(withBase64String base64String: String?) {
+        guard
+            let string = base64String,
+            let data = Data(base64Encoded: string),
+            let message = GenericMessage.with({ try? $0.merge(serializedData: data) }).validatingFields()
+        else { return nil }
+        self = message
+    }
+    
+    init(content: EphemeralMessageCapable, nonce: UUID = UUID(), expiresAfter timeout: TimeInterval? = nil) {
+        self = GenericMessage.with() {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable
             if let timeout = timeout, timeout > 0 {
@@ -42,12 +51,26 @@ public extension GenericMessage {
         }
     }
     
-    static func message(content: MessageCapable, nonce: UUID = UUID()) -> GenericMessage {
-        return GenericMessage.with() {
+    init(content: MessageCapable, nonce: UUID = UUID()) {
+        self = GenericMessage.with() {
             $0.messageID = nonce.transportString()
             let messageContent = content
             messageContent.setContent(on: &$0)
         }
+    }
+    
+    init(clientAction action: ClientAction, nonce: UUID = UUID()) {
+        self = GenericMessage.with {
+            $0.messageID = nonce.transportString()
+            $0.clientAction = action
+        }
+    }
+}
+
+public extension GenericMessage {
+    var zmMessage: ZMGenericMessage? {
+        let data = try? serializedData()
+        return ZMGenericMessage.message(fromData: data)
     }
 }
 
@@ -101,6 +124,25 @@ extension GenericMessage {
         default:
             return nil
         }
+    }
+    
+    var textData: Text? {
+        guard let content = content else { return nil }
+        switch content {
+        case .text(let data):
+            return data
+        case .edited(let messageEdit):
+            if case .text(let data)? = messageEdit.content {
+                return data
+            }
+        case .ephemeral(let ephemeral):
+            if case .text(let data)? = ephemeral.content {
+                return data
+            }
+        default:
+            return nil
+        }
+        return nil
     }
 }
 
@@ -172,7 +214,7 @@ extension Knock: EphemeralMessageCapable {
 
 extension Text: EphemeralMessageCapable {
     
-    public init(content: String, mentions: [Mention], linkPreviews: [LinkMetadata], replyingTo: ZMOTRMessage?) {
+    public init(content: String, mentions: [Mention] = [], linkPreviews: [LinkMetadata] = [], replyingTo: ZMOTRMessage? = nil) {
         self = Text.with {
             $0.content = content
             $0.mentions = mentions.compactMap { WireProtos.Mention($0) }
@@ -246,7 +288,7 @@ extension LastRead: MessageCapable {
 
 extension Calling: MessageCapable {
     
-    init(content: String) {
+    public init(content: String) {
         self = Calling.with {
             $0.content = content
         }
@@ -268,7 +310,7 @@ extension Calling: MessageCapable {
 
 extension WireProtos.MessageEdit: MessageCapable {
     
-    init(replacingMessageID: UUID, text: Text) {
+    public init(replacingMessageID: UUID, text: Text) {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
             $0.text = text
@@ -286,6 +328,39 @@ extension WireProtos.MessageEdit: MessageCapable {
         set {
             
         }
+    }
+}
+
+extension Cleared: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.cleared = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get { return false }
+        set {}
+    }
+}
+
+extension MessageHide: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.hidden = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get { return false }
+        set {}
+    }
+}
+
+extension MessageDelete: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.deleted = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get { return false }
+        set {}
     }
 }
 
@@ -378,6 +453,28 @@ extension WireProtos.Confirmation: MessageCapable {
         }
         set {
         }
+    }
+}
+
+extension External: MessageCapable {
+    init(withOTRKey otrKey: Data, sha256: Data) {
+        self = External.with {
+            $0.otrKey = otrKey
+            $0.sha256 = sha256
+        }
+    }
+    
+    init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
+        self = External(withOTRKey: key.aesKey, sha256: key.sha256)
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.external = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get { return false }
+        set {}
     }
 }
 

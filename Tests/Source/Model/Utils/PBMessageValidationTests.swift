@@ -20,6 +20,295 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
+class PBMessageValidationTests: XCTestCase {
+    // MARK: Generic Message
+    
+    func testThatItCreatesGenericMessageWithValidFields() {
+        let text = Text.with() {
+            $0.content = "Hello hello hello"
+        }
+        
+        let message = GenericMessage.with() {
+            text.setContent(on: &$0)
+            $0.messageID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+        }
+        
+        XCTAssertNotNil(message.validatingFields())
+    }
+    
+    func testThatItDoesNotCreateGenericMessageWithInvalidFields() {
+        let text = Text.with() {
+            $0.content = "Hello hello hello"
+        }
+        
+        let message = GenericMessage.with() {
+            text.setContent(on: &$0)
+            $0.messageID = "nonce"
+        }
+        
+        XCTAssertNil(message.validatingFields())
+    }
+    
+    // MARK: Last Read
+    
+    func testThatItCreatesLastReadWithValidFields() {
+        let lastRead = LastRead.with() {
+            $0.conversationID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+            $0.lastReadTimestamp = 25_000
+        }
+        
+        XCTAssertNotNil(GenericMessage(content: lastRead).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateLastReadWithInvalidFields() {
+        let lastRead = LastRead.with() {
+            $0.conversationID = "null"
+            $0.lastReadTimestamp = 25_000
+        }
+
+        XCTAssertNil(GenericMessage(content: lastRead).validatingFields())
+    }
+    
+    // MARK: Cleared
+    
+    func testThatItCreatesClearedWithValidFields() {
+        let cleared = Cleared.with() {
+            $0.conversationID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+            $0.clearedTimestamp = 25_000
+        }
+        
+        XCTAssertNotNil(GenericMessage(content: cleared).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateClearedWithInvalidFields() {
+        let cleared = Cleared.with() {
+            $0.conversationID = "wirewire"
+            $0.clearedTimestamp = 25_000
+        }
+        
+        XCTAssertNil(GenericMessage(content: cleared).validatingFields())
+    }
+
+    // MARK: Message Hide
+    
+    func testThatItCreatesHideWithValidFields() {
+        let messageHide = MessageHide.with() {
+            $0.conversationID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+        }
+      
+        XCTAssertNotNil(GenericMessage(content: messageHide).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateHideWithInvalidFields() {
+        var invalidMessageHide: MessageHide
+        
+        invalidMessageHide = MessageHide.with() {
+            $0.conversationID = ""
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+        }
+        
+        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+        
+        invalidMessageHide = MessageHide.with() {
+            $0.conversationID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.messageID = ""
+        }
+        
+        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+
+        invalidMessageHide = MessageHide.with() {
+            $0.conversationID = ""
+            $0.messageID = ""
+        }
+        
+        XCTAssertNil(GenericMessage(content: invalidMessageHide).validatingFields())
+    }
+
+    // MARK: Message Delete
+    
+    func testThatItCreatesMessageDeleteWithValidFields() {
+        let messageDelete = MessageDelete.with() {
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+        }
+        
+        XCTAssertNotNil(GenericMessage(content: messageDelete).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateMessageDeleteWithInvalidFields() {
+        let messageDelete = MessageDelete.with() {
+            $0.messageID = "invalid"
+        }
+    
+        XCTAssertNil(GenericMessage(content: messageDelete).validatingFields())
+    }
+
+    // MARK: Message Edit
+    
+    func testThatItCreatesMessageEditWithValidFields() {
+        
+        let messageEdit = MessageEdit.with() {
+            $0.text = Text.with({ $0.content = "Hello" })
+            $0.replacingMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+        }
+        
+        XCTAssertNotNil(GenericMessage(content: messageEdit).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateMessageEditWithInvalidFields() {
+        let messageEdit = MessageEdit.with() {
+            $0.text = Text.with({ $0.content = "Hello" })
+            $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
+        }
+
+        XCTAssertNil(GenericMessage(content: messageEdit).validatingFields())
+    }
+    
+    // MARK: Confirmation
+    
+    func testThatItCreatesConfirmationWithValidFields() {
+        let confirmation = Confirmation.with() {
+            $0.type = .delivered
+            $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
+        }
+
+        XCTAssertNotNil(GenericMessage(content: confirmation).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateConfirmationWithInvalidFields() {
+        var confirmation: Confirmation
+        
+        confirmation = Confirmation.with() {
+            $0.type = .delivered
+            $0.firstMessageID = "invalid"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
+        }
+        
+        XCTAssertNil(GenericMessage(content: confirmation).validatingFields())
+
+        confirmation = Confirmation.with() {
+            $0.type = .delivered
+            $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229", "invalid"]
+        }
+        
+        XCTAssertNil(GenericMessage(content: confirmation).validatingFields())
+    }
+    
+    // MARK: Reaction
+    
+    func testThatItCreatesReactionWithValidFields() {
+        let reaction = WireProtos.Reaction.with() {
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.emoji = "🤩"
+        }
+        
+        XCTAssertNotNil(GenericMessage(content: reaction).validatingFields())
+    }
+    
+    func testThatItDoesNotCreateReactionWithInvalidFields() {
+        let reaction = WireProtos.Reaction.with() {
+            $0.messageID = "Not-A-UUID"
+            $0.emoji = "🤩"
+        }
+
+        XCTAssertNil(GenericMessage(content: reaction).validatingFields())
+    }
+    
+    // MARK: User ID
+    
+    func testThatItCreatesUserIDWithValidFields() {
+        let userId = UserId.with({$0.uuid = NSUUID().data()})
+        
+        XCTAssertNotNil(userId.validatingFields())
+    }
+    
+    func testThatItDoesNotCreateUserIDWithInvalidFields() {
+        let userId = UserId.with({$0.uuid = Data() })
+        
+        XCTAssertNil(userId.validatingFields())
+    }
+
+    // MARK: Assets
+
+    func testThatItCreatesMessageWithValidAsset() {
+        XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token", preview: true))
+        XCTAssertNotNil(genericMessage(assetId: "asset-id", assetToken: "token=", preview: false))
+        
+        XCTAssertNotNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", preview: true))
+        XCTAssertNotNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==", preview: false))
+        
+        XCTAssertNotNil(genericMessage(assetId: "C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "", preview: true))
+        XCTAssertNotNil(genericMessage(assetId: "c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "", preview: false))
+        
+        XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", preview: true))
+        XCTAssertNotNil(genericMessage(assetId: "", assetToken: "", preview: false))
+    }
+    
+    func testThatItDoesNotCreateMessageWithInvalidAsset() {
+        // Invalid asset ID
+        XCTAssertNil(genericMessage(assetId: "asset:id", assetToken: "token", preview: true))
+        XCTAssertNil(genericMessage(assetId: "asset/id", assetToken: "token", preview: false))
+        XCTAssertNil(genericMessage(assetId: "asset.id", assetToken: "token", preview: true))
+        XCTAssertNil(genericMessage(assetId: "asset@id", assetToken: "token", preview: false))
+        XCTAssertNil(genericMessage(assetId: "asset[id", assetToken: "token", preview: true))
+        XCTAssertNil(genericMessage(assetId: "asset`id", assetToken: "token", preview: false))
+        XCTAssertNil(genericMessage(assetId: "asset{id", assetToken: "token", preview: true))
+        
+        // Invalid asset token
+        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "5@shay_a3wAY4%$@#$@%)!@-pOe==", preview: true))
+        XCTAssertNil(genericMessage(assetId: "asset-id", assetToken: "aV0TGxF3ugpawm3wAYPmew===", preview: false))
+        XCTAssertNil(genericMessage(assetId: "3-1-C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "aV0TGxF3ugpawm3wAYPmew=Hello", preview: true))
+        XCTAssertNil(genericMessage(assetId: "3-1-c89d16c3-8fb4-48d7-8ee5-f8d69a2068c8", assetToken: "aV0TGxF3ugpawm3wAYPmew==Hello", preview: false))
+    
+        // Both
+        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", preview: true))
+        XCTAssertNil(genericMessage(assetId: "../C89D16C3-8FB4-48D7-8EE5-F8D69A2068C8", assetToken: "token?name=foo", preview: false))
+    }
+    
+    // MARK: - Utilities
+    
+    private func genericMessage(assetId: String, assetToken: String?, preview: Bool) -> GenericMessage? {
+        var assetPreview: WireProtos.Asset.Preview!
+        
+        if preview {
+            let metadata = WireProtos.Asset.ImageMetaData.with() {
+                $0.width = 1000
+                $0.height = 1000
+                $0.tag = "tag"
+            }
+            
+            assetPreview = WireProtos.Asset.Preview.with() {
+                $0.size = 1000
+                $0.mimeType = "image/png"
+                $0.remote = assetRemoteData(id: assetId, token: assetToken!)
+                $0.image = metadata
+            }
+        }
+        
+        let asset = WireProtos.Asset.with() {
+            if preview {
+                $0.preview = assetPreview
+            }
+            $0.uploaded = assetRemoteData(id: assetId, token: assetToken!)
+        }
+        
+        return GenericMessage(content: asset).validatingFields()
+    }
+    
+    private func assetRemoteData(id: String, token: String) -> WireProtos.Asset.RemoteData {
+        return WireProtos.Asset.RemoteData.with() {
+            $0.assetID = id
+            $0.assetToken = token
+            $0.otrKey = Data("pFHd6iVTvOVP2wFAd2yVlA==".utf8)
+            $0.sha256 = Data("8fab1b98a5b5ac2b07f0f77c739980bd4c895db23a09a3bed9ecec584d3ed3e0".utf8)
+            $0.encryption = .aesCbc
+        }
+    }
+    
+}
+
 class ModelValidationTests: XCTestCase {
 
     // MARK: Generic Message

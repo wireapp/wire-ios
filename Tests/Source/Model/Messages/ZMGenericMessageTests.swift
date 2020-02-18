@@ -20,7 +20,7 @@ import Foundation
 
 @testable import WireDataModel
 
-class GenericMessageTests: ZMTBaseTest {
+class ZMGenericMessageTests: ZMTBaseTest {
     func testThatItChecksTheCommonMessageTypesAsKnownMessage() {
         let generators: [()->(ZMGenericMessage)] = [
             {

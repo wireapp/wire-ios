@@ -256,7 +256,7 @@ extension ProtobufUtilitiesTests {
         // given
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
-        var sut = GenericMessage.message(content: asset, nonce: UUID.create())
+        var sut = GenericMessage(content: asset, nonce: UUID.create())
         
         // when
         XCTAssertNotEqual(sut.asset.uploaded.assetID, assetId)
@@ -272,7 +272,7 @@ extension ProtobufUtilitiesTests {
         // given
         let (assetId, token) = ("id", "token")
         let asset = WireProtos.Asset(imageSize: CGSize(width: 42, height: 12), mimeType: "image/jpeg", size: 123)
-        var sut = GenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
         
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.uploaded.assetID, assetId)
@@ -301,7 +301,7 @@ extension ProtobufUtilitiesTests {
         }
         
         let (assetId, token) = ("id", "token")
-        var sut = GenericMessage.message(content: asset, nonce: UUID.create())
+        var sut = GenericMessage(content: asset, nonce: UUID.create())
     
         // when
         XCTAssertNotEqual(sut.asset.preview.remote.assetID, assetId)
@@ -332,7 +332,7 @@ extension ProtobufUtilitiesTests {
         }
         
         let (assetId, token) = ("id", "token")
-        var sut = GenericMessage.message(content: asset, nonce: UUID.create(), expiresAfter: 15)
+        var sut = GenericMessage(content: asset, nonce: UUID.create(), expiresAfter: 15)
         
         // when
         XCTAssertNotEqual(sut.ephemeral.asset.preview.remote.assetID, assetId)
