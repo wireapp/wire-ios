@@ -48,13 +48,6 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey : Any]
     func sessionManagerDidBlacklistJailbrokenDevice()
 }
 
-@objc
-public protocol UserSessionSource: class {
-    var activeUserSession: ZMUserSession? { get }
-    var activeUnauthenticatedSession: UnauthenticatedSession { get }
-    var isSelectedAccountAuthenticated: Bool { get }
-}
-
 /// The public interface for the session manager.
 
 @objc
@@ -174,7 +167,11 @@ public protocol ForegroundNotificationResponder: class {
 
 
 @objcMembers
-public final class SessionManager : NSObject, SessionManagerType, UserSessionSource {
+public final class SessionManager : NSObject, SessionManagerType {
+    
+    public enum AccountError: Error {
+        case accountLimitReached
+    }
 
     /// Maximum number of accounts which can be logged in simultanously
     public static let maxNumberAccounts = 3
@@ -184,7 +181,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
     public weak var delegate: SessionManagerDelegate? = nil
     public let accountManager: AccountManager
     public fileprivate(set) var activeUserSession: ZMUserSession?
-    public var urlHandler: SessionManagerURLHandler!
+    public weak var urlActionDelegate: URLActionDelegate?
 
     public fileprivate(set) var backgroundUserSessions: [UUID: ZMUserSession] = [:]
     public internal(set) var unauthenticatedSession: UnauthenticatedSession? {
@@ -215,6 +212,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
     var pushRegistry: PushRegistry
     let notificationsTracker: NotificationsTracker?
     let configuration: SessionManagerConfiguration
+    var pendingURLAction: URLAction?
     
     var notificationCenter: UserNotificationCenter = UNUserNotificationCenter.current()
     
@@ -260,6 +258,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
         mediaManager: MediaManagerType,
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
+        showContentDelegate: ShowContentDelegate?,
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
         configuration: SessionManagerConfiguration,
@@ -273,6 +272,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
                 mediaManager: mediaManager,
                 analytics: analytics,
                 delegate: delegate,
+                showContentDelegate: showContentDelegate,
                 application: application,
                 environment: environment,
                 configuration: configuration,
@@ -290,6 +290,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
         mediaManager: MediaManagerType,
         analytics: AnalyticsType?,
         delegate: SessionManagerDelegate?,
+        showContentDelegate: ShowContentDelegate?,
         application: ZMApplication,
         environment: BackendEnvironmentProvider,
         configuration: SessionManagerConfiguration = SessionManagerConfiguration(),
@@ -309,7 +310,8 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
             flowManager: flowManager,
             environment: environment,
             reachability: reachability,
-            analytics: analytics
+            analytics: analytics,
+            showContentDelegate: showContentDelegate
           )
 
         self.init(
@@ -428,7 +430,6 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
         // register for voIP push notifications
         self.pushRegistry.delegate = self
         self.pushRegistry.desiredPushTypes = Set(arrayLiteral: PKPushType.voIP)
-        self.urlHandler = SessionManagerURLHandler(userSessionSource: self)
 
         postLoginAuthenticationToken = PostLoginAuthenticationNotification.addObserver(self, queue: self.groupQueue)
         callCenterObserverToken = WireCallCenterV3.addGlobalCallStateObserver(observer: self)
@@ -465,7 +466,7 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
 
     private func selectInitialAccount(_ account: Account?, launchOptions: LaunchOptions) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
-            if URLAction(url: url)?.causesLogout == true {
+            if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
                 return
             }
@@ -628,10 +629,10 @@ public final class SessionManager : NSObject, SessionManagerType, UserSessionSou
             log.debug("Activated ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
             completion(session)
             self.delegate?.sessionManagerActivated(userSession: session)
-            self.urlHandler.sessionManagerActivated(userSession: session)
             
             // Configure user notifications if they weren't already previously configured.
             self.configureUserNotifications()
+            self.processPendingURLAction()
         }
     }
     
@@ -939,6 +940,11 @@ extension SessionManager {
 }
 
 extension SessionManager: UnauthenticatedSessionDelegate {
+    
+    public func sessionIsAllowedToCreateNewAccount(_ session: UnauthenticatedSession) -> Bool {
+        return accountManager.accounts.count < SessionManager.maxNumberAccounts
+    }
+    
     public func session(session: UnauthenticatedSession, isExistingAccount account: Account) -> Bool {
         return accountManager.accounts.contains(account)
     }
