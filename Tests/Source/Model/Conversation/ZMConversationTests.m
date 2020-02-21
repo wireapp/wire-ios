@@ -1377,7 +1377,7 @@
     [conversation addParticipantAndUpdateConversationStateWithUser:[ZMUser selfUserInContext:self.uiMOC] role:nil];
     [self.uiMOC saveOrRollback];
     
-    NSString *expected = @"Bar, Foo";
+    NSString *expected = @"Bar 2, Foo 1";
     
     // when
     conversation.userDefinedName = nil;
@@ -1404,7 +1404,7 @@
     [conversation addParticipantsAndUpdateConversationStateWithUsers:[NSSet setWithObjects:user1, user2, user3, user4, [ZMUser selfUserInContext:self.uiMOC], nil] role:nil];
     [self.uiMOC saveOrRollback];
     
-    NSString *expected = @"Bar, Baz";
+    NSString *expected = @", Bar 2, Baz 4";
     
     // when
     conversation.userDefinedName = nil;

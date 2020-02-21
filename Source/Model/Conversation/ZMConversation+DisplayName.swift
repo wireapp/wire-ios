@@ -80,11 +80,10 @@ public extension ZMConversation {
         if let userDefined = userDefinedName, !userDefined.isEmpty {
             return userDefined
         }
-
+        
         let activeNames: [String] = localParticipants.compactMap { (user) -> String? in
-            guard user != selfUser &&
-                !user.displayName.isEmpty else { return nil }
-            return user.displayName
+            guard user != selfUser else { return nil }
+            return user.name
         }
         
         return activeNames.isEmpty ? nil : activeNames.sorted().joined(separator: ", ")
