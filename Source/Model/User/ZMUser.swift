@@ -301,12 +301,6 @@ extension ZMUser {
 }
 
 extension ZMUser {
-    @objc(displayNameInConversation:)
-    public func displayName(in conversation: ZMConversation?) -> String {
-        guard let conversation = conversation, let nameGenerator = self.managedObjectContext?.zm_displayNameGenerator else { return self.displayName }
-        return nameGenerator.displayName(for: self, in: conversation)
-    }
-    
     // MARK: - Participant role
     
     @objc

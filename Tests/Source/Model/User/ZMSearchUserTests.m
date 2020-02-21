@@ -136,7 +136,7 @@
 
     
     // then
-    XCTAssertEqualObjects(searchUser.displayName, @"John");
+    XCTAssertEqualObjects(searchUser.name, @"John Doe");
     XCTAssertEqual(searchUser.accentColorValue, ZMAccentColorStrongLimeGreen);
     XCTAssertEqual(searchUser.isConnected, NO);
     XCTAssertNil(searchUser.completeImageData);
@@ -174,7 +174,7 @@
     // then
     XCTAssertEqualObjects(searchUser.name, user.name);
     XCTAssertEqualObjects(searchUser.handle, user.handle);
-    XCTAssertEqualObjects(searchUser.displayName, user.displayName);
+    XCTAssertEqualObjects(searchUser.name, user.name);
     XCTAssertEqual(searchUser.accentColorValue, user.accentColorValue);
     XCTAssertEqual(searchUser.isConnected, user.isConnected);
     XCTAssertEqualObjects(searchUser.completeImageData, user.completeImageData);

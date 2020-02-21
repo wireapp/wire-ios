@@ -122,7 +122,6 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     
     fileprivate weak var contextProvider: ZMManagedObjectContextProvider?
     fileprivate var internalName: String
-    fileprivate var internalDisplayName: String?
     fileprivate var internalInitials: String?
     fileprivate var internalHandle: String?
     fileprivate var internalIsConnected: Bool = false
@@ -148,12 +147,6 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     public var name: String? {
         get {
             return user != nil ? user?.name : internalName
-        }
-    }
-    
-    public var displayName: String {
-        get {
-            return user != nil ? user!.displayName : internalDisplayName ?? ""
         }
     }
     
@@ -447,7 +440,6 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         self.internalName = name
         self.internalHandle = handle
         self.internalInitials = personName.initials
-        self.internalDisplayName = personName.givenName
         self.internalAccentColorValue = accentColor
         self.user = existingUser
         self.remoteIdentifier = existingUser?.remoteIdentifier ?? remoteIdentifier

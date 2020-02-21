@@ -605,7 +605,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         
         guard let user = conversation.participantRoles.first?.user else { XCTFail(); return }
         
-        message?.textMessageData?.editText(user.displayName, mentions: [Mention(range: NSRange(location: 0, length: user.displayName.count), user: user)], fetchLinkPreview: false)
+        message?.textMessageData?.editText((user.name ?? ""), mentions: [Mention(range: NSRange(location: 0, length: (user.name ?? "").count), user: user)], fetchLinkPreview: false)
         self.uiMOC.saveOrRollback()
         
         // then

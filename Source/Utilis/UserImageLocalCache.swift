@@ -113,12 +113,12 @@ extension NSManagedObjectContext
         case .preview:
             let stored = setImage(inCache: smallUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] preview image [\(imageData)] cache key: \(String(describing: key))")
+                log.info("Setting [\(user.name ?? "")] preview image [\(imageData)] cache key: \(String(describing: key))")
             }
         case .complete:
             let stored = setImage(inCache: largeUserImageCache, cacheKey: key, data: imageData)
             if stored {
-                log.info("Setting [\(user.displayName)] complete image [\(imageData)] cache key: \(String(describing: key))")
+                log.info("Setting [\(user.name ?? "")] complete image [\(imageData)] cache key: \(String(describing: key))")
             }
         }
     }
@@ -146,7 +146,7 @@ extension NSManagedObjectContext
             data = largeUserImageCache.object(forKey: cacheKey) as? Data
         }
         if let data = data {
-            log.info("Getting [\(user.displayName)] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
+            log.info("Getting [\(String(describing: user.name))] \(size == .preview ? "preview" : "complete") image [\(data)] cache key: [\(cacheKey)]")
         }
 
         return data

@@ -30,9 +30,6 @@ public protocol UserType: NSObjectProtocol {
     
     /// The full name
     var name: String? { get }
-
-    /// The given name / first name e.g. "John" for "John Smith"
-    var displayName: String { get }
     
     /// The "@name" handle
     var handle: String? { get }

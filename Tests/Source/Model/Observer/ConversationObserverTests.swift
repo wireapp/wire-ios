@@ -264,9 +264,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         conversation.conversationType = ZMConversationType.group
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        XCTAssertTrue(user1.displayName == "Foo")
-        
+                
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
                                                      modifier: { conversation, observer in

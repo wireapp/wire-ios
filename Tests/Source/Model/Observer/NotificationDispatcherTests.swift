@@ -178,7 +178,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         uiMOC.refresh(user, mergeChanges: true)
         XCTAssertTrue(user.isFault)
-        XCTAssertEqual(user.displayName, "foo")
+        XCTAssertEqual(user.name, "foo")
         let observer = UserObserver()
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
         
@@ -191,7 +191,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
             mergeLastChanges()
             
             // then
-            XCTAssertEqual(user.displayName, "bar")
+            XCTAssertEqual(user.name, "bar")
             XCTAssertEqual(observer.notifications.count, 1)
             if let note = observer.notifications.first {
                 XCTAssertTrue(note.nameChanged)
