@@ -18,13 +18,13 @@
 
 import UIKit
 
-@objcMembers class LightNavigationBar : DefaultNavigationBar {
+final class LightNavigationBar : DefaultNavigationBar {
     override var colorSchemeVariant: ColorSchemeVariant {
         return .light
     }
 }
 
-@objcMembers class DefaultNavigationBar : UINavigationBar {
+class DefaultNavigationBar : UINavigationBar {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
