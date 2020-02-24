@@ -47,8 +47,7 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 
 /// The full name
 @property (nonatomic, readonly, nullable) NSString *name;
-/// The initials e.g. "JS" for "John Smith"
-@property (nonatomic, readonly, nullable) NSString *initials;
+
 /// The "@name" handle
 @property (nonatomic, readonly, nullable) NSString *handle;
 
