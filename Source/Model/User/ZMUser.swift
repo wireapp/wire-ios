@@ -328,3 +328,12 @@ extension ZMUser {
         return !hasUntrustedClients
     }
 }
+
+extension ZMUser {
+    
+    /// The initials e.g. "JS" for "John Smith"
+    @objc public var initials: String? {
+        return PersonName.person(withName: self.name ?? "", schemeTagger: nil).initials
+    }
+}
+
