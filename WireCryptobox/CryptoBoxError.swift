@@ -16,8 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
-
 import Foundation
+import WireSystem
 
 extension CBoxResult : Error {
     
@@ -33,5 +33,11 @@ extension CBoxResult : Error {
         if self == CBOX_PANIC || self == CBOX_INIT_ERROR {
             fatalError("Cryptobox panic")
         }
+    }
+}
+
+extension CBoxResult: SafeForLoggingStringConvertible {
+    public var safeForLoggingDescription: String {
+        return String(describing: self)
     }
 }
