@@ -42,9 +42,6 @@
 #import "ConfirmAssetViewController.h"
 #import "ConfirmAssetViewController+Internal.h"
 
-#import "ProfileSelfPictureViewController.h"
-#import "ProfileSelfPictureViewController+Internal.h"
-
 #import "FullscreenImageViewController.h"
 #import "FullscreenImageViewController+PullToDismiss.h"
 #import "FullscreenImageViewController+internal.h"
