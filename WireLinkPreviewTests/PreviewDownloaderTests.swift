@@ -213,7 +213,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.requestOpenGraphData(fromURL: url, completion: completion)
         
         // then
-        let expected = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+        let expected = "WireLinkPreview"
         XCTAssertEqual(mockSession.dataTaskWithURLCallCount, 1)
         let request = mockSession.dataTaskWithURLParameters.first
         let agent = request?.allHTTPHeaderFields?["User-Agent"]
