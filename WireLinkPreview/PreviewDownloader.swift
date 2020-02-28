@@ -19,7 +19,7 @@
 
 import Foundation
 
-private let userAgent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"
+private let userAgent = "WireLinkPreview"
 
 protocol PreviewDownloaderType {
     func requestOpenGraphData(fromURL url: URL, completion: @escaping (OpenGraphData?) -> Void)
