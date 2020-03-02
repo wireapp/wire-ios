@@ -22,10 +22,17 @@ import WireProtos
 public protocol MessageCapable {
     func setContent(on message: inout GenericMessage)
     var expectsReadConfirmation: Bool { get set }
+    var legalHoldStatus: LegalHoldStatus { get }
 }
 
 public protocol EphemeralMessageCapable: MessageCapable {
     func setEphemeralContent(on ephemeral: inout Ephemeral)
+}
+
+extension MessageCapable {
+    var defaultLegalHoldStatus: LegalHoldStatus {
+        return .unknown
+    }
 }
 
 public extension GenericMessage {
@@ -190,6 +197,56 @@ extension Ephemeral: MessageCapable {
     public func setContent(on message: inout GenericMessage) {
         message.ephemeral = self
     }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        get {
+            guard let content = content else { return defaultLegalHoldStatus }
+            switch content {
+            case let .text(value):
+                return value.legalHoldStatus
+            case .image:
+                return defaultLegalHoldStatus
+            case let .knock(value):
+                return value.legalHoldStatus
+            case let .asset(value):
+                return value.legalHoldStatus
+            case let .location(value):
+                return value.legalHoldStatus
+            }
+        }
+    }
+    
+    public mutating func updateLegalHoldStatus(_ status: LegalHoldStatus) {
+        guard let content = content else { return }
+        switch content {
+        case .text:
+            self.text.legalHoldStatus = status
+        case .image:
+            break
+        case .knock:
+            self.knock.legalHoldStatus = status
+        case .asset:
+            self.asset.legalHoldStatus = status
+        case .location:
+            self.location.legalHoldStatus = status
+        }
+    }
+    
+    public mutating func updateExpectsReadConfirmation(_ value: Bool) {
+        guard let content = content else { return }
+        switch content {
+        case .text:
+            self.text.expectsReadConfirmation = value
+        case .image:
+            break
+        case .knock:
+            self.knock.expectsReadConfirmation = value
+        case .asset:
+            self.asset.expectsReadConfirmation = value
+        case .location:
+            self.location.expectsReadConfirmation = value
+        }
+    }
 }
 
 public extension ClientEntry {
@@ -288,9 +345,7 @@ extension WireProtos.Reaction: MessageCapable {
         get {
             return false
         }
-        set {
-            
-        }
+        set {}
     }
 }
 
@@ -311,9 +366,11 @@ extension LastRead: MessageCapable {
         get {
             return false
         }
-        set {
-            
-        }
+        set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -333,9 +390,11 @@ extension Calling: MessageCapable {
         get {
             return false
         }
-        set {
-           
-        }
+        set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -356,9 +415,11 @@ extension WireProtos.MessageEdit: MessageCapable {
         get {
             return false
         }
-        set {
-            
-        }
+        set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -371,6 +432,10 @@ extension Cleared: MessageCapable {
         get { return false }
         set {}
     }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
+    }
 }
 
 extension MessageHide: MessageCapable {
@@ -382,6 +447,10 @@ extension MessageHide: MessageCapable {
         get { return false }
         set {}
     }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
+    }
 }
 
 extension MessageDelete: MessageCapable {
@@ -392,6 +461,10 @@ extension MessageDelete: MessageCapable {
     public var expectsReadConfirmation: Bool {
         get { return false }
         set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -482,8 +555,11 @@ extension WireProtos.Confirmation: MessageCapable {
         get {
             return false
         }
-        set {
-        }
+        set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -506,6 +582,10 @@ extension External: MessageCapable {
     public var expectsReadConfirmation: Bool {
         get { return false }
         set {}
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
     }
 }
 
@@ -586,6 +666,8 @@ public extension LinkPreview {
     }
 }
 
+// MARK:- Update assets
+
 extension GenericMessage {
     
     public mutating func updatedPreview(withAssetId assetId: String, token: String?) {
@@ -629,6 +711,49 @@ extension GenericMessage {
             default:
                 return
             }
+        default:
+            return
+        }
+    }
+}
+
+// MARK:- Set message flags
+
+extension GenericMessage {
+    
+    public mutating func setLegalHoldStatus(_ status: LegalHoldStatus) {
+        guard let content = content else { return }
+        switch content {
+        case .ephemeral:
+            self.ephemeral.updateLegalHoldStatus(status)
+        case .reaction:
+            self.reaction.legalHoldStatus = status
+        case .knock:
+            self.knock.legalHoldStatus = status
+        case .text:
+            self.text.legalHoldStatus = status
+        case .location:
+            self.location.legalHoldStatus = status
+        case .asset:
+            self.asset.legalHoldStatus = status
+        default:
+            return
+        }
+    }
+    
+    public mutating func setExpectsReadConfirmation(_ value: Bool) {
+        guard let content = content else { return }
+        switch content {
+        case .ephemeral:
+            self.ephemeral.updateExpectsReadConfirmation(value)
+        case .knock:
+            self.knock.expectsReadConfirmation = value
+        case .text:
+            self.text.expectsReadConfirmation = value
+        case .location:
+            self.location.expectsReadConfirmation = value
+        case .asset:
+            self.asset.expectsReadConfirmation = value
         default:
             return
         }

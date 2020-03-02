@@ -18,9 +18,11 @@
 
 
 import XCTest
+import WireTesting
+
 @testable import WireDataModel
 
-class ProtobufUtilitiesTests: XCTestCase {
+class ProtobufUtilitiesTests: BaseZMClientMessageTests {
     
     func testThatItSetsAndReadsTheLoudness() {
         
@@ -248,7 +250,7 @@ class ProtobufUtilitiesTests: XCTestCase {
     }
 }
 
-// MARK:-  Using Swift protobuf API
+// MARK:-  Using Swift protobuf API, Update assets
 
 extension ProtobufUtilitiesTests {
     
