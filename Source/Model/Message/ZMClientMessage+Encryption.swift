@@ -129,7 +129,7 @@ extension ZMGenericMessage {
         encryptionContext.perform { (sessionsDirectory) in
             let message = otrMessage(selfClient, recipients: recipients, externalData: externalData, sessionDirectory: sessionsDirectory)
 
-            messageData = message.data()
+            messageData = try? message.serializedData()
             
             // message too big?
             if let data = messageData, UInt(data.count) > ZMClientMessageByteSizeExternalThreshold && externalData == nil {
@@ -228,12 +228,11 @@ extension ZMGenericMessage {
     fileprivate func otrMessage(_ selfClient: UserClient,
                                 recipients: Set<ZMUser>,
                                 externalData: Data?,
-                                sessionDirectory: EncryptionSessionsDirectory) -> ZMNewOtrMessage {
+                                sessionDirectory: EncryptionSessionsDirectory) -> NewOtrMessage {
         
         let userEntries = self.recipientsWithEncryptedData(selfClient, recipients: recipients, sessionDirectory: sessionDirectory)
         let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
-        let message = ZMNewOtrMessage.message(withSender: selfClient, nativePush: nativePush, recipients: userEntries, blob: externalData)
-        
+        let message = NewOtrMessage(withSender: selfClient, nativePush: nativePush, recipients: userEntries, blob: externalData)
         return message
     }
     
@@ -241,12 +240,12 @@ extension ZMGenericMessage {
     func recipientsWithEncryptedData(_ selfClient: UserClient,
                                      recipients: Set<ZMUser>,
                                      sessionDirectory: EncryptionSessionsDirectory
-        ) -> [ZMUserEntry]
+        ) -> [UserEntry]
     {
-        let userEntries = recipients.compactMap { user -> ZMUserEntry? in
+        let userEntries = recipients.compactMap { user -> UserEntry? in
                 guard !user.isAccountDeleted else { return nil }
             
-                let clientsEntries = user.clients.compactMap { client -> ZMClientEntry? in
+                let clientsEntries = user.clients.compactMap { client -> ClientEntry? in
                     
                 if client != selfClient {
                     guard let clientRemoteIdentifier = client.sessionIdentifier else {
@@ -259,7 +258,7 @@ extension ZMGenericMessage {
                         // if the session is corrupted, we will send a special payload
                         if client.failedToEstablishSession {
                             let data = ZMFailedToCreateEncryptedMessagePayloadString.data(using: String.Encoding.utf8)!
-                            return ZMClientEntry.entry(withClient: client, data: data)
+                            return ClientEntry(withClient: client, data: data)
                         }
                         else {
                             // if we do not have a session, we need to fetch a prekey and create a new session
@@ -270,7 +269,7 @@ extension ZMGenericMessage {
                     guard let encryptedData = try? sessionDirectory.encryptCaching(self.data(), for: clientRemoteIdentifier) else {
                         return nil
                     }
-                    return ZMClientEntry.entry(withClient: client, data: encryptedData)
+                    return ClientEntry(withClient: client, data: encryptedData)
                 } else {
                     return nil
                 }
@@ -279,7 +278,7 @@ extension ZMGenericMessage {
             if clientsEntries.isEmpty {
                 return nil
             }
-            return ZMUserEntry.entry(withUser: user, clientEntries: clientsEntries)
+            return UserEntry(withUser: user, clientEntries: clientsEntries)
         }
         return userEntries
     }

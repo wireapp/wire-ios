@@ -55,12 +55,13 @@ extension ClientMessageTests_OTR {
             else { return XCTFail() }
             
             // then
-            guard let createdMessage = ZMNewOtrMessage.builder()!.merge(from: dataAndStrategy.data).build()! as? ZMNewOtrMessage
-            else { return XCTFail() }
-            
-            XCTAssertEqual(createdMessage.hasBlob(), true)
-            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ZMClientId] in
-                return (userEntry.clients).map { clientEntry -> ZMClientId in
+            let createdMessage = NewOtrMessage.with {
+                try? $0.merge(serializedData: dataAndStrategy.data)
+            }
+           
+            XCTAssertEqual(createdMessage.hasBlob, true)
+            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ClientId] in
+                return (userEntry.clients).map { clientEntry -> ClientId in
                     return clientEntry.client
                 }
             }
@@ -87,14 +88,16 @@ extension ClientMessageTests_OTR {
                 return
             }
             
-            //then
-            guard let createdMessage = ZMNewOtrMessage.builder()!.merge(from: dataAndStrategy.data).build()! as? ZMNewOtrMessage else { return XCTFail() }
-            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId().isEqual($0.user) }) else { return XCTFail() }
+            // then
+            let createdMessage = NewOtrMessage.with {
+                try? $0.merge(serializedData: dataAndStrategy.data)
+            }
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
             
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
             XCTAssertFalse(self.syncUser3Client1.failedToEstablishSession)
-        }
+            }
     }
     
     func testThatCorruptedClientsReceiveBogusPayloadWhenSentAsExternal() {
@@ -112,8 +115,10 @@ extension ClientMessageTests_OTR {
             }
             
             //then
-            guard let createdMessage = ZMNewOtrMessage.builder()!.merge(from: dataAndStrategy.data).build()! as? ZMNewOtrMessage else { return XCTFail() }
-            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId().isEqual($0.user) }) else { return XCTFail() }
+            let createdMessage = NewOtrMessage.with {
+                try? $0.merge(serializedData: dataAndStrategy.data)
+            }
+            guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
             
             XCTAssertEqual(userEntry.clients.count, 1)
             XCTAssertEqual(userEntry.clients.first?.text, ZMFailedToCreateEncryptedMessagePayloadString.data(using: .utf8))
@@ -331,19 +336,14 @@ extension ClientMessageTests_OTR {
             default:
                 XCTFail()
             }
-            guard let messageMetadata = ZMNewOtrMessageBuilder().merge(from: payloadAndStrategy.data).build()! as? ZMNewOtrMessage else {
-                XCTFail()
-                return
+            let messageMetadata = NewOtrMessage.with {
+                try? $0.merge(serializedData: payloadAndStrategy.data)
             }
             
-            if let recipients = messageMetadata.recipients {
-                let payloadClients = recipients.compactMap { user -> [String] in
-                    return user.clients?.map({ String(format: "%llx", $0.client.client) }) ?? []
-                }.flatMap { $0 }
-                XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
-            } else {
-                XCTFail("Metadata does not contain recipients")
-            }
+            let payloadClients = messageMetadata.recipients.compactMap { user -> [String] in
+                return user.clients.map({ String(format: "%llx", $0.client.client) })
+            }.flatMap { $0 }
+            XCTAssertEqual(payloadClients.sorted(), self.syncUser1.clients.map { $0.remoteIdentifier! }.sorted())
         }
     }
     
@@ -462,20 +462,12 @@ extension ClientMessageTests_OTR {
     
     /// Asserts that the message metadata is as expected
     fileprivate func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
-        guard let messageMetadata = ZMNewOtrMessageBuilder().merge(from: payload).build()! as? ZMNewOtrMessage else {
-            XCTFail(file: file, line: line)
-            return
+        let messageMetadata = NewOtrMessage.with {
+            try? $0.merge(serializedData: payload)
         }
-        if let sender = messageMetadata.sender {
-            XCTAssertEqual(sender.client, self.selfClient1.clientId.client, file: file, line: line)
-        } else {
-            XCTFail("Metadata does not contain sender", file: file, line: line)
-        }
-        if let recipients = messageMetadata.recipients  {
-            self.assertRecipients(recipients, file: file, line: line)
-        } else {
-            XCTFail("Metadata does not contain recipients", file: file, line: line)
-        }
+        
+        XCTAssertEqual(messageMetadata.sender.client, self.selfClient1.clientId.client, file: file, line: line)
+        assertRecipients(messageMetadata.recipients, file: file, line: line)
     }
     
     /// Returns a string that is big enough to require external message payload

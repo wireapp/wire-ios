@@ -192,6 +192,37 @@ extension Ephemeral: MessageCapable {
     }
 }
 
+public extension ClientEntry {
+    init(withClient client: UserClient, data: Data) {
+        self = ClientEntry.with {
+            $0.client = client.clientId
+            $0.text = data
+        }
+    }
+}
+
+public extension UserEntry {
+    init(withUser user: ZMUser, clientEntries: [ClientEntry]) {
+        self = UserEntry.with {
+            $0.user = user.userId
+            $0.clients = clientEntries
+        }
+    }
+}
+
+public extension NewOtrMessage {
+    init(withSender sender: UserClient, nativePush: Bool, recipients: [UserEntry], blob: Data? = nil) {
+        self = NewOtrMessage.with {
+            $0.nativePush = nativePush
+            $0.sender = sender.clientId
+            $0.recipients = recipients
+            if blob != nil {
+                $0.blob = blob!
+            }
+        }
+    }
+}
+
 extension Location: EphemeralMessageCapable {
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.location = self
