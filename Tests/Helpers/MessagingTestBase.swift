@@ -171,12 +171,12 @@ extension MessagingTestBase {
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
     func outgoingMessageWrapper(from request: ZMTransportRequest,
                                 file: StaticString = #file,
-                                line: UInt = #line) -> ZMNewOtrMessage? {
-        guard let protobuf = ZMNewOtrMessage.parse(from: request.binaryData) else {
+                                line: UInt = #line) -> NewOtrMessage? {
+        guard let data = request.binaryData else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
-        return protobuf
+        return try? NewOtrMessage(serializedData: data)
     }
     
     /// Extract encrypted payload from a request
@@ -186,17 +186,13 @@ extension MessagingTestBase {
                                   file: StaticString = #file
         ) -> ZMGenericMessage? {
         
-        guard let protobuf = ZMNewOtrMessage.parse(from: request.binaryData) else {
+        guard let data = request.binaryData, let protobuf = try? NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
-        // find user
-        guard let recipients = protobuf.recipients else {
-            XCTFail("Recipients not found")
-            return nil
-        }
-        let userEntries = recipients.compactMap { $0 }
-        guard let userEntry = userEntries.first(where: { $0.user == client.user!.userId() }) else {
+       
+        let userEntries = protobuf.recipients.compactMap { $0 }
+        guard let userEntry = userEntries.first(where: { $0.user == client.user?.userId }) else {
             XCTFail("User not found", file: file, line: line)
             return nil
         }
@@ -207,11 +203,7 @@ extension MessagingTestBase {
         }
         
         // text content
-        guard let cyphertext = clientEntry.text else {
-            XCTFail("No text", file: file, line: line)
-            return nil
-        }
-        guard let plaintext = self.decryptMessageFromSelf(cypherText: cyphertext, to: self.otherClient) else {
+        guard let plaintext = self.decryptMessageFromSelf(cypherText: clientEntry.text, to: self.otherClient) else {
             XCTFail("failed to decrypt", file: file, line: line)
             return nil
         }
