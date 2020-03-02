@@ -178,7 +178,13 @@ extension ClientMessageTranscoderTests {
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
             let text = "Lorem ipsum"
             let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
-            message.add(message.genericMessage!.setExpectsReadConfirmation(true)!.data())
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setExpectsReadConfirmation(true)
+            do {
+                message.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail("Error in adding data: \(error)")
+            }
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -189,7 +195,7 @@ extension ClientMessageTranscoderTests {
             }
             
             // THEN
-            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+            XCTAssertFalse(message.underlyingMessage!.text.expectsReadConfirmation)
         }
     }
 
@@ -208,7 +214,13 @@ extension ClientMessageTranscoderTests {
 
             let text = "Lorem ipsum"
             let message = conversation.append(text: text) as! ZMClientMessage
-            message.add(message.genericMessage!.setLegalHoldStatus(.DISABLED)!.data()!)
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setLegalHoldStatus(.disabled)
+            do {
+                message.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail("Error in adding data: \(error)")
+            }
             self.syncMOC.saveOrRollback()
 
             // WHEN
@@ -219,10 +231,10 @@ extension ClientMessageTranscoderTests {
             }
 
             // THEN
-            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .ENABLED)
+            XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .enabled)
         }
     }
-
+    
     func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() {
         self.syncMOC.performGroupedBlockAndWait {
 
@@ -232,7 +244,13 @@ extension ClientMessageTranscoderTests {
 
             let text = "Lorem ipsum"
             let message = conversation.append(text: text) as! ZMClientMessage
-            message.add(message.genericMessage!.setLegalHoldStatus(.ENABLED)!.data())
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setLegalHoldStatus(.enabled)
+            do {
+                message.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail("Error in adding data: \(error)")
+            }
             self.syncMOC.saveOrRollback()
 
             // WHEN
@@ -243,10 +261,10 @@ extension ClientMessageTranscoderTests {
             }
 
             // THEN
-            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .DISABLED)
+           XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .disabled)
         }
     }
-
+    
     func testThatItGeneratesARequestToSendAClientMessage() {
         self.syncMOC.performGroupedBlockAndWait {
             

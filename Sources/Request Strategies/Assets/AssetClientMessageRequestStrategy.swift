@@ -97,13 +97,15 @@ extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
         
         if message.conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting
-            if let updatedGenericMessage = message.genericMessage?.setExpectsReadConfirmation(ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled) {
+            if var updatedGenericMessage = message.underlyingMessage {
+                updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled)
                 message.add(updatedGenericMessage)
             }
         }
-
+        
         if let legalHoldStatus = message.conversation?.legalHoldStatus {
-            if let updatedGenericMessage = message.genericMessage?.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .ENABLED : .DISABLED) {
+            if var updatedGenericMessage = message.underlyingMessage {
+                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
                 message.add(updatedGenericMessage)
             }
         }

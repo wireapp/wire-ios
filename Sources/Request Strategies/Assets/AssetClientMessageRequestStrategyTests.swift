@@ -256,7 +256,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             
             // WHEN
             XCTAssertNotNil(self.sut.nextRequest())
-            
+
             // THEN
             XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
         }
@@ -267,28 +267,32 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
-            message.add(message.genericMessage!.setExpectsReadConfirmation(true)!)
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setExpectsReadConfirmation(true)
+            message.add(genericMessage)
             
             // WHEN
             XCTAssertNotNil(self.sut.nextRequest())
             
             // THEN
-            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+            XCTAssertFalse(message.underlyingMessage!.asset.expectsReadConfirmation)
         }
     }
 
-    func testThatItUpdateLegalHoldStatusWhenLegalHoldIsEnabled() {
+    func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreEnabled() {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
+            ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.oneToOneConversation)
-            message.add(message.genericMessage!.setExpectsReadConfirmation(true)!)
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setExpectsReadConfirmation(true)
+            message.add(genericMessage)
 
             // WHEN
             XCTAssertNotNil(self.sut.nextRequest())
 
             // THEN
-            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+            XCTAssertTrue(message.underlyingMessage!.asset.expectsReadConfirmation)
         }
     }
 
@@ -306,7 +310,9 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertTrue(conversation.isUnderLegalHold)
 
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
-            message.add(message.genericMessage!.setLegalHoldStatus(.ENABLED)!)
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setLegalHoldStatus(.enabled)
+            message.add(genericMessage)
             self.syncMOC.saveOrRollback()
 
             // WHEN
@@ -317,7 +323,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .ENABLED)
+            XCTAssertEqual(message.underlyingMessage!.asset.legalHoldStatus, .enabled)
         }
     }
 
@@ -329,7 +335,9 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertFalse(conversation.isUnderLegalHold)
 
             let message = self.createMessage(isImage: true, uploaded: true, assetId: true, conversation: self.groupConversation)
-            message.add(message.genericMessage!.setLegalHoldStatus(.ENABLED)!)
+            var genericMessage = message.underlyingMessage!
+            genericMessage.setLegalHoldStatus(.enabled)
+            message.add(genericMessage)
             self.syncMOC.saveOrRollback()
 
             // WHEN
@@ -340,7 +348,7 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             }
 
             // THEN
-            XCTAssertEqual(message.genericMessage!.content!.legalHoldStatus, .DISABLED)
+            XCTAssertEqual(message.underlyingMessage!.asset.legalHoldStatus, .disabled)
         }
     }
 

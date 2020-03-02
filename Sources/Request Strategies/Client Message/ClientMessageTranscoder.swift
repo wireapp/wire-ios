@@ -91,18 +91,28 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
         }
         
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
-
+        
         if message.conversation?.conversationType == .oneOnOne {
             // Update expectsReadReceipt flag to reflect the current user setting
-            if let updatedGenericMessage = message.genericMessage?.setExpectsReadConfirmation(ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled) {
-                message.add(updatedGenericMessage.data())
+            if var updatedGenericMessage = message.underlyingMessage {
+                updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled)
+                do {
+                    message.add(try updatedGenericMessage.serializedData())
+                } catch {
+                    fatal("Failure adding genericMessage")
+                }
             }
         }
 
         if let legalHoldStatus = message.conversation?.legalHoldStatus {
             // Update the legalHoldStatus flag to reflect the current known legal hold status
-            if let updatedGenericMessage = message.genericMessage?.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .ENABLED : .DISABLED) {
-                message.add(updatedGenericMessage.data())
+            if var updatedGenericMessage = message.underlyingMessage {
+                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
+                do {
+                    message.add(try updatedGenericMessage.serializedData())
+                } catch {
+                    fatal("Failure adding genericMessage")
+                }
             }
         }
 
