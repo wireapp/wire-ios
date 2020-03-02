@@ -587,43 +587,6 @@ extension ZMExternal: MessageContentType {
     }
 }
 
-public extension ZMClientEntry {
-    
-    @objc static func entry(withClient client: UserClient, data: Data) -> ZMClientEntry {
-        let builder = ZMClientEntry.builder()!
-        builder.setClient(client.clientId)
-        builder.setText(data)
-        return builder.build()
-    }
-    
-}
-
-public extension ZMUserEntry {
-    
-    @objc static func entry(withUser user: ZMUser, clientEntries: [ZMClientEntry]) -> ZMUserEntry {
-        let builder = ZMUserEntry.builder()!
-        builder.setUser(user.userId())
-        builder.setClientsArray(clientEntries)
-        return builder.build()
-    }
-    
-}
-
-public extension ZMNewOtrMessage {
-    
-    @objc static func message(withSender sender: UserClient, nativePush: Bool, recipients: [ZMUserEntry], blob: Data? = nil) -> ZMNewOtrMessage {
-        let builder = ZMNewOtrMessage.builder()!
-        builder.setNativePush(nativePush)
-        builder.setSender(sender.clientId)
-        builder.setRecipientsArray(recipients)
-        if nil != blob {
-            builder.setBlob(blob)
-        }
-        return builder.build()
-    }
-    
-}
-
 @objc
 extension ZMAsset: EphemeralMessageContentType {
     

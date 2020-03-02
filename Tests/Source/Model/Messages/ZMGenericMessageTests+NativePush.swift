@@ -48,13 +48,13 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
 
             // when
             let (data, _) = message.encryptedMessagePayloadData(conversation, externalData: nil)!
-            let builder = ZMNewOtrMessage.builder()!
-            builder.merge(from: data)
-            guard let otrMessage = builder.build() else { return XCTFail("Unable to build ZMNewOTRMessage", line: line) }
+            let otrMessage = NewOtrMessage.with {
+               try? $0.merge(serializedData: data)
+            }
 
             // then
-            XCTAssertTrue(otrMessage.hasNativePush(), line: line)
-            XCTAssertEqual(otrMessage.nativePush(), nativePush, "Wrong value for nativePush", line: line)
+            XCTAssertTrue(otrMessage.hasNativePush, line: line)
+            XCTAssertEqual(otrMessage.nativePush, nativePush, "Wrong value for nativePush", line: line)
         }
 
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), line: line)
