@@ -75,6 +75,14 @@ extension ZMAssetClientMessage {
         _ = self.mergeWithExistingData(data: genericMessage.data())
     }
     
+    public func add(_ genericMessage: GenericMessage) {
+        do {
+        _ = self.mergeWithExistingData(data: try genericMessage.serializedData())
+        } catch {
+            return
+        }
+    }
+    
     func mergeWithExistingData(data: Data) -> ZMGenericMessageData? {
         self.cachedGenericAssetMessage = nil
         self.cachedUnderlyingAssetMessage = nil

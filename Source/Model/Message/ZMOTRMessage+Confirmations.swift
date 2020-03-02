@@ -23,18 +23,6 @@ extension ZMOTRMessage {
     private static let deliveryConfirmationDayThreshold = 7
     
     @NSManaged @objc dynamic var expectsReadConfirmation: Bool
-        
-    override open var needsReadConfirmation: Bool {
-        guard let conversation = conversation, let managedObjectContext = managedObjectContext else { return false }
-        
-        if conversation.conversationType == .oneOnOne {
-            return genericMessage?.content?.expectsReadConfirmation() == true && ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled
-        } else if conversation.conversationType == .group {
-            return expectsReadConfirmation
-        }
-        
-        return false
-    }
     
     @objc
     var needsDeliveryConfirmation: Bool {
@@ -53,4 +41,33 @@ extension ZMOTRMessage {
         return daysElapsed <= ZMOTRMessage.deliveryConfirmationDayThreshold
     }
     
+    func needsReadConfirmation(_ genericMessage: GenericMessage) -> Bool {
+        guard let conversation = conversation, let managedObjectContext = managedObjectContext else { return false }
+        
+        if conversation.conversationType == .oneOnOne {
+            var expectsReadConfirmation: Bool {
+                
+                switch genericMessage.content {
+                case .ephemeral(let data)?:
+                    return data.expectsReadConfirmation
+                case .knock(let data)?:
+                    return data.expectsReadConfirmation
+                case .text(let data)?:
+                    return data.expectsReadConfirmation
+                case .location(let data)?:
+                    return data.expectsReadConfirmation
+                case .asset(let data)?:
+                    return data.expectsReadConfirmation
+                default:
+                    return false
+                }
+            }
+            
+            return (expectsReadConfirmation && ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled)
+        } else if conversation.conversationType == .group {
+            return expectsReadConfirmation
+        }
+        
+        return false
+    }
 }

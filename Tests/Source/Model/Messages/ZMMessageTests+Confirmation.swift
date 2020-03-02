@@ -91,10 +91,18 @@ extension ZMMessageTests_Confirmation {
         
         // insert message which expects read confirmation
         let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
-        message.genericMessage?.setExpectsReadConfirmation(true)?.data().apply(message.add)
+        var genericMessage = message.underlyingMessage!
+        genericMessage.setExpectsReadConfirmation(true)
+        
+        do {
+            message.add(try genericMessage.serializedData())
+        } catch {
+            return
+        }
 
         // when
         ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
+        
         // then
         XCTAssertTrue(message.needsReadConfirmation)
     }
@@ -105,12 +113,21 @@ extension ZMMessageTests_Confirmation {
         let conversation = createConversation(in: uiMOC)
         conversation.conversationType = .oneOnOne
         
-        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = false
         
         // insert message which expects read confirmation
         let message = insertMessage(conversation, fromSender: user, timestamp: Date()) as! ZMClientMessage
-        message.genericMessage?.setExpectsReadConfirmation(true)?.data().apply(message.add)
+        var genericMessage = message.underlyingMessage!
+        genericMessage.setExpectsReadConfirmation(true)
         
+        do {
+            message.add(try genericMessage.serializedData())
+        } catch {
+            return
+        }
+        
+        // when
+        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = false
+
         // then
         XCTAssertFalse(message.needsReadConfirmation)
     }
