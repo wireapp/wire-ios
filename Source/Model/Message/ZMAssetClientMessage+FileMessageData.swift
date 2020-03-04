@@ -18,6 +18,7 @@
 
 
 import Foundation
+import MobileCoreServices
 
 // MARK: - ZMFileMessageData
 @objc public protocol ZMFileMessageData: NSObjectProtocol {
@@ -132,9 +133,17 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public var fileURL: URL? {
-        guard let assetURL = asset?.fileURL, let filename = filename, let temporaryDirectoryURL = temporaryDirectoryURL else { return nil }
+        guard let assetURL = asset?.fileURL,
+            let filename = filename,
+            let temporaryDirectoryURL = temporaryDirectoryURL else { return nil }
         
-        let temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(filename)
+        var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(filename)
+        
+        if let fileExtension = fileExtension,
+            richAssetType == .audio,
+            temporaryFileURL.pathExtension != fileExtension {
+            temporaryFileURL.appendPathExtension(fileExtension)
+        }
         
         if FileManager.default.fileExists(atPath: temporaryFileURL.path) {
             return temporaryFileURL
@@ -148,6 +157,15 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
         
         return temporaryFileURL
+    }
+    
+    private var fileExtension: String? {
+        guard let mime = mimeType,
+            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mime as CFString, nil),
+            let extensionUTI = UTTypeCopyPreferredTagWithClass(uti.takeRetainedValue(), kUTTagClassFilenameExtension) else {
+                return nil
+        }
+        return String(extensionUTI.takeRetainedValue())
     }
     
     public var temporaryDirectoryURL: URL? {
