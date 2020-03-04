@@ -144,6 +144,17 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var needsLinkAttachmentsUpdate: Bool { get set }
 }
 
+public extension ZMConversationMessage {
+
+    /// Whether the given user is the sender of the message.
+
+    func isUserSender(_ user: UserType) -> Bool {
+        guard let zmUser = user as? ZMUser else { return false }
+        return zmUser == sender
+    }
+
+}
+
 public extension Equatable where Self : ZMConversationMessage { }
 
 public func ==(lhs: ZMConversationMessage, rhs: ZMConversationMessage) -> Bool {
