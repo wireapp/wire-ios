@@ -19,7 +19,7 @@
 
 import WireTransport
 
-private let zmLog = ZMSLog(tag: "Conversations")
+private let zmLog = ZMSLog(tag: "event-processing")
 
 
 /// This enum matches the backend convention for type
@@ -173,6 +173,8 @@ extension ZMConversation {
             userIdKey: PayloadKeys.IDKey)
         let allParticipants = Set(usersAndRoles.map { $0.0 })
         let removedParticipants = self.localParticipantsExcludingSelf.subtracting(allParticipants)
+        
+        zmLog.debug("Removing participants: \(removedParticipants.map({ $0.remoteIdentifier })) in \(remoteIdentifier?.transportString() ?? "N/A")")
   
         self.addParticipantsAndUpdateConversationState(usersAndRoles: usersAndRoles)
         self.removeParticipantsAndUpdateConversationState(users: removedParticipants, initiatingUser: ZMUser.selfUser(in: moc))
