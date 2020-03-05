@@ -293,6 +293,9 @@ static NSInteger const DefaultMaximumRequests = 6;
         [self.sessionsDirectory tearDown];
         [self.workGroup leave];
     }];
+    
+    // Wait until all the requests have been cancelled
+    [self.workQueue waitUntilAllOperationsAreFinished];
 }
 
 #if DEBUG
