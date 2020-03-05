@@ -19,6 +19,8 @@
 import Foundation
 import WireCryptobox
 
+private let zmLog = ZMSLog(tag: "event-processing")
+
 @objc public enum ZMConversationLegalHoldStatus: Int16 {
     case disabled = 0
     case pendingApproval = 1
@@ -320,6 +322,8 @@ extension ZMConversation {
         let date = dateOptional ?? Date()
 
         guard !localParticipants.contains(user) else { return }
+        
+        zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map{ $0.remoteIdentifier} )")
         
         switch conversationType {
         case .group:
