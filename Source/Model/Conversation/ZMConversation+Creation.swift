@@ -23,21 +23,21 @@ extension ZMConversation {
     
     @objc(insertGroupConversationIntoManagedObjectContext:withParticipants:)
     static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                                     participants: [ZMUser]) -> ZMConversation? {
-        return self.insertGroupConversation(moc: moc,
-                                            participants: participants,
-                                            name: nil)
+                                               participants: [UserType]) -> ZMConversation?
+    {
+        return self.insertGroupConversation(moc: moc, participants: participants, name: nil)
     }
     
     /// Insert a new group conversation with name into the user session
+
     @objc
     static public func insertGroupConversation(session: ZMManagedObjectContextProvider,
-                                              participants: [ZMUser],
-                                              name: String? = nil,
-                                              team: Team? = nil,
-                                              allowGuests: Bool = true,
-                                              readReceipts: Bool = false,
-                                              participantsRole: Role? = nil) -> ZMConversation?
+                                               participants: [UserType],
+                                               name: String? = nil,
+                                               team: Team? = nil,
+                                               allowGuests: Bool = true,
+                                               readReceipts: Bool = false,
+                                               participantsRole: Role? = nil) -> ZMConversation?
     {
         return self.insertGroupConversation(moc: session.managedObjectContext!,
                                             participants: participants,
@@ -50,13 +50,21 @@ extension ZMConversation {
     
     @objc
     static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                               participants: [ZMUser],
+                                               participants: [UserType],
                                                name: String? = nil,
                                                team: Team? = nil,
                                                allowGuests: Bool = true,
                                                readReceipts: Bool = false,
-                                               participantsRole: Role? = nil) -> ZMConversation? {
-        return insertGroupConversation(moc: moc, participants: participants, name: name, team: team, allowGuests: allowGuests, readReceipts: readReceipts, participantsRole: participantsRole, type: .group)
+                                               participantsRole: Role? = nil) -> ZMConversation?
+    {
+        return insertGroupConversation(moc: moc,
+                                       participants: participants,
+                                       name: name,
+                                       team: team,
+                                       allowGuests: allowGuests,
+                                       readReceipts: readReceipts,
+                                       participantsRole: participantsRole,
+                                       type: .group)
     }
     
     /// insert a conversation with group type
@@ -71,15 +79,20 @@ extension ZMConversation {
     ///   - participantsRole: the participants' role
     ///   - type: the convo type want to be created (for permission check)
     /// - Returns: the created conversation, nullable
+
     static public func insertGroupConversation(moc: NSManagedObjectContext,
-                                       participants: [ZMUser],
-                                       name: String? = nil,
-                                       team: Team? = nil,
-                                       allowGuests: Bool = true,
-                                       readReceipts: Bool = false,
-                                       participantsRole: Role? = nil,
-                                       type: ZMConversationType = .group) -> ZMConversation? {
+                                               participants: [UserType],
+                                               name: String? = nil,
+                                               team: Team? = nil,
+                                               allowGuests: Bool = true,
+                                               readReceipts: Bool = false,
+                                               participantsRole: Role? = nil,
+                                               type: ZMConversationType = .group) -> ZMConversation?
+    {
+        guard let participants = participants as? [ZMUser] else { return nil }
+
         let selfUser = ZMUser.selfUser(in: moc)
+
         if (team != nil && !selfUser.canCreateConversation(type: type)) {
             return nil
         }
@@ -90,6 +103,7 @@ extension ZMConversation {
         conversation.creator = selfUser
         conversation.team = team
         conversation.userDefinedName = name
+
         if (team != nil) {
             conversation.allowGuests = allowGuests;
             conversation.hasReadReceiptsEnabled = readReceipts;
@@ -107,6 +121,7 @@ extension ZMConversation {
         conversation.increaseSecurityLevelIfNeededAfterTrusting(
             clients: Set(participantsIncludingSelf.flatMap { $0.clients })
         )
+
         return conversation
     }
     
