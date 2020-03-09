@@ -27,6 +27,8 @@ public protocol TransportSessionType: class, ZMBackgroundable, ZMRequestCancella
     
     var cookieStorage: ZMPersistentCookieStorage { get }
     
+    var requestLoopDetectionCallback: ((_ path: String) -> Void)? { get set }
+    
     @objc(enqueueOneTimeRequest:) 
     func enqueueOneTime(_ request: ZMTransportRequest)
     
