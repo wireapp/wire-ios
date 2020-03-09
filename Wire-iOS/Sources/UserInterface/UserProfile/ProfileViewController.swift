@@ -29,7 +29,7 @@ enum ProfileViewControllerTabBarIndex : Int {
 
 protocol ProfileViewControllerDelegate: class {
     func profileViewController(_ controller: ProfileViewController?, wantsToNavigateTo conversation: ZMConversation)
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: Set<ZMUser>)
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet)
 }
 
 protocol BackButtonTitleDelegate: class {
@@ -458,22 +458,22 @@ extension ProfileViewController: ProfileViewControllerDelegate {
         delegate?.profileViewController(controller, wantsToNavigateTo: conversation)
     }
         
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: Set<ZMUser>) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
         // no-op
     }
 
 }
 
 extension ProfileViewController: ConversationCreationControllerDelegate {
-    func conversationCreationController(
-        _ controller: ConversationCreationController,
-        didSelectName name: String,
-        participants: Set<ZMUser>,
-        allowGuests: Bool,
-        enableReceipts: Bool
-        ) {
+    func conversationCreationController(_ controller: ConversationCreationController,
+                                        didSelectName name: String,
+                                        participants: UserSet,
+                                        allowGuests: Bool,
+                                        enableReceipts: Bool) {
         controller.dismiss(animated: true) { [weak self] in
-            self?.delegate?.profileViewController(self, wantsToCreateConversationWithName: name, users: participants)
+            self?.delegate?.profileViewController(self,
+                                                  wantsToCreateConversationWithName: name,
+                                                  users: participants)
         }
     }
 }
