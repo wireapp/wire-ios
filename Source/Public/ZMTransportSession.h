@@ -74,7 +74,7 @@ extern NSString * const ZMTransportSessionNewRequestAvailableNotification;
 @property (nonatomic, assign) NSInteger maximumConcurrentRequests;
 @property (nonatomic, readonly) ZMPersistentCookieStorage *cookieStorage;
 @property (nonatomic, readonly) id<URLSessionsDirectory, TearDownCapable> sessionsDirectory;
-@property (nonatomic, copy) void (^requestLoopDetectionCallback)(NSString*);
+@property (nonatomic, copy, nullable) void (^requestLoopDetectionCallback)(NSString*);
 @property (nonatomic, readonly) id<ReachabilityProvider, TearDownCapable> reachability;
 
 - (instancetype)initWithEnvironment:(id<BackendEnvironmentProvider>)environment
