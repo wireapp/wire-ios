@@ -36,7 +36,7 @@ public struct ConversationDirectoryChangeInfo {
     
 }
 
-public protocol ConversationDirectoryObserver {
+public protocol ConversationDirectoryObserver: class {
     
     func conversationDirectoryDidChange(_ changeInfo: ConversationDirectoryChangeInfo)
 
@@ -104,7 +104,7 @@ extension ZMConversationListDirectory: ConversationDirectoryType {
 
 fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObserver, ZMConversationListReloadObserver, ZMConversationListFolderObserver  {
     
-    var observer: ConversationDirectoryObserver
+    weak var observer: ConversationDirectoryObserver?
     var directory: ZMConversationListDirectory
     
     init(observer: ConversationDirectoryObserver, directory: ZMConversationListDirectory) {
@@ -113,11 +113,11 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
     }
     
     func conversationListsDidReload() {
-        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: true, updatedLists: [], updatedFolders: false))
     }
     
     func conversationListsDidChangeFolders() {
-        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: [], updatedFolders: true))
     }
     
     func conversationListDidChange(_ changeInfo: ConversationListChangeInfo) {
@@ -141,7 +141,7 @@ fileprivate class ConversationListObserverProxy: NSObject, ZMConversationListObs
             updatedLists = []
         }
 
-        observer.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
+        observer?.conversationDirectoryDidChange(ConversationDirectoryChangeInfo(reloaded: false, updatedLists: updatedLists, updatedFolders: false))
     }
     
 }
