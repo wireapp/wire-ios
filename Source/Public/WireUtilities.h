@@ -48,3 +48,4 @@ FOUNDATION_EXPORT const unsigned char WireUtilitiesVersionString[];
 #import <WireUtilities/ZMEncodedNSUUIDWithTimestamp.h>
 #import <WireUtilities/ZMAccentColor.h>
 #import <WireUtilities/ZMAtomicInteger.h>
+#import <WireUtilities/ZMObjectValidationError.h>
