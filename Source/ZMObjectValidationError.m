@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,15 +17,7 @@
 //
 
 
-import Foundation
+#import <Foundation/Foundation.h>
+#import "ZMObjectValidationError.h"
 
-@objc public enum ZMManagedObjectValidationErrorCode: Int, Error {
-    case tooLong
-    case tooShort
-    case emailAddressIsInvalid
-    case phoneNumberContainsInvalidCharacters
-}
-
-public protocol ZMPropertyValidator {
-    static func validateValue(_ ioValue: AutoreleasingUnsafeMutablePointer<AnyObject?>!) throws
-}
+NSString * const ZMObjectValidationErrorDomain = @"ZMObjectValidationErrorDomain";
