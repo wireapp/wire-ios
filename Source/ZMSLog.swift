@@ -309,31 +309,27 @@ extension ZMSLog {
         updatingHandle = nil
     }
 
-    static public func appendToCurrentLog(_ string: String) {
+    static func appendToCurrentLog(_ string: String) {
         
         guard let currentLogURL = self.currentLogPath else { return }
         let currentLogPath = currentLogURL.path
-
-        logQueue.async {
-
-            let manager = FileManager.default
-
-            if !manager.fileExists(atPath: currentLogPath) {
-                manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
-            }
-
-            if updatingHandle == nil {
-                updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
-                updatingHandle?.seekToEndOfFile()
-            }
-
-            let data = Data(string.utf8)
-
-            do {
-                try updatingHandle?.wr_write(data)
-            } catch {
-                updatingHandle = nil
-            }
+        let manager = FileManager.default
+        
+        if !manager.fileExists(atPath: currentLogPath) {
+            manager.createFile(atPath: currentLogPath, contents: nil, attributes: nil)
+        }
+        
+        if updatingHandle == nil {
+            updatingHandle = FileHandle(forUpdatingAtPath: currentLogPath)
+            updatingHandle?.seekToEndOfFile()
+        }
+        
+        let data = Data(string.utf8)
+        
+        do {
+            try updatingHandle?.wr_write(data)
+        } catch {
+            updatingHandle = nil
         }
     }
 }
