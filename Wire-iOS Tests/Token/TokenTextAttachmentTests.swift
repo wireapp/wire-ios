@@ -1,4 +1,3 @@
-//
 // Wire
 // Copyright (C) 2020 Wire Swiss GmbH
 //
@@ -16,24 +15,26 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class TokenizedTextView;
+import XCTest
+@testable import Wire
+import SnapshotTesting
 
-@interface TokenField ()
+final class TokenTextAttachmentTests: XCTestCase {
+    var sut: TokenTextAttachment!
 
-@property (nonatomic) NSLayoutConstraint *accessoryButtonTopMargin;
-@property (nonatomic) NSLayoutConstraint *accessoryButtonRightMargin;
+    override func setUp() {
+        let token = Token(title: "Max Mustermann", representedObject: MockUser())
+        let tokenField = TokenField()
+        tokenField.tokenTitleColor = .black
 
-@property (nonatomic) UILabel *toLabel;
-@property (nonatomic) NSLayoutConstraint *toLabelLeftMargin;
-@property (nonatomic) NSLayoutConstraint *toLabelTopMargin;
+        sut = TokenTextAttachment(token: token, tokenField: tokenField)
+    }
 
-@property (nonatomic) NSMutableArray *currentTokens;
-@property (readonly, nonatomic) NSDictionary *textAttributes;
+    override func tearDown() {
+        sut = nil
+    }
 
-@property (nonatomic, readwrite) BOOL userDidConfirmInput;
-
-- (void)updateExcludePath;
-- (void)updateLayout;
-- (void)updateTextAttributes;
-
-@end
+    func testTokenAttachmentImage() {
+        verify(matching: sut.image!)
+    }
+}

@@ -16,24 +16,6 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-@class TokenizedTextView;
-
-@interface TokenField ()
-
-@property (nonatomic) NSLayoutConstraint *accessoryButtonTopMargin;
-@property (nonatomic) NSLayoutConstraint *accessoryButtonRightMargin;
-
-@property (nonatomic) UILabel *toLabel;
-@property (nonatomic) NSLayoutConstraint *toLabelLeftMargin;
-@property (nonatomic) NSLayoutConstraint *toLabelTopMargin;
-
-@property (nonatomic) NSMutableArray *currentTokens;
-@property (readonly, nonatomic) NSDictionary *textAttributes;
-
-@property (nonatomic, readwrite) BOOL userDidConfirmInput;
-
-- (void)updateExcludePath;
-- (void)updateLayout;
-- (void)updateTextAttributes;
-
-@end
+protocol TokenContainer {
+    var token: Token { get }
+}
