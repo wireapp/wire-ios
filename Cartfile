@@ -1,6 +1,6 @@
-github "wireapp/wire-ios-cryptobox" ~> 20.0
+github "wireapp/wire-ios-cryptobox" ~> 21.0
 github "wireapp/wire-ios-protos" ~> 21.0
-github "wireapp/wire-ios-images" ~> 29.0
+github "wireapp/wire-ios-images" ~> 30.0
 github "wireapp/PINCache" "2.3-swift3.1"
-github "wireapp/wire-ios-transport" ~> 67.0
-github "wireapp/wire-ios-link-preview" ~> 25.0
+github "wireapp/wire-ios-transport" ~> 68.0
+github "wireapp/wire-ios-link-preview" ~> 26.0
