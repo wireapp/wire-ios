@@ -25,8 +25,7 @@
 #import "Settings.h"
 
 // UI
-#import "TokenField.h"
-#import "TokenField+Internal.h"
+#import "TextTransform.h"
 
 // View Controllers
 
