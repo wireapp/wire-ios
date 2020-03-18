@@ -123,20 +123,25 @@ public final class EncryptionSessionsDirectory : NSObject {
         let key = hash(for: plainText, recipient: recipientIdentifier)
         
         if let cachedObject = encryptionPayloadCache.value(for: key) {
-            zmLog.debug("Cache hit: \(key)")
+            zmLog.safePublic("Encrypting, cache hit")
             return cachedObject
         }
         else {
-            zmLog.debug("Cache miss: \(key)")
+            zmLog.debug("Encrypting, cache miss")
             let data = try encrypt(plainText, for: recipientIdentifier)
-            encryptionPayloadCache.set(value: data, for: key, cost: data.count)
+            let didPurgeData = encryptionPayloadCache.set(value: data, for: key, cost: data.count)
+            
+            if didPurgeData {
+                zmLog.safePublic("Encrypting, cache limit reached")
+            }
+            
             return data
         }
     }
     
     /// Purges the cache of encrypted payloads created as the result of @c encryptCaching() call
     public func purgeEncryptedPayloadCache() {
-        zmLog.debug("Cache purged")
+        zmLog.safePublic("Encryption cache purged")
         encryptionPayloadCache.purge()
     }
 }
