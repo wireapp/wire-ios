@@ -18,6 +18,8 @@
 
 import Foundation
 
+/// In memory cache with support for generics.
+
 public class Cache<Key: Hashable, Value> {
     private var cache: [Key: EntryMetadata<Value>] = [:]
     private var cacheBuffer: CircularArray<Key>
@@ -35,6 +37,14 @@ public class Cache<Key: Hashable, Value> {
         }
     }
     
+    /// Create a new cache
+    ///
+    /// When any of the limits are reached the oldest value in the Cache will be removed first.
+    ///
+    /// - Parameters:
+    ///     - maxCost: Maximum cost which can be stored in cached before entries are purged.
+    ///     - maxElementsCount: Maximum number of elements which can be stored in the cached before entries are
+    ///       purged.
     public init(maxCost: Int, maxElementsCount: Int) {
         assert(maxCost > 0, "maxCost must be greather than 0")
         assert(maxElementsCount > 0, "maxElementsCount must be greather than 0")
@@ -43,37 +53,59 @@ public class Cache<Key: Hashable, Value> {
         cacheBuffer = CircularArray<Key>(size: maxElementsCount)
     }
     
-    public func set(value: Value, for key: Key, cost: Int) {
+    /// Add a value to the cache
+    ///
+    /// - Parameters:
+    ///     - value: Value which should be stored in the cache.
+    ///     - key: Key by which the value later can be retrieved.
+    ///     - cost: How much it costs to store value. This will be used to determine if values need purged
+    ///             from the cache when the cost limit has been reached.
+    /// - Returns: Boolean set to true if values had to be purged in order to make room for the new value,
+    ///            otherwise false.
+    @discardableResult
+    public func set(value: Value, for key: Key, cost: Int) -> Bool {
         assert(cost > 0, "Cost must be greather than 0")
         cache[key] = EntryMetadata(value: value, cost: cost)
         currentCost = currentCost + cost
-        purgeBasedOnElementsCount(adding: key)
-        purgeBasedOnCost()
+        
+        var didPurgeItems = false
+        didPurgeItems = didPurgeItems || purgeBasedOnElementsCount(adding: key)
+        didPurgeItems = didPurgeItems || purgeBasedOnCost()
+        
+        return didPurgeItems
     }
     
+    /// Retrieve a value from the cache
+    ///
+    /// - Parameters:
+    ///     - key: Key used to retrieve a previously stored value.
+    /// - Returns: Value if it exists the cache.
     public func value(for key: Key) -> Value? {
         return cache[key]?.value
     }
     
+    /// Remove all values from the cache.
     public func purge() {
         cache.removeAll()
         cacheBuffer.clear()
         currentCost = 0
     }
 
-    private func purgeBasedOnElementsCount(adding key: Key) {
+    private func purgeBasedOnElementsCount(adding key: Key) -> Bool {
         guard let discardedElement = cacheBuffer.add(key) else {
-            return
+            return false
         }
         let metadata = cache[discardedElement]!
         currentCost = currentCost - metadata.cost
 
         cache[discardedElement] = nil
+        
+        return true
     }
     
-    private func purgeBasedOnCost() {
+    private func purgeBasedOnCost() -> Bool {
         guard currentCost > maxCost else {
-            return
+            return false
         }
         
         var elementsToDiscard: Int = 0
@@ -101,6 +133,8 @@ public class Cache<Key: Hashable, Value> {
         // rebuild cacheBuffer, since as many as `elementsToDiscard` number of elements must be discarded
         cacheBuffer = CircularArray(size: maxElementsCount,
                                     initialValue: Array(currentCacheBuffer.prefix(upTo: currentCacheBuffer.count - elementsToDiscard)))
+        
+        return true
     }
     
 }
