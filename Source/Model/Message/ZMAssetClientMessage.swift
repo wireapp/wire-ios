@@ -129,7 +129,7 @@ import Foundation
                 hasEncryptionKeys = true
             }
         } else if self.imageMessageData != nil {
-            if let imageAsset = mediumGenericMessage?.imageAssetData, imageAsset.hasOtrKey() {
+            if let imageAsset = mediumGenericMessage?.imageAssetData, imageAsset.hasOtrKey {
                 hasEncryptionKeys = true
             }
         }

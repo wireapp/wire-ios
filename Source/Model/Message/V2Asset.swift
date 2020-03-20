@@ -97,8 +97,8 @@ extension UTType {
     }
 
     public var isAnimatedGIF: Bool {
-        return assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType
-            .flatMap(UTType.init(mimeType:))?.isGIF == true
+        guard let imageAsset = assetClientMessage.mediumGenericMessage?.imageAssetData else { return false }
+        return [imageAsset.mimeType].contains(where: { UTType.init(mimeType: $0)?.isGIF == true })
     }
 
     public var imageType: String? {
@@ -174,7 +174,7 @@ extension V2Asset: AssetProxyType {
 
     public func requestPreviewDownload() {
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
-        if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
+        if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
             NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName, context: moc.notificationContext, object: assetClientMessage.objectID).post()
         }
     }

@@ -113,13 +113,13 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
         
         if let assetData = self.previewGenericMessage?.imageAssetData,
-            assetData.hasMimeType()
+            assetData.hasMimeType
         {
             return assetData.mimeType
         }
         
         if let assetData = self.mediumGenericMessage?.imageAssetData,
-            assetData.hasMimeType()
+            assetData.hasMimeType
         {
             return assetData.mimeType
         }
@@ -195,63 +195,42 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         get {
             guard self.fileMessageData != nil else { return nil }
             guard let assetData = self.genericMessage(dataType: .thumbnail)?.assetData,
-                assetData.preview.remote.hasAssetId(),
-                let assetId = assetData.preview.remote.assetId,
-                !assetId.isEmpty
-            else { return nil }
-            return assetId
+                assetData.preview.remote.hasAssetID,
+                !assetData.preview.remote.assetID.isEmpty
+                else { return nil }
+            return assetData.preview.remote.assetID
         }
         
         set {
-
+            
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
-            guard self.fileMessageData != nil else { return }
-            
             guard let thumbnailMessage = self.genericMessage(dataType: .thumbnail) else { return }
-                
+            var message = GenericMessage()
+            guard var assetData = thumbnailMessage.assetData,
+                assetData.hasPreview,
+                assetData.preview.hasRemote else { return }
+            assetData.preview.remote.assetID = newValue ?? ""
             
-            let remoteBuilder = ZMAssetRemoteDataBuilder()
-            let previewBuilder = ZMAssetPreviewBuilder()
-            let assetBuilder = ZMAssetBuilder()
-            let messageBuilder = ZMGenericMessageBuilder()
-
-            if let assetData = thumbnailMessage.assetData {
-                if assetData.hasPreview() {
-                    if assetData.preview.hasRemote() {
-                        remoteBuilder.merge(from:assetData.preview.remote)
-                    }
-                    previewBuilder.merge(from:assetData.preview)
-                }
-                assetBuilder.merge(from: assetData)
-            }
-            messageBuilder.merge(from: thumbnailMessage)
-            remoteBuilder.setAssetId(newValue)
-
-            previewBuilder.setRemote(remoteBuilder.build())
-            assetBuilder.setPreview(previewBuilder.build())
-            let asset = assetBuilder.build()!
-            
-            if self.isEphemeral {
-                messageBuilder.setEphemeral(ZMEphemeral.ephemeral(content: asset, expiresAfter: deletionTimeout))
-            } else {
-                messageBuilder.setAsset(asset)
-            }
-            
-            self.replaceGenericMessageForThumbnail(with: messageBuilder.build())
+            try? message.merge(serializedData: thumbnailMessage.serializedData())
+            message.update(asset: assetData)
+            self.replaceGenericMessageForThumbnail(with: message)
         }
     }
     
-    private func replaceGenericMessageForThumbnail(with genericMessage: ZMGenericMessage) {
-        self.cachedGenericAssetMessage = nil
+    private func replaceGenericMessageForThumbnail(with genericMessage: GenericMessage) {
+        self.cachedUnderlyingAssetMessage = nil
         
         self.dataSet
             .map { $0 as! ZMGenericMessageData }
             .forEach { data in
-                let dataMessage = data.genericMessage
+                let dataMessage = data.underlyingMessage
                 if let assetData = dataMessage?.assetData,
-                    assetData.hasPreview() && !assetData.hasUploaded() {
-                    data.data = genericMessage.data()
+                    assetData.hasPreview {
+                    do {
+                        let genericMessageData = try genericMessage.serializedData()
+                        data.data =  genericMessageData
+                    } catch {}
                 }
         }
     }

@@ -16,27 +16,63 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+@available(*, deprecated)
 public extension ZMAssetOriginal {
     var hasRasterImage: Bool {
         return hasImage() && UTType(mimeType: mimeType)?.isSVG == false
     }
 }
 
+@available(*, deprecated)
 fileprivate extension ZMImageAsset {
     var isRaster: Bool {
         return UTType(mimeType: mimeType)?.isSVG == false
     }
 }
 
+@available(*, deprecated)
 public extension ZMGenericMessage {
     var hasRasterImage: Bool {
         return hasImage() && image.isRaster
     }
 }
 
+@available(*, deprecated)
 public extension ZMEphemeral {
     var hasRasterImage: Bool {
         return hasImage() && image.isRaster
     }
 }
 
+public extension WireProtos.Asset.Original {
+    var hasRasterImage: Bool {
+        guard case .image? = self.metaData,
+            UTType(mimeType: mimeType)?.isSVG == false else { return false }
+        return true
+    }
+}
+
+fileprivate extension ImageAsset {
+    var isRaster: Bool {
+        return UTType(mimeType: mimeType)?.isSVG == false
+    }
+}
+
+public extension GenericMessage {
+    var hasRasterImage: Bool {
+        guard let content = content else { return false }
+        switch content {
+        case .image(let data):
+            return data.isRaster
+        case .ephemeral(let data):
+            switch data.content {
+            case .image(let image)?:
+                return image.isRaster
+            default:
+                return false
+            }
+        default:
+            return false
+        }
+    }
+}

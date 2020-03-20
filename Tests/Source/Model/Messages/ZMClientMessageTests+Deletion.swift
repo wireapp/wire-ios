@@ -579,9 +579,9 @@ extension ZMClientMessageTests_Deletion {
 
             XCTAssertNil(cache.assetData(message, encrypted: true))
             XCTAssertNil(cache.assetData(message, encrypted: false))
-            
+
         } else if let clientMessage = message as? ZMClientMessage {
-            XCTAssertNil(clientMessage.genericMessage, line: line)
+            XCTAssertNil(clientMessage.underlyingMessage, line: line)
         }
     }
 
