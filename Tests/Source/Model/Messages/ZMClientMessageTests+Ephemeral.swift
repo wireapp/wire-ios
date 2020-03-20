@@ -280,7 +280,7 @@ extension ZMClientMessageTests_Ephemeral {
             
             // then
             XCTAssertNil(message.sender)
-            XCTAssertNil(message.genericMessage)
+            XCTAssertNil(message.underlyingMessage)
         }
     }
     
@@ -305,7 +305,7 @@ extension ZMClientMessageTests_Ephemeral {
             
             // then
             XCTAssertNil(message.sender)
-            XCTAssertNil(message.genericMessage)
+            XCTAssertNil(message.underlyingMessage)
         }
     }
     
@@ -402,7 +402,7 @@ extension ZMClientMessageTests_Ephemeral {
 
         XCTAssertNotEqual(deleteMessage, message)
         XCTAssertNotNil(message.sender)
-        XCTAssertNil(message.genericMessage)
+        XCTAssertNil(message.underlyingMessage)
         XCTAssertNil(message.destructionDate)
     }
     

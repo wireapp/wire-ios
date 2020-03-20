@@ -99,7 +99,7 @@ extension GenericMessage {
         }        
     }
     
-    var imageAssetData : ImageAsset? {
+    public var imageAssetData : ImageAsset? {
         guard let content = content else { return nil }
         switch content {
         case .image(let data):
@@ -116,7 +116,7 @@ extension GenericMessage {
         }        
     }
 
-    var assetData: WireProtos.Asset? {
+    public var assetData: WireProtos.Asset? {
         guard let content = content else { return nil }
         switch content {
         case .asset(let data):
@@ -124,6 +124,23 @@ extension GenericMessage {
         case .ephemeral(let data):
             switch data.content {
             case .asset(let data)?:
+                return data
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
+    public var knockData : Knock? {
+        guard let content = content else { return nil }
+        switch content {
+        case .knock(let data):
+            return data
+        case .ephemeral(let data):
+            switch data.content {
+            case .knock(let data)?:
                 return data
             default:
                 return nil
@@ -150,6 +167,26 @@ extension GenericMessage {
             return nil
         }
         return nil
+    }
+}
+
+extension GenericMessage {
+    var linkPreviews: [LinkPreview] {
+        guard let content = content else { return [] }
+        switch content {
+        case .text:
+            return text.linkPreview.compactMap { $0 }
+        case .edited:
+            return edited.text.linkPreview.compactMap { $0 }
+        case .ephemeral(let ephemeral):
+            if case .text? = ephemeral.content {
+                return ephemeral.text.linkPreview.compactMap { $0 }
+            } else {
+                return []
+            }
+        default:
+            return []
+        }
     }
 }
 
@@ -281,6 +318,13 @@ public extension NewOtrMessage {
 }
 
 extension Location: EphemeralMessageCapable {
+    init(latitude: Float, longitude: Float) {
+        self = WireProtos.Location.with({
+            $0.latitude = latitude
+            $0.longitude = longitude
+        })
+    }
+
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.location = self
     }
@@ -524,6 +568,17 @@ extension WireProtos.Asset: EphemeralMessageCapable {
         })
     }
     
+    init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
+        self = WireProtos.Asset.with({
+            if let original = original {
+                $0.original = original
+            }
+            if let preview = preview {
+                $0.preview = preview
+            }
+        })
+    }
+
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
     }
@@ -715,6 +770,24 @@ extension GenericMessage {
             return
         }
     }
+    
+    public mutating func update(asset: WireProtos.Asset) {
+        guard let content = content else { return }
+        switch content {
+        case .asset:
+            self.asset = asset
+        case .ephemeral(let data):
+            switch data.content {
+            case .asset?:
+                self.ephemeral.asset = asset
+            default:
+                return
+            }
+        default:
+            return
+        }
+    }
+
 }
 
 // MARK:- Set message flags

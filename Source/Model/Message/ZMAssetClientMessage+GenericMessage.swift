@@ -27,16 +27,16 @@ extension ZMAssetClientMessage {
             .first
     }
     
-    public var mediumGenericMessage: ZMGenericMessage? {
-        return self.genericMessageDataFromDataSet(for: .medium)?.genericMessage
+    public var mediumGenericMessage: GenericMessage? {
+        return self.genericMessageDataFromDataSet(for: .medium)?.underlyingMessage
     }
     
     static func keyPathsForValuesAffectingMediumGenericMessage() -> Set<String> {
         return Set([#keyPath(ZMOTRMessage.dataSet), #keyPath(ZMOTRMessage.dataSet)+".data"])
     }
     
-    public var previewGenericMessage: ZMGenericMessage? {
-        return self.genericMessageDataFromDataSet(for: .preview)?.genericMessage
+    public var previewGenericMessage: GenericMessage? {
+        return self.genericMessageDataFromDataSet(for: .preview)?.underlyingMessage
     }
     
     static func keyPathsForValuesAffectingPreviewGenericMessage() -> Set<String> {
@@ -71,6 +71,7 @@ extension ZMAssetClientMessage {
         return self.cachedUnderlyingAssetMessage
     }
     
+    @available(*, deprecated)
     public func add(_ genericMessage: ZMGenericMessage) {
         _ = self.mergeWithExistingData(data: genericMessage.data())
     }
@@ -145,25 +146,32 @@ extension ZMAssetClientMessage {
     }
     
     /// Returns the generic message for the given representation
-    func genericMessage(dataType: AssetClientMessageDataType) -> ZMGenericMessage? {
+    func genericMessage(dataType: AssetClientMessageDataType) -> GenericMessage? {
         
         if self.fileMessageData != nil {
             switch dataType {
             case .fullAsset:
-                guard let genericMessage = self.genericAssetMessage,
+                guard let genericMessage = self.underlyingMessage,
                     let assetData = genericMessage.assetData,
-                    assetData.hasUploaded()
+                    case .uploaded? = assetData.status
                     else { return nil }
                 return genericMessage
             case .placeholder:
-                return self.genericMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
                     guard let assetData = message.assetData else { return false }
-                    return assetData.hasOriginal() || assetData.hasNotUploaded()
+                    guard case .notUploaded? = assetData.status else {
+                        return assetData.hasOriginal
+                    }
+                    return true
                 })
             case .thumbnail:
-                return self.genericMessageMergedFromDataSet(filter: { (message) -> Bool in
+                return self.underlyingMessageMergedFromDataSet(filter: { (message) -> Bool in
                     guard let assetData = message.assetData else { return false }
-                    return assetData.hasPreview() && !assetData.hasUploaded()
+                    if let status = assetData.status {
+                        guard case .notUploaded = status else { return false }
+                        return assetData.hasPreview
+                    }
+                    return assetData.hasPreview
                 })
             }
         }
@@ -195,13 +203,13 @@ extension ZMAssetClientMessage {
     public override func update(with message: ZMGenericMessage, updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
         self.add(message)
         self.version = 3 // We assume received assets are V3 since backend no longer supports sending V2 assets.
-        
+
         if let assetData = message.assetData, assetData.hasUploaded() {
             if assetData.uploaded.hasAssetId() {
                 self.updateTransferState(.uploaded, synchronize: false)
             }
         }
-        
+
         if let assetData = message.assetData, assetData.hasNotUploaded(), self.transferState != .uploaded {
             ///TODO: change ZMAssetNotUploaded to NS_CLOSED_ENUM
             switch assetData.notUploaded {
