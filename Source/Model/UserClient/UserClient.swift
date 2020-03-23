@@ -194,7 +194,7 @@ public class UserClient: ZMManagedObject, UserClientType {
         userClient.user = selfUser
         userClient.model = model
         userClient.label = label
-        userClient.deviceClass = model.hasSuffix("iPad") ? .tablet : .phone
+        userClient.deviceClass = model.hasPrefix("iPad") ? .tablet : .phone
         
         return userClient
     }
