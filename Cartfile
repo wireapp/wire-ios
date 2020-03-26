@@ -1,3 +1,3 @@
-github "wireapp/wire-ios-protos" ~> 21.0
+github "wireapp/wire-ios-protos" ~> 22.0
 github "wireapp/wire-ios-transport" ~> 68.0
 github "wireapp/wire-ios-cryptobox" ~> 21.0
