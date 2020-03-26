@@ -116,6 +116,9 @@ NSString *NSStringFromZMLegalHoldStatus(ZMLegalHoldStatus value) {
 @property (strong) ZMReaction* reaction;
 @property (strong) ZMEphemeral* ephemeral;
 @property (strong) ZMAvailability* availability;
+@property (strong) ZMComposite* composite;
+@property (strong) ZMButtonAction* buttonAction;
+@property (strong) ZMButtonActionConfirmation* buttonActionConfirmation;
 @end
 
 @implementation ZMGenericMessage
@@ -246,6 +249,27 @@ NSString *NSStringFromZMLegalHoldStatus(ZMLegalHoldStatus value) {
   hasAvailability_ = !!_value_;
 }
 @synthesize availability;
+- (BOOL) hasComposite {
+  return !!hasComposite_;
+}
+- (void) setHasComposite:(BOOL) _value_ {
+  hasComposite_ = !!_value_;
+}
+@synthesize composite;
+- (BOOL) hasButtonAction {
+  return !!hasButtonAction_;
+}
+- (void) setHasButtonAction:(BOOL) _value_ {
+  hasButtonAction_ = !!_value_;
+}
+@synthesize buttonAction;
+- (BOOL) hasButtonActionConfirmation {
+  return !!hasButtonActionConfirmation_;
+}
+- (void) setHasButtonActionConfirmation:(BOOL) _value_ {
+  hasButtonActionConfirmation_ = !!_value_;
+}
+@synthesize buttonActionConfirmation;
 - (instancetype) init {
   if ((self = [super init])) {
     self.messageId = @"";
@@ -266,6 +290,9 @@ NSString *NSStringFromZMLegalHoldStatus(ZMLegalHoldStatus value) {
     self.reaction = [ZMReaction defaultInstance];
     self.ephemeral = [ZMEphemeral defaultInstance];
     self.availability = [ZMAvailability defaultInstance];
+    self.composite = [ZMComposite defaultInstance];
+    self.buttonAction = [ZMButtonAction defaultInstance];
+    self.buttonActionConfirmation = [ZMButtonActionConfirmation defaultInstance];
   }
   return self;
 }
@@ -365,6 +392,21 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       return NO;
     }
   }
+  if (self.hasComposite) {
+    if (!self.composite.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasButtonAction) {
+    if (!self.buttonAction.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasButtonActionConfirmation) {
+    if (!self.buttonActionConfirmation.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -421,6 +463,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAvailability) {
     [output writeMessage:19 value:self.availability];
+  }
+  if (self.hasComposite) {
+    [output writeMessage:20 value:self.composite];
+  }
+  if (self.hasButtonAction) {
+    [output writeMessage:21 value:self.buttonAction];
+  }
+  if (self.hasButtonActionConfirmation) {
+    [output writeMessage:22 value:self.buttonActionConfirmation];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -484,6 +535,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAvailability) {
     size_ += computeMessageSize(19, self.availability);
+  }
+  if (self.hasComposite) {
+    size_ += computeMessageSize(20, self.composite);
+  }
+  if (self.hasButtonAction) {
+    size_ += computeMessageSize(21, self.buttonAction);
+  }
+  if (self.hasButtonActionConfirmation) {
+    size_ += computeMessageSize(22, self.buttonActionConfirmation);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -622,6 +682,24 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasComposite) {
+    [output appendFormat:@"%@%@ {\n", indent, @"composite"];
+    [self.composite writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasButtonAction) {
+    [output appendFormat:@"%@%@ {\n", indent, @"buttonAction"];
+    [self.buttonAction writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasButtonActionConfirmation) {
+    [output appendFormat:@"%@%@ {\n", indent, @"buttonActionConfirmation"];
+    [self.buttonActionConfirmation writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -711,6 +789,21 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
    [self.availability storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"availability"];
   }
+  if (self.hasComposite) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.composite storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"composite"];
+  }
+  if (self.hasButtonAction) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.buttonAction storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"buttonAction"];
+  }
+  if (self.hasButtonActionConfirmation) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.buttonActionConfirmation storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"buttonActionConfirmation"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -758,6 +851,12 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
       (!self.hasEphemeral || [self.ephemeral isEqual:otherMessage.ephemeral]) &&
       self.hasAvailability == otherMessage.hasAvailability &&
       (!self.hasAvailability || [self.availability isEqual:otherMessage.availability]) &&
+      self.hasComposite == otherMessage.hasComposite &&
+      (!self.hasComposite || [self.composite isEqual:otherMessage.composite]) &&
+      self.hasButtonAction == otherMessage.hasButtonAction &&
+      (!self.hasButtonAction || [self.buttonAction isEqual:otherMessage.buttonAction]) &&
+      self.hasButtonActionConfirmation == otherMessage.hasButtonActionConfirmation &&
+      (!self.hasButtonActionConfirmation || [self.buttonActionConfirmation isEqual:otherMessage.buttonActionConfirmation]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -815,6 +914,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (self.hasAvailability) {
     hashCode = hashCode * 31 + [self.availability hash];
+  }
+  if (self.hasComposite) {
+    hashCode = hashCode * 31 + [self.composite hash];
+  }
+  if (self.hasButtonAction) {
+    hashCode = hashCode * 31 + [self.buttonAction hash];
+  }
+  if (self.hasButtonActionConfirmation) {
+    hashCode = hashCode * 31 + [self.buttonActionConfirmation hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -912,6 +1020,15 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
   }
   if (other.hasAvailability) {
     [self mergeAvailability:other.availability];
+  }
+  if (other.hasComposite) {
+    [self mergeComposite:other.composite];
+  }
+  if (other.hasButtonAction) {
+    [self mergeButtonAction:other.buttonAction];
+  }
+  if (other.hasButtonActionConfirmation) {
+    [self mergeButtonActionConfirmation:other.buttonActionConfirmation];
   }
   [self mergeUnknownFields:other.unknownFields];
   return self;
@@ -1089,6 +1206,33 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setAvailability:[subBuilder buildPartial]];
+        break;
+      }
+      case 162: {
+        ZMCompositeBuilder* subBuilder = [ZMComposite builder];
+        if (self.hasComposite) {
+          [subBuilder mergeFrom:self.composite];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setComposite:[subBuilder buildPartial]];
+        break;
+      }
+      case 170: {
+        ZMButtonActionBuilder* subBuilder = [ZMButtonAction builder];
+        if (self.hasButtonAction) {
+          [subBuilder mergeFrom:self.buttonAction];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setButtonAction:[subBuilder buildPartial]];
+        break;
+      }
+      case 178: {
+        ZMButtonActionConfirmationBuilder* subBuilder = [ZMButtonActionConfirmation builder];
+        if (self.hasButtonActionConfirmation) {
+          [subBuilder mergeFrom:self.buttonActionConfirmation];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setButtonActionConfirmation:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1604,6 +1748,1526 @@ static ZMGenericMessage* defaultZMGenericMessageInstance = nil;
 - (ZMGenericMessageBuilder*) clearAvailability {
   resultGenericMessage.hasAvailability = NO;
   resultGenericMessage.availability = [ZMAvailability defaultInstance];
+  return self;
+}
+- (BOOL) hasComposite {
+  return resultGenericMessage.hasComposite;
+}
+- (ZMComposite*) composite {
+  return resultGenericMessage.composite;
+}
+- (ZMGenericMessageBuilder*) setComposite:(ZMComposite*) value {
+  resultGenericMessage.hasComposite = YES;
+  resultGenericMessage.composite = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setCompositeBuilder:(ZMCompositeBuilder*) builderForValue {
+  return [self setComposite:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeComposite:(ZMComposite*) value {
+  if (resultGenericMessage.hasComposite &&
+      resultGenericMessage.composite != [ZMComposite defaultInstance]) {
+    resultGenericMessage.composite =
+      [[[ZMComposite builderWithPrototype:resultGenericMessage.composite] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.composite = value;
+  }
+  resultGenericMessage.hasComposite = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearComposite {
+  resultGenericMessage.hasComposite = NO;
+  resultGenericMessage.composite = [ZMComposite defaultInstance];
+  return self;
+}
+- (BOOL) hasButtonAction {
+  return resultGenericMessage.hasButtonAction;
+}
+- (ZMButtonAction*) buttonAction {
+  return resultGenericMessage.buttonAction;
+}
+- (ZMGenericMessageBuilder*) setButtonAction:(ZMButtonAction*) value {
+  resultGenericMessage.hasButtonAction = YES;
+  resultGenericMessage.buttonAction = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setButtonActionBuilder:(ZMButtonActionBuilder*) builderForValue {
+  return [self setButtonAction:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeButtonAction:(ZMButtonAction*) value {
+  if (resultGenericMessage.hasButtonAction &&
+      resultGenericMessage.buttonAction != [ZMButtonAction defaultInstance]) {
+    resultGenericMessage.buttonAction =
+      [[[ZMButtonAction builderWithPrototype:resultGenericMessage.buttonAction] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.buttonAction = value;
+  }
+  resultGenericMessage.hasButtonAction = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearButtonAction {
+  resultGenericMessage.hasButtonAction = NO;
+  resultGenericMessage.buttonAction = [ZMButtonAction defaultInstance];
+  return self;
+}
+- (BOOL) hasButtonActionConfirmation {
+  return resultGenericMessage.hasButtonActionConfirmation;
+}
+- (ZMButtonActionConfirmation*) buttonActionConfirmation {
+  return resultGenericMessage.buttonActionConfirmation;
+}
+- (ZMGenericMessageBuilder*) setButtonActionConfirmation:(ZMButtonActionConfirmation*) value {
+  resultGenericMessage.hasButtonActionConfirmation = YES;
+  resultGenericMessage.buttonActionConfirmation = value;
+  return self;
+}
+- (ZMGenericMessageBuilder*) setButtonActionConfirmationBuilder:(ZMButtonActionConfirmationBuilder*) builderForValue {
+  return [self setButtonActionConfirmation:[builderForValue build]];
+}
+- (ZMGenericMessageBuilder*) mergeButtonActionConfirmation:(ZMButtonActionConfirmation*) value {
+  if (resultGenericMessage.hasButtonActionConfirmation &&
+      resultGenericMessage.buttonActionConfirmation != [ZMButtonActionConfirmation defaultInstance]) {
+    resultGenericMessage.buttonActionConfirmation =
+      [[[ZMButtonActionConfirmation builderWithPrototype:resultGenericMessage.buttonActionConfirmation] mergeFrom:value] buildPartial];
+  } else {
+    resultGenericMessage.buttonActionConfirmation = value;
+  }
+  resultGenericMessage.hasButtonActionConfirmation = YES;
+  return self;
+}
+- (ZMGenericMessageBuilder*) clearButtonActionConfirmation {
+  resultGenericMessage.hasButtonActionConfirmation = NO;
+  resultGenericMessage.buttonActionConfirmation = [ZMButtonActionConfirmation defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMComposite ()
+@property (strong) NSMutableArray<ZMCompositeItem*> * itemsArray;
+@property BOOL expectsReadConfirmation;
+@property ZMLegalHoldStatus legalHoldStatus;
+@end
+
+@implementation ZMComposite
+
+@synthesize itemsArray;
+@dynamic items;
+- (BOOL) hasExpectsReadConfirmation {
+  return !!hasExpectsReadConfirmation_;
+}
+- (void) setHasExpectsReadConfirmation:(BOOL) _value_ {
+  hasExpectsReadConfirmation_ = !!_value_;
+}
+- (BOOL) expectsReadConfirmation {
+  return !!expectsReadConfirmation_;
+}
+- (void) setExpectsReadConfirmation:(BOOL) _value_ {
+  expectsReadConfirmation_ = !!_value_;
+}
+- (BOOL) hasLegalHoldStatus {
+  return !!hasLegalHoldStatus_;
+}
+- (void) setHasLegalHoldStatus:(BOOL) _value_ {
+  hasLegalHoldStatus_ = !!_value_;
+}
+@synthesize legalHoldStatus;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.expectsReadConfirmation = NO;
+    self.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
+  }
+  return self;
+}
+static ZMComposite* defaultZMCompositeInstance = nil;
++ (void) initialize {
+  if (self == [ZMComposite class]) {
+    defaultZMCompositeInstance = [[ZMComposite alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMCompositeInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMCompositeInstance;
+}
+- (NSArray<ZMCompositeItem*> *)items {
+  return itemsArray;
+}
+- (ZMCompositeItem*)itemsAtIndex:(NSUInteger)index {
+  return [itemsArray objectAtIndex:index];
+}
+- (BOOL) isInitialized {
+  __block BOOL isInititems = YES;
+   [self.items enumerateObjectsUsingBlock:^(ZMCompositeItem *element, NSUInteger idx, BOOL *stop) {
+    if (!element.isInitialized) {
+      isInititems = NO;
+      *stop = YES;
+    }
+  }];
+  if (!isInititems) return isInititems;
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  [self.itemsArray enumerateObjectsUsingBlock:^(ZMCompositeItem *element, NSUInteger idx, BOOL *stop) {
+    [output writeMessage:1 value:element];
+  }];
+  if (self.hasExpectsReadConfirmation) {
+    [output writeBool:2 value:self.expectsReadConfirmation];
+  }
+  if (self.hasLegalHoldStatus) {
+    [output writeEnum:3 value:self.legalHoldStatus];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  [self.itemsArray enumerateObjectsUsingBlock:^(ZMCompositeItem *element, NSUInteger idx, BOOL *stop) {
+    size_ += computeMessageSize(1, element);
+  }];
+  if (self.hasExpectsReadConfirmation) {
+    size_ += computeBoolSize(2, self.expectsReadConfirmation);
+  }
+  if (self.hasLegalHoldStatus) {
+    size_ += computeEnumSize(3, self.legalHoldStatus);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMComposite*) parseFromData:(NSData*) data {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromData:data] build];
+}
++ (ZMComposite*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMComposite*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromInputStream:input] build];
+}
++ (ZMComposite*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMComposite*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMComposite*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMComposite*)[[[ZMComposite builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMCompositeBuilder*) builder {
+  return [[ZMCompositeBuilder alloc] init];
+}
++ (ZMCompositeBuilder*) builderWithPrototype:(ZMComposite*) prototype {
+  return [[ZMComposite builder] mergeFrom:prototype];
+}
+- (ZMCompositeBuilder*) builder {
+  return [ZMComposite builder];
+}
+- (ZMCompositeBuilder*) toBuilder {
+  return [ZMComposite builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  [self.itemsArray enumerateObjectsUsingBlock:^(ZMCompositeItem *element, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@ {\n", indent, @"items"];
+    [element writeDescriptionTo:output
+                     withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }];
+  if (self.hasExpectsReadConfirmation) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"expectsReadConfirmation", [NSNumber numberWithBool:self.expectsReadConfirmation]];
+  }
+  if (self.hasLegalHoldStatus) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"legalHoldStatus", NSStringFromZMLegalHoldStatus(self.legalHoldStatus)];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  for (ZMCompositeItem* element in self.itemsArray) {
+    NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
+    [element storeInDictionary:elementDictionary];
+    [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"items"];
+  }
+  if (self.hasExpectsReadConfirmation) {
+    [dictionary setObject: [NSNumber numberWithBool:self.expectsReadConfirmation] forKey: @"expectsReadConfirmation"];
+  }
+  if (self.hasLegalHoldStatus) {
+    [dictionary setObject: @(self.legalHoldStatus) forKey: @"legalHoldStatus"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMComposite class]]) {
+    return NO;
+  }
+  ZMComposite *otherMessage = other;
+  return
+      [self.itemsArray isEqualToArray:otherMessage.itemsArray] &&
+      self.hasExpectsReadConfirmation == otherMessage.hasExpectsReadConfirmation &&
+      (!self.hasExpectsReadConfirmation || self.expectsReadConfirmation == otherMessage.expectsReadConfirmation) &&
+      self.hasLegalHoldStatus == otherMessage.hasLegalHoldStatus &&
+      (!self.hasLegalHoldStatus || self.legalHoldStatus == otherMessage.legalHoldStatus) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  [self.itemsArray enumerateObjectsUsingBlock:^(ZMCompositeItem *element, NSUInteger idx, BOOL *stop) {
+    hashCode = hashCode * 31 + [element hash];
+  }];
+  if (self.hasExpectsReadConfirmation) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithBool:self.expectsReadConfirmation] hash];
+  }
+  if (self.hasLegalHoldStatus) {
+    hashCode = hashCode * 31 + self.legalHoldStatus;
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMCompositeItem ()
+@property (strong) ZMText* text;
+@property (strong) ZMButton* button;
+@end
+
+@implementation ZMCompositeItem
+
+- (BOOL) hasText {
+  return !!hasText_;
+}
+- (void) setHasText:(BOOL) _value_ {
+  hasText_ = !!_value_;
+}
+@synthesize text;
+- (BOOL) hasButton {
+  return !!hasButton_;
+}
+- (void) setHasButton:(BOOL) _value_ {
+  hasButton_ = !!_value_;
+}
+@synthesize button;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.text = [ZMText defaultInstance];
+    self.button = [ZMButton defaultInstance];
+  }
+  return self;
+}
+static ZMCompositeItem* defaultZMCompositeItemInstance = nil;
++ (void) initialize {
+  if (self == [ZMCompositeItem class]) {
+    defaultZMCompositeItemInstance = [[ZMCompositeItem alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMCompositeItemInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMCompositeItemInstance;
+}
+- (BOOL) isInitialized {
+  if (self.hasText) {
+    if (!self.text.isInitialized) {
+      return NO;
+    }
+  }
+  if (self.hasButton) {
+    if (!self.button.isInitialized) {
+      return NO;
+    }
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasText) {
+    [output writeMessage:1 value:self.text];
+  }
+  if (self.hasButton) {
+    [output writeMessage:2 value:self.button];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasText) {
+    size_ += computeMessageSize(1, self.text);
+  }
+  if (self.hasButton) {
+    size_ += computeMessageSize(2, self.button);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMCompositeItem*) parseFromData:(NSData*) data {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromData:data] build];
+}
++ (ZMCompositeItem*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMCompositeItem*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromInputStream:input] build];
+}
++ (ZMCompositeItem*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMCompositeItem*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMCompositeItem*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMCompositeItem*)[[[ZMCompositeItem builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMCompositeItemBuilder*) builder {
+  return [[ZMCompositeItemBuilder alloc] init];
+}
++ (ZMCompositeItemBuilder*) builderWithPrototype:(ZMCompositeItem*) prototype {
+  return [[ZMCompositeItem builder] mergeFrom:prototype];
+}
+- (ZMCompositeItemBuilder*) builder {
+  return [ZMCompositeItem builder];
+}
+- (ZMCompositeItemBuilder*) toBuilder {
+  return [ZMCompositeItem builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasText) {
+    [output appendFormat:@"%@%@ {\n", indent, @"text"];
+    [self.text writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  if (self.hasButton) {
+    [output appendFormat:@"%@%@ {\n", indent, @"button"];
+    [self.button writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasText) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.text storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"text"];
+  }
+  if (self.hasButton) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.button storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"button"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMCompositeItem class]]) {
+    return NO;
+  }
+  ZMCompositeItem *otherMessage = other;
+  return
+      self.hasText == otherMessage.hasText &&
+      (!self.hasText || [self.text isEqual:otherMessage.text]) &&
+      self.hasButton == otherMessage.hasButton &&
+      (!self.hasButton || [self.button isEqual:otherMessage.button]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasText) {
+    hashCode = hashCode * 31 + [self.text hash];
+  }
+  if (self.hasButton) {
+    hashCode = hashCode * 31 + [self.button hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMCompositeItemBuilder()
+@property (strong) ZMCompositeItem* resultItem;
+@end
+
+@implementation ZMCompositeItemBuilder
+@synthesize resultItem;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultItem = [[ZMCompositeItem alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultItem;
+}
+- (ZMCompositeItemBuilder*) clear {
+  self.resultItem = [[ZMCompositeItem alloc] init];
+  return self;
+}
+- (ZMCompositeItemBuilder*) clone {
+  return [ZMCompositeItem builderWithPrototype:resultItem];
+}
+- (ZMCompositeItem*) defaultInstance {
+  return [ZMCompositeItem defaultInstance];
+}
+- (ZMCompositeItem*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMCompositeItem*) buildPartial {
+  ZMCompositeItem* returnMe = resultItem;
+  self.resultItem = nil;
+  return returnMe;
+}
+- (ZMCompositeItemBuilder*) mergeFrom:(ZMCompositeItem*) other {
+  if (other == [ZMCompositeItem defaultInstance]) {
+    return self;
+  }
+  if (other.hasText) {
+    [self mergeText:other.text];
+  }
+  if (other.hasButton) {
+    [self mergeButton:other.button];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMCompositeItemBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMCompositeItemBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        ZMTextBuilder* subBuilder = [ZMText builder];
+        if (self.hasText) {
+          [subBuilder mergeFrom:self.text];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setText:[subBuilder buildPartial]];
+        break;
+      }
+      case 18: {
+        ZMButtonBuilder* subBuilder = [ZMButton builder];
+        if (self.hasButton) {
+          [subBuilder mergeFrom:self.button];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setButton:[subBuilder buildPartial]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasText {
+  return resultItem.hasText;
+}
+- (ZMText*) text {
+  return resultItem.text;
+}
+- (ZMCompositeItemBuilder*) setText:(ZMText*) value {
+  resultItem.hasText = YES;
+  resultItem.text = value;
+  return self;
+}
+- (ZMCompositeItemBuilder*) setTextBuilder:(ZMTextBuilder*) builderForValue {
+  return [self setText:[builderForValue build]];
+}
+- (ZMCompositeItemBuilder*) mergeText:(ZMText*) value {
+  if (resultItem.hasText &&
+      resultItem.text != [ZMText defaultInstance]) {
+    resultItem.text =
+      [[[ZMText builderWithPrototype:resultItem.text] mergeFrom:value] buildPartial];
+  } else {
+    resultItem.text = value;
+  }
+  resultItem.hasText = YES;
+  return self;
+}
+- (ZMCompositeItemBuilder*) clearText {
+  resultItem.hasText = NO;
+  resultItem.text = [ZMText defaultInstance];
+  return self;
+}
+- (BOOL) hasButton {
+  return resultItem.hasButton;
+}
+- (ZMButton*) button {
+  return resultItem.button;
+}
+- (ZMCompositeItemBuilder*) setButton:(ZMButton*) value {
+  resultItem.hasButton = YES;
+  resultItem.button = value;
+  return self;
+}
+- (ZMCompositeItemBuilder*) setButtonBuilder:(ZMButtonBuilder*) builderForValue {
+  return [self setButton:[builderForValue build]];
+}
+- (ZMCompositeItemBuilder*) mergeButton:(ZMButton*) value {
+  if (resultItem.hasButton &&
+      resultItem.button != [ZMButton defaultInstance]) {
+    resultItem.button =
+      [[[ZMButton builderWithPrototype:resultItem.button] mergeFrom:value] buildPartial];
+  } else {
+    resultItem.button = value;
+  }
+  resultItem.hasButton = YES;
+  return self;
+}
+- (ZMCompositeItemBuilder*) clearButton {
+  resultItem.hasButton = NO;
+  resultItem.button = [ZMButton defaultInstance];
+  return self;
+}
+@end
+
+@interface ZMCompositeBuilder()
+@property (strong) ZMComposite* resultComposite;
+@end
+
+@implementation ZMCompositeBuilder
+@synthesize resultComposite;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultComposite = [[ZMComposite alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultComposite;
+}
+- (ZMCompositeBuilder*) clear {
+  self.resultComposite = [[ZMComposite alloc] init];
+  return self;
+}
+- (ZMCompositeBuilder*) clone {
+  return [ZMComposite builderWithPrototype:resultComposite];
+}
+- (ZMComposite*) defaultInstance {
+  return [ZMComposite defaultInstance];
+}
+- (ZMComposite*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMComposite*) buildPartial {
+  ZMComposite* returnMe = resultComposite;
+  self.resultComposite = nil;
+  return returnMe;
+}
+- (ZMCompositeBuilder*) mergeFrom:(ZMComposite*) other {
+  if (other == [ZMComposite defaultInstance]) {
+    return self;
+  }
+  if (other.itemsArray.count > 0) {
+    if (resultComposite.itemsArray == nil) {
+      resultComposite.itemsArray = [[NSMutableArray alloc] initWithArray:other.itemsArray];
+    } else {
+      [resultComposite.itemsArray addObjectsFromArray:other.itemsArray];
+    }
+  }
+  if (other.hasExpectsReadConfirmation) {
+    [self setExpectsReadConfirmation:other.expectsReadConfirmation];
+  }
+  if (other.hasLegalHoldStatus) {
+    [self setLegalHoldStatus:other.legalHoldStatus];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMCompositeBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMCompositeBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        ZMCompositeItemBuilder* subBuilder = [ZMCompositeItem builder];
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self addItems:[subBuilder buildPartial]];
+        break;
+      }
+      case 16: {
+        [self setExpectsReadConfirmation:[input readBool]];
+        break;
+      }
+      case 24: {
+        ZMLegalHoldStatus value = (ZMLegalHoldStatus)[input readEnum];
+        if (ZMLegalHoldStatusIsValidValue(value)) {
+          [self setLegalHoldStatus:value];
+        } else {
+          [unknownFields mergeVarintField:3 value:value];
+        }
+        break;
+      }
+    }
+  }
+}
+- (NSMutableArray<ZMCompositeItem*> *)items {
+  return resultComposite.itemsArray;
+}
+- (ZMCompositeItem*)itemsAtIndex:(NSUInteger)index {
+  return [resultComposite itemsAtIndex:index];
+}
+- (ZMCompositeBuilder *)addItems:(ZMCompositeItem*)value {
+  if (resultComposite.itemsArray == nil) {
+    resultComposite.itemsArray = [[NSMutableArray alloc]init];
+  }
+  [resultComposite.itemsArray addObject:value];
+  return self;
+}
+- (ZMCompositeBuilder *)setItemsArray:(NSArray<ZMCompositeItem*> *)array {
+  resultComposite.itemsArray = [[NSMutableArray alloc]initWithArray:array];
+  return self;
+}
+- (ZMCompositeBuilder *)clearItems {
+  resultComposite.itemsArray = nil;
+  return self;
+}
+- (BOOL) hasExpectsReadConfirmation {
+  return resultComposite.hasExpectsReadConfirmation;
+}
+- (BOOL) expectsReadConfirmation {
+  return resultComposite.expectsReadConfirmation;
+}
+- (ZMCompositeBuilder*) setExpectsReadConfirmation:(BOOL) value {
+  resultComposite.hasExpectsReadConfirmation = YES;
+  resultComposite.expectsReadConfirmation = value;
+  return self;
+}
+- (ZMCompositeBuilder*) clearExpectsReadConfirmation {
+  resultComposite.hasExpectsReadConfirmation = NO;
+  resultComposite.expectsReadConfirmation = NO;
+  return self;
+}
+- (BOOL) hasLegalHoldStatus {
+  return resultComposite.hasLegalHoldStatus;
+}
+- (ZMLegalHoldStatus) legalHoldStatus {
+  return resultComposite.legalHoldStatus;
+}
+- (ZMCompositeBuilder*) setLegalHoldStatus:(ZMLegalHoldStatus) value {
+  resultComposite.hasLegalHoldStatus = YES;
+  resultComposite.legalHoldStatus = value;
+  return self;
+}
+- (ZMCompositeBuilder*) clearLegalHoldStatus {
+  resultComposite.hasLegalHoldStatus = NO;
+  resultComposite.legalHoldStatus = ZMLegalHoldStatusUNKNOWN;
+  return self;
+}
+@end
+
+@interface ZMButton ()
+@property (strong) NSString* text;
+@property (strong) NSString* id;
+@end
+
+@implementation ZMButton
+
+- (BOOL) hasText {
+  return !!hasText_;
+}
+- (void) setHasText:(BOOL) _value_ {
+  hasText_ = !!_value_;
+}
+@synthesize text;
+- (BOOL) hasId {
+  return !!hasId_;
+}
+- (void) setHasId:(BOOL) _value_ {
+  hasId_ = !!_value_;
+}
+@synthesize id;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.text = @"";
+    self.id = @"";
+  }
+  return self;
+}
+static ZMButton* defaultZMButtonInstance = nil;
++ (void) initialize {
+  if (self == [ZMButton class]) {
+    defaultZMButtonInstance = [[ZMButton alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMButtonInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMButtonInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasText) {
+    return NO;
+  }
+  if (!self.hasId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasText) {
+    [output writeString:1 value:self.text];
+  }
+  if (self.hasId) {
+    [output writeString:2 value:self.id];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasText) {
+    size_ += computeStringSize(1, self.text);
+  }
+  if (self.hasId) {
+    size_ += computeStringSize(2, self.id);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMButton*) parseFromData:(NSData*) data {
+  return (ZMButton*)[[[ZMButton builder] mergeFromData:data] build];
+}
++ (ZMButton*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButton*)[[[ZMButton builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMButton*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMButton*)[[[ZMButton builder] mergeFromInputStream:input] build];
+}
++ (ZMButton*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButton*)[[[ZMButton builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButton*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMButton*)[[[ZMButton builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMButton*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButton*)[[[ZMButton builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonBuilder*) builder {
+  return [[ZMButtonBuilder alloc] init];
+}
++ (ZMButtonBuilder*) builderWithPrototype:(ZMButton*) prototype {
+  return [[ZMButton builder] mergeFrom:prototype];
+}
+- (ZMButtonBuilder*) builder {
+  return [ZMButton builder];
+}
+- (ZMButtonBuilder*) toBuilder {
+  return [ZMButton builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasText) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"text", self.text];
+  }
+  if (self.hasId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"id", self.id];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasText) {
+    [dictionary setObject: self.text forKey: @"text"];
+  }
+  if (self.hasId) {
+    [dictionary setObject: self.id forKey: @"id"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMButton class]]) {
+    return NO;
+  }
+  ZMButton *otherMessage = other;
+  return
+      self.hasText == otherMessage.hasText &&
+      (!self.hasText || [self.text isEqual:otherMessage.text]) &&
+      self.hasId == otherMessage.hasId &&
+      (!self.hasId || [self.id isEqual:otherMessage.id]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasText) {
+    hashCode = hashCode * 31 + [self.text hash];
+  }
+  if (self.hasId) {
+    hashCode = hashCode * 31 + [self.id hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMButtonBuilder()
+@property (strong) ZMButton* resultButton;
+@end
+
+@implementation ZMButtonBuilder
+@synthesize resultButton;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultButton = [[ZMButton alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultButton;
+}
+- (ZMButtonBuilder*) clear {
+  self.resultButton = [[ZMButton alloc] init];
+  return self;
+}
+- (ZMButtonBuilder*) clone {
+  return [ZMButton builderWithPrototype:resultButton];
+}
+- (ZMButton*) defaultInstance {
+  return [ZMButton defaultInstance];
+}
+- (ZMButton*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMButton*) buildPartial {
+  ZMButton* returnMe = resultButton;
+  self.resultButton = nil;
+  return returnMe;
+}
+- (ZMButtonBuilder*) mergeFrom:(ZMButton*) other {
+  if (other == [ZMButton defaultInstance]) {
+    return self;
+  }
+  if (other.hasText) {
+    [self setText:other.text];
+  }
+  if (other.hasId) {
+    [self setId:other.id];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMButtonBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMButtonBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setText:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setId:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasText {
+  return resultButton.hasText;
+}
+- (NSString*) text {
+  return resultButton.text;
+}
+- (ZMButtonBuilder*) setText:(NSString*) value {
+  resultButton.hasText = YES;
+  resultButton.text = value;
+  return self;
+}
+- (ZMButtonBuilder*) clearText {
+  resultButton.hasText = NO;
+  resultButton.text = @"";
+  return self;
+}
+- (BOOL) hasId {
+  return resultButton.hasId;
+}
+- (NSString*) id {
+  return resultButton.id;
+}
+- (ZMButtonBuilder*) setId:(NSString*) value {
+  resultButton.hasId = YES;
+  resultButton.id = value;
+  return self;
+}
+- (ZMButtonBuilder*) clearId {
+  resultButton.hasId = NO;
+  resultButton.id = @"";
+  return self;
+}
+@end
+
+@interface ZMButtonAction ()
+@property (strong) NSString* buttonId;
+@property (strong) NSString* referenceMessageId;
+@end
+
+@implementation ZMButtonAction
+
+- (BOOL) hasButtonId {
+  return !!hasButtonId_;
+}
+- (void) setHasButtonId:(BOOL) _value_ {
+  hasButtonId_ = !!_value_;
+}
+@synthesize buttonId;
+- (BOOL) hasReferenceMessageId {
+  return !!hasReferenceMessageId_;
+}
+- (void) setHasReferenceMessageId:(BOOL) _value_ {
+  hasReferenceMessageId_ = !!_value_;
+}
+@synthesize referenceMessageId;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.buttonId = @"";
+    self.referenceMessageId = @"";
+  }
+  return self;
+}
+static ZMButtonAction* defaultZMButtonActionInstance = nil;
++ (void) initialize {
+  if (self == [ZMButtonAction class]) {
+    defaultZMButtonActionInstance = [[ZMButtonAction alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMButtonActionInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMButtonActionInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasButtonId) {
+    return NO;
+  }
+  if (!self.hasReferenceMessageId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasButtonId) {
+    [output writeString:1 value:self.buttonId];
+  }
+  if (self.hasReferenceMessageId) {
+    [output writeString:2 value:self.referenceMessageId];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasButtonId) {
+    size_ += computeStringSize(1, self.buttonId);
+  }
+  if (self.hasReferenceMessageId) {
+    size_ += computeStringSize(2, self.referenceMessageId);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMButtonAction*) parseFromData:(NSData*) data {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromData:data] build];
+}
++ (ZMButtonAction*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonAction*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromInputStream:input] build];
+}
++ (ZMButtonAction*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonAction*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMButtonAction*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonAction*)[[[ZMButtonAction builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonActionBuilder*) builder {
+  return [[ZMButtonActionBuilder alloc] init];
+}
++ (ZMButtonActionBuilder*) builderWithPrototype:(ZMButtonAction*) prototype {
+  return [[ZMButtonAction builder] mergeFrom:prototype];
+}
+- (ZMButtonActionBuilder*) builder {
+  return [ZMButtonAction builder];
+}
+- (ZMButtonActionBuilder*) toBuilder {
+  return [ZMButtonAction builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasButtonId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"buttonId", self.buttonId];
+  }
+  if (self.hasReferenceMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"referenceMessageId", self.referenceMessageId];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasButtonId) {
+    [dictionary setObject: self.buttonId forKey: @"buttonId"];
+  }
+  if (self.hasReferenceMessageId) {
+    [dictionary setObject: self.referenceMessageId forKey: @"referenceMessageId"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMButtonAction class]]) {
+    return NO;
+  }
+  ZMButtonAction *otherMessage = other;
+  return
+      self.hasButtonId == otherMessage.hasButtonId &&
+      (!self.hasButtonId || [self.buttonId isEqual:otherMessage.buttonId]) &&
+      self.hasReferenceMessageId == otherMessage.hasReferenceMessageId &&
+      (!self.hasReferenceMessageId || [self.referenceMessageId isEqual:otherMessage.referenceMessageId]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasButtonId) {
+    hashCode = hashCode * 31 + [self.buttonId hash];
+  }
+  if (self.hasReferenceMessageId) {
+    hashCode = hashCode * 31 + [self.referenceMessageId hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMButtonActionBuilder()
+@property (strong) ZMButtonAction* resultButtonAction;
+@end
+
+@implementation ZMButtonActionBuilder
+@synthesize resultButtonAction;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultButtonAction = [[ZMButtonAction alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultButtonAction;
+}
+- (ZMButtonActionBuilder*) clear {
+  self.resultButtonAction = [[ZMButtonAction alloc] init];
+  return self;
+}
+- (ZMButtonActionBuilder*) clone {
+  return [ZMButtonAction builderWithPrototype:resultButtonAction];
+}
+- (ZMButtonAction*) defaultInstance {
+  return [ZMButtonAction defaultInstance];
+}
+- (ZMButtonAction*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMButtonAction*) buildPartial {
+  ZMButtonAction* returnMe = resultButtonAction;
+  self.resultButtonAction = nil;
+  return returnMe;
+}
+- (ZMButtonActionBuilder*) mergeFrom:(ZMButtonAction*) other {
+  if (other == [ZMButtonAction defaultInstance]) {
+    return self;
+  }
+  if (other.hasButtonId) {
+    [self setButtonId:other.buttonId];
+  }
+  if (other.hasReferenceMessageId) {
+    [self setReferenceMessageId:other.referenceMessageId];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMButtonActionBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMButtonActionBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setButtonId:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setReferenceMessageId:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasButtonId {
+  return resultButtonAction.hasButtonId;
+}
+- (NSString*) buttonId {
+  return resultButtonAction.buttonId;
+}
+- (ZMButtonActionBuilder*) setButtonId:(NSString*) value {
+  resultButtonAction.hasButtonId = YES;
+  resultButtonAction.buttonId = value;
+  return self;
+}
+- (ZMButtonActionBuilder*) clearButtonId {
+  resultButtonAction.hasButtonId = NO;
+  resultButtonAction.buttonId = @"";
+  return self;
+}
+- (BOOL) hasReferenceMessageId {
+  return resultButtonAction.hasReferenceMessageId;
+}
+- (NSString*) referenceMessageId {
+  return resultButtonAction.referenceMessageId;
+}
+- (ZMButtonActionBuilder*) setReferenceMessageId:(NSString*) value {
+  resultButtonAction.hasReferenceMessageId = YES;
+  resultButtonAction.referenceMessageId = value;
+  return self;
+}
+- (ZMButtonActionBuilder*) clearReferenceMessageId {
+  resultButtonAction.hasReferenceMessageId = NO;
+  resultButtonAction.referenceMessageId = @"";
+  return self;
+}
+@end
+
+@interface ZMButtonActionConfirmation ()
+@property (strong) NSString* referenceMessageId;
+@property (strong) NSString* buttonId;
+@end
+
+@implementation ZMButtonActionConfirmation
+
+- (BOOL) hasReferenceMessageId {
+  return !!hasReferenceMessageId_;
+}
+- (void) setHasReferenceMessageId:(BOOL) _value_ {
+  hasReferenceMessageId_ = !!_value_;
+}
+@synthesize referenceMessageId;
+- (BOOL) hasButtonId {
+  return !!hasButtonId_;
+}
+- (void) setHasButtonId:(BOOL) _value_ {
+  hasButtonId_ = !!_value_;
+}
+@synthesize buttonId;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.referenceMessageId = @"";
+    self.buttonId = @"";
+  }
+  return self;
+}
+static ZMButtonActionConfirmation* defaultZMButtonActionConfirmationInstance = nil;
++ (void) initialize {
+  if (self == [ZMButtonActionConfirmation class]) {
+    defaultZMButtonActionConfirmationInstance = [[ZMButtonActionConfirmation alloc] init];
+  }
+}
++ (instancetype) defaultInstance {
+  return defaultZMButtonActionConfirmationInstance;
+}
+- (instancetype) defaultInstance {
+  return defaultZMButtonActionConfirmationInstance;
+}
+- (BOOL) isInitialized {
+  if (!self.hasReferenceMessageId) {
+    return NO;
+  }
+  return YES;
+}
+- (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
+  if (self.hasReferenceMessageId) {
+    [output writeString:1 value:self.referenceMessageId];
+  }
+  if (self.hasButtonId) {
+    [output writeString:2 value:self.buttonId];
+  }
+  [self.unknownFields writeToCodedOutputStream:output];
+}
+- (SInt32) serializedSize {
+  __block SInt32 size_ = memoizedSerializedSize;
+  if (size_ != -1) {
+    return size_;
+  }
+
+  size_ = 0;
+  if (self.hasReferenceMessageId) {
+    size_ += computeStringSize(1, self.referenceMessageId);
+  }
+  if (self.hasButtonId) {
+    size_ += computeStringSize(2, self.buttonId);
+  }
+  size_ += self.unknownFields.serializedSize;
+  memoizedSerializedSize = size_;
+  return size_;
+}
++ (ZMButtonActionConfirmation*) parseFromData:(NSData*) data {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromData:data] build];
+}
++ (ZMButtonActionConfirmation*) parseFromData:(NSData*) data extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromData:data extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonActionConfirmation*) parseFromInputStream:(NSInputStream*) input {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromInputStream:input] build];
+}
++ (ZMButtonActionConfirmation*) parseFromInputStream:(NSInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonActionConfirmation*) parseFromCodedInputStream:(PBCodedInputStream*) input {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromCodedInputStream:input] build];
+}
++ (ZMButtonActionConfirmation*) parseFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  return (ZMButtonActionConfirmation*)[[[ZMButtonActionConfirmation builder] mergeFromCodedInputStream:input extensionRegistry:extensionRegistry] build];
+}
++ (ZMButtonActionConfirmationBuilder*) builder {
+  return [[ZMButtonActionConfirmationBuilder alloc] init];
+}
++ (ZMButtonActionConfirmationBuilder*) builderWithPrototype:(ZMButtonActionConfirmation*) prototype {
+  return [[ZMButtonActionConfirmation builder] mergeFrom:prototype];
+}
+- (ZMButtonActionConfirmationBuilder*) builder {
+  return [ZMButtonActionConfirmation builder];
+}
+- (ZMButtonActionConfirmationBuilder*) toBuilder {
+  return [ZMButtonActionConfirmation builderWithPrototype:self];
+}
+- (void) writeDescriptionTo:(NSMutableString*) output withIndent:(NSString*) indent {
+  if (self.hasReferenceMessageId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"referenceMessageId", self.referenceMessageId];
+  }
+  if (self.hasButtonId) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"buttonId", self.buttonId];
+  }
+  [self.unknownFields writeDescriptionTo:output withIndent:indent];
+}
+- (void) storeInDictionary:(NSMutableDictionary *)dictionary {
+  if (self.hasReferenceMessageId) {
+    [dictionary setObject: self.referenceMessageId forKey: @"referenceMessageId"];
+  }
+  if (self.hasButtonId) {
+    [dictionary setObject: self.buttonId forKey: @"buttonId"];
+  }
+  [self.unknownFields storeInDictionary:dictionary];
+}
+- (BOOL) isEqual:(id)other {
+  if (other == self) {
+    return YES;
+  }
+  if (![other isKindOfClass:[ZMButtonActionConfirmation class]]) {
+    return NO;
+  }
+  ZMButtonActionConfirmation *otherMessage = other;
+  return
+      self.hasReferenceMessageId == otherMessage.hasReferenceMessageId &&
+      (!self.hasReferenceMessageId || [self.referenceMessageId isEqual:otherMessage.referenceMessageId]) &&
+      self.hasButtonId == otherMessage.hasButtonId &&
+      (!self.hasButtonId || [self.buttonId isEqual:otherMessage.buttonId]) &&
+      (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
+}
+- (NSUInteger) hash {
+  __block NSUInteger hashCode = 7;
+  if (self.hasReferenceMessageId) {
+    hashCode = hashCode * 31 + [self.referenceMessageId hash];
+  }
+  if (self.hasButtonId) {
+    hashCode = hashCode * 31 + [self.buttonId hash];
+  }
+  hashCode = hashCode * 31 + [self.unknownFields hash];
+  return hashCode;
+}
+@end
+
+@interface ZMButtonActionConfirmationBuilder()
+@property (strong) ZMButtonActionConfirmation* resultButtonActionConfirmation;
+@end
+
+@implementation ZMButtonActionConfirmationBuilder
+@synthesize resultButtonActionConfirmation;
+- (instancetype) init {
+  if ((self = [super init])) {
+    self.resultButtonActionConfirmation = [[ZMButtonActionConfirmation alloc] init];
+  }
+  return self;
+}
+- (PBGeneratedMessage*) internalGetResult {
+  return resultButtonActionConfirmation;
+}
+- (ZMButtonActionConfirmationBuilder*) clear {
+  self.resultButtonActionConfirmation = [[ZMButtonActionConfirmation alloc] init];
+  return self;
+}
+- (ZMButtonActionConfirmationBuilder*) clone {
+  return [ZMButtonActionConfirmation builderWithPrototype:resultButtonActionConfirmation];
+}
+- (ZMButtonActionConfirmation*) defaultInstance {
+  return [ZMButtonActionConfirmation defaultInstance];
+}
+- (ZMButtonActionConfirmation*) build {
+  [self checkInitialized];
+  return [self buildPartial];
+}
+- (ZMButtonActionConfirmation*) buildPartial {
+  ZMButtonActionConfirmation* returnMe = resultButtonActionConfirmation;
+  self.resultButtonActionConfirmation = nil;
+  return returnMe;
+}
+- (ZMButtonActionConfirmationBuilder*) mergeFrom:(ZMButtonActionConfirmation*) other {
+  if (other == [ZMButtonActionConfirmation defaultInstance]) {
+    return self;
+  }
+  if (other.hasReferenceMessageId) {
+    [self setReferenceMessageId:other.referenceMessageId];
+  }
+  if (other.hasButtonId) {
+    [self setButtonId:other.buttonId];
+  }
+  [self mergeUnknownFields:other.unknownFields];
+  return self;
+}
+- (ZMButtonActionConfirmationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input {
+  return [self mergeFromCodedInputStream:input extensionRegistry:[PBExtensionRegistry emptyRegistry]];
+}
+- (ZMButtonActionConfirmationBuilder*) mergeFromCodedInputStream:(PBCodedInputStream*) input extensionRegistry:(PBExtensionRegistry*) extensionRegistry {
+  PBUnknownFieldSetBuilder* unknownFields = [PBUnknownFieldSet builderWithUnknownFields:self.unknownFields];
+  while (YES) {
+    SInt32 tag = [input readTag];
+    switch (tag) {
+      case 0:
+        [self setUnknownFields:[unknownFields build]];
+        return self;
+      default: {
+        if (![self parseUnknownField:input unknownFields:unknownFields extensionRegistry:extensionRegistry tag:tag]) {
+          [self setUnknownFields:[unknownFields build]];
+          return self;
+        }
+        break;
+      }
+      case 10: {
+        [self setReferenceMessageId:[input readString]];
+        break;
+      }
+      case 18: {
+        [self setButtonId:[input readString]];
+        break;
+      }
+    }
+  }
+}
+- (BOOL) hasReferenceMessageId {
+  return resultButtonActionConfirmation.hasReferenceMessageId;
+}
+- (NSString*) referenceMessageId {
+  return resultButtonActionConfirmation.referenceMessageId;
+}
+- (ZMButtonActionConfirmationBuilder*) setReferenceMessageId:(NSString*) value {
+  resultButtonActionConfirmation.hasReferenceMessageId = YES;
+  resultButtonActionConfirmation.referenceMessageId = value;
+  return self;
+}
+- (ZMButtonActionConfirmationBuilder*) clearReferenceMessageId {
+  resultButtonActionConfirmation.hasReferenceMessageId = NO;
+  resultButtonActionConfirmation.referenceMessageId = @"";
+  return self;
+}
+- (BOOL) hasButtonId {
+  return resultButtonActionConfirmation.hasButtonId;
+}
+- (NSString*) buttonId {
+  return resultButtonActionConfirmation.buttonId;
+}
+- (ZMButtonActionConfirmationBuilder*) setButtonId:(NSString*) value {
+  resultButtonActionConfirmation.hasButtonId = YES;
+  resultButtonActionConfirmation.buttonId = value;
+  return self;
+}
+- (ZMButtonActionConfirmationBuilder*) clearButtonId {
+  resultButtonActionConfirmation.hasButtonId = NO;
+  resultButtonActionConfirmation.buttonId = @"";
   return self;
 }
 @end
@@ -5890,6 +7554,7 @@ static ZMMessageDelete* defaultZMMessageDeleteInstance = nil;
 @interface ZMMessageEdit ()
 @property (strong) NSString* replacingMessageId;
 @property (strong) ZMText* text;
+@property (strong) ZMComposite* composite;
 @end
 
 @implementation ZMMessageEdit
@@ -5908,10 +7573,18 @@ static ZMMessageDelete* defaultZMMessageDeleteInstance = nil;
   hasText_ = !!_value_;
 }
 @synthesize text;
+- (BOOL) hasComposite {
+  return !!hasComposite_;
+}
+- (void) setHasComposite:(BOOL) _value_ {
+  hasComposite_ = !!_value_;
+}
+@synthesize composite;
 - (instancetype) init {
   if ((self = [super init])) {
     self.replacingMessageId = @"";
     self.text = [ZMText defaultInstance];
+    self.composite = [ZMComposite defaultInstance];
   }
   return self;
 }
@@ -5936,6 +7609,11 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
       return NO;
     }
   }
+  if (self.hasComposite) {
+    if (!self.composite.isInitialized) {
+      return NO;
+    }
+  }
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -5944,6 +7622,9 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
   }
   if (self.hasText) {
     [output writeMessage:2 value:self.text];
+  }
+  if (self.hasComposite) {
+    [output writeMessage:3 value:self.composite];
   }
   [self.unknownFields writeToCodedOutputStream:output];
 }
@@ -5959,6 +7640,9 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
   }
   if (self.hasText) {
     size_ += computeMessageSize(2, self.text);
+  }
+  if (self.hasComposite) {
+    size_ += computeMessageSize(3, self.composite);
   }
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
@@ -6004,6 +7688,12 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
                          withIndent:[NSString stringWithFormat:@"%@  ", indent]];
     [output appendFormat:@"%@}\n", indent];
   }
+  if (self.hasComposite) {
+    [output appendFormat:@"%@%@ {\n", indent, @"composite"];
+    [self.composite writeDescriptionTo:output
+                         withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -6014,6 +7704,11 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
    NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
    [self.text storeInDictionary:messageDictionary];
    [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"text"];
+  }
+  if (self.hasComposite) {
+   NSMutableDictionary *messageDictionary = [NSMutableDictionary dictionary]; 
+   [self.composite storeInDictionary:messageDictionary];
+   [dictionary setObject:[NSDictionary dictionaryWithDictionary:messageDictionary] forKey:@"composite"];
   }
   [self.unknownFields storeInDictionary:dictionary];
 }
@@ -6030,6 +7725,8 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
       (!self.hasReplacingMessageId || [self.replacingMessageId isEqual:otherMessage.replacingMessageId]) &&
       self.hasText == otherMessage.hasText &&
       (!self.hasText || [self.text isEqual:otherMessage.text]) &&
+      self.hasComposite == otherMessage.hasComposite &&
+      (!self.hasComposite || [self.composite isEqual:otherMessage.composite]) &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -6039,6 +7736,9 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
   }
   if (self.hasText) {
     hashCode = hashCode * 31 + [self.text hash];
+  }
+  if (self.hasComposite) {
+    hashCode = hashCode * 31 + [self.composite hash];
   }
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
@@ -6089,6 +7789,9 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
   if (other.hasText) {
     [self mergeText:other.text];
   }
+  if (other.hasComposite) {
+    [self mergeComposite:other.composite];
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -6121,6 +7824,15 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
         }
         [input readMessage:subBuilder extensionRegistry:extensionRegistry];
         [self setText:[subBuilder buildPartial]];
+        break;
+      }
+      case 26: {
+        ZMCompositeBuilder* subBuilder = [ZMComposite builder];
+        if (self.hasComposite) {
+          [subBuilder mergeFrom:self.composite];
+        }
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self setComposite:[subBuilder buildPartial]];
         break;
       }
     }
@@ -6170,6 +7882,36 @@ static ZMMessageEdit* defaultZMMessageEditInstance = nil;
 - (ZMMessageEditBuilder*) clearText {
   resultMessageEdit.hasText = NO;
   resultMessageEdit.text = [ZMText defaultInstance];
+  return self;
+}
+- (BOOL) hasComposite {
+  return resultMessageEdit.hasComposite;
+}
+- (ZMComposite*) composite {
+  return resultMessageEdit.composite;
+}
+- (ZMMessageEditBuilder*) setComposite:(ZMComposite*) value {
+  resultMessageEdit.hasComposite = YES;
+  resultMessageEdit.composite = value;
+  return self;
+}
+- (ZMMessageEditBuilder*) setCompositeBuilder:(ZMCompositeBuilder*) builderForValue {
+  return [self setComposite:[builderForValue build]];
+}
+- (ZMMessageEditBuilder*) mergeComposite:(ZMComposite*) value {
+  if (resultMessageEdit.hasComposite &&
+      resultMessageEdit.composite != [ZMComposite defaultInstance]) {
+    resultMessageEdit.composite =
+      [[[ZMComposite builderWithPrototype:resultMessageEdit.composite] mergeFrom:value] buildPartial];
+  } else {
+    resultMessageEdit.composite = value;
+  }
+  resultMessageEdit.hasComposite = YES;
+  return self;
+}
+- (ZMMessageEditBuilder*) clearComposite {
+  resultMessageEdit.hasComposite = NO;
+  resultMessageEdit.composite = [ZMComposite defaultInstance];
   return self;
 }
 @end
