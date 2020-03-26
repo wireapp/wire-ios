@@ -151,6 +151,15 @@ extension ZMGenericMessage {
     func recipientUsersForMessage(in conversation: ZMConversation, selfUser: ZMUser) -> (users: Set<ZMUser>, strategy: MissingClientsStrategy) {
         let (services, otherUsers) = conversation.localParticipants.categorizeServicesAndUser()
 
+        func recipientForButtonActionMessage() -> Set<ZMUser> {
+            guard hasButtonAction(),
+                let message = ZMMessage.fetch(withNonce: UUID(uuidString: self.buttonAction.referenceMessageId), for: conversation, in: conversation.managedObjectContext!),
+                let sender = message.sender else {
+                    fatal("buttonAction needs a recipient")
+            }
+            return Set(arrayLiteral: sender)
+        }
+        
         func recipientForConfirmationMessage() -> Set<ZMUser>? {
             guard self.hasConfirmation(), self.confirmation.firstMessageId != nil else { return nil }
             guard let message = ZMMessage.fetch(withNonce:UUID(uuidString:self.confirmation.firstMessageId), for:conversation, in:conversation.managedObjectContext!) else { return nil }
@@ -206,7 +215,9 @@ extension ZMGenericMessage {
             }
             recipientUsers = recipients
         }
-        else if let deletedEphemeral = recipientsForDeletedEphemeral() {
+        else if self.hasButtonAction() {
+            recipientUsers = recipientForButtonActionMessage()
+        } else if let deletedEphemeral = recipientsForDeletedEphemeral() {
             recipientUsers = deletedEphemeral
         }
         else {

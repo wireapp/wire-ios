@@ -120,6 +120,8 @@ class DependencyKeyStore {
             return Label.observableKeys
         case ParticipantRole.entityName():
             return ParticipantRole.observableKeys
+        case ButtonState.entityName():
+            return Set([#keyPath(ButtonState.stateValue), #keyPath(ButtonState.isExpired)])
         default:
             zmLog.warn("There are no observable keys defined for \(classIdentifier)")
             return Set()
@@ -158,6 +160,8 @@ class DependencyKeyStore {
             return observableKeys.mapToDictionary{Label.keyPathsForValuesAffectingValue(forKey: $0)}
         case ParticipantRole.entityName():
             return observableKeys.mapToDictionary{ParticipantRole.keyPathsForValuesAffectingValue(forKey: $0)}
+        case ButtonState.entityName():
+            return observableKeys.mapToDictionary{ButtonState.keyPathsForValuesAffectingValue(forKey: $0)}
         default:
             zmLog.warn("There is no path to affecting keys defined for \(classIdentifier)")
             return [:]

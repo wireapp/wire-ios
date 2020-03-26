@@ -210,6 +210,17 @@ extension Reaction : SideEffectSource {
     }
 }
 
+extension ButtonState : SideEffectSource {
+    
+    func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {
+        return byUpdateAffectedKeys(for: message, knownKeys: knownKeys, keyStore: keyStore, originalChangeKey: MessageChangeInfo.ButtonStateChangeInfoKey, keyMapping: {"\(#keyPath(ZMClientMessage.buttonStates)).\($0)"})
+    }
+    
+    func affectedObjectsForInsertionOrDeletion(keyStore: DependencyKeyStore) -> ObjectAndChanges {
+        return byInsertOrDeletionAffectedKeys(for: message, keyStore: keyStore, affectedKey: #keyPath(ZMClientMessage.buttonStates))
+    }
+}
+
 extension ZMGenericMessageData : SideEffectSource {
     
     func affectedObjectsAndKeys(keyStore: DependencyKeyStore, knownKeys: Set<String>) -> ObjectAndChanges {

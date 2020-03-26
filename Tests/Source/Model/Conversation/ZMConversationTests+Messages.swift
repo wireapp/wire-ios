@@ -583,4 +583,21 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         // THEN
         XCTAssertEqual(lastMessage, nil)
     }
+    
+    func testThatWeCanInsertAButtonActionMessage() {
+        // GIVEN
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.remoteIdentifier = UUID()
+        let buttonId = UUID().transportString()
+        let messageId = UUID()
+
+        // WHEN
+        let message = conversation.append(buttonActionWithId: buttonId, referenceMessageId: messageId)
+
+        // THEN
+        let expectedMessage = conversation.hiddenMessages.first
+        XCTAssertEqual(message, expectedMessage)
+        XCTAssertEqual(message?.underlyingMessage?.buttonAction.buttonID , buttonId)
+        XCTAssertEqual(message?.underlyingMessage?.buttonAction.referenceMessageID, messageId.transportString())
+    }
 }

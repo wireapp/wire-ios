@@ -21,6 +21,7 @@
 
 @class UserClient;
 @class MessageUpdateResult;
+@class ButtonState;
 
 NS_ASSUME_NONNULL_BEGIN
 
@@ -28,6 +29,7 @@ extern NSString * const DeliveredKey;
 
 @interface ZMOTRMessage : ZMMessage
 
+@property (nonatomic, nullable) NSSet<ButtonState *> *buttonStates;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic, readonly) NSSet *missingRecipients;
 @property (nonatomic, readonly, nullable) NSString *dataSetDebugInformation;

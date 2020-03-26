@@ -202,6 +202,10 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
         // This way if we get a delete from a different device while we are waiting for the response it will delete this message
         NSUUID *originalID = [NSUUID uuidWithTransportString:self.genericMessage.edited.replacingMessageId];
         self.nonce = originalID;
+    } else if (self.genericMessage.hasButtonAction) {
+        [ZMClientMessage expireButtonStateForButtonAction:self.genericMessage.buttonAction
+                                          forConversation:self.conversation
+                                                inContext:self.managedObjectContext];
     }
     [super expire];
 }

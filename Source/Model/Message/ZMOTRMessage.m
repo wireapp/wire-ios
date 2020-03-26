@@ -32,6 +32,7 @@ NSString * const DeliveredKey = @"delivered";
 
 @implementation ZMOTRMessage
 
+@dynamic buttonStates;
 @dynamic dataSet;
 @dynamic missingRecipients;
 
@@ -194,6 +195,8 @@ NSString * const DeliveredKey = @"delivered";
         [ZMMessage addReaction:message.reaction senderID:updateEvent.senderUUID conversation:conversation inManagedObjectContext:moc];
     } else if (message.hasConfirmation) {
         [ZMMessageConfirmation createMessageConfirmations:message.confirmation conversation:conversation updateEvent:updateEvent];
+    } else if (message.hasButtonActionConfirmation) {
+        [ZMClientMessage updateButtonStatesWithConfirmation:message.buttonActionConfirmation forConversation:conversation inContext:moc];
     } else if (message.hasEdited) {
         NSUUID *editedMessageId = [NSUUID uuidWithTransportString:message.edited.replacingMessageId];
         ZMClientMessage *editedMessage = [ZMClientMessage fetchMessageWithNonce:editedMessageId forConversation:conversation inManagedObjectContext:moc prefetchResult:prefetchResult];
