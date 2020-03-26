@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -296,6 +296,30 @@ public struct GenericMessage {
     set {_uniqueStorage()._content = .availability(newValue)}
   }
 
+  public var composite: Composite {
+    get {
+      if case .composite(let v)? = _storage._content {return v}
+      return Composite()
+    }
+    set {_uniqueStorage()._content = .composite(newValue)}
+  }
+
+  public var buttonAction: ButtonAction {
+    get {
+      if case .buttonAction(let v)? = _storage._content {return v}
+      return ButtonAction()
+    }
+    set {_uniqueStorage()._content = .buttonAction(newValue)}
+  }
+
+  public var buttonActionConfirmation: ButtonActionConfirmation {
+    get {
+      if case .buttonActionConfirmation(let v)? = _storage._content {return v}
+      return ButtonActionConfirmation()
+    }
+    set {_uniqueStorage()._content = .buttonActionConfirmation(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Content: Equatable {
@@ -317,6 +341,9 @@ public struct GenericMessage {
     case reaction(Reaction)
     case ephemeral(Ephemeral)
     case availability(Availability)
+    case composite(Composite)
+    case buttonAction(ButtonAction)
+    case buttonActionConfirmation(ButtonActionConfirmation)
 
   #if !swift(>=4.1)
     public static func ==(lhs: GenericMessage.OneOf_Content, rhs: GenericMessage.OneOf_Content) -> Bool {
@@ -338,6 +365,9 @@ public struct GenericMessage {
       case (.reaction(let l), .reaction(let r)): return l == r
       case (.ephemeral(let l), .ephemeral(let r)): return l == r
       case (.availability(let l), .availability(let r)): return l == r
+      case (.composite(let l), .composite(let r)): return l == r
+      case (.buttonAction(let l), .buttonAction(let r)): return l == r
+      case (.buttonActionConfirmation(let l), .buttonActionConfirmation(let r)): return l == r
       default: return false
       }
     }
@@ -347,6 +377,181 @@ public struct GenericMessage {
   public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
+}
+
+public struct Composite {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var items: [Composite.Item] = []
+
+  public var expectsReadConfirmation: Bool {
+    get {return _expectsReadConfirmation ?? false}
+    set {_expectsReadConfirmation = newValue}
+  }
+  /// Returns true if `expectsReadConfirmation` has been explicitly set.
+  public var hasExpectsReadConfirmation: Bool {return self._expectsReadConfirmation != nil}
+  /// Clears the value of `expectsReadConfirmation`. Subsequent reads from it will return its default value.
+  public mutating func clearExpectsReadConfirmation() {self._expectsReadConfirmation = nil}
+
+  public var legalHoldStatus: LegalHoldStatus {
+    get {return _legalHoldStatus ?? .unknown}
+    set {_legalHoldStatus = newValue}
+  }
+  /// Returns true if `legalHoldStatus` has been explicitly set.
+  public var hasLegalHoldStatus: Bool {return self._legalHoldStatus != nil}
+  /// Clears the value of `legalHoldStatus`. Subsequent reads from it will return its default value.
+  public mutating func clearLegalHoldStatus() {self._legalHoldStatus = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public struct Item {
+    // SwiftProtobuf.Message conformance is added in an extension below. See the
+    // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+    // methods supported on all messages.
+
+    public var content: OneOf_Content? {
+      get {return _storage._content}
+      set {_uniqueStorage()._content = newValue}
+    }
+
+    public var text: Text {
+      get {
+        if case .text(let v)? = _storage._content {return v}
+        return Text()
+      }
+      set {_uniqueStorage()._content = .text(newValue)}
+    }
+
+    public var button: Button {
+      get {
+        if case .button(let v)? = _storage._content {return v}
+        return Button()
+      }
+      set {_uniqueStorage()._content = .button(newValue)}
+    }
+
+    public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+    public enum OneOf_Content: Equatable {
+      case text(Text)
+      case button(Button)
+
+    #if !swift(>=4.1)
+      public static func ==(lhs: Composite.Item.OneOf_Content, rhs: Composite.Item.OneOf_Content) -> Bool {
+        switch (lhs, rhs) {
+        case (.text(let l), .text(let r)): return l == r
+        case (.button(let l), .button(let r)): return l == r
+        default: return false
+        }
+      }
+    #endif
+    }
+
+    public init() {}
+
+    fileprivate var _storage = _StorageClass.defaultInstance
+  }
+
+  public init() {}
+
+  fileprivate var _expectsReadConfirmation: Bool? = nil
+  fileprivate var _legalHoldStatus: LegalHoldStatus? = nil
+}
+
+public struct Button {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var text: String {
+    get {return _text ?? String()}
+    set {_text = newValue}
+  }
+  /// Returns true if `text` has been explicitly set.
+  public var hasText: Bool {return self._text != nil}
+  /// Clears the value of `text`. Subsequent reads from it will return its default value.
+  public mutating func clearText() {self._text = nil}
+
+  public var id: String {
+    get {return _id ?? String()}
+    set {_id = newValue}
+  }
+  /// Returns true if `id` has been explicitly set.
+  public var hasID: Bool {return self._id != nil}
+  /// Clears the value of `id`. Subsequent reads from it will return its default value.
+  public mutating func clearID() {self._id = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _text: String? = nil
+  fileprivate var _id: String? = nil
+}
+
+public struct ButtonAction {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var buttonID: String {
+    get {return _buttonID ?? String()}
+    set {_buttonID = newValue}
+  }
+  /// Returns true if `buttonID` has been explicitly set.
+  public var hasButtonID: Bool {return self._buttonID != nil}
+  /// Clears the value of `buttonID`. Subsequent reads from it will return its default value.
+  public mutating func clearButtonID() {self._buttonID = nil}
+
+  public var referenceMessageID: String {
+    get {return _referenceMessageID ?? String()}
+    set {_referenceMessageID = newValue}
+  }
+  /// Returns true if `referenceMessageID` has been explicitly set.
+  public var hasReferenceMessageID: Bool {return self._referenceMessageID != nil}
+  /// Clears the value of `referenceMessageID`. Subsequent reads from it will return its default value.
+  public mutating func clearReferenceMessageID() {self._referenceMessageID = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _buttonID: String? = nil
+  fileprivate var _referenceMessageID: String? = nil
+}
+
+public struct ButtonActionConfirmation {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var referenceMessageID: String {
+    get {return _referenceMessageID ?? String()}
+    set {_referenceMessageID = newValue}
+  }
+  /// Returns true if `referenceMessageID` has been explicitly set.
+  public var hasReferenceMessageID: Bool {return self._referenceMessageID != nil}
+  /// Clears the value of `referenceMessageID`. Subsequent reads from it will return its default value.
+  public mutating func clearReferenceMessageID() {self._referenceMessageID = nil}
+
+  /// if not present, no button is accepted
+  public var buttonID: String {
+    get {return _buttonID ?? String()}
+    set {_buttonID = newValue}
+  }
+  /// Returns true if `buttonID` has been explicitly set.
+  public var hasButtonID: Bool {return self._buttonID != nil}
+  /// Clears the value of `buttonID`. Subsequent reads from it will return its default value.
+  public mutating func clearButtonID() {self._buttonID = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _referenceMessageID: String? = nil
+  fileprivate var _buttonID: String? = nil
 }
 
 public struct Availability {
@@ -990,7 +1195,6 @@ public struct MessageEdit {
     set {_uniqueStorage()._content = newValue}
   }
 
-  /// Reply can also be edited, but the edit will only affect the Text part
   public var text: Text {
     get {
       if case .text(let v)? = _storage._content {return v}
@@ -999,16 +1203,28 @@ public struct MessageEdit {
     set {_uniqueStorage()._content = .text(newValue)}
   }
 
+  /// Reply can also be edited, but the edit will only affect the Text part
+  public var composite: Composite {
+    get {
+      if case .composite(let v)? = _storage._content {return v}
+      return Composite()
+    }
+    set {_uniqueStorage()._content = .composite(newValue)}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_Content: Equatable {
-    /// Reply can also be edited, but the edit will only affect the Text part
     case text(Text)
+    /// Reply can also be edited, but the edit will only affect the Text part
+    case composite(Composite)
 
   #if !swift(>=4.1)
     public static func ==(lhs: MessageEdit.OneOf_Content, rhs: MessageEdit.OneOf_Content) -> Bool {
       switch (lhs, rhs) {
       case (.text(let l), .text(let r)): return l == r
+      case (.composite(let l), .composite(let r)): return l == r
+      default: return false
       }
     }
   #endif
@@ -1936,6 +2152,9 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
     17: .same(proto: "reaction"),
     18: .same(proto: "ephemeral"),
     19: .same(proto: "availability"),
+    20: .same(proto: "composite"),
+    21: .same(proto: "buttonAction"),
+    22: .same(proto: "buttonActionConfirmation"),
   ]
 
   fileprivate class _StorageClass {
@@ -1979,6 +2198,9 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       case .reaction(let v)?: if !v.isInitialized {return false}
       case .ephemeral(let v)?: if !v.isInitialized {return false}
       case .availability(let v)?: if !v.isInitialized {return false}
+      case .composite(let v)?: if !v.isInitialized {return false}
+      case .buttonAction(let v)?: if !v.isInitialized {return false}
+      case .buttonActionConfirmation(let v)?: if !v.isInitialized {return false}
       default: break
       }
       return true
@@ -2124,6 +2346,30 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
           }
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._content = .availability(v)}
+        case 20:
+          var v: Composite?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .composite(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .composite(v)}
+        case 21:
+          var v: ButtonAction?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .buttonAction(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .buttonAction(v)}
+        case 22:
+          var v: ButtonActionConfirmation?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .buttonActionConfirmation(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .buttonActionConfirmation(v)}
         default: break
         }
       }
@@ -2170,6 +2416,12 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
         try visitor.visitSingularMessageField(value: v, fieldNumber: 18)
       case .availability(let v)?:
         try visitor.visitSingularMessageField(value: v, fieldNumber: 19)
+      case .composite(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 20)
+      case .buttonAction(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 21)
+      case .buttonActionConfirmation(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 22)
       case nil: break
       }
     }
@@ -2187,6 +2439,266 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
       }
       if !storagesAreEqual {return false}
     }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Composite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "Composite"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "items"),
+    2: .standard(proto: "expects_read_confirmation"),
+    3: .standard(proto: "legal_hold_status"),
+  ]
+
+  public var isInitialized: Bool {
+    if !SwiftProtobuf.Internal.areAllInitialized(self.items) {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeRepeatedMessageField(value: &self.items)
+      case 2: try decoder.decodeSingularBoolField(value: &self._expectsReadConfirmation)
+      case 3: try decoder.decodeSingularEnumField(value: &self._legalHoldStatus)
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if !self.items.isEmpty {
+      try visitor.visitRepeatedMessageField(value: self.items, fieldNumber: 1)
+    }
+    if let v = self._expectsReadConfirmation {
+      try visitor.visitSingularBoolField(value: v, fieldNumber: 2)
+    }
+    if let v = self._legalHoldStatus {
+      try visitor.visitSingularEnumField(value: v, fieldNumber: 3)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Composite, rhs: Composite) -> Bool {
+    if lhs.items != rhs.items {return false}
+    if lhs._expectsReadConfirmation != rhs._expectsReadConfirmation {return false}
+    if lhs._legalHoldStatus != rhs._legalHoldStatus {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Composite.Item: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = Composite.protoMessageName + ".Item"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "text"),
+    2: .same(proto: "button"),
+  ]
+
+  fileprivate class _StorageClass {
+    var _content: Composite.Item.OneOf_Content?
+
+    static let defaultInstance = _StorageClass()
+
+    private init() {}
+
+    init(copying source: _StorageClass) {
+      _content = source._content
+    }
+  }
+
+  fileprivate mutating func _uniqueStorage() -> _StorageClass {
+    if !isKnownUniquelyReferenced(&_storage) {
+      _storage = _StorageClass(copying: _storage)
+    }
+    return _storage
+  }
+
+  public var isInitialized: Bool {
+    return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      switch _storage._content {
+      case .text(let v)?: if !v.isInitialized {return false}
+      case .button(let v)?: if !v.isInitialized {return false}
+      default: break
+      }
+      return true
+    }
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    _ = _uniqueStorage()
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      while let fieldNumber = try decoder.nextFieldNumber() {
+        switch fieldNumber {
+        case 1:
+          var v: Text?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .text(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .text(v)}
+        case 2:
+          var v: Button?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .button(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .button(v)}
+        default: break
+        }
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    try withExtendedLifetime(_storage) { (_storage: _StorageClass) in
+      switch _storage._content {
+      case .text(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 1)
+      case .button(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      case nil: break
+      }
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Composite.Item, rhs: Composite.Item) -> Bool {
+    if lhs._storage !== rhs._storage {
+      let storagesAreEqual: Bool = withExtendedLifetime((lhs._storage, rhs._storage)) { (_args: (_StorageClass, _StorageClass)) in
+        let _storage = _args.0
+        let rhs_storage = _args.1
+        if _storage._content != rhs_storage._content {return false}
+        return true
+      }
+      if !storagesAreEqual {return false}
+    }
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension Button: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "Button"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "text"),
+    2: .same(proto: "id"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._text == nil {return false}
+    if self._id == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self._text)
+      case 2: try decoder.decodeSingularStringField(value: &self._id)
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._text {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    }
+    if let v = self._id {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: Button, rhs: Button) -> Bool {
+    if lhs._text != rhs._text {return false}
+    if lhs._id != rhs._id {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ButtonAction: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ButtonAction"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "button_id"),
+    2: .standard(proto: "reference_message_id"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._buttonID == nil {return false}
+    if self._referenceMessageID == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self._buttonID)
+      case 2: try decoder.decodeSingularStringField(value: &self._referenceMessageID)
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._buttonID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    }
+    if let v = self._referenceMessageID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ButtonAction, rhs: ButtonAction) -> Bool {
+    if lhs._buttonID != rhs._buttonID {return false}
+    if lhs._referenceMessageID != rhs._referenceMessageID {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension ButtonActionConfirmation: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "ButtonActionConfirmation"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .standard(proto: "reference_message_id"),
+    2: .standard(proto: "button_id"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._referenceMessageID == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      switch fieldNumber {
+      case 1: try decoder.decodeSingularStringField(value: &self._referenceMessageID)
+      case 2: try decoder.decodeSingularStringField(value: &self._buttonID)
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._referenceMessageID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    }
+    if let v = self._buttonID {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: ButtonActionConfirmation, rhs: ButtonActionConfirmation) -> Bool {
+    if lhs._referenceMessageID != rhs._referenceMessageID {return false}
+    if lhs._buttonID != rhs._buttonID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -3011,6 +3523,7 @@ extension MessageEdit: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "replacing_message_id"),
     2: .same(proto: "text"),
+    3: .same(proto: "composite"),
   ]
 
   fileprivate class _StorageClass {
@@ -3037,7 +3550,11 @@ extension MessageEdit: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public var isInitialized: Bool {
     return withExtendedLifetime(_storage) { (_storage: _StorageClass) in
       if _storage._replacingMessageID == nil {return false}
-      if case .text(let v)? = _storage._content, !v.isInitialized {return false}
+      switch _storage._content {
+      case .text(let v)?: if !v.isInitialized {return false}
+      case .composite(let v)?: if !v.isInitialized {return false}
+      default: break
+      }
       return true
     }
   }
@@ -3056,6 +3573,14 @@ extension MessageEdit: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
           }
           try decoder.decodeSingularMessageField(value: &v)
           if let v = v {_storage._content = .text(v)}
+        case 3:
+          var v: Composite?
+          if let current = _storage._content {
+            try decoder.handleConflictingOneOf()
+            if case .composite(let m) = current {v = m}
+          }
+          try decoder.decodeSingularMessageField(value: &v)
+          if let v = v {_storage._content = .composite(v)}
         default: break
         }
       }
@@ -3067,8 +3592,12 @@ extension MessageEdit: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       if let v = _storage._replacingMessageID {
         try visitor.visitSingularStringField(value: v, fieldNumber: 1)
       }
-      if case .text(let v)? = _storage._content {
+      switch _storage._content {
+      case .text(let v)?:
         try visitor.visitSingularMessageField(value: v, fieldNumber: 2)
+      case .composite(let v)?:
+        try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+      case nil: break
       }
     }
     try unknownFields.traverse(visitor: &visitor)
