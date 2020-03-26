@@ -86,7 +86,7 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     
     /// The location message data associated with the message. If the message is not a location message, it will be nil
     var locationMessageData: LocationMessageData? { get }
-    
+
     var usersReaction : Dictionary<String, [ZMUser]> { get }
     
     /// In case this message failed to deliver, this will resend it
@@ -144,6 +144,11 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var needsLinkAttachmentsUpdate: Bool { get set }
 }
 
+public protocol ConversationCompositeMessage {
+    /// The composite message associated with the message. If the message is not a composite message, it will be nil
+    var compositeMessageData: CompositeMessageData? { get }
+}
+
 public extension ZMConversationMessage {
 
     /// Whether the given user is the sender of the message.
@@ -152,7 +157,6 @@ public extension ZMConversationMessage {
         guard let zmUser = user as? ZMUser else { return false }
         return zmUser == sender
     }
-
 }
 
 public extension Equatable where Self : ZMConversationMessage { }

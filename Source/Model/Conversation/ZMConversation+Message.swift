@@ -23,6 +23,12 @@ private let log = ZMSLog(tag: "Conversations")
 @objc 
 extension ZMConversation {
     
+    @discardableResult
+    func append(buttonActionWithId id: String, referenceMessageId: UUID, nonce: UUID = UUID()) -> ZMClientMessage? {
+        let buttonAction = ButtonAction(buttonId: id, referenceMessageId: referenceMessageId)
+        return appendClientMessage(with: GenericMessage(content: buttonAction, nonce: nonce), hidden: true)
+    }
+    
     @discardableResult @objc(appendLocation:nonce:)
     public func append(location: LocationData, nonce: UUID = UUID()) -> ZMConversationMessage? {
         let locationContent = Location.with() {

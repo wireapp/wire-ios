@@ -317,6 +317,28 @@ public extension NewOtrMessage {
     }
 }
 
+extension ButtonAction: MessageCapable {
+    init(buttonId: String, referenceMessageId: UUID) {
+        self = ButtonAction.with {
+            $0.buttonID = buttonId
+            $0.referenceMessageID = referenceMessageId.transportString()
+        }
+    }
+    
+    public func setContent(on message: inout GenericMessage) {
+        message.buttonAction = self
+    }
+    
+    public var expectsReadConfirmation: Bool {
+        get { return false }
+        set { }
+    }
+    
+    public var legalHoldStatus: LegalHoldStatus {
+        return defaultLegalHoldStatus
+    }
+}
+
 extension Location: EphemeralMessageCapable {
     init(latitude: Float, longitude: Float) {
         self = WireProtos.Location.with({

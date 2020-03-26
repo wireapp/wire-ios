@@ -92,7 +92,10 @@
     self.hasEphemeral ||
     self.hasCalling ||
     self.hasExternal ||
-    self.hasAvailability;
+    self.hasAvailability ||
+    self.hasButtonAction ||
+    self.hasButtonActionConfirmation ||
+    self.hasComposite;
 }
 
 @end
