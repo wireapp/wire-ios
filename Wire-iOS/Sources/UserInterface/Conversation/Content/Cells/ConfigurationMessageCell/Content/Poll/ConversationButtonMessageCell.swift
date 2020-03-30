@@ -54,6 +54,8 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
 
     private var config: Configuration? {
         didSet {
+            buttonAction = config?.buttonAction
+
             guard config != oldValue else {
                 return
             }
@@ -66,8 +68,7 @@ final class ConversationButtonMessageCell: UIView, ConversationMessageCell {
         guard let config = config else {
             return
         }
-
-        buttonAction = config.buttonAction
+        
         button.setTitle(config.text, for: .normal)
 
         switch config.state {
