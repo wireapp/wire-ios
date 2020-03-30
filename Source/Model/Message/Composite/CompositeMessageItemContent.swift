@@ -109,8 +109,13 @@ extension CompositeMessageItemContent: ButtonMessageData {
             guard let `self` = self else { return }
             let buttonState = self.buttonState ??
                 ButtonState.insert(with: buttonId, message: self.parentMessage, inContext: moc)
-            buttonState.state = .selected
             self.parentMessage.buttonStates?.resetExpired()
+            guard self.parentMessage.isSenderInConversation else {
+                buttonState.isExpired = true
+                moc.saveOrRollback()
+                return
+            }
+            buttonState.state = .selected
             self.parentMessage.conversation?.append(buttonActionWithId: buttonId, referenceMessageId: messageId)
             moc.saveOrRollback()
         }

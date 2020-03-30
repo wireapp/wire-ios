@@ -294,6 +294,11 @@ extension ZMConversation {
             self.needsToDownloadRoles = true
         }
     }
+    
+    // MARK: - Utils
+    func has(participantWithId userId: UserId?) -> Bool {
+        return localParticipants.contains { $0.userId == userId }
+    }
 }
 
 

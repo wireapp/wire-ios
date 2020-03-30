@@ -20,33 +20,7 @@
 import Foundation
 @testable import WireDataModel
 
-class ZMClientMessageTests_Composite: BaseZMClientMessageTests {
-    func compositeItemButton(buttonID: String = "1") -> Composite.Item {
-        return Composite.Item.with { $0.button = Button.with {
-            $0.text = "Button text"
-            $0.id = buttonID
-        }}
-    }
-    
-    func compositeItemText() -> Composite.Item {
-        return Composite.Item.with { $0.text = Text.with { $0.content = "Text" } }
-    }
-
-    func compositeProto(items: Composite.Item...) -> Composite {
-        return Composite.with { $0.items = items }
-    }
-    
-    func compositeMessage(with proto: Composite, nonce: UUID = UUID()) -> ZMClientMessage {
-        let genericMessage = GenericMessage.with {
-            $0.composite = proto
-            $0.messageID = nonce.transportString()
-        }
-        let message = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        let data = try! genericMessage.serializedData()
-        message.add(data)
-        return message
-    }
-    
+class ZMClientMessageTests_Composite: BaseCompositeMessageTests {
     func testThatCompositeMessageDataIsReturned() {
         // GIVEN
         let expectedCompositeMessage = compositeProto(items: compositeItemButton(), compositeItemText())
@@ -59,67 +33,12 @@ class ZMClientMessageTests_Composite: BaseZMClientMessageTests {
         XCTAssertEqual(compositeMessage, expectedCompositeMessage)
         XCTAssertEqual(compositeMessage?.items, expectedCompositeMessage.items)
     }
-
-    func testThatButtonTouchActionInsertsMessageInConversationIfNoneIsSelected() {
-        // GIVEN
-        let message = compositeMessage(with: compositeProto(items: compositeItemButton(), compositeItemText()))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.append(message)
-
-        // WHEN
-        button.touchAction()
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        
-        // THEN
-        let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage
-        guard case .some(.buttonAction) = hiddenMessage?.underlyingMessage?.content else { return XCTFail() }
-    }
-    
-    func testThatButtonTouchActionDoesNotInsertMessageInConversationIfAButtonIsSelected() {
-        // GIVEN
-        let buttonItem = compositeItemButton()
-        let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.append(message)
-        uiMOC.performAndWait {
-            let buttonState = WireDataModel.ButtonState.insert(with: buttonItem.button.id, message: message, inContext: self.uiMOC)
-            buttonState.state = .selected
-            self.uiMOC.saveOrRollback()
-
-            // WHEN
-            button.touchAction()
-            
-            // THEN
-            let lastmessage = conversation.lastMessage as? ZMClientMessage
-            if case .some(.buttonAction) = lastmessage?.underlyingMessage?.content { XCTFail() }
-        }
-    }
-    
-    func testThatButtonTouchActionCreatesButtonStateIfNeeded() {
-        // GIVEN
-        let id = "123"
-        let buttonItem = compositeItemButton(buttonID: id)
-        let message = compositeMessage(with: compositeProto(items: buttonItem))
-        guard case .some(.button(let button)) = message.items.first else { return XCTFail() }
-
-        // WHEN
-        button.touchAction()
-        _ = waitForAllGroupsToBeEmpty(withTimeout: 0.5)
-        
-        // THEN
-        let buttonState = message.buttonStates?.first(where: {$0.remoteIdentifier == id})
-        XCTAssertNotNil(buttonState)
-        XCTAssertEqual(WireDataModel.ButtonState.State.selected, buttonState?.state)
-    }
     
     func testThatItCreatesButtonStateIfNeeded_WhenReceivingButtonActionConfirmation() {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton()), nonce: nonce)
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.append(message)
+        let conversation = self.conversation(withMessage: message)
         
         let builder = ZMButtonActionConfirmationBuilder()
         builder.setReferenceMessageId(nonce.transportString())
@@ -149,8 +68,7 @@ class ZMClientMessageTests_Composite: BaseZMClientMessageTests {
         
         let message = compositeMessage(with: compositeProto(items: buttonItems[0], buttonItems[1], buttonItems[2], buttonItems[3]), nonce: nonce)
         
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.append(message)
+        let conversation = self.conversation(withMessage: message)
 
         var buttonStates: [WireDataModel.ButtonState]!
         
@@ -190,8 +108,7 @@ class ZMClientMessageTests_Composite: BaseZMClientMessageTests {
         // GIVEN
         let nonce = UUID()
         let message = compositeMessage(with: compositeProto(items: compositeItemButton(buttonID: "1")), nonce: nonce)
-        let conversation = ZMConversation.insertNewObject(in: uiMOC)
-        conversation.append(message)
+        let conversation = self.conversation(withMessage: message)
         
         var buttonState:  WireDataModel.ButtonState!
         uiMOC.performAndWait { [uiMOC] in
