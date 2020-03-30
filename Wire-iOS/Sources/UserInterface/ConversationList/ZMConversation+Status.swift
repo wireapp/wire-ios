@@ -739,8 +739,8 @@ extension ConversationStatus {
     }
     
     func description(for conversation: ZMConversation) -> NSAttributedString {
-        let allMatchers = self.appliedMatchersForDescription(for: conversation)
-        guard allMatchers.count > 0 else {
+        let allMatchers = appliedMatchersForDescription(for: conversation)
+        guard !allMatchers.isEmpty else {
             return "" && [:]
         }
         let allStrings = allMatchers.compactMap { $0.description(with: self, conversation: conversation) }
