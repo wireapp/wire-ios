@@ -277,3 +277,59 @@ extension ZMConversationTests_Mute {
     }
     
 }
+
+// MARK: - Alarming messages
+class ZMConversationTest_Mute_Alarming: BaseCompositeMessageTests {
+    
+    func testCompositeMessageShouldCreateNotification_AvailabilityBusy() {
+        // GIVEN
+        selfUser.availability = .busy
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = compositeMessage(with: compositeProto(items: compositeItemText()))
+        conversation.append(message)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        message.sender = user
+        
+        // WHEN / THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+    
+    func testCompositeMessageShouldCreateNotification_AvailabilityAway() {
+        // GIVEN
+        selfUser.availability = .away
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let message = compositeMessage(with: compositeProto(items: compositeItemText()))
+        conversation.append(message)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        message.sender = user
+        
+        // WHEN / THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+    
+    func testCompositeMessageShouldCreateNotification_FullySilenced() {
+        // GIVEN
+        let message = compositeMessage(with: compositeProto(items: compositeItemText()))
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .all
+        conversation.append(message)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        message.sender = user
+
+        // WHEN / THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+    
+    func testCompositeMessageShouldCreateNotification_RegularSilenced() {
+        // GIVEN
+        let message = compositeMessage(with: compositeProto(items: compositeItemText()))
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.mutedMessageTypes = .regular
+        conversation.append(message)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        message.sender = user
+        
+        // WHEN / THEN
+        XCTAssertFalse(message.isSilenced)
+    }
+}
