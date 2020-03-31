@@ -140,6 +140,11 @@ extension ZMConversationMessage {
             return false
         }
         
+        // We assume that all composite messages are alarming messages
+        guard (self as? ConversationCompositeMessage)?.compositeMessageData == nil else {
+            return false
+        }
+        
         guard let textMessageData = self.textMessageData else {
             return true
         }
