@@ -40,6 +40,13 @@ public enum CompositeMessageItem {
     }
 }
 
+extension CompositeMessageItem {
+    public var textData: ZMTextMessageData? {
+        guard case .text(let data) = self else { return nil }
+        return data
+    }
+}
+
 // MARK: - ButtonMessageData protocol
 
 public protocol ButtonMessageData {
