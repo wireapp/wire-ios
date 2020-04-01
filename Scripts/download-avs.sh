@@ -106,7 +106,7 @@ else
 	exit 1
 	fi
 	
-	echo "ℹ️  credentials are ready"
+	echo "ℹ️  the credentials are ready"
 
 
 	# Get tag json: need to parse json to get assed URL
