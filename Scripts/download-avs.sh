@@ -33,7 +33,7 @@ AVS_FRAMEWORK_NAME="avs.framework"
 AVS_LOCAL_PATH="wire-avs-ios"
 
 if [[ -n "${AVS_REPO}" ]]; then
-	echo "ℹ️  Using custom AVS binary"
+	echo "ℹ️  Using custom AVS binary ${APPSTORE_AVS_VERSION}"
 	AVS_VERSION="${AVS_CUSTOM_VERSION}"
 	if [ -z "${AVS_VERSION}" ]; then
 		AVS_VERSION="${APPSTORE_AVS_VERSION}"
@@ -81,31 +81,34 @@ if [ -e "${AVS_FILENAME}" ]; then
 	echo "ℹ️  Existing archive ${AVS_FILENAME} found, skipping download"
 else
 	# DOWNLOAD
-	echo "ℹ️  Downloading ${AVS_RELEASE_TAG_PATH}..."
+	echo "ℹ️  Downloading AVS: ${AVS_RELEASE_TAG_PATH}..."
 
-  # prepare credentials
-  if hash git 2>/dev/null; then
-    GITHUB_USERNAME="`git config user.email`"
+	# prepare credentials
+	if hash git 2>/dev/null; then
+	GITHUB_USERNAME="`git config user.email`"
 
-    # guard username exists
-    if [[ -z "${GITHUB_USERNAME}" ]]; then
-      echo "❌  Git email not found. Configure it with: git config user.name ⚠️"
-      exit 1
-    fi
+	# guard username exists
+	if [[ -z "${GITHUB_USERNAME}" ]]; then
+	  echo "❌  Git email not found. Configure it with: git config user.name ⚠️"
+	  exit 1
+	fi
 
-    # guard access token exists
-    if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
-      echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
-      exit 1
-    fi
+	# guard access token exists
+	if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
+	  echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
+	  exit 1
+	fi
 
-    CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
+	CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
 
-  else
-    echo "❌  Can't find git. Please make sure it is installed ⚠️"
-    exit 1
-  fi
+	else
+	echo "❌  Can't find git. Please make sure it is installed ⚠️"
+	exit 1
+	fi
 	
+	echo "ℹ️  credentials are ready"
+
+
 	# Get tag json: need to parse json to get assed URL
 	TEMP_FILE=`mktemp`
 	curl -sLJ -u "${CREDENTIALS}" "${AVS_RELEASE_TAG_PATH}" -o "${TEMP_FILE}"
