@@ -40,7 +40,7 @@ fi
 AVS_LOCAL_PATH="wire-avs-ios"
 
 if [[ -n "${AVS_REPO}" ]]; then
-	echo "ℹ️  Using custom AVS binary"
+	echo "ℹ️  Using custom AVS binary ${APPSTORE_AVS_VERSION}"
 	AVS_VERSION="${AVS_CUSTOM_VERSION}"
 	if [ -z "${AVS_VERSION}" ]; then
 		AVS_VERSION="${APPSTORE_AVS_VERSION}"
