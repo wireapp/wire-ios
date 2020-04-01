@@ -150,6 +150,6 @@ fi
 
 rm -rf "Carthage"
 
-echo "✅  Done"
+echo "✅  AVS downloading Done"
 
 popd  > /dev/null
