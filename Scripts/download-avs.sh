@@ -85,28 +85,29 @@ else
 
 	# prepare credentials
 	if hash git 2>/dev/null; then
-	GITHUB_USERNAME="`git config user.email`"
+		echo "ℹ️  git is installed"
+		GITHUB_USERNAME="`git config user.email`"
 
-	# guard username exists
-	if [[ -z "${GITHUB_USERNAME}" ]]; then
-	  echo "❌  Git email not found. Configure it with: git config user.name ⚠️"
-	  exit 1
-	fi
+		# guard username exists
+		if [[ -z "${GITHUB_USERNAME}" ]]; then
+		  echo "❌  Git email not found. Configure it with: git config user.name ⚠️"
+		  exit 1
+		fi
 
-	# guard access token exists
-	if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
-	  echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
-	  exit 1
-	fi
+		# guard access token exists
+		if [[ -z "${GITHUB_ACCESS_TOKEN}" ]]; then
+		  echo "❌  GITHUB_ACCESS_TOKEN not set ⚠️"
+		  exit 1
+		fi
 
-	CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
+		CREDENTIALS="${GITHUB_USERNAME}:${GITHUB_ACCESS_TOKEN}"
 
 	else
-	echo "❌  Can't find git. Please make sure it is installed ⚠️"
-	exit 1
+		echo "❌  Can't find git. Please make sure it is installed ⚠️"
+		exit 1
 	fi
 	
-	echo "ℹ️  the credentials are ready"
+	echo "ℹ️  Github credentials are ready"
 
 
 	# Get tag json: need to parse json to get assed URL
