@@ -31,11 +31,14 @@ enum ClientSection: Int {
 }
 
 final class SettingsClientViewController: UIViewController,
-                                    UITableViewDelegate,
-                                    UITableViewDataSource,
-                                    UserClientObserver,
-                                    ClientColorVariantProtocol {
-    
+                                          UITableViewDelegate,
+                                          UITableViewDataSource,
+                                          UserClientObserver,
+                                          ClientColorVariantProtocol,
+                                          SpinnerCapable {
+    //MARK: SpinnerCapable
+    var dismissSpinner: SpinnerCompletion?
+
     fileprivate static let deleteCellReuseIdentifier: String = "DeleteCellReuseIdentifier"
     fileprivate static let resetCellReuseIdentifier: String = "ResetCellReuseIdentifier"
     fileprivate static let verifiedCellReuseIdentifier: String = "VerifiedCellReuseIdentifier"

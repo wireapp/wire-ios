@@ -20,37 +20,53 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
+final class MockLoadingViewController: SpinnerCapableViewController {
+    var dismissSpinner: SpinnerCompletion?
+}
+
 final class LoadingViewControllerTests: XCTestCase {
-    
+    var sut: MockLoadingViewController!
+
+    override func setUp() {
+        super.setUp()
+        sut = MockLoadingViewController()
+        sut.view.backgroundColor = .white
+    }
+
+    override func tearDown() {
+        sut = nil
+        super.tearDown()
+    }
+
     func testThatItShowsLoadingIndicator() {
         // Given
-        let sut = UIViewController()
-        sut.view.backgroundColor = .white
-        sut.view.layer.speed = 0
-        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
-        sut.beginAppearanceTransition(true, animated: false)
-        
+
         // when
-        sut.showLoadingView = true
-        
+        sut.isSpinnerVisible = true
+
         // then
+        XCTAssert(sut.isSpinnerVisible)
         verifyInAllDeviceSizes(matching: sut)
     }
-    
+
+    func testThatItDismissesLoadingIndicator() {
+        // given & when
+        sut.isSpinnerVisible = true
+        sut.isSpinnerVisible = false
+
+        // then
+        XCTAssertFalse(sut.isSpinnerVisible)
+        verify(matching: sut)
+    }
+
     func testThatItShowsLoadingIndicatorWithSubtitle() {
         // Given
-        let sut = UIViewController()
-        sut.view.backgroundColor = .white
-        sut.view.layer.speed = 0
-        sut.view.frame = CGRect(x: 0, y: 0, width: 375, height: 667)
-        sut.beginAppearanceTransition(true, animated: false)
-        
+
         // when
-        sut.spinnerView.subtitle = "RESTORING…"
-        sut.showLoadingView = true
-        
+        sut.showSpinner(title: "RESTORING…")
+
         // then
         verifyInAllDeviceSizes(matching: sut)
     }
-    
+
 }
