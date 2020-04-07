@@ -42,20 +42,20 @@ final class LoadingViewControllerTests: XCTestCase {
         // Given
 
         // when
-        sut.isSpinnerVisible = true
+        sut.isLoadingViewVisible = true
 
         // then
-        XCTAssert(sut.isSpinnerVisible)
+        XCTAssert(sut.isLoadingViewVisible)
         verifyInAllDeviceSizes(matching: sut)
     }
 
     func testThatItDismissesLoadingIndicator() {
         // given & when
-        sut.isSpinnerVisible = true
-        sut.isSpinnerVisible = false
+        sut.isLoadingViewVisible = true
+        sut.isLoadingViewVisible = false
 
         // then
-        XCTAssertFalse(sut.isSpinnerVisible)
+        XCTAssertFalse(sut.isLoadingViewVisible)
         verify(matching: sut)
     }
 
@@ -63,7 +63,7 @@ final class LoadingViewControllerTests: XCTestCase {
         // Given
 
         // when
-        sut.showSpinner(title: "RESTORING…")
+        sut.showLoadingView(title: "RESTORING…")
 
         // then
         verifyInAllDeviceSizes(matching: sut)

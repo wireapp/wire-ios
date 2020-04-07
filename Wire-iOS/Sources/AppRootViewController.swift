@@ -22,7 +22,8 @@ import SafariServices
 
 var defaultFontScheme: FontScheme = FontScheme(contentSizeCategory: UIApplication.shared.preferredContentSizeCategory)
 
-final class AppRootViewController: UIViewController {
+final class AppRootViewController: UIViewController, SpinnerCapable {
+    var dismissSpinner: SpinnerCompletion?
 
     public let mainWindow: UIWindow
     public let callWindow: CallWindow
@@ -232,7 +233,7 @@ final class AppRootViewController: UIViewController {
                 break
             }
 
-            let navigationController = UINavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
+            let navigationController = SpinnerCapableNavigationController(navigationBarClass: AuthenticationNavigationBar.self, toolbarClass: nil)
 
             authenticationCoordinator = AuthenticationCoordinator(presenter: navigationController,
                                                                   sessionManager: SessionManager.shared!,
@@ -613,4 +614,8 @@ public extension SessionManager {
         return SessionManager.shared?.accountManager.accounts.count ?? 0
     }
 
+}
+
+final class SpinnerCapableNavigationController: UINavigationController, SpinnerCapable {
+    var dismissSpinner: SpinnerCompletion?
 }
