@@ -25,15 +25,15 @@ protocol SpinnerCapable: class {
 }
 
 extension SpinnerCapable where Self: UIViewController {
-    func showSpinner(title: String) {
+    func showLoadingView(title: String) {
         dismissSpinner = presentSpinner(title: title)
     }
 
-    var isSpinnerVisible: Bool {
+    var isLoadingViewVisible: Bool {
         set {
             if newValue {
                 // do not show double spinners
-                guard !isSpinnerVisible else { return }
+                guard !isLoadingViewVisible else { return }
 
                 dismissSpinner = presentSpinner()
             } else {
@@ -97,5 +97,19 @@ fileprivate final class LoadingSpinnerView: UIView {
         NSLayoutConstraint.activate([
             spinnerSubtitleView.centerXAnchor.constraint(equalTo: centerXAnchor),
             spinnerSubtitleView.centerYAnchor.constraint(equalTo: centerYAnchor)])
+    }
+}
+
+extension UINavigationController {
+    var isLoadingViewVisible: Bool? {
+        get {
+            return (self as? SpinnerCapableViewController)?.isLoadingViewVisible
+        }
+
+        set {
+            if let newValue = newValue {
+                (self as? SpinnerCapableViewController)?.isLoadingViewVisible = newValue
+            }
+        }
     }
 }

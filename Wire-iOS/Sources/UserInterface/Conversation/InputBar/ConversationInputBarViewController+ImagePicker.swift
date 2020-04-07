@@ -111,16 +111,13 @@ extension ConversationInputBarViewController {
             UISaveVideoAtPathToSavedPhotosAlbum(videoTempURL.path, self, #selector(video(_:didFinishSavingWithError:contextInfo:)), nil)
         }
 
-        picker.showLoadingView = true
         AVURLAsset.convertVideoToUploadFormat(at: videoTempURL) { resultURL, asset, error in
             if error == nil,
                let resultURL = resultURL {
                 self.uploadFile(at: resultURL)
             }
 
-            self.parent?.dismiss(animated: true) {
-                picker.showLoadingView = false
-            }
+            self.parent?.dismiss(animated: true)
         }
     }
 

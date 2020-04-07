@@ -85,7 +85,7 @@ struct ChangeEmailState {
 
 }
 
-@objcMembers final class ChangeEmailViewController: SettingsBaseTableViewController {
+final class ChangeEmailViewController: SettingsBaseTableViewController {
 
     fileprivate weak var userProfile = ZMUserSession.shared()?.userProfile
     var state: ChangeEmailState
@@ -179,7 +179,7 @@ struct ChangeEmailState {
         do {
             try updateBlock()
             updateSaveButtonState(enabled: false)
-            navigationController?.showLoadingView = showLoadingView
+            navigationController?.isLoadingViewVisible = showLoadingView
         } catch { }
     }
     
@@ -217,13 +217,13 @@ struct ChangeEmailState {
 extension ChangeEmailViewController: UserProfileUpdateObserver {
     
     func emailUpdateDidFail(_ error: Error!) {
-        navigationController?.showLoadingView = false
+        navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
         showAlert(for: error)
     }
     
     func didSendVerificationEmail() {
-        navigationController?.showLoadingView = false
+        navigationController?.isLoadingViewVisible = false
         updateSaveButtonState()
         if let newEmail = state.newEmail {
             let confirmController = ConfirmEmailViewController(newEmail: newEmail, delegate: self)
