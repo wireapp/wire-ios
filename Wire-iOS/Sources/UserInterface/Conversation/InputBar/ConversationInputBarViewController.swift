@@ -18,6 +18,11 @@
 import Foundation
 import MobileCoreServices
 import Photos
+import UIKit
+import WireDataModel
+import WireSyncEngine
+import avs
+import AVFoundation
 
 enum ConversationInputBarViewControllerMode {
     case textInput
