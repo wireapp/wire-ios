@@ -42,6 +42,9 @@ extern NSString * const DeliveredKey;
 
 - (void)updateWithGenericMessage:(ZMGenericMessage * )message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
+// Temporary method needed to decouple from ZMGenericMessage
+- (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
+
 + (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent
                                         inManagedObjectContext:(NSManagedObjectContext *)moc
                                                 prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;

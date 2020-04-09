@@ -19,6 +19,21 @@
 import Foundation
 
 extension ZMClientMessage {
+    static func editMessage(withEdit messageEdit: ZMMessageEdit,
+                            forConversation conversation: ZMConversation,
+                            updateEvent: ZMUpdateEvent,
+                            inContext moc: NSManagedObjectContext,
+                            prefetchResult: ZMFetchRequestBatchResult) -> ZMClientMessage? {
+        guard
+            let editedMessageId = UUID(uuidString: messageEdit.replacingMessageId),
+            let editedMessage = ZMClientMessage.fetch(withNonce: editedMessageId, for: conversation, in: moc, prefetchResult: prefetchResult),
+            editedMessage.processMessageEdit(messageEdit, from: updateEvent)
+        else {
+            return nil
+        }
+        editedMessage.updateCategoryCache()
+        return editedMessage
+    }
     
     /// Apply a message edit update
     ///

@@ -456,6 +456,9 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return conversationType;
 }
 
+- (BOOL)isSelfConversation {
+    return self.conversationType == ZMConversationTypeSelf;
+}
 
 + (NSArray *)defaultSortDescriptors
 {

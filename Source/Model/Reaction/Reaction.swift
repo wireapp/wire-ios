@@ -66,4 +66,9 @@ public let ZMReactionUsersValueKey      = "users"
 
     }
     
+    public static func validate(unicode: String) -> Bool {
+        let isDelete = unicode.count == 0
+        let isValidReaction = Reaction.transportReaction(from: unicode) != .none
+        return isDelete || isValidReaction
+    }
 }
