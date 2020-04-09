@@ -535,72 +535,6 @@ extension MessageDelete: MessageCapable {
 }
 
 extension WireProtos.Asset: EphemeralMessageCapable {
-    
-    init(_ metadata: ZMFileMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
-                $0.size = metadata.size
-                $0.mimeType = metadata.mimeType
-                $0.name = metadata.filename
-            })
-        })
-    }
-    
-    init(_ metadata: ZMAudioMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
-                $0.size = metadata.size
-                $0.mimeType = metadata.mimeType
-                $0.name = metadata.filename
-                $0.audio = WireProtos.Asset.AudioMetaData.with({
-                    let loudnessArray = metadata.normalizedLoudness.map { UInt8(roundf($0 * 255)) }
-                    $0.durationInMillis = UInt64(metadata.duration * 1000)
-                    $0.normalizedLoudness = NSData(bytes: loudnessArray, length: loudnessArray.count) as Data
-                })
-                
-            })
-        })
-    }
-    
-    init(_ metadata: ZMVideoMetadata) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
-                $0.size = metadata.size
-                $0.mimeType = metadata.mimeType
-                $0.name = metadata.filename
-                $0.video = WireProtos.Asset.VideoMetaData.with({
-                    $0.durationInMillis = UInt64(metadata.duration * 1000)
-                    $0.width = Int32(metadata.dimensions.width)
-                    $0.height = Int32(metadata.dimensions.height)
-                })
-            })
-        })
-    }
-    
-    init(imageSize: CGSize, mimeType: String, size: UInt64) {
-        self = WireProtos.Asset.with({
-            $0.original = WireProtos.Asset.Original.with({
-                $0.size = size
-                $0.mimeType = mimeType
-                $0.image = WireProtos.Asset.ImageMetaData.with({
-                    $0.width = Int32(imageSize.width)
-                    $0.height = Int32(imageSize.height)
-                })
-            })
-        })
-    }
-    
-    init(original: WireProtos.Asset.Original?, preview: WireProtos.Asset.Preview?) {
-        self = WireProtos.Asset.with({
-            if let original = original {
-                $0.original = original
-            }
-            if let preview = preview {
-                $0.preview = preview
-            }
-        })
-    }
-
     public func setEphemeralContent(on ephemeral: inout Ephemeral) {
         ephemeral.asset = self
     }
@@ -663,20 +597,6 @@ extension External: MessageCapable {
     
     public var legalHoldStatus: LegalHoldStatus {
         return defaultLegalHoldStatus
-    }
-}
-
-extension WireProtos.Asset.Preview {
-    
-    init(size: UInt64, mimeType: String, remoteData: WireProtos.Asset.RemoteData?, imageMetadata: WireProtos.Asset.ImageMetaData) {
-        self = WireProtos.Asset.Preview.with({
-            $0.size = size
-            $0.mimeType = mimeType
-            $0.image = imageMetadata
-            if let remoteData = remoteData {
-                $0.remote = remoteData
-            }
-        })
     }
 }
 
