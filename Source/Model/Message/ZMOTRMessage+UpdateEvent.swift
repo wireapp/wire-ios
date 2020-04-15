@@ -95,7 +95,7 @@ extension ZMOTRMessage {
                 clientMessage?.serverTimestamp = updateEvent.timeStamp()
                 
                 if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
-                    clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled
+                    clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || message.hasComposite()
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID() {
                 return nil
