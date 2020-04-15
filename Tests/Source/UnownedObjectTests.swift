@@ -20,7 +20,7 @@
 import XCTest
 import WireUtilities
 
-class UnownedObjectTests: XCTestCase {
+final class UnownedObjectTests: XCTestCase {
 
     
     func testThatCreatingAnUnownedObjectWithALocallyScopedObjectIsValid() {
@@ -33,7 +33,7 @@ class UnownedObjectTests: XCTestCase {
     
     func testThatUnownedObjectIsInvalidIfValueDoesNotExistAnymore() {
         
-        var array : Array<Date>? = [Date()]
+        var array : Array<NSObject>? = [NSObject()]
         let unownedObject = UnownedObject(array![0] as AnyObject)
         array = nil
         XCTAssertFalse(unownedObject.isValid)
