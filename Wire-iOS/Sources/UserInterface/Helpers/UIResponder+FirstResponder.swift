@@ -17,11 +17,11 @@
 //
 
 import Foundation
+import UIKit
 
 extension UIResponder {
     private static weak var currentFirstResponder: UIResponder?
 
-    @objc(wr_currentFirstResponder)
     class var currentFirst: UIResponder? {
         currentFirstResponder = nil
         UIApplication.shared.sendAction(#selector(findFirstResponder(_:)), to: nil, from: nil, for: nil)

@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 enum ConversationType: Int {
     case oneToOne
@@ -69,8 +70,7 @@ extension ZMConversation {
     }
     
     static let userNameSorter: (UserType, UserType) -> Bool = { user0, user1 in
-        user0.displayName != user1.displayName ? user0.displayName < user1.displayName :
-                                                 user0.name < user1.name
+        user0.name < user1.name
     }
     
     ///TODO: move to DM

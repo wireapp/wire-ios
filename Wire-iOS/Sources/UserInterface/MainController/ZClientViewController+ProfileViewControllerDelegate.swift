@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 extension ZClientViewController: ProfileViewControllerDelegate {
     
@@ -24,7 +25,7 @@ extension ZClientViewController: ProfileViewControllerDelegate {
         select(conversation: conversation, focusOnView: true, animated: true)
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: Set<ZMUser>) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
         //no-op. Profile viewer does not have function to create a group conversation.
     }
 

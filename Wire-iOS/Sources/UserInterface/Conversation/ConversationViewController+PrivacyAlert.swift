@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 
 extension ConversationViewController {
 
@@ -52,7 +53,6 @@ extension ConversationViewController {
     // MARK: - Alert
 
     /// Presents an alert in response to a change in privacy (legal hold and/or client verification).
-    @objc(presentPrivacyWarningAlertForChange:)
     func presentPrivacyWarningAlert(for changeInfo: ConversationChangeInfo) {
         let title: String
         let message = "meta.degraded.dialog_message".localized
@@ -69,7 +69,7 @@ extension ConversationViewController {
             actions += [.sendAnyway, .cancel]
         } else if conversation.securityLevel == .secureWithIgnored {
             let users = changeInfo.usersThatCausedConversationToDegrade
-            let names = changeInfo.usersThatCausedConversationToDegrade.map { $0.displayName }.joined(separator: ", ")
+            let names = changeInfo.usersThatCausedConversationToDegrade.compactMap(\.name).joined(separator: ", ")
             let keySuffix = users.count <= 1 ? "singular" : "plural"
             title = "meta.degraded.degradation_reason_message.\(keySuffix)".localized(args: names)
             

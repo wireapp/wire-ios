@@ -91,7 +91,7 @@ extension UIApplication {
         (currentResponder as? UIView)?.endEditing(true)
         
         let noVideoAlert = UIAlertController.alertWithOKButton(title: "voice.alert.camera_warning.title".localized,
-                                                               message: "voice.alert.camera_warning.explanation".localized,
+                                                               message: "NSCameraUsageDescription".infoPlistLocalized,
                                                                okActionHandler: { action in
                                                                 completion()
         })
@@ -112,7 +112,7 @@ extension UIApplication {
     
     private class func wr_warnAboutMicrophonePermission() {
         let noMicrophoneAlert = UIAlertController.alertWithOKButton(title: "voice.alert.microphone_warning.title".localized,
-                                                                    message: "voice.alert.microphone_warning.explanation".localized,
+                                                                    message:"NSMicrophoneUsageDescription".infoPlistLocalized,
                                                                     okActionHandler: nil)
         
         let actionSettings = UIAlertAction(title: "general.open_settings".localized,
@@ -129,9 +129,8 @@ extension UIApplication {
     }
     
     private class func wr_warnAboutPhotoLibraryRestricted() {
-        let libraryRestrictedAlert = UIAlertController(title: "library.alert.permission_warning.title".localized,
-                                                       message: "library.alert.permission_warning.restrictions.explaination".localized,
-                                                       cancelButtonTitle: "general.ok".localized)
+        let libraryRestrictedAlert = UIAlertController.alertWithOKButton(title:"library.alert.permission_warning.title".localized,
+                                                                         message: "library.alert.permission_warning.restrictions.explaination".localized)
         
         AppDelegate.shared.window?.rootViewController?.present(libraryRestrictedAlert, animated: true)
     }
@@ -139,7 +138,7 @@ extension UIApplication {
     private class func wr_warnAboutPhotoLibaryDenied() {
         let deniedAlert = UIAlertController(title: "library.alert.permission_warning.title".localized,
                                             message: "library.alert.permission_warning.not_allowed.explaination".localized,
-                                            cancelButtonTitle: "general.cancel".localized)
+                                            alertAction: UIAlertAction.cancel())
         
         deniedAlert.addAction(UIAlertAction(title: "general.open_settings".localized,
                                             style: .default,

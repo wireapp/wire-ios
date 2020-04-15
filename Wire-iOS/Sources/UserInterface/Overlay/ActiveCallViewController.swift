@@ -17,6 +17,10 @@
 //
 
 import Foundation
+import UIKit
+import WireSystem
+import WireDataModel
+import WireSyncEngine
 
 fileprivate let zmLog = ZMSLog(tag: "calling")
 
@@ -77,12 +81,16 @@ final class ActiveCallViewController : UIViewController {
         updateVisibleVoiceChannelViewController()
     }
 
-    override var prefersStatusBarHidden: Bool {
-        return visibleVoiceChannelViewController.prefersStatusBarHidden
+    override var childForStatusBarStyle: UIViewController? {
+        return visibleVoiceChannelViewController
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return visibleVoiceChannelViewController.preferredStatusBarStyle
+    override var childForStatusBarHidden: UIViewController? {
+        return visibleVoiceChannelViewController
+    }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return wr_supportedInterfaceOrientations
     }
 
     override func dismiss(animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -121,7 +129,6 @@ final class ActiveCallViewController : UIViewController {
             { (finished) in
                 toViewController.didMove(toParent: self)
                 fromViewController.removeFromParent()
-                UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
         })
     }
     
@@ -133,7 +140,7 @@ final class ActiveCallViewController : UIViewController {
 
 extension ActiveCallViewController : WireCallCenterCallStateObserver {
     
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?)  {
+    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?)  {
         updateVisibleVoiceChannelViewController()
     }
     

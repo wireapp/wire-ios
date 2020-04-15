@@ -17,13 +17,7 @@
 //
 
 import Foundation
-
-extension ConversationListCell {
-    @objc
-    func setupConversationObserver(conversation: ZMConversation) {
-        conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
-    }
-}
+import WireDataModel
 
 extension ConversationListCell: ZMConversationObserver {
     public func conversationDidChange(_ change: ConversationChangeInfo) {

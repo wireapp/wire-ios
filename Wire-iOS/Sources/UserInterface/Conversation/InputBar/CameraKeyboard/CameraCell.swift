@@ -19,6 +19,7 @@
 
 import Foundation
 import Cartography
+import avs
 
 protocol CameraCellDelegate: class {
     func cameraCellWantsToOpenFullCamera(_ cameraCell: CameraCell)
@@ -39,7 +40,7 @@ final class CameraCell: UICollectionViewCell {
     }
 
     override init(frame: CGRect) {
-        self.cameraController = CameraController(camera: Settings.shared().preferredCamera)
+        cameraController = CameraController(camera: Settings.shared[.preferredCamera] ?? .front)
 
         super.init(frame: frame)
         
@@ -148,7 +149,7 @@ final class CameraCell: UICollectionViewCell {
     
     @objc func changeCameraPressed(_ sender: AnyObject) {
         cameraController?.switchCamera { currentCamera in
-            Settings.shared().preferredCamera = currentCamera
+            Settings.shared[.preferredCamera] = currentCamera
         }
     }
 }

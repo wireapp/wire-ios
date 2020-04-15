@@ -17,6 +17,10 @@
 //
 
 import Foundation
+import UIKit
+import WireSystem
+import WireCommonComponents
+import WireSyncEngine
 
 enum ApplicationLaunchType {
     case unknown
@@ -33,8 +37,8 @@ extension Notification.Name {
 
 private let zmLog = ZMSLog(tag: "AppDelegate")
 
-final class AppDelegate: UIResponder, UIApplicationDelegate {
-    
+class AppDelegate: UIResponder, UIApplicationDelegate {
+
     @objc
     var window: UIWindow? {
         get {
@@ -67,14 +71,20 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     
     private static var sharedAppDelegate: AppDelegate!
 
-    @objc(sharedAppDelegate)
     static var shared: AppDelegate {
         return sharedAppDelegate!
     }
 
-    @objc
     var mediaPlaybackManager: MediaPlaybackManager? {
         return (rootViewController.visibleViewController as? ZClientViewController)?.mediaPlaybackManager
+    }
+
+    // When running production code, this should always be true to ensure that we set the self user provider
+    // on the `SelfUser` helper. The `TestingAppDelegate` subclass should override this with `false` in order
+    // to require explict configuration of the self user.
+    
+    var shouldConfigureSelfUserProvider: Bool {
+        return true
     }
     
     override init() {
@@ -83,24 +93,10 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func setupBackendEnvironment() {
-        let BackendEnvironmentTypeKey = "ZMBackendEnvironmentType"
-        let backendEnvironment = UserDefaults.standard.string(forKey: BackendEnvironmentTypeKey)
-        UserDefaults.shared().set(backendEnvironment, forKey: BackendEnvironmentTypeKey)
-        
-        if AutomationHelper.sharedHelper.shouldPersistBackendType {
-            UserDefaults.standard.set(backendEnvironment, forKey: BackendEnvironmentTypeKey)
+        guard let backendTypeOverride = AutomationHelper.sharedHelper.backendEnvironmentTypeOverride() else {
+            return
         }
-        
-        if backendEnvironment?.isEmpty == true ||
-            backendEnvironment == "default" {
-            let defaultBackend = Bundle.defaultBackend
-            
-            zmLog.info("Backend environment is <not defined>. Using '\(String(describing: defaultBackend))'.")
-            UserDefaults.standard.set(defaultBackend, forKey: BackendEnvironmentTypeKey)
-            UserDefaults.shared().set(defaultBackend, forKey: BackendEnvironmentTypeKey)
-        } else {
-            zmLog.info("Using '\(String(describing: backendEnvironment))' backend environment")
-        }
+        AutomationHelper.sharedHelper.persistBackendTypeOverrideIfNeeded(with: backendTypeOverride)
     }
     
     func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
@@ -176,9 +172,6 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         zmLog.info("applicationWillTerminate:  (applicationState = \(application.applicationState.rawValue))")
-        
-        // In case of normal termination we do not need the run duration to persist
-        UIApplication.shared.resetRunDuration()
     }
     
     func application(_ application: UIApplication, performActionFor shortcutItem: UIApplicationShortcutItem, completionHandler: @escaping (Bool) -> Void) {

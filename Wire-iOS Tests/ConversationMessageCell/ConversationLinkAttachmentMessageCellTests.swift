@@ -31,7 +31,7 @@ final class ConversationLinkAttachmentMessageCellTests: ConversationCellSnapshot
     }
 
     override func tearDown() {
-        defaultImageCache.cache.removeAllObjects()
+        MediaAssetCache.defaultImageCache.cache.removeAllObjects()
         mockThumbnail = nil
         super.tearDown()
     }
@@ -51,7 +51,7 @@ final class ConversationLinkAttachmentMessageCellTests: ConversationCellSnapshot
         cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(view: cell)
+        verify(matching: cell)
     }
 
     func testThatItRendersSoundCloudSongAttachment() {
@@ -69,7 +69,7 @@ final class ConversationLinkAttachmentMessageCellTests: ConversationCellSnapshot
         cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(view: cell)
+        verify(matching: cell)
     }
 
     func testThatItRendersSoundCloudPlaylistAttachment() {
@@ -87,7 +87,7 @@ final class ConversationLinkAttachmentMessageCellTests: ConversationCellSnapshot
         cell.frame.size = cell.systemLayoutSizeFitting(CGSize(width: 414, height: 0))
 
         // THEN
-        verify(view: cell)
+        verify(matching: cell)
     }
 
 }

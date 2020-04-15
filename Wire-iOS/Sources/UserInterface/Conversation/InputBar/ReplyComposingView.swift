@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireSyncEngine
+import UIKit
 
 protocol ReplyComposingViewDelegate: NSObjectProtocol {
     func composingViewDidCancel(composingView: ReplyComposingView)
@@ -26,7 +28,7 @@ protocol ReplyComposingViewDelegate: NSObjectProtocol {
 fileprivate extension ZMConversationMessage {
     var accessibilityDescription: String {
         let contentDescriptionText: String
-        let senderDescriptionText = self.sender?.displayName(in: self.conversation) ?? ""
+        let senderDescriptionText = self.sender?.name ?? ""
         
         if let textData = textMessageData {
             contentDescriptionText = textData.messageText ?? ""

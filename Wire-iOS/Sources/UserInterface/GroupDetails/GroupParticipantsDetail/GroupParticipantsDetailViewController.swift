@@ -17,6 +17,7 @@
 //
 
 import UIKit
+import WireDataModel
 
 final class GroupParticipantsDetailViewController: UIViewController {
 
@@ -179,7 +180,7 @@ private final class SelectedUserCell: UserCell {
 
 extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDelegate {
     
-    func presentDetails(for user: ZMUser) {
+    func presentDetails(for user: UserType) {
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
             conversation: viewModel.conversation,
@@ -195,7 +196,6 @@ extension GroupParticipantsDetailViewController: GroupDetailsSectionControllerDe
         presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
     
-    @objc(presentParticipantsDetailsWithUsers:selectedUsers:animated:)
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
@@ -224,7 +224,7 @@ extension GroupParticipantsDetailViewController: ProfileViewControllerDelegate {
         }
     }
 
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: Set<ZMUser>) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
             //no-op
     }
 }

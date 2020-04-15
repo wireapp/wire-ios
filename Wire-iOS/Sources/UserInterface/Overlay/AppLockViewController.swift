@@ -19,6 +19,8 @@
 import Foundation
 import Cartography
 import WireSyncEngine
+import UIKit
+import WireSystem
 
 private let zmLog = ZMSLog(tag: "UI")
 
@@ -51,6 +53,10 @@ final class AppLockViewController: UIViewController {
 
     convenience init() {
         self.init(nibName:nil, bundle:nil)
+    }
+    
+    override var prefersStatusBarHidden: Bool {
+        return true
     }
     
     override func viewDidLoad() {

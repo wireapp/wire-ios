@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireSyncEngine
 
 typealias AccentColorChangeHandlerBlock = (UIColor?, Any?) -> Void
 
@@ -24,7 +25,6 @@ final class AccentColorChangeHandler: NSObject, ZMUserObserver {
 
     private var handlerBlock: AccentColorChangeHandlerBlock?
     private var observer: Any?
-    private var selfUser: ZMUser?
     private var userObserverToken: Any?
     
     class func addObserver(_ observer: Any?, handlerBlock changeHandler: @escaping AccentColorChangeHandlerBlock) -> Self {
@@ -35,9 +35,8 @@ final class AccentColorChangeHandler: NSObject, ZMUserObserver {
         super.init()
         handlerBlock = changeHandler
         self.observer = observer
-        
-        selfUser = ZMUser.selfUser()
-        if let selfUser = selfUser, let userSession = ZMUserSession.shared() {
+
+        if let selfUser = SelfUser.provider?.selfUser, let userSession = ZMUserSession.shared() {
             userObserverToken = UserChangeInfo.add(observer: self, for: selfUser, in: userSession)
         }
     }
@@ -48,7 +47,7 @@ final class AccentColorChangeHandler: NSObject, ZMUserObserver {
     
     func userDidChange(_ change: UserChangeInfo) {
         if change.accentColorValueChanged {
-            handlerBlock?(UIColor.accent(), observer)
+            handlerBlock?(change.user.accentColor, observer)
         }
     }
 }

@@ -18,6 +18,7 @@
 
 import UIKit
 import WireDataModel
+import WireSyncEngine
 
 /**
  * An object that receives notifications from a profile details content controller.
@@ -103,7 +104,7 @@ final class ProfileDetailsContentController: NSObject,
         super.init()
         configureObservers()
         updateContent()
-        ZMUserSession.shared()?.performChanges {
+        ZMUserSession.shared()?.perform {
             user.needsRichProfileUpdate = true
         }
     }

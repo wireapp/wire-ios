@@ -18,6 +18,8 @@
 
 import UIKit
 import Cartography
+import WireDataModel
+import WireSyncEngine
 
 class LayerHostView<LayerType: CALayer>: UIView {
     var hostedLayer: LayerType {
@@ -161,7 +163,7 @@ class BaseAccountView: UIView {
         }
 
         if let userSession = SessionManager.shared?.activeUserSession {
-            selfUserObserver = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(inUserSession: userSession), in: userSession)
+            selfUserObserver = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession)
         }
 
         selectionView.hostedLayer.strokeColor = UIColor.accent().cgColor

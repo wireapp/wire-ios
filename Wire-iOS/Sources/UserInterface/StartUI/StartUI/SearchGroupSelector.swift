@@ -18,12 +18,12 @@
 
 
 import Foundation
+import UIKit
 
-@objcMembers
 final class SearchGroupSelector: UIView, TabBarDelegate {
-    @objc public var onGroupSelected: ((SearchGroup)->())? = nil
+    var onGroupSelected: ((SearchGroup)->())? = nil
 
-    @objc public var group: SearchGroup = .people {
+    var group: SearchGroup = .people {
         didSet {
             onGroupSelected?(group)
         }

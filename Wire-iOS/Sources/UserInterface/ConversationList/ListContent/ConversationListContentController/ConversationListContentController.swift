@@ -19,6 +19,7 @@
 import Foundation
 import DifferenceKit
 import UIKit
+import WireDataModel
 
 private let CellReuseIdConnectionRequests = "CellIdConnectionRequests"
 private let CellReuseIdConversation = "CellId"
@@ -26,7 +27,6 @@ private let CellReuseIdConversation = "CellId"
 final class ConversationListContentController: UICollectionViewController {
     weak var contentDelegate: ConversationListContentDelegate?
     let listViewModel: ConversationListViewModel = ConversationListViewModel()
-    private weak var activeMediaPlayerObserver: NSObject?
     private weak var mediaPlaybackManager: MediaPlaybackManager?
     private var focusOnNextSelection = false
     private var animateNextSelection = false
@@ -35,7 +35,8 @@ final class ConversationListContentController: UICollectionViewController {
     private let layoutCell = ConversationListCell()
     var startCallController: ConversationCallController?
     private let selectionFeedbackGenerator = UISelectionFeedbackGenerator()
-
+    private var token: NSObjectProtocol?
+    
     init() {
         let flowLayout = BoundsAwareFlowLayout()
         flowLayout.minimumLineSpacing = 0
@@ -68,25 +69,36 @@ final class ConversationListContentController: UICollectionViewController {
         super.viewWillAppear(animated)
 
         // viewWillAppear: can get called also when dismissing the controller above this one.
-        // The user session might not be there anymore in some cases, e.g. when logging out
-        guard let _ = ZMUserSession.shared() else {
-            return
-        }
+        // The self user might not be there anymore in some cases, e.g. when logging out
+        guard SelfUser.provider != nil else { return }
 
         updateVisibleCells()
 
         scrollToCurrentSelection(animated: false)
 
-        if let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager {
-            activeMediaPlayerObserver = KeyValueObserver.observe(mediaPlaybackManager, keyPath: "activeMediaPlayer", target: self, selector: #selector(activeMediaPlayerChanged(_:)))
-
-            self.mediaPlaybackManager = mediaPlaybackManager
+    
+        token = NotificationCenter.default.addObserver(forName: .activeMediaPlayerChanged, object: nil, queue: .main) { [weak self] _ in
+            self?.activeMediaPlayerChanged()
         }
+
+        mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        activeMediaPlayerObserver = nil
+       
+        if let token = token {
+            NotificationCenter.default.removeObserver(token)
+            self.token = nil
+        }
+    }
+    
+    private func activeMediaPlayerChanged() {
+        DispatchQueue.main.async(execute: {
+            for cell in self.collectionView.visibleCells {
+                (cell as? ConversationListCell)?.updateAppearance()
+            }
+        })
     }
 
     func reload() {
@@ -117,8 +129,6 @@ final class ConversationListContentController: UICollectionViewController {
         collectionView.accessibilityIdentifier = "conversation list"
         clearsSelectionOnViewWillAppear = false
     }
-
-
 
     // MARK: - section header
 

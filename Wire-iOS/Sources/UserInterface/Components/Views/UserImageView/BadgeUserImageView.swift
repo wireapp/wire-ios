@@ -19,12 +19,14 @@
 /**
  * A user image view that can display a badge on top for different connection states.
  */
+import UIKit
+import WireCommonComponents
+import WireSyncEngine
 
-@objc
 final class BadgeUserImageView: UserImageView {
 
     /// The color of the badge.
-    @objc var badgeColor: UIColor = .white {
+    var badgeColor: UIColor = .white {
         didSet {
             updateIconView(with: badgeIcon, animated: false)
         }
@@ -152,7 +154,7 @@ final class BadgeUserImageView: UserImageView {
                 hideBadge()
                 changeImage()
                 UIView.animate(withDuration: 0.65, delay: 0, usingSpringWithDamping: 0.5, initialSpringVelocity: 15.0, options: [], animations: showBadge, completion: nil)
-                UIView.wr_animate(easing: .easeOutQuart, duration: 0.15, animations: showShadow)
+                UIView.animate(easing: .easeOutQuart, duration: 0.15, animations: showShadow)
             } else {
                 changeImage()
                 showShadow()
@@ -169,7 +171,7 @@ final class BadgeUserImageView: UserImageView {
 
 extension BadgeUserImageView {
 
-    @objc var wr_badgeIconSize: CGFloat {
+    var wr_badgeIconSize: CGFloat {
         get {
             return badgeIconSize.rawValue
         }

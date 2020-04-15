@@ -18,6 +18,10 @@
 
 import Foundation
 import Cartography
+import UIKit
+import WireDataModel
+import WireSyncEngine
+import avs
 
 struct Stream: Equatable {
     let userId: UUID
@@ -58,7 +62,7 @@ extension ZMEditableUser {
               let userId = selfUser.remoteIdentifier,
               let clientId = selfUser.selfClient()?.remoteIdentifier
         else {
-            fatal("Could create self user stream which should always exist")
+            fatal("Could not create self user stream which should always exist")
         }
         
         return Stream(userId: userId, clientId: clientId)

@@ -17,8 +17,9 @@
 //
 
 import Foundation
+import UIKit
 
-class KeyboardAvoidingViewController: UIViewController {
+final class KeyboardAvoidingViewController: UIViewController {
     
     let viewController: UIViewController
     var disabledWhenInsidePopover: Bool = false
@@ -54,12 +55,12 @@ class KeyboardAvoidingViewController: UIViewController {
         return viewController.navigationItem
     }
     
-    override var prefersStatusBarHidden: Bool {
-        return viewController.prefersStatusBarHidden
+    override var childForStatusBarStyle: UIViewController? {
+        return viewController
     }
     
-    override var preferredStatusBarStyle: UIStatusBarStyle {
-        return viewController.preferredStatusBarStyle
+    override var childForStatusBarHidden: UIViewController? {
+        return viewController
     }
     
     override var title: String? {
@@ -70,13 +71,7 @@ class KeyboardAvoidingViewController: UIViewController {
             viewController.title = newValue
         }
     }
-    
-    private var isInsidePopover: Bool {
-        guard let popoverPresentationController = popoverPresentationController else { return false }
         
-        return popoverPresentationController.arrowDirection != .unknown
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -105,7 +100,8 @@ class KeyboardAvoidingViewController: UIViewController {
         bottomEdgeConstraint?.isActive = true
     }
     
-    @objc func keyboardFrameWillChange(_ notification: Notification?) {
+    @objc
+    private func keyboardFrameWillChange(_ notification: Notification?) {
         guard let bottomEdgeConstraint = bottomEdgeConstraint else { return }
         
         guard !disabledWhenInsidePopover || !isInsidePopover else {
@@ -128,9 +124,12 @@ class KeyboardAvoidingViewController: UIViewController {
             bottomOffset = -abs(keyboardFrameInView.size.height)
         }
         
-        // When this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the bottomOffset should be reduced.
-        if modalPresentationStyle == .formSheet, let frame = presentationController?.frameOfPresentedViewInContainerView {
-            bottomOffset += frame.minY
+        // When the keyboard is visible &
+        // this controller's view is presented at a form sheet style on iPad, the view is has a top offset and the bottomOffset should be reduced.
+        if !keyboardFrameInView.origin.y.isInfinite,
+            modalPresentationStyle == .formSheet,
+            let frame = presentationController?.frameOfPresentedViewInContainerView {
+            bottomOffset += frame.minY ///TODO: no need to add when no keyboard
         }
         
         guard bottomEdgeConstraint.constant != bottomOffset else { return }

@@ -17,13 +17,30 @@
 //
 
 import Foundation
+import UIKit
+import WireSyncEngine
 
 extension AppDelegate {
 
     func open(url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
-        guard let urlHandler = sessionManager?.urlHandler else { return false }
-        
-        return urlHandler.openURL(url, options: options as [UIApplication.OpenURLOptionsKey : AnyObject])
+        do {
+            return try sessionManager?.openURL(url, options: options) ?? false
+        } catch let error as LocalizedError {
+            if error is CompanyLoginError {
+                rootViewController.authenticationCoordinator?.cancelCompanyLogin()
+                
+                UIApplication.shared.topmostViewController()?.dismissIfNeeded(animated: true, completion: {
+                    UIApplication.shared.topmostViewController()?.showAlert(for: error)
+                })
+            } else {
+                UIApplication.shared.topmostViewController()?.showAlert(for: error)
+            }
+            
+            return false
+        } catch {
+            return false
+        }
     }
+    
 }
 

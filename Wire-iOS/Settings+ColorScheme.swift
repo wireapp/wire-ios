@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireSystem
 
 enum SettingsColorScheme {
     case light
     case dark
-    
+
     var colorSchemeVariant: ColorSchemeVariant {
         switch self {
         case .light:
@@ -33,31 +34,23 @@ enum SettingsColorScheme {
 }
 
 extension Settings {
-    static var shared: Settings {
-        return Settings.shared()
-    }
-    
     func notifyColorSchemeChanged() {
-        NotificationCenter.default.post(name: NSNotification.Name.SettingsColorSchemeChanged, object: self, userInfo: nil)
+        NotificationCenter.default.post(name: .SettingsColorSchemeChanged, object: self, userInfo: nil)
     }
 
-    @objc
     var defaults: UserDefaults {
-        return UserDefaults.standard
+        return .standard
     }
 
-    var colorScheme: SettingsColorScheme {
-        get {
-            guard let string = defaults.string(forKey: UserDefaultColorScheme) else { return .light }
-            return settingsColorScheme(from: string)
+    var colorSchemeVariant: ColorSchemeVariant {
+        guard let string: String = self[.colorScheme] else {
+            return .light
         }
-        set {            
-            defaults.set(string(for: newValue), forKey: UserDefaultColorScheme)
-            defaults.synchronize()
-            notifyColorSchemeChanged()
-        }
+
+        return settingsColorScheme(from: string).colorSchemeVariant
     }
-    
+
+    ///TODO: move to SettingsColorScheme, as a init method
     func settingsColorScheme(from string: String) -> SettingsColorScheme {
         switch string {
         case "dark":
@@ -68,7 +61,8 @@ extension Settings {
             fatal("unsupported colorScheme string")
         }
     }
-    
+
+    ///TODO: move to SettingsColorScheme
     func string(for colorScheme: SettingsColorScheme) -> String {
         switch colorScheme {
         case .dark:

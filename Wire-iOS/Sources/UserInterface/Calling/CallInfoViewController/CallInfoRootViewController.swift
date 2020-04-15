@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import UIKit
 
 protocol CallInfoRootViewControllerDelegate: class {
     func infoRootViewController(_ viewController: CallInfoRootViewController, perform action: CallAction)
@@ -61,14 +62,14 @@ final class CallInfoRootViewController: UIViewController, UINavigationController
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
         createConstraints()
         updateConfiguration()
     }
-        
+
     private func setupViews() {
         addToSelf(contentNavigationController)
         addToSelf(callDegradationController)

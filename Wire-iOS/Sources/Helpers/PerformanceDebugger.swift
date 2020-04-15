@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import WireSystem
+import UIKit
 
 /**
  * An object that tracks performance issues in the application for debugging purposes.
@@ -41,7 +43,7 @@ import Foundation
 
     /// Starts tracking performance issues.
     @objc func start() {
-        guard DeveloperMenuState.developerMenuEnabled() else {
+        guard Bundle.developerModeEnabled else {
             return
         }
 
