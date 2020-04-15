@@ -21,7 +21,7 @@ import WireTesting
 import WireRequestStrategy
 @testable import WireShareEngine
 
-class RequestGeneratorStoreTests : ZMTBaseTest {
+final class RequestGeneratorStoreTests : ZMTBaseTest {
     
     class MockStrategy : NSObject, ZMRequestGeneratorSource, ZMContextChangeTrackerSource {
         public var requestGenerators: [ZMRequestGenerator] = []
@@ -51,7 +51,7 @@ class RequestGeneratorStoreTests : ZMTBaseTest {
             self.request = request
         }
 
-        @objc public func nextRequest() -> ZMTransportRequest? {
+        public func nextRequest() -> ZMTransportRequest? {
             return request
         }
 
