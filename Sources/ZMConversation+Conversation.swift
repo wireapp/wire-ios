@@ -24,7 +24,7 @@ import WireRequestStrategy
 
 extension ZMConversation: Conversation {
 
-    @objc public var name: String { return displayName }
+    public var name: String { return displayName }
         
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
         return append(text: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
