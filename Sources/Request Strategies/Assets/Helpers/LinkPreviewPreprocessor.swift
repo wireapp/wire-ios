@@ -33,7 +33,7 @@ import WireUtilities
     }
 
     public override func fetchRequestForTrackedObjects() -> NSFetchRequest<NSFetchRequestResult>? {
-        let predicate = NSPredicate(format: "%K == %d", ZMClientMessageLinkPreviewStateKey, ZMLinkPreviewState.waitingToBeProcessed.rawValue)
+        let predicate = NSPredicate(format: "%K == %d", ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.waitingToBeProcessed.rawValue)
         return ZMClientMessage.sortedFetchRequest(with: predicate)
     }
 

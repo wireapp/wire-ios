@@ -88,7 +88,7 @@ import Foundation
         
         guard let uiMOC = managedObjectContext.zm_userInterface else { return }
         NotificationDispatcher.notifyNonCoreDataChanges(objectID: message.objectID,
-                                                        changedKeys: [ZMClientMessageLinkPreviewKey, #keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
+                                                        changedKeys: [ZMClientMessage.linkPreviewKey, #keyPath(ZMAssetClientMessage.hasDownloadedPreview)],
                                                         uiContext: uiMOC)
     }
 
