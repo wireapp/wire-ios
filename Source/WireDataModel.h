@@ -48,7 +48,6 @@
 #import <WireDataModel/ZMMessage.h>
 #import <WireDataModel/ZMMessage+Internal.h>
 #import <WireDataModel/ZMOTRMessage.h>
-#import <WireDataModel/ZMClientMessage.h>
 #import <WireDataModel/ZMGenericMessage+External.h>
 #import <WireDataModel/ZMGenericMessage+UpdateEvent.h>
 #import <WireDataModel/ZMGenericMessageData.h>

@@ -21,7 +21,6 @@
 #import <libkern/OSAtomic.h>
 #import <CommonCrypto/CommonCrypto.h>
 
-#import "ZMClientMessage.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "MockModelObjectContextFactory.h"

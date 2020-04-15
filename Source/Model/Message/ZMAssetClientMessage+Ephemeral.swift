@@ -21,49 +21,52 @@ import Foundation
 extension ZMAssetClientMessage {
  
     @objc override public var isEphemeral: Bool {
-        return self.destructionDate != nil || self.ephemeral != nil || self.isObfuscated
+        return destructionDate != nil
+            || ephemeral != nil
+            || isObfuscated
     }
     
     var ephemeral: Ephemeral? {
-        let first = self.dataSet.array
+        return dataSet.lazy
             .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
-            .filter({ (message) -> Bool in
-               guard case .ephemeral? = message.content else { return false }
-               return true
-            })
-            .first
-        return first?.ephemeral
+            .first(where: { (message) -> Bool in
+                guard case .ephemeral? = message.content else {
+                    return false
+                }
+                return true
+            })?.ephemeral
     }
     
     @objc override public var deletionTimeout: TimeInterval {
-        if let ephemeral = self.ephemeral {
-            return TimeInterval(ephemeral.expireAfterMillis / 1000)
+        guard let ephemeral = self.ephemeral else {
+            return -1
         }
-        return -1
+        return TimeInterval(ephemeral.expireAfterMillis / 1000)
     }
     
     @objc override public func obfuscate() {
         super.obfuscate()
         
         var obfuscatedMessage: GenericMessage? = nil
-        if let medium = self.mediumGenericMessage {
+        if let medium = mediumGenericMessage {
             obfuscatedMessage = medium.obfuscatedMessage()
-        } else if self.fileMessageData != nil {
-            obfuscatedMessage = self.underlyingMessage?.obfuscatedMessage()
+        } else if fileMessageData != nil {
+            obfuscatedMessage = underlyingMessage?.obfuscatedMessage()
         }
-        
-        self.deleteContent()
+        deleteContent()
         
         if let obfuscatedMessage = obfuscatedMessage {
-            _ = try? self.createNewGenericMessage(with: obfuscatedMessage.serializedData())
+            _ = try? createNewGenericMessage(with: obfuscatedMessage.serializedData())
         }
     }
     
     @discardableResult @objc public override func startDestructionIfNeeded() -> Bool {
         
-        if self.imageMessageData != nil && !self.hasDownloadedFile {
+        if imageMessageData != nil && !hasDownloadedFile {
             return false
-        } else if self.fileMessageData != nil  && self.genericAssetMessage?.assetData?.hasUploaded() == false && self.genericAssetMessage?.assetData?.hasNotUploaded() == false {
+        } else if fileMessageData != nil
+            && genericAssetMessage?.assetData?.hasUploaded() == false
+            && genericAssetMessage?.assetData?.hasNotUploaded() == false {
             return false
         }
         
@@ -77,11 +80,13 @@ extension ZMAssetClientMessage {
     public func extendDestructionTimer(to date: Date) {
         let timeout = date.timeIntervalSince(Date())
         
-        guard let isSelfUser = self.sender?.isSelfUser,
+        guard
+            let isSelfUser = sender?.isSelfUser,
             let destructionDate = self.destructionDate,
             date > destructionDate,
-            timeout > 0
-            else { return }
+            timeout > 0 else {
+                return
+        }
         
         let msg = self as ZMMessage
         if isSelfUser { msg.restartObfuscationTimer(timeout) }

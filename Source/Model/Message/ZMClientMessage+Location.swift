@@ -28,6 +28,26 @@ public protocol LocationMessageData: NSObjectProtocol {
 }
 
 extension ZMClientMessage: LocationMessageData {
+    
+    public override var locationMessageData: LocationMessageData? {
+        guard let content = underlyingMessage?.content else {
+            return nil
+        }
+        switch content {
+        case .location:
+            return self
+        case .ephemeral(let data):
+            switch data.content {
+            case .location?:
+                return self
+            default:
+                return nil
+            }
+        default:
+            return nil
+        }
+    }
+    
     @objc public var latitude: Float {
         return self.underlyingMessage?.locationData?.latitude ?? 0
     }
