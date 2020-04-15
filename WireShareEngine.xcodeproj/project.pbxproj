@@ -59,6 +59,7 @@
 		F1DABFA71E9B8B6100AD2324 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF9C1E9B8B6100AD2324 /* SharingSession.swift */; };
 		F1DABFA81E9B8B6100AD2324 /* SharingTarget.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */; };
 		F1DABFA91E9B8B6100AD2324 /* StrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */; };
+		F1DABFAA1E9B8B6100AD2324 /* WireShareEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F1DABFAB1E9B8B6100AD2324 /* ZMConversation+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABFA01E9B8B6100AD2324 /* ZMConversation+Conversation.swift */; };
 		F1DABFAC1E9B8B6100AD2324 /* ZMMessage+Sendable.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */; };
 /* End PBXBuildFile section */
@@ -154,6 +155,7 @@
 		F1DABF9C1E9B8B6100AD2324 /* SharingSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingSession.swift; sourceTree = "<group>"; };
 		F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SharingTarget.swift; sourceTree = "<group>"; };
 		F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StrategyFactory.swift; sourceTree = "<group>"; };
+		F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireShareEngine.h; sourceTree = "<group>"; };
 		F1DABFA01E9B8B6100AD2324 /* ZMConversation+Conversation.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMConversation+Conversation.swift"; sourceTree = "<group>"; };
 		F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMMessage+Sendable.swift"; sourceTree = "<group>"; };
 		F1DDDDED1F3C665100BAFE82 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
@@ -331,6 +333,7 @@
 				F1DABF9C1E9B8B6100AD2324 /* SharingSession.swift */,
 				F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */,
 				F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */,
+				F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */,
 				F1DABFA01E9B8B6100AD2324 /* ZMConversation+Conversation.swift */,
 				F1DABFA11E9B8B6100AD2324 /* ZMMessage+Sendable.swift */,
 			);
@@ -344,6 +347,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F1DABFAA1E9B8B6100AD2324 /* WireShareEngine.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
