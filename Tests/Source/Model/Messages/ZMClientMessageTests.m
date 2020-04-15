@@ -21,7 +21,6 @@
 #import "MessagingTest+EventFactory.h"
 #import "ZMMessage+Internal.h"
 #import "ZMUser+Internal.h"
-#import "ZMClientMessage.h"
 #import "NSString+RandomString.h"
 #import "WireDataModelTests-Swift.h"
 #import <WireDataModel/WireDataModel-Swift.h>
@@ -126,13 +125,13 @@
 {
     // given
     ZMClientMessage *message = [self createClientTextMessage];
-    XCTAssertFalse([message.keysThatHaveLocalModifications containsObject:ZMClientMessageLinkPreviewStateKey]);
+    XCTAssertFalse([message.keysThatHaveLocalModifications containsObject:ZMClientMessage.linkPreviewStateKey]);
     
     // when
     message.linkPreviewState = state;
     
     // then
-    XCTAssertEqual([message.keysThatHaveLocalModifications containsObject:ZMClientMessageLinkPreviewStateKey], shouldSet);
+    XCTAssertEqual([message.keysThatHaveLocalModifications containsObject:ZMClientMessage.linkPreviewStateKey], shouldSet);
 }
 
 - (void)testThatAInsertedClientMessageHasADefaultLinkPreviewStateDone

@@ -31,7 +31,6 @@
 
 #import "ZMConversation+UnreadCount.h"
 #import "ZMUpdateEvent+WireDataModel.h"
-#import "ZMClientMessage.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
 

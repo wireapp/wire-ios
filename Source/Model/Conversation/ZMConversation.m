@@ -32,7 +32,6 @@
 #import "ZMUser+Internal.h"
 
 #import "ZMMessage+Internal.h"
-#import "ZMClientMessage.h"
 
 #import "NSManagedObjectContext+zmessaging.h"
 #import "ZMConnection+Internal.h"

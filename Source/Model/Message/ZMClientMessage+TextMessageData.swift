@@ -23,6 +23,13 @@ extension ZMClientMessage: ZMTextMessageData {
     
     @NSManaged public var quote: ZMMessage?
     
+    public override var textMessageData: ZMTextMessageData? {        
+        guard genericMessage?.textData != nil else {
+            return nil
+        }
+        return self
+    }
+    
     public var isQuotingSelf: Bool{
         return quote?.sender?.isSelfUser ?? false
     }
@@ -40,7 +47,9 @@ extension ZMClientMessage: ZMTextMessageData {
     }
         
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
-        guard let nonce = nonce, isEditableMessage else { return }
+        guard let nonce = nonce, isEditableMessage else {
+            return
+        }
         
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)

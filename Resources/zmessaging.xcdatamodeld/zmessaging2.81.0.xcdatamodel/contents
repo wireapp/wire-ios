@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="19B88" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.79.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="19B88" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.81.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
@@ -22,6 +22,12 @@
         <attribute name="uploadState" optional="YES" attributeType="Integer 16" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="version" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="dataSet" toMany="YES" deletionRule="Cascade" ordered="YES" destinationEntity="GenericMessageData" inverseName="asset" inverseEntity="GenericMessageData" syncable="YES"/>
+    </entity>
+    <entity name="ButtonState" representedClassName=".ButtonState" syncable="YES">
+        <attribute name="isExpired" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
+        <attribute name="remoteIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="stateValue" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="buttonStates" inverseEntity="Message" syncable="YES"/>
     </entity>
     <entity name="ClientMessage" representedClassName=".ZMClientMessage" parentEntity="Message" syncable="YES">
         <attribute name="linkPreviewState" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
@@ -143,6 +149,7 @@
         <attribute name="normalizedText" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
         <attribute name="senderClientID" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="serverTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
+        <relationship name="buttonStates" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ButtonState" inverseName="message" inverseEntity="ButtonState" syncable="YES"/>
         <relationship name="confirmations" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="MessageConfirmation" inverseName="message" inverseEntity="MessageConfirmation" syncable="YES"/>
         <relationship name="discoveredClients" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="UserClient" inverseName="discoveredByMessage" inverseEntity="UserClient" syncable="YES"/>
         <relationship name="hiddenInConversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="hiddenMessages" inverseEntity="Conversation" syncable="YES"/>
@@ -310,6 +317,7 @@
         <element name="Action" positionX="-189" positionY="72" width="128" height="75"/>
         <element name="AddressBookEntry" positionX="9" positionY="153" width="128" height="90"/>
         <element name="AssetClientMessage" positionX="9" positionY="153" width="128" height="225"/>
+        <element name="ButtonState" positionX="-225" positionY="36" width="128" height="105"/>
         <element name="ClientMessage" positionX="9" positionY="153" width="128" height="90"/>
         <element name="Connection" positionX="0" positionY="0" width="128" height="165"/>
         <element name="Conversation" positionX="0" positionY="0" width="128" height="705"/>
@@ -318,7 +326,7 @@
         <element name="KnockMessage" positionX="0" positionY="0" width="128" height="45"/>
         <element name="Label" positionX="-225" positionY="36" width="128" height="150"/>
         <element name="Member" positionX="18" positionY="162" width="128" height="165"/>
-        <element name="Message" positionX="0" positionY="0" width="128" height="420"/>
+        <element name="Message" positionX="0" positionY="0" width="128" height="435"/>
         <element name="MessageConfirmation" positionX="9" positionY="153" width="128" height="105"/>
         <element name="ParticipantRole" positionX="-207" positionY="54" width="128" height="105"/>
         <element name="Reaction" positionX="18" positionY="162" width="128" height="105"/>

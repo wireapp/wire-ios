@@ -18,7 +18,6 @@
 
 
 #import "ZMGenericMessage+UpdateEvent.h"
-#import "ZMClientMessage.h"
 #import "ZMGenericMessage+External.h"
 #import "ZMGenericMessage+Utils.h"
 #import "WireDataModel/WireDataModel-Swift.h"
