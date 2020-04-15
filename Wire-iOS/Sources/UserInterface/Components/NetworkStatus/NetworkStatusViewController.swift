@@ -18,6 +18,8 @@
 
 import Foundation
 import Cartography
+import UIKit
+import WireSyncEngine
 
 typealias NetworkStatusBarDelegate = NetworkStatusViewControllerDelegate & NetworkStatusViewDelegate
 
@@ -120,9 +122,9 @@ final class NetworkStatusViewController : UIViewController {
     }
 
     func showOfflineAlert() {
-        let offlineAlert = UIAlertController.init(title: "system_status_bar.no_internet.title".localized,
+        let offlineAlert = UIAlertController(title: "system_status_bar.no_internet.title".localized,
                                                   message: "system_status_bar.no_internet.explanation".localized,
-                                                  cancelButtonTitle: "general.confirm".localized)
+                                                  alertAction: .confirm())
         offlineAlert.presentTopmost()
     }
 

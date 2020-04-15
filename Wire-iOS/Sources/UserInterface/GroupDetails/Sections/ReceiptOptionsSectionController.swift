@@ -17,6 +17,9 @@
 //
 
 import Foundation
+import UIKit
+import WireDataModel
+import WireSyncEngine
 
 final class ReceiptOptionsSectionController: GroupDetailsSectionController {
 
@@ -34,7 +37,7 @@ final class ReceiptOptionsSectionController: GroupDetailsSectionController {
     private weak var presentingViewController: UIViewController?
     
     override var isHidden: Bool {
-        return !(ZMUser.selfUser()?.canModifyReadReceiptSettings(in: conversation) ?? false)
+        return !SelfUser.current.canModifyReadReceiptSettings(in: conversation)
     }
 
     init(conversation: ZMConversation,

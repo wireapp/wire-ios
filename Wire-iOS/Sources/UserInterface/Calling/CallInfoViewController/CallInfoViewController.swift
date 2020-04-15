@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import UIKit
+import WireSyncEngine
 
 protocol CallInfoViewControllerDelegate: class {
     func infoViewController(_ viewController: CallInfoViewController, perform action: CallAction)
@@ -98,7 +100,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         super.viewWillAppear(animated)
         updateState()
     }
-
+    
     private func setupViews() {
         addToSelf(backgroundViewController)
 
@@ -106,7 +108,7 @@ final class CallInfoViewController: UIViewController, CallActionsViewDelegate, C
         view.addSubview(stackView)
         stackView.alignment = .center
         stackView.distribution = .fill
-        stackView.spacing = DeviceNativeBoundsSize.nativeScreenBoundOfThisDevice == .iPhone3_5Inch ? 6 : 16
+        stackView.spacing = 16
 
         addChild(statusViewController)
         [statusViewController.view, accessoryViewController.view, actionsView].forEach(stackView.addArrangedSubview)

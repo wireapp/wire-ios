@@ -17,10 +17,16 @@
 //
 
 import Foundation
+import UIKit
+import WireSystem
+import WireDataModel
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "StartUIViewController")
 
-final class StartUIViewController: UIViewController {
+final class StartUIViewController: UIViewController, SpinnerCapable {
+    var dismissSpinner: SpinnerCompletion?
+    
     static let InitiallyShowsKeyboardConversationThreshold = 10
     
     weak var delegate: StartUIDelegate?
@@ -83,7 +89,7 @@ final class StartUIViewController: UIViewController {
     }
 
     var selfUser: UserType {
-        return ZMUser.selfUser()
+        return SelfUser.current
     }
     
     // MARK: - Overloaded methods
@@ -93,7 +99,6 @@ final class StartUIViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(animated)
         handleUploadAddressBookLogicIfNeeded()
     }
     
@@ -105,7 +110,6 @@ final class StartUIViewController: UIViewController {
         navigationController?.navigationBar.tintColor = UIColor.from(scheme: .textForeground, variant: .dark)
         navigationController?.navigationBar.titleTextAttributes = DefaultNavigationBar.titleTextAttributes(for: .dark)
         
-        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(animated)
     }
     
     override var preferredStatusBarStyle: UIStatusBarStyle {
@@ -131,7 +135,7 @@ final class StartUIViewController: UIViewController {
         if let team = (selfUser as? ZMUser)?.team {
             title = team.name?.uppercased()
         } else {
-            title = selfUser.displayName.uppercased()
+            title = selfUser.name?.uppercased()
         }
         
         searchHeader.delegate = self
@@ -180,7 +184,7 @@ final class StartUIViewController: UIViewController {
     func showKeyboardIfNeeded() {
         let conversationCount = ZMConversationList.conversations(inUserSession: ZMUserSession.shared()!).count ///TODO: unwrap
         if conversationCount > StartUIViewController.InitiallyShowsKeyboardConversationThreshold {
-            searchHeader.tokenField.becomeFirstResponder()
+            _ = searchHeader.tokenField.becomeFirstResponder()
         }
         
     }
@@ -197,7 +201,7 @@ final class StartUIViewController: UIViewController {
     
     @objc
     func onDismissPressed() {
-        searchHeader.tokenField.resignFirstResponder()
+        _ = searchHeader.tokenField.resignFirstResponder()
         navigationController?.dismiss(animated: true)
     }
     
@@ -228,13 +232,16 @@ final class StartUIViewController: UIViewController {
     }
     
     // MARK: - Action bar
+
     @objc
     func inviteMoreButtonTapped(_ sender: UIButton?) {
-        let inviteContactsViewController = InviteContactsViewController()
-        inviteContactsViewController.delegate = self
-        navigationController?.pushViewController(inviteContactsViewController, animated: true)
+        if needsAddressBookPermission {
+            presentShareContactsViewController()
+        } else {
+            navigationController?.pushViewController(ContactsViewController(), animated: true)
+        }
     }
-    
+
 }
 
 extension StartUIViewController: SearchHeaderViewControllerDelegate {

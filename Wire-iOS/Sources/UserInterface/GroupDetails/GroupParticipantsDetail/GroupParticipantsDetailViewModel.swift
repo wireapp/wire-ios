@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireDataModel
 
 fileprivate extension String {
     var isValidQuery: Bool {
@@ -80,13 +81,14 @@ final class GroupParticipantsDetailViewModel: NSObject, SearchHeaderViewControll
     }
     
     private func filterPredicate(for query: String) -> NSPredicate {
+        let trimmedQuery = query.trim()
         var predicates = [
-            NSPredicate(format: "name contains[cd] %@", query),
-            NSPredicate(format: "handle contains[cd] %@", query)
+            NSPredicate(format: "name contains[cd] %@", trimmedQuery),
+            NSPredicate(format: "handle contains[cd] %@", trimmedQuery)
         ]
 
         if query.hasPrefix("@") {
-            predicates.append(.init(format: "handle contains[cd] %@", String(query.dropFirst())))
+            predicates.append(.init(format: "handle contains[cd] %@", String(trimmedQuery.dropFirst())))
         }
         
         return NSCompoundPredicate(orPredicateWithSubpredicates: predicates)

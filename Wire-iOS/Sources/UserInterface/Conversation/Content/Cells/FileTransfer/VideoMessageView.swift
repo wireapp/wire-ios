@@ -18,6 +18,9 @@
 
 import Foundation
 import Cartography
+import UIKit
+import WireDataModel
+import WireCommonComponents
 
 final class VideoMessageView: UIView, TransferView {
     public var fileMessage: ZMConversationMessage?
@@ -176,7 +179,7 @@ final class VideoMessageView: UIView, TransferView {
     }
     
     private func updatePreviewImage(_ image: MediaAsset) {
-        previewImageView.setMediaAsset(image) 
+        previewImageView.mediaAsset = image
         timeLabel.textColor = UIColor.from(scheme: .textForeground, variant: .dark)
         updateVisibleViews()
     }

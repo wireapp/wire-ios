@@ -18,6 +18,9 @@
 
 import UIKit
 import AVFoundation
+import WireDataModel
+import WireSyncEngine
+import avs
 
 final class CallViewController: UIViewController {
     
@@ -130,7 +133,7 @@ final class CallViewController: UIViewController {
         setupApplicationStateObservers()
         updateIdleTimer()
     }
-
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         proximityMonitorManager?.stopListening()
@@ -161,6 +164,10 @@ final class CallViewController: UIViewController {
     override var prefersStatusBarHidden: Bool {
         return !isOverlayVisible
     }
+    
+    override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
+        return wr_supportedInterfaceOrientations
+    }
 
     @objc private func resumeVideoIfNeeded() {
         guard voiceChannel.videoState.isPaused else { return }
@@ -183,15 +190,17 @@ final class CallViewController: UIViewController {
     }
     
     fileprivate func minimizeOverlay() {
+        weak var rootViewController = view.window?.rootViewController
         dismiss(animated: true, completion: {
             self.dismisser?.dismiss(viewController: self, completion: nil)
+            rootViewController?.setNeedsStatusBarAppearanceUpdate()
         })
     }
 
     fileprivate func acceptDegradedCall() {
         guard let userSession = ZMUserSession.shared() else { return }
         
-        userSession.enqueueChanges({
+        userSession.enqueue({
             self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession)
         }, completionHandler: {
             self.conversation?.joinCall()
@@ -210,7 +219,6 @@ final class CallViewController: UIViewController {
         updateOverlayAfterStateChanged()
         updateAppearance()
         updateIdleTimer()
-        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
     }
     
     private func updateIdleTimer() {
@@ -225,7 +233,10 @@ final class CallViewController: UIViewController {
 
     fileprivate func alertVideoUnavailable() {
         if voiceChannel.videoState == .stopped, voiceChannel.conversation?.localParticipants.count > 4 {
-            showAlert(forMessage: "call.video.too_many.alert.message".localized, title: "call.video.too_many.alert.title".localized) { _ in }
+            let alert = UIAlertController.alertWithOKButton(title: "call.video.too_many.alert.title".localized,
+                                                            message: "call.video.too_many.alert.message".localized)
+            
+            present(alert, animated: true)
         }
     }
     
@@ -264,7 +275,7 @@ final class CallViewController: UIViewController {
 
 extension CallViewController: WireCallCenterCallStateObserver {
     
-    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: ZMUser, timestamp: Date?, previousCallState: CallState?) {
+    func callCenterDidChange(callState: CallState, conversation: ZMConversation, caller: UserType, timestamp: Date?, previousCallState: CallState?) {
         updateConfiguration()
         hideOverlayAfterCallEstablishedIfNeeded()
         hapticsController.updateCallState(callState)
@@ -369,11 +380,11 @@ extension CallViewController: CallInfoRootViewControllerDelegate {
         guard let userSession = ZMUserSession.shared() else { return }
         
         switch action {
-        case .continueDegradedCall: userSession.enqueueChanges { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
+        case .continueDegradedCall: userSession.enqueue { self.voiceChannel.continueByDecreasingConversationSecurity(userSession: userSession) }
         case .acceptCall: acceptCallIfPossible()
         case .acceptDegradedCall: acceptDegradedCall()
         case .terminateCall: voiceChannel.leave(userSession: userSession, completion: nil)
-        case .terminateDegradedCall: userSession.enqueueChanges { self.voiceChannel.leaveAndDecreaseConversationSecurity(userSession: userSession) }
+        case .terminateDegradedCall: userSession.enqueue { self.voiceChannel.leaveAndDecreaseConversationSecurity(userSession: userSession) }
         case .toggleMuteState: voiceChannel.toggleMuteState(userSession: userSession)
         case .toggleSpeakerState: AVSMediaManager.sharedInstance().toggleSpeaker()
         case .minimizeOverlay: minimizeOverlay()

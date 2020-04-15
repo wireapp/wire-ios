@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import UserNotifications
+import UIKit
 
 extension ConversationListViewController: PermissionDeniedViewControllerDelegate {
     public func continueWithoutPermission(_ viewController: PermissionDeniedViewController) {

@@ -16,6 +16,8 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireSyncEngine
+
 final class CallHapticsController {
 
     private var lastCallState: CallState?
@@ -86,9 +88,7 @@ final class CallHapticsController {
     }
     
     private func createVideoStateMap(using participants: [CallParticipant]) -> [CallParticipant : Bool] {
-        return Dictionary(uniqueKeysWithValues: participants.map {
-            ($0, $0.state.isSendingVideo)
-        })
+        return Dictionary(participants.map { ($0, $0.state.isSendingVideo) }, uniquingKeysWith: { (first, _) in first })
     }
 }
 

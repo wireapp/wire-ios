@@ -17,6 +17,8 @@
 //
 
 import Foundation
+import UIKit
+import WireCommonComponents
 
 final class MediaBarViewController: UIViewController {
     private var mediaPlaybackManager: MediaPlaybackManager?
@@ -88,10 +90,6 @@ final class MediaBarViewController: UIViewController {
 }
 
 extension MediaBarViewController: MediaPlaybackManagerChangeObserver {
-    
-    func activeMediaPlayerTitleDidChange() {
-        updateTitleLabel()
-    }
     
     func activeMediaPlayerStateDidChange() {
         updatePlayPauseButton()

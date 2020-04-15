@@ -17,6 +17,10 @@
 //
 
 import Foundation
+import UIKit
+import WireSystem
+import WireDataModel
+import WireSyncEngine
 
 private let zmLog = ZMSLog(tag: "ConversationViewController+ConversationContentViewControllerDelegate")
 
@@ -44,7 +48,7 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
     }
     
     func conversationContentViewController(_ contentViewController: ConversationContentViewController, didTriggerResending message: ZMConversationMessage) {
-        ZMUserSession.shared()?.enqueueChanges({
+        ZMUserSession.shared()?.enqueue({
             message.resend()
         })
     }
@@ -107,11 +111,14 @@ extension ConversationViewController: ConversationContentViewControllerDelegate 
         presentParticipantsViewController(navigationController, from: sourceView)
     }
     
-    func conversationContentViewController(_ controller: ConversationContentViewController, presentParticipantsDetailsWithSelectedUsers selectedUsers: [ZMUser], from sourceView: UIView) {
+    func conversationContentViewController(_ controller: ConversationContentViewController, presentParticipantsDetailsWithSelectedUsers selectedUsers: [UserType], from sourceView: UIView) {
         if let groupDetailsViewController = (participantsController as? UINavigationController)?.topViewController as? GroupDetailsViewController {
                 groupDetailsViewController.presentParticipantsDetails(with: conversation.sortedOtherParticipants, selectedUsers: selectedUsers, animated: false)            
         }
-        presentParticipantsViewController(participantsController, from: sourceView)
+        
+        if let participantsController = participantsController {
+            presentParticipantsViewController(participantsController, from: sourceView)
+        }
     }
 }
 

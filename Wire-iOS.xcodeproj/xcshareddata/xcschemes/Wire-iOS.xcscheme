@@ -153,7 +153,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-ZMBackendEnvironmentType staging"
+            argument = "-BackendEnvironmentTypeOverrideKey staging"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument

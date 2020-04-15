@@ -17,6 +17,9 @@
 //
 
 import Foundation
+import UIKit
+import WireDataModel
+import WireSyncEngine
 
 final class ConnectRequestsViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     var connectionRequests: [ZMConversation] = []
@@ -43,7 +46,7 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
                                                                                  for: pendingConnectionsList,
                                                                                  userSession: userSession)
             
-            userObserverToken = UserChangeInfo.add(observer: self, for: ZMUser.selfUser(), in: userSession)
+            userObserverToken = UserChangeInfo.add(observer: self, for: userSession.selfUser, in: userSession)
             
             connectionRequests = pendingConnectionsList as? [ZMConversation] ?? []
         }
@@ -57,11 +60,6 @@ final class ConnectRequestsViewController: UIViewController, UITableViewDataSour
         tableView.estimatedRowHeight = 0
         tableView.estimatedSectionHeaderHeight = 0
         tableView.estimatedSectionFooterHeight = 0
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        UIApplication.shared.wr_updateStatusBarForCurrentControllerAnimated(true)
     }
     
     override var prefersStatusBarHidden: Bool {

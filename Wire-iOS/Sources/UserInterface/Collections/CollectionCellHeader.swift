@@ -19,8 +19,10 @@
 
 import Foundation
 import Cartography
+import UIKit
+import WireDataModel
 
-public final class CollectionCellHeader: UIView {
+final class CollectionCellHeader: UIView {
     public var message: ZMConversationMessage? {
         didSet {
             guard let message = self.message, let serverTimestamp = message.serverTimestamp, let sender = message.sender else {
@@ -28,7 +30,7 @@ public final class CollectionCellHeader: UIView {
             }
             
             self.nameLabel.textColor = sender.nameAccentColor
-            self.nameLabel.text = sender.displayName
+            self.nameLabel.text = sender.name
             self.dateLabel.text = serverTimestamp.formattedDate
         }
     }

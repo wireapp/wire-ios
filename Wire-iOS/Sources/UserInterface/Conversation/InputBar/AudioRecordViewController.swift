@@ -20,14 +20,19 @@
 
 import Foundation
 import MobileCoreServices
+import UIKit
+import WireSystem
+import avs
+import WireSyncEngine
+import WireCommonComponents
 
 private let zmLog = ZMSLog(tag: "UI")
 
-@objc protocol AudioRecordBaseViewController: NSObjectProtocol {
-    weak var delegate: AudioRecordViewControllerDelegate? { get set }
+protocol AudioRecordBaseViewController: class {
+    var delegate: AudioRecordViewControllerDelegate? { get set }
 }
 
-@objc protocol AudioRecordViewControllerDelegate: class {
+protocol AudioRecordViewControllerDelegate: class {
     func audioRecordViewControllerDidCancel(_ audioRecordViewController: AudioRecordBaseViewController)
     func audioRecordViewControllerDidStartRecording(_ audioRecordViewController: AudioRecordBaseViewController)
     func audioRecordViewControllerWantsToSendAudio(_ audioRecordViewController: AudioRecordBaseViewController, recordingURL: URL, duration: TimeInterval, filter: AVSAudioEffectType)
@@ -67,8 +72,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     }
     
     init(audioRecorder: AudioRecorderType? = nil) {
-        let maxAudioLength = ZMUserSession.shared()?.maxAudioLength()
-        let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize()
+        let maxAudioLength = ZMUserSession.shared()?.maxAudioLength
+        let maxUploadSize = ZMUserSession.shared()?.maxUploadFileSize
         self.recorder = audioRecorder ?? AudioRecorder(format: .wav, maxRecordingDuration: maxAudioLength, maxFileSize: maxUploadSize)
         
         super.init(nibName: nil, bundle: nil)
@@ -79,8 +84,8 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
 
         updateRecordingState(recordingState)
 
-        if DeveloperMenuState.developerMenuEnabled() && Settings.shared().maxRecordingDurationDebug != 0 {
-            self.recorder.maxRecordingDuration = Settings.shared().maxRecordingDurationDebug
+        if Bundle.developerModeEnabled && Settings.shared.maxRecordingDurationDebug != 0 {
+            self.recorder.maxRecordingDuration = Settings.shared.maxRecordingDurationDebug
         }
     }
     
@@ -134,7 +139,9 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
     
     private func configureViews() {
         accentColorChangeHandler = AccentColorChangeHandler.addObserver(self) { [unowned self] color, _ in
-            self.audioPreviewView.color = color
+            if let color = color {
+                self.audioPreviewView.color = color
+            }
         }
         
         topContainerView.backgroundColor = UIColor.from(scheme: .background)
@@ -273,7 +280,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
         
         recorder.recordLevelCallBack = { [weak self] level in
             guard let `self` = self else { return }
-            self.audioPreviewView.updateWithLevel(CGFloat(level))
+            self.audioPreviewView.updateWithLevel(level)
         }
     }
     
@@ -385,7 +392,7 @@ final class AudioRecordViewController: UIViewController, AudioRecordBaseViewCont
             let convertedPath = (NSTemporaryDirectory() as NSString).appendingPathComponent(filename)
             convertedPath.deleteFileAtPath()
             
-            AVAsset.wr_convertAudioToUploadFormat(effectPath, outPath: convertedPath) { success in
+            AVAsset.convertAudioToUploadFormat(effectPath, outPath: convertedPath) { success in
                 effectPath.deleteFileAtPath()
                 
                 if success {

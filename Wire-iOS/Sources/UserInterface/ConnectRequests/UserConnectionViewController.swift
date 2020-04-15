@@ -18,6 +18,9 @@
 
 
 import Foundation
+import UIKit
+import WireDataModel
+import WireSyncEngine
 
 enum IncomingConnectionAction: UInt {
     case ignore, accept
@@ -48,14 +51,14 @@ final class IncomingConnectionViewController: UIViewController {
         connectionView = IncomingConnectionView(user: user)
         connectionView.onAccept = { [weak self] user in
             guard let `self` = self else { return }
-            self.userSession?.performChanges {
+            self.userSession?.perform {
                 self.user.accept()
             }
             self.onAction?(.accept)
         }
         connectionView.onIgnore = { [weak self] user in
             guard let `self` = self else { return }
-            self.userSession?.performChanges {
+            self.userSession?.perform {
                 self.user.ignore()
                 self.onAction?(.ignore)
             }
@@ -66,7 +69,6 @@ final class IncomingConnectionViewController: UIViewController {
     
 }
 
-@objcMembers
 final class UserConnectionViewController: UIViewController {
 
     fileprivate var userConnectionView: UserConnectionView!

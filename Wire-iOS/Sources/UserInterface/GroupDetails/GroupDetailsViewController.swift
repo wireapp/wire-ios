@@ -18,6 +18,8 @@
 
 import UIKit
 import Cartography
+import WireDataModel
+import WireSyncEngine
 
 final class GroupDetailsViewController: UIViewController, ZMConversationObserver, GroupDetailsFooterViewDelegate {
     
@@ -168,17 +170,12 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
             sections.append(optionsSectionController)
         }
         
-        if let selfUser = ZMUser.selfUser(),
-            conversation.teamRemoteIdentifier != nil,
-            selfUser.canModifyReadReceiptSettings(in: conversation)
-        {
+        if conversation.teamRemoteIdentifier != nil && SelfUser.current.canModifyReadReceiptSettings(in: conversation) {
             let receiptOptionsSectionController = ReceiptOptionsSectionController(conversation: conversation,
                                                                                   syncCompleted: didCompleteInitialSync,
                                                                                   collectionView: self.collectionViewController.collectionView!,
                                                                                   presentingViewController: self)
             sections.append(receiptOptionsSectionController)
-           
-            
         }
         
         // MARK: services sections
@@ -223,7 +220,6 @@ final class GroupDetailsViewController: UIViewController, ZMConversationObserver
         }
     }
     
-    @objc(presentParticipantsDetailsWithUsers:selectedUsers:animated:)
     func presentParticipantsDetails(with users: [UserType], selectedUsers: [UserType], animated: Bool) {
         let detailsViewController = GroupParticipantsDetailViewController(
             selectedParticipants: selectedUsers,
@@ -264,14 +260,14 @@ extension GroupDetailsViewController: ProfileViewControllerDelegate {
         }
     }
     
-    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: Set<ZMUser>) {
+    func profileViewController(_ controller: ProfileViewController?, wantsToCreateConversationWithName name: String?, users: UserSet) {
         //no-op
     }
 }
 
 extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, GroupOptionsSectionControllerDelegate {
 
-    func presentDetails(for user: ZMUser) {
+    func presentDetails(for user: UserType) {
         let viewController = UserDetailViewControllerFactory.createUserDetailViewController(
             user: user,
             conversation: conversation,
@@ -286,9 +282,8 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         presentParticipantsDetails(with: users, selectedUsers: [], animated: true)
     }
     
-    @objc(presentGuestOptionsAnimated:)
     func presentGuestOptions(animated: Bool) {
-        let menu = ConversationOptionsViewController(conversation: conversation, userSession: .shared()!)
+        let menu = ConversationOptionsViewController(conversation: conversation, userSession: ZMUserSession.shared()!)
         navigationController?.pushViewController(menu, animated: animated)
     }
 
@@ -304,14 +299,4 @@ extension GroupDetailsViewController: GroupDetailsSectionControllerDelegate, Gro
         navigationController?.pushViewController(menu, animated: animated)
     }
     
-}
-
-extension Array where Element: UserType {
-    func addSelfUserAndSorted() -> [UserType] {
-        var arr: [UserType] = self
-        if let selfUser = ZMUser.selfUser() {
-            arr.append(selfUser)
-        }
-        return arr.sorted { $0.displayName < $1.displayName } as! Array<Element>
-    }
 }

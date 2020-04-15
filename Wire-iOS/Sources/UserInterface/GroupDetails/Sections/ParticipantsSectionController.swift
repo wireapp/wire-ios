@@ -17,6 +17,9 @@
 //
 
 import Foundation
+import UIKit
+import WireDataModel
+import WireSyncEngine
 
 protocol ParticipantsCellConfigurable: Reusable {
     func configure(with rowType: ParticipantsRowType, conversation: ZMConversation, showSeparator: Bool)
@@ -219,8 +222,7 @@ final class ParticipantsSectionController: GroupDetailsSectionController {
 
     override func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         switch viewModel.rows[indexPath.row] {
-        case .user(let bareUser):
-            guard let user = bareUser as? ZMUser else { return }
+        case .user(let user):
             delegate?.presentDetails(for: user)
         case .showAll:
             delegate?.presentFullParticipantsList(for: viewModel.participants, in: conversation)
