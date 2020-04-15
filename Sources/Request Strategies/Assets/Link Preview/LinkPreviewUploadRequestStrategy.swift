@@ -34,7 +34,7 @@ public final class LinkPreviewUploadRequestStrategy: AbstractRequestStrategy, ZM
             entityName: ZMClientMessage.entityName(),
             update: LinkPreviewUploadRequestStrategy.updatePredicate,
             filter: LinkPreviewUploadRequestStrategy.updateFilter,
-            keysToSync: [ZMClientMessageLinkPreviewStateKey],
+            keysToSync: [ZMClientMessage.linkPreviewStateKey],
             managedObjectContext: managedObjectContext
         )
     }
@@ -69,12 +69,12 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
 
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let message = managedObject as? ZMClientMessage else { return nil }
-        guard keys.contains(ZMClientMessageLinkPreviewStateKey) else { return nil }
+        guard keys.contains(ZMClientMessage.linkPreviewStateKey) else { return nil }
         guard let conversationId = message.conversation?.remoteIdentifier else { return nil }
         requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
         let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversationId)
         zmLog.debug("request to send: \(message.nonce?.uuidString ?? "nil"), linkPreview: \(String(describing: message.genericMessage))")
-        return ZMUpstreamRequest(keys: [ZMClientMessageLinkPreviewStateKey], transportRequest: request)
+        return ZMUpstreamRequest(keys: [ZMClientMessage.linkPreviewStateKey], transportRequest: request)
     }
     
     public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
@@ -102,7 +102,7 @@ extension LinkPreviewUploadRequestStrategy : ZMUpstreamTranscoder {
     }
 
     public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable: Any]?, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-        guard keysToParse.contains(ZMClientMessageLinkPreviewStateKey) else { return false }
+        guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
         guard let message = managedObject as? ZMClientMessage else { return false }
 
         // We do not update the message with the response to avoid updating the timestamp.

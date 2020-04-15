@@ -144,7 +144,9 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // WHEN
-        message.textMessageData?.requestLinkPreviewImageDownload()
+        syncMOC.performGroupedBlockAndWait {
+            message.textMessageData?.requestLinkPreviewImageDownload()
+        }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // THEN
