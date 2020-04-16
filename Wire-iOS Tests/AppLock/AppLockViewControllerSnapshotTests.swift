@@ -18,8 +18,7 @@
 
 @testable import Wire
 
-///TODO: shield logo is not visible.
-final class AppLockViewControllerSnapshotTests: ZMSnapshotTestCase {
+class AppLockViewControllerSnapshotTests: ZMSnapshotTestCase {
     var sut: AppLockViewController!
     
     override func setUp() {
