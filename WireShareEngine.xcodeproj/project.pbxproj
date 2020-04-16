@@ -613,7 +613,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
 			};
 			name = Debug;
@@ -626,7 +625,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.wire-ios-share-engineTests";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
-				SWIFT_OBJC_INTERFACE_HEADER_NAME = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
 			};
 			name = Release;
