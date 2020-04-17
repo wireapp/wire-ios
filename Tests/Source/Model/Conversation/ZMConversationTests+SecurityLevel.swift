@@ -62,6 +62,33 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         }
     }
     
+    func testThatItDoesNotIncreaseTheSecurityLevelIfAConversationIsAConnection() {
+        self.syncMOC.performGroupedAndWait {_ in
+            // given
+            let selfUser = ZMUser.selfUser(in: self.uiMOC)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+            conversation.conversationType = .connection
+            conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+            let selfClient = self.createSelfClient(onMOC: self.uiMOC)
+            
+            let userClient = UserClient.insertNewObject(in: self.uiMOC)
+            userClient.remoteIdentifier = UUID.create().uuidString
+            userClient.user = selfUser
+            
+            // when
+            XCTAssertEqual(conversation.securityLevel, .notSecure)
+            XCTAssertFalse(conversation.allUsersTrusted)
+            
+            selfClient.trustClient(userClient)
+            conversation.increaseSecurityLevelIfNeededAfterTrusting(clients: Set([userClient]))
+            
+            // then
+            XCTAssertTrue(conversation.allUsersTrusted)
+            XCTAssertEqual(conversation.securityLevel, .notSecure)
+        }
+    }
+    
     func testThatItDoesNotIncreaseTheSecurityLevelIfAConversationContainsUsersWithoutAConnection()
     {
         self.syncMOC.performGroupedAndWait {_ in
