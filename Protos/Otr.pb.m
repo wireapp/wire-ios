@@ -1056,6 +1056,9 @@ static ZMUserEntry* defaultZMUserEntryInstance = nil;
 @property (strong) NSMutableArray<ZMUserEntry*> * recipientsArray;
 @property BOOL nativePush;
 @property (strong) NSData* blob;
+@property ZMNewOtrMessagePriority nativePriority;
+@property BOOL transient;
+@property (strong) NSMutableArray<ZMUserId*> * reportMissingArray;
 @end
 
 @implementation ZMNewOtrMessage
@@ -1088,11 +1091,34 @@ static ZMUserEntry* defaultZMUserEntryInstance = nil;
   hasBlob_ = !!_value_;
 }
 @synthesize blob;
+- (BOOL) hasNativePriority {
+  return !!hasNativePriority_;
+}
+- (void) setHasNativePriority:(BOOL) _value_ {
+  hasNativePriority_ = !!_value_;
+}
+@synthesize nativePriority;
+- (BOOL) hasTransient {
+  return !!hasTransient_;
+}
+- (void) setHasTransient:(BOOL) _value_ {
+  hasTransient_ = !!_value_;
+}
+- (BOOL) transient {
+  return !!transient_;
+}
+- (void) setTransient:(BOOL) _value_ {
+  transient_ = !!_value_;
+}
+@synthesize reportMissingArray;
+@dynamic reportMissing;
 - (instancetype) init {
   if ((self = [super init])) {
     self.sender = [ZMClientId defaultInstance];
     self.nativePush = YES;
     self.blob = [NSData data];
+    self.nativePriority = ZMNewOtrMessagePriorityLOWPRIORITY;
+    self.transient = NO;
   }
   return self;
 }
@@ -1114,6 +1140,12 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
 - (ZMUserEntry*)recipientsAtIndex:(NSUInteger)index {
   return [recipientsArray objectAtIndex:index];
 }
+- (NSArray<ZMUserId*> *)reportMissing {
+  return reportMissingArray;
+}
+- (ZMUserId*)reportMissingAtIndex:(NSUInteger)index {
+  return [reportMissingArray objectAtIndex:index];
+}
 - (BOOL) isInitialized {
   if (!self.hasSender) {
     return NO;
@@ -1129,6 +1161,14 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
     }
   }];
   if (!isInitrecipients) return isInitrecipients;
+  __block BOOL isInitreportMissing = YES;
+   [self.reportMissing enumerateObjectsUsingBlock:^(ZMUserId *element, NSUInteger idx, BOOL *stop) {
+    if (!element.isInitialized) {
+      isInitreportMissing = NO;
+      *stop = YES;
+    }
+  }];
+  if (!isInitreportMissing) return isInitreportMissing;
   return YES;
 }
 - (void) writeToCodedOutputStream:(PBCodedOutputStream*) output {
@@ -1144,6 +1184,15 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (self.hasBlob) {
     [output writeData:4 value:self.blob];
   }
+  if (self.hasNativePriority) {
+    [output writeEnum:5 value:self.nativePriority];
+  }
+  if (self.hasTransient) {
+    [output writeBool:6 value:self.transient];
+  }
+  [self.reportMissingArray enumerateObjectsUsingBlock:^(ZMUserId *element, NSUInteger idx, BOOL *stop) {
+    [output writeMessage:7 value:element];
+  }];
   [self.unknownFields writeToCodedOutputStream:output];
 }
 - (SInt32) serializedSize {
@@ -1165,6 +1214,15 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (self.hasBlob) {
     size_ += computeDataSize(4, self.blob);
   }
+  if (self.hasNativePriority) {
+    size_ += computeEnumSize(5, self.nativePriority);
+  }
+  if (self.hasTransient) {
+    size_ += computeBoolSize(6, self.transient);
+  }
+  [self.reportMissingArray enumerateObjectsUsingBlock:^(ZMUserId *element, NSUInteger idx, BOOL *stop) {
+    size_ += computeMessageSize(7, element);
+  }];
   size_ += self.unknownFields.serializedSize;
   memoizedSerializedSize = size_;
   return size_;
@@ -1218,6 +1276,18 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (self.hasBlob) {
     [output appendFormat:@"%@%@: %@\n", indent, @"blob", self.blob];
   }
+  if (self.hasNativePriority) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"nativePriority", NSStringFromZMNewOtrMessagePriority(self.nativePriority)];
+  }
+  if (self.hasTransient) {
+    [output appendFormat:@"%@%@: %@\n", indent, @"transient", [NSNumber numberWithBool:self.transient]];
+  }
+  [self.reportMissingArray enumerateObjectsUsingBlock:^(ZMUserId *element, NSUInteger idx, BOOL *stop) {
+    [output appendFormat:@"%@%@ {\n", indent, @"reportMissing"];
+    [element writeDescriptionTo:output
+                     withIndent:[NSString stringWithFormat:@"%@  ", indent]];
+    [output appendFormat:@"%@}\n", indent];
+  }];
   [self.unknownFields writeDescriptionTo:output withIndent:indent];
 }
 - (void) storeInDictionary:(NSMutableDictionary *)dictionary {
@@ -1237,6 +1307,17 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (self.hasBlob) {
     [dictionary setObject: self.blob forKey: @"blob"];
   }
+  if (self.hasNativePriority) {
+    [dictionary setObject: @(self.nativePriority) forKey: @"nativePriority"];
+  }
+  if (self.hasTransient) {
+    [dictionary setObject: [NSNumber numberWithBool:self.transient] forKey: @"transient"];
+  }
+  for (ZMUserId* element in self.reportMissingArray) {
+    NSMutableDictionary *elementDictionary = [NSMutableDictionary dictionary];
+    [element storeInDictionary:elementDictionary];
+    [dictionary setObject:[NSDictionary dictionaryWithDictionary:elementDictionary] forKey:@"reportMissing"];
+  }
   [self.unknownFields storeInDictionary:dictionary];
 }
 - (BOOL) isEqual:(id)other {
@@ -1255,6 +1336,11 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
       (!self.hasNativePush || self.nativePush == otherMessage.nativePush) &&
       self.hasBlob == otherMessage.hasBlob &&
       (!self.hasBlob || [self.blob isEqual:otherMessage.blob]) &&
+      self.hasNativePriority == otherMessage.hasNativePriority &&
+      (!self.hasNativePriority || self.nativePriority == otherMessage.nativePriority) &&
+      self.hasTransient == otherMessage.hasTransient &&
+      (!self.hasTransient || self.transient == otherMessage.transient) &&
+      [self.reportMissingArray isEqualToArray:otherMessage.reportMissingArray] &&
       (self.unknownFields == otherMessage.unknownFields || (self.unknownFields != nil && [self.unknownFields isEqual:otherMessage.unknownFields]));
 }
 - (NSUInteger) hash {
@@ -1271,10 +1357,39 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (self.hasBlob) {
     hashCode = hashCode * 31 + [self.blob hash];
   }
+  if (self.hasNativePriority) {
+    hashCode = hashCode * 31 + self.nativePriority;
+  }
+  if (self.hasTransient) {
+    hashCode = hashCode * 31 + [[NSNumber numberWithBool:self.transient] hash];
+  }
+  [self.reportMissingArray enumerateObjectsUsingBlock:^(ZMUserId *element, NSUInteger idx, BOOL *stop) {
+    hashCode = hashCode * 31 + [element hash];
+  }];
   hashCode = hashCode * 31 + [self.unknownFields hash];
   return hashCode;
 }
 @end
+
+BOOL ZMNewOtrMessagePriorityIsValidValue(ZMNewOtrMessagePriority value) {
+  switch (value) {
+    case ZMNewOtrMessagePriorityLOWPRIORITY:
+    case ZMNewOtrMessagePriorityHIGHPRIORITY:
+      return YES;
+    default:
+      return NO;
+  }
+}
+NSString *NSStringFromZMNewOtrMessagePriority(ZMNewOtrMessagePriority value) {
+  switch (value) {
+    case ZMNewOtrMessagePriorityLOWPRIORITY:
+      return @"ZMNewOtrMessagePriorityLOWPRIORITY";
+    case ZMNewOtrMessagePriorityHIGHPRIORITY:
+      return @"ZMNewOtrMessagePriorityHIGHPRIORITY";
+    default:
+      return nil;
+  }
+}
 
 @interface ZMNewOtrMessageBuilder()
 @property (strong) ZMNewOtrMessage* resultNewOtrMessage;
@@ -1330,6 +1445,19 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
   if (other.hasBlob) {
     [self setBlob:other.blob];
   }
+  if (other.hasNativePriority) {
+    [self setNativePriority:other.nativePriority];
+  }
+  if (other.hasTransient) {
+    [self setTransient:other.transient];
+  }
+  if (other.reportMissingArray.count > 0) {
+    if (resultNewOtrMessage.reportMissingArray == nil) {
+      resultNewOtrMessage.reportMissingArray = [[NSMutableArray alloc] initWithArray:other.reportMissingArray];
+    } else {
+      [resultNewOtrMessage.reportMissingArray addObjectsFromArray:other.reportMissingArray];
+    }
+  }
   [self mergeUnknownFields:other.unknownFields];
   return self;
 }
@@ -1372,6 +1500,25 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
       }
       case 34: {
         [self setBlob:[input readData]];
+        break;
+      }
+      case 40: {
+        ZMNewOtrMessagePriority value = (ZMNewOtrMessagePriority)[input readEnum];
+        if (ZMNewOtrMessagePriorityIsValidValue(value)) {
+          [self setNativePriority:value];
+        } else {
+          [unknownFields mergeVarintField:5 value:value];
+        }
+        break;
+      }
+      case 48: {
+        [self setTransient:[input readBool]];
+        break;
+      }
+      case 58: {
+        ZMUserIdBuilder* subBuilder = [ZMUserId builder];
+        [input readMessage:subBuilder extensionRegistry:extensionRegistry];
+        [self addReportMissing:[subBuilder buildPartial]];
         break;
       }
     }
@@ -1458,6 +1605,59 @@ static ZMNewOtrMessage* defaultZMNewOtrMessageInstance = nil;
 - (ZMNewOtrMessageBuilder*) clearBlob {
   resultNewOtrMessage.hasBlob = NO;
   resultNewOtrMessage.blob = [NSData data];
+  return self;
+}
+- (BOOL) hasNativePriority {
+  return resultNewOtrMessage.hasNativePriority;
+}
+- (ZMNewOtrMessagePriority) nativePriority {
+  return resultNewOtrMessage.nativePriority;
+}
+- (ZMNewOtrMessageBuilder*) setNativePriority:(ZMNewOtrMessagePriority) value {
+  resultNewOtrMessage.hasNativePriority = YES;
+  resultNewOtrMessage.nativePriority = value;
+  return self;
+}
+- (ZMNewOtrMessageBuilder*) clearNativePriority {
+  resultNewOtrMessage.hasNativePriority = NO;
+  resultNewOtrMessage.nativePriority = ZMNewOtrMessagePriorityLOWPRIORITY;
+  return self;
+}
+- (BOOL) hasTransient {
+  return resultNewOtrMessage.hasTransient;
+}
+- (BOOL) transient {
+  return resultNewOtrMessage.transient;
+}
+- (ZMNewOtrMessageBuilder*) setTransient:(BOOL) value {
+  resultNewOtrMessage.hasTransient = YES;
+  resultNewOtrMessage.transient = value;
+  return self;
+}
+- (ZMNewOtrMessageBuilder*) clearTransient {
+  resultNewOtrMessage.hasTransient = NO;
+  resultNewOtrMessage.transient = NO;
+  return self;
+}
+- (NSMutableArray<ZMUserId*> *)reportMissing {
+  return resultNewOtrMessage.reportMissingArray;
+}
+- (ZMUserId*)reportMissingAtIndex:(NSUInteger)index {
+  return [resultNewOtrMessage reportMissingAtIndex:index];
+}
+- (ZMNewOtrMessageBuilder *)addReportMissing:(ZMUserId*)value {
+  if (resultNewOtrMessage.reportMissingArray == nil) {
+    resultNewOtrMessage.reportMissingArray = [[NSMutableArray alloc]init];
+  }
+  [resultNewOtrMessage.reportMissingArray addObject:value];
+  return self;
+}
+- (ZMNewOtrMessageBuilder *)setReportMissingArray:(NSArray<ZMUserId*> *)array {
+  resultNewOtrMessage.reportMissingArray = [[NSMutableArray alloc]initWithArray:array];
+  return self;
+}
+- (ZMNewOtrMessageBuilder *)clearReportMissing {
+  resultNewOtrMessage.reportMissingArray = nil;
   return self;
 }
 @end

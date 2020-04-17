@@ -78,6 +78,14 @@
 @class ZMUserIdBuilder;
 
 
+typedef NS_ENUM(SInt32, ZMNewOtrMessagePriority) {
+  ZMNewOtrMessagePriorityLOWPRIORITY = 1,
+  ZMNewOtrMessagePriorityHIGHPRIORITY = 2,
+};
+
+BOOL ZMNewOtrMessagePriorityIsValidValue(ZMNewOtrMessagePriority value);
+NSString *NSStringFromZMNewOtrMessagePriority(ZMNewOtrMessagePriority value);
+
 
 @interface ZMOtrRoot : NSObject {
 }
@@ -313,24 +321,38 @@
 #define NewOtrMessage_recipients @"recipients"
 #define NewOtrMessage_native_push @"nativePush"
 #define NewOtrMessage_blob @"blob"
+#define NewOtrMessage_native_priority @"nativePriority"
+#define NewOtrMessage_transient @"transient"
+#define NewOtrMessage_report_missing @"reportMissing"
 @interface ZMNewOtrMessage : PBGeneratedMessage<GeneratedMessageProtocol> {
 @private
   BOOL hasNativePush_:1;
+  BOOL hasTransient_:1;
   BOOL hasSender_:1;
   BOOL hasBlob_:1;
+  BOOL hasNativePriority_:1;
   BOOL nativePush_:1;
+  BOOL transient_:1;
   ZMClientId* sender;
   NSData* blob;
+  ZMNewOtrMessagePriority nativePriority;
   NSMutableArray * recipientsArray;
+  NSMutableArray * reportMissingArray;
 }
 - (BOOL) hasSender;
 - (BOOL) hasNativePush;
 - (BOOL) hasBlob;
+- (BOOL) hasNativePriority;
+- (BOOL) hasTransient;
 @property (readonly, strong) ZMClientId* sender;
 @property (readonly, strong) NSArray<ZMUserEntry*> * recipients;
 - (BOOL) nativePush;
 @property (readonly, strong) NSData* blob;
+@property (readonly) ZMNewOtrMessagePriority nativePriority;
+- (BOOL) transient;
+@property (readonly, strong) NSArray<ZMUserId*> * reportMissing;
 - (ZMUserEntry*)recipientsAtIndex:(NSUInteger)index;
+- (ZMUserId*)reportMissingAtIndex:(NSUInteger)index;
 
 + (instancetype) defaultInstance;
 - (instancetype) defaultInstance;
@@ -389,6 +411,22 @@
 - (NSData*) blob;
 - (ZMNewOtrMessageBuilder*) setBlob:(NSData*) value;
 - (ZMNewOtrMessageBuilder*) clearBlob;
+
+- (BOOL) hasNativePriority;
+- (ZMNewOtrMessagePriority) nativePriority;
+- (ZMNewOtrMessageBuilder*) setNativePriority:(ZMNewOtrMessagePriority) value;
+- (ZMNewOtrMessageBuilder*) clearNativePriority;
+
+- (BOOL) hasTransient;
+- (BOOL) transient;
+- (ZMNewOtrMessageBuilder*) setTransient:(BOOL) value;
+- (ZMNewOtrMessageBuilder*) clearTransient;
+
+- (NSMutableArray<ZMUserId*> *)reportMissing;
+- (ZMUserId*)reportMissingAtIndex:(NSUInteger)index;
+- (ZMNewOtrMessageBuilder *)addReportMissing:(ZMUserId*)value;
+- (ZMNewOtrMessageBuilder *)setReportMissingArray:(NSArray<ZMUserId*> *)array;
+- (ZMNewOtrMessageBuilder *)clearReportMissing;
 @end
 
 #define OtrAssetMeta_sender @"sender"
