@@ -90,8 +90,8 @@ class ZMSnapshotTestCase: FBSnapshotTestCase {
         super.setUp()
 
         XCTAssertEqual(UIScreen.main.scale, 2, "Snapshot tests need to be run on a device with a 2x scale")
-        if UIDevice.current.systemVersion.compare("10", options: .numeric, range: nil, locale: .current) == .orderedAscending {
-            XCTFail("Snapshot tests need to be run on a device running at least iOS 10")
+        if UIDevice.current.systemVersion.compare("13", options: .numeric, range: nil, locale: .current) == .orderedAscending {
+            XCTFail("Snapshot tests need to be run on a device running at least iOS 13")
         }
         AppRootViewController.configureAppearance()
         UIView.setAnimationsEnabled(false)
