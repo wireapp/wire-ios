@@ -172,12 +172,71 @@ public struct NewOtrMessage {
   /// Clears the value of `blob`. Subsequent reads from it will return its default value.
   public mutating func clearBlob() {_uniqueStorage()._blob = nil}
 
+  public var nativePriority: NewOtrMessage.Priority {
+    get {return _storage._nativePriority ?? .lowPriority}
+    set {_uniqueStorage()._nativePriority = newValue}
+  }
+  /// Returns true if `nativePriority` has been explicitly set.
+  public var hasNativePriority: Bool {return _storage._nativePriority != nil}
+  /// Clears the value of `nativePriority`. Subsequent reads from it will return its default value.
+  public mutating func clearNativePriority() {_uniqueStorage()._nativePriority = nil}
+
+  public var transient: Bool {
+    get {return _storage._transient ?? false}
+    set {_uniqueStorage()._transient = newValue}
+  }
+  /// Returns true if `transient` has been explicitly set.
+  public var hasTransient: Bool {return _storage._transient != nil}
+  /// Clears the value of `transient`. Subsequent reads from it will return its default value.
+  public mutating func clearTransient() {_uniqueStorage()._transient = nil}
+
+  public var reportMissing: [UserId] {
+    get {return _storage._reportMissing}
+    set {_uniqueStorage()._reportMissing = newValue}
+  }
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public enum Priority: SwiftProtobuf.Enum {
+    public typealias RawValue = Int
+
+    /// 0 is reserved for errors
+    case lowPriority // = 1
+    case highPriority // = 2
+
+    public init() {
+      self = .lowPriority
+    }
+
+    public init?(rawValue: Int) {
+      switch rawValue {
+      case 1: self = .lowPriority
+      case 2: self = .highPriority
+      default: return nil
+      }
+    }
+
+    public var rawValue: Int {
+      switch self {
+      case .lowPriority: return 1
+      case .highPriority: return 2
+      }
+    }
+
+  }
 
   public init() {}
 
   fileprivate var _storage = _StorageClass.defaultInstance
 }
+
+#if swift(>=4.2)
+
+extension NewOtrMessage.Priority: CaseIterable {
+  // Support synthesized by the compiler.
+}
+
+#endif  // swift(>=4.2)
 
 public struct OtrAssetMeta {
   // SwiftProtobuf.Message conformance is added in an extension below. See the
@@ -456,6 +515,9 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     2: .same(proto: "recipients"),
     3: .standard(proto: "native_push"),
     4: .same(proto: "blob"),
+    5: .standard(proto: "native_priority"),
+    6: .same(proto: "transient"),
+    7: .standard(proto: "report_missing"),
   ]
 
   fileprivate class _StorageClass {
@@ -463,6 +525,9 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     var _recipients: [UserEntry] = []
     var _nativePush: Bool? = nil
     var _blob: Data? = nil
+    var _nativePriority: NewOtrMessage.Priority? = nil
+    var _transient: Bool? = nil
+    var _reportMissing: [UserId] = []
 
     static let defaultInstance = _StorageClass()
 
@@ -473,6 +538,9 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       _recipients = source._recipients
       _nativePush = source._nativePush
       _blob = source._blob
+      _nativePriority = source._nativePriority
+      _transient = source._transient
+      _reportMissing = source._reportMissing
     }
   }
 
@@ -488,6 +556,7 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       if _storage._sender == nil {return false}
       if let v = _storage._sender, !v.isInitialized {return false}
       if !SwiftProtobuf.Internal.areAllInitialized(_storage._recipients) {return false}
+      if !SwiftProtobuf.Internal.areAllInitialized(_storage._reportMissing) {return false}
       return true
     }
   }
@@ -501,6 +570,9 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         case 2: try decoder.decodeRepeatedMessageField(value: &_storage._recipients)
         case 3: try decoder.decodeSingularBoolField(value: &_storage._nativePush)
         case 4: try decoder.decodeSingularBytesField(value: &_storage._blob)
+        case 5: try decoder.decodeSingularEnumField(value: &_storage._nativePriority)
+        case 6: try decoder.decodeSingularBoolField(value: &_storage._transient)
+        case 7: try decoder.decodeRepeatedMessageField(value: &_storage._reportMissing)
         default: break
         }
       }
@@ -521,6 +593,15 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
       if let v = _storage._blob {
         try visitor.visitSingularBytesField(value: v, fieldNumber: 4)
       }
+      if let v = _storage._nativePriority {
+        try visitor.visitSingularEnumField(value: v, fieldNumber: 5)
+      }
+      if let v = _storage._transient {
+        try visitor.visitSingularBoolField(value: v, fieldNumber: 6)
+      }
+      if !_storage._reportMissing.isEmpty {
+        try visitor.visitRepeatedMessageField(value: _storage._reportMissing, fieldNumber: 7)
+      }
     }
     try unknownFields.traverse(visitor: &visitor)
   }
@@ -534,6 +615,9 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
         if _storage._recipients != rhs_storage._recipients {return false}
         if _storage._nativePush != rhs_storage._nativePush {return false}
         if _storage._blob != rhs_storage._blob {return false}
+        if _storage._nativePriority != rhs_storage._nativePriority {return false}
+        if _storage._transient != rhs_storage._transient {return false}
+        if _storage._reportMissing != rhs_storage._reportMissing {return false}
         return true
       }
       if !storagesAreEqual {return false}
@@ -541,6 +625,13 @@ extension NewOtrMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementa
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
+}
+
+extension NewOtrMessage.Priority: SwiftProtobuf._ProtoNameProviding {
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "LOW_PRIORITY"),
+    2: .same(proto: "HIGH_PRIORITY"),
+  ]
 }
 
 extension OtrAssetMeta: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
