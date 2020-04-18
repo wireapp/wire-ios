@@ -86,6 +86,9 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
+            # TODO: read from input
+            xcode_select("/Applications/Xcode_11.4.app")
+
             build_app(
                 scheme: "Wire-iOS",
                 configuration: build.configuration,
