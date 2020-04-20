@@ -87,13 +87,6 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
-
-            if !developer_dir.nil? 
-                # TODO: test
-                xcode_select(developer_dir)
-            end
-
-
             build_app(
                 scheme: "Wire-iOS",
                 configuration: build.configuration,
@@ -244,7 +237,6 @@ class Build
         @build_type = build_type
         @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
         @build_number = build_number
-        @developer_dir = options[:developer_dir]
 
         for_simulator = options[:for_simulator]
         if for_simulator.nil? 
