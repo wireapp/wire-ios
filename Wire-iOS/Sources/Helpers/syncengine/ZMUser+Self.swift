@@ -19,6 +19,7 @@
 import Foundation
 import WireSyncEngine
 
+#if targetEnvironment(simulator)
 typealias EditableUser = ZMUser & ZMEditableUser
 
 protocol SelfUserProviderUI {
@@ -41,3 +42,16 @@ extension ZMUser {
         }
     }
 }
+#else
+extension ZMUser {
+
+    /// Return self's User object
+    ///
+    /// - Returns: a ZMUser object for app target
+    static func selfUser() -> ZMUser! {
+        guard let session = ZMUserSession.shared() else { return nil }
+
+        return ZMUser.selfUser(inUserSession: session)
+    }
+}
+#endif
