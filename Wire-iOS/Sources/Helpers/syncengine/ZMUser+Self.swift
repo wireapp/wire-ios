@@ -17,7 +17,6 @@
 //
 
 import Foundation
-import WireDataModel
 import WireSyncEngine
 
 typealias EditableUser = ZMUser & ZMEditableUser
@@ -31,7 +30,6 @@ extension ZMUser {
     /// Return self's User object
     ///
     /// - Returns: a ZMUser<ZMEditableUser> object for app target, or a MockUser object for test.
-    @objc
     static func selfUser() -> EditableUser! {
 
         if let mockUserClass = NSClassFromString("MockUser") as? SelfUserProviderUI.Type {
