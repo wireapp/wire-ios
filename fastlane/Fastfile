@@ -2,6 +2,7 @@ opt_out_usage
 default_platform(:ios)
 
 platform :ios do
+    xcversion(version: "11.4")
 
     desc "Fetch dependencies"
     lane :prepare do |options|
@@ -86,8 +87,12 @@ platform :ios do
                 sh "cd debug && zip -r ../#{build.artifact_path(with_filename: true)}.ipa Payload/"
             end
         else
-            # TODO: read from input
-            xcode_select("/Applications/Xcode_11.4.app")
+
+            if !developer_dir.nil? 
+                # TODO: test
+                xcode_select(developer_dir)
+            end
+
 
             build_app(
                 scheme: "Wire-iOS",
@@ -239,6 +244,7 @@ class Build
         @build_type = build_type
         @git_branch = %x(git rev-parse --abbrev-ref HEAD).chomp
         @build_number = build_number
+        @developer_dir = options[:developer_dir]
 
         for_simulator = options[:for_simulator]
         if for_simulator.nil? 
