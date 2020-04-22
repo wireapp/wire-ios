@@ -181,6 +181,12 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     
     NSString *onlyForUser = query[@"report_missing"];
+    
+    if (otrMetaData.reportMissing.count > 0) {
+        const void * uuidBytes = otrMetaData.reportMissing.firstObject.uuid.bytes;
+        onlyForUser = [[[NSUUID alloc] initWithUUIDBytes:uuidBytes] transportString];
+    }
+    
     NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
     NSDictionary *deletedClients = [self deletedClientsFromRecipients:otrMetaData.recipients conversation:conversation];
     
