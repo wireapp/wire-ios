@@ -72,6 +72,7 @@
         member.team = team
         member.user = user
         member.remoteIdentifier = user.remoteIdentifier
+        member.needsToBeUpdatedFromBackend = true
         return member
     }
 

@@ -35,6 +35,7 @@ import WireUtilities
         self.searchContext = ManagedObjectContextDirectory.createSearchManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator, dispatchGroup: dispatchGroup)
         MemoryReferenceDebugger.register(self.searchContext)
         super.init()
+        configureManagedObjectContextReferences()
     }
     
     /// User interface context. It can be used only from the main queue
@@ -55,6 +56,20 @@ import WireUtilities
 }
 
 extension ManagedObjectContextDirectory {
+    
+    func configureManagedObjectContextReferences() {
+        uiContext.performAndWait {
+            uiContext.zm_sync = syncContext
+        }
+        syncContext.performAndWait {
+            syncContext.zm_userInterface = uiContext
+        }
+    }
+    
+}
+
+extension ManagedObjectContextDirectory {
+    
     func tearDown() {
         // this will set all contextes to nil
         // making it crash if used after tearDown
@@ -129,6 +144,7 @@ extension ManagedObjectContextDirectory {
         }
         return moc
     }
+    
 }
 
 extension NSManagedObjectContext {

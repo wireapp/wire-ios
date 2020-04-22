@@ -62,24 +62,73 @@ public struct NotificationMethod: OptionSet {
 }
 
 extension ZMUser {
-    
-    @objc public static func connectionsAndTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
-        var connectionsAndTeamMembers : Set<ZMUser> = Set()
-        
-        let selfUser = ZMUser.selfUser(in: context)
-        let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
-        request.predicate = ZMUser.predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
-        
-        let connectedUsers = context.fetchOrAssert(request: request)
-        connectionsAndTeamMembers.formUnion(connectedUsers)
-        
-        if let teamUsers = selfUser.team?.members.compactMap({ $0.user }) {
-            connectionsAndTeamMembers.formUnion(teamUsers)
+
+    /// The set of all users to receive an availability status broadcast message.
+    ///
+    /// Broadcast messages are expensive for large teams. Therefore it is necessary broadcast to
+    /// a limited subset of all users. Known team members are priortized first, followed by
+    /// connected non team members. The self user is guaranteed to be a recipient.
+    ///
+    /// - Parameters:
+    ///     - context: The context to search in.
+    ///     - maxCount: The maximum number of recipients to return.
+
+    public static func recipientsForAvailabilityStatusBroadcast(in context: NSManagedObjectContext, maxCount: Int) -> Set<ZMUser> {
+        var recipients: Set = [selfUser(in: context)]
+        var remainingSlots = maxCount - recipients.count
+
+        let sortByIdentifer: (ZMUser, ZMUser) -> Bool = {
+            $0.remoteIdentifier.transportString() < $1.remoteIdentifier.transportString()
         }
-        
-        return connectionsAndTeamMembers
+
+        let teamMembers = knownTeamMembers(in: context)
+            .sorted(by: sortByIdentifer)
+            .prefix(remainingSlots)
+
+        recipients.formUnion(teamMembers)
+        remainingSlots = maxCount - recipients.count
+
+        guard remainingSlots > 0 else { return recipients }
+
+        let teamUsers = knownTeamUsers(in: context)
+            .sorted(by: sortByIdentifer)
+            .prefix(remainingSlots)
+
+        recipients.formUnion(teamUsers)
+
+        return recipients
     }
-    
+
+    /// The set of all users who both share the team and a conversation with the self user.
+    ///
+    /// Note: the self user is not included.
+
+    static func knownTeamMembers(in context: NSManagedObjectContext) -> Set<ZMUser> {
+        let selfUser = ZMUser.selfUser(in: context)
+
+        guard selfUser.hasTeam else { return Set() }
+
+        let teamMembersInConversationWithSelfUser = selfUser.conversations.lazy
+            .flatMap { $0.participantRoles }
+            .map { $0.user }
+            .filter { $0.isOnSameTeam(otherUser: selfUser) && !$0.isSelfUser }
+
+        return Set(teamMembersInConversationWithSelfUser)
+    }
+
+    /// The set of all users from another team who are connected with the self user.
+
+    static func knownTeamUsers(in context: NSManagedObjectContext) -> Set<ZMUser> {
+        let connectedPredicate = ZMUser.predicateForUsers(withConnectionStatuses: [ZMConnectionStatus.accepted.rawValue])
+        let request = NSFetchRequest<ZMUser>(entityName: ZMUser.entityName())
+        request.predicate = connectedPredicate
+
+        let connections = Set(context.fetchOrAssert(request: request))
+        let selfUser = ZMUser.selfUser(in: context)
+        let result = connections.filter { $0.hasTeam && !$0.isOnSameTeam(otherUser: selfUser) }
+        return Set(result)
+    }
+
     @objc public var availability : Availability {
         get {
             self.willAccessValue(forKey: AvailabilityKey)
@@ -95,22 +144,7 @@ extension ZMUser {
             updateAvailability(newValue)
         }
     }
-    
-    public var shouldHideAvailability: Bool {
-        guard let moc = managedObjectContext, !isSelfUser else { return false }
         
-        let selfUserTeam = ZMUser.selfUser(in: moc).team
-        
-        guard let userTeamId = self.team?.remoteIdentifier, let selfUserTeamId = selfUserTeam?.remoteIdentifier else {
-            return false
-        }
-        
-        let userIsTeammate = userTeamId == selfUserTeamId
-        let communicateStatus = selfUserTeam?.shouldCommunicateStatus ?? true
-        
-        return userIsTeammate && !communicateStatus
-    }
-    
     internal func updateAvailability(_ newValue : Availability) {
         self.willChangeValue(forKey: AvailabilityKey)
         self.setPrimitiveValue(NSNumber(value: newValue.rawValue), forKey: AvailabilityKey)

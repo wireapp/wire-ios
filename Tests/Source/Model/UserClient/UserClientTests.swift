@@ -248,6 +248,36 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         }
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
     }
+
+    func testThatWhenDeletingClientItTriggersUserFetchForPossibleMemberLeave() {
+        self.syncMOC.performGroupedBlockAndWait{
+            // given
+            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient.remoteIdentifier = UUID.create().transportString()
+
+            let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
+            otherUser.remoteIdentifier = UUID.create()
+            otherClient.user = otherUser
+
+            let team = self.createTeam(in: self.syncMOC)
+            _ = self.createMembership(in: self.syncMOC, user: otherUser, team: team)
+
+            otherUser.needsToBeUpdatedFromBackend = false
+
+            XCTAssertTrue(otherUser.isTeamMember)
+            XCTAssertFalse(otherUser.needsToBeUpdatedFromBackend)
+
+            // when
+            otherClient.deleteClientAndEndSession()
+
+            // then
+            XCTAssertTrue(otherClient.isZombieObject)
+            XCTAssertTrue(otherUser.clients.isEmpty)
+            XCTAssertTrue(otherUser.needsToBeUpdatedFromBackend)
+        }
+
+        XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
     
     func testThatItRefetchesMissingFingerprintForUserWithSession() {
         // given
