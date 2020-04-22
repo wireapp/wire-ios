@@ -238,6 +238,10 @@ extension MockUser {
                                       "id" : serviceIdentifier]
             }
             
+            if let team = self.memberships?.first?.team {
+                payload["team"] = team.identifier
+            }
+            
             return payload
         }
     }

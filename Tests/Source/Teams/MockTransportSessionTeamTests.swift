@@ -393,6 +393,42 @@ extension MockTransportSessionTeamTests {
         let identifiers = Set(teams.compactMap { $0["user"] as? String })
         XCTAssertEqual(identifiers, [user1.identifier, user2.identifier])
     }
+    
+    func testThatItFetchesTeamMembersByID() {
+        // Given
+        var user1: MockUser!
+        var user2: MockUser!
+        var team: MockTeam!
+        
+        sut.performRemoteChanges { session in
+            user1 = session.insertSelfUser(withName: "one")
+            user2 = session.insertUser(withName: "two")
+            
+            team = session.insertTeam(withName: "name", isBound: true, users: [user1, user2])
+            team.pictureAssetKey = "1234-abc"
+            team.pictureAssetId = "123-1234-abc"
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // When
+        let requestPayload = ["user_ids": [user1.identifier, user2.identifier]]
+        let path = "/teams/\(team.identifier)/get-members-by-ids-using-post"
+        let response = self.response(forPayload: requestPayload as ZMTransportData, path: path, method: .methodPOST)
+        XCTAssertNotNil(response)
+        XCTAssertEqual(response?.httpStatus, 200)
+        XCTAssertNotNil(response?.payload)
+        
+        // Then
+        let payload = response?.payload?.asDictionary() as? [String : Any]
+        guard let teams = payload?["members"] as? [[String : Any]] else {
+            XCTFail("Should have teams array")
+            return
+        }
+        XCTAssertEqual(teams.count, 2)
+        
+        let identifiers = Set(teams.compactMap { $0["user"] as? String })
+        XCTAssertEqual(identifiers, [user1.identifier, user2.identifier])
+    }
 
     func testThatItFetchesSingleTeamMembers() {
         // Given

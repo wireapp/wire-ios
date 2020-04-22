@@ -321,6 +321,41 @@
     XCTAssertEqualObjects([response.payload.asTransportData optionalStringForKey:@"name"], @"default");
 }
 
+- (void)testCreatingAndRequestingTeamUser
+{
+    // GIVEN
+    __block MockUser *user;
+    __block NSString *userID;
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> session) {
+        user = [session insertUserWithName:@"Bar"];
+        user.email = @"barfooz@example.com";
+        user.accentID = 7;
+        
+        [session insertTeamWithName:@"Team A" isBound:YES users:[NSSet setWithObject:user]];
+        [session addProfilePictureToUser:user];
+        
+        [user.managedObjectContext obtainPermanentIDsForObjects:@[user] error:NULL];
+        userID = user.identifier;
+    }];
+    WaitForAllGroupsToBeEmpty(0.5);
+    
+    // WHEN
+    NSString *path = [@"/users/" stringByAppendingPathComponent:userID];
+    ZMTransportResponse *response = [self responseForPayload:nil path:path method:ZMMethodGET];
+    
+    // THEN
+    XCTAssertNotNil(response);
+    if (!response) {
+        return;
+    }
+    XCTAssertEqual(response.HTTPStatus, 200);
+    XCTAssertNil(response.transportSessionError);
+    XCTAssertTrue([response.payload isKindOfClass:[NSDictionary class]]);
+    NSDictionary *data = (id) response.payload;
+    
+    [self checkThatTransportData:data matchesUser:user isSelfUser:NO failureRecorder:NewFailureRecorder()];
+}
+
 - (void)testCreatingAndRequestingConnectedUser;
 {
     // GIVEN

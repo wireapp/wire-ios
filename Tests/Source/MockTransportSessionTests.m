@@ -392,17 +392,26 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithDictionary:(id) data];
     FHAssertTrue(fr, [dict isKindOfClass:[NSDictionary class]]);
     NSArray *keys = @[@"accent_id", @"id", @"name", @"picture", @"handle", @"assets"];
-    if(isSelf) {
+    if (isSelf) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"email", @"phone"]];
+    }
+    
+    MockTeam *team = user.memberships.anyObject.team;
+    if (team != nil) {
+        keys = [keys arrayByAddingObjectsFromArray:@[@"team"]];
     }
     
     AssertDictionaryHasKeys(dict, keys);
     
     [user.managedObjectContext performBlockAndWait:^{
         
-        if(isSelf) {
+        if (isSelf) {
             FHAssertEqualObjects(fr, dict[@"email"], user.email);
             FHAssertEqual(fr, dict[@"phone"], user.phone);
+        }
+        
+        if (team != nil) {
+            FHAssertEqual(fr, dict[@"team"], team.identifier);
         }
         
         FHAssertEqualObjects(fr, dict[@"name"], user.name);
