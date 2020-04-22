@@ -18,9 +18,11 @@
 
 import Foundation
 
-public class AvailabilityRequestStrategy : AbstractRequestStrategy {
+public class AvailabilityRequestStrategy: AbstractRequestStrategy {
     
-    var modifiedSync : ZMUpstreamModifiedObjectSync!
+    var modifiedSync: ZMUpstreamModifiedObjectSync!
+
+    private let maximumBroadcastRecipients = 500
     
     override public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         
@@ -29,42 +31,38 @@ public class AvailabilityRequestStrategy : AbstractRequestStrategy {
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self,
                                                          entityName: ZMUser.entityName(),
                                                          update: nil,
-                                                         filter: predicateForSelfUserCommunicatingStatus(),
+                                                         filter: ZMUser.predicateForSelfUser(),
                                                          keysToSync: [AvailabilityKey],
                                                          managedObjectContext: managedObjectContext)
     }
-    
-    private func predicateForSelfUserCommunicatingStatus() -> NSPredicate {
-        let statusPredicate =  NSPredicate { object, _ in
-            guard let user = object as? ZMUser else { return false }
-            return user.team?.shouldCommunicateStatus ?? true
-        }
-        let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [statusPredicate, ZMUser.predicateForSelfUser()])
-        
-        return compoundPredicate
-    }
-    
+
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return modifiedSync.nextRequest()
     }
     
 }
 
-extension AvailabilityRequestStrategy : ZMUpstreamTranscoder {
-    
+extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
+
     public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
         guard let selfUser = managedObject as? ZMUser else { return nil }
-        
+
         let originalPath = "/broadcast/otr/messages"
         let message = ZMGenericMessage.message(content: ZMAvailability.availability(selfUser.availability))
-        
-        guard let dataAndMissingClientStrategy = message.encryptedMessagePayloadDataForBroadcast(context: managedObjectContext) else {
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
+
+        guard let dataAndMissingClientStrategy = message.encryptedMessagePayloadDataForBroadcast(recipients: recipients, in: context) else {
             return nil
         }
-        
+
         let protobufContentType = "application/x-protobuf"
         let path = originalPath.pathWithMissingClientStrategy(strategy: dataAndMissingClientStrategy.strategy)
-        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: dataAndMissingClientStrategy.data, type: protobufContentType, contentDisposition: nil)
+
+        let request = ZMTransportRequest(path: path,
+                                         method: .methodPOST,
+                                         binaryData: dataAndMissingClientStrategy.data,
+                                         type: protobufContentType,
+                                         contentDisposition: nil)
         
         return ZMUpstreamRequest(keys: keys, transportRequest: request)
     }
@@ -105,7 +103,7 @@ extension AvailabilityRequestStrategy : ZMUpstreamTranscoder {
     
 }
 
-extension AvailabilityRequestStrategy : OTREntity {
+extension AvailabilityRequestStrategy: OTREntity {
     
     public var context: NSManagedObjectContext {
         return managedObjectContext
@@ -123,15 +121,13 @@ extension AvailabilityRequestStrategy : OTREntity {
     }
     
     public func detectedMissingClient(for user: ZMUser) {
-        // If we don't know about a user for a missing client we are out sync. To recover
-        // from this we must restart the slow sync.
-        if !ZMUser.connectionsAndTeamMembers(in: managedObjectContext).contains(user) {
-            applicationStatus?.requestSlowSync()
-        }
+        // Broadcast messsages are targeted to specific set of recipients and we will ignore any other
+        // users who are not recipients.
     }
     
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
-        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: ZMUser.connectionsAndTeamMembers(in: managedObjectContext))
+        let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
+        return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: recipients)
     }
     
     public var isExpired: Bool {
@@ -144,7 +140,7 @@ extension AvailabilityRequestStrategy : OTREntity {
     
 }
 
-extension AvailabilityRequestStrategy : ZMContextChangeTrackerSource {
+extension AvailabilityRequestStrategy: ZMContextChangeTrackerSource {
     
     public var contextChangeTrackers: [ZMContextChangeTracker] {
         return [modifiedSync]
@@ -152,7 +148,7 @@ extension AvailabilityRequestStrategy : ZMContextChangeTrackerSource {
     
 }
 
-extension AvailabilityRequestStrategy : ZMEventConsumer {
+extension AvailabilityRequestStrategy: ZMEventConsumer {
     
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {

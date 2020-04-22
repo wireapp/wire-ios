@@ -32,6 +32,7 @@ public final class ClientMessageRequestFactory: NSObject {
     public func upstreamRequestForFetchingClients(conversationId: UUID, selfClient: UserClient) -> ZMTransportRequest? {
         let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
         let newOtrMessage = NewOtrMessage(withSender: selfClient, nativePush: false, recipients: [])
+        
         let path = originalPath.pathWithMissingClientStrategy(strategy: .doNotIgnoreAnyMissingClient)
         guard let data = try? newOtrMessage.serializedData() else {
             zmLog.debug("failed to serialize message")
@@ -94,13 +95,11 @@ extension String {
 
     func pathWithMissingClientStrategy(strategy: MissingClientsStrategy) -> String {
         switch strategy {
-        case .doNotIgnoreAnyMissingClient:
+        case .doNotIgnoreAnyMissingClient,
+             .ignoreAllMissingClientsNotFromUsers(_):
             return self
         case .ignoreAllMissingClients:
             return self + "?ignore_missing"
-        case .ignoreAllMissingClientsNotFromUsers(let users):
-            let userIDs = users.compactMap { $0.remoteIdentifier?.transportString() }
-            return self + "?report_missing=\(userIDs.joined(separator: ","))"
         }
     }
 }
