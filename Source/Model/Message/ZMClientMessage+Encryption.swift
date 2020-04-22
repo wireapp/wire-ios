@@ -100,28 +100,38 @@ extension ZMAssetClientMessage: EncryptedPayloadGenerator {
 
 extension ZMGenericMessage {
         
-    public func encryptedMessagePayloadData(_ conversation: ZMConversation, externalData: Data?) -> (data: Data, strategy: MissingClientsStrategy)? {
+    public func encryptedMessagePayloadData(_ conversation: ZMConversation,
+                                            externalData: Data?) -> (data: Data, strategy: MissingClientsStrategy)? {
         guard let context = conversation.managedObjectContext else { return nil }
         
-        let recipientsAndStrategy = recipientUsersForMessage(in: conversation, selfUser: ZMUser.selfUser(in: context))
-        if let data = encryptedMessagePayloadData(for: recipientsAndStrategy.users, externalData: nil, context: context) {
+        let recipientsAndStrategy = recipientUsersForMessage(in: conversation,
+                                                             selfUser: ZMUser.selfUser(in: context))
+        if let data = encryptedMessagePayloadData(for: recipientsAndStrategy.users,
+                                                  missingClientsStrategy: recipientsAndStrategy.strategy,
+                                                  externalData: nil,
+                                                  context: context) {
             return (data, recipientsAndStrategy.strategy)
         }
         
         return nil
     }
     
-    public func encryptedMessagePayloadDataForBroadcast(context: NSManagedObjectContext) -> (data: Data, strategy: MissingClientsStrategy)? {
-        let recipients = ZMUser.connectionsAndTeamMembers(in: context)
-        
-        if let data = encryptedMessagePayloadData(for: recipients, externalData: nil, context: context) {
-            return (data, MissingClientsStrategy.doNotIgnoreAnyMissingClient)
-        }
-        
-        return nil
+    public func encryptedMessagePayloadDataForBroadcast(recipients: Set<ZMUser>,
+                                                        in context: NSManagedObjectContext) -> (data: Data, strategy: MissingClientsStrategy)? {
+        let missingClientsStrategy = MissingClientsStrategy.ignoreAllMissingClientsNotFromUsers(users: recipients)
+        guard let data = encryptedMessagePayloadData(for: recipients,
+                                                     missingClientsStrategy: missingClientsStrategy,
+                                                     externalData: nil,
+                                                     context: context) else { return nil }
+
+        // It's important to ignore all irrelevant missing clients, because otherwise the backend will enforce that
+        // the message is sent to all team members and contacts.
+        return (data, missingClientsStrategy)
     }
     
-    fileprivate func encryptedMessagePayloadData(for recipients: Set<ZMUser>, externalData: Data?, context: NSManagedObjectContext) -> Data? {
+    fileprivate func encryptedMessagePayloadData(for recipients: Set<ZMUser>,
+                                                 missingClientsStrategy: MissingClientsStrategy,
+                                                 externalData: Data?, context: NSManagedObjectContext) -> Data? {
         guard let selfClient = ZMUser.selfUser(in: context).selfClient(), selfClient.remoteIdentifier != nil
             else { return nil }
         
@@ -129,7 +139,11 @@ extension ZMGenericMessage {
         var messageData : Data?
         
         encryptionContext.perform { (sessionsDirectory) in
-            let message = otrMessage(selfClient, recipients: recipients, externalData: externalData, sessionDirectory: sessionsDirectory)
+            let message = otrMessage(selfClient,
+                                     recipients: recipients,
+                                     missingClientsStrategy: missingClientsStrategy,
+                                     externalData: externalData,
+                                     sessionDirectory: sessionsDirectory)
 
             messageData = try? message.serializedData()
             
@@ -138,7 +152,9 @@ extension ZMGenericMessage {
                 // The payload is too big, we therefore rollback the session since we won't use the message we just encrypted.
                 // This will prevent us advancing sender chain multiple time before sending a message, and reduce the risk of TooDistantFuture.
                 sessionsDirectory.discardCache()
-                messageData = self.encryptedMessageDataWithExternalDataBlob(recipients, context: context)
+                messageData = self.encryptedMessageDataWithExternalDataBlob(recipients,
+                                                                            missingClientsStrategy: missingClientsStrategy,
+                                                                            context: context)
             }
         }
         
@@ -240,12 +256,22 @@ extension ZMGenericMessage {
     /// Returns a message with recipients
     fileprivate func otrMessage(_ selfClient: UserClient,
                                 recipients: Set<ZMUser>,
+                                missingClientsStrategy: MissingClientsStrategy,
                                 externalData: Data?,
                                 sessionDirectory: EncryptionSessionsDirectory) -> NewOtrMessage {
         
         let userEntries = self.recipientsWithEncryptedData(selfClient, recipients: recipients, sessionDirectory: sessionDirectory)
         let nativePush = !hasConfirmation() // We do not want to send pushes for delivery receipts
-        let message = NewOtrMessage(withSender: selfClient, nativePush: nativePush, recipients: userEntries, blob: externalData)
+        var message = NewOtrMessage(withSender: selfClient, nativePush: nativePush, recipients: userEntries, blob: externalData)
+        
+        
+        switch missingClientsStrategy {
+        case .ignoreAllMissingClientsNotFromUsers(let users):
+            message.reportMissing = Array(users.map{ $0.userId })
+        default:
+            break
+        }
+        
         return message
     }
     
@@ -310,12 +336,17 @@ extension ZMGenericMessage {
         return externalGenericMessage.encryptedMessagePayloadData(conversation, externalData: encryptedDataWithKeys.data)
     }
     
-    fileprivate func encryptedMessageDataWithExternalDataBlob(_ recipients: Set<ZMUser>, context: NSManagedObjectContext) -> Data? {
+    fileprivate func encryptedMessageDataWithExternalDataBlob(_ recipients: Set<ZMUser>,
+                                                              missingClientsStrategy: MissingClientsStrategy,
+                                                              context: NSManagedObjectContext) -> Data? {
         
         guard let encryptedDataWithKeys = ZMGenericMessage.encryptedDataWithKeys(from: self) else { return nil }
         
         let externalGenericMessage = ZMGenericMessage.message(content: ZMExternal.external(withKeyWithChecksum: encryptedDataWithKeys.keys))
-        return externalGenericMessage.encryptedMessagePayloadData(for: recipients, externalData: encryptedDataWithKeys.data, context: context)
+        return externalGenericMessage.encryptedMessagePayloadData(for: recipients,
+                                                                  missingClientsStrategy: missingClientsStrategy,
+                                                                  externalData: encryptedDataWithKeys.data,
+                                                                  context: context)
     }
 }
 

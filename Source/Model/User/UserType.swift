@@ -49,9 +49,6 @@ public protocol UserType: NSObjectProtocol {
     /// The availability of the user
     var availability: Availability { get set }
     
-    /// Wether or not the availability should be display for the user
-    var shouldHideAvailability: Bool { get }
-    
     /// The name of the team the user belongs to.
     var teamName: String? { get }
     
@@ -116,10 +113,7 @@ public protocol UserType: NSObjectProtocol {
     
     /// The extended metadata for this user, provided by SCIM.
     var richProfile: [UserRichProfileField] { get }
-    
-    /// Used to trigger rich profile download from backend
-    var needsRichProfileUpdate: Bool { get set }
-    
+        
     /// Conversations the user is a currently a participant of
     var activeConversations: Set<ZMConversation> { get }
     
@@ -139,8 +133,24 @@ public protocol UserType: NSObjectProtocol {
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void)
     
     /// Request a refresh of the user data from the backend.
-    /// This is useful for non-connected user, that we will otherwise never re-fetch
+    ///
+    /// This is useful for non-connected user (that we will otherwise never re-fetch)
+    /// or discovering if the user is still in team.
     func refreshData()
+
+    /// Request a refresh of the rich profile.
+    func refreshRichProfile()
+
+    /// Request a refresh of the user's membership.
+    ///
+    /// This is useful to discover if user is still in a team since clients are not notified
+    /// of team-wide events.
+    func refreshMembership()
+
+    /// Request a refresh of the team metadata.
+    ///
+    /// This is useful to discover changes such as team name and logo.
+    func refreshTeamData()
     
     /// Sends a connection request to the given user. May be a no-op, eg. if we're already connected.
     /// A ZMUserChangeNotification with the searchUser as object will be sent notifiying about the connection status change

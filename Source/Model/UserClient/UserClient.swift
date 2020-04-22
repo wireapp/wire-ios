@@ -260,13 +260,20 @@ public class UserClient: ZMManagedObject, UserClientType {
         // reset the relationship
         self.user = nil
 
-        // increase securityLevel of affected conversations
         if let previousUser = user {
+            // increase securityLevel of affected conversations
             if isLegalHoldDevice && previousUser.isSelfUser {
                 previousUser.needsToAcknowledgeLegalHoldStatus = true
             }
 
             conversations.forEach{ $0.increaseSecurityLevelIfNeededAfterRemoving(clients: [previousUser: [self]]) }
+
+            // if they have no clients left, it's possible they left the team
+            let userMayHaveLeftTeam = previousUser.isTeamMember && previousUser.clients.isEmpty
+
+            if userMayHaveLeftTeam {
+                previousUser.needsToBeUpdatedFromBackend = true
+            }
         }
 
         // delete the object

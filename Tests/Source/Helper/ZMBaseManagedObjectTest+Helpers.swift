@@ -20,10 +20,12 @@ import Foundation
 
 extension ZMBaseManagedObjectTest {
 
-    func createConversation(in moc: NSManagedObjectContext) -> ZMConversation {
+    @discardableResult
+    func createConversation(in moc: NSManagedObjectContext, with participants: [ZMUser] = [], role: Role? = nil) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: moc)
         conversation.remoteIdentifier = UUID()
         conversation.conversationType = .group
+        conversation.addParticipantsAndUpdateConversationState(users: Set(participants), role: role)
         return conversation
     }
 
@@ -43,6 +45,7 @@ extension ZMBaseManagedObjectTest {
         let member = Member.insertNewObject(in: moc)
         member.user = user
         member.team = team
+        member.user?.teamIdentifier = team.remoteIdentifier
         return member
     }
 

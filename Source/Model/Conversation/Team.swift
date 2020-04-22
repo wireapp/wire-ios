@@ -30,6 +30,7 @@ public protocol TeamType: class {
     var imageData: Data? { get set }
 
     func requestImage()
+    func refreshMetadata()
 }
 
 @objcMembers
@@ -84,6 +85,10 @@ public class Team: ZMManagedObject, TeamType {
         }
 
         return nil
+    }
+
+    public func refreshMetadata() {
+        needsToBeUpdatedFromBackend = true
     }
 }
 

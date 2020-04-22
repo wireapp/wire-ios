@@ -20,8 +20,7 @@
 import XCTest
 @testable import WireDataModel
 
-class ClientMessageTests_OTR: BaseZMClientMessageTests {
-}
+final class ClientMessageTests_OTR: BaseZMClientMessageTests {}
 
 // MARK: - Payload creation
 extension ClientMessageTests_OTR {
@@ -72,6 +71,8 @@ extension ClientMessageTests_OTR {
             notSelfClients.forEach{
                 XCTAssertTrue(clientSet.contains($0.clientId))
             }
+            
+            XCTAssertEqual(createdMessage.reportMissing.count, createdMessage.recipients.count)
         }
     }
     

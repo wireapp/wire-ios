@@ -37,8 +37,28 @@ extension ModelObjectsTests {
         let member = Member.insertNewObject(in: uiMOC)
         member.user = .insertNewObject(in: uiMOC)
         member.user?.remoteIdentifier = .create()
+        member.user?.teamIdentifier = team.remoteIdentifier
         member.team = team
         return (member.user!, member)
+    }
+
+    @objc(userWithClients:trusted:)
+    public func userWithClients(count: Int, trusted: Bool) -> ZMUser {
+        self.createSelfClient()
+        self.uiMOC.refreshAllObjects()
+
+        let selfClient: UserClient? = ZMUser.selfUser(in: self.uiMOC).selfClient()
+        let user: ZMUser = ZMUser.insertNewObject(in: self.uiMOC)
+        [0...count].forEach({ _ in
+            let client: UserClient = UserClient.insertNewObject(in: self.uiMOC)
+            client.user = user
+            if trusted {
+                selfClient?.trustClient(client)
+            } else {
+                selfClient?.ignoreClient(client)
+            }
+        })
+        return user
     }
     
     // MARK: Files
@@ -80,5 +100,5 @@ extension ModelObjectsTests {
             XCTFail("Error removing file: \(error)")
         }
     }
-    
+
 }
