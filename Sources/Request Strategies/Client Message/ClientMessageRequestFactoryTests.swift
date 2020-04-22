@@ -74,7 +74,7 @@ extension ClientMessageRequestFactoryTests {
             
             // THEN
             XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
-            XCTAssertEqual(request.path, "/conversations/\(self.oneToOneConversation.remoteIdentifier!.transportString())/otr/messages?report_missing=\(self.otherUser.remoteIdentifier!.transportString())")
+            XCTAssertEqual(request.path, "/conversations/\(self.oneToOneConversation.remoteIdentifier!.transportString())/otr/messages")
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
                 return XCTFail("Invalid message")
             }
