@@ -177,11 +177,14 @@ extension ZMSnapshotTestCase {
                                 tolerance: CGFloat = 0,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
-        if let errorDescription = snapshotVerifyViewOrLayer(view,
+        let errorDescription = snapshotVerifyViewOrLayer(view,
                                                             identifier: identifier,
-                                                            suffixes: suffix,
-                                                            tolerance: tolerance, defaultReferenceDirectory: (FB_REFERENCE_IMAGE_DIR)) {
+                                                            suffixes: suffix!,
+                                                            overallTolerance: tolerance,
+                                                            defaultReferenceDirectory: (FB_REFERENCE_IMAGE_DIR),
+                                                            defaultImageDiffDirectory: (IMAGE_DIFF_DIR))
 
+        if errorDescription.count > 0 {
             XCTFail("\(errorDescription)", file:file, line:line)
         } else {
             XCTAssert(true)
