@@ -650,7 +650,7 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         self.assetKeys = nil
     }
     
-    public func updateWithTeamMembership(permissions: Permissions, createdBy: UUID?) {
+    public func updateWithTeamMembership(permissions: Permissions?, createdBy: UUID?) {
         self.internalTeamPermissions = permissions
         self.internalTeamCreatedBy = createdBy
     }
