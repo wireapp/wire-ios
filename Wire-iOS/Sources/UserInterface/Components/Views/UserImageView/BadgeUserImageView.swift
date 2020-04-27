@@ -180,11 +180,11 @@ extension BadgeUserImageView {
         }
     }
 
-    func setBadgeIcon(_ newValue: StyleKitIcon) {
+    @objc func setBadgeIcon(_ newValue: StyleKitIcon) {
         badgeIcon = newValue
     }
 
-    func removeBadgeIcon() {
+    @objc func removeBadgeIcon() {
         badgeIcon = nil
     }
 
