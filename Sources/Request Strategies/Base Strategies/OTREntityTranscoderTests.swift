@@ -48,8 +48,15 @@ import XCTest
         hasher.combine(self.conversation!)
     }
     
-    func detectedRedundantClients() {
+    func detectedRedundantUsers(_ users: [ZMUser]) {
+        // if the BE tells us that these users are not in the
+        // conversation anymore, it means that we are out of sync
+        // with the list of participants
         conversation?.needsToBeUpdatedFromBackend = true
+        
+        // The missing users might have been deleted so we need re-fetch their profiles
+        // to verify if that's the case.
+        users.forEach({ $0.needsToBeUpdatedFromBackend = true })
     }
     
     func detectedMissingClient(for user: ZMUser) {
@@ -176,6 +183,25 @@ class OTREntityTranscoderTests : MessagingTestBase {
 
             // THEN
             XCTAssertTrue(self.groupConversation.needsToBeUpdatedFromBackend)
+        }
+    }
+    
+    func testThatItHandlesRedundantClient_MarkUserAsNeedsToBeUpdatedFromBackend() {
+        self.syncMOC.performGroupedAndWait { _ in
+            // GIVEN
+            let user = self.createUser()
+            user.needsToBeUpdatedFromBackend = false
+            let clientId = "ajsd9898u13a"
+            let payload = [
+                "redundant" : ["\(user.remoteIdentifier!)" : [clientId] ]
+            ]
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            
+            // WHEN
+            self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
+            
+            // THEN
+            XCTAssertTrue(user.needsToBeUpdatedFromBackend)
         }
     }
     
