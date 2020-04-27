@@ -137,6 +137,29 @@ class OTREntityTranscoderTests : MessagingTestBase {
         }
     }
     
+    func testThatItHandlesMissingClient_ignoresClientIfItAlreadyHasAnEstablishedSession() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // GIVEN
+            let user = ZMUser.insertNewObject(in: moc)
+            user.remoteIdentifier = UUID.create()
+            
+            let clientId = "ajsd9898u13a"
+            let userClient = UserClient.fetchUserClient(withRemoteId: clientId, forUser: user, createIfNeeded: true)!
+            self.establishSessionFromSelf(to: userClient)
+            
+            let payload = [
+                "missing" : ["\(user.remoteIdentifier!)" : [clientId] ]
+            ]
+            let response = ZMTransportResponse(payload: payload as NSDictionary, httpStatus: 200, transportSessionError: nil)
+            
+            // WHEN
+            self.sut.request(forEntity: self.mockEntity, didCompleteWithResponse: response)
+            
+            // THEN
+            XCTAssertEqual(self.selfClient.missingClients!.count, 0)
+        }
+    }
+    
     func testThatItHandlesMissingClient_MarkAsNeedsToDownloadNotAlreadyThere() {
         self.syncMOC.performGroupedAndWait { _ in
             // GIVEN

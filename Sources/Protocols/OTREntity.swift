@@ -270,8 +270,14 @@ extension OTREntity {
             
             // client
             guard let clientIDs = pair.1 as? [String] else { fatal("Missing client ID is not parsed properly") }
-            let clients: [UserClient] = clientIDs.map {
-                let client = UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true)!
+            let clients: [UserClient] = clientIDs.compactMap {
+                guard
+                    let client = UserClient.fetchUserClient(withRemoteId: $0, forUser: user, createIfNeeded: true),
+                    !client.hasSessionWithSelfClient
+                else {
+                    return nil
+                }
+                
                 client.discoveredByMessage = self as? ZMOTRMessage
                 return client
             }
