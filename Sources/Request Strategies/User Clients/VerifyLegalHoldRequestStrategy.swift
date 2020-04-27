@@ -106,8 +106,12 @@ fileprivate class VerifyClientsParser: OTREntity {
         // no-op
     }
     
-    func detectedRedundantClients() {
+    func detectedRedundantUsers(_ users: [ZMUser]) {
         conversation.needsToBeUpdatedFromBackend = true
+        
+        // The missing users might have been deleted so we need re-fetch their profiles
+        // to verify if that's the case.
+        users.forEach({ $0.needsToBeUpdatedFromBackend = true })
     }
     
     func detectedMissingClient(for user: ZMUser) {

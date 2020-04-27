@@ -127,9 +127,12 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     }
     
     func testThatItRequestSlowSyncIfWeAreSendingToRedudantClients() {
-        self.syncMOC.performGroupedAndWait { _ in
-            // given when
-            self.sut.detectedRedundantClients()
+        self.syncMOC.performGroupedAndWait { moc in
+            // given
+            let redundantUser = ZMUser(remoteID: UUID(), createIfNeeded: true, in: moc)!
+            
+            // when
+            self.sut.detectedRedundantUsers([redundantUser])
 
             // then
             XCTAssertTrue(self.applicationStatus.slowSyncWasRequested)
