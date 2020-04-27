@@ -77,6 +77,10 @@ final class SelfProfileViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
         settingsPropertyFactory.delegate = self
+
+        if selfUser.isTeamMember {
+            selfUser.refreshTeamData()
+        }
     }
 
     @available(*, unavailable)

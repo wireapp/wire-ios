@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,12 +17,12 @@
 //
 
 import Foundation
-import UIKit
-import AVFoundation
 
-/// A protocol for allow tests to mock recordPermission
-protocol AVAudioSessionType {
-    var recordPermission: AVAudioSession.RecordPermission { get }
+extension TimeInterval {
+
+    static let oneDay: TimeInterval = 24 * oneHour
+    static let oneHour: TimeInterval = 60 * oneMinute
+    static let oneMinute: TimeInterval = 60 * oneSecond
+    static let oneSecond: TimeInterval = 1
+
 }
-
-extension AVAudioSession: AVAudioSessionType {}
