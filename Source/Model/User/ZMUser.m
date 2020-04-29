@@ -546,7 +546,7 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
     }
 
     NSString *name = [transportData optionalStringForKey:@"name"];
-    if (name != nil || authoritative) {
+    if (!self.isAccountDeleted && (name != nil || authoritative)) {
         self.name = name;
     }
     
