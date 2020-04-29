@@ -435,6 +435,31 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
         XCTAssertEqual(conversation.participantRoles.first {$0.user == user2}?.role, role2)
     }
+
+    func testThatItDoesNotAddDeletedParticipants() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = .group
+        let role1 = Role.create(managedObjectContext: uiMOC, name: "role1", conversation: conversation)
+        conversation.nonTeamRoles.insert(role1)
+        let role2 = Role.create(managedObjectContext: uiMOC, name: "role2", conversation: conversation)
+        conversation.nonTeamRoles.insert(role2)
+        let user1 = ZMUser.insertNewObject(in: self.uiMOC)
+        user1.name = "user1"
+        let user2 = ZMUser.insertNewObject(in: self.uiMOC)
+        user2.name = "user2"
+        user2.isAccountDeleted = true
+
+        // when
+        conversation.addParticipantsAndUpdateConversationState(usersAndRoles: [
+            (user1, role1),
+            (user2, role2)
+        ])
+
+        // then
+        XCTAssertEqual(conversation.participantRoles.count, 1)
+        XCTAssertEqual(conversation.participantRoles.first {$0.user == user1}?.role, role1)
+    }
     
     func testThatItUpdateParticipantWithTheGivenRole() {
         

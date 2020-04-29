@@ -141,6 +141,7 @@ extension ZMConversation {
         let doesExistsOnBackend = self.remoteIdentifier != nil
         
         let addedRoles = usersAndRoles.compactMap { (user, role) -> ParticipantRole? in
+            guard !user.isAccountDeleted else { return nil }
             
             // make sure the role is the right team/conversation role
             require(
