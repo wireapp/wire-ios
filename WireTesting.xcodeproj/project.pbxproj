@@ -46,6 +46,7 @@
 		54AFD7E61CB6986A0090E33A /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 54AFD7E01CB698690090E33A /* tiny.jpg */; };
 		54AFD7E81CB699710090E33A /* ZMTTestBaseTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54AFD7E71CB699710090E33A /* ZMTTestBaseTests.swift */; };
 		87B0EF5C2139687500CE1931 /* ManagedObjectContextChangesMerger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */; };
+		A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */; };
 		CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = CE6B7B2C1C11ED5F00FC4C2E /* ZMMockEntity.m */; };
 		CE6B7B321C11ED5F00FC4C2E /* ZMMockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = CE6B7B2E1C11ED5F00FC4C2E /* ZMMockEntity2.m */; };
 		CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = CEB8FD681C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m */; };
@@ -119,7 +120,6 @@
 		54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
 		54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
@@ -134,6 +134,7 @@
 		54BD49F01D41FA56006E29D1 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		54BD49F11D41FA56006E29D1 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		87B0EF5B2139687500CE1931 /* ManagedObjectContextChangesMerger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedObjectContextChangesMerger.swift; sourceTree = "<group>"; };
+		A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMTBaseTest.swift; sourceTree = "<group>"; };
 		CE6B7B2B1C11ED5F00FC4C2E /* ZMMockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity.h; sourceTree = "<group>"; };
 		CE6B7B2C1C11ED5F00FC4C2E /* ZMMockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMockEntity.m; sourceTree = "<group>"; };
 		CE6B7B2D1C11ED5F00FC4C2E /* ZMMockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMockEntity2.h; sourceTree = "<group>"; };
@@ -267,6 +268,7 @@
 				09A217ED1B78DFAF0076547A /* ZMTAsserts.h */,
 				09A217EE1B78DFAF0076547A /* ZMTBaseTest.h */,
 				09A217EF1B78DFAF0076547A /* ZMTBaseTest.m */,
+				A971FAE023D7477200AB25B4 /* ZMTBaseTest.swift */,
 				098CFBC21B7BAA2D000B02B1 /* XCTestCase+Helpers.h */,
 				098CFBC31B7BAA2D000B02B1 /* XCTestCase+Helpers.m */,
 				16E2561E21089DAE00919DB0 /* XCTestCase+Helpers.swift */,
@@ -301,7 +303,6 @@
 				54AD5CFA1EEFEEC00072FC97 /* project-common.xcconfig */,
 				54AD5CFB1EEFEEC00072FC97 /* project-debug.xcconfig */,
 				54AD5CFC1EEFEEC00072FC97 /* project.xcconfig */,
-				54AD5CFD1EEFEEC00072FC97 /* simulator.xcconfig */,
 				54AD5D001EEFEEC00072FC97 /* test-target.xcconfig */,
 				54AD5D021EEFEEC00072FC97 /* warnings-debug.xcconfig */,
 				54AD5D031EEFEEC00072FC97 /* warnings.xcconfig */,
@@ -391,7 +392,7 @@
 			attributes = {
 				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0710;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = Wire;
 				TargetAttributes = {
 					096AD7BA1B68D41D00E007A8 = {
@@ -465,6 +466,7 @@
 				098CFBC51B7BAA2D000B02B1 /* XCTestCase+Helpers.m in Sources */,
 				CEB8FD6A1C11E50700ED0BE5 /* ZMMockManagedObjectContextFactory.m in Sources */,
 				09A218011B78DFAF0076547A /* ZMTFailureRecorder.m in Sources */,
+				A971FAE123D7477200AB25B4 /* ZMTBaseTest.swift in Sources */,
 				09A217F91B78DFAF0076547A /* NSData+WireTesting.m in Sources */,
 				CE6B7B301C11ED5F00FC4C2E /* ZMMockEntity.m in Sources */,
 				F97E28BE1D8AACEA00A77567 /* UUID+WireTesting.swift in Sources */,
