@@ -46,7 +46,8 @@ public class ZMSLogEntry: NSObject {
 ///     zmLog.debug("Debug information")
 ///     zmLog.warn("A serious warning!")
 ///
-@objc public class ZMSLog : NSObject {
+@objc
+public class ZMSLog : NSObject {
 
     public typealias LogHook = (_ level: ZMLogLevel_t, _ tag: String?, _ message: String) -> (Void)
     public typealias LogEntryHook = (
@@ -72,7 +73,8 @@ public class ZMSLogEntry: NSObject {
     }
     
     /// Wait for all log operations to be completed
-    @objc public static func sync() {
+    @objc
+    public static func sync() {
         logQueue.sync {
             // no op
         }
@@ -134,25 +136,26 @@ extension ZMSLog {
     }
 }
 
+// NOTE:
+// I could use NotificationCenter for this, but I would have to deal with
+// passing and extracting (and downcasting and wrapping) the parameters from the user info dictionary
+// I prefer handling my own delegates
+
+/// Opaque token to unregister observers
+@objc(ZMSLogLogHookToken)
+public final class LogHookToken : NSObject {
+
+    /// Internal identifier
+    fileprivate let token : UUID
+    
+    override init() {
+        self.token = UUID()
+        super.init()
+    }
+}
+
 // MARK: - Hooks (log observing)
 extension ZMSLog {
-
-    // NOTE:         
-    // I could use NotificationCenter for this, but I would have to deal with
-    // passing and extracting (and downcasting and wrapping) the parameters from the user info dictionary
-    // I prefer handling my own delegates
-    
-    /// Opaque token to unregister observers
-    @objc public class LogHookToken : NSObject {
-
-        /// Internal identifier
-        fileprivate let token : UUID
-        
-        override init() {
-            self.token = UUID()
-            super.init()
-        }
-    }
     
     /// Notify all hooks of a new log
     fileprivate static func notifyHooks(level: ZMLogLevel_t,

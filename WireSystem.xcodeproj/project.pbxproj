@@ -79,7 +79,6 @@
 		546BC7D01EFD49B400DDB12A /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		546BC7D21EFD49B400DDB12A /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		546BC7D31EFD49B400DDB12A /* simulator.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = simulator.xcconfig; sourceTree = "<group>"; };
 		546BC7D41EFD49B400DDB12A /* test-host-ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-host-ios.xcconfig"; sourceTree = "<group>"; };
 		546BC7D51EFD49B400DDB12A /* test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "test-target.xcconfig"; sourceTree = "<group>"; };
 		546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
@@ -165,7 +164,6 @@
 				546BC7D01EFD49B400DDB12A /* project-common.xcconfig */,
 				546BC7D11EFD49B400DDB12A /* project-debug.xcconfig */,
 				546BC7D21EFD49B400DDB12A /* project.xcconfig */,
-				546BC7D31EFD49B400DDB12A /* simulator.xcconfig */,
 				546BC7D41EFD49B400DDB12A /* test-host-ios.xcconfig */,
 				546BC7D51EFD49B400DDB12A /* test-target.xcconfig */,
 				546BC7D61EFD49B400DDB12A /* warnings-debug.xcconfig */,
@@ -317,7 +315,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					3ECC350F1AD436750089FD4B = {
 						DevelopmentTeam = W5KEQBF9B5;
