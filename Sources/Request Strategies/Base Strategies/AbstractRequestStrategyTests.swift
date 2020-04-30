@@ -55,12 +55,8 @@ class TestRequestStrategy : AbstractRequestStrategy, TestableAbstractRequestStra
     }
     
     override var configuration: ZMStrategyConfigurationOption {
-        get {
-            return mutableConfiguration
-        }
-        set {
-            mutableConfiguration = configuration
-        }
+        get { return mutableConfiguration }
+        set { mutableConfiguration = newValue }
     }
     
 }
