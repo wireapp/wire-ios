@@ -329,7 +329,7 @@
 			attributes = {
 				LastSwiftMigration = 0710;
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Zeta Project Germany";
 				TargetAttributes = {
 					DBF380581B15C0B800369FB7 = {
@@ -342,13 +342,13 @@
 					};
 				};
 			};
-			buildConfigurationList = DBF380531B15C0B800369FB7 /* Build configuration list for PBXProject "ziphy" */;
+			buildConfigurationList = DBF380531B15C0B800369FB7 /* Build configuration list for PBXProject "Ziphy" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = DBF3804F1B15C0B800369FB7;
 			productRefGroup = DBF3805A1B15C0B800369FB7 /* Products */;
@@ -435,6 +435,7 @@
 			baseConfigurationReference = 54FB26861D4669D0005574BF /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -492,6 +493,7 @@
 			baseConfigurationReference = 54FB26861D4669D0005574BF /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -541,6 +543,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -554,6 +557,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54FB265A1D4669A6005574BF /* ziphy-ios.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				INFOPLIST_FILE = "$(SRCROOT)/Sources/Info.plist";
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
@@ -590,7 +594,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		DBF380531B15C0B800369FB7 /* Build configuration list for PBXProject "ziphy" */ = {
+		DBF380531B15C0B800369FB7 /* Build configuration list for PBXProject "Ziphy" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DBF3806D1B15C0B800369FB7 /* Debug */,
