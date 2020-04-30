@@ -24,6 +24,7 @@ SDKROOT = iphoneos
 
 // Swift
 //
+SWIFT_VERSION = 5.1
 DEFINES_MODULE = YES
 
 // Packaging

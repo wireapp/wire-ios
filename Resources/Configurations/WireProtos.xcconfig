@@ -17,6 +17,7 @@
 //
 
 #include "zmc-config/ios.xcconfig"
+#include "zmc-config/project-common.xcconfig"
 
 APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireProtos

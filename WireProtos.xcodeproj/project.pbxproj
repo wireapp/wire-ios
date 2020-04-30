@@ -73,6 +73,7 @@
 		5E13807B21A30A9D004A646C /* messages.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = messages.pb.swift; sourceTree = "<group>"; };
 		5E13807C21A30A9D004A646C /* otr.pb.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = otr.pb.swift; sourceTree = "<group>"; };
 		5E13807F21A30AB7004A646C /* ProtosTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProtosTests.swift; sourceTree = "<group>"; };
+		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F184BE851E65CADA0020EBB7 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
 		F1FDF2E121B0443600E037A1 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
@@ -190,6 +191,7 @@
 		09B70B4E1B874390002667A6 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
+				A9EF6A7323D76AC8002904B4 /* ios.xcconfig */,
 				54B5E1F11F0A6B77001F43A6 /* project-common.xcconfig */,
 				54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */,
 				54B5E1F31F0A6B77001F43A6 /* project.xcconfig */,
@@ -271,26 +273,27 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0700;
-				LastUpgradeCheck = 1000;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = Wire;
 				TargetAttributes = {
 					090837FD1B872DBF00629095 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 1000;
+						LastSwiftMigration = 1130;
 					};
 					090838081B872DBF00629095 = {
 						CreatedOnToolsVersion = 6.4;
-						LastSwiftMigration = 1010;
+						LastSwiftMigration = 1130;
 						ProvisioningStyle = Manual;
 					};
 				};
 			};
 			buildConfigurationList = 090837F81B872DBF00629095 /* Build configuration list for PBXProject "WireProtos" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
 				en,
+				Base,
 			);
 			mainGroup = 090837F41B872DBF00629095;
 			productRefGroup = 090837FF1B872DBF00629095 /* Products */;
@@ -356,6 +359,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F21F0A6B77001F43A6 /* project-debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 			};
 			name = Debug;
@@ -364,6 +368,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54B5E1F31F0A6B77001F43A6 /* project.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				SWIFT_COMPILATION_MODE = wholemodule;
 			};
@@ -382,7 +387,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				SWIFT_COMPILATION_MODE = singlefile;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -397,7 +401,6 @@
 				INFOPLIST_FILE = Protos/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
@@ -412,7 +415,6 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
-				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
 		};
@@ -426,7 +428,6 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = WireProtosTests;
-				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
 		};
