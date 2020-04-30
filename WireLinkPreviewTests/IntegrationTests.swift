@@ -93,14 +93,16 @@ class IntegrationTests: XCTestCase {
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
+    let uft16ExpectedString = "Apple\u{A0}Music"
+    
     func testThatItParsesSampleDataiTunes() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: "Apple Music", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: uft16ExpectedString, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
 
     func testThatItParsesSampleDataiTunesWithoutTitle() {
-        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: "Apple Music", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
+        let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "music.album", siteNameString: uft16ExpectedString, userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.iTunesDataWithoutTitle()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
@@ -137,7 +139,9 @@ class IntegrationTests: XCTestCase {
         let hasFoursquareMetaData: Bool
     }
     
-    func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData, expected: OpenGraphDataExpectation?, line: UInt = #line) {
+    func assertThatItCanParseSampleData(_ mockData: OpenGraphMockData,
+                                        expected: OpenGraphDataExpectation?,
+                                        line: UInt = #line) {
 
         // given
         let completionExpectation = expectation(description: "It should parse the data")
@@ -175,6 +179,7 @@ class IntegrationTests: XCTestCase {
         XCTAssertEqual(data.content != nil, expected.hasDescription, expected.hasDescription ? "Should have description" : "Should not have description", line: line)
         XCTAssertEqual(data.foursquareMetaData != nil, expected.hasFoursquareMetaData, expected.hasFoursquareMetaData ? "Should have Foursquare metadata" : "Should not have Foursquare metadata", line: line)
         XCTAssertEqual(data.type, expected.type, "Type should be \(expected.type ?? "nil"), found:\(data.type)", line: line)
+                
         XCTAssertEqual(data.siteNameString, expected.siteNameString, "Site name should be \(expected.siteNameString ?? "nil"), found: \(data.siteNameString ?? "nil")", line: line)
         XCTAssertEqual(data.userGeneratedImage, expected.userGeneratedImage, "User generated image should match", line: line)
         XCTAssertTrue(data.imageUrls.count == expected.numberOfImages, "Should have \(expected.numberOfImages) images, found:\(data.imageUrls.count)",line: line)
