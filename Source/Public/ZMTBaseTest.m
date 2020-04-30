@@ -32,7 +32,7 @@
 @property (nonatomic) BOOL ignoreLogErrors; ///< if false, will fail on ZMLogError or ZMLogWarn
 @property (nonatomic) NSMutableArray *mocksToBeVerified;
 @property (nonatomic) NSMutableArray *expectations; // Beta3Workaround
-@property (nonatomic) LogHookToken *logHookToken;
+@property (nonatomic) ZMSLogLogHookToken *logHookToken;
 
 @property (nonatomic, strong) id<ZMSGroupQueue> innerFakeUIContext;
 @property (nonatomic, strong) id<ZMSGroupQueue> innerFakeSyncContext;
