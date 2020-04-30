@@ -823,7 +823,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
-				LastUpgradeCheck = 1020;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Zeta Project";
 				TargetAttributes = {
 					54C902321B7532DD007162A8 = {
@@ -840,11 +840,11 @@
 			};
 			buildConfigurationList = 54C9022D1B7532DD007162A8 /* Build configuration list for PBXProject "WireMockTransport" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
+				Base,
 			);
 			mainGroup = 54C902291B7532DD007162A8;
 			productRefGroup = 54C902341B7532DD007162A8 /* Products */;
@@ -982,6 +982,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C9025A1B7532F6007162A8 /* project-debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Debug;
@@ -990,6 +991,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 54C9025B1B7532F6007162A8 /* project.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				SWIFT_SWIFT3_OBJC_INFERENCE = Off;
 			};
 			name = Release;
