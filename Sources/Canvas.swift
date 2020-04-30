@@ -222,7 +222,7 @@ public class Canvas: UIView {
         }
         
         // move object to top
-        if let index = scene.index(where: { $0 === newSelection }) {
+        if let index = scene.firstIndex(where: { $0 === newSelection }) {
             scene.remove(at: index)
             scene.append(newSelection)
             unflatten()
