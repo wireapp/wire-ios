@@ -98,7 +98,7 @@
 
         // then
         XCTAssertNotNil(event);
-        XCTAssertEqual([types[key] intValue], event.type);
+        XCTAssertEqual([types[key] intValue], (int) event.type);
     }
 
 }

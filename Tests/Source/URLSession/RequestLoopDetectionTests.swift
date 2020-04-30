@@ -130,7 +130,7 @@ class RequestLoopDetectionTests : XCTestCase {
     func testThatItDetectsMultipleLoopsFromDifferentURLs() {
         
         // given
-        var paths = ["foo.com", "bar.de", "baz.org"]
+        let paths = ["foo.com", "bar.de", "baz.org"]
         var triggeredURLs : [String] = []
         let hash : UInt = 14
 

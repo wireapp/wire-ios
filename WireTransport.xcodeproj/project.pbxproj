@@ -952,7 +952,7 @@
 		3E88BC9E1B1F35DF00232589 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0930;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = Wire;
 				TargetAttributes = {
 					09A218651B790D330076547A = {
@@ -974,10 +974,9 @@
 			};
 			buildConfigurationList = 3E88BCA11B1F35DF00232589 /* Build configuration list for PBXProject "WireTransport" */;
 			compatibilityVersion = "Xcode 3.2";
-			developmentRegion = English;
+			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
-				English,
 				en,
 				Base,
 			);
@@ -1228,6 +1227,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 547712111B751F7900223568 /* project-debug.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Debug;
 		};
@@ -1235,6 +1235,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 547712121B751F7900223568 /* project.xcconfig */;
 			buildSettings = {
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 			};
 			name = Release;
 		};

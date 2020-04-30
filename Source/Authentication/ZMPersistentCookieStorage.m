@@ -178,6 +178,51 @@ static dispatch_queue_t isolationQueue()
     return success;
 }
 
+#pragma mark - Private API
+
+- (NSArray<NSHTTPCookie *> *)authenticationCookies
+{
+    NSData *data = self.authenticationCookieData;
+    if (data == nil) {
+        return nil;
+    }
+    data = [[NSData alloc] initWithBase64EncodedData:data options:0];
+    if (data == nil) {
+        return nil;
+    }
+    if (TARGET_OS_IPHONE) {
+        NSData *secretKey = [NSUserDefaults cookiesKey];
+        data = [data zmDecryptPrefixedIVWithKey:secretKey];
+    }
+    NSKeyedUnarchiver *unarchiver;
+    @try {
+        unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
+    } @catch (id) {
+
+        ZMLogError(@"Unable to parse stored cookie data.");
+        self.authenticationCookieData = nil;
+        return nil;
+    }
+    if (unarchiver == nil) {
+        ZMLogError(@"Unable to parse stored cookie data.");
+        self.authenticationCookieData = nil;
+        return nil;
+    }
+
+    unarchiver.requiresSecureCoding = YES;
+    NSArray *properties = [unarchiver decodePropertyListForKey:@"properties"];
+
+    if (![properties isKindOfClass:[NSArray class]]) {
+        return nil;
+    }
+
+    NSArray *cookies = [properties mapWithBlock:^id(NSDictionary *p) {
+        return [[NSHTTPCookie alloc] initWithProperties:p];
+    }];
+
+    return cookies;
+}
+
 @end
 
 
@@ -361,49 +406,6 @@ static dispatch_queue_t isolationQueue()
         NOT_USED(stop);
         [request addValue:value forHTTPHeaderField:field];
     }];
-}
-    
-- (NSArray<NSHTTPCookie *> *)authenticationCookies
-{
-    NSData *data = self.authenticationCookieData;
-    if (data == nil) {
-        return nil;
-    }
-    data = [[NSData alloc] initWithBase64EncodedData:data options:0];
-    if (data == nil) {
-        return nil;
-    }
-    if (TARGET_OS_IPHONE) {
-        NSData *secretKey = [NSUserDefaults cookiesKey];
-        data = [data zmDecryptPrefixedIVWithKey:secretKey];
-    }
-    NSKeyedUnarchiver *unarchiver;
-    @try {
-        unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
-    } @catch (id) {
-        
-        ZMLogError(@"Unable to parse stored cookie data.");
-        self.authenticationCookieData = nil;
-        return nil;
-    }
-    if (unarchiver == nil) {
-        ZMLogError(@"Unable to parse stored cookie data.");
-        self.authenticationCookieData = nil;
-        return nil;
-    }
-    
-    unarchiver.requiresSecureCoding = YES;
-    NSArray *properties = [unarchiver decodePropertyListForKey:@"properties"];
-    
-    if (![properties isKindOfClass:[NSArray class]]) {
-        return nil;
-    }
-    
-    NSArray *cookies = [properties mapWithBlock:^id(NSDictionary *p) {
-        return [[NSHTTPCookie alloc] initWithProperties:p];
-    }];
-    
-    return cookies;
 }
 
 @end
