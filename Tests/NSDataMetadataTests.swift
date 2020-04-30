@@ -90,8 +90,11 @@ class NSDataMetadataTests: XCTestCase {
             originalMetadata[kCGImagePropertyProfileName as String] = nil
             let converted = try! data.wr_removingImageMetadata()
             var convertedMetadata = try! converted.wr_metadata()
-            convertedMetadata[kCGImagePropertyProfileName as String] = nil
             
+            /// remove non-related properties
+            convertedMetadata[kCGImagePropertyProfileName as String] = nil
+            convertedMetadata[kCGImagePropertyExifDictionary as String] = nil
+
             // THEN
             XCTAssertEqual(originalMetadata as NSDictionary, convertedMetadata as NSDictionary)
         }
