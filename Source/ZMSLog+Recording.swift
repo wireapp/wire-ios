@@ -18,7 +18,7 @@
 
 import Foundation
 
-private var recordingToken : ZMSLog.LogHookToken? = nil
+private var recordingToken : LogHookToken? = nil
 
 extension ZMSLog {
     
@@ -40,7 +40,7 @@ extension ZMSLog {
     
     /// Stop recording logs and discard cache
     @objc public static func stopRecording() {
-        var tokenToRemove : ZMSLog.LogHookToken?
+        var tokenToRemove : LogHookToken?
         logQueue.sync {
             guard let token = recordingToken else { return }
             tokenToRemove = token
