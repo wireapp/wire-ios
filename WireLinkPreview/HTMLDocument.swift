@@ -33,9 +33,10 @@ extension UnsafeMutablePointer where Pointee == xmlDoc {
     /// Tries to create a new HTML document.
     init?(xmlString: String) {
         let options = Int32(HTML_PARSE_NOWARNING.rawValue) | Int32(HTML_PARSE_NOERROR.rawValue) | Int32(HTML_PARSE_RECOVER.rawValue)
-        let data = Data(bytes: xmlString.utf8)
+        let data = Data(xmlString.utf8)
 
-        let decodedDocument: xmlDocPtr? = data.withUnsafeBytes { (cString: UnsafePointer<Int8>) in
+        let decodedDocument = data.withUnsafeBytes { (pointer: UnsafeRawBufferPointer) -> xmlDocPtr? in
+            guard let cString = pointer.baseAddress?.assumingMemoryBound(to: Int8.self) else { return nil }
             return htmlReadMemory(cString, Int32(data.count), "", nil, options)
         }
 
