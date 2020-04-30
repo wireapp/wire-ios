@@ -417,7 +417,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0830;
-				LastUpgradeCheck = 1030;
+				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = com.wire;
 				TargetAttributes = {
 					5470D3E71D76E1B000FDE440 = {
