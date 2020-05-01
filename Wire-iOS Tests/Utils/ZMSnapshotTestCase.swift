@@ -275,7 +275,7 @@ extension ZMSnapshotTestCase {
     func verifyView(view: UIView,
                     extraLayoutPass: Bool = false,
                     width: CGFloat,
-                    tolerance: CGFloat = 0,
+                    tolerance: CGFloat = 0.2,
                     identifier: String? = nil,
                     configuration: ((UIView) -> Swift.Void)? = nil,
                     file: StaticString = #file,
@@ -308,7 +308,7 @@ extension ZMSnapshotTestCase {
 
     func verifyInAllPhoneWidths(view: UIView,
                                 extraLayoutPass: Bool = false,
-                                tolerance: CGFloat = 0,
+                                tolerance: CGFloat = 0.2,
                                 configuration: ((UIView) -> Swift.Void)? = nil,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
