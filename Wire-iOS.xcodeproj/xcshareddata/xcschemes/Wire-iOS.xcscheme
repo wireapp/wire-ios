@@ -74,6 +74,9 @@
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent()">
                </Test>
                <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent_LibraryAccessGranted()">
+               </Test>
+               <Test
                   Identifier = "ConversationLinkAttachmentMessageCellTests">
                </Test>
                <Test
