@@ -243,7 +243,7 @@ extension ZMSnapshotTestCase {
     /// Performs an assertion with the given view and the recorded snapshot.
     func verify(view: UIView,
                 extraLayoutPass: Bool = false,
-                tolerance: CGFloat = 0.1,
+                tolerance: CGFloat = 0.2,
                 identifier: String? = nil,
                 deviceName: String? = nil,
                 file: StaticString = #file,
