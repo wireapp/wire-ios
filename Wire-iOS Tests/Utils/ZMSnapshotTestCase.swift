@@ -174,7 +174,7 @@ extension ZMSnapshotTestCase {
     private func snapshotVerify(view: UIView,
                                 identifier: String? = nil,
                                 suffix: NSOrderedSet? = FBSnapshotTestCaseDefaultSuffixes(),
-                                tolerance: CGFloat = 0.1,
+                                tolerance: CGFloat = 0,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
         let errorDescription = snapshotVerifyViewOrLayer(view,
@@ -243,7 +243,7 @@ extension ZMSnapshotTestCase {
     /// Performs an assertion with the given view and the recorded snapshot.
     func verify(view: UIView,
                 extraLayoutPass: Bool = false,
-                tolerance: CGFloat = 0,
+                tolerance: CGFloat = 0.1,
                 identifier: String? = nil,
                 deviceName: String? = nil,
                 file: StaticString = #file,
