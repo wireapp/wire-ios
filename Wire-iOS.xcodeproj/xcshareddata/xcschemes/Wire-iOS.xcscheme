@@ -71,15 +71,6 @@
                   Identifier = "CallInfoRootViewControllerTests/testGroupAudioEstablished_LargeGroup()">
                </Test>
                <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent()">
-               </Test>
-               <Test
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent_LibraryAccessGranted()">
                </Test>
                <Test
@@ -98,16 +89,10 @@
                   Identifier = "ConversationTextMessageTests">
                </Test>
                <Test
-                  Identifier = "EphemeralKeyboardViewControllerTests/testThatItRendersCorrectInitially()">
+                  Identifier = "GroupDetailsViewControllerSnapshotTests/testForActionMenu()">
                </Test>
                <Test
-                  Identifier = "EphemeralKeyboardViewControllerTests/testThatItRendersCorrectIntially_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "GroupConversationCellTests">
-               </Test>
-               <Test
-                  Identifier = "GroupDetailsViewControllerSnapshotTests">
+                  Identifier = "GroupDetailsViewControllerSnapshotTests/testForActionMenu_NonTeam()">
                </Test>
                <Test
                   Identifier = "LandingViewControllerSnapshotTests">
@@ -119,13 +104,7 @@
                   Identifier = "NSData_ImageTypeTests">
                </Test>
                <Test
-                  Identifier = "StartedConversationCellTests">
-               </Test>
-               <Test
                   Identifier = "UIAlertControllerCompanyLoginSnapshotTests">
-               </Test>
-               <Test
-                  Identifier = "UserClientCellTests">
                </Test>
             </SkippedTests>
          </TestableReference>
