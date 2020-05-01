@@ -71,7 +71,19 @@
                   Identifier = "CallInfoRootViewControllerTests/testGroupAudioEstablished_LargeGroup()">
                </Test>
                <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent_LibraryAccessGranted()">
+               </Test>
+               <Test
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent_LibraryAccessGranted()">
+               </Test>
+               <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeCompact_LibraryAccessGranted()">
+               </Test>
+               <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeRegularLandscape_LibraryAccessGranted()">
+               </Test>
+               <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeRegularPortrait_LibraryAccessGranted()">
                </Test>
                <Test
                   Identifier = "ConversationContentViewControllerTests">
@@ -102,6 +114,12 @@
                </Test>
                <Test
                   Identifier = "NSData_ImageTypeTests">
+               </Test>
+               <Test
+                  Identifier = "StartedConversationCellTests">
+               </Test>
+               <Test
+                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCell_SelfIsCollaborator_AllowGuests()">
                </Test>
                <Test
                   Identifier = "UIAlertControllerCompanyLoginSnapshotTests">
