@@ -68,6 +68,9 @@
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent()">
                </Test>
                <Test
+                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent_LibraryAccessGranted()">
+               </Test>
+               <Test
                   Identifier = "ConversationLinkAttachmentMessageCellTests">
                </Test>
                <Test
@@ -75,6 +78,9 @@
                </Test>
                <Test
                   Identifier = "EphemeralKeyboardViewControllerTests/testThatItRendersCorrectInitially()">
+               </Test>
+               <Test
+                  Identifier = "EphemeralKeyboardViewControllerTests/testThatItRendersCorrectIntially_DarkMode()">
                </Test>
                <Test
                   Identifier = "LandingViewControllerSnapshotTests">
