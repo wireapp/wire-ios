@@ -62,6 +62,12 @@
                   Identifier = "AuthenticationInterfaceBuilderTests">
                </Test>
                <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
+               </Test>
+               <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
+               </Test>
+               <Test
                   Identifier = "CallInfoRootViewControllerTests/testGroupAudioEstablished_LargeGroup()">
                </Test>
                <Test
@@ -77,7 +83,16 @@
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent_LibraryAccessGranted()">
                </Test>
                <Test
+                  Identifier = "ConversationContentViewControllerTests">
+               </Test>
+               <Test
+                  Identifier = "ConversationInputBarViewControllerTests">
+               </Test>
+               <Test
                   Identifier = "ConversationLinkAttachmentMessageCellTests">
+               </Test>
+               <Test
+                  Identifier = "ConversationListViewControllerViewModelSnapshotTests">
                </Test>
                <Test
                   Identifier = "ConversationTextMessageTests">
@@ -87,6 +102,12 @@
                </Test>
                <Test
                   Identifier = "EphemeralKeyboardViewControllerTests/testThatItRendersCorrectIntially_DarkMode()">
+               </Test>
+               <Test
+                  Identifier = "GroupConversationCellTests">
+               </Test>
+               <Test
+                  Identifier = "GroupDetailsViewControllerSnapshotTests">
                </Test>
                <Test
                   Identifier = "LandingViewControllerSnapshotTests">
@@ -102,6 +123,9 @@
                </Test>
                <Test
                   Identifier = "UIAlertControllerCompanyLoginSnapshotTests">
+               </Test>
+               <Test
+                  Identifier = "UserClientCellTests">
                </Test>
             </SkippedTests>
          </TestableReference>
