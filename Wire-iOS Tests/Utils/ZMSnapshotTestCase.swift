@@ -174,7 +174,7 @@ extension ZMSnapshotTestCase {
     private func snapshotVerify(view: UIView,
                                 identifier: String? = nil,
                                 suffix: NSOrderedSet? = FBSnapshotTestCaseDefaultSuffixes(),
-                                tolerance: CGFloat = 0,
+                                tolerance: CGFloat = tolerance,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
         let errorDescription = snapshotVerifyViewOrLayer(view,
@@ -370,7 +370,7 @@ extension ZMSnapshotTestCase {
     // MARK: - verify the snapshots in both dark and light scheme
 
     func verifyInAllColorSchemes(view: UIView,
-                                 tolerance: CGFloat = 0,
+                                 tolerance: CGFloat = tolerance,
                                  file: StaticString = #file,
                                  line: UInt = #line) {
         if var themeable = view as? Themeable {
