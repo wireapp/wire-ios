@@ -174,7 +174,7 @@ extension ZMSnapshotTestCase {
     private func snapshotVerify(view: UIView,
                                 identifier: String? = nil,
                                 suffix: NSOrderedSet? = FBSnapshotTestCaseDefaultSuffixes(),
-                                tolerance: CGFloat = 0,
+                                tolerance: CGFloat = 0.1,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
         let errorDescription = snapshotVerifyViewOrLayer(view,
