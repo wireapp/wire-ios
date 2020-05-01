@@ -243,7 +243,7 @@ extension ZMSnapshotTestCase {
     /// Performs an assertion with the given view and the recorded snapshot.
     func verify(view: UIView,
                 extraLayoutPass: Bool = false,
-                tolerance: CGFloat = 0.2,
+                tolerance: CGFloat = tolerance,
                 identifier: String? = nil,
                 deviceName: String? = nil,
                 file: StaticString = #file,
@@ -271,11 +271,12 @@ extension ZMSnapshotTestCase {
         assertAmbigousLayout(container, file: file, line: line)
     }
 
+    static let tolerance: CGFloat = 0.2
     /// Performs an assertion with the given view and the recorded snapshot with the custom width
     func verifyView(view: UIView,
                     extraLayoutPass: Bool = false,
                     width: CGFloat,
-                    tolerance: CGFloat = 0.2,
+                    tolerance: CGFloat = tolerance,
                     identifier: String? = nil,
                     configuration: ((UIView) -> Swift.Void)? = nil,
                     file: StaticString = #file,
@@ -308,7 +309,7 @@ extension ZMSnapshotTestCase {
 
     func verifyInAllPhoneWidths(view: UIView,
                                 extraLayoutPass: Bool = false,
-                                tolerance: CGFloat = 0.2,
+                                tolerance: CGFloat = tolerance,
                                 configuration: ((UIView) -> Swift.Void)? = nil,
                                 file: StaticString = #file,
                                 line: UInt = #line) {
