@@ -65,13 +65,28 @@
                   Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithoutImage()">
                </Test>
                <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromAccentColor()">
+               </Test>
+               <Test
                   Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
+               </Test>
+               <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImageRemoved()">
                </Test>
                <Test
                   Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
                </Test>
                <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromUserImage()">
+               </Test>
+               <Test
                   Identifier = "CallInfoRootViewControllerTests/testGroupAudioEstablished_LargeGroup()">
+               </Test>
+               <Test
+                  Identifier = "CallInfoRootViewControllerTests/testGroupVideoDeniedVideoPermissions()">
+               </Test>
+               <Test
+                  Identifier = "CallInfoRootViewControllerTests/testGroupVideoUndeterminedVideoPermissions()">
                </Test>
                <Test
                   Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent_LibraryAccessGranted()">
@@ -110,13 +125,25 @@
                   Identifier = "GroupDetailsViewControllerSnapshotTests/testForActionMenu_NonTeam()">
                </Test>
                <Test
+                  Identifier = "IconLabelButtonTests/testIconLabelButton_Dark_Unselected_Disabled_Blurred()">
+               </Test>
+               <Test
+                  Identifier = "IconLabelButtonTests/testIconLabelButton_Dark_Unselected_Enabled_Blurred()">
+               </Test>
+               <Test
                   Identifier = "LandingViewControllerSnapshotTests">
                </Test>
                <Test
                   Identifier = "LaunchImageViewControllerSnapshotTests">
                </Test>
                <Test
+                  Identifier = "MediaPreviewViewSnapshotTests">
+               </Test>
+               <Test
                   Identifier = "NSData_ImageTypeTests">
+               </Test>
+               <Test
+                  Identifier = "ShareViewControllerTests">
                </Test>
                <Test
                   Identifier = "StartedConversationCellTests">
