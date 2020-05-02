@@ -271,7 +271,7 @@ extension ZMSnapshotTestCase {
         assertAmbigousLayout(container, file: file, line: line)
     }
 
-    static let tolerance: CGFloat = 0.2
+    static let tolerance: CGFloat = 0.3
     /// Performs an assertion with the given view and the recorded snapshot with the custom width
     func verifyView(view: UIView,
                     extraLayoutPass: Bool = false,

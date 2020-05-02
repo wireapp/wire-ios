@@ -62,6 +62,9 @@
                   Identifier = "AuthenticationInterfaceBuilderTests">
                </Test>
                <Test
+                  Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithoutImage()">
+               </Test>
+               <Test
                   Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
                </Test>
                <Test
