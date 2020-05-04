@@ -131,8 +131,10 @@ public class Cache<Key: Hashable, Value> {
         }
 
         // rebuild cacheBuffer, since as many as `elementsToDiscard` number of elements must be discarded
-        cacheBuffer = CircularArray(size: maxElementsCount,
-                                    initialValue: Array(currentCacheBuffer.prefix(upTo: currentCacheBuffer.count - elementsToDiscard)))
+        let numberOfElementsToKeep = currentCacheBuffer.count - elementsToDiscard
+        let elementsToKeep = currentCacheBuffer.suffix(numberOfElementsToKeep)
+
+        cacheBuffer = CircularArray(size: maxElementsCount, initialValue: Array(elementsToKeep))
         
         return true
     }

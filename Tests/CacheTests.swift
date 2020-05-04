@@ -88,6 +88,38 @@ class CacheTests: XCTestCase {
         XCTAssertEqual(cache.value(for: "word 0"), nil)
     }
 
+    func testThatItPurgesWhenCostIsTooHigh_MultiplePurges() {
+        // GIVEN
+        let cache = Cache<String, String>(maxCost: 10, maxElementsCount: 10)
+        cache.set(value: "Hello 0", for: "word 0", cost: 1)
+        cache.set(value: "Hello 1", for: "word 1", cost: 1)
+        cache.set(value: "Hello 2", for: "word 2", cost: 3)
+        cache.set(value: "Hello 3", for: "word 3", cost: 5)
+
+        // WHEN
+        var didPurgeElements = cache.set(value: "Hello 4", for: "word 4", cost: 2)
+
+        // THEN
+        XCTAssertTrue(didPurgeElements)
+        XCTAssertEqual(cache.value(for: "word 4"), "Hello 4")
+        XCTAssertEqual(cache.value(for: "word 3"), "Hello 3")
+        XCTAssertEqual(cache.value(for: "word 2"), "Hello 2")
+        XCTAssertEqual(cache.value(for: "word 1"), nil)
+        XCTAssertEqual(cache.value(for: "word 0"), nil)
+
+        // WHEN
+        didPurgeElements = cache.set(value: "Hello 5", for: "word 5", cost: 2)
+
+        // THEN
+        XCTAssertTrue(didPurgeElements)
+        XCTAssertEqual(cache.value(for: "word 5"), "Hello 5")
+        XCTAssertEqual(cache.value(for: "word 4"), "Hello 4")
+        XCTAssertEqual(cache.value(for: "word 3"), "Hello 3")
+        XCTAssertEqual(cache.value(for: "word 2"), nil)
+        XCTAssertEqual(cache.value(for: "word 1"), nil)
+        XCTAssertEqual(cache.value(for: "word 0"), nil)
+    }
+
     func testThatPurgeResetsContent() {
         // GIVEN
         let cache = Cache<String, String>(maxCost: 5, maxElementsCount: 5)
