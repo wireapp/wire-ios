@@ -56,9 +56,6 @@
                   Identifier = "AppLockViewSnapshotTests">
                </Test>
                <Test
-                  Identifier = "ArticleViewTests">
-               </Test>
-               <Test
                   Identifier = "AuthenticationInterfaceBuilderTests">
                </Test>
                <Test
@@ -132,6 +129,12 @@
                </Test>
                <Test
                   Identifier = "ShareViewControllerTests">
+               </Test>
+               <Test
+                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests()">
+               </Test>
+               <Test
+                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests()">
                </Test>
                <Test
                   Identifier = "UIAlertControllerCompanyLoginSnapshotTests">
