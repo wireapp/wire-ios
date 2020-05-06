@@ -298,6 +298,8 @@ protocol CoreDataFixtureTestHelper {
     func createUser(name: String) -> ZMUser
 
     func teamTest(_ block: () -> Void)
+    
+    func createGroupConversationOnlyAdmin() -> ZMConversation
 }
 
 // MARK: - default implementation for migrating CoreDataSnapshotTestCase to XCTestCase
@@ -344,5 +346,9 @@ extension CoreDataFixtureTestHelper {
 
     var team: Team? {
         return coreDataFixture.team
+    }
+    
+    func createGroupConversationOnlyAdmin() -> ZMConversation {
+        return ZMConversation.createGroupConversationOnlyAdmin(moc: uiMOC, selfUser: selfUser)
     }
 }
