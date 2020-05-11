@@ -50,66 +50,6 @@
             </BuildableReference>
             <SkippedTests>
                <Test
-                  Identifier = "AppLockViewSnapshotTests">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithoutImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromAccentColor()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImage()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserAccentColorUpdate_fromUserImageRemoved()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
-               </Test>
-               <Test
-                  Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromUserImage()">
-               </Test>
-               <Test
-                  Identifier = "CallInfoRootViewControllerTests/testGroupAudioEstablished_LargeGroup()">
-               </Test>
-               <Test
-                  Identifier = "CallInfoRootViewControllerTests/testGroupVideoDeniedVideoPermissions()">
-               </Test>
-               <Test
-                  Identifier = "CallInfoRootViewControllerTests/testGroupVideoUndeterminedVideoPermissions()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallyAwayPercent_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testCameraScrolledHorizontallySomePercent_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeCompact_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeRegularLandscape_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "CameraKeyboardViewControllerTests/testInitialStateLayoutSizeRegularPortrait_LibraryAccessGranted()">
-               </Test>
-               <Test
-                  Identifier = "ConversationContentViewControllerTests">
-               </Test>
-               <Test
-                  Identifier = "ConversationLinkAttachmentMessageCellTests">
-               </Test>
-               <Test
-                  Identifier = "ConversationTextMessageTests">
-               </Test>
-               <Test
-                  Identifier = "IconLabelButtonTests/testIconLabelButton_Dark_Unselected_Disabled_Blurred()">
-               </Test>
-               <Test
-                  Identifier = "IconLabelButtonTests/testIconLabelButton_Dark_Unselected_Enabled_Blurred()">
-               </Test>
-               <Test
                   Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_FileMessage()">
                </Test>
                <Test
@@ -123,15 +63,6 @@
                </Test>
                <Test
                   Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_Video_DarkMode()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersFromSmallTeamWithManyGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndNameAllTeamUsersWithGuests()">
-               </Test>
-               <Test
-                  Identifier = "StartedConversationCellTests/testThatItRendersNewConversationCellWithParticipantsAndWithoutName_AllowGuests()">
                </Test>
             </SkippedTests>
          </TestableReference>
