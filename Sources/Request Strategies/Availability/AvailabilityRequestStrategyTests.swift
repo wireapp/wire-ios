@@ -139,30 +139,4 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
         }
     }
     
-    func testThatItDoesNotRequestSlowSyncIfWeAreMissingAUser() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let missingUser = ZMUser(remoteID: UUID(), createIfNeeded: true, in: moc)!
-
-            // when
-            self.sut.detectedMissingClient(for: missingUser)
-
-            // then
-            XCTAssertFalse(self.applicationStatus.slowSyncWasRequested)
-        }
-    }
-    
-    func testThatItDoesNotRequestSlowSyncIfWeAreNotMissingAUser() {
-        self.syncMOC.performGroupedAndWait { _ in
-            // given
-            let connectedUser = self.otherUser!
-
-            // when
-            self.sut.detectedMissingClient(for: connectedUser)
-
-            // then
-            XCTAssertFalse(self.applicationStatus.slowSyncWasRequested)
-        }
-    }
-    
 }
