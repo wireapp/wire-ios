@@ -49,20 +49,9 @@ import XCTest
     }
     
     func detectedRedundantUsers(_ users: [ZMUser]) {
-        // if the BE tells us that these users are not in the
-        // conversation anymore, it means that we are out of sync
-        // with the list of participants
-        conversation?.needsToBeUpdatedFromBackend = true
+        // no-op
+    }
         
-        // The missing users might have been deleted so we need re-fetch their profiles
-        // to verify if that's the case.
-        users.forEach({ $0.needsToBeUpdatedFromBackend = true })
-    }
-    
-    func detectedMissingClient(for user: ZMUser) {
-        conversation?.addParticipantAndSystemMessageIfMissing(user, date: nil)
-    }
-    
 }
 
 func ==(lhs: MockOTREntity, rhs: MockOTREntity) -> Bool {

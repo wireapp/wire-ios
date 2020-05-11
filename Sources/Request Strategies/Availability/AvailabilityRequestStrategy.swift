@@ -104,9 +104,13 @@ extension AvailabilityRequestStrategy: ZMUpstreamTranscoder {
 }
 
 extension AvailabilityRequestStrategy: OTREntity {
-    
+
     public var context: NSManagedObjectContext {
         return managedObjectContext
+    }
+    
+    public var conversation: ZMConversation? {
+        return nil
     }
     
     public func missesRecipients(_ recipients: Set<UserClient>!) {
@@ -117,17 +121,8 @@ extension AvailabilityRequestStrategy: OTREntity {
         // We were sending a message to clients which should not receive it. To recover
         // from this we must restart the slow sync.
         applicationStatus?.requestSlowSync()
+    }
         
-        // The missing users might have been deleted so we need re-fetch their profiles
-        // to verify if that's the case.
-        users.forEach({ $0.needsToBeUpdatedFromBackend = true })
-    }
-    
-    public func detectedMissingClient(for user: ZMUser) {
-        // Broadcast messsages are targeted to specific set of recipients and we will ignore any other
-        // users who are not recipients.
-    }
-    
     public var dependentObjectNeedingUpdateBeforeProcessing: NSObject? {
         let recipients = ZMUser.recipientsForAvailabilityStatusBroadcast(in: context, maxCount: maximumBroadcastRecipients)
         return self.dependentObjectNeedingUpdateBeforeProcessingOTREntity(recipients: recipients)

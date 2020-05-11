@@ -95,7 +95,7 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
 fileprivate class VerifyClientsParser: OTREntity {
     
     var context: NSManagedObjectContext
-    let conversation: ZMConversation
+    let conversation: ZMConversation?
     
     init(context: NSManagedObjectContext, conversation: ZMConversation) {
         self.context = context
@@ -107,17 +107,9 @@ fileprivate class VerifyClientsParser: OTREntity {
     }
     
     func detectedRedundantUsers(_ users: [ZMUser]) {
-        conversation.needsToBeUpdatedFromBackend = true
-        
-        // The missing users might have been deleted so we need re-fetch their profiles
-        // to verify if that's the case.
-        users.forEach({ $0.needsToBeUpdatedFromBackend = true })
-    }
-    
-    func detectedMissingClient(for user: ZMUser) {
         // no-op
     }
-    
+        
     var dependentObjectNeedingUpdateBeforeProcessing: NSObject? = nil
     
     var isExpired: Bool = false
