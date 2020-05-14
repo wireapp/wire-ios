@@ -343,6 +343,10 @@ public class Canvas: UIView {
         }
     }
     
+    public override func gestureRecognizerShouldBegin(_ gestureRecognizer: UIGestureRecognizer) -> Bool {
+        return gestureRecognizers?.contains(gestureRecognizer) ?? false
+    }
+    
     // MARK - Touch handling
     
     override public func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
