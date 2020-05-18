@@ -492,6 +492,33 @@
     }];
 }
 
+- (void)testThatItReturnsNilForInvalidToUUID_ReferringToSelfUser
+{
+
+    // given
+    NSUUID *selfUserUUID = [ZMUser selfUserInContext:self.uiMOC].remoteIdentifier;
+    
+    NSDictionary *payload =     // expected JSON response
+    @{
+      @"status": @"accepted",
+      @"from": @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
+      @"conversation": @"fef60427-3c53-4ac5-b971-ad5088f5a4c2",
+      @"to": selfUserUUID.transportString,
+      @"last_update": @"2014-04-16T15:01:45.762Z",
+      };
+    
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self performIgnoringZMLogError:^{
+            
+            // when
+            ZMConnection *connection = [ZMConnection connectionFromTransportData:payload managedObjectContext:self.syncMOC];
+            
+            // then
+            XCTAssertNil(connection);
+        }];
+    }];
+}
+
 
 
 - (void)testThatItReturnsNilForInvalidConversationUUID
