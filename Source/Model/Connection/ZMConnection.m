@@ -304,6 +304,9 @@ struct stringAndStatus {
     if(toUUID == nil) {
         ZMLogError(@"Invalid 'to'-UUID in connection: %@", transportData);
         return nil;
+    } else if ([toUUID isEqual:[ZMUser selfUserInContext:moc].remoteIdentifier]) {
+        ZMLogError(@"Invalid 'to'-UUID in connection referencing self user: %@", transportData);
+        return nil;
     }
     
     NSDate *lastUpdateDate = [transportData dateFor:@"last_update"];
