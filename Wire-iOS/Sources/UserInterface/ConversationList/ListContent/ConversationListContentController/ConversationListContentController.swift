@@ -255,13 +255,6 @@ final class ConversationListContentController: UICollectionViewController {
         selectModelItem(conversationListItem)
     }
 
-    private func conversationPreviewViewController(indexPath: IndexPath) -> ConversationPreviewViewController? {
-        guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else { return nil }
-
-        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self)
-
-    }
-
     // MARK: context menu
     @available(iOS 13.0, *)
     override func collectionView(_ collectionView: UICollectionView,
@@ -278,31 +271,29 @@ final class ConversationListContentController: UICollectionViewController {
     override func collectionView(_ collectionView: UICollectionView,
                                  contextMenuConfigurationForItemAt indexPath: IndexPath,
                                  point: CGPoint) -> UIContextMenuConfiguration? {
-        guard let conversation = self.listViewModel.item(for: indexPath) as? ZMConversation,
-            let previewViewController = conversationPreviewViewController(indexPath: indexPath) else { return nil }
+        guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
+                return nil                
+        }
 
         let previewProvider: UIContextMenuContentPreviewProvider = {
-            return previewViewController
+            return ConversationPreviewViewController(conversation: conversation, presentingViewController: self)
         }
 
         let actionProvider: UIContextMenuActionProvider = { _ in
-            return self.makeContextMenu(conversation: conversation, actionController: previewViewController.actionController)
+            let actions = conversation.listActions.map { action in
+                UIAction(title: action.title, image: nil) { _ in
+                    let actionController = ConversationActionController(conversation: conversation, target: self)
+
+                    actionController.handleAction(action)
+                }
+            }
+
+            return UIMenu(title: conversation.displayName, children: actions)
         }
 
         return UIContextMenuConfiguration(identifier: indexPath as NSIndexPath,
                                           previewProvider: previewProvider,
                                           actionProvider: actionProvider)
-    }
-
-    @available(iOS 13.0, *)
-    private func makeContextMenu(conversation: ZMConversation, actionController: ConversationActionController) -> UIMenu {
-        let actions = conversation.listActions.map { action in
-            UIAction(title: action.title, image: nil) { _ in
-                actionController.handleAction(action)
-            }
-        }
-
-        return UIMenu(title: conversation.displayName, children: actions)
     }
 
     // MARK: - UICollectionViewDataSource
@@ -454,9 +445,13 @@ extension ConversationListContentController: UIViewControllerPreviewingDelegate 
                 return nil
         }
 
+        guard let conversation = listViewModel.item(for: indexPath) as? ZMConversation else {
+            return nil
+        }
+
         previewingContext.sourceRect = layoutAttributes.frame
 
-        return conversationPreviewViewController(indexPath: indexPath)
+        return ConversationPreviewViewController(conversation: conversation, presentingViewController: self)
     }
 }
 
