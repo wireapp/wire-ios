@@ -40,7 +40,7 @@
 		0660428B247FE76A00A5F161 = {
 			isa = PBXGroup;
 			children = (
-				06604296247FE76A00A5F161 /* Resources */,
+				06604296247FE76A00A5F161 /* Sources */,
 				06604295247FE76A00A5F161 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -53,7 +53,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		06604296247FE76A00A5F161 /* Resources */ = {
+		06604296247FE76A00A5F161 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
 				06604297247FE76A00A5F161 /* AppDelegate.swift */,
@@ -64,7 +64,7 @@
 				066042A2247FE76C00A5F161 /* LaunchScreen.storyboard */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
 			);
-			path = Resources;
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
