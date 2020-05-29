@@ -1,0 +1,16 @@
+resources:
+  repositories:
+  - repository: wire-ios-notification-engine
+    type: github
+    name: wireapp/wire-ios-notification-engine
+    ref: refs/heads/master # Branch to fetch the jobs template from
+    endpoint: wireapp
+
+trigger:
+  branches:
+    include:
+      - develop
+      - refs/tags/*
+
+jobs:
+  - template: Azure/framework-pipelines.yml@wire-ios-notification-engine
