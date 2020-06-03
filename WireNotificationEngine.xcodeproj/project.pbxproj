@@ -7,23 +7,58 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0660429F247FE76A00A5F161 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0660429D247FE76A00A5F161 /* Main.storyboard */; };
 		066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 066042A0247FE76C00A5F161 /* Assets.xcassets */; };
-		066042A4247FE76C00A5F161 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 066042A2247FE76C00A5F161 /* LaunchScreen.storyboard */; };
-		066042AB247FE92B00A5F161 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
-		066042AC247FE92F00A5F161 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0660429B247FE76A00A5F161 /* ViewController.swift */; };
-		066042AD247FE93200A5F161 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604299247FE76A00A5F161 /* SceneDelegate.swift */; };
+		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */; };
+		067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
+		067ECB5E2487ABF000701956 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604299247FE76A00A5F161 /* SceneDelegate.swift */; };
+		067ECB5F2487ABF400701956 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0660429B247FE76A00A5F161 /* ViewController.swift */; };
+		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		067ECB3F2487A93D00701956 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 067ECB392487A93D00701956;
+			remoteInfo = WireNotificationEngine;
+		};
+		067ECB542487AB6000701956 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 06604293247FE76A00A5F161;
+			remoteInfo = WireNotificationEngineHost;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		067ECB462487A93E00701956 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06604294247FE76A00A5F161 /* WireNotificationEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		06604299247FE76A00A5F161 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		0660429B247FE76A00A5F161 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		0660429E247FE76A00A5F161 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		066042A0247FE76C00A5F161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		066042A3247FE76C00A5F161 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		066042A5247FE76C00A5F161 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireNotificationEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		067ECB3C2487A93D00701956 /* WireNotificationEngine.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = WireNotificationEngine.h; sourceTree = "<group>"; };
+		067ECB3D2487A93D00701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTests.swift; sourceTree = "<group>"; };
+		067ECB532487AB6000701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -34,6 +69,21 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		067ECB372487A93D00701956 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		067ECB4C2487AB6000701956 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -41,6 +91,8 @@
 			isa = PBXGroup;
 			children = (
 				06604296247FE76A00A5F161 /* Sources */,
+				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
+				067ECB502487AB6000701956 /* WireNotificationEngineTests */,
 				06604295247FE76A00A5F161 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -49,6 +101,8 @@
 			isa = PBXGroup;
 			children = (
 				06604294247FE76A00A5F161 /* WireNotificationEngine.app */,
+				067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */,
+				067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -59,33 +113,98 @@
 				06604297247FE76A00A5F161 /* AppDelegate.swift */,
 				06604299247FE76A00A5F161 /* SceneDelegate.swift */,
 				0660429B247FE76A00A5F161 /* ViewController.swift */,
-				0660429D247FE76A00A5F161 /* Main.storyboard */,
 				066042A0247FE76C00A5F161 /* Assets.xcassets */,
-				066042A2247FE76C00A5F161 /* LaunchScreen.storyboard */,
 				066042A5247FE76C00A5F161 /* Info.plist */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
 		};
+		067ECB3B2487A93D00701956 /* WireNotificationEngine */ = {
+			isa = PBXGroup;
+			children = (
+				067ECB3C2487A93D00701956 /* WireNotificationEngine.h */,
+				067ECB3D2487A93D00701956 /* Info.plist */,
+			);
+			path = WireNotificationEngine;
+			sourceTree = "<group>";
+		};
+		067ECB502487AB6000701956 /* WireNotificationEngineTests */ = {
+			isa = PBXGroup;
+			children = (
+				067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */,
+				067ECB532487AB6000701956 /* Info.plist */,
+			);
+			path = WireNotificationEngineTests;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		067ECB352487A93D00701956 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
-		06604293247FE76A00A5F161 /* WireNotificationEngine */ = {
+		06604293247FE76A00A5F161 /* WireNotificationEngineHost */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */;
+			buildConfigurationList = 066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngineHost" */;
 			buildPhases = (
 				06604290247FE76A00A5F161 /* Sources */,
 				06604291247FE76A00A5F161 /* Frameworks */,
 				06604292247FE76A00A5F161 /* Resources */,
+				067ECB462487A93E00701956 /* Embed Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				067ECB402487A93D00701956 /* PBXTargetDependency */,
+			);
+			name = WireNotificationEngineHost;
+			productName = "wire-ios-notification-engine";
+			productReference = 06604294247FE76A00A5F161 /* WireNotificationEngine.app */;
+			productType = "com.apple.product-type.application";
+		};
+		067ECB392487A93D00701956 /* WireNotificationEngine */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 067ECB432487A93E00701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */;
+			buildPhases = (
+				067ECB352487A93D00701956 /* Headers */,
+				067ECB362487A93D00701956 /* Sources */,
+				067ECB372487A93D00701956 /* Frameworks */,
+				067ECB382487A93D00701956 /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			name = WireNotificationEngine;
-			productName = "wire-ios-notification-engine";
-			productReference = 06604294247FE76A00A5F161 /* WireNotificationEngine.app */;
-			productType = "com.apple.product-type.application";
+			productName = WireNotificationEngine;
+			productReference = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		067ECB4E2487AB6000701956 /* WireNotificationEngineTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 067ECB562487AB6000701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */;
+			buildPhases = (
+				067ECB4B2487AB6000701956 /* Sources */,
+				067ECB4C2487AB6000701956 /* Frameworks */,
+				067ECB4D2487AB6000701956 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				067ECB552487AB6000701956 /* PBXTargetDependency */,
+			);
+			name = WireNotificationEngineTests;
+			productName = WireNotificationEngineTests;
+			productReference = 067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -99,6 +218,14 @@
 				TargetAttributes = {
 					06604293247FE76A00A5F161 = {
 						CreatedOnToolsVersion = 11.4.1;
+					};
+					067ECB392487A93D00701956 = {
+						CreatedOnToolsVersion = 11.4.1;
+						LastSwiftMigration = 1140;
+					};
+					067ECB4E2487AB6000701956 = {
+						CreatedOnToolsVersion = 11.4.1;
+						TestTargetID = 06604293247FE76A00A5F161;
 					};
 				};
 			};
@@ -115,7 +242,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				06604293247FE76A00A5F161 /* WireNotificationEngine */,
+				06604293247FE76A00A5F161 /* WireNotificationEngineHost */,
+				067ECB392487A93D00701956 /* WireNotificationEngine */,
+				067ECB4E2487AB6000701956 /* WireNotificationEngineTests */,
 			);
 		};
 /* End PBXProject section */
@@ -125,9 +254,21 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				066042A4247FE76C00A5F161 /* LaunchScreen.storyboard in Resources */,
 				066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */,
-				0660429F247FE76A00A5F161 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		067ECB382487A93D00701956 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		067ECB4D2487AB6000701956 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -138,32 +279,41 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				066042AD247FE93200A5F161 /* SceneDelegate.swift in Sources */,
-				066042AC247FE92F00A5F161 /* ViewController.swift in Sources */,
-				066042AB247FE92B00A5F161 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		067ECB362487A93D00701956 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				067ECB602487ABF700701956 /* AppDelegate.swift in Sources */,
+				067ECB5F2487ABF400701956 /* ViewController.swift in Sources */,
+				067ECB5E2487ABF000701956 /* SceneDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		067ECB4B2487AB6000701956 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
-/* Begin PBXVariantGroup section */
-		0660429D247FE76A00A5F161 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				0660429E247FE76A00A5F161 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
+/* Begin PBXTargetDependency section */
+		067ECB402487A93D00701956 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
+			targetProxy = 067ECB3F2487A93D00701956 /* PBXContainerItemProxy */;
 		};
-		066042A2247FE76C00A5F161 /* LaunchScreen.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				066042A3247FE76C00A5F161 /* Base */,
-			);
-			name = LaunchScreen.storyboard;
-			sourceTree = "<group>";
+		067ECB552487AB6000701956 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 06604293247FE76A00A5F161 /* WireNotificationEngineHost */;
+			targetProxy = 067ECB542487AB6000701956 /* PBXContainerItemProxy */;
 		};
-/* End PBXVariantGroup section */
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		066042A6247FE76C00A5F161 /* Debug */ = {
@@ -320,6 +470,99 @@
 			};
 			name = Release;
 		};
+		067ECB442487A93E00701956 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = WireNotificationEngine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		067ECB452487A93E00701956 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = WireNotificationEngine/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngine;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		067ECB572487AB6000701956 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WireNotificationEngineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngine.app/WireNotificationEngine";
+			};
+			name = Debug;
+		};
+		067ECB582487AB6000701956 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				INFOPLIST_FILE = WireNotificationEngineTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireNotificationEngineTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireNotificationEngine.app/WireNotificationEngine";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -332,11 +575,29 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */ = {
+		066042A8247FE76C00A5F161 /* Build configuration list for PBXNativeTarget "WireNotificationEngineHost" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				066042A9247FE76C00A5F161 /* Debug */,
 				066042AA247FE76C00A5F161 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		067ECB432487A93E00701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngine" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				067ECB442487A93E00701956 /* Debug */,
+				067ECB452487A93E00701956 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		067ECB562487AB6000701956 /* Build configuration list for PBXNativeTarget "WireNotificationEngineTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				067ECB572487AB6000701956 /* Debug */,
+				067ECB582487AB6000701956 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
