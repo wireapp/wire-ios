@@ -59,6 +59,18 @@
 		067ECB4F2487AB6000701956 /* WireNotificationEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireNotificationEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WireNotificationEngineTests.swift; sourceTree = "<group>"; };
 		067ECB532487AB6000701956 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "wire-ios-notification-engine.xcconfig"; sourceTree = "<group>"; };
+		06BD1D302487B01C002F82A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
+		06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
+		06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
+		06BD1D342487B01C002F82A6 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
+		06BD1D352487B01C002F82A6 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		06BD1D362487B01C002F82A6 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
+		06BD1D372487B01C002F82A6 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
+		06BD1D382487B01C002F82A6 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
+		06BD1D392487B01C002F82A6 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
+		06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
+		06BD1D3B2487B01C002F82A6 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -90,6 +102,7 @@
 		0660428B247FE76A00A5F161 = {
 			isa = PBXGroup;
 			children = (
+				06BD1D2D2487B01C002F82A6 /* Resources */,
 				06604296247FE76A00A5F161 /* Sources */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
 				067ECB502487AB6000701956 /* WireNotificationEngineTests */,
@@ -135,6 +148,41 @@
 				067ECB532487AB6000701956 /* Info.plist */,
 			);
 			path = WireNotificationEngineTests;
+			sourceTree = "<group>";
+		};
+		06BD1D2D2487B01C002F82A6 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				06BD1D2E2487B01C002F82A6 /* Configurations */,
+				06BD1D3B2487B01C002F82A6 /* Info.plist */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		06BD1D2E2487B01C002F82A6 /* Configurations */ = {
+			isa = PBXGroup;
+			children = (
+				06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */,
+				06BD1D302487B01C002F82A6 /* version.xcconfig */,
+				06BD1D312487B01C002F82A6 /* zmc-config */,
+			);
+			path = Configurations;
+			sourceTree = "<group>";
+		};
+		06BD1D312487B01C002F82A6 /* zmc-config */ = {
+			isa = PBXGroup;
+			children = (
+				06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */,
+				06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */,
+				06BD1D342487B01C002F82A6 /* project-common.xcconfig */,
+				06BD1D352487B01C002F82A6 /* warnings.xcconfig */,
+				06BD1D362487B01C002F82A6 /* project.xcconfig */,
+				06BD1D372487B01C002F82A6 /* ios.xcconfig */,
+				06BD1D382487B01C002F82A6 /* tests.xcconfig */,
+				06BD1D392487B01C002F82A6 /* project-debug.xcconfig */,
+				06BD1D3A2487B01C002F82A6 /* warnings-debug.xcconfig */,
+			);
+			path = "zmc-config";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
