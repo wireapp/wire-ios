@@ -47,6 +47,9 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		064496892487BFB200576799 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
+		0644968A2487BFB200576799 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		0644968B2487BFB200576799 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		06604294247FE76A00A5F161 /* WireNotificationEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		06604299247FE76A00A5F161 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -102,6 +105,9 @@
 		0660428B247FE76A00A5F161 = {
 			isa = PBXGroup;
 			children = (
+				0644968A2487BFB200576799 /* Cartfile */,
+				0644968B2487BFB200576799 /* Cartfile.private */,
+				064496892487BFB200576799 /* Cartfile.resolved */,
 				06BD1D2D2487B01C002F82A6 /* Resources */,
 				06604296247FE76A00A5F161 /* Sources */,
 				067ECB3B2487A93D00701956 /* WireNotificationEngine */,
