@@ -91,10 +91,10 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
     }
     
     func event(for message: String, in conversation: ZMConversation, mentions: [Mention] = [], replyingTo quotedMessage: ZMClientMessage? = nil) -> ZMUpdateEvent {
-        let text = ZMText.text(with: message, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage)
-        let message = ZMGenericMessage.message(content: text, nonce: UUID())
+        let text = Text(content: message, mentions: mentions, linkPreviews: [], replyingTo: quotedMessage)
+        let message = GenericMessage(content: text, nonce: UUID())
         
-        let dataString = message.data()!.base64EncodedString()
+        let dataString = try! message.serializedData().base64EncodedString()
         
         let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage, data: dataString)
         

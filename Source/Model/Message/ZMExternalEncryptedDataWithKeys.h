@@ -18,16 +18,27 @@
 
 
 @import WireProtos;
-@import WireTransport;
+@class ZMUpdateEvent;
 
-@interface ZMGenericMessage (UpdateEvent)
+@interface ZMEncryptionKeyWithChecksum: NSObject
 
-+ (ZMGenericMessage *)genericMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent;
+/// AES Key used for the symmetric encryption of the data
+@property (nonatomic, readonly) NSData *aesKey;
+/// SHA-256 digest
+@property (nonatomic, readonly) NSData *sha256;
 
-+ (ZMGenericMessage *)genericMessageWithBase64String:(NSString *)string updateEvent:(ZMUpdateEvent *)event;
++ (ZMEncryptionKeyWithChecksum *)keyWithAES:(NSData *)aesKey digest:(NSData *)sha256;
 
-+ (Class)entityClassForGenericMessage:(ZMGenericMessage *)genericMessage;
+@end
 
-+ (Class)entityClassForPlainMessageForGenericMessage:(ZMGenericMessage *)genericMessage;
+
+@interface ZMExternalEncryptedDataWithKeys : NSObject
+
+/// The encrypted data
+@property (nonatomic, readonly) NSData *data;
+/// The AES Key used to encrypt @c data and the sha-256 digest of @c data
+@property (nonatomic, readonly) ZMEncryptionKeyWithChecksum *keys;
+
++ (ZMExternalEncryptedDataWithKeys *)dataWithKeysWithData:(NSData *)data keys:(ZMEncryptionKeyWithChecksum *)keys;
 
 @end

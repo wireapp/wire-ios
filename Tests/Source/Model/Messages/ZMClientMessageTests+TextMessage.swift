@@ -42,9 +42,18 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        let linkPreview = article.protocolBuffer.update(withOtrKey: Data(), sha256: Data())
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "sample text", linkPreviews: [linkPreview]), nonce: nonce).data())
         
+        var linkPreview = LinkPreview(articleMetadata: article)
+        linkPreview.update(withOtrKey: Data(), sha256: Data(), original: nil)
+        let text = Text.with {
+            $0.content = "sample text"
+            $0.linkPreview = [linkPreview]
+        }
+        do {
+            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+        } catch {
+            XCTFail()
+        }
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
@@ -66,7 +75,15 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         )
         article.title = "title"
         article.summary = "summary"
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "sample text", linkPreviews: [article.protocolBuffer]), nonce: nonce).data())
+        let text = Text.with {
+            $0.content = "sample text"
+            $0.linkPreview = [LinkPreview(articleMetadata: article)]
+        }
+        do {
+            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+        } catch {
+            XCTFail()
+        }
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
@@ -90,9 +107,17 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         preview.author = "Author"
         preview.message = name
 
-        let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "Text", linkPreviews: [updated]), nonce: nonce).data())
-        
+        var updated = LinkPreview(twitterMetadata: preview)
+        updated.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
+        let text = Text.with {
+            $0.content = "Text"
+            $0.linkPreview = [updated]
+        }
+        do {
+            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+        } catch {
+            XCTFail()
+        }
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
         
@@ -115,7 +140,15 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         
         preview.author = "Author"
         preview.message = name
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "Text", linkPreviews: [preview.protocolBuffer]), nonce: nonce).data())
+        let text = Text.with {
+            $0.content = "Text"
+            $0.linkPreview = [LinkPreview(twitterMetadata: preview)]
+        }
+        do {
+            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+        } catch {
+            XCTFail()
+        }
         
         // when
         let willHaveAnImage = clientMessage.textMessageData!.linkPreviewHasImage
@@ -162,9 +195,18 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
         let nonce = UUID.create()
         let clientMessage = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         
-        let updated = preview.protocolBuffer.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key())
-        let withID = updated.update(withAssetKey: "id", assetToken: nil)
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "Text", linkPreviews: [withID]), nonce: nonce).data())
+        var updated = LinkPreview(preview)
+        updated.update(withOtrKey: .randomEncryptionKey(), sha256: .zmRandomSHA256Key(), original: nil)
+        updated.update(withAssetKey: "id", assetToken: nil)
+        let text = Text.with {
+            $0.content = "Text"
+            $0.linkPreview = [updated]
+        }
+        do {
+            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+        } catch {
+            XCTFail()
+        }
         try! uiMOC.obtainPermanentIDs(for: [clientMessage])
 
         

@@ -21,31 +21,36 @@ import Foundation
 private let zmLog = ZMSLog(tag: "event-processing")
 
 extension ZMOTRMessage {
+    
     @objc static func createOrUpdate(fromUpdateEvent updateEvent: ZMUpdateEvent,
                                      inManagedObjectContext moc: NSManagedObjectContext,
                                      prefetchResult: ZMFetchRequestBatchResult) -> ZMOTRMessage? {
+        
         let selfUser = ZMUser.selfUser(in: moc)
-
+        
         guard
             let senderID = updateEvent.senderUUID(),
             let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
             !isSelf(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier)
-        else {
-            zmLog.debug("Illegal sender or conversation, abort processing.")
-            return nil
+            else {
+                zmLog.debug("Illegal sender or conversation, abort processing.")
+                return nil
         }
         
-        guard let message = ZMGenericMessage(from: updateEvent) else {
-            zmLog.debug("Can't read protobuf, abort processing:\n\(updateEvent.payload)")
-            appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
-            return nil
+        guard
+            let message = GenericMessage(from: updateEvent),
+            let content = message.content
+            else {
+                zmLog.debug("Can't read protobuf, abort processing:\n\(updateEvent.payload)")
+                appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
+                return nil
         }
         zmLog.debug("Processing:\n\(message.debugDescription)")
         
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timeStamp() ?? Date())
         
-        if !message.knownMessage() {
+        if !message.knownMessage {
             UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
         }
         
@@ -53,29 +58,38 @@ extension ZMOTRMessage {
         conversation.verifySender(of: updateEvent, moc: moc)
         
         // Insert the message
-        if message.hasLastRead() && conversation.isSelfConversation {
-            ZMConversation.updateConversationWithZMLastRead(fromSelfConversation: message.lastRead, in: moc)
-        } else if message.hasCleared() && conversation.isSelfConversation {
-            ZMConversation.updateConversationWithZMCleared(fromSelfConversation: message.cleared, in: moc)
-        } else if message.hasHidden() && conversation.isSelfConversation {
-            ZMMessage.removeMessage(withRemotelyHiddenMessage: message.hidden, in: moc)
-        } else if message.hasDeleted() {
-            ZMMessage.removeMessage(withRemotelyDeletedMessage: message.deleted, in: conversation, senderID: senderID, in: moc)
-        } else if message.hasReaction() {
+        switch content {
+        case .lastRead where conversation.isSelfConversation:
+            ZMConversation.updateConversation(withLastReadFromSelfConversation: message.lastRead, inContext: moc)
+        case .cleared where conversation.isSelfConversation:
+            ZMConversation.updateConversation(withClearedFromSelfConversation: message.cleared, inContext: moc)
+        case .hidden where conversation.isSelfConversation:
+            ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
+        case .deleted:
+            ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
+        case .reaction:
             // if we don't understand the reaction received, discard it
             guard Reaction.validate(unicode: message.reaction.emoji) else {
                 return nil
             }
-            ZMMessage.add(message.reaction, senderID: senderID, conversation: conversation, in: moc)
-        } else if message.hasConfirmation() {
+            ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, inContext: moc)
+        case .confirmation:
             ZMMessageConfirmation.createMessageConfirmations(message.confirmation, conversation: conversation, updateEvent: updateEvent)
-        } else if message.hasButtonActionConfirmation() {
+        case .buttonActionConfirmation:
             ZMClientMessage.updateButtonStates(withConfirmation: message.buttonActionConfirmation, forConversation: conversation, inContext: moc)
-        } else if message.hasEdited() {
+        case .edited:
             return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
-        } else if conversation.shouldAdd(event: updateEvent) && !(message.hasClientAction() || message.hasCalling() || message.hasAvailability()) {
-            guard let nonce = UUID(uuidString: message.messageId) else { return nil }
-            let messageClass: AnyClass = ZMGenericMessage.entityClass(for: message)
+        case .clientAction, .calling, .availability:
+            return nil
+        default:
+            guard
+                conversation.shouldAdd(event: updateEvent),
+                let nonce = UUID(uuidString: message.messageID)
+            else {
+                return nil
+            }
+            
+            let messageClass: AnyClass = GenericMessage.entityClass(for: message)
             var clientMessage = messageClass.fetch(withNonce: nonce, for: conversation, in: moc, prefetchResult: prefetchResult) as? ZMOTRMessage
             
             guard !isZombieObject(clientMessage) else {
@@ -98,7 +112,8 @@ extension ZMOTRMessage {
                 clientMessage?.serverTimestamp = updateEvent.timeStamp()
                 
                 if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
-                    clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || message.hasComposite()
+                    let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
+                    clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID() {
                 return nil
@@ -121,6 +136,7 @@ extension ZMOTRMessage {
             
             return clientMessage
         }
+        
         return nil
     }
     

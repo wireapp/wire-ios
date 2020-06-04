@@ -23,15 +23,12 @@ import CoreData
 @objc public enum MessageConfirmationType : Int16 {
     case delivered, read
     
-    static func convert(_ zmConfirmationType: ZMConfirmationType) -> MessageConfirmationType {
-        //TODO: change ZMConfirmationType to NS_CLOSED_ENUM
+    static func convert(_ zmConfirmationType: Confirmation.TypeEnum) -> MessageConfirmationType {
         switch zmConfirmationType {
-        case .DELIVERED:
+        case .delivered:
             return .delivered
-        case .READ:
+        case .read:
             return .read
-        @unknown default:
-            fatalError()
         }
     }
 }
@@ -58,20 +55,22 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     
     /// Creates a ZMMessageConfirmation objects that holds a reference to a message that was confirmed and the user who confirmed it.
     /// It can have 2 types: Delivered and Read depending on the confirmation type
-    @objc
     @discardableResult
-    public static func createMessageConfirmations(_ confirmation: ZMConfirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
+    public static func createMessageConfirmations(_ confirmation: Confirmation, conversation: ZMConversation, updateEvent: ZMUpdateEvent) -> [ZMMessageConfirmation] {
         
         let type = MessageConfirmationType.convert(confirmation.type)
         
-        guard let managedObjectContext = conversation.managedObjectContext,
-              let senderUUID = updateEvent.senderUUID(),
-              let sender = ZMUser(remoteID: senderUUID, createIfNeeded: true, in: managedObjectContext),
-              let serverTimestamp = updateEvent.timeStamp(),
-              let firstMessageId = confirmation.firstMessageId else { return [] }
+        guard
+            let managedObjectContext = conversation.managedObjectContext,
+            let senderUUID = updateEvent.senderUUID(),
+            let sender = ZMUser(remoteID: senderUUID, createIfNeeded: true, in: managedObjectContext),
+            let serverTimestamp = updateEvent.timeStamp()
+        else {
+            return []
+        }
         
-        let moreMessageIds = confirmation.moreMessageIds as? [String] ?? []
-        let confirmedMesssageIds = ([firstMessageId] + moreMessageIds).compactMap({ UUID(uuidString: $0) })
+        let moreMessageIds = confirmation.moreMessageIds
+        let confirmedMesssageIds = ([confirmation.firstMessageID] + moreMessageIds).compactMap({ UUID(uuidString: $0) })
         
         return confirmedMesssageIds.compactMap { confirmedMessageId in
             guard let message = ZMMessage.fetch(withNonce: confirmedMessageId, for: conversation, in: managedObjectContext),

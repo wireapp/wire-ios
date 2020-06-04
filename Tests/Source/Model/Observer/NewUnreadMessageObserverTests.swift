@@ -154,10 +154,14 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         self.processPendingChangesAndClearNotifications()
         
         // when
-        let genMsg = ZMGenericMessage.message(content: ZMKnock.knock())
+        let genMsg = GenericMessage(content: Knock.with { $0.hotKnock = false })
         
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        msg1.add(genMsg.data())
+        do {
+            msg1.add(try genMsg.serializedData())
+        } catch {
+            XCTFail()
+        }
         msg1.visibleInConversation = conversation
         msg1.serverTimestamp = Date()
         self.uiMOC.saveOrRollback()

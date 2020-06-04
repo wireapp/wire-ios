@@ -479,18 +479,26 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             // When we add a linkpreview to the message before searching
             guard let clientMessage = message as? ZMClientMessage else { return XCTFail("No client message") }
             let (title, summary, url, permanentURL) = ("title", "summary", "www.example.com/original", "www.example.com/permanent")
-            let image = ZMAsset.asset(withUploadedOTRKey: Data.secureRandomData(ofLength: 16), sha256: Data.secureRandomData(ofLength: 16))
-            let preview = ZMLinkPreview.linkPreview(
-                withOriginalURL: url,
-                permanentURL: permanentURL,
-                offset: 42,
-                title: title,
-                summary: summary,
-                imageAsset: image
-            )
-            
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: message.textMessageData!.messageText!, linkPreviews: [preview]), nonce: message.nonce!)
-            clientMessage.add(genericMessage.data())
+            let image = WireProtos.Asset(withUploadedOTRKey: Data.secureRandomData(ofLength: 16), sha256: Data.secureRandomData(ofLength: 16))
+
+            let preview = LinkPreview.with {
+                $0.url = url
+                $0.permanentURL = permanentURL
+                $0.urlOffset = 42
+                $0.title = title
+                $0.summary = summary
+                $0.image = image
+            }
+            let text = Text.with {
+                $0.content = message.textMessageData!.messageText!
+                $0.linkPreview = [preview]
+            }
+            let genericMessage = GenericMessage(content: text, nonce: message.nonce!)
+            do {
+                try clientMessage.add(genericMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
             message.markAsSent()
         }
     }

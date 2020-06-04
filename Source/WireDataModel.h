@@ -48,9 +48,7 @@
 #import <WireDataModel/ZMMessage.h>
 #import <WireDataModel/ZMMessage+Internal.h>
 #import <WireDataModel/ZMOTRMessage.h>
-#import <WireDataModel/ZMGenericMessage+External.h>
-#import <WireDataModel/ZMGenericMessage+UpdateEvent.h>
-#import <WireDataModel/ZMGenericMessageData.h>
+#import <WireDataModel/ZMExternalEncryptedDataWithKeys.h>
 
 #import <WireDataModel/UserClientTypes.h>
 
@@ -61,8 +59,7 @@
 
 #import <WireDataModel/NSString+ZMPersonName.h>
 
-#import <WireDataModel/ZMGenericMessage+Utils.h>
-#import <WireDataModel/ZMGenericMessage+PropertyUtils.h>
+#import <WireDataModel/ZMImageAssetEncryptionKeys.h>
 #import <WireDataModel/ZMMessageTimer.h>
 #import <WireDataModel/NSPredicate+ZMSearch.h>
 #import <WireDataModel/ZMTestSession.h>

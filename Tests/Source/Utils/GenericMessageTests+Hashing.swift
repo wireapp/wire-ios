@@ -20,13 +20,13 @@ import XCTest
 
 @testable import WireDataModel
 
-class ZMGenericMessageTests_Hashing: XCTestCase {
+class GenericMessageTests_Hashing: XCTestCase {
 
     // MARK: - Text
 
     func testCorrectHashValueForText1() {
         // given
-        let textMessage = ZMGenericMessage.message(content: ZMText.text(with: "Hello 👩‍💻👨‍👩‍👧!"))
+        let textMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"))
         let timestamp = Date(timeIntervalSince1970: 1540213769)
 
         // when
@@ -38,7 +38,7 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForText2() {
         // given
-        let textMessage = ZMGenericMessage.message(content: ZMText.text(with: "https://www.youtube.com/watch?v=DLzxrzFCyOs"))
+        let textMessage = GenericMessage(content: Text(content: "https://www.youtube.com/watch?v=DLzxrzFCyOs"))
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
@@ -50,7 +50,7 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForText3() {
         // given
-        let textMessage = ZMGenericMessage.message(content: ZMText.text(with: "بغداد"))
+        let textMessage = GenericMessage(content: Text(content: "بغداد"))
         let timestamp = Date(timeIntervalSince1970: 1540213965)
         
         // when
@@ -64,7 +64,11 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForLocation1() {
         // given
-        let locationMessage = ZMGenericMessage.message(content: ZMLocation.location(withLatitude: 52.5166667, longitude: 13.4))
+        let location = WireProtos.Location.with {
+            $0.latitude = 52.5166667
+            $0.longitude = 13.4
+        }
+        let locationMessage = GenericMessage(content: location)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
@@ -76,7 +80,11 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForLocation2() {
         // given
-        let locationMessage = ZMGenericMessage.message(content: ZMLocation.location(withLatitude: 51.509143, longitude: -0.117277))
+        let location = WireProtos.Location.with {
+            $0.latitude = 51.509143
+            $0.longitude = -0.117277
+        }
+        let locationMessage = GenericMessage(content: location)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
@@ -90,8 +98,12 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForAsset1() {
         // given
-        var assetMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: Data(), sha256: Data()))
-        assetMessage = assetMessage.updatedUploaded(withAssetId: "3-2-1-38d4f5b9", token: nil)!
+        let asset = WireProtos.Asset.with {
+            $0.uploaded.otrKey = Data()
+            $0.uploaded.sha256 = Data()
+        }
+        var assetMessage = GenericMessage(content: asset)
+        assetMessage.updateUploaded(assetId: "3-2-1-38d4f5b9", token: nil)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
@@ -103,8 +115,12 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForAsset2() {
         // given
-        var assetMessage = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: Data(), sha256: Data()))
-        assetMessage = assetMessage.updatedUploaded(withAssetId: "3-3-3-82a62735", token: nil)!
+        let asset = WireProtos.Asset.with {
+            $0.uploaded.otrKey = Data()
+            $0.uploaded.sha256 = Data()
+        }
+        var assetMessage = GenericMessage(content: asset)
+        assetMessage.updateUploaded(assetId: "3-3-3-82a62735", token: nil)
         let timestamp = Date(timeIntervalSince1970: 1540213965)
         
         // when
@@ -118,7 +134,7 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     
     func testCorrectHashValueForEphemeral() {
         // given
-        let ephemeralTextMessage = ZMGenericMessage.message(content: ZMText.text(with: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: 100)
+        let ephemeralTextMessage = GenericMessage(content: Text(content: "Hello 👩‍💻👨‍👩‍👧!"), expiresAfter: 100)
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when
@@ -133,7 +149,7 @@ class ZMGenericMessageTests_Hashing: XCTestCase {
     func testCorrectHashValueForEdited() {
         // given
         
-        let editedTextMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: ZMText.text(with: "Hello 👩‍💻👨‍👩‍👧!"), replacingMessageId: UUID()))
+        let editedTextMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID(), text: Text(content: "Hello 👩‍💻👨‍👩‍👧!")))
         let timestamp = Date(timeIntervalSince1970: 1540213769)
         
         // when

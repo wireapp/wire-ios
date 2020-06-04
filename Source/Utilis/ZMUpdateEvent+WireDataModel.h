@@ -28,7 +28,6 @@
 - (nullable NSDate *)timeStamp;
 - (nullable NSUUID *)senderUUID;
 - (nullable NSUUID *)conversationUUID;
-- (nullable NSUUID *)messageNonce;
 - (nullable NSString *)senderClientID;
 - (nullable NSString *)recipientClientID;
 

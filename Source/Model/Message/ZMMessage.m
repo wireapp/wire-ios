@@ -349,69 +349,6 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
     }
 }
 
-+ (void)removeMessageWithRemotelyHiddenMessage:(ZMMessageHide *)hiddenMessage inManagedObjectContext:(NSManagedObjectContext *)moc;
-{
-    NSUUID *conversationID = [NSUUID uuidWithTransportString:hiddenMessage.conversationId];
-    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:NO inContext:moc];
-    
-    NSUUID *messageID = [NSUUID uuidWithTransportString:hiddenMessage.messageId];
-    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
-    
-    // To avoid reinserting when receiving an edit we delete the message locally
-    if (message != nil) {
-        [message removeMessageClearingSender:YES];
-        [moc deleteObject:message];
-    }
-}
-
-+ (void)addReaction:(ZMReaction *)reaction senderID:(NSUUID *)senderID conversation:(ZMConversation *)conversation inManagedObjectContext:(NSManagedObjectContext *)moc;
-{
-    ZMUser *user = [ZMUser fetchObjectWithRemoteIdentifier:senderID inManagedObjectContext:moc];
-    NSUUID *nonce = [NSUUID uuidWithTransportString:reaction.messageId];
-    ZMMessage *localMessage = [ZMMessage fetchMessageWithNonce:nonce
-                                               forConversation:conversation
-                                        inManagedObjectContext:moc];
-    
-    [localMessage addReaction:reaction.emoji forUser:user];
-    [localMessage updateCategoryCache];
-}
-
-+ (void)removeMessageWithRemotelyDeletedMessage:(ZMMessageDelete *)deletedMessage inConversation:(ZMConversation *)conversation senderID:(NSUUID *)senderID inManagedObjectContext:(NSManagedObjectContext *)moc;
-{
-    NSUUID *messageID = [NSUUID uuidWithTransportString:deletedMessage.messageId];
-    ZMMessage *message = [ZMMessage fetchMessageWithNonce:messageID forConversation:conversation inManagedObjectContext:moc];
-
-    // We need to cascade delete the pending delivery confirmation messages for the message being deleted
-    [message removePendingDeliveryReceipts];
-    
-    if (message.hasBeenDeleted) {
-        ZMLogError(@"Attempt to delete the deleted message: %@, existing: %@", deletedMessage, message);
-        return;
-    }
-    
-    // Only the sender of the original message can delete it
-    if (![senderID isEqual:message.sender.remoteIdentifier] && !message.isEphemeral) {
-        return;
-    }
-
-    ZMUser *selfUser = [ZMUser selfUserInContext:moc];
-
-    // Only clients other than self should see the system message
-    if (nil != message && ![senderID isEqual:selfUser.remoteIdentifier] && !message.isEphemeral) {
-        [conversation appendDeletedForEveryoneSystemMessageAt:message.serverTimestamp sender:message.sender];
-    }
-    // If we receive a delete for an ephemeral message that was not originally sent by the selfUser, we need to stop the deletion timer
-    if (nil != message && message.isEphemeral && ![message.sender.remoteIdentifier isEqual:selfUser.remoteIdentifier]) {
-        [message removeMessageClearingSender:YES];
-        [self stopDeletionTimerForMessage:message];
-    } else {
-        [message removeMessageClearingSender:YES];
-        [message updateCategoryCache];
-    }
-    
-    [conversation updateTimestampsAfterDeletingMessage];
-}
-
 + (void)stopDeletionTimerForMessage:(ZMMessage *)message
 {
     NSManagedObjectContext *uiMOC = message.managedObjectContext;
@@ -427,59 +364,6 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
         }
         [uiMOC.zm_messageDeletionTimer stopTimerForMessage:uiMessage];
     }];
-}
-
-- (void)removePendingDeliveryReceipts
-{
-    // Pending receipt can exist only in new inserted messages since it is deleted locally after it is sent to the backend
-    NSFetchRequest *requestForInsertedMessages = [ZMClientMessage sortedFetchRequestWithPredicate:[ZMClientMessage predicateForObjectsThatNeedToBeInsertedUpstream]];
-    NSArray *possibleMatches = [self.managedObjectContext executeFetchRequestOrAssert:requestForInsertedMessages];
-    
-    NSArray *confirmationReceipts = [possibleMatches filterWithBlock:^BOOL(ZMClientMessage *candidateConfirmationReceipt) {
-        if (candidateConfirmationReceipt.genericMessage.hasConfirmation &&
-            candidateConfirmationReceipt.genericMessage.confirmation.hasFirstMessageId &&
-            [candidateConfirmationReceipt.genericMessage.confirmation.firstMessageId isEqual:self.nonce.transportString]) {
-            return YES;
-        }
-        return NO;
-    }];
-    
-    // TODO: Re-enable
-//    NSAssert(confirmationReceipts.count <= 1, @"More than one confirmation receipt");
-    
-    for (ZMClientMessage *confirmationReceipt in confirmationReceipts) {
-        [self.managedObjectContext deleteObject:confirmationReceipt];
-    }
-}
-
-- (NSUUID *)nonceFromPostPayload:(NSDictionary *)payload
-{
-    ZMUpdateEventType eventType = [ZMUpdateEvent updateEventTypeForEventTypeString:[payload optionalStringForKey:@"type"]];
-    switch (eventType) {
-            
-        case ZMUpdateEventTypeConversationMessageAdd:
-        case ZMUpdateEventTypeConversationKnock:
-            return [[payload dictionaryForKey:@"data"] uuidForKey:@"nonce"];
-
-        case ZMUpdateEventTypeConversationClientMessageAdd:
-        case ZMUpdateEventTypeConversationOtrMessageAdd:
-        {
-            //if event is otr message then payload should be already decrypted and should contain generic message data
-            NSString *base64Content = [payload stringForKey:@"data"];
-            ZMGenericMessage *message;
-            @try {
-                message = [ZMGenericMessage messageWithBase64String:base64Content];
-            }
-            @catch(NSException *e) {
-                ZMLogError(@"Cannot create message from protobuffer: %@ event payload: %@", e, payload);
-                return nil;
-            }
-            return [NSUUID uuidWithTransportString:message.messageId];
-        }
-            
-        default:
-            return nil;
-    }
 }
 
 - (void)updateWithPostPayload:(NSDictionary *)payload updatedKeys:(__unused NSSet *)updatedKeys

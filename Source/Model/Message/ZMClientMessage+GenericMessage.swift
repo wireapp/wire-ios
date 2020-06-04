@@ -20,31 +20,6 @@ import Foundation
 
 extension ZMClientMessage {
     
-    public override var genericMessage: ZMGenericMessage? {
-        guard !isZombieObject else {
-            return nil
-        }
-        
-        if cachedGenericMessage == nil {
-            cachedGenericMessage = genericMessageFromDataSet()
-        }
-        return cachedGenericMessage
-    }
-    
-    private func genericMessageFromDataSet() -> ZMGenericMessage? {
-        let filteredMessages = dataSet.lazy
-            .compactMap { ($0 as? ZMGenericMessageData)?.genericMessage }
-            .filter{ $0.knownMessage() && $0.imageAssetData == nil }
-        
-        guard !Array(filteredMessages).isEmpty else {
-            return nil
-        }
-        
-        let builder = ZMGenericMessage.builder()!
-        filteredMessages.forEach { builder.merge(from: $0) }
-        return builder.build()
-    }
-    
     public var underlyingMessage: GenericMessage? {
         guard !isZombieObject else {
             return nil
@@ -81,18 +56,9 @@ extension ZMClientMessage {
         let messageData = mergeWithExistingData(data)
         
         if (nonce == nil) {
-            nonce = UUID(uuidString: messageData?.genericMessage?.messageId ?? "")
+            nonce = UUID(uuidString: messageData?.underlyingMessage?.messageID ?? "")
         }
         updateCategoryCache()
         setLocallyModifiedKeys([#keyPath(ZMClientMessage.dataSet)])
-    }
-    
-    public override func update(with message: ZMGenericMessage, updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        if initialUpdate {
-            add(message.data())
-            updateNormalizedText()
-        } else {
-            applyLinkPreviewUpdate(message, from: updateEvent)
-        }
     }
 }

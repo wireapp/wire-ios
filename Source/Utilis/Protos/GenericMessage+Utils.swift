@@ -23,3 +23,26 @@ extension GenericMessage {
         return content != nil
     }
 }
+
+extension ImageAsset {
+    public init(mediumProperties: ZMIImageProperties?,
+         processedProperties: ZMIImageProperties?,
+         encryptionKeys: ZMImageAssetEncryptionKeys?,
+         format: ZMImageFormat) {
+        self = ImageAsset.with {
+            $0.width = Int32(processedProperties?.size.width ?? 0)
+            $0.height = Int32(processedProperties?.size.height ?? 0)
+            $0.size = Int32(processedProperties?.length ?? 0)
+            $0.originalWidth = Int32(mediumProperties?.size.width ?? 0)
+            $0.originalHeight = Int32(mediumProperties?.size.height ?? 0)
+            if let otrKey = encryptionKeys?.otrKey {
+                $0.otrKey = otrKey
+            }
+            if let sha256 = encryptionKeys?.sha256 {
+                $0.sha256 = sha256
+            }
+            $0.mimeType = processedProperties?.mimeType ?? ""
+            $0.tag = StringFromImageFormat(format)
+        }
+    }
+}

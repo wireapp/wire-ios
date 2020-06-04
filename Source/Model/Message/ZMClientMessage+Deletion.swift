@@ -21,7 +21,6 @@ import Foundation
 extension ZMClientMessage {
     
     func deleteContent() {
-        cachedGenericMessage = nil
         cachedUnderlyingMessage = nil
         dataSet.compactMap { $0 as? ZMGenericMessageData }.forEach {
             $0.managedObjectContext?.delete($0)

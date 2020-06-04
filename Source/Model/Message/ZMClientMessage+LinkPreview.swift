@@ -19,7 +19,7 @@
 import Foundation
 import WireLinkPreview
 
-@objc extension ZMClientMessage {
+extension ZMClientMessage {
     
     public static let linkPreviewImageDownloadNotification = NSNotification.Name(rawValue: "ZMClientMessageLinkPreviewImageDownloadNotificationName")
     
@@ -45,7 +45,7 @@ import WireLinkPreview
     
     public var linkPreview: LinkMetadata? {
         guard let linkPreview = self.firstZMLinkPreview else { return nil }
-        if linkPreview.hasTweet() {
+        if case .tweet? = linkPreview.metaData {
             return TwitterStatusMetadata(protocolBuffer: linkPreview)
         } else {
             let metadata = ArticleMetadata(protocolBuffer: linkPreview)
@@ -59,8 +59,8 @@ import WireLinkPreview
         return linkAttachments?.first
     }
     
-    var firstZMLinkPreview: ZMLinkPreview? {
-        return self.genericMessage?.linkPreviews.first
+    var firstZMLinkPreview: LinkPreview? {
+        return self.underlyingMessage?.linkPreviews.first
     }
     
     static func keyPathsForValuesAffectingLinkPreview() -> Set<String> {
@@ -73,7 +73,7 @@ import WireLinkPreview
               let moc = self.managedObjectContext,
               let linkPreview = self.firstZMLinkPreview else { return }
         
-        guard linkPreview.article.image.uploaded.hasAssetId() || linkPreview.image.uploaded.hasAssetId(), !hasDownloadedImage() else { return }
+        guard linkPreview.image.uploaded.hasAssetID, !hasDownloadedImage() else { return }
         
         NotificationInContext(name: ZMClientMessage.linkPreviewImageDownloadNotification, context: moc.notificationContext, object: self.objectID).post()
     }
@@ -88,19 +88,20 @@ import WireLinkPreview
         }
     }
     
-    func applyLinkPreviewUpdate(_ updatedMessage: ZMGenericMessage, from updateEvent: ZMUpdateEvent) {
+    @nonobjc func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
         guard let nonce = self.nonce,
               let senderUUID = updateEvent.senderUUID(),
-              let originalText = genericMessage?.textData,
+              let originalText = underlyingMessage?.textData,
               let updatedText = updatedMessage.textData,
               senderUUID == sender?.remoteIdentifier,
               originalText.content == updatedText.content
         else { return }
         
         let expiresAfter = deletionTimeout > 0 ? deletionTimeout : nil
-        add(ZMGenericMessage.message(content: originalText.updateLinkPeview(from: updatedText), nonce: nonce, expiresAfter: expiresAfter).data())
+        let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfter: expiresAfter)
+        guard let data = try? message.serializedData() else { return }
+        add(data)
     }
-    
 }
 
 
@@ -112,7 +113,7 @@ extension ZMClientMessage: ZMImageOwner {
     
     // The image formats that this @c ZMImageOwner wants preprocessed. Order of formats determines order in which data is preprocessed
     @objc public func requiredImageFormats() -> NSOrderedSet {
-        if let genericMessage = self.genericMessage, genericMessage.linkPreviews.count > 0 {
+        if let genericMessage = self.underlyingMessage, genericMessage.linkPreviews.count > 0 {
             return NSOrderedSet(array: [ZMImageFormat.medium.rawValue])
         }
         return NSOrderedSet()
@@ -139,9 +140,9 @@ extension ZMClientMessage: ZMImageOwner {
             ?? self.managedObjectContext?.zm_fileAssetCache.assetData(self, format: .medium, encrypted: false)
     }
     
-    @objc public var linkPreviewHasImage: Bool {
+    public var linkPreviewHasImage: Bool {
         guard let linkPreview = self.firstZMLinkPreview else { return false }
-        return linkPreview.article.hasImage() || linkPreview.hasImage()
+        return linkPreview.hasImage
     }
     
     @objc public var linkPreviewImageCacheKey: String? {
@@ -149,37 +150,58 @@ extension ZMClientMessage: ZMImageOwner {
     }
 
     @objc public func setImageData(_ imageData: Data, for format: ZMImageFormat, properties: ZMIImageProperties?) {
-        guard format == .medium else { return }
-        guard let linkPreview = self.firstZMLinkPreview else { return }
-        guard let moc = self.managedObjectContext else { return }
+        guard let moc = self.managedObjectContext,
+            var linkPreview = self.firstZMLinkPreview,
+            format == .medium else {
+                return
+        }
         
         moc.zm_fileAssetCache.storeAssetData(self, format: format, encrypted: false, data: imageData)
         guard let keys = moc.zm_fileAssetCache.encryptImageAndComputeSHA256Digest(self, format: format) else { return }
         
-        let imageMetaData = ZMAssetImageMetaData.imageMetaData(withWidth: Int32(properties?.size.width ?? 0), height: Int32(properties?.size.height ?? 0))
-        let original = ZMAssetOriginal.original(withSize: UInt64(imageData.count), mimeType: properties?.mimeType ?? "", name: nil, imageMetaData: imageMetaData)
+        let imageMetaData = WireProtos.Asset.ImageMetaData(width: Int32(properties?.size.width ?? 0), height: Int32(properties?.size.height ?? 0))
+        let original = WireProtos.Asset.Original(withSize: UInt64(imageData.count), mimeType: properties?.mimeType ?? "", name: nil, imageMetaData: imageMetaData)
         
-        let updatedPreview = linkPreview.update(withOtrKey: keys.otrKey, sha256: keys.sha256!, original: original)
+        linkPreview.update(withOtrKey: keys.otrKey, sha256: keys.sha256!, original: original)
 
-        if let genericMessage = self.genericMessage, let textMessageData = textMessageData {
+        if let genericMessage = self.underlyingMessage, let textMessageData = textMessageData {
             
-            let text = ZMText.text(with: textMessageData.messageText ?? "", mentions: textMessageData.mentions, linkPreviews: [updatedPreview])
-            let messageUpdate: MessageContentType
-
-            if genericMessage.hasText() {
+            let text = Text.with {
+                $0.content = textMessageData.messageText ?? ""
+                $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention($0) }
+                $0.linkPreview = [linkPreview]
+            }
+            
+            let messageUpdate: MessageCapable
+            guard 
+                let content = genericMessage.content,
+                let nonce = nonce else {
+                    return
+            }
+            switch content {
+            case .text:
                 messageUpdate = text
-            } else if genericMessage.hasEphemeral() && genericMessage.ephemeral.hasText() {
-                messageUpdate = ZMEphemeral.ephemeral(content: text, expiresAfter: deletionTimeout)
-            } else if genericMessage.hasEdited(), let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageId) {
-                messageUpdate = ZMMessageEdit.edit(with: text, replacingMessageId: replacingMessageID)
-            } else {
+            case .ephemeral(let data):
+                switch data.content {
+                case .text?:
+                    messageUpdate = Ephemeral(content: text, expiresAfter: deletionTimeout)
+                default:
+                    return
+                }
+            case .edited:
+                guard let replacingMessageID = UUID(uuidString: genericMessage.edited.replacingMessageID) else {
+                    return
+                }
+                messageUpdate = MessageEdit(replacingMessageID: replacingMessageID, text: text)
+            default:
                 return
             }
             
-            self.add(ZMGenericMessage.message(content: messageUpdate, nonce: nonce!).data())
+            do {
+                add(try GenericMessage(content: messageUpdate, nonce: nonce).serializedData())
+            } catch { return }
         }
         
         moc.enqueueDelayedSave()
     }
 }
-

@@ -40,15 +40,20 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         article.title = "title"
         article.summary = "tile"
         let mention = Mention(range: NSRange(location: 0, length: 4), user: user1)
-        let text = ZMText.text(with: "@joe example.com/article/original", mentions: [mention], linkPreviews: [article.protocolBuffer])
-        var genericMessage : ZMGenericMessage!
+       
+        let text = Text(content: "@joe example.com/article/original", mentions: [mention], linkPreviews: [article], replyingTo: nil)
+        var genericMessage : GenericMessage!
         switch contentType{
         case .textMessage:
-            genericMessage = ZMGenericMessage.message(content: text, nonce: nonce)
+            genericMessage = GenericMessage(content: text, nonce: nonce)
         case .editMessage:
-            genericMessage = ZMGenericMessage.message(content: ZMMessageEdit.edit(with: text, replacingMessageId: UUID.create()), nonce: nonce)
+            genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
         }
-        clientMessage.add(genericMessage.data())
+        do {
+            clientMessage.add(try genericMessage.serializedData())
+        } catch {
+            XCTFail()
+        }
         clientMessage.visibleInConversation = conversation
         clientMessage.sender = selfUser
         return clientMessage
@@ -80,16 +85,16 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(clientMessage, format: .medium, encrypted: false))
         XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(clientMessage, format: .medium, encrypted: true))
         
-        guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
-        XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
-        XCTAssertNotNil(linkPreview.article.image.uploaded.sha256)
+        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
+        XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
+        XCTAssertNotNil(linkPreview.image.uploaded.sha256)
 
-        let original = linkPreview.article.image.original!
+        let original = linkPreview.image.original
         XCTAssertEqual(Int(original.size), imageData.count)
         XCTAssertEqual(original.mimeType, "image/jpeg")
         XCTAssertEqual(original.image.width, 42)
         XCTAssertEqual(original.image.height, 12)
-        XCTAssertFalse(original.hasName())
+        XCTAssertFalse(original.hasName)
     }
     
     func testThatItCachesAndEncryptsTheMediumImage_EditMessage() {
@@ -105,16 +110,16 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
         XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(clientMessage, format: .medium, encrypted: false))
         XCTAssertNotNil(self.uiMOC.zm_fileAssetCache.assetData(clientMessage, format: .medium, encrypted: true))
         
-        guard let linkPreview = clientMessage.genericMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
-        XCTAssertNotNil(linkPreview.article.image.uploaded.otrKey)
-        XCTAssertNotNil(linkPreview.article.image.uploaded.sha256)
+        guard let linkPreview = clientMessage.underlyingMessage?.linkPreviews.first else { return XCTFail("did not contain linkpreview") }
+        XCTAssertNotNil(linkPreview.image.uploaded.otrKey)
+        XCTAssertNotNil(linkPreview.image.uploaded.sha256)
         
-        let original = linkPreview.article.image.original!
+        let original = linkPreview.image.original
         XCTAssertEqual(Int(original.size), imageData.count)
         XCTAssertEqual(original.mimeType, "image/jpeg")
         XCTAssertEqual(original.image.width, 42)
         XCTAssertEqual(original.image.height, 12)
-        XCTAssertFalse(original.hasName())
+        XCTAssertFalse(original.hasName)
     }
     
     func testThatUpdatesLinkPreviewStateAndDeleteOriginalDataAfterProcessingFinishes() {

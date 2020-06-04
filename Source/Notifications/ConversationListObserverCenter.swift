@@ -136,7 +136,7 @@ public class ConversationListObserverCenter : NSObject, ZMConversationObserver, 
     
     /// Handles updated messages that could be visible in the conversation list
     private func messagesDidChange(_ changes: MessageChangeInfo) {
-        guard let conversation = changes.message.conversation, changes.genericMessageChanged else { return }
+        guard let conversation = changes.message.conversation, changes.underlyingMessageChanged else { return }
         
         let changeInfo = ConversationChangeInfo(object: conversation)
         changeInfo.changedKeys.insert(#keyPath(ZMConversation.allMessages))

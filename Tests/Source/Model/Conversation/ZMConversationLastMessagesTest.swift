@@ -100,4 +100,18 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
     }
     
+    func testThatItReturnsMessageIfLastMessageIsEditedTextAndSentBySelfUser() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        
+        // when
+        let message = conversation.append(text: "Test Message") as! ZMMessage
+        message.sender = ZMUser.selfUser(in: self.uiMOC)
+        message.markAsSent()
+        message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)
+        
+        // then
+        XCTAssertEqual(conversation.lastEditableMessage, message)
+    }
+
 }

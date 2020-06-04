@@ -31,22 +31,32 @@ extension ZMConversation {
             let data = try genericMessage.serializedData()
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: moc)
             message.add(data)
-            message.sender = ZMUser.selfUser(in: moc)
-            if expires {
-                message.setExpirationDate()
-            }
-            if hidden {
-                message.hiddenInConversation = self
-            } else {
-                append(message)
-                unarchiveIfNeeded()
-                message.updateCategoryCache()
-                message.prepareToSend()
-            }
-
-            return message
+            return append(message, expires: expires, hidden: hidden)
         } catch {
             return nil
         }
+    }
+    
+    /// Appends a new message to the conversation.
+    /// @param client message that should be appended
+    public func append(_ message: ZMClientMessage, expires: Bool, hidden: Bool) -> ZMClientMessage? {
+        guard let moc = self.managedObjectContext else {
+            return nil
+        }
+        message.sender = ZMUser.selfUser(in: moc)
+        
+        if expires {
+            message.setExpirationDate()
+        }
+        
+        if hidden {
+            message.hiddenInConversation = self
+        } else {
+            append(message)
+            unarchiveIfNeeded()
+            message.updateCategoryCache()
+            message.prepareToSend()
+        }
+        return message
     }
 }

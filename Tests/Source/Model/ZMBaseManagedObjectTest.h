@@ -87,9 +87,6 @@
 - (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser;
 - (nonnull UserClient *)createClientForUser:(nonnull ZMUser *)user createSessionWithSelfUser:(BOOL)createSessionWithSeflUser onMOC:(nonnull NSManagedObjectContext *)moc;
 
-- (nonnull ZMClientMessage *)createClientTextMessage;
-- (nonnull ZMClientMessage *)createClientTextMessageWithText:(nonnull NSString *)text;
-
 @end
 
 

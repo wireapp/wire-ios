@@ -32,7 +32,6 @@ import Foundation
     @NSManaged public var updatedTimestamp: Date?
     
     /// In memory cache
-    var cachedGenericMessage: ZMGenericMessage? = nil
     var cachedUnderlyingMessage: GenericMessage? = nil
     
     public override static func entityName() -> String {
@@ -52,58 +51,76 @@ import Foundation
         guard let serverTimestamp = serverTimestamp else {
             return nil
         }
-        return genericMessage?.hashOfContent(with: serverTimestamp)
+        return underlyingMessage?.hashOfContent(with: serverTimestamp)
     }
 
     public override func awakeFromFetch() {
         super.awakeFromFetch()
         
-        cachedGenericMessage = nil
         cachedUnderlyingMessage = nil
     }
     
     public override func awake(fromSnapshotEvents flags: NSSnapshotEventType) {
         super.awake(fromSnapshotEvents: flags)
         
-        cachedGenericMessage = nil
         cachedUnderlyingMessage = nil
     }
     
     public override func didTurnIntoFault() {
         super.didTurnIntoFault()
         
-        cachedGenericMessage = nil
         cachedUnderlyingMessage = nil
     }
     
-    public static func keyPathsForValuesAffectingGenericMessage() -> Set<String> {
+    public override var isUpdatingExistingMessage: Bool {
+        guard let content = underlyingMessage?.content else {
+                return false
+        }
+        switch content {
+        case .edited, .reaction:
+            return true
+        default:
+            return false
+        }
+    }
+
+    public static func keyPathsForValuesAffectingUnderlyingMessage() -> Set<String> {
         return Set([#keyPath(ZMClientMessage.dataSet),
                     #keyPath(ZMClientMessage.dataSet) + ".data"])
     }
 
     public override func expire() {
-        guard let genericMessage = self.genericMessage else {
-            super.expire()
-            return
+        guard
+            let genericMessage = self.underlyingMessage,
+            let content = genericMessage.content else {
+                super.expire()
+                return
         }
-        if genericMessage.hasEdited() {
+        
+        switch content {
+        case .edited:
             // Replace the nonce with the original
             // This way if we get a delete from a different device while we are waiting for the response it will delete this message
-            let originalID = self.genericMessage.flatMap { UUID(uuidString: $0.edited.replacingMessageId) }
+            let originalID = underlyingMessage.flatMap { UUID(uuidString: $0.edited.replacingMessageID) }
             nonce = originalID
-        } else if genericMessage.hasButtonAction(),
-            let managedObjectContext = managedObjectContext,
-            let conversation = conversation
-        {
+        case .buttonAction:
+            guard
+                let managedObjectContext = managedObjectContext,
+                let conversation = conversation else {
+                    return
+            }
             ZMClientMessage.expireButtonState(forButtonAction: genericMessage.buttonAction,
                                               forConversation: conversation,
                                               inContext: managedObjectContext)
+        default:
+            break
         }
         super.expire()
     }
 
     public override func resend() {
-        if let genericMessage = self.genericMessage, genericMessage.hasEdited() {
+        if let genericMessage = underlyingMessage,
+            case .edited? = genericMessage.content {
             // Re-apply the edit since we've restored the orignal nonce when the message expired
             editText(self.textMessageData?.messageText ?? "",
                      mentions: self.textMessageData?.mentions ?? [],
@@ -114,35 +131,36 @@ import Foundation
     
     public override func update(withPostPayload payload: [AnyHashable : Any], updatedKeys: Set<AnyHashable>?) {
         // we don't want to update the conversation if the message is a confirmation message
-        guard let genericMessage = self.genericMessage else {
-            return
+        guard
+            let genericMessage = underlyingMessage,
+            let content = genericMessage.content else {
+                return
         }
-        if genericMessage.hasConfirmation() || genericMessage.hasReaction() {
+        switch content {
+        case .confirmation, .reaction:
             return
-        }
-
-        if genericMessage.hasDeleted() {
-            let originalID = UUID(uuidString: genericMessage.deleted.messageId)
+        case .deleted:
+            let originalID = UUID(uuidString: genericMessage.deleted.messageID)
             guard
                 let managedObjectContext = managedObjectContext,
                 let conversation = conversation else {
                     return
             }
-
+            
             let original = ZMMessage.fetch(withNonce: originalID, for: conversation, in: managedObjectContext)
             original?.sender = nil
             original?.senderClientID = nil
-        } else if genericMessage.hasEdited() {
+        case .edited:
             if let nonce = self.nonce(fromPostPayload: payload),
                 self.nonce != nonce {
                 ZMSLog(tag: "send message response nonce does not match")
                 return
             }
-
+            
             if let serverTimestamp = (payload as NSDictionary).optionalDate(forKey: "time") {
                 updatedTimestamp = serverTimestamp
             }
-        } else {
+        default:
             super.update(withPostPayload: payload, updatedKeys: nil)
         }
     }
@@ -166,7 +184,7 @@ import Foundation
         guard isEphemeral else {
             return
         }
-        if let genericMessage = self.genericMessage,
+        if let genericMessage = self.underlyingMessage,
             genericMessage.textData != nil,
             !genericMessage.linkPreviews.isEmpty,
             linkPreviewState != ZMLinkPreviewState.done {

@@ -65,8 +65,8 @@ extension ZMAssetClientMessage {
         if imageMessageData != nil && !hasDownloadedFile {
             return false
         } else if fileMessageData != nil
-            && genericAssetMessage?.assetData?.hasUploaded() == false
-            && genericAssetMessage?.assetData?.hasNotUploaded() == false {
+            && underlyingMessage?.assetData?.hasUploaded == false
+            && underlyingMessage?.assetData?.hasNotUploaded == false {
             return false
         }
         

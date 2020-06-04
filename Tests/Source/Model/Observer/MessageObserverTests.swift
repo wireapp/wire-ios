@@ -79,7 +79,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                 #keyPath(MessageChangeInfo.reactionsChanged),
                 #keyPath(MessageChangeInfo.transferStateChanged),
                 #keyPath(MessageChangeInfo.confirmationsChanged),
-                #keyPath(MessageChangeInfo.genericMessageChanged),
+                #keyPath(MessageChangeInfo.underlyingMessageChanged),
                 #keyPath(MessageChangeInfo.linkAttachmentsChanged)
             ]
 
@@ -117,10 +117,10 @@ class MessageObserverTests : NotificationDispatcherTestBase {
                                               macKey: Data.zmRandomSHA256Key(),
                                               mac: Data.zmRandomSHA256Key())
 
-        let imageMessage = ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties,
-                                                                          processedProperties: properties,
-                                                                          encryptionKeys: keys,
-                                                                          format: .preview),
+        let imageMessage = GenericMessage(content: ImageAsset(mediumProperties: properties,
+                                                              processedProperties: properties,
+                                                              encryptionKeys: keys,
+                                                              format: .preview),
                                                     nonce: UUID.create())
 
         // when
@@ -144,23 +144,33 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         // given
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: name), nonce: nonce).data())
-        let preview = ZMLinkPreview.linkPreview(
-            withOriginalURL: "www.example.com",
-            permanentURL: "www.example.com/permanent",
-            offset: 42,
-            title: "title",
-            summary: "summary",
-            imageAsset: nil
-        )
-        let updateGenericMessage = ZMGenericMessage.message(content: ZMText.text(with: name, linkPreviews: [preview]), nonce: nonce)
+        let genericMessage = GenericMessage(content: Text(content: name), nonce: nonce)
+        do {
+            clientMessage.add(try genericMessage.serializedData())
+        } catch {
+            XCTFail()
+        }
+        
+        let preview = LinkPreview.with {
+            $0.url = "www.example.com"
+            $0.permanentURL = "www.example.com/permanent"
+            $0.urlOffset = 42
+            $0.title = "title"
+            $0.summary = "summary"
+        }
+        let text = Text.with {
+            $0.content = "test"
+            $0.linkPreview = [preview]
+        }
+        let updateGenericMessage = GenericMessage(content: text, nonce: nonce)
         uiMOC.saveOrRollback()
         
         // when
+        let genericMessageData = try? updateGenericMessage.serializedData()
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
-            modifier: { $0.add(updateGenericMessage.data()) },
-            expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.genericMessageChanged)]
+            modifier: { $0.add(genericMessageData) },
+            expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.underlyingMessageChanged)]
         )
     }
     
@@ -322,15 +332,21 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         
         let clientMessage = ZMClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         let nonce = UUID.create()
-        clientMessage.add(ZMGenericMessage.message(content: ZMText.text(with: "foo"), nonce: nonce).data())
-        let update = ZMGenericMessage.message(content: ZMText.text(with: "bar"), nonce: nonce)
+        let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)
+        do {
+            clientMessage.add(try genericMessage.serializedData())
+        } catch {
+            XCTFail()
+        }
+        let update = GenericMessage(content: Text(content: "bar"), nonce: nonce)
         uiMOC.saveOrRollback()
         
         // when
+        let genericMessageData = try? update.serializedData()
         self.checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
-            modifier: { $0.add(update.data()) },
-            expectedChangedFields: [ #keyPath(MessageChangeInfo.genericMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
+            modifier: { $0.add(genericMessageData) },
+            expectedChangedFields: [ #keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
         )
 
     }

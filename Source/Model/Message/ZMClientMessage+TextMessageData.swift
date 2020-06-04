@@ -18,13 +18,12 @@
 
 import Foundation
 
-@objc
 extension ZMClientMessage: ZMTextMessageData {
     
     @NSManaged public var quote: ZMMessage?
     
     public override var textMessageData: ZMTextMessageData? {        
-        guard genericMessage?.textData != nil else {
+        guard underlyingMessage?.textData != nil else {
             return nil
         }
         return self
@@ -35,11 +34,11 @@ extension ZMClientMessage: ZMTextMessageData {
     }
     
     public var hasQuote: Bool {
-        return genericMessage?.textData?.hasQuote() ?? false
+        return underlyingMessage?.textData?.hasQuote ?? false
     }
     
     public var messageText: String? {
-        return genericMessage?.textData?.content.removingExtremeCombiningCharacters
+        return underlyingMessage?.textData?.content.removingExtremeCombiningCharacters
     }
     
     public var mentions: [Mention] {
