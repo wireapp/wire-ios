@@ -122,7 +122,7 @@ extension ImageV2DownloadRequestStrategy : ZMDownstreamTranscoder {
             let sha256: Data?
             
             if message.fileMessageData != nil {
-                let remote = message.genericAssetMessage?.assetData?.preview.remote
+                let remote = message.underlyingMessage?.assetData?.preview.remote
                 otrKey = remote?.otrKey
                 sha256 = remote?.sha256
             } else if message.imageMessageData != nil {

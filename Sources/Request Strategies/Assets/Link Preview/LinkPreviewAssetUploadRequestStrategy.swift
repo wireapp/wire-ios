@@ -140,20 +140,28 @@ extension LinkPreviewAssetUploadRequestStrategy : ZMUpstreamTranscoder {
         guard keysToParse.contains(ZMClientMessage.linkPreviewStateKey) else { return false }
         guard let payload = response.payload?.asDictionary(), let assetKey = payload["key"] as? String else { fatal("No asset ID present in payload") }
         
-        if let linkPreview = message.genericMessage?.linkPreviews.first, !message.isObfuscated,
+        if var linkPreview = message.underlyingMessage?.linkPreviews.first, !message.isObfuscated,
            let messageText = message.textMessageData?.messageText,
            let mentions = message.textMessageData?.mentions {
             
-            let updatedPreview = linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
-            let updatedText = ZMText.text(with: messageText, mentions: mentions, linkPreviews: [updatedPreview])
-            let genericMessage = ZMGenericMessage.message(content: updatedText, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
-            message.add(genericMessage.data())
-            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil"), genericMessage: \(String(describing: message.genericMessage))")
+            linkPreview.update(withAssetKey: assetKey, assetToken: payload["token"] as? String)
+            let updatedText = Text.with {
+                $0.content = messageText
+                $0.mentions = mentions.compactMap { WireProtos.Mention($0) }
+                $0.linkPreview = [linkPreview]
+            }
+            let genericMessage = GenericMessage(content: updatedText, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
+           do {
+               message.add(try genericMessage.serializedData())
+           } catch {
+               zmLog.debug("Failure adding genericMessage")
+           }
+            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil"), genericMessage: \(String(describing: message.underlyingMessage))")
             zmLog.debug("setting state to .uploaded for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .uploaded
             return true
         } else {
-            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil") but message is missing link preview: \(String(describing: message.genericMessage))")
+            zmLog.debug("did upload image for: \(message.nonce?.uuidString ?? "nil") but message is missing link preview: \(String(describing: message.underlyingMessage))")
             zmLog.debug("setting state to .done for: \(message.nonce?.uuidString ?? "nil")")
             message.linkPreviewState = .done
         }

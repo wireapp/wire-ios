@@ -29,7 +29,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: UUID(), type: .DELIVERED)))!
+            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))!
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
             
@@ -38,7 +38,7 @@ extension ClientMessageTranscoderTests {
             
             // THEN
             guard let message = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else { return XCTFail() }
-            XCTAssertTrue(message.hasConfirmation())
+            XCTAssertTrue(message.hasConfirmation)
         }
     }
 
@@ -46,7 +46,7 @@ extension ClientMessageTranscoderTests {
         syncMOC.performGroupedBlockAndWait {
 
             // Given
-            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: UUID(), type: .DELIVERED)))!
+            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))!
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
@@ -63,7 +63,7 @@ extension ClientMessageTranscoderTests {
 
             // THEN
             guard let message = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else { return XCTFail() }
-            XCTAssertTrue(message.hasConfirmation())
+            XCTAssertTrue(message.hasConfirmation)
         }
     }
 
@@ -73,7 +73,7 @@ extension ClientMessageTranscoderTests {
         var confirmationMessage: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
-            confirmationMessage = self.oneToOneConversation.appendClientMessage(with: ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: UUID(), type: .DELIVERED)))
+            confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 

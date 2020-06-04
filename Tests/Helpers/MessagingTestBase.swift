@@ -102,12 +102,12 @@ extension MessagingTestBase {
                                              source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
         
-        let message = ZMGenericMessage.message(content: ZMText.text(with: text))
+        let message = GenericMessage(content: Text(content: text))
         return self.decryptedUpdateEventFromOtherClient(message: message, conversation: conversation, source: source)
     }
     
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedUpdateEventFromOtherClient(message: ZMGenericMessage,
+    func decryptedUpdateEventFromOtherClient(message: GenericMessage,
                                              conversation: ZMConversation? = nil,
                                              source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
@@ -124,7 +124,7 @@ extension MessagingTestBase {
     }
     
     /// Creates an update event with encrypted message from the other client, decrypts it and returns it
-    func decryptedAssetUpdateEventFromOtherClient(message: ZMGenericMessage,
+    func decryptedAssetUpdateEventFromOtherClient(message: GenericMessage,
                                              conversation: ZMConversation? = nil,
                                              source: ZMUpdateEventSource = .pushNotification
         ) -> ZMUpdateEvent {
@@ -184,7 +184,7 @@ extension MessagingTestBase {
                                   for client: UserClient,
                                   line: UInt = #line,
                                   file: StaticString = #file
-        ) -> ZMGenericMessage? {
+        ) -> GenericMessage? {
         
         guard let data = request.binaryData, let protobuf = try? NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
@@ -207,10 +207,8 @@ extension MessagingTestBase {
             XCTFail("failed to decrypt", file: file, line: line)
             return nil
         }
-        guard let receivedMessage = ZMGenericMessage.parse(from: plaintext) else {
-            XCTFail("Invalid message")
-            return nil
-        }
+
+        let receivedMessage = try? GenericMessage.init(serializedData: plaintext) 
         return receivedMessage
     }
 }

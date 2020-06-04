@@ -99,7 +99,7 @@ import WireTransport
         assetClientMessage.isDownloading = false
         
         if response.result == .success {
-            guard let asset = assetClientMessage.genericAssetMessage?.assetData else { return }
+            guard let asset = assetClientMessage.underlyingMessage?.assetData else { return }
             guard assetClientMessage.visibleInConversation != nil else {
                 // If the assetClientMessage was "deleted" (e.g. due to ephemeral) before the download finished, 
                 // we don't want to update the message

@@ -55,23 +55,44 @@ class LinkPreviewAssetDownloadRequestStrategyTests: MessagingTestBase {
     
     // MARK: - Helper
     
-    fileprivate func createLinkPreviewAndKeys(_ assetID: String, article: Bool = true, otrKey: Data? = nil, sha256: Data? = nil) -> (preview: ZMLinkPreview, otrKey: Data?, sha256: Data?) {
+    fileprivate func createLinkPreview(_ assetID: String,
+                                       article: Bool = true,
+                                       otrKey: Data? = nil,
+                                       sha256: Data? = nil) -> LinkPreview {
         let URL = "http://www.example.com"
-        
+
         if article {
-            let assetBuilder = ZMAsset.builder()!
-            let remoteBuilder = ZMAssetRemoteData.builder()!
             let (otr, sha) = (otrKey ?? Data.randomEncryptionKey(), sha256 ?? Data.zmRandomSHA256Key())
-            remoteBuilder.setAssetId(assetID)
-            remoteBuilder.setOtrKey(otr)
-            remoteBuilder.setSha256(sha)
-            assetBuilder.setUploaded(remoteBuilder)
-            let preview = ZMLinkPreview.linkPreview(withOriginalURL: URL, permanentURL: URL, offset: 42, title: "Title", summary: "Summary", imageAsset: assetBuilder.build(), tweet: nil)
-            return (preview, otr, sha)
+            let remoteData = WireProtos.Asset.RemoteData.with {
+                $0.assetID = assetID
+                $0.otrKey = otr
+                $0.sha256 = sha
+            }
+            let asset = WireProtos.Asset.with {
+                $0.uploaded = remoteData
+            }
+            let linkPreview = LinkPreview.with {
+                $0.url = URL
+                $0.permanentURL = URL
+                $0.urlOffset = 42
+                $0.title = "Title"
+                $0.summary = "Summary"
+                $0.image = asset
+            }
+            return linkPreview
         } else {
-            let tweet = ZMTweet.tweet(withAuthor: "Author", username: "UserName")
-            let preview = ZMLinkPreview.linkPreview(withOriginalURL: URL, permanentURL: URL, offset: 42, title: "Title", summary: "Summary", imageAsset: nil, tweet: tweet)
-            return (preview, nil, nil)
+            let linkPreview = LinkPreview.with {
+                $0.url = URL
+                $0.permanentURL = URL
+                $0.urlOffset = 42
+                $0.title = "Title"
+                $0.tweet = WireProtos.Tweet.with {
+                    $0.author = "Author"
+                    $0.username = "UserName"
+                }
+            }
+
+            return linkPreview
         }
     }
     
@@ -88,9 +109,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     func testThatItGeneratesARequestForAWhitelistedMessageWithNoImageInCache() {
         // GIVEN
         let assetID = UUID.create().transportString()
-        let linkPreview = self.createLinkPreviewAndKeys(assetID).preview
+        let linkPreview = self.createLinkPreview(assetID)
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce)
+        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        text.linkPreview.append(linkPreview)
+        let genericMessage = GenericMessage(content: text, nonce: nonce)
 
         self.syncMOC.performGroupedAndWait { syncMOC in
             let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
@@ -113,9 +136,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         self.syncMOC.performGroupedAndWait { syncMOC in
             // GIVEN
-            let linkPreview = self.createLinkPreviewAndKeys(assetID).preview
+            let linkPreview = self.createLinkPreview(assetID)
             let nonce = UUID.create()
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce, expiresAfter: 20)
+            var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+            text.linkPreview.append(linkPreview)
+            let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: 20)
             let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
@@ -133,7 +158,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     
     func testThatItDoesNotGenerateARequestForAMessageWithoutALinkPreview() {
         let message = syncMOC.performGroupedAndWait { moc -> ZMMessage in
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name))
+            let genericMessage = GenericMessage(content: Text(content: self.name))
             return self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
         }
         
@@ -160,9 +185,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         self.syncMOC.performGroupedAndWait { syncMOC in
             // GIVEN
             let assetID = UUID.create().transportString()
-            let linkPreview = self.createLinkPreviewAndKeys(assetID).preview
+            let linkPreview = self.createLinkPreview(assetID)
             let nonce = UUID.create()
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce)
+            var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+            text.linkPreview.append(linkPreview)
+            let genericMessage = GenericMessage(content: text, nonce: nonce)
             let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
             syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
@@ -178,9 +205,11 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     
     func testThatItDoesNotGenerateARequestForAMessageWithoutArticleLinkPreview() {
         let assetID = UUID.create().transportString()
-        let linkPreview = self.createLinkPreviewAndKeys(assetID, article: false).preview
+        let linkPreview = self.createLinkPreview(assetID, article: false)
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce)
+        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        text.linkPreview.append(linkPreview)
+        let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
 
         self.syncMOC.performGroupedAndWait { syncMOC in
@@ -206,9 +235,12 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let data = Data.secureRandomData(length: 256)
         let otrKey = Data.randomEncryptionKey()
         let encrypted = data.zmEncryptPrefixingPlainTextIV(key: otrKey)
-        let (linkPreview, _, _) = createLinkPreviewAndKeys(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
+        let linkPreview = createLinkPreview(assetID, otrKey: otrKey, sha256: encrypted.zmSHA256Digest())
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce)
+        
+        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        text.linkPreview.append(linkPreview)
+        let genericMessage = GenericMessage(content: text, nonce: nonce)
 
         var message: ZMMessage!
 
@@ -236,12 +268,14 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             XCTAssertNil(syncMOC.zm_fileAssetCache.assetData(message, format: .medium, encrypted: true))
         }
     }
-    
+
     func testThatItDoesNotDecyptTheImageDataInTheRequestResponseWhenTheResponseIsNotSuccessful() {
         let assetID = UUID.create().transportString()
-        let (linkPreview, _, _) = createLinkPreviewAndKeys(assetID)
+        let linkPreview = createLinkPreview(assetID)
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: self.name, mentions: [], linkPreviews: [linkPreview]), nonce: nonce)
+        var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
+        text.linkPreview.append(linkPreview)
+        let genericMessage = GenericMessage(content: text, nonce: nonce)
         var message: ZMMessage!
         self.syncMOC.performGroupedAndWait { syncMOC in
 

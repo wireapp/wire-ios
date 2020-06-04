@@ -259,7 +259,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(message?.genericMessage?.assetData?.uploaded?.assetId, expectedAssetId)
+            XCTAssertEqual(message?.underlyingMessage?.assetData?.uploaded.assetID, expectedAssetId)
         }
     }
     

@@ -103,54 +103,58 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(message.mimeType, "image/jpg", line: line)
             XCTAssertEqual(message.size, 1024, line: line)
             XCTAssertEqual(message.imageMessageData?.originalSize, size, line: line)
-            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasOriginal(), line: line)
+            XCTAssertTrue(message.underlyingMessage!.assetData!.hasOriginal, line: line)
         }
 
         if preview {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
             let previewId: String? = previewAssetId ? UUID.create().transportString() : nil
-            let previewAsset = ZMAssetPreview.preview(
-                withSize: 128,
-                mimeType: "image/jpg",
-                remoteData: .remoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil),
-                imageMetadata: .imageMetaData(withWidth: 123, height: 420)
-            )
-
-            let previewMessage = ZMGenericMessage.message(
-                content: ZMAsset.asset(withOriginal: nil, preview: previewAsset),
+            let remote = WireProtos.Asset.RemoteData(withOTRKey: otr, sha256: sha, assetId: previewId, assetToken: nil)
+            let imageMetadata = WireProtos.Asset.ImageMetaData(width: 123, height: 420)
+            let previewAsset = WireProtos.Asset.Preview(size: 128,
+                                                        mimeType: "image/jpg",
+                                                        remoteData: remote,
+                                                        imageMetadata: imageMetadata)
+            
+            let previewMessage = GenericMessage(
+                content: WireProtos.Asset(original: nil, preview: previewAsset),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
-
+            
             message.add(previewMessage)
-            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasPreview(), line: line)
-            XCTAssertEqual(message.genericAssetMessage!.assetData!.preview.remote.hasAssetId(), previewAssetId, line: line)
+            XCTAssertTrue(message.underlyingMessage!.assetData!.hasPreview, line: line)
+            XCTAssertEqual(message.underlyingMessage!.assetData!.preview.remote.hasAssetID, previewAssetId, line: line)
             XCTAssertEqual(message.isEphemeral, targetConversation.messageDestructionTimeoutValue != 0, line: line)
         }
 
         if uploaded {
             let (otr, sha) = (Data.randomEncryptionKey(), Data.zmRandomSHA256Key())
-            var uploaded = ZMGenericMessage.message(
-                content: ZMAsset.asset(withUploadedOTRKey: otr, sha256: sha),
+            var uploaded = GenericMessage(
+                content: WireProtos.Asset(withUploadedOTRKey: otr, sha256: sha),
                 nonce: message.nonce!,
                 expiresAfter: targetConversation.messageDestructionTimeoutValue
             )
             if assetId {
-                uploaded = uploaded.updatedUploaded(withAssetId: UUID.create().transportString(), token: nil)!
+                uploaded.updateUploaded(assetId: UUID.create().transportString(), token: nil)
             }
             message.add(uploaded)
             message.updateTransferState(.uploaded, synchronize: true)
-            XCTAssertTrue(message.genericAssetMessage!.assetData!.hasUploaded(), line: line)
+            XCTAssertTrue(message.underlyingMessage!.assetData!.hasUploaded, line: line)
             XCTAssertEqual(message.isEphemeral, self.groupConversation.messageDestructionTimeoutValue != 0, line: line)
         } else  {
             message.updateTransferState(transferState, synchronize: true) // TODO jacob
         }
-
+        
         syncMOC.saveOrRollback()
         prepareUpload(of: message)
-
+        
         XCTAssertEqual(message.version, 3, line: line)
-        XCTAssertEqual(message.genericAssetMessage?.assetData?.original.hasImage(), isImage, line: line)
+        guard case .image? = message.underlyingMessage?.assetData?.original.metaData else {
+            XCTAssertEqual(false, isImage, line: line)
+            return message
+        }
+        XCTAssertEqual(true, isImage, line: line)
 
         return message
     }
@@ -244,7 +248,12 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             XCTAssertNotNil(self.sut.nextRequest())
             
             // THEN
-            XCTAssertTrue(message.genericMessage!.content!.expectsReadConfirmation())
+            switch message.underlyingMessage?.content {
+            case .asset(let data)?:
+                XCTAssertTrue(data.expectsReadConfirmation)
+            default:
+                XCTFail()
+            }
         }
     }
     
@@ -256,9 +265,14 @@ class AssetClientMessageRequestStrategyTests: MessagingTestBase {
             
             // WHEN
             XCTAssertNotNil(self.sut.nextRequest())
-
+            
             // THEN
-            XCTAssertFalse(message.genericMessage!.content!.expectsReadConfirmation())
+            switch message.underlyingMessage?.content {
+            case .asset(let data)?:
+                XCTAssertFalse(data.expectsReadConfirmation)
+            default:
+                XCTFail()
+            }
         }
     }
     

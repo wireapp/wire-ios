@@ -58,8 +58,8 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
         
-        message.add(ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
-        message.add(ZMGenericMessage.message(content: ZMImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
+        message.add(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
+        message.add(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
         message.version = 2
         message.assetId = assetId
         message.sender = sender

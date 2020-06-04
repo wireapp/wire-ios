@@ -82,7 +82,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             // the timeout here has to be at least 5. If I return something smaller, it will anyway be approximated to 5 internally
             // as it's the lowest allowed timeout
-            let generic = ZMGenericMessage.message(content: ZMText.text(with: text), expiresAfter: 5)
+            let generic = GenericMessage(content: Text(content: text), expiresAfter: 5)
             let event = self.decryptedUpdateEventFromOtherClient(message: generic)
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
             self.syncMOC.saveOrRollback()
@@ -122,7 +122,7 @@ extension ClientMessageTranscoderTests {
         let text = "Come fosse antani"
         self.syncMOC.performGroupedBlockAndWait {
             // the timeout here has to be at least 5. If I return something smaller, it will anyway be approximated to 5
-            let generic = ZMGenericMessage.message(content: ZMText.text(with: text), expiresAfter: 5)
+            let generic = GenericMessage(content: Text(content: text), expiresAfter: 5)
             let event = self.decryptedUpdateEventFromOtherClient(message: generic)
             self.sut.processEvents([event], liveEvents: true, prefetchResult: nil)
             self.syncMOC.saveOrRollback()
