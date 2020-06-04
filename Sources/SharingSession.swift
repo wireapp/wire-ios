@@ -29,10 +29,10 @@ class PushMessageHandlerDummy : NSObject, PushMessageHandler {
         // nop
     }
 
-    func process(_ genericMessage: ZMGenericMessage) {
+    public func process(_ event: ZMUpdateEvent) {
         // nop
     }
-
+    
     func didFailToSend(_ message: ZMMessage) {
         // nop
     }
