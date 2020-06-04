@@ -16,12 +16,6 @@
 		5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 090837FE1B872DBF00629095 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5EAC172F21A30C390014E671 /* SwiftProtobuf.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5E13807921A307CA004A646C /* SwiftProtobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2DF21B043F400E037A1 /* WireProtos.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F1FDF2E221B0443600E037A1 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FDF2E121B0443600E037A1 /* ProtocolBuffers.framework */; };
-		F1FDF2E721B04C1200E037A1 /* Otr.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = F1FDF2E321B04C1100E037A1 /* Otr.pb.m */; };
-		F1FDF2E821B04C1200E037A1 /* Otr.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2E421B04C1100E037A1 /* Otr.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F1FDF2E921B04C1200E037A1 /* Messages.pb.m in Sources */ = {isa = PBXBuildFile; fileRef = F1FDF2E521B04C1100E037A1 /* Messages.pb.m */; };
-		F1FDF2EA21B04C1200E037A1 /* Messages.pb.h in Headers */ = {isa = PBXBuildFile; fileRef = F1FDF2E621B04C1100E037A1 /* Messages.pb.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F1FDF2EB21B0547200E037A1 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = F1FDF2E121B0443600E037A1 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -41,7 +35,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				F1FDF2EB21B0547200E037A1 /* ProtocolBuffers.framework in CopyFiles */,
 				5EAC172E21A30C390014E671 /* WireProtos.framework in CopyFiles */,
 				5EAC172F21A30C390014E671 /* SwiftProtobuf.framework in CopyFiles */,
 			);
@@ -76,11 +69,6 @@
 		A9EF6A7323D76AC8002904B4 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F184BE851E65CADA0020EBB7 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		F1FDF2DF21B043F400E037A1 /* WireProtos.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireProtos.h; sourceTree = "<group>"; };
-		F1FDF2E121B0443600E037A1 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
-		F1FDF2E321B04C1100E037A1 /* Otr.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Otr.pb.m; sourceTree = "<group>"; };
-		F1FDF2E421B04C1100E037A1 /* Otr.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Otr.pb.h; sourceTree = "<group>"; };
-		F1FDF2E521B04C1100E037A1 /* Messages.pb.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Messages.pb.m; sourceTree = "<group>"; };
-		F1FDF2E621B04C1100E037A1 /* Messages.pb.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Messages.pb.h; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +76,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1FDF2E221B0443600E037A1 /* ProtocolBuffers.framework in Frameworks */,
 				5E13807A21A307CA004A646C /* SwiftProtobuf.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -130,10 +117,6 @@
 		090838001B872DBF00629095 /* Protos */ = {
 			isa = PBXGroup;
 			children = (
-				F1FDF2E621B04C1100E037A1 /* Messages.pb.h */,
-				F1FDF2E521B04C1100E037A1 /* Messages.pb.m */,
-				F1FDF2E421B04C1100E037A1 /* Otr.pb.h */,
-				F1FDF2E321B04C1100E037A1 /* Otr.pb.m */,
 				090838241B87347900629095 /* messages.proto */,
 				099223A61BED06E400668091 /* otr.proto */,
 				5E13807B21A30A9D004A646C /* messages.pb.swift */,
@@ -207,7 +190,6 @@
 		67FFDFDA66F3EEA3F9461130 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F1FDF2E121B0443600E037A1 /* ProtocolBuffers.framework */,
 				5E13807921A307CA004A646C /* SwiftProtobuf.framework */,
 			);
 			name = Frameworks;
@@ -220,9 +202,7 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1FDF2EA21B04C1200E037A1 /* Messages.pb.h in Headers */,
 				F1FDF2E021B043F400E037A1 /* WireProtos.h in Headers */,
-				F1FDF2E821B04C1200E037A1 /* Otr.pb.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -329,9 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1FDF2E921B04C1200E037A1 /* Messages.pb.m in Sources */,
 				5E13807E21A30A9D004A646C /* otr.pb.swift in Sources */,
-				F1FDF2E721B04C1200E037A1 /* Otr.pb.m in Sources */,
 				5E13807D21A30A9D004A646C /* messages.pb.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
