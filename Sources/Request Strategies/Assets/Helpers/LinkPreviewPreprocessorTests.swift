@@ -115,7 +115,7 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
             let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertEqual(data, preview.imageData.first!)
-            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
         }
     }
@@ -140,7 +140,7 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.uploaded)
             let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertNil(data)
-            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
+            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
             XCTAssertFalse(genericMessage.text.linkPreview.isEmpty)
         }
     }
@@ -254,8 +254,10 @@ extension LinkPreviewPreprocessorTests {
             XCTAssertEqual(message.linkPreviewState, ZMLinkPreviewState.downloaded)
             let data = self.syncMOC.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
             XCTAssertEqual(data, preview.imageData.first!)
-            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-            XCTAssertTrue(genericMessage.hasEphemeral())
+            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            guard case .ephemeral? = genericMessage.content else {
+                return XCTFail()
+            }
             XCTAssertFalse(genericMessage.ephemeral.text.linkPreview.isEmpty)
         }
     }
@@ -280,8 +282,10 @@ extension LinkPreviewPreprocessorTests {
         
         self.syncMOC.performGroupedBlockAndWait {
             // THEN
-            guard let genericMessage = message.genericMessage else { return XCTFail("No generic message") }
-            XCTAssertFalse(genericMessage.hasEphemeral())
+            guard let genericMessage = message.underlyingMessage else { return XCTFail("No generic message") }
+            if case .ephemeral? = genericMessage.content {
+                return XCTFail()
+            }
             XCTAssertEqual(genericMessage.linkPreviews.count, 0)
             XCTAssertEqual(message.linkPreviewState, .done)
         }

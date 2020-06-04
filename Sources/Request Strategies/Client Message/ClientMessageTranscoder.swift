@@ -131,7 +131,7 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
         
         request.add(completionHandler)
         
-        if message.genericMessage?.hasConfirmation() == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
+        if message.underlyingMessage?.hasConfirmation == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
             request.forceToVoipSession()
         }
         
@@ -167,15 +167,13 @@ extension ClientMessageTranscoder {
             // process generic message first, b/c if there is no updateResult, then
             // a the event from a deleted message wouldn't delete the notification.
             if event.source == .pushNotification || event.source == .webSocket {
-                if let genericMessage = ZMGenericMessage(from: event) {
-                    self.localNotificationDispatcher.process(genericMessage)
-                }
+                self.localNotificationDispatcher.process(event)
             }
             
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
             
             message.markAsSent()
-                                    
+            
             if event.source == .pushNotification || event.source == .webSocket {
                 self.localNotificationDispatcher.process(message)
             }
@@ -199,17 +197,17 @@ extension ClientMessageTranscoder {
         
         guard let message = managedObject as? ZMClientMessage,
             !managedObject.isZombieObject,
-            let genericMessage = message.genericMessage else {
+            let genericMessage = message.underlyingMessage else {
                 return
         }
         
         self.update(message, from: response, keys: upstreamRequest.keys ?? Set())
         _ = message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
         
-        if genericMessage.hasReaction() {
+        if genericMessage.hasReaction {
             message.managedObjectContext?.delete(message)
         }
-        if genericMessage.hasConfirmation() {
+        if genericMessage.hasConfirmation {
             self.applicationStatus?.deliveryConfirmation.didConfirmMessage(message.nonce!)
             message.managedObjectContext?.delete(message)
         }
@@ -248,9 +246,9 @@ extension ClientMessageTranscoder {
     public func shouldCreateRequest(toSyncObject managedObject: ZMManagedObject, forKeys keys: Set<String>, withSync sync: Any) -> Bool {
         guard let message = managedObject as? ZMClientMessage,
             !managedObject.isZombieObject,
-            let genericMessage = message.genericMessage else { return false }
-        if genericMessage.hasConfirmation() == true {
-            let messageNonce = UUID(uuidString: genericMessage.confirmation.firstMessageId)
+            let genericMessage = message.underlyingMessage else { return false }
+        if genericMessage.hasConfirmation == true {
+            let messageNonce = UUID(uuidString: genericMessage.confirmation.firstMessageID)
             let sentMessage = ZMMessage.fetch(withNonce: messageNonce, for: message.conversation!, in: message.managedObjectContext!)
             return (sentMessage?.sender != nil)
                 || (message.conversation?.connectedUser != nil)
@@ -279,7 +277,7 @@ extension ClientMessageTranscoder : ZMEventConsumer {
         return Set(events.compactMap {
             switch $0.type {
             case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                return $0.messageNonce()
+                return $0.messageNonce
             default:
                 return nil
             }
@@ -290,7 +288,7 @@ extension ClientMessageTranscoder : ZMEventConsumer {
         return updateEvents.compactMap {
             switch $0.type {
             case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-                if let nonce = $0.messageNonce() {
+                if let nonce = $0.messageNonce {
                     return UpdateEventWithNonce(event: $0, nonce: nonce)
                 }
                 return nil

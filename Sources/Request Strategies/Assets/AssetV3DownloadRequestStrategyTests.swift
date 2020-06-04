@@ -76,15 +76,11 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
 
         let message = aConversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
+        var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
 
-        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
-            XCTFail("Failed to update asset")
-            return nil
-        }
-        
+        uploaded.updateUploaded(assetId: assetId, token: token)
         message.updateTransferState(.uploaded, synchronize: false)
-        message.add(uploadedWithId)
+        message.add(uploaded)
         deleteDownloadedFileFor(message: message)
         XCTAssertEqual(message.version, 3)
         syncMOC.saveOrRollback()
@@ -146,11 +142,11 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         
             // Given
             guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData found") }
+            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
             
             expectedAssetId = assetId
-            XCTAssert(assetData.hasUploaded())
-            XCTAssertEqual(assetData.uploaded.assetId, assetId)
+            XCTAssert(assetData.hasUploaded)
+            XCTAssertEqual(assetData.uploaded.assetID, assetId)
             XCTAssertEqual(assetData.uploaded.assetToken, token)
             message.requestFileDownload()
         }
@@ -176,13 +172,15 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
             // Given
             self.conversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 5))
             guard let (message, assetId, token) = self.createFileMessageWithAssetId(in: self.conversation) else { return XCTFail("No message") }
-            guard let assetData = message.genericAssetMessage?.assetData else { return XCTFail("No assetData found") }
+            guard let assetData = message.underlyingMessage?.assetData else { return XCTFail("No assetData found") }
             
             expectedAssetId = assetId
-            XCTAssert(assetData.hasUploaded())
-            XCTAssertEqual(assetData.uploaded.assetId, assetId)
+            XCTAssert(assetData.hasUploaded)
+            XCTAssertEqual(assetData.uploaded.assetID, assetId)
             XCTAssertEqual(assetData.uploaded.assetToken, token)
-            XCTAssert(message.genericAssetMessage!.hasEphemeral())
+            guard case .ephemeral? = message.underlyingMessage!.content else {
+                return XCTFail()
+            }
             message.requestFileDownload()
         }
         
@@ -452,26 +450,24 @@ extension AssetV3DownloadRequestStrategyTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let asset = ZMAssetBuilder()
-                .setOriginal(ZMAssetOriginalBuilder()
-                    .setMimeType("image/jpeg")
-                    .setSize(UInt64(plainTextData.count))
-                    .setImage(ZMAssetImageMetaDataBuilder()
-                        .setWidth(100)
-                        .setHeight(100)
-                        .setTag("medium")))
-                .setUploaded(ZMAssetRemoteDataBuilder()
-                    .setOtrKey(key)
-                    .setSha256(sha)
-                    .setAssetId("someId")
-                    .setAssetToken("someToken"))
-                .build()
+            var asset = WireProtos.Asset()
+            var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
+            imageMetaData.tag = "medium"
+            asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
+                                                        mimeType: "image/jpeg",
+                                                        name: nil,
+                                                        imageMetaData: imageMetaData)
+            asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
+                                                          sha256: sha,
+                                                          assetId: "someId",
+                                                          assetToken: "someToken")
             
-            let genericMessage = ZMGenericMessage.message(content: asset!, nonce: messageId)
+            let genericMessage = GenericMessage(content: asset, nonce: messageId)
             
+            let messageData = try? genericMessage.serializedData()
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
-                        "text": genericMessage.data().base64String()] as NSDictionary
+                        "text": messageData?.base64String()] as NSDictionary
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data":dict,
@@ -526,26 +522,24 @@ extension AssetV3DownloadRequestStrategyTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let asset = ZMAssetBuilder()
-                .setOriginal(ZMAssetOriginalBuilder()
-                    .setMimeType("image/svg+xml")
-                    .setSize(UInt64(plainTextData.count))
-                    .setImage(ZMAssetImageMetaDataBuilder() // Even if we treat them as files, SVGs are sent as images.
-                        .setWidth(100)
-                        .setHeight(100)
-                        .setTag("medium")))
-                .setUploaded(ZMAssetRemoteDataBuilder()
-                    .setOtrKey(key)
-                    .setSha256(sha)
-                    .setAssetId("someId")
-                    .setAssetToken("someToken"))
-                .build()
+            var asset = WireProtos.Asset()
+            var imageMetaData = WireProtos.Asset.ImageMetaData(width: 100, height: 100)
+            imageMetaData.tag = "medium"
+            asset.original = WireProtos.Asset.Original(withSize: UInt64(plainTextData.count),
+                                                        mimeType: "image/svg+xml",
+                                                        name: nil,
+                                                        imageMetaData: imageMetaData)// Even if we treat them as files, SVGs are sent as images.
+            asset.uploaded = WireProtos.Asset.RemoteData(withOTRKey: key,
+                                                          sha256: sha,
+                                                          assetId: "someId",
+                                                          assetToken: "someToken")
             
-            let genericMessage = ZMGenericMessage.message(content: asset!, nonce: messageId)
+            let genericMessage = GenericMessage(content: asset, nonce: messageId)
             
+            let messageData = try? genericMessage.serializedData()
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
-                        "text": genericMessage.data().base64String()] as NSDictionary
+                        "text": messageData?.base64String()] as NSDictionary
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",
                 "data":dict,

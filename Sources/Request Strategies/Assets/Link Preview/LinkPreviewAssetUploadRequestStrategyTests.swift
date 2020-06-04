@@ -55,9 +55,19 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
-            message.add(ZMGenericMessage.message(content: ZMText.text(with: text, mentions: [], linkPreviews: [linkPreview.protocolBuffer]), nonce: message.nonce!, expiresAfter: 10).data())
+            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfter: 10)
+            do {
+                message.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail("Error in adding data: \(error)")
+            }
         } else {
-            message.add(ZMGenericMessage.message(content: ZMText.text(with: text, mentions: [], linkPreviews: [linkPreview.protocolBuffer]), nonce: message.nonce!).data())
+            let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!)
+            do {
+                message.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail("Error in adding data: \(error)")
+            }
         }
         self.syncMOC.saveOrRollback()
         
@@ -89,10 +99,19 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         let otrKey = "1".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         let sha256 = "2".data(using: String.Encoding.utf8, allowLossyConversion: false)!
         
-        var linkPreview = message.genericMessage!.linkPreviews.first!
-        linkPreview = linkPreview.update(withOtrKey: otrKey, sha256: sha256)
-        
-        message.add(ZMGenericMessage.message(content: ZMText.text(with: message.textMessageData!.messageText!, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfter: message.deletionTimeout).data())
+        var linkPreview = message.underlyingMessage!.linkPreviews.first!
+        linkPreview.update(withOtrKey: otrKey, sha256: sha256, original: nil)
+        let text = Text.with {
+            $0.content = message.textMessageData!.messageText!
+            $0.mentions = []
+            $0.linkPreview = [linkPreview]
+        }
+        let genericMessage = GenericMessage(content: text, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
+        do {
+            message.add(try genericMessage.serializedData())
+        } catch {
+            fatal("Failure adding genericMessage")
+        }
         
         return (otrKey, sha256)
     }
@@ -217,12 +236,11 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         
         // THEN
         syncMOC.performGroupedBlockAndWait {
-            let linkPreviews = message.genericMessage!.linkPreviews
-            let articleProtocol: ZMArticle = linkPreviews.first!.article
-            XCTAssertEqual(articleProtocol.image.uploaded.otrKey, otrKey)
-            XCTAssertEqual(articleProtocol.image.uploaded.sha256, sha256)
-            XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetId)
-            XCTAssertEqual(articleProtocol.image.uploaded.assetToken, token)
+            let linkPreview = message.underlyingMessage!.linkPreviews.first!
+            XCTAssertEqual(linkPreview.image.uploaded.otrKey, otrKey)
+            XCTAssertEqual(linkPreview.image.uploaded.sha256, sha256)
+            XCTAssertEqual(linkPreview.image.uploaded.assetID, assetId)
+            XCTAssertEqual(linkPreview.image.uploaded.assetToken, token)
         }
     }
     
@@ -296,15 +314,17 @@ extension LinkPreviewAssetUploadRequestStrategyTests {
         syncMOC.performGroupedBlock {
             // THEN
             XCTAssertTrue(message.isEphemeral)
-            XCTAssertTrue(message.genericMessage!.hasEphemeral())
-            XCTAssertFalse(message.genericMessage!.hasText())
+            guard case .ephemeral? = message.underlyingMessage!.content else {
+                return XCTFail()
+            }
+            // The message is ephemeral and contains text
+            XCTAssertTrue(message.underlyingMessage!.hasText)
             
-            let linkPreviews = message.genericMessage!.linkPreviews
-            let articleProtocol: ZMArticle = linkPreviews.first!.article
-            XCTAssertEqual(articleProtocol.image.uploaded.otrKey, otrKey)
-            XCTAssertEqual(articleProtocol.image.uploaded.sha256, sha256)
-            XCTAssertEqual(articleProtocol.image.uploaded.assetId, assetId)
-            XCTAssertEqual(articleProtocol.image.uploaded.assetToken, token)
+            let linkPreview = message.underlyingMessage!.linkPreviews.first!
+            XCTAssertEqual(linkPreview.image.uploaded.otrKey, otrKey)
+            XCTAssertEqual(linkPreview.image.uploaded.sha256, sha256)
+            XCTAssertEqual(linkPreview.image.uploaded.assetID, assetId)
+            XCTAssertEqual(linkPreview.image.uploaded.assetToken, token)
         }
     }
 

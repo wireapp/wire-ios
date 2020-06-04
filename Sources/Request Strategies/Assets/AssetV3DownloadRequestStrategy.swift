@@ -39,7 +39,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
             guard let message = object as? ZMAssetClientMessage else { return false }
             guard message.version == 3 else { return false }
             
-            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message.genericMessage?.assetData?.hasUploaded() == true
+            return !message.hasDownloadedFile && message.transferState == .uploaded && message.isDownloading && message.underlyingMessage?.assetData?.hasUploaded == true
         }
         
         assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(transcoder: self,
@@ -131,11 +131,11 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     private func storeAndDecrypt(data: Data, for message: ZMAssetClientMessage) -> Bool {
-        guard let genericMessage = message.genericAssetMessage,
+        guard let genericMessage = message.underlyingMessage,
               let asset = genericMessage.assetData
         else { return false }
 
-        let keys = (asset.uploaded.otrKey!, asset.uploaded.sha256!)
+        let keys = (asset.uploaded.otrKey, asset.uploaded.sha256)
 
         if asset.original.hasRasterImage {
             return storeAndDecryptImage(asset: asset, message: message, data: data, keys: keys)
@@ -144,7 +144,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         }
     }
 
-    private func storeAndDecryptImage(asset: ZMAsset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
+    private func storeAndDecryptImage(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
         precondition(asset.original.hasRasterImage, "Should only be called for assets with image")
 
         let cache = managedObjectContext.zm_fileAssetCache
@@ -156,7 +156,7 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         return success
     }
 
-    private func storeAndDecryptFile(asset: ZMAsset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
+    private func storeAndDecryptFile(asset: WireProtos.Asset, message: ZMAssetClientMessage, data: Data, keys: DecryptionKeys) -> Bool {
         precondition(!asset.original.hasRasterImage, "Should not be called for assets with image")
 
         let cache = managedObjectContext.zm_fileAssetCache
@@ -192,9 +192,9 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
                 self.managedObjectContext.enqueueDelayedSave()
             }
 
-            if let asset = assetClientMessage.genericAssetMessage?.assetData {
-                let token = asset.uploaded.hasAssetToken() ? asset.uploaded.assetToken : nil
-                if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: asset.uploaded.assetId, token: token) {
+            if let asset = assetClientMessage.underlyingMessage?.assetData {
+                let token = asset.uploaded.hasAssetToken ? asset.uploaded.assetToken : nil
+                if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: asset.uploaded.assetID, token: token) {
                     request.add(taskCreationHandler)
                     request.add(completionHandler)
                     request.add(progressHandler)

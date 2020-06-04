@@ -23,9 +23,9 @@ import WireDataModel
     
     /// Create a notification for the message if needed
     ///
-    /// - Parameter genericMessage: generic message that was received
-    @objc(processGenericMessage:)
-    func process(_ genericMessage: ZMGenericMessage)
+    /// - Parameter event: the decrypted  ZMUpdateEvent 
+    @objc(processEvent:)
+    func process(_ event: ZMUpdateEvent)
     
     
     /// Creates a notification for the message if needed

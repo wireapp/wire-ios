@@ -106,10 +106,11 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
             let selfUser = ZMUser.selfUser(in: moc)
             _ = ZMConversation(remoteID: selfUser.remoteIdentifier!, createIfNeeded: true, in: moc) // create self conversation
 
-            let message = ZMGenericMessage.message(content: ZMAvailability.availability(.away))
+            let message = GenericMessage(content: WireProtos.Availability(.away))
+            let messageData = try? message.serializedData()
             let dict = ["recipient": self.selfClient.remoteIdentifier!,
                         "sender": self.selfClient.remoteIdentifier!,
-                        "text": message.data().base64String()] as NSDictionary
+                        "text": messageData?.base64String()] as NSDictionary
 
             let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
                 "type": "conversation.otr-message-add",

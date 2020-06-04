@@ -34,7 +34,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         let filter = NSPredicate { object, _ in
             guard let message = object as? ZMAssetClientMessage, nil != message.fileMessageData else { return false }
             guard message.version == 3, message.visibleInConversation != nil else { return false }
-            guard nil != message.genericAssetMessage?.previewAssetId else { return false }
+            guard nil != message.underlyingMessage?.previewAssetId else { return false }
             return !message.hasDownloadedPreview
         }
 
@@ -73,9 +73,10 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        guard let asset = assetClientMessage.genericAssetMessage?.assetData, response.result == .success else { return }
-        guard let remote = asset.preview.remote, assetClientMessage.visibleInConversation != nil else { return }
+        guard let asset = assetClientMessage.underlyingMessage?.assetData, response.result == .success else { return }
+        guard assetClientMessage.visibleInConversation != nil else { return }
 
+        let remote = asset.preview.remote
         let cache = managedObjectContext.zm_fileAssetCache
         cache.storeAssetData(assetClientMessage, format: .medium, encrypted: true, data: response.rawData!)
 
@@ -112,12 +113,12 @@ extension AssetV3PreviewDownloadRequestStrategy: ZMDownstreamTranscoder {
 
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         if let assetClientMessage = object as? ZMAssetClientMessage,
-            let asset = assetClientMessage.genericAssetMessage?.assetData,
-            let remote = asset.preview.remote,
+            let asset = assetClientMessage.underlyingMessage?.assetData,
             assetClientMessage.version == 3 {
 
-            let token = remote.hasAssetToken() ? remote.assetToken : nil
-            if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: remote.assetId, token: token) {
+            let remote = asset.preview.remote
+            let token = remote.hasAssetToken ? remote.assetToken : nil
+            if let request = AssetDownloadRequestFactory().requestToGetAsset(withKey: remote.assetID, token: token) {
                 request.add(ZMCompletionHandler(on: self.managedObjectContext) { response in
                     self.handleResponse(response, forMessage: assetClientMessage)
                 })

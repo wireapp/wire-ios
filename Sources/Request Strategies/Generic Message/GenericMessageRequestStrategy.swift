@@ -65,7 +65,7 @@ public func ==(lhs: GenericMessageEntity, rhs: GenericMessageEntity) -> Bool {
 extension GenericMessageEntity : EncryptedPayloadGenerator {
     
     public func encryptedMessagePayloadData() -> (data: Data, strategy: MissingClientsStrategy)? {
-        return message.zmMessage?.encryptedMessagePayloadData(conversation!, externalData: nil)
+        return message.encryptedMessagePayloadData(conversation!, externalData: nil)
     }
 
     public var debugInfo: String {

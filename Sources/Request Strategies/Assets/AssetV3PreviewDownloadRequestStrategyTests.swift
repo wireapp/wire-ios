@@ -63,37 +63,32 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         let message = conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
+        var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
+        uploaded.updateUploaded(assetId: assetId, token: token)
         
-        guard let uploadedWithId = uploaded.updatedUploaded(withAssetId: assetId, token: token) else {
-            XCTFail("Failed to update asset")
-            return nil
-        }
-        
-        message.add(uploadedWithId)
+        message.add(uploaded)
         message.updateTransferState(.uploaded, synchronize: false)
         syncMOC.saveOrRollback()
         
         return (message, assetId, token)
     }
     
-    func createPreview(with nonce: UUID, otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (genericMessage: ZMGenericMessage, meta: PreviewMeta) {
+    func createPreview(with nonce: UUID, otr: Data = .randomEncryptionKey(), sha: Data = .randomEncryptionKey()) -> (genericMessage: GenericMessage, meta: PreviewMeta) {
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
-        let assetBuilder = ZMAsset.builder()
-        let previewBuilder = ZMAssetPreview.builder()
-        let remoteBuilder = ZMAssetRemoteData.builder()
         
-        _ = remoteBuilder?.setOtrKey(otr)
-        _ = remoteBuilder?.setSha256(sha)
-        _ = remoteBuilder?.setAssetId(assetId)
-        _ = remoteBuilder?.setAssetToken(token)
-        _ = previewBuilder?.setSize(512)
-        _ = previewBuilder?.setMimeType("image/jpg")
-        _ = previewBuilder?.setRemote(remoteBuilder)
-        _ = assetBuilder?.setPreview(previewBuilder)
+        let remote = WireProtos.Asset.RemoteData(withOTRKey: otr,
+                                                sha256: sha,
+                                                assetId: assetId,
+                                                assetToken: token)
+        let preview = WireProtos.Asset.Preview.with {
+            $0.size = 512
+            $0.mimeType = "image/jpg"
+            $0.remote = remote
+        }
+        let asset = WireProtos.Asset(original: nil, preview: preview)
         
         let previewMeta = (otr, sha, assetId, token)
-        return (ZMGenericMessage.message(content: assetBuilder!.build(), nonce: nonce), previewMeta)
+        return (GenericMessage(content: asset, nonce: nonce), previewMeta)
     }
     
     func testThatItGeneratesNoRequestsIfTheStatusIsEmpty() {
@@ -191,7 +186,7 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotGenerateAReuqestForAV3FileMessageWithPreviewThatAlreadyHasBeenDownloaded() {
         // GIVEN
         var message: ZMAssetClientMessage!
-        var previewGenericMessage: ZMGenericMessage!
+        var previewGenericMessage: GenericMessage!
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(in: self.conversation)!.message
             previewGenericMessage = self.createPreview(with: message.nonce!).genericMessage

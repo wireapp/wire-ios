@@ -30,10 +30,16 @@ import Foundation
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
         let downloadFilter = NSPredicate { object, _ in
-            guard let message = object as? ZMClientMessage, let genericMessage = message.genericMessage, genericMessage.textData != nil else { return false }
-            guard let preview = genericMessage.linkPreviews.first, let remote: ZMAssetRemoteData = preview.remote  else { return false }
+            guard let message = object as? ZMClientMessage,
+                let genericMessage = message.underlyingMessage,
+                genericMessage.textData != nil else {
+                    return false
+            }
+            guard let preview = genericMessage.linkPreviews.first else {
+                return false
+            }
             guard nil == managedObjectContext.zm_fileAssetCache.assetData(message, format: .medium, encrypted: false) else { return false }
-            return remote.hasAssetId()
+            return preview.image.uploaded.hasAssetID
         }
         
         assetDownstreamObjectSync = ZMDownstreamObjectSyncWithWhitelist(
@@ -73,8 +79,12 @@ import Foundation
         guard response.result == .success else { return }
         let cache = managedObjectContext.zm_fileAssetCache
         
-        let linkPreview = message.genericMessage?.linkPreviews.first
-        guard let remote = linkPreview?.remote, let data = response.rawData else { return }
+        let linkPreview = message.underlyingMessage?.linkPreviews.first
+        guard
+            let remote = linkPreview?.image.uploaded,
+            let data = response.rawData else {
+                return
+        }
         cache.storeAssetData(message, format: .medium, encrypted: true, data: data)
 
         let success = cache.decryptImageIfItMatchesDigest(
@@ -107,12 +117,14 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
     
     public func request(forFetching object: ZMManagedObject!, downstreamSync: ZMObjectSync!) -> ZMTransportRequest! {
         guard let message = object as? ZMClientMessage else { fatal("Unable to generate request for \(object.safeForLoggingDescription)") }
-        guard let linkPreview = message.genericMessage?.linkPreviews.first else { return nil }
-        guard let remoteData = linkPreview.remote else { return nil }
+        guard let linkPreview = message.underlyingMessage?.linkPreviews.first else {
+            return nil
+        }
+        let remoteData = linkPreview.image.uploaded
 
         // Protobuf initializes the token to an empty string when set to nil
-        let token = remoteData.hasAssetToken() && remoteData.assetToken != "" ? remoteData.assetToken : nil
-        let request = assetRequestFactory.requestToGetAsset(withKey: remoteData.assetId, token: token)
+        let token = remoteData.hasAssetToken && remoteData.assetToken != "" ? remoteData.assetToken : nil
+        let request = assetRequestFactory.requestToGetAsset(withKey: remoteData.assetID, token: token)
         request?.add(ZMCompletionHandler(on: managedObjectContext) { response in
             self.handleResponse(response, forMessage: message)
         })
@@ -127,16 +139,4 @@ extension LinkPreviewAssetDownloadRequestStrategy: ZMDownstreamTranscoder {
         // no-op
     }
     
-}
-
-extension ZMLinkPreview {
-    var remote: ZMAssetRemoteData? {
-        if let image = article.image, image.hasUploaded() {
-            return image.uploaded
-        } else if let image = image, hasImage() {
-            return image.uploaded
-        }
-        
-        return nil
-    }
 }
