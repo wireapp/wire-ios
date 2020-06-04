@@ -1,2 +1,1 @@
 github "wireapp/swift-protobuf" "1.8.0_Swift5.2.2"
-github "wireapp/protobuf-objc" ~> 1.9
