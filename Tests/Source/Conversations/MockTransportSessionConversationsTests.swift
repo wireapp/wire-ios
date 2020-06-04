@@ -17,6 +17,7 @@
 //
 
 import Foundation
+import WireProtos
 
 @testable import WireMockTransport
 
@@ -250,4 +251,177 @@ class MockTransportSessionConversationsTests_Swift: MockTransportSessionTests {
         XCTAssertEqual(member?["actions"] as? [String], ["leave_conversation"])
     }
     
+    func testThatItDecodesOTRMessageProtobufOnReceivingClient() {
+        // GIVEN
+        var selfClient: MockUserClient?
+        
+        var otherUser: MockUser?
+        var otherUserClient: MockUserClient?
+        
+        var conversation: MockConversation?
+        
+        self.sut.performRemoteChanges { (session) in
+            session.registerClient(for: self.selfUser!, label: "self user", type: "permanent", deviceClass: "phone")
+    
+            otherUser = session.insertUser(withName: "bar")
+            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: ZMTConversationType.oneOnOne)
+            
+            selfClient = self.selfUser?.clients.anyObject() as? MockUserClient
+            otherUserClient = otherUser?.clients.anyObject() as? MockUserClient
+        }
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let messageText = "Fofooof"
+        let text = Text.with {
+            $0.content = messageText
+        }
+
+        let messageID = UUID.create().transportString()
+        let message = GenericMessage.with {
+            $0.text = text
+            $0.messageID = messageID
+        }
+        
+        var messageData: Data?
+        do {
+            let data = try message.serializedData()
+            messageData = try selfClient?.newOtrMessageWithRecipients(for: [otherUserClient!], plainText: data).serializedData()
+        } catch {
+            return XCTFail()
+        }
+        
+        // WHEN
+        let requestPath = "/conversations/\(conversation!.identifier)/otr/messages"
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: ZMTransportRequestMethod.methodPOST)
+        
+        // THEN
+        XCTAssertEqual(response!.httpStatus, 201)
+        let lastEvent = conversation!.events.lastObject as! MockEvent
+        XCTAssertNotNil(lastEvent)
+        XCTAssertEqual(lastEvent.eventType, ZMUpdateEventType.conversationOtrMessageAdd)
+        XCTAssertNotNil(lastEvent.decryptedOTRData)
+        let decryptedMessage = try! GenericMessage(serializedData: lastEvent.decryptedOTRData!)
+        XCTAssertEqual(decryptedMessage.text.content, messageText)
+    }
+    
+    func testThatItReturnsMissingClientsWhenReceivingOTRMessage_Protobuf() {
+        // GIVEN
+        var selfClient: MockUserClient!
+        var secondSelfClient: MockUserClient!
+        
+        var otherUser: MockUser!
+        var otherUserClient: MockUserClient!
+        var secondOtherUserClient: MockUserClient!
+        var redundantClient: MockUserClient!
+        var conversation: MockConversation!
+        
+        sut.performRemoteChanges { session in
+            session.registerClient(for: self.selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+            
+            otherUser = session.insertUser(withName: "bar")
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
+            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
+            redundantClient = session.registerClient(for: otherUser, label: "Wire for OS/2", type: "permanent", deviceClass: "phone")
+            
+            selfClient = self.selfUser.clients.anyObject() as? MockUserClient
+            secondSelfClient = session.registerClient(for: self.selfUser, label: "self2", type: "permanent", deviceClass: "phone")
+            
+            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: .oneOnOne)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let previousNotificationsCount = sut.generatedPushEvents.count
+        
+        let data = "foobar".data(using: .utf8)!
+        let messageData = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, redundantClient], plainText: data).serializedData()
+        
+        sut.performRemoteChanges { _ in
+            redundantClient.user = nil
+        }
+        
+        // WHEN
+        let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST)
+        
+        // THEN
+        XCTAssertNotNil(response)
+        XCTAssertNil(response?.transportSessionError)
+        
+        XCTAssertEqual(response?.httpStatus, 412)
+        let expectedResponsePayload = [
+            "missing": [
+                selfUser.identifier: [secondSelfClient.identifier],
+                otherUser.identifier: [secondOtherUserClient.identifier]
+            ],
+            "deleted": [
+                otherUser.identifier: [redundantClient.identifier]
+            ]
+        ]
+        
+        if let response = response {
+            assertExpectedPayload(expectedResponsePayload, in: response)
+        }
+
+        XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationsCount)
+    }
+
+    func testThatItCreatesPushEventsWhenReceivingOTRMessageWithoutMissedClients_Protobuf() {
+        // GIVEN
+        var selfClient: MockUserClient!
+        var secondSelfClient: MockUserClient!
+        
+        var otherUser: MockUser!
+        var otherUserClient: MockUserClient!
+        var secondOtherUserClient: MockUserClient!
+        var conversation: MockConversation!
+        
+        sut.performRemoteChanges { session in
+            session.registerClient(for: self.selfUser, label: "self user", type: "permanent", deviceClass: "phone")
+                       
+            otherUser = session.insertUser(withName: "bar")
+            conversation = session.insertConversation(withCreator: self.selfUser, otherUsers: [otherUser!], type: .oneOnOne)
+            
+            selfClient = self.selfUser.clients.anyObject() as? MockUserClient
+            secondSelfClient = session.registerClient(for: self.selfUser, label: "self2", type: "permanent", deviceClass: "phone")
+            
+            otherUserClient = otherUser.clients.anyObject() as? MockUserClient
+            secondOtherUserClient = session.registerClient(for: otherUser, label: "other2", type: "permanent", deviceClass: "phone")
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        let previousNotificationCount = sut.generatedPushEvents.count
+        
+        let data = "foobar".data(using: .utf8)!
+        let message = selfClient.newOtrMessageWithRecipients(for: [secondSelfClient, otherUserClient, secondOtherUserClient], plainText: data)
+        let messageData = try? message.serializedData()
+        
+        // WHEN
+        let requestPath = "/conversations/\(conversation.identifier)/otr/messages"
+        let response = self.response(forProtobufData: messageData, path: requestPath, method: .methodPOST)
+        
+        // THEN
+        XCTAssertNotNil(response)
+        XCTAssertNil(response?.transportSessionError)
+        
+        XCTAssertEqual(response?.httpStatus, 201)
+        
+        let expectedResponsePayload = [
+            "missing": [:],
+            "redundant": [:]
+        ]
+       
+       if let response = response {
+            assertExpectedPayload(expectedResponsePayload, in: response)
+        }
+
+        XCTAssertEqual(sut.generatedPushEvents.count, previousNotificationCount + 3)
+        if sut.generatedPushEvents.count > 4 {
+            let otrEvents = sut.generatedPushEvents.subarray(with: NSRange(location: sut.generatedPushEvents.count-3, length: 3)) as! [MockPushEvent]
+            
+            for event in otrEvents {
+                let eventPayload = event.payload.asDictionary()
+                XCTAssertEqual(eventPayload?["type"] as? String, "conversation.otr-message-add")
+            }
+        }
+    }
 }

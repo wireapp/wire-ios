@@ -159,55 +159,6 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:statusCode transportSessionError:nil];
 }
 
-- (ZMTransportResponse *)processAddOTRMessageToConversation:(NSString *)conversationID
-                                          withProtobuffData:(NSData *)binaryData
-                                                      query:(NSDictionary *)query;
-{
-    NSAssert(self.selfUser != nil, @"No self user in mock transport session");
-    
-    MockConversation *conversation = [self fetchConversationWithIdentifier:conversationID];
-    if (conversation == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    ZMNewOtrMessage *otrMetaData = (ZMNewOtrMessage *)[[[ZMNewOtrMessage builder] mergeFromData:binaryData] build];
-    if (otrMetaData == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    MockUserClient *senderClient = [self otrMessageSenderFromClientId:otrMetaData.sender];
-    if (senderClient == nil) {
-        return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
-    }
-    
-    NSString *onlyForUser = query[@"report_missing"];
-    
-    if (otrMetaData.reportMissing.count > 0) {
-        const void * uuidBytes = otrMetaData.reportMissing.firstObject.uuid.bytes;
-        onlyForUser = [[[NSUUID alloc] initWithUUIDBytes:uuidBytes] transportString];
-    }
-    
-    NSDictionary *missedClients = [self missedClientsFromRecipients:otrMetaData.recipients conversation:conversation sender:senderClient onlyForUserId:onlyForUser];
-    NSDictionary *deletedClients = [self deletedClientsFromRecipients:otrMetaData.recipients conversation:conversation];
-    
-    NSDictionary *payload = @{@"missing": missedClients, @"deleted": deletedClients, @"time": [NSDate date].transportString};
-    
-    NSInteger statusCode = 412;
-    if (missedClients.count == 0) {
-        statusCode = 201;
-        [self insertOTRMessageEventsToConversation:conversation
-                                 requestRecipients:otrMetaData.recipients
-                                      senderClient:senderClient
-                                  createEventBlock:^MockEvent *(MockUserClient *recipient, NSData *messageData, NSData *decryptedData) {
-                                      MockEvent* event = [conversation insertOTRMessageFromClient:senderClient toClient:recipient data:messageData];
-                                      event.decryptedOTRData = decryptedData;
-                                      return event;
-        }];
-    }
-    
-    return [ZMTransportResponse responseWithPayload:payload HTTPStatus:statusCode transportSessionError:nil];
-}
-
 - (ZMTransportResponse *)processPutConversation:(NSString *)conversationId payload:(NSDictionary *)payload;
 {
     MockConversation *conversation = [self conversationByIdentifier:conversationId];
