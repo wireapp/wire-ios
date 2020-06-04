@@ -40,4 +40,12 @@ extension MockTransportSessionTests {
         return response
     }
     
+    func assertExpectedPayload(_ expectedPayload: [String : Any], in response:  ZMTransportResponse, file: StaticString = #file, line: UInt = #line) {
+        let keys = Array<String>(expectedPayload.keys)
+        
+        for key in keys {
+            let payload = response.payload?.asDictionary()?[key] as? [String: Any] ?? [:]
+            XCTAssertTrue(NSDictionary(dictionary: payload).isEqual(to: expectedPayload[key]! as! [String : Any]), "\(key) clients: \n\(payload)\n doesn't match expected payload:\n \(expectedPayload)", file: file, line: line)
+        }
+    }
 }

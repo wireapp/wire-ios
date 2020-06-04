@@ -21,13 +21,6 @@
 
 @import WireProtos;
 
-@protocol OtrMessage <NSObject>
-
-- (ZMClientId *)sender;
-
-@end
-
-
 @interface MockTransportSession (OTR)
 
 - (MockUserClient *)otrMessageSender:(NSDictionary *)payload;
@@ -50,34 +43,8 @@
 /// @param recipients list of intender recipients
 - (NSDictionary *)deletedClients:(NSDictionary *)recipients;
 
-- (MockUserClient *)otrMessageSenderFromClientId:(ZMClientId *)sender;
-
-/// Returns a list of missing clients in the conversation that were not included in the list of intendend recipients
-/// @param recipients list of intender recipients
-/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
-- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
-
-/// Returns a list of missing clients for broascasting that were not included in the list of intendend recipients
-/// @param recipients list of intender recipients
-/// @param onlyForUserId if not nil, only return missing recipients matching this user ID
-- (NSDictionary *)missedClientsFromRecipients:(NSArray *)recipients sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId;
-
-/// Returns a list of deleted clients in the conversation that were included in the list of intendend recipients
-/// @param recipients list of intender recipients
-- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients conversation:(MockConversation *)conversation;
-
-/// Returns a list of deleted clients for broascasting that were included in the list of intendend recipients
-/// @param recipients list of intender recipients
-- (NSDictionary *)deletedClientsFromRecipients:(NSArray *)recipients;
-
-
 - (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
                               requestPayload:(NSDictionary *)requestPayload
                             createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData))createEventBlock;
-
-- (void)insertOTRMessageEventsToConversation:(MockConversation *)conversation
-                           requestRecipients:(NSArray *)recipients
-                                senderClient:(MockUserClient *)sender
-                            createEventBlock:(MockEvent *(^)(MockUserClient *recipient, NSData *messageData, NSData *decryptedData))createEventBlock;
 
 @end

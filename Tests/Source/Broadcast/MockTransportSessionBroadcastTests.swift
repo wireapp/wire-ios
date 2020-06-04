@@ -21,14 +21,6 @@ import XCTest
 
 class MockTransportSessionBroadcastTests: MockTransportSessionTests {
     
-    func assertExpectedPayload(_ payload : [String : Any], in response:  ZMTransportResponse, file: StaticString = #file, line: UInt = #line) {
-        let missing = response.payload!.asDictionary()!["missing"] as! [String : Any]
-        let deleted = response.payload!.asDictionary()!["deleted"] as! [String : Any]
-        
-        XCTAssertTrue(NSDictionary(dictionary: missing).isEqual(to: payload["missing"]! as! [String : Any]), "missing clients: \n\(missing)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
-        XCTAssertTrue(NSDictionary(dictionary: deleted).isEqual(to: payload["deleted"]! as! [String : Any]), "deleted clients: \n\(deleted)\n doesn't match expected payload:\n \(payload)", file: file, line: line)
-    }
-    
     func testThatItReturnsMissingConnectedUsersWhenReceivingOTRMessage() {
         // given
         var selfUser : MockUser!
@@ -66,7 +58,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                       otherUserRedundantClient.identifier!: base64Content] ]
         ]
         
-        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: messageData).build().data()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient, otherUserRedundantClient], plainText: messageData).serializedData()
 
         sut.performRemoteChanges { session in
             otherUserRedundantClient.user = nil
@@ -119,7 +111,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             "recipients": [:]
         ]
 
-        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [], plainText: messageData).build().data()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [], plainText: messageData).serializedData()
 
         // when
         let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
@@ -169,7 +161,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             "recipients": [ otherUser.identifier : [ otherUserClient.identifier!: base64Content] ]
         ]
 
-        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient], plainText: messageData).build().data()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 
         // when
         let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
@@ -219,7 +211,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
             "sender": selfClient.identifier!,
             "recipients": [ otherUser.identifier : [ otherUserClient.identifier!: base64Content] ]
         ]
-        let protoPayload = selfClient.otrMessageBuilderWithRecipients(for: [otherUserClient], plainText: messageData).build().data()
+        let protoPayload = try? selfClient.newOtrMessageWithRecipients(for: [otherUserClient], plainText: messageData).serializedData()
 
         // when
         let responseJSON = self.response(forPayload: payload as ZMTransportData, path: "/broadcast/otr/messages", method: .methodPOST)
@@ -233,7 +225,7 @@ class MockTransportSessionBroadcastTests: MockTransportSessionTests {
                 XCTAssertEqual(response.httpStatus, 201)
 
                 let expectedPayload = [
-                    "missing"  : [:],
+                    "missing" : [:],
                     "deleted" : [:]
                 ]
 

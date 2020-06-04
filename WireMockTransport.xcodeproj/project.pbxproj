@@ -65,6 +65,8 @@
 		54C9023F1B7532DD007162A8 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54C902331B7532DD007162A8 /* WireMockTransport.framework */; };
 		54FAE6821E3A025500E6DE42 /* MockTransportSessionObjectCreationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */; };
 		5502C6EE22B8EC31000684B7 /* MockPendingLegalHoldClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5502C6ED22B8EC31000684B7 /* MockPendingLegalHoldClient.swift */; };
+		63128BB3247C014300673D18 /* MockTransportSession+OTR.swift in Sources */ = {isa = PBXBuildFile; fileRef = 63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */; };
+		6348BCBA247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6348BCB9247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift */; };
 		7C52BFF72033225500297DDA /* MockReachability.h in Headers */ = {isa = PBXBuildFile; fileRef = 7C52BFF52033225500297DDA /* MockReachability.h */; };
 		7C52BFF82033225500297DDA /* MockReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C52BFF62033225500297DDA /* MockReachability.m */; };
 		872A2EE01FFE761B00900B22 /* MockService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872A2EDF1FFE761B00900B22 /* MockService.swift */; };
@@ -242,6 +244,8 @@
 		54C902641B7532F6007162A8 /* WireMockTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireMockTransport.xcconfig; sourceTree = "<group>"; };
 		54FAE6801E3A01F000E6DE42 /* MockTransportSessionObjectCreationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionObjectCreationTests.swift; sourceTree = "<group>"; };
 		5502C6ED22B8EC31000684B7 /* MockPendingLegalHoldClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockPendingLegalHoldClient.swift; sourceTree = "<group>"; };
+		63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+OTR.swift"; sourceTree = "<group>"; };
+		6348BCB9247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MockTransportSession+Broadcast.swift"; sourceTree = "<group>"; };
 		7C52BFF52033225500297DDA /* MockReachability.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = MockReachability.h; sourceTree = "<group>"; };
 		7C52BFF62033225500297DDA /* MockReachability.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MockReachability.m; sourceTree = "<group>"; };
 		872A2EDF1FFE761B00900B22 /* MockService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockService.swift; sourceTree = "<group>"; };
@@ -698,6 +702,7 @@
 			children = (
 				09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */,
 				09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */,
+				63128BB2247C014300673D18 /* MockTransportSession+OTR.swift */,
 				09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */,
 				09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */,
 				547AC6351E377B5A001458FD /* MockUserClient.swift */,
@@ -714,6 +719,7 @@
 			children = (
 				163EB0CC1FD1A658005B8D8D /* MockTransportSession+Broadcast.h */,
 				163EB0CD1FD1A658005B8D8D /* MockTransportSession+Broadcast.m */,
+				6348BCB9247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift */,
 			);
 			path = Broadcast;
 			sourceTree = "<group>";
@@ -908,6 +914,7 @@
 				163EB0CF1FD1A658005B8D8D /* MockTransportSession+Broadcast.m in Sources */,
 				54AE5A821B78FA43002757E9 /* MockConversation.m in Sources */,
 				0641A8C6239A581A00B24621 /* MockRole.swift in Sources */,
+				6348BCBA247BFC54008BF9B5 /* MockTransportSession+Broadcast.swift in Sources */,
 				54AE5A7E1B78FA43002757E9 /* MockTransportSession.m in Sources */,
 				54AE5A721B78FA43002757E9 /* MockTransportSession+assets.m in Sources */,
 				547AC6381E37811C001458FD /* String+Random.swift in Sources */,
@@ -919,6 +926,7 @@
 				5425EF061E1E3579006D7A01 /* MockTransportSession+notifications.m in Sources */,
 				54AE5A861B78FA43002757E9 /* MockTransportSession.xcdatamodeld in Sources */,
 				0641A8C4239A56E900B24621 /* MockAction.swift in Sources */,
+				63128BB3247C014300673D18 /* MockTransportSession+OTR.swift in Sources */,
 				54AE5A811B78FA43002757E9 /* MockConnection.m in Sources */,
 				06392CFB23C36D30003186E6 /* MockParticipantRole.swift in Sources */,
 				872A2EE01FFE761B00900B22 /* MockService.swift in Sources */,
