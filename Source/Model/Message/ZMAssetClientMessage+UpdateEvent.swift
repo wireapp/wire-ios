@@ -20,9 +20,31 @@ import Foundation
 
 extension ZMAssetClientMessage {
     override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = ZMGenericMessage(from: updateEvent) else {
+        guard let message = GenericMessage(from: updateEvent) else {
             return
         }
-        update(with: message, updateEvent: updateEvent, initialUpdate: initialUpdate)
+
+        add(message)
+        version = 3 // We assume received assets are V3 since backend no longer supports sending V2 assets.
+        
+        guard
+            let assetData = message.assetData,
+            let status = assetData.status
+        else {
+            return
+        }
+        
+        switch status {
+        case .uploaded(let data) where data.hasAssetID:
+            updateTransferState(.uploaded, synchronize: false)
+        case .notUploaded where transferState != .uploaded:
+            switch assetData.notUploaded {
+            case .cancelled:
+                managedObjectContext?.delete(self)
+            case .failed:
+                updateTransferState(.uploadingFailed, synchronize: false)
+            }
+        default: break
+        }
     }
 }

@@ -19,21 +19,7 @@
 import Foundation
 import WireProtos
 
-public protocol MessageCapable {
-    func setContent(on message: inout GenericMessage)
-    var expectsReadConfirmation: Bool { get set }
-    var legalHoldStatus: LegalHoldStatus { get }
-}
-
-public protocol EphemeralMessageCapable: MessageCapable {
-    func setEphemeralContent(on ephemeral: inout Ephemeral)
-}
-
-extension MessageCapable {
-    var defaultLegalHoldStatus: LegalHoldStatus {
-        return .unknown
-    }
-}
+// MARK: - GenericMessage
 
 public extension GenericMessage {
     init?(withBase64String base64String: String?) {
@@ -50,7 +36,7 @@ public extension GenericMessage {
             $0.messageID = nonce.transportString()
             let messageContent: MessageCapable
             if let timeout = timeout, timeout > 0 {
-                messageContent = Ephemeral.ephemeral(content: content, expiresAfter: timeout)
+                messageContent = Ephemeral(content: content, expiresAfter: timeout)
             } else {
                 messageContent = content
             }
@@ -74,14 +60,53 @@ public extension GenericMessage {
     }
 }
 
-public extension GenericMessage {
-    var zmMessage: ZMGenericMessage? {
-        let data = try? serializedData()
-        return ZMGenericMessage.message(fromData: data)
-    }
-}
-
 extension GenericMessage {
+    public var messageData: MessageCapable? {
+        guard let content = content else { return nil }
+        switch content {
+        case .text(let data):
+            return data
+        case .confirmation(let data):
+            return data
+        case .reaction(let data):
+            return data
+        case .asset(let data):
+            return data
+        case .ephemeral(let data):
+            return data.messageData
+        case .clientAction(let data):
+            return data
+        case .cleared(let data):
+            return data
+        case .lastRead(let data):
+            return data
+        case .knock(let data):
+            return data
+        case .external(let data):
+            return data
+        case .availability(let data):
+            return data
+        case .edited(let data):
+            return data
+        case .deleted(let data):
+            return data
+        case .calling(let data):
+            return data
+        case .hidden(let data):
+            return data
+        case .location(let data):
+            return data
+        case .image(let data):
+            return data
+        case .composite(let data):
+            return data
+        case .buttonAction(let data):
+            return data
+        case .buttonActionConfirmation(let data):
+            return data
+        }
+    }
+    
     var locationData: Location? {
         guard let content = content else { return nil }
         switch content {
@@ -99,7 +124,7 @@ extension GenericMessage {
         }        
     }
     
-    public var imageAssetData : ImageAsset? {
+    public var imageAssetData: ImageAsset? {
         guard let content = content else { return nil }
         switch content {
         case .image(let data):
@@ -133,7 +158,7 @@ extension GenericMessage {
         }
     }
     
-    public var knockData : Knock? {
+    public var knockData: Knock? {
         guard let content = content else { return nil }
         switch content {
         case .knock(let data):
@@ -150,7 +175,7 @@ extension GenericMessage {
         }
     }
     
-    var textData: Text? {
+    public var textData: Text? {
         guard let content = content else { return nil }
         switch content {
         case .text(let data):
@@ -170,8 +195,37 @@ extension GenericMessage {
     }
 }
 
+
 extension GenericMessage {
-    var linkPreviews: [LinkPreview] {
+    var v3_isImage: Bool {
+        return assetData?.original.hasRasterImage ?? false
+    }
+    
+    var v3_uploadedAssetId: String? {
+        guard
+            let assetData = assetData,
+            case .uploaded? = assetData.status
+        else {
+            return nil
+        }
+        return assetData.uploaded.assetID
+    }
+    
+    public var previewAssetId: String? {
+        guard
+            let assetData = assetData,
+            assetData.hasPreview,
+            assetData.preview.hasRemote,
+            assetData.preview.remote.hasAssetID
+        else {
+            return nil
+        }
+        return assetData.preview.remote.assetID
+    }
+}
+
+extension GenericMessage {
+    public var linkPreviews: [LinkPreview] {
         guard let content = content else { return [] }
         switch content {
         case .text:
@@ -190,101 +244,34 @@ extension GenericMessage {
     }
 }
 
-extension Ephemeral: MessageCapable {
-    public var expectsReadConfirmation: Bool {
-        get {
-            guard let content = content else { return false }
-            switch content {
-            case let .text(value):
-                return value.expectsReadConfirmation
-            case .image:
-                return false
-            case let .knock(value):
-                return value.expectsReadConfirmation
-            case let .asset(value):
-                return value.expectsReadConfirmation
-            case let .location(value):
-                return value.expectsReadConfirmation
-            }
-        }
-        set {
-            guard let content = content else { return }
-            switch content {
-            case .text:
-                text.expectsReadConfirmation = newValue
-            case .image:
-                break
-            case .knock:
-                knock.expectsReadConfirmation = newValue
-            case .asset:
-                knock.expectsReadConfirmation = newValue
-            case .location:
-                location.expectsReadConfirmation = newValue
-            }
-        }
-    }
-    
-    public static func ephemeral(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) -> Ephemeral {
-        return Ephemeral.with() { 
+// MARK: - Ephemeral
+
+extension Ephemeral {
+    public init(content: EphemeralMessageCapable, expiresAfter timeout: TimeInterval) {
+        self = Ephemeral.with() {
             $0.expireAfterMillis = Int64(timeout * 1000)
             content.setEphemeralContent(on: &$0)
         }
     }
     
-    public func setContent(on message: inout GenericMessage) {
-        message.ephemeral = self
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        get {
-            guard let content = content else { return defaultLegalHoldStatus }
-            switch content {
-            case let .text(value):
-                return value.legalHoldStatus
-            case .image:
-                return defaultLegalHoldStatus
-            case let .knock(value):
-                return value.legalHoldStatus
-            case let .asset(value):
-                return value.legalHoldStatus
-            case let .location(value):
-                return value.legalHoldStatus
-            }
-        }
-    }
-    
-    public mutating func updateLegalHoldStatus(_ status: LegalHoldStatus) {
-        guard let content = content else { return }
+    public var messageData: MessageCapable? {
+        guard let content = content else { return nil }
         switch content {
-        case .text:
-            self.text.legalHoldStatus = status
-        case .image:
-            break
-        case .knock:
-            self.knock.legalHoldStatus = status
-        case .asset:
-            self.asset.legalHoldStatus = status
-        case .location:
-            self.location.legalHoldStatus = status
-        }
-    }
-    
-    public mutating func updateExpectsReadConfirmation(_ value: Bool) {
-        guard let content = content else { return }
-        switch content {
-        case .text:
-            self.text.expectsReadConfirmation = value
-        case .image:
-            break
-        case .knock:
-            self.knock.expectsReadConfirmation = value
-        case .asset:
-            self.asset.expectsReadConfirmation = value
-        case .location:
-            self.location.expectsReadConfirmation = value
+        case .text(let data):
+            return data
+        case .asset(let data):
+            return data
+        case .knock(let data):
+            return data
+        case .location(let data):
+            return data
+        case .image(let data):
+            return data
         }
     }
 }
+
+// MARK: - ClientEntry
 
 public extension ClientEntry {
     init(withClient client: UserClient, data: Data) {
@@ -295,6 +282,8 @@ public extension ClientEntry {
     }
 }
 
+// MARK: - UserEntry
+
 public extension UserEntry {
     init(withUser user: ZMUser, clientEntries: [ClientEntry]) {
         self = UserEntry.with {
@@ -303,6 +292,8 @@ public extension UserEntry {
         }
     }
 }
+
+// MARK: - NewOtrMessage
 
 public extension NewOtrMessage {
     init(withSender sender: UserClient, nativePush: Bool, recipients: [UserEntry], blob: Data? = nil) {
@@ -317,57 +308,31 @@ public extension NewOtrMessage {
     }
 }
 
-extension ButtonAction: MessageCapable {
+// MARK: - ButtonAction
+
+extension ButtonAction {
     init(buttonId: String, referenceMessageId: UUID) {
         self = ButtonAction.with {
             $0.buttonID = buttonId
             $0.referenceMessageID = referenceMessageId.transportString()
         }
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.buttonAction = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get { return false }
-        set { }
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
-    }
 }
 
-extension Location: EphemeralMessageCapable {
+// MARK: - Location
+
+extension Location {
     init(latitude: Float, longitude: Float) {
-        self = WireProtos.Location.with({
+        self = WireProtos.Location.with {
             $0.latitude = latitude
             $0.longitude = longitude
-        })
-    }
-
-    public func setEphemeralContent(on ephemeral: inout Ephemeral) {
-        ephemeral.location = self
-    }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.location = self
+        }
     }
 }
 
-extension Knock: EphemeralMessageCapable {
-    public func setEphemeralContent(on ephemeral: inout Ephemeral) {
-        ephemeral.knock = self
-    }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.knock = self
-    }
-}
+// MARK: - Text
 
-extension Text: EphemeralMessageCapable {
-    
+extension Text {
     public init(content: String, mentions: [Mention] = [], linkPreviews: [LinkMetadata] = [], replyingTo: ZMOTRMessage? = nil) {
         self = Text.with {
             $0.content = content
@@ -377,176 +342,120 @@ extension Text: EphemeralMessageCapable {
             if let quotedMessage = replyingTo,
                let quotedMessageNonce = quotedMessage.nonce,
                let quotedMessageHash = quotedMessage.hashOfContent {
-                $0.quote = Quote.with({
+                $0.quote = Quote.with {
                     $0.quotedMessageID = quotedMessageNonce.transportString()
                     $0.quotedMessageSha256 = quotedMessageHash
-                })
+                }
             }
         }
     }
     
-    public func setEphemeralContent(on ephemeral: inout Ephemeral) {
-        ephemeral.text = self
+    public func applyEdit(from text: Text) -> Text {
+        var updatedText = text
+        // Transfer read receipt expectation
+        updatedText.expectsReadConfirmation = expectsReadConfirmation
+        
+        // We always keep the quote from the original message
+        hasQuote
+            ? updatedText.quote = quote
+            : updatedText.clearQuote()
+        return updatedText
     }
     
-    public func setContent(on message: inout GenericMessage) {
-        message.text = self
+    public func updateLinkPreview(from text: Text) -> Text {
+        guard !text.linkPreview.isEmpty else {
+            return self
+        }
+        do {
+            let data = try serializedData()
+            var updatedText = try Text(serializedData: data)
+            updatedText.linkPreview = text.linkPreview
+            return updatedText
+        } catch {
+            return self
+        }
     }
 }
 
-extension WireProtos.Reaction: MessageCapable {
-    
-    init(emoji: String, messageID: UUID) {
+// MARK: - Reaction
+
+extension WireProtos.Reaction {
+    public init(emoji: String, messageID: UUID) {
         self = WireProtos.Reaction.with({
             $0.emoji = emoji
             $0.messageID = messageID.transportString()
         })
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.reaction = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
-        }
-        set {}
-    }
 }
 
-extension LastRead: MessageCapable {
-    
-    init(conversationID: UUID, lastReadTimestamp: Date) {
+// MARK: - LastRead
+
+extension LastRead {
+    public init(conversationID: UUID, lastReadTimestamp: Date) {
         self = LastRead.with {
             $0.conversationID = conversationID.transportString()
             $0.lastReadTimestamp = Int64(lastReadTimestamp.timeIntervalSince1970 * 1000)
         }
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.lastRead = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
-        }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
-    }
 }
 
-extension Calling: MessageCapable {
-    
+// MARK: - Calling
+
+extension Calling {
     public init(content: String) {
         self = Calling.with {
             $0.content = content
         }
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.calling = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
-        }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
-    }
 }
 
-extension WireProtos.MessageEdit: MessageCapable {
-    
+// MARK: - MessageEdit
+
+extension WireProtos.MessageEdit {
     public init(replacingMessageID: UUID, text: Text) {
         self = MessageEdit.with {
             $0.replacingMessageID = replacingMessageID.transportString()
             $0.text = text
         }
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.edited = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
+}
+
+// MARK: - Cleared
+
+extension Cleared {
+    public init(timestamp: Date, conversationID: UUID) {
+        self = Cleared.with {
+            $0.clearedTimestamp = Int64(timestamp.timeIntervalSince1970 * 1000)
+            $0.conversationID = conversationID.transportString()
         }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
     }
 }
 
-extension Cleared: MessageCapable {
-    public func setContent(on message: inout GenericMessage) {
-        message.cleared = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get { return false }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
+// MARK: - MessageHide
+
+extension MessageHide {
+    public init(conversationId: UUID, messageId: UUID) {
+        self = MessageHide.with {
+            $0.conversationID = conversationId.transportString()
+            $0.messageID = messageId.transportString()
+        }
     }
 }
 
-extension MessageHide: MessageCapable {
-    public func setContent(on message: inout GenericMessage) {
-        message.hidden = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get { return false }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
+// MARK: - MessageDelete
+
+extension MessageDelete {
+    public init(messageId: UUID) {
+        self = MessageDelete.with {
+         $0.messageID = messageId.transportString()
+        }
     }
 }
 
-extension MessageDelete: MessageCapable {
-    public func setContent(on message: inout GenericMessage) {
-        message.deleted = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get { return false }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
-    }
-}
+// MARK: - Confirmation
 
-extension WireProtos.Asset: EphemeralMessageCapable {
-    public func setEphemeralContent(on ephemeral: inout Ephemeral) {
-        ephemeral.asset = self
-    }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.asset = self
-    }
-}
-
-extension WireProtos.Confirmation: MessageCapable {
-    
-    init?(messageIds: [UUID], type: Confirmation.TypeEnum) {
+extension WireProtos.Confirmation {
+    public init?(messageIds: [UUID], type: Confirmation.TypeEnum = .delivered) {
         guard let firstMessageID = messageIds.first else {
             return nil
         }
@@ -558,23 +467,17 @@ extension WireProtos.Confirmation: MessageCapable {
         })
     }
     
-    public func setContent(on message: inout GenericMessage) {
-        message.confirmation = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get {
-            return false
+    public init(messageId: UUID, type: Confirmation.TypeEnum = .delivered) {
+        self = WireProtos.Confirmation.with {
+            $0.firstMessageID = messageId.transportString()
+            $0.type = type
         }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
     }
 }
 
-extension External: MessageCapable {
+// MARK: - External
+
+extension External {
     init(withOTRKey otrKey: Data, sha256: Data) {
         self = External.with {
             $0.otrKey = otrKey
@@ -585,23 +488,11 @@ extension External: MessageCapable {
     init(withKeyWithChecksum key: ZMEncryptionKeyWithChecksum) {
         self = External(withOTRKey: key.aesKey, sha256: key.sha256)
     }
-    
-    public func setContent(on message: inout GenericMessage) {
-        message.external = self
-    }
-    
-    public var expectsReadConfirmation: Bool {
-        get { return false }
-        set {}
-    }
-    
-    public var legalHoldStatus: LegalHoldStatus {
-        return defaultLegalHoldStatus
-    }
 }
 
-extension WireProtos.Mention {
-    
+// MARK: - Mention
+
+public extension WireProtos.Mention {
     init?(_ mention: WireDataModel.Mention) {
         guard let userID = (mention.user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
         
@@ -613,8 +504,28 @@ extension WireProtos.Mention {
     }
 }
 
-public extension LinkPreview {
+// MARK: - Availability
 
+extension WireProtos.Availability {
+    public init(_ availability: Availability) {
+        self = WireProtos.Availability.with {
+            switch availability {
+            case .none:
+                $0.type = .none
+            case .available:
+                $0.type = .available
+            case .away:
+                $0.type = .away
+            case .busy:
+                $0.type = .busy
+            }
+        }
+    }
+}
+
+// MARK: - LinkPreview
+
+public extension LinkPreview {
     init(_ linkMetadata: LinkMetadata) {
         if let articleMetadata = linkMetadata as? ArticleMetadata {
             self = LinkPreview(articleMetadata: articleMetadata)
@@ -661,116 +572,77 @@ public extension LinkPreview {
             })
         }
     }
+    
+    init(withOriginalURL originalURL: String,
+         permanentURL: String,
+         offset: Int32,
+         title: String?,
+         summary: String?,
+         imageAsset: WireProtos.Asset?,
+         article: Article? = nil,
+         tweet: Tweet? = nil) {
+        self = LinkPreview.with {
+            $0.url = originalURL
+            $0.permanentURL = permanentURL
+            $0.urlOffset = offset
+            
+            if let title = title {
+                $0.title = title
+            }
+            if let summary = summary {
+                $0.summary = summary
+            }
+            if let image = imageAsset {
+                $0.image = image
+            }
+            if let tweet = tweet {
+                $0.tweet = tweet
+            }
+            if let article = article {
+                $0.article = article
+            }
+        }
+    }
+    
+    mutating func update(withOtrKey otrKey: Data, sha256: Data, original: WireProtos.Asset.Original?) {
+        image.uploaded = WireProtos.Asset.RemoteData(withOTRKey: otrKey, sha256: sha256)
+        if let original = original {
+            image.original = original
+        }
+    }
+    
+    mutating func update(withAssetKey assetKey: String, assetToken: String?) {
+        image.uploaded.assetID = assetKey
+        image.uploaded.assetToken = assetToken ?? ""
+    }
+    
+    var hasTweet: Bool {
+        switch metaData {
+        case .tweet:
+            return true
+        default:
+            return false
+        }
+    }
 }
 
-// MARK:- Update assets
-
-extension GenericMessage {
-    
-    public mutating func updatedPreview(withAssetId assetId: String, token: String?) {
-        guard let content = content else { return }
-        switch content {
-        case .asset:
-            self.asset.preview.remote.assetID = assetId
-            if let token = token {
-                self.asset.preview.remote.assetToken = token
+public extension Tweet {
+    init(author: String?, username: String?) {
+        self = Tweet.with {
+            if let author = author {
+                $0.author = author
             }
-        case .ephemeral(let data):
-            switch data.content {
-            case .asset?:
-                self.ephemeral.asset.preview.remote.assetID = assetId
-                if let token = token {
-                    self.ephemeral.asset.preview.remote.assetToken = token
-                }
-            default:
-                return
+            if let username = username {
+                $0.username = username
             }
-        default:
-            return
         }
     }
-    
-    public mutating func updatedUploaded(withAssetId assetId: String, token: String?) {
-        guard let content = content else { return }
-        switch content {
-        case .asset:
-            self.asset.uploaded.assetID = assetId
-            if let token = token {
-                self.asset.uploaded.assetToken = token
-            }
-        case .ephemeral(let data):
-            switch data.content {
-            case .asset?:
-                self.ephemeral.asset.uploaded.assetID = assetId
-                if let token = token {
-                    self.ephemeral.asset.uploaded.assetToken = token
-                }
-            default:
-                return
-            }
-        default:
-            return
-        }
-    }
-    
-    public mutating func update(asset: WireProtos.Asset) {
-        guard let content = content else { return }
-        switch content {
-        case .asset:
-            self.asset = asset
-        case .ephemeral(let data):
-            switch data.content {
-            case .asset?:
-                self.ephemeral.asset = asset
-            default:
-                return
-            }
-        default:
-            return
-        }
-    }
-
 }
 
-// MARK:- Set message flags
+// MARK: - ImageAsset
 
-extension GenericMessage {
-    
-    public mutating func setLegalHoldStatus(_ status: LegalHoldStatus) {
-        guard let content = content else { return }
-        switch content {
-        case .ephemeral:
-            self.ephemeral.updateLegalHoldStatus(status)
-        case .reaction:
-            self.reaction.legalHoldStatus = status
-        case .knock:
-            self.knock.legalHoldStatus = status
-        case .text:
-            self.text.legalHoldStatus = status
-        case .location:
-            self.location.legalHoldStatus = status
-        case .asset:
-            self.asset.legalHoldStatus = status
-        default:
-            return
-        }
-    }
-    
-    public mutating func setExpectsReadConfirmation(_ value: Bool) {
-        guard let content = content else { return }
-        switch content {
-        case .ephemeral:
-            self.ephemeral.updateExpectsReadConfirmation(value)
-        case .knock:
-            self.knock.expectsReadConfirmation = value
-        case .text:
-            self.text.expectsReadConfirmation = value
-        case .location:
-            self.location.expectsReadConfirmation = value
-        case .asset:
-            self.asset.expectsReadConfirmation = value
-        default:
-            return
-        }
+extension ImageAsset {
+    public func imageFormat() -> ZMImageFormat {
+        return ImageFormatFromString(self.tag)
     }
 }

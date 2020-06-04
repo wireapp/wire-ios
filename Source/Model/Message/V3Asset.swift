@@ -70,7 +70,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     fileprivate let moc: NSManagedObjectContext
 
     fileprivate var isImage: Bool {
-        return assetClientMessage.genericAssetMessage?.v3_isImage ?? false
+        return assetClientMessage.underlyingMessage?.v3_isImage ?? false
     }
 
     public init?(with message: ZMAssetClientMessage) {
@@ -108,18 +108,20 @@ private let zmLog = ZMSLog(tag: "AssetV3")
     }
 
     public var isAnimatedGIF: Bool {
-        return assetClientMessage.genericAssetMessage?.assetData?.original.mimeType
-            .flatMap(UTType.init(mimeType:))?.isGIF == true
+        guard let mimeType = assetClientMessage.underlyingMessage?.assetData?.original.mimeType else {
+            return false
+        }
+        return UTType(mimeType: mimeType)?.isGIF == true
     }
 
     public var imageType: String? {
         guard isImage else { return nil }
-        return assetClientMessage.genericAssetMessage?.assetData?.original.mimeType
+        return assetClientMessage.underlyingMessage?.assetData?.original.mimeType
     }
 
     public var originalSize: CGSize {
         guard nil != assetClientMessage.fileMessageData, isImage else { return .zero }
-        guard let asset = assetClientMessage.genericAssetMessage?.assetData else { return .zero }
+        guard let asset = assetClientMessage.underlyingMessage?.assetData else { return .zero }
         let size = CGSize(width: Int(asset.original.image.width), height: Int(asset.original.image.height))
         
         if size != .zero {
@@ -167,7 +169,7 @@ extension V3Asset: AssetProxyType {
     }
 
     public func requestPreviewDownload() {
-        if assetClientMessage.genericAssetMessage?.assetData?.hasPreview() == true {
+        if assetClientMessage.underlyingMessage?.assetData?.hasPreview == true {
             guard !assetClientMessage.objectID.isTemporaryID else { return }
             NotificationInContext(name: ZMAssetClientMessage.imageDownloadNotificationName,
                                   context: self.moc.notificationContext,

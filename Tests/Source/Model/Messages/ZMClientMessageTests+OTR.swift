@@ -26,7 +26,7 @@ final class ClientMessageTests_OTR: BaseZMClientMessageTests {}
 extension ClientMessageTests_OTR {
 
     func testThatCreatesEncryptedDataAndAddsItToGenericMessageAsBlob() {
-        self.syncMOC.performGroupedBlockAndWait { 
+        self.syncMOC.performGroupedBlockAndWait {
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
             otherUser.remoteIdentifier = UUID.create()
             let firstClient = self.createClient(for: otherUser, createSessionWithSelfUser: true, onMOC: self.syncMOC)
@@ -35,13 +35,8 @@ extension ClientMessageTests_OTR {
             let selfClient = ZMUser.selfUser(in: self.syncMOC).selfClient()
             let notSelfClients = selfClients.filter { $0 != selfClient }
             
-            let nonce = UUID.create()
-            let builder = ZMGenericMessage.builder()!
-            let textBuilder = ZMText.builder()!
-            textBuilder.setContent(self.textMessageRequiringExternalMessage(2))
-            builder.setText(textBuilder.build()!)
-            builder.setMessageId(nonce.transportString())
-            let textMessage = builder.build()!
+            let nonce = UUID.create()            
+            let textMessage = GenericMessage(content: Text(content: self.textMessageRequiringExternalMessage(2)), nonce: nonce)
             
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
@@ -324,7 +319,7 @@ extension ClientMessageTests_OTR {
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = conversation.append(message: ZMConfirmation.confirm(messageId: textMessage.nonce!, type: .DELIVERED), hidden: true)
+            let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
             
             //when
             guard let payloadAndStrategy = confirmationMessage?.encryptedMessagePayloadData()
@@ -369,7 +364,7 @@ extension ClientMessageTests_OTR {
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = conversation.append(message: ZMConfirmation.confirm(messageId: textMessage.nonce!, type: .DELIVERED), hidden: true)
+            let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
             
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
@@ -389,14 +384,18 @@ extension ClientMessageTests_OTR {
             connection.status = .accepted
             conversation.connection = connection
             
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "yo"), nonce: UUID.create())
+            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            clientmessage.add(genericMessage.data())
+            do {
+                clientmessage.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
             clientmessage.visibleInConversation = conversation
             
             self.syncMOC.saveOrRollback()
             
-            let confirmationMessage = conversation.append(message: ZMConfirmation.confirm(messageId: clientmessage.nonce!, type: .DELIVERED), hidden: true)
+            let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
 
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()
@@ -412,14 +411,18 @@ extension ClientMessageTests_OTR {
             conversation.remoteIdentifier = UUID.create()
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
             
-            let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "yo"), nonce: UUID.create())
+            let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            clientmessage.add(genericMessage.data())
+            do {
+                clientmessage.add(try genericMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
             clientmessage.visibleInConversation = conversation
             
             self.syncMOC.saveOrRollback()
             
-            let confirmationMessage = conversation.append(message: ZMConfirmation.confirm(messageId: clientmessage.nonce!, type: .DELIVERED), hidden: true)
+            let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
 
             //when
             guard let _ = confirmationMessage?.encryptedMessagePayloadData()

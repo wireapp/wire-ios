@@ -45,28 +45,3 @@
 - (nonnull instancetype)initWithOtrKey:(nonnull NSData *)otrKey sha256:(nonnull NSData *)sha256;
 
 @end
-
-
-NS_ASSUME_NONNULL_BEGIN
-
-@interface ZMGenericMessage (Utils)
-
-- (BOOL)knownMessage;
-
-@end
-
-NS_ASSUME_NONNULL_END
-
-
-@interface ZMImageAsset (Internal)
-
-- (ZMImageFormat)imageFormat;
-+ (nonnull instancetype)imageAssetWithMediumProperties:(nullable ZMIImageProperties *)mediumFormatProperties
-                           processedProperties:(nullable ZMIImageProperties *)processedProperties
-                                encryptionKeys:(nullable ZMImageAssetEncryptionKeys *)encryptionKeys
-                                        format:(ZMImageFormat)format;
-+ (nullable instancetype)imageAssetWithData:(nullable NSData *)imageData format:(ZMImageFormat)format;
-
-@end
-
-

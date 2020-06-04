@@ -32,17 +32,13 @@ extern NSString * const DeliveredKey;
 @property (nonatomic, nullable) NSSet<ButtonState *> *buttonStates;
 @property (nonatomic) NSOrderedSet *dataSet;
 @property (nonatomic, readonly) NSSet *missingRecipients;
-@property (nonatomic, readonly, nullable) NSString *dataSetDebugInformation;
-@property (nonatomic, readonly, nullable) ZMGenericMessage *genericMessage;
+@property (nonatomic, readonly) BOOL isUpdatingExistingMessage;
 
 - (void)missesRecipient:(UserClient *)recipient;
 - (void)missesRecipients:(NSSet<UserClient *> *)recipients;
 - (void)doesNotMissRecipient:(UserClient *)recipient;
 - (void)doesNotMissRecipients:(NSSet<UserClient *> *)recipients;
 
-- (void)updateWithGenericMessage:(ZMGenericMessage * )message updateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
-
-// Temporary method needed to decouple from ZMGenericMessage
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)updateEvent initialUpdate:(BOOL)initialUpdate;
 
 + (instancetype _Nullable)createOrUpdateMessageFromUpdateEvent:(ZMUpdateEvent *)updateEvent

@@ -610,44 +610,44 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
     // MARK: - Message Status Hints
 
     func testThatItUpdatesFromMessageHint_EnabledToDisabled() {
-        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
-            ZMText.text(with: "Legal hold is coming to town!")
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .disabled, expectedStatus: .disabled, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
+            Text(content: "Legal hold is coming to town!")
         })
     }
 
     func testThatItUpdatesFromMessageHint_EnabledToDisabled_Ephemeral() {
-        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
-            ZMEphemeral.ephemeral(content: ZMText.text(with: "Legal hold is coming to town!"), expiresAfter: 60)
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .disabled, expectedStatus: .disabled, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
+            Ephemeral(content: Text(content: "Legal hold is coming to town!"), expiresAfter: 60)
         })
     }
 
     func testThatItUpdatesFromMessageHint_DisabledToEnabled() {
-        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: true,expectLegalHoldVerification: true, messageContent: {
-            ZMText.text(with: "🙈🙉🙊")
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .enabled, expectedStatus: .pendingApproval, expectSystemMessage: true,expectLegalHoldVerification: true, messageContent: {
+            Text(content: "🙈🙉🙊")
         })
     }
 
     func testThatItUpdatesFromMessageHint_DisabledToEnabled_Ephemeral() {
-        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
-            ZMEphemeral.ephemeral(content: ZMText.text(with: "🙈🙉🙊"), expiresAfter: 60)
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .enabled, expectedStatus: .pendingApproval, expectSystemMessage: true, expectLegalHoldVerification: true, messageContent: {
+            Ephemeral(content: Text(content: "🙈🙉🙊"), expiresAfter: 60)
         })
     }
 
     func testThatItDoesNotUpdateFromMessageHint_EnabledToEnabled() {
-        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .ENABLED, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
-            ZMText.text(with: "Hello? Can you hear me?")
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .enabled, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
+            Text(content: "Hello? Can you hear me?")
         })
     }
 
     func testThatItDoesNotUpdateFromMessageHint_DisabledToDisabled() {
-        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .DISABLED, expectedStatus: .disabled, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
-            ZMText.text(with: "Really not enabled.")
+        assertLegalHoldHintBehavior(initiallyEnabled: false, receivedStatus: .disabled, expectedStatus: .disabled, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
+            Text(content: "Really not enabled.")
         })
     }
 
     func testThatItDoesNotUpdateFromMessageHint_EnabledReceivingMessageWithUnknownLegalHoldStatus() {
-        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .UNKNOWN, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
-            ZMText.text(with: "I know nothing")
+        assertLegalHoldHintBehavior(initiallyEnabled: true, receivedStatus: .unknown, expectedStatus: .pendingApproval, expectSystemMessage: false, expectLegalHoldVerification: false, messageContent: {
+            Text(content: "I know nothing")
         })
     }
     
@@ -663,11 +663,11 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
     }
 
     private func assertLegalHoldHintBehavior(initiallyEnabled: Bool,
-                                             receivedStatus: ZMLegalHoldStatus,
+                                             receivedStatus: LegalHoldStatus,
                                              expectedStatus: ZMConversationLegalHoldStatus,
                                              expectSystemMessage: Bool,
                                              expectLegalHoldVerification: Bool,
-                                             messageContent: @escaping () -> MessageContentType, file: StaticString = #file, line: UInt = #line) {
+                                             messageContent: @escaping () -> MessageCapable, file: StaticString = #file, line: UInt = #line) {
         syncMOC.performGroupedBlock {
             let selfUser = ZMUser.selfUser(in: self.syncMOC)
             let otherUser = ZMUser.insertNewObject(in: self.syncMOC)
@@ -691,16 +691,17 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
 
             // WHEN
             let nonce = UUID()
-            var genericMessage = ZMGenericMessage.message(content: messageContent(), nonce: nonce)
-            genericMessage = genericMessage.setLegalHoldStatus(receivedStatus) ?? genericMessage
+            var genericMessage = GenericMessage(content: messageContent(), nonce: nonce)
+            genericMessage.setLegalHoldStatus(receivedStatus)
 
+            let genericMessageData = try? genericMessage.serializedData()
             let payload: [String: Any] = [
                 "conversation": conversation.remoteIdentifier!.transportString(),
                 "from": otherUser.remoteIdentifier!.transportString(),
                 "time": Date(),
                 "type": "conversation.otr-message-add",
                 "data": [
-                    "text": genericMessage.data()!.base64String(),
+                    "text": genericMessageData?.base64String(),
                 ]
             ]
 

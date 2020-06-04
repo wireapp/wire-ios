@@ -18,8 +18,30 @@
 
 import Foundation
 
-extension ZMGenericMessageData {
-    var underlyingMessage: GenericMessage? {
+@objc(ZMGenericMessageData)
+@objcMembers public class ZMGenericMessageData: ZMManagedObject {
+    
+    public static let dataKey = "data"
+    public static let messageKey = "message"
+    public static let assetKey = "asset"
+
+    @NSManaged public var data: Data
+    @NSManaged public var message: ZMClientMessage?
+    @NSManaged public var asset: ZMAssetClientMessage?
+    
+    override open class func entityName() -> String {
+        return "GenericMessageData"
+    }
+    
+    public override var modifiedKeys: Set<AnyHashable>? {
+        get {
+            return Set()
+        } set {
+            // do nothing
+        }
+    }
+    
+    public var underlyingMessage: GenericMessage? {
         do {
             let genericMessage = try GenericMessage(serializedData: data)
             return genericMessage

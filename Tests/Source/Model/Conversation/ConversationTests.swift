@@ -90,3 +90,339 @@ final class ConversationTests: ZMConversationTestsBase {
         XCTAssertEqual(result?.first as? ZMConversation, conversation)
     }
 }
+
+// MARK: - LastEditableMessage
+
+extension ConversationTests {
+    func testThatItReturnsNilIfLastMessageIsEditedTextAndNotSentBySelfUser() {
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = UUID.create()
+        let sender = ZMUser.insertNewObject(in: self.uiMOC)
+        sender.remoteIdentifier = UUID.create()
+        
+        // when
+        let message = conversation.append(text: "Test Message") as! ZMMessage
+        message.sender = sender
+        message.markAsSent()
+        
+        let genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: message.nonce!, text: Text(content: "Edited Test Message", mentions: [], linkPreviews: [], replyingTo: nil)), nonce: UUID.create())
+        let genericMessageData = try? genericMessage.serializedData()
+        let payload: NSDictionary = [
+            "conversation": conversation.remoteIdentifier?.transportString(),
+            "from": message.sender?.remoteIdentifier.transportString(),
+            "time": Date().transportString(),
+            "data": [
+                "text": genericMessageData?.base64String()
+            ],
+            "type": "conversation.otr-message-add"
+        ]
+        let updateEvent = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: UUID.create())
+        
+        var newMessage: ZMClientMessage?
+        self.performPretendingUiMocIsSyncMoc {
+            newMessage = ZMClientMessage.createOrUpdate(from: updateEvent!, in: self.uiMOC, prefetchResult: nil)
+        }
+        
+        // then
+        XCTAssertNil(conversation.lastEditableMessage)
+        XCTAssertNotNil(newMessage)
+    }
+}
+
+// MARK: - SelfConversationSync
+
+extension ConversationTests {
+    func testThatItUpdatesTheConversationWhenItReceivesALastReadMessage() {
+        // given
+        var updatedConversation: ZMConversation?
+        let oldLastRead = Date()
+        let newLastRead = oldLastRead.addingTimeInterval(100)
+        
+        self.syncMOC.performGroupedAndWait {_ in
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            XCTAssertNotNil(selfUserID)
+            
+            updatedConversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            updatedConversation?.remoteIdentifier = UUID.create()
+            updatedConversation?.lastReadServerTimeStamp = oldLastRead
+            
+            let message = GenericMessage(content: LastRead(conversationID: updatedConversation!.remoteIdentifier!, lastReadTimestamp: newLastRead) , nonce: UUID.create())
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : newLastRead.transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+        }
+        self.syncMOC.performGroupedAndWait {_ in
+            // then
+            XCTAssertEqual(updatedConversation!.lastReadServerTimeStamp!.timeIntervalSince1970, newLastRead.timeIntervalSince1970, accuracy: 1.5)
+        }
+    }
+    
+    func testThatItRemovesTheMessageWhenItReceivesAHidingMessage() {
+        // given
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let messageID = UUID.create()
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            XCTAssertNotNil(selfUserID)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.append(text: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            
+            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // then
+            let fetchedMessage = ZMMessage.fetch(withNonce: messageID, for: conversation, in: self.syncMOC)
+            XCTAssertNil(fetchedMessage)
+        }
+    }
+    
+    func testThatItRemovesImageAssetsWhenItReceivesADeletionMessage() {
+        // given
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let messageID = UUID.create()
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            let imageData = Data.secureRandomData(length: 100)
+            XCTAssertNotNil(selfUserID)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            let message = conversation.append(imageFromData: self.verySmallJPEGData(), nonce: messageID) as! ZMConversationMessage
+            
+            // store asset data
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.original, encrypted: false, data: imageData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: false, data: imageData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: false, data: imageData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.preview, encrypted: true, data: imageData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: ZMImageFormat.medium, encrypted: true, data: imageData)
+            
+            // delete
+            let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let contentData = try? deleteMessage.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // then
+            
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.original, encrypted: false))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: false))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: false))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.preview, encrypted: true))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache.assetData(message, format: ZMImageFormat.medium, encrypted: true))
+        }
+    }
+    
+    func testThatItRemovesFileAssetsWhenItReceivesADeletionMessage() {
+        // given
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let messageID = UUID.create()
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            let fileData = Data.secureRandomData(length: 100)
+            let fileName = "foo.bar"
+                        
+            let documentsURL = NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true)[0]
+            let fileURL = URL(fileURLWithPath: documentsURL).appendingPathComponent(fileName)
+            do {
+                try fileData.write(to: fileURL)
+            } catch {
+                XCTFail()
+            }
+            
+            XCTAssertNotNil(selfUserID)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            
+            let fileMetadata = ZMFileMetadata.init(fileURL: fileURL, thumbnail: nil)
+            let message = conversation.append(file: fileMetadata, nonce: messageID)!
+            
+            // store asset data
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: fileData)
+            self.syncMOC.zm_fileAssetCache.storeAssetData(message, encrypted: true, data: fileData)
+            
+            // delete
+            let deleteMessage = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: messageID), nonce: UUID.create())
+            let contentData = try? deleteMessage.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // re-create message with same nonce to access the cache
+            let lookupMessage = conversation.append(text: "123") as! ZMConversationMessage
+            
+            // then
+            
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: false))
+            XCTAssertNil(self.syncMOC.zm_fileAssetCache .assetData(lookupMessage, encrypted: true))
+        }
+    }
+    
+    func testThatItDoesNotRemovesANonExistingMessageWhenItReceivesADeletionMessage() {
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            XCTAssertNotNil(selfUserID)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+                        
+            conversation.append(text: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: UUID.create())
+            let previusMessagesCount = conversation.allMessages.count
+
+            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // then
+            XCTAssertEqual(previusMessagesCount, conversation.allMessages.count)
+        }
+    }
+
+    func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotFromSelfUser() {
+        // given
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let messageID = UUID.create()
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            XCTAssertNotNil(selfUserID);
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+
+            conversation.append(text: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            let previusMessagesCount = conversation.allMessages.count
+                        
+            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : selfUserID?.transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // then
+            XCTAssertEqual(previusMessagesCount, conversation.allMessages.count)
+        }
+    }
+    
+    func testThatItDoesNotRemovesAMessageWhenItReceivesADeletionMessageNotInTheSelfConversation() {
+        // given
+        self.syncMOC.performGroupedAndWait {_ in
+            
+            // given
+            let messageID = UUID.create()
+            let selfUserID = ZMUser.selfUser(in: self.syncMOC).remoteIdentifier
+            XCTAssertNotNil(selfUserID)
+            
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+
+            conversation.append(text: "Le fromage c'est delicieux", mentions: [], fetchLinkPreview: true, nonce: messageID)
+            let previusMessagesCount = conversation.allMessages.count
+                        
+            let message = GenericMessage(content: MessageHide(conversationId: conversation.remoteIdentifier!, messageId: UUID.create()), nonce: UUID.create())
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64EncodedString()
+            
+            let payload: NSDictionary = [
+                "conversation" : UUID.create().transportString(),
+                "time" : Date().transportString(),
+                "data" : data,
+                "from" : selfUserID?.transportString(),
+                "type": "conversation.client-message-add"
+            ]
+            
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            
+            // when
+            ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            self.syncMOC.saveOrRollback()
+            
+            // then
+            XCTAssertEqual(previusMessagesCount, conversation.allMessages.count)
+        }
+    }
+}

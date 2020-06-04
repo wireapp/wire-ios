@@ -23,12 +23,13 @@ import WireCryptobox
 extension ZMConversation {
     static func appendHideMessageToSelfConversation(_ message: ZMMessage) {
         guard let messageId = message.nonce,
-              let conversation = message.conversation,
-              let conversationId = conversation.remoteIdentifier
-        else { return }
+            let conversation = message.conversation,
+            let conversationId = conversation.remoteIdentifier else {
+                return
+        }
         
-        let genericMessage = ZMGenericMessage.message(content: ZMMessageHide.hide(conversationId: conversationId, messageId: messageId))
-        ZMConversation.appendSelfConversation(with: genericMessage, managedObjectContext: message.managedObjectContext!)
+        let genericMessage = GenericMessage(content: MessageHide(conversationId: conversationId, messageId: messageId))
+        ZMConversation.appendSelfConversation(genericMessage: genericMessage, managedObjectContext: message.managedObjectContext!)
     }
 }
 
@@ -61,7 +62,7 @@ extension ZMMessage {
         guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
         
-        let message =  conversation.append(message: ZMMessageDelete.delete(messageId: messageNonce), hidden: true)
+        let message =  conversation.append(message: MessageDelete(messageId: messageNonce), hidden: true)
         
         removeClearingSender(false)
         updateCategoryCache()
@@ -75,13 +76,20 @@ extension ZMMessage {
 
 extension ZMClientMessage {
     override var isEditableMessage : Bool {
-        guard let genericMessage = genericMessage,
-              let sender = sender, sender.isSelfUser
-        else {
+        guard
+            let genericMessage = underlyingMessage,
+            let sender = sender, sender.isSelfUser,
+            let content = genericMessage.content else {
+                return false
+        }
+        switch content {
+        case .edited:
+            return true
+        case .text:
+            return !isEphemeral && isSent
+        default:
             return false
         }
-        
-        return genericMessage.hasEdited() || genericMessage.hasText() && !isEphemeral && isSent
     }
 }
 

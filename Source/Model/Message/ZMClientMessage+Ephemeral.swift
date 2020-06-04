@@ -26,10 +26,15 @@ extension ZMClientMessage {
             || isObfuscated
     }
     
-    var ephemeral: ZMEphemeral? {
+    var ephemeral: Ephemeral? {
         return dataSet.lazy
-            .compactMap { ($0 as? ZMGenericMessageData)?.genericMessage }
-            .first(where: { $0.hasEphemeral() })?.ephemeral
+            .compactMap { ($0 as? ZMGenericMessageData)?.underlyingMessage }
+            .first(where: { (message) -> Bool in
+                guard case .ephemeral? = message.content else {
+                    return false
+                }
+                return true
+            })?.ephemeral
     }
 
     @objc

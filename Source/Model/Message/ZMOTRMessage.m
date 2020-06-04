@@ -18,10 +18,8 @@
 
 
 #import "ZMOTRMessage.h"
-#import "ZMGenericMessage+UpdateEvent.h"
 #import "ZMConversation+Internal.h"
 #import <WireDataModel/WireDataModel-Swift.h>
-#import "ZMGenericMessageData.h"
 
 
 @import WireTransport;
@@ -99,13 +97,6 @@ NSString * const DeliveredKey = @"delivered";
     return [[ZMMessage keyPathsForValuesAffectingValueForKey:ZMMessageDeliveryStateKey] setByAddingObject:DeliveredKey];
 }
 
-- (NSString *)dataSetDebugInformation
-{
-    return [[self.dataSet mapWithBlock:^NSString *(ZMGenericMessageData *msg) {
-        return [NSString stringWithFormat:@"<%@>: %@", NSStringFromClass(ZMGenericMessageData.class), msg.genericMessage];
-    }].array componentsJoinedByString:@"\n"];
-}
-
 - (void)markAsSent
 {
     self.delivered = YES;
@@ -123,18 +114,12 @@ NSString * const DeliveredKey = @"delivered";
     [super resend];
 }
 
-- (ZMGenericMessage *)genericMessage
+- (BOOL)isUpdatingExistingMessage
 {
-    NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
-    return nil;
+    return NO;
 }
 
 - (void)updateWithUpdateEvent:(__unused ZMUpdateEvent *)updateEvent initialUpdate:(__unused BOOL)initialUpdate {
-    NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
-}
-
-- (void)updateWithGenericMessage:(__unused ZMGenericMessage *)message updateEvent:(__unused ZMUpdateEvent *)updateEvent initialUpdate:(__unused BOOL)initialUpdate
-{
     NSAssert(FALSE, @"Subclasses should override this method: [%@ %@]", NSStringFromClass([self class]), NSStringFromSelector(_cmd));
 }
 

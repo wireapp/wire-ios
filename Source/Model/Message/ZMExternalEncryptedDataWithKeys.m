@@ -17,9 +17,7 @@
 // 
 
 
-#import "ZMGenericMessage+External.h"
-#import "ZMGenericMessage+UpdateEvent.h"
-
+#import "ZMExternalEncryptedDataWithKeys.h"
 
 @import WireTransport;
 @import WireUtilities;
@@ -100,41 +98,3 @@
 
 @end
 
-
-#pragma mark - ZMGenericMessage
-
-
-@implementation ZMGenericMessage (External)
-
-+ (ZMExternalEncryptedDataWithKeys *)encryptedDataWithKeysFromMessage:(ZMGenericMessage *)message
-{
-    NSData *aesKey = NSData.randomEncryptionKey;
-    NSData *encryptedData = [message.data zmEncryptPrefixingPlainTextIVWithKey:aesKey];
-    ZMEncryptionKeyWithChecksum *keys = [ZMEncryptionKeyWithChecksum keyWithAES:aesKey digest:encryptedData.zmSHA256Digest];
-    return [ZMExternalEncryptedDataWithKeys dataWithKeysWithData:encryptedData keys:keys];
-}
-
-+ (ZMGenericMessage *)genericMessageFromUpdateEventWithExternal:(ZMUpdateEvent *)updateEvent external:(ZMExternal *)external
-{
-    NSData *sha256 = external.sha256;
-    NSData *otrKey = external.otrKey;
-    VerifyReturnNil(nil != sha256);
-    VerifyReturnNil(nil != otrKey);
-    
-    NSString *externalDataString = [updateEvent.payload optionalStringForKey:@"external"];
-    VerifyReturnNil(nil != externalDataString);
-    NSData *externalData = [[NSData alloc] initWithBase64EncodedString:externalDataString options:0];
-    NSData *externalSha256 = externalData.zmSHA256Digest;
-    
-    if (! [externalSha256 isEqualToData:sha256]) {
-        ZMLogError(@"Invalid hash for external data: %@ != %@, updateEvent: %@", externalSha256, sha256, updateEvent);
-        return nil;
-    }
-    
-    NSData *decryptedData = [externalData zmDecryptPrefixedPlainTextIVWithKey:otrKey];
-    VerifyReturnNil(nil != decryptedData);
-    
-    return [self genericMessageWithBase64String:decryptedData.base64String updateEvent:updateEvent];
-}
-
-@end

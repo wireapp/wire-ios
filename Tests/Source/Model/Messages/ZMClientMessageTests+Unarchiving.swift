@@ -28,7 +28,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.remoteIdentifier = UUID.create()
         conversation.isArchived = true
         
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
+        let genericMessage = GenericMessage(content: Text(content: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
 
         // when
@@ -48,7 +48,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         conversation.mutedMessageTypes = .all
 
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
+        let genericMessage = GenericMessage(content: Text(content: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         
         // when
@@ -73,7 +73,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
         
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
+        let genericMessage = GenericMessage(content: Text(content: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         XCTAssertNotNil(event)
         
@@ -101,7 +101,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
 
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "bar"))
+        let genericMessage = GenericMessage(content: Text(content: "bar"))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         
         XCTAssertLessThan(conversation.clearedTimeStamp!.timeIntervalSince1970, event.timeStamp()!.timeIntervalSince1970)

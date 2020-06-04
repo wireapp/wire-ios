@@ -23,10 +23,14 @@ import XCTest
 class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
     
     func createMessage(text: String, mentions: [ Mention]) -> ZMClientMessage {
-        let text = ZMText.text(with: text, mentions: mentions, linkPreviews: [])
+        let text = Text(content: text, mentions: mentions, linkPreviews: [])
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
-        message.add(ZMGenericMessage.message(content: text).data())
+        do {
+            message.add(try GenericMessage(content: text).serializedData())
+        } catch {
+            XCTFail()
+        }
         
         return message
     }

@@ -109,8 +109,7 @@ extension ZMConversation {
     /// Should be called when a message is received.
     /// If the legal hold status hint inside the received message is different than the local status,
     /// we update the local version to match the remote one.
-    @objc(updateSecurityLevelIfNeededAfterReceiving:timestamp:)
-    public func updateSecurityLevelIfNeededAfterReceiving(message: ZMGenericMessage, timestamp: Date) {
+    public func updateSecurityLevelIfNeededAfterReceiving(message: GenericMessage, timestamp: Date) {
         updateLegalHoldIfNeededWithHint(from: message, timestamp: timestamp)
     }
     
@@ -237,15 +236,15 @@ extension ZMConversation {
         }
     }
 
-    /// Update the legal hold status based on the hint of a message.
-    private func updateLegalHoldIfNeededWithHint(from message: ZMGenericMessage, timestamp: Date) {
-        switch message.content?.legalHoldStatus {
-        case .ENABLED? where !legalHoldStatus.denotesEnabledComplianceDevice:
+    /// Update the legal hold status based on the hint of a message.    
+    private func updateLegalHoldIfNeededWithHint(from message: GenericMessage, timestamp: Date) {
+        switch message.legalHoldStatus {
+        case .enabled where !legalHoldStatus.denotesEnabledComplianceDevice:
             needsToVerifyLegalHold = true
             legalHoldStatus = .pendingApproval
             appendLegalHoldEnabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
             expireAllPendingMessagesBecauseOfSecurityLevelDegradation()
-        case .DISABLED? where legalHoldStatus.denotesEnabledComplianceDevice:
+        case .disabled where legalHoldStatus.denotesEnabledComplianceDevice:
             needsToVerifyLegalHold = true
             legalHoldStatus = .disabled
             appendLegalHoldDisabledSystemMessageForConversationAfterReceivingMessage(at: timestamp)
@@ -448,7 +447,9 @@ extension ZMConversation {
     /// Expire all pending messages
     fileprivate func expireAllPendingMessagesBecauseOfSecurityLevelDegradation() {
         for message in undeliveredMessages {
-            if let clientMessage = message as? ZMClientMessage, let genericMessage = clientMessage.genericMessage, genericMessage.hasConfirmation() {
+            if let clientMessage = message as? ZMClientMessage,
+                let genericMessage = clientMessage.underlyingMessage,
+                genericMessage.hasConfirmation {
                 // Delivery receipt: just expire it
                 message.expire()
             } else {
@@ -709,15 +710,6 @@ extension ZMSystemMessage {
         let fetchRequest = ZMSystemMessage.sortedFetchRequest(with: compound)!
         let result = conversation.managedObjectContext!.executeFetchRequestOrAssert(fetchRequest)!
         return result.first as? ZMSystemMessage
-    }
-}
-
-extension ZMOTRMessage {
-    
-    fileprivate var isUpdatingExistingMessage: Bool {
-        guard let genericMessage = genericMessage else { return false }
-        
-        return genericMessage.hasEdited() || genericMessage.hasReaction()
     }
 }
 

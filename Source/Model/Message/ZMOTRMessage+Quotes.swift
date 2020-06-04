@@ -23,11 +23,11 @@ private var log = ZMSLog(tag: "event-processing")
 
 extension ZMOTRMessage {
     
-    func establishRelationshipsForInsertedQuote(_ quote: ZMQuote) {
+    func establishRelationshipsForInsertedQuote(_ quote: Quote) {
         
         guard let managedObjectContext = managedObjectContext,
               let conversation = conversation,
-              let quotedMessageId = UUID(uuidString: quote.quotedMessageId),
+              let quotedMessageId = UUID(uuidString: quote.quotedMessageID),
               let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: conversation, in: managedObjectContext) else { return }
         
         if quotedMessage.hashOfContent == quote.quotedMessageSha256 {

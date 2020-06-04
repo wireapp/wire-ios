@@ -103,24 +103,23 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     // MIME type of the file being transfered (implied from file extension)
     public var mimeType: String? {
         
-        guard let asset = self.genericAssetMessage?.assetData else { return nil }
-        if asset.original.hasMimeType() {
+        guard let asset = underlyingMessage?.assetData else {
+            return nil
+        }
+        
+        if asset.original.hasMimeType {
             return asset.original.mimeType
         }
         
-        if asset.preview.hasMimeType() {
+        if asset.preview.hasMimeType {
             return asset.preview.mimeType
         }
         
-        if let assetData = self.previewGenericMessage?.imageAssetData,
-            assetData.hasMimeType
-        {
+        if let assetData = previewGenericMessage?.imageAssetData, assetData.hasMimeType {
             return assetData.mimeType
         }
         
-        if let assetData = self.mediumGenericMessage?.imageAssetData,
-            assetData.hasMimeType
-        {
+        if let assetData = mediumGenericMessage?.imageAssetData, assetData.hasMimeType {
             return assetData.mimeType
         }
         
@@ -176,25 +175,25 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public var previewData: Data? {
-        return self.asset?.previewData
+        return asset?.previewData
     }
     
     public func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (Data?) -> Void) {
-        guard nil != self.fileMessageData, !isImage else { return completionHandler(nil) }
+        guard nil != fileMessageData, !isImage else { return completionHandler(nil) }
         
-        self.asset?.fetchImageData(with: queue, completionHandler: completionHandler)
+        asset?.fetchImageData(with: queue, completionHandler: completionHandler)
     }
     
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
-        return self.genericAssetMessage?.assetData?.original.name.removingExtremeCombiningCharacters
+        return underlyingMessage?.assetData?.original.name.removingExtremeCombiningCharacters
     }
     
     public var thumbnailAssetID: String? {
         
         get {
-            guard self.fileMessageData != nil else { return nil }
-            guard let assetData = self.genericMessage(dataType: .thumbnail)?.assetData,
+            guard fileMessageData != nil else { return nil }
+            guard let assetData = genericMessage(dataType: .thumbnail)?.assetData,
                 assetData.preview.remote.hasAssetID,
                 !assetData.preview.remote.assetID.isEmpty
                 else { return nil }
@@ -205,7 +204,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
-            guard let thumbnailMessage = self.genericMessage(dataType: .thumbnail) else { return }
+            guard let thumbnailMessage = genericMessage(dataType: .thumbnail) else { return }
             var message = GenericMessage()
             guard var assetData = thumbnailMessage.assetData,
                 assetData.hasPreview,
@@ -214,29 +213,29 @@ extension ZMAssetClientMessage: ZMFileMessageData {
             
             try? message.merge(serializedData: thumbnailMessage.serializedData())
             message.update(asset: assetData)
-            self.replaceGenericMessageForThumbnail(with: message)
+            replaceGenericMessageForThumbnail(with: message)
         }
     }
     
     private func replaceGenericMessageForThumbnail(with genericMessage: GenericMessage) {
-        self.cachedUnderlyingAssetMessage = nil
+        cachedUnderlyingAssetMessage = nil
         
-        self.dataSet
-            .map { $0 as! ZMGenericMessageData }
-            .forEach { data in
-                let dataMessage = data.underlyingMessage
-                if let assetData = dataMessage?.assetData,
-                    assetData.hasPreview {
-                    do {
-                        let genericMessageData = try genericMessage.serializedData()
-                        data.data =  genericMessageData
-                    } catch {}
-                }
+        dataSet
+        .map { $0 as! ZMGenericMessageData }
+        .forEach { data in
+            let dataMessage = data.underlyingMessage
+            if let assetData = dataMessage?.assetData,
+                assetData.hasPreview {
+                do {
+                    let genericMessageData = try genericMessage.serializedData()
+                    data.data =  genericMessageData
+                } catch {}
+            }
         }
     }
     
     public var imagePreviewDataIdentifier: String? {
-        return self.asset?.imagePreviewDataIdentifier
+        return asset?.imagePreviewDataIdentifier
     }
 
     public var isPass: Bool {
@@ -252,31 +251,31 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public var v3_isImage: Bool {
-        return self.genericAssetMessage?.v3_isImage ?? false
+        return underlyingMessage?.v3_isImage ?? false
     }
     
     public var videoDimensions: CGSize {
-        guard let assetData = self.genericAssetMessage?.assetData else { return CGSize.zero }
+        guard let assetData = underlyingMessage?.assetData else { return CGSize.zero }
         let w = assetData.original.video.width
         let h = assetData.original.video.height
         return CGSize(width: Int(w), height: Int(h))
     }
 
     public var durationMilliseconds: UInt64 {
-        guard let assetData = self.genericAssetMessage?.assetData else { return 0 }
-        if self.isVideo {
+        guard let assetData = underlyingMessage?.assetData else { return 0 }
+        if isVideo {
             return assetData.original.video.durationInMillis
         }
-        if self.isAudio {
+        if isAudio {
             return assetData.original.audio.durationInMillis
         }
         return 0
     }
     
     public var normalizedLoudness: [Float]? {
-        guard self.isAudio,
-            let assetData = self.genericAssetMessage?.assetData,
-            assetData.original.audio.hasNormalizedLoudness() else
+        guard isAudio,
+            let assetData = underlyingMessage?.assetData,
+            assetData.original.audio.hasNormalizedLoudness else
         {
             return nil
         }

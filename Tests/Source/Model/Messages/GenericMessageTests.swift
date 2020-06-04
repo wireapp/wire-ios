@@ -20,19 +20,25 @@ import Foundation
 @testable import WireDataModel
 
 class GenericMessageTests: XCTestCase {
-    func testThatItChecksTheCommonMessageTypeAsKnownMessage() {
+    func testThatItChecksTheCommonMessageTypesAsKnownMessage() {
         let generators: [()->(GenericMessage)] = [
             { return GenericMessage(content: Text(content: "hello")) },
             { return GenericMessage(content: Knock()) },
             { return GenericMessage(content: LastRead(conversationID: UUID.create(), lastReadTimestamp: Date())) },
+            { return GenericMessage(content: Cleared(timestamp: Date(), conversationID: UUID.create())) },
             {
                 let sha256 = Data(base64Encoded: "47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU=")!
                 let otrKey = Data(base64Encoded: "4H1nD6bG2sCxC/tZBnIG7avLYhkCsSfv0ATNqnfug7w=")!
                 return GenericMessage(content: External(withOTRKey: otrKey, sha256: sha256))
             },
+            { return GenericMessage(clientAction: .resetSession) },
             { return GenericMessage(content: Calling(content: "Calling")) },
             { return GenericMessage(content: WireProtos.Asset(imageSize: .zero, mimeType: "image/jpeg", size: 0)) },
-            { return GenericMessage(content: WireProtos.Reaction(emoji: "test", messageID: UUID.create())) }
+            { return GenericMessage(content: MessageHide(conversationId: UUID.create(), messageId: UUID.create())) },
+            { return GenericMessage(content: Location(latitude: 1, longitude: 2)) },
+            { return GenericMessage(content: MessageDelete(messageId: UUID.create())) },
+            { return GenericMessage(content: WireProtos.Reaction(emoji: "test", messageID: UUID.create())) },
+            { return GenericMessage(content: WireProtos.Availability(.away)) }
         ]
         
         generators.forEach { generator in

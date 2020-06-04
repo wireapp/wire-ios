@@ -27,6 +27,7 @@ enum MessageKey: String {
     case previewGenericMessage = "previewGenericMessage"
     case mediumGenericMessage = "mediumGenericMessage"
     case linkPreview = "linkPreview"
+    case underlyingMessage = "underlyingMessage"
 }
 
 extension ZMMessage : ObjectInSnapshot {
@@ -63,7 +64,7 @@ extension ZMClientMessage {
         let keys = super.observableKeys
         let additionalKeys = [#keyPath(ZMAssetClientMessage.hasDownloadedPreview),
                               #keyPath(ZMClientMessage.linkPreviewState),
-                              #keyPath(ZMClientMessage.genericMessage),
+                              MessageKey.underlyingMessage.rawValue,
                               #keyPath(ZMMessage.reactions),
                               #keyPath(ZMMessage.confirmations),
                               #keyPath(ZMClientMessage.quote),
@@ -131,7 +132,7 @@ extension ZMSystemMessage {
                 "transferStateChanged: \(transferStateChanged)",
                 "senderChanged: \(senderChanged)",
                 "isObfuscatedChanged: \(isObfuscatedChanged)",
-                "genericMessageChanged: \(genericMessageChanged)",
+                "underlyingMessageChanged: \(underlyingMessageChanged)",
                 "linkAttachmentsChanged: \(linkAttachmentsChanged)",
                 "buttonStatesChanged: \(buttonStatesChanged)"
                 ].joined(separator: ", ")
@@ -149,9 +150,9 @@ extension ZMSystemMessage {
     public var confirmationsChanged : Bool {
         return changedKeysContain(keys: #keyPath(ZMMessage.confirmations))
     }
-
-    public var genericMessageChanged : Bool {
-        return changedKeysContain(keys: #keyPath(ZMClientMessage.genericMessage))
+    
+    public var underlyingMessageChanged : Bool {
+        return changedKeysContain(keys: MessageKey.underlyingMessage.rawValue)
     }
     
     public var childMessagesChanged : Bool {

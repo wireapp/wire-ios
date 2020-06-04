@@ -1074,15 +1074,3 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 @end
 
 
-@implementation ZMUser (Protobuf)
-
-- (ZMUserId *)zmUserId
-{
-    ZMUserIdBuilder *userIdBuilder = [ZMUserId builder];
-    [userIdBuilder setUuid:[self.remoteIdentifier data]];
-    return [userIdBuilder build];
-}
-
-@end
-
-

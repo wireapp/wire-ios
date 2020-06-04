@@ -315,294 +315,203 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesGenericMessageWithValidFields() {
 
-        let text = ZMText.builder()!
-        text.setContent("Hello hello hello")
+        let text = Text(content: "Hello hello hello")
+        var genericMessage = GenericMessage(content: text)
+        genericMessage.messageID = "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F"
+        let message = genericMessage.validatingFields()
 
-        let builder = ZMGenericMessage.builder()!
-        builder.setText(text)
-        builder.setMessageId("8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")
-
-        let message = builder.buildAndValidate()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateGenericMessageWithInvalidFields() {
 
-        let text = ZMText.builder()!
-        text.setContent("Hieeee!")
+        let text = Text(content: "Hieeee!")
+        var genericMessage = GenericMessage(content: text)
+        genericMessage.messageID = "nonce"
+        let message = genericMessage.validatingFields()
 
-        let builder = ZMGenericMessage.builder()!
-        builder.setText(text)
-        builder.setMessageId("nonce")
-
-        let message = builder.buildAndValidate()
         XCTAssertNil(message)
-
     }
 
     // MARK: Last Read
 
     func testThatItCreatesLastReadWithValidFields() {
+        
+        let lastRead = LastRead(conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!, lastReadTimestamp: Date(timeIntervalSince1970: 25_000))
+        let message = GenericMessage(content: lastRead).validatingFields()
 
-        let builder = ZMLastRead.builder()!
-        builder.setConversationId("8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")
-        builder.setLastReadTimestamp(25_000)
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setLastRead(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateLastReadWithInvalidFields() {
-
-        let builder = ZMLastRead.builder()!
-        builder.setConversationId("null")
-        builder.setLastReadTimestamp(25_000)
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setLastRead(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let lastRead = LastRead.with {
+            $0.lastReadTimestamp = 25000
+        }
+        let message = GenericMessage(content: lastRead).validatingFields()
         XCTAssertNil(message)
-
     }
 
     // MARK: Cleared
 
     func testThatItCreatesClearedWithValidFields() {
-
-        let builder = ZMCleared.builder()!
-        builder.setConversationId("8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")
-        builder.setClearedTimestamp(25_000)
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setCleared(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let cleared = Cleared(timestamp: Date(timeIntervalSince1970: 25000), conversationID: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!)
+        let message = GenericMessage(content: cleared).validatingFields()
+        
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateClearedWithInvalidFields() {
+        
+        let cleared = Cleared.with {
+            $0.clearedTimestamp = 25000
+            $0.conversationID = "wirewire"
+        }
+        let message = GenericMessage(content: cleared).validatingFields()
 
-        let builder = ZMCleared.builder()!
-        builder.setConversationId("wirewire")
-        builder.setClearedTimestamp(25_000)
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setCleared(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
         XCTAssertNil(message)
-
     }
 
     // MARK: Message Hide
 
     func testThatItCreatesHideWithValidFields() {
-
-        let builder = ZMMessageHide.builder()!
-        builder.setConversationId("8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")
-        builder.setMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setHidden(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let messageHide = MessageHide(conversationId: UUID(uuidString: "8783C4BD-A5D3-4F6B-8C41-A6E75F12926F")!, messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let message = GenericMessage(content: messageHide).validatingFields()
+        
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateHideWithInvalidFields() {
-
-        let invalidConversationBuilder = ZMMessageHide.builder()!
-        invalidConversationBuilder.setConversationId("")
-        invalidConversationBuilder.setMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-
-        let invalidConversationMessageBuilder = genericMessageBuilder()
-        invalidConversationMessageBuilder.setHidden(invalidConversationBuilder.build())
-        let invalidConversationHide = invalidConversationMessageBuilder.buildAndValidate()
+        
+        let invalidConversation = MessageHide.with {
+            $0.conversationID = ""
+            $0.messageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+        }
+        let invalidConversationHide = GenericMessage(content: invalidConversation).validatingFields()
         XCTAssertNil(invalidConversationHide)
-
-        let invalidMessageBuilder = ZMMessageHide.builder()!
-        invalidMessageBuilder.setConversationId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-        invalidMessageBuilder.setMessageId("")
-
-        let invalidMessageMessageBuilder = genericMessageBuilder()
-        invalidMessageMessageBuilder.setHidden(invalidMessageBuilder)
-        let invalidMessageHide = invalidMessageMessageBuilder.buildAndValidate()
+        
+        let invalidMessage = MessageHide.with {
+            $0.conversationID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.messageID = ""
+        }
+        let invalidMessageHide = GenericMessage(content: invalidMessage).validatingFields()
         XCTAssertNil(invalidMessageHide)
-
-        let invalidHideBuilder = ZMMessageHide.builder()!
-        invalidHideBuilder.setConversationId("")
-        invalidHideBuilder.setMessageId("")
-
-        let invalidHideMessageBuilder = genericMessageBuilder()
-        invalidHideMessageBuilder.setHidden(invalidHideBuilder)
-        let invalidHide = invalidHideMessageBuilder.buildAndValidate()
-        XCTAssertNil(invalidHide)
-
+        
+        let invalidHide = MessageHide.with {
+            $0.conversationID = ""
+            $0.messageID = ""
+        }
+        let invalidHideMessage = GenericMessage(content: invalidHide).validatingFields()
+        XCTAssertNil(invalidHideMessage)
     }
 
     // MARK: Message Delete
 
     func testThatItCreatesMessageDeleteWithValidFields() {
 
-        let builder = ZMMessageDelete.builder()!
-        builder.setMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setDeleted(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        let delete = MessageDelete(messageId: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let message = GenericMessage(content: delete).validatingFields()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateMessageDeleteWithInvalidFields() {
 
-        let builder = ZMMessageDelete.builder()!
-        builder.setMessageId("invalid")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setDeleted(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        let delete = MessageDelete.with {
+            $0.messageID = "invalid"
+        }
+        let message = GenericMessage(content: delete).validatingFields()
         XCTAssertNil(message)
-
     }
 
     // MARK: Message Edit
 
     func testThatItCreatesMessageEditWithValidFields() {
 
-        let text = ZMText.builder()!
-        text.setContent("Hello")
-
-        let builder = ZMMessageEdit.builder()!
-        builder.setText(text)
-        builder.setReplacingMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setEdited(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        let text = Text(content: "Hello")
+        let messageEdit = MessageEdit(replacingMessageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!,
+                                      text: text)
+        let message = GenericMessage(content: messageEdit).validatingFields()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateMessageEditWithInvalidFields() {
 
-        let text = ZMText.builder()!
-        text.setContent("Hello")
-
-        let builder = ZMMessageEdit.builder()!
-        builder.setText(text)
-        builder.setReplacingMessageId("N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setEdited(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        let text = Text(content: "Hello")
+        let messageEdit = MessageEdit.with {
+            $0.replacingMessageID = "N0TAUNIV-ER5A-77YU-NIQU-EID3NTIF1ER!"
+            $0.text = text
+        }
+        let message = GenericMessage(content: messageEdit).validatingFields()
         XCTAssertNil(message)
-
     }
 
     // MARK: Message Confirmation
 
     func testThatItCreatesConfirmationWithValidFields() {
-
-        let builder = ZMConfirmation.builder()!
-        builder.setType(.DELIVERED)
-        builder.setFirstMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-        builder.setMoreMessageIdsArray(["54A6E947-1321-42C6-BA99-F407FDF1A229"])
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setConfirmation(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let confirmation = Confirmation.with {
+            $0.type = .delivered
+            $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
+        }
+        let message = GenericMessage(content: confirmation).validatingFields()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateConfirmationWithInvalidFields() {
-
-        let invalidFirstIDBuilder = ZMConfirmation.builder()!
-        invalidFirstIDBuilder.setType(.DELIVERED)
-        invalidFirstIDBuilder.setFirstMessageId("invalid")
-        invalidFirstIDBuilder.setMoreMessageIdsArray(["54A6E947-1321-42C6-BA99-F407FDF1A229"])
-
-        let invalidFirstIDMessageBuilder = genericMessageBuilder()
-        invalidFirstIDMessageBuilder.setConfirmation(invalidFirstIDBuilder.build())
-        let invalidFirstIDMessage = invalidFirstIDMessageBuilder.buildAndValidate()
+        
+        let invalidFirstID = Confirmation.with {
+            $0.type = .delivered
+            $0.firstMessageID = "invalid"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229"]
+        }
+        let invalidFirstIDMessage = GenericMessage(content: invalidFirstID).validatingFields()
         XCTAssertNil(invalidFirstIDMessage)
-
-        let invalidArrayBuilder = ZMConfirmation.builder()!
-        invalidArrayBuilder.setType(.DELIVERED)
-        invalidArrayBuilder.setFirstMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-        invalidArrayBuilder.setMoreMessageIdsArray(["54A6E947-1321-42C6-BA99-F407FDF1A229", 150])
-
-        let invalidArrayMessageBuilder = genericMessageBuilder()
-        invalidArrayMessageBuilder.setConfirmation(invalidArrayBuilder.build())
-        let invalidArrayMessage = invalidArrayMessageBuilder.buildAndValidate()
+        
+        let invalidArray = Confirmation.with {
+            $0.type = .delivered
+            $0.firstMessageID = "8B496992-E74D-41D2-A2C4-C92EEE777DCE"
+            $0.moreMessageIds = ["54A6E947-1321-42C6-BA99-F407FDF1A229", "150"]
+        }
+        let invalidArrayMessage = GenericMessage(content: invalidArray).validatingFields()
         XCTAssertNil(invalidArrayMessage)
-
     }
 
     // MARK: Reaction
 
     func testThatItCreatesReactionWithValidFields() {
-
-        let builder = ZMReaction.builder()!
-        builder.setMessageId("8B496992-E74D-41D2-A2C4-C92EEE777DCE")
-        builder.setEmoji("🤩")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setReaction(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let reaction = WireProtos.Reaction(emoji: "🤩", messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let message = GenericMessage(content: reaction).validatingFields()
         XCTAssertNotNil(message)
-
     }
 
     func testThatItDoesNotCreateReactionWithInvalidFields() {
-
-        let builder = ZMReaction.builder()!
-        builder.setMessageId("Not-A-UUID")
-        builder.setEmoji("🤩")
-
-        let messageBuilder = genericMessageBuilder()
-        messageBuilder.setReaction(builder.build())
-
-        let message = messageBuilder.buildAndValidate()
+        
+        let reaction = WireProtos.Reaction.with {
+            $0.emoji = "🤩"
+            $0.messageID = "Not-A-UUID"
+        }
+        let message = GenericMessage(content: reaction).validatingFields()
         XCTAssertNil(message)
-
     }
 
     // MARK: User ID
 
     func testThatItCreatesUserIDWithValidFields() {
 
-        let builder = ZMUserId.builder()!
-        builder.setUuid(NSUUID().data())
-
-        let userID = builder.build().validatingFields()
-        XCTAssertNotNil(userID)
-
+        let userId = UserId.with { $0.uuid = NSUUID().data() }
+        
+        XCTAssertNotNil(userId.validatingFields())
     }
 
     func testThatItDoesNotCreateUserIDWithInvalidFields() {
 
-        let tooSmallBuilder = ZMUserId.builder()!
-        tooSmallBuilder.setUuid(Data())
-
-        let tooSmall = tooSmallBuilder.build().validatingFields()
-        XCTAssertNil(tooSmall)
-
+        let userId = UserId.with { $0.uuid = Data() }
+               
+        XCTAssertNil(userId.validatingFields())
     }
 
     // MARK: - Assets
@@ -650,49 +559,33 @@ class ModelValidationTests: XCTestCase {
 
     // MARK: - Utilities
 
-    private func genericMessageBuilder() -> ZMGenericMessageBuilder {
-        let builder = ZMGenericMessage.builder()!
-        builder.setMessageId(UUID.create().uuidString)
-        return builder
-    }
-
-    private func genericMessage(assetId: String, assetToken: String?, preview: Bool) -> ZMGenericMessage? {
-
-        let builder = ZMAsset.builder()!
-
+    private func genericMessage(assetId: String, assetToken: String?, preview: Bool) -> GenericMessage? {
+        
+        var asset = WireProtos.Asset()
+        
         if preview {
-
-            let metaBuilder = ZMAssetImageMetaData.builder()!
-            metaBuilder.setWidth(1000)
-            metaBuilder.setHeight(1000)
-            metaBuilder.setTag("tag")
-
-            let preview = ZMAssetPreview.preview(withSize: 1000,
-                                                 mimeType: "image/png",
-                                                 remoteData: assetRemoteData(id: assetId, token: assetToken),
-                                                 imageMetadata: metaBuilder.build())
-
-            builder.setPreview(preview)
-
+            let imageMetaData = WireProtos.Asset.ImageMetaData.with {
+                $0.tag = "tag"
+                $0.width = 1000
+                $0.height = 1000
+            }
+            
+            let remoteData = WireProtos.Asset.RemoteData.with {
+                $0.assetID = assetId
+                $0.assetToken = assetToken ?? ""
+            }
+            let preview = WireProtos.Asset.Preview(size: 1000,
+                                                   mimeType: "image/png",
+                                                   remoteData: remoteData,
+                                                   imageMetadata: imageMetaData)
+            asset.preview = preview
         }
-
-        builder.setUploaded(assetRemoteData(id: assetId, token: assetToken))
-
-        return ZMGenericMessage.message(content: builder.buildPartial()!).validatingFields()
-
+        
+        asset.uploaded = WireProtos.Asset.RemoteData.with {
+            $0.assetID = assetId
+            $0.assetToken = assetToken ?? ""
+        }
+        
+        return GenericMessage(content: asset).validatingFields()
     }
-
-    private func assetRemoteData(id: String, token: String?) -> ZMAssetRemoteData {
-
-        let dataBuilder = ZMAssetRemoteData.builder()!
-        dataBuilder.setAssetId(id)
-        dataBuilder.setAssetToken(token)
-        dataBuilder.setOtrKey(Data("pFHd6iVTvOVP2wFAd2yVlA==".utf8))
-        dataBuilder.setSha256(Data("8fab1b98a5b5ac2b07f0f77c739980bd4c895db23a09a3bed9ecec584d3ed3e0".utf8))
-        dataBuilder.setEncryption(.AESCBC)
-
-        return dataBuilder.build()
-
-    }
-
 }

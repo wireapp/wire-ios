@@ -710,40 +710,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return [ZMConversation conversationWithRemoteID:selfUserID createIfNeeded:NO inContext:managedObjectContext];
 }
 
-- (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage
-{
-    return [self appendClientMessageWithGenericMessage:genericMessage expires:YES hidden:NO];
-}
-
-- (ZMClientMessage *)appendClientMessageWithGenericMessage:(ZMGenericMessage *)genericMessage expires:(BOOL)expires hidden:(BOOL)hidden
-{
-    ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:[NSUUID uuidWithTransportString:genericMessage.messageId]
-                                                 managedObjectContext:self.managedObjectContext];
-    [message addData:genericMessage.data];
-    
-    return [self appendMessage:message expires:expires hidden:hidden];
-}
-
-- (ZMClientMessage *)appendMessage:(ZMClientMessage *)message expires:(BOOL)expires hidden:(BOOL)hidden
-{
-    message.sender = [ZMUser selfUserInContext:self.managedObjectContext];
-    
-    if (expires) {
-        [message setExpirationDate];
-    }
-    
-    if(hidden) {
-        message.hiddenInConversation = self;
-    } else {
-        [self appendMessage:message];
-        [self unarchiveIfNeeded];
-        [message updateCategoryCache];
-        [message prepareToSend];
-    }
-    
-    return message;
-}
-
 - (void)appendMessage:(ZMMessage *)message;
 {
     Require(message != nil);
@@ -760,68 +726,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         self.isArchived = NO;
     }
 }
-
-@end
-
-
-
-
-@implementation ZMConversation (SelfConversation)
-
-+ (ZMClientMessage *)appendSelfConversationWithGenericMessage:(ZMGenericMessage * )genericMessage managedObjectContext:(NSManagedObjectContext *)moc;
-{
-    VerifyReturnNil(genericMessage != nil);
-
-    ZMConversation *selfConversation = [ZMConversation selfConversationInContext:moc];
-    VerifyReturnNil(selfConversation != nil);
-    
-    ZMClientMessage *clientMessage = [selfConversation appendClientMessageWithGenericMessage:genericMessage expires:NO hidden:NO];
-    return clientMessage;
-}
-
-+ (void)updateConversationWithZMLastReadFromSelfConversation:(ZMLastRead *)lastRead inContext:(NSManagedObjectContext *)context
-{
-    double newTimeStamp = lastRead.lastReadTimestamp;
-    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:(newTimeStamp/1000)];
-    NSUUID *conversationID = [NSUUID uuidWithTransportString:lastRead.conversationId];
-    if (conversationID == nil || timestamp == nil) {
-        return;
-    }
-    
-    ZMConversation *conversationToUpdate = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:context];
-    [conversationToUpdate updateLastRead:timestamp synchronize:NO];
-}
-
-
-+ (ZMClientMessage *)appendSelfConversationWithClearedOfConversation:(ZMConversation *)conversation
-{
-    NSUUID *convID = conversation.remoteIdentifier;
-    NSDate *cleared = conversation.clearedTimeStamp;
-    if (convID == nil || cleared == nil || [convID isEqual:[ZMConversation selfConversationIdentifierInContext:conversation.managedObjectContext]]) {
-        return nil;
-    }
-    
-    NSUUID *nonce = [NSUUID UUID];
-    ZMGenericMessage *message = [ZMGenericMessage messageWithContent:[ZMCleared clearedWithTimestamp:cleared conversationRemoteID:convID] nonce:nonce];
-    VerifyReturnNil(message != nil);
-    
-    return [self appendSelfConversationWithGenericMessage:message managedObjectContext:conversation.managedObjectContext];
-}
-
-+ (void)updateConversationWithZMClearedFromSelfConversation:(ZMCleared *)cleared inContext:(NSManagedObjectContext *)context
-{
-    double newTimeStamp = cleared.clearedTimestamp;
-    NSDate *timestamp = [NSDate dateWithTimeIntervalSince1970:(newTimeStamp/1000)];
-    NSUUID *conversationID = [NSUUID uuidWithTransportString:cleared.conversationId];
-    
-    if (conversationID == nil || timestamp == nil) {
-        return;
-    }
-    
-    ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:context];
-    [conversation updateCleared:timestamp synchronize:NO];
-}
-
 
 @end
 

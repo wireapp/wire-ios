@@ -34,11 +34,4 @@ extension UserClient {
             $0.client = self.hexRemoteIdentifier
         }
     }
-    
-    public var zmClientId: ZMClientId {
-        let builder = ZMClientIdBuilder()
-        builder.setClient(self.hexRemoteIdentifier)
-        return builder.build()
-    }
-
 }

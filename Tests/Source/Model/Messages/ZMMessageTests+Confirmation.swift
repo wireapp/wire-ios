@@ -193,7 +193,7 @@ extension ZMMessageTests_Confirmation {
         
         // when
         let sut = insertMessage(conversation, fromSender: remoteUser)
-        _ = conversation.append(message: ZMConfirmation.confirm(messageId: sut.nonce!, type: .DELIVERED), hidden: true)
+        _ = conversation.append(message: Confirmation(messageId: sut.nonce!, type: .delivered), hidden: true)
         
         // then
         guard let hiddenMessage = conversation.hiddenMessages.first as? ZMClientMessage else {
@@ -201,7 +201,7 @@ extension ZMMessageTests_Confirmation {
             return
         }
         
-        XCTAssertTrue(hiddenMessage.genericMessage?.hasConfirmation() == true)
+        XCTAssertTrue(hiddenMessage.underlyingMessage?.hasConfirmation == true)
         // when
         
         sut.removePendingDeliveryReceipts()
@@ -513,7 +513,7 @@ extension ZMMessageTests_Confirmation {
     
     func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> ZMMessage {
         let nonce = UUID.create()
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: "foo"), nonce: nonce)
+        let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)
         let messageEvent = createUpdateEvent(
             nonce,
             conversationID: conversation.remoteIdentifier!,
@@ -541,12 +541,12 @@ extension ZMMessageTests_Confirmation {
     }
     
     func createMessageDeliveryConfirmationUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create(), timestamp: Date = .init()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage.message(content: ZMConfirmation.confirm(messageId: nonce, type: .DELIVERED))
+        let genericMessage = GenericMessage(content: Confirmation(messageId: nonce, type: .delivered))
         return createUpdateEvent(UUID(), conversationID: conversationID, timestamp: timestamp,  genericMessage: genericMessage, senderID: senderID)
     }
     
     func createMessageReadConfirmationUpdateEvent(_ nonces: [UUID], conversationID: UUID, senderID: UUID = .create(), timestamp: Date = .init()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage.message(content: ZMConfirmation.confirm(messages: nonces, type: .READ))
+        let genericMessage = GenericMessage(content: Confirmation(messageIds: nonces, type: .read)!)
         return createUpdateEvent(UUID(), conversationID: conversationID, timestamp: timestamp, genericMessage: genericMessage, senderID: senderID)
     }
     

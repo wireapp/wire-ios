@@ -51,15 +51,15 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // then
         XCTAssertEqual(confirmMessages.count, 2)
         
-        if (confirmMessages[0].genericMessage?.confirmation.firstMessageId != message2.nonce?.transportString()) {
+        if (confirmMessages[0].underlyingMessage?.confirmation.firstMessageID != message2.nonce?.transportString()) {
             // Confirm messages order is not stable so we need swap if they are not in the expected order
             confirmMessages.swapAt(0, 1)
         }
         
-        XCTAssertEqual(confirmMessages[0].genericMessage?.confirmation.firstMessageId, message2.nonce?.transportString())
-        XCTAssertEqual(confirmMessages[0].genericMessage?.confirmation.moreMessageIds as! [String], [message4.nonce!.transportString()])
-        XCTAssertEqual(confirmMessages[1].genericMessage?.confirmation.firstMessageId, message3.nonce?.transportString())
-        XCTAssertNil(confirmMessages[1].genericMessage?.confirmation.moreMessageIds)
+        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message2.nonce?.transportString())
+        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds as! [String], [message4.nonce!.transportString()])
+        XCTAssertEqual(confirmMessages[1].underlyingMessage?.confirmation.firstMessageID, message3.nonce?.transportString())
+        XCTAssertEqual(confirmMessages[1].underlyingMessage?.confirmation.moreMessageIds, [])
     }
     
     func testThatConfirmUnreadMessagesAsRead_DoesntConfirmMessageAfterTheTimestamp() {
@@ -87,8 +87,8 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         
         // then
         XCTAssertEqual(confirmMessages.count, 1)
-        XCTAssertEqual(confirmMessages[0].genericMessage?.confirmation.firstMessageId, message1.nonce?.transportString())
-        XCTAssertEqual(confirmMessages[0].genericMessage?.confirmation.moreMessageIds as! [String], [message2.nonce!.transportString()])
+        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.firstMessageID, message1.nonce?.transportString())
+        XCTAssertEqual(confirmMessages[0].underlyingMessage?.confirmation.moreMessageIds as! [String], [message2.nonce!.transportString()])
     }
     
     func testThatItConfirmsSentMessagesAsDelivered() {
@@ -122,15 +122,15 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         
         // then
         var nonces = Set(messagesUUIDs.map { $0.transportString() })
-        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.genericMessage else { XCTFail(); return }
+        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.underlyingMessage else { XCTFail(); return }
         XCTAssertNotNil(lastMessage.confirmation)
         
         // Verifies that first message ID is in the set of added nonces
-        XCTAssertNotNil(nonces.remove(at: nonces.firstIndex(of: lastMessage.confirmation!.firstMessageId!)!))
+        XCTAssertNotNil(nonces.remove(at: nonces.firstIndex(of: lastMessage.confirmation.firstMessageID)!))
         // Verifies that other nonces are included in the "moreMessageIds" array
-        XCTAssertTrue(nonces.isSubset(of: lastMessage.confirmation!.moreMessageIds as! [String]))
+        XCTAssertTrue(nonces.isSubset(of: lastMessage.confirmation.moreMessageIds as! [String]))
         
-        XCTAssertEqual(lastMessage.confirmation.moreMessageIds?.count, 2)
+        XCTAssertEqual(lastMessage.confirmation.moreMessageIds.count, 2)
     }
     
     func testThatItConfirmsMessagesOnMultipleConversationsAsDelivered() {
@@ -166,15 +166,15 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
                                                 with: self.uiMOC)
         
         // then
-        guard let lastMessageC1 = (conversation1.hiddenMessages.first as? ZMClientMessage)?.genericMessage else { XCTFail(); return }
+        guard let lastMessageC1 = (conversation1.hiddenMessages.first as? ZMClientMessage)?.underlyingMessage else { XCTFail(); return }
         XCTAssertNotNil(lastMessageC1.confirmation)
-        XCTAssertEqual(lastMessageC1.confirmation.firstMessageId, message1.nonce!.transportString())
-        XCTAssertNil(lastMessageC1.confirmation.moreMessageIds)
+        XCTAssertEqual(lastMessageC1.confirmation.firstMessageID, message1.nonce!.transportString())
+        XCTAssertEqual(lastMessageC1.confirmation.moreMessageIds, [])
         
-        guard let lastMessageC2 = (conversation2.hiddenMessages.first as? ZMClientMessage)?.genericMessage else { XCTFail(); return }
+        guard let lastMessageC2 = (conversation2.hiddenMessages.first as? ZMClientMessage)?.underlyingMessage else { XCTFail(); return }
         XCTAssertNotNil(lastMessageC2.confirmation)
-        XCTAssertEqual(lastMessageC2.confirmation.firstMessageId, message2.nonce!.transportString())
-        XCTAssertNil(lastMessageC2.confirmation.moreMessageIds)
+        XCTAssertEqual(lastMessageC2.confirmation.firstMessageID, message2.nonce!.transportString())
+        XCTAssertEqual(lastMessageC2.confirmation.moreMessageIds, [])
     }
     
     func testThatConfirmedMessagesAreNotMarkedAsConfirmed() {
@@ -209,10 +209,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // then
         XCTAssertEqual(message1.deliveryState, ZMDeliveryState.delivered)
         XCTAssertEqual(message1.confirmations.count, 1)
-        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.genericMessage else { XCTFail(); return }
+        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.underlyingMessage else { XCTFail(); return }
         XCTAssertNotNil(lastMessage.confirmation)
-        XCTAssertEqual(lastMessage.confirmation.firstMessageId, message2.nonce!.transportString())
-        XCTAssertNil(lastMessage.confirmation.moreMessageIds)
+        XCTAssertEqual(lastMessage.confirmation.firstMessageID, message2.nonce!.transportString())
+        XCTAssertEqual(lastMessage.confirmation.moreMessageIds, [])
     }
     
     func testThatReadMessagesAreNotMarkedAsConfirmed() {
@@ -247,10 +247,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         // then
         XCTAssertEqual(message1.deliveryState, ZMDeliveryState.read)
         XCTAssertEqual(message1.confirmations.count, 1)
-        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.genericMessage else { XCTFail(); return }
+        guard let lastMessage = (conversation.hiddenMessages.first as? ZMClientMessage)?.underlyingMessage else { XCTFail(); return }
         XCTAssertNotNil(lastMessage.confirmation)
-        XCTAssertEqual(lastMessage.confirmation.firstMessageId, message2.nonce!.transportString())
-        XCTAssertNil(lastMessage.confirmation.moreMessageIds)
+        XCTAssertEqual(lastMessage.confirmation.firstMessageID, message2.nonce!.transportString())
+        XCTAssertEqual(lastMessage.confirmation.moreMessageIds, [])
     }
     
 }

@@ -76,8 +76,12 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         
         // expect
         let assetId = "asset-id"
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)!
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        let asset = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        var message = GenericMessage(content: asset, nonce: sut.nonce!)
+        message.updateUploaded(assetId: assetId, token: nil)
+        let updateEvent = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
+        
+        sut.update(with: updateEvent, initialUpdate: true)
         let observer = AssetDeletionNotificationObserver()
         
         // when
@@ -116,17 +120,21 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         XCTAssertNotNil(cache.assetData(sut, encrypted: false))
         
         // expect
-        let assetId = "asset-id"
-        let uploaded = ZMGenericMessage.message(content: ZMAsset.asset(withUploadedOTRKey: .init(), sha256: .init()), nonce: sut.nonce!).updatedUploaded(withAssetId: assetId, token: nil)!
-        sut.update(with: uploaded, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        let assetId = UUID.create().transportString()
+        let asset1 = WireProtos.Asset(withUploadedOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key())
+        var message = GenericMessage(content: asset1, nonce: sut.nonce!)
+        message.updateUploaded(assetId: assetId, token: nil)
+        let updateEvent1 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: message)
+        sut.update(with: updateEvent1, initialUpdate: true)
         
-        let previewAssetId = "preview_assetId"
-        let remote = ZMAssetRemoteData.remoteData(withOTRKey: .init(), sha256: .init(), assetId: previewAssetId, assetToken: nil)
-        let image = ZMAssetImageMetaData.imageMetaData(withWidth: 1024, height: 1024)
-        let preview = ZMAssetPreview.preview(withSize: 256, mimeType: "image/png", remoteData: remote, imageMetadata: image)
-        let asset = ZMAsset.asset(withOriginal: nil, preview: preview)
-        let genericMessage = ZMGenericMessage.message(content: asset, nonce: sut.nonce!)
-        sut.update(with: genericMessage, updateEvent: ZMUpdateEvent(), initialUpdate: true)
+        let previewAssetId = UUID.create().transportString()
+        let remote = WireProtos.Asset.RemoteData(withOTRKey: .zmRandomSHA256Key(), sha256: .zmRandomSHA256Key(), assetId: previewAssetId, assetToken: nil)
+        let image = WireProtos.Asset.ImageMetaData(width: 1024, height: 1024)
+        let preview = WireProtos.Asset.Preview(size: 256, mimeType: "image/png", remoteData: remote, imageMetadata: image)
+        let asset2 = WireProtos.Asset(original: nil, preview: preview)
+        let genericMessage = GenericMessage(content: asset2, nonce: sut.nonce!)
+        let updateEvent2 = createUpdateEvent(sut.nonce!, conversationID: UUID.create(), genericMessage: genericMessage)
+        sut.update(with: updateEvent2, initialUpdate: true)
         
         let observer = AssetDeletionNotificationObserver()
         
@@ -260,7 +268,7 @@ class ZMClientMessageTests_Deletion: BaseZMClientMessageTests {
         // given
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         let nonce = UUID.create()
-        let deletedMessage = ZMGenericMessage.message(content: ZMMessageDelete(messageID: nonce))
+        let deletedMessage = GenericMessage(content: MessageDelete(messageId: nonce))
         
         // when
         let sut = conversation.appendClientMessage(with: deletedMessage, expires: false, hidden: true)!
@@ -444,7 +452,7 @@ extension ZMClientMessageTests_Deletion {
         assertDeletedContent(ofMessage: sut as! ZMOTRMessage, inConversation: conversation)
 
         //when
-        let genericMessage = ZMGenericMessage.message(content: ZMText.text(with: name), nonce: nonce)
+        let genericMessage = GenericMessage(content: Text(content: name), nonce: nonce)
         let nextEvent = createUpdateEvent(nonce, conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage)
         performPretendingUiMocIsSyncMoc {
             ZMOTRMessage.createOrUpdate(from: nextEvent, in: self.uiMOC, prefetchResult: nil)
@@ -506,7 +514,10 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNotNil(sut.destructionDate)
             
             // when self deletes the ephemeral
-            let deletedMessage = ZMGenericMessage.message(content: ZMMessageDelete(messageID: sut.nonce!))
+            let messageDelete = MessageDelete.with {
+                $0.messageID = sut.nonce!.transportString()
+            }
+            let deletedMessage = GenericMessage(content: messageDelete)
             let recipients = deletedMessage.recipientUsersForMessage(in: self.syncConversation, selfUser: self.syncSelfUser).users
             
             // then all users receive delete message
@@ -532,7 +543,10 @@ extension ZMClientMessageTests_Deletion {
         XCTAssertNotNil(sut.destructionDate)
         
         // when self deletes the ephemeral
-        let deletedMessage = ZMGenericMessage.message(content: ZMMessageDelete(messageID: sut.nonce!))
+        let messageDelete = MessageDelete.with {
+            $0.messageID = sut.nonce!.transportString()
+        }
+        let deletedMessage = GenericMessage(content: messageDelete)
         let recipients = deletedMessage.recipientUsersForMessage(in: conversation, selfUser: selfUser).users
         
         // then only sender & self recieve the delete message
@@ -547,7 +561,7 @@ extension ZMClientMessageTests_Deletion {
 extension ZMClientMessageTests_Deletion {
 
     func createMessageDeletedUpdateEvent(_ nonce: UUID, conversationID: UUID, senderID: UUID = .create()) -> ZMUpdateEvent {
-        let genericMessage = ZMGenericMessage.message(content: ZMMessageDelete(messageID: nonce))
+        let genericMessage = GenericMessage(content: MessageDelete(messageId: nonce))
         return createUpdateEvent(nonce, conversationID: conversationID, genericMessage: genericMessage, senderID: senderID)
     }
     
@@ -567,7 +581,7 @@ extension ZMClientMessageTests_Deletion {
             XCTAssertNil(assetMessage.fileMessageData, line: line)
             XCTAssertNil(assetMessage.filename, line: line)
             XCTAssertNil(assetMessage.imageMessageData, line: line)
-            XCTAssertNil(assetMessage.genericAssetMessage, line: line)
+            XCTAssertNil(assetMessage.underlyingMessage, line: line)
             XCTAssertEqual(assetMessage.size, 0, line: line)
 
             let cache = uiMOC.zm_fileAssetCache

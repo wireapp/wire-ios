@@ -25,19 +25,17 @@ import Foundation
 
 extension Availability {
     
-    public init(_ proto : ZMAvailability) {
+    public init(_ proto : WireProtos.Availability) {
         ///TODO: change ZMAvailabilityType to NS_CLOSED_ENUM
         switch proto.type {
-        case .NONE:
+        case .none:
             self = .none
-        case .AVAILABLE:
+        case .available:
             self = .available
-        case .AWAY:
+        case .away:
             self = .away
-        case .BUSY:
+        case .busy:
             self = .busy
-        @unknown default:
-            self = .none
         }
     }
 
@@ -151,10 +149,8 @@ extension ZMUser {
         self.didChangeValue(forKey: AvailabilityKey)
     }
     
-    @objc public func updateAvailability(from genericMessage : ZMGenericMessage) {
-        guard let availabilityProtobuffer = genericMessage.availability else { return }
-        
-        updateAvailability(Availability(availabilityProtobuffer))
+    public func updateAvailability(from genericMessage : GenericMessage) {
+        updateAvailability(Availability(genericMessage.availability))
     }
     
     private static let needsToNotifyAvailabilityBehaviourChangeKey = "needsToNotifyAvailabilityBehaviourChange"

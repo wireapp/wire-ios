@@ -187,13 +187,23 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         }
     }
     
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: ZMGenericMessage, senderID: UUID = .create(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
+    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: GenericMessage, senderID: UUID = .create(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
+        let data = try? genericMessage.serializedData().base64String()
+        return createUpdateEvent(nonce,
+                                 conversationID: conversationID,
+                                 timestamp: timestamp,
+                                 genericMessageData: data ?? "",
+                                 senderID: senderID,
+                                 eventSource: eventSource)
+    }
+    
+    private func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date, genericMessageData: String, senderID: UUID, eventSource: ZMUpdateEventSource) -> ZMUpdateEvent  {
         let payload : [String : Any] = [
             "conversation": conversationID.transportString(),
             "from": senderID.transportString(),
             "time": timestamp.transportString(),
             "data": [
-                "text": genericMessage.data().base64String()
+                "text": genericMessageData
             ],
             "type": "conversation.otr-message-add"
         ]
@@ -204,12 +214,11 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             let streamPayload = ["payload" : [payload],
                                  "id" : UUID.create()] as [String : Any]
             let event = ZMUpdateEvent.eventsArray(from: streamPayload as ZMTransportData,
-                                                                   source: eventSource)!.first!
+                                                  source: eventSource)!.first!
             XCTAssertNotNil(event)
             return event
         }
     }
-    
 }
 
 

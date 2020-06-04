@@ -97,8 +97,10 @@ extension UTType {
     }
 
     public var isAnimatedGIF: Bool {
-        guard let imageAsset = assetClientMessage.mediumGenericMessage?.imageAssetData else { return false }
-        return [imageAsset.mimeType].contains(where: { UTType.init(mimeType: $0)?.isGIF == true })
+        guard let mimeType = assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType else {
+            return false
+        }
+        return UTType.init(mimeType: mimeType)?.isGIF == true
     }
 
     public var imageType: String? {

@@ -28,9 +28,13 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             // given
             let timestamp = Date()
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
-            let knock = ZMGenericMessage.message(content: ZMKnock.knock())
+            let knock = GenericMessage(content: Knock.with { $0.hotKnock = false })
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            message.add(knock.data())
+            do {
+                message.add(try knock.serializedData())
+            } catch {
+                XCTFail()
+            }
             message.serverTimestamp = timestamp
             message.visibleInConversation = conversation
             
@@ -88,7 +92,13 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
-            message.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+            
+            let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            do {
+                message.add(try textMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
             message.serverTimestamp = timestamp
             message.visibleInConversation = conversation
             
@@ -128,7 +138,13 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             let mention = Mention(range: NSRange(location: 0, length: 4), user: self.selfUser)
             let message = ZMClientMessage(nonce: nonce, managedObjectContext: self.syncMOC)
-            message.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+            
+            let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            do {
+                message.add(try textMessage.serializedData())
+            } catch {
+                XCTFail()
+            }
             message.serverTimestamp = timestamp
             message.visibleInConversation = conversation
             conversation.updateTimestampsAfterInsertingMessage(message)
@@ -274,7 +290,13 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         let nonce = UUID()
         let message2 = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         let mention = Mention(range: NSRange(location: 0, length: 4), user: selfUser)
-        message2.add(ZMGenericMessage.message(content: ZMText.text(with: "@joe hello", mentions: [mention]), nonce: nonce).data())
+        
+        let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
+        do {
+            message2.add(try textMessage.serializedData())
+        } catch {
+            XCTFail()
+        }
         message2.visibleInConversation = conversation
         message1.serverTimestamp = Date(timeIntervalSinceNow: -1)
         
