@@ -29,7 +29,7 @@ Carthage
 ZMCSystem.framework.zip
 
 
-# Test artefacts
+# Test artifacts
 xcode-*.log
 tests.xml
 code-coverage/*
