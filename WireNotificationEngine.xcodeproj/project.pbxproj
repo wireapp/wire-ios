@@ -35,6 +35,7 @@
 		0602565B2489337100E060E1 /* WireMockTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256362489324200E060E1 /* WireMockTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0602565D248933A800E060E1 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; };
 		0602565E248933B000E060E1 /* WireLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
 		066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 066042A0247FE76C00A5F161 /* Assets.xcassets */; };
 		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */; };
@@ -474,6 +475,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -725,7 +727,7 @@
 		067ECB572487AB6000701956 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -748,7 +750,7 @@
 		067ECB582487AB6000701956 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
