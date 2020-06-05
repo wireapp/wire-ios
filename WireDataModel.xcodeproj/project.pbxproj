@@ -501,13 +501,7 @@
 		F9A706FD1CAEE32A00C2F5FE /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D31CAEE30700C2F5FE /* medium.jpg */; };
 		F9A706FE1CAEE32A00C2F5FE /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D41CAEE30700C2F5FE /* not_animated.gif */; };
 		F9A707031CAEE32E00C2F5FE /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D91CAEE30700C2F5FE /* tiny.jpg */; };
-		F9A7070A1CAEE38500C2F5FE /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6B51CAD80BC0039E10C /* ProtocolBuffers.framework */; };
 		F9A7070B1CAEE38500C2F5FE /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */; };
-		F9A707321CAEE3C900C2F5FE /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A707251CAEE3AA00C2F5FE /* WireSystem.framework */; };
-		F9A707331CAEE3C900C2F5FE /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A7072B1CAEE3AA00C2F5FE /* WireTransport.framework */; };
-		F9A707341CAEE3C900C2F5FE /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A7072D1CAEE3AA00C2F5FE /* WireUtilities.framework */; };
-		F9A707351CAEE3FA00C2F5FE /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9A7071B1CAEE3AA00C2F5FE /* ocmock.framework */; };
-		F9A707361CAEE3FA00C2F5FE /* ocmock.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F9A7071B1CAEE3AA00C2F5FE /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F9A7073D1CAEE8FC00C2F5FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A81D1CAEDA330039E10C /* AppDelegate.m */; };
 		F9A7073E1CAEE8FC00C2F5FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A8241CAEDA330039E10C /* main.m */; };
 		F9A708341CAEEB7500C2F5FE /* ManagedObjectContextSaveNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708041CAEEB7400C2F5FE /* ManagedObjectContextSaveNotificationTests.m */; };
@@ -574,7 +568,6 @@
 		F9C9A6AD1CAD7C7F0039E10C /* ZMMessage.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A61CAD7C7F0039E10C /* ZMMessage.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6AE1CAD7C7F0039E10C /* ZMUser.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A71CAD7C7F0039E10C /* ZMUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6B01CAD7D1F0039E10C /* ZMManagedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6AF1CAD7D1F0039E10C /* ZMManagedObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F9C9A6B81CAD80BC0039E10C /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6B51CAD80BC0039E10C /* ProtocolBuffers.framework */; };
 		F9C9A7661CAE8DFC0039E10C /* ZMAddressBookContact.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7641CAE8DFC0039E10C /* ZMAddressBookContact.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; };
 		F9C9A80D1CAED9A00039E10C /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -617,7 +610,6 @@
 			files = (
 				F1FDF30321B17AE100E037A1 /* SwiftProtobuf.framework in Embed Frameworks */,
 				878B823220A1C7D1007455CA /* HTMLString.framework in Embed Frameworks */,
-				F9A707361CAEE3FA00C2F5FE /* ocmock.framework in Embed Frameworks */,
 				F9C9A80D1CAED9A00039E10C /* WireDataModel.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -1190,26 +1182,6 @@
 		F9A706D31CAEE30700C2F5FE /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = medium.jpg; path = Tests/Resources/medium.jpg; sourceTree = SOURCE_ROOT; };
 		F9A706D41CAEE30700C2F5FE /* not_animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = not_animated.gif; path = Tests/Resources/not_animated.gif; sourceTree = SOURCE_ROOT; };
 		F9A706D91CAEE30700C2F5FE /* tiny.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; name = tiny.jpg; path = Tests/Resources/tiny.jpg; sourceTree = SOURCE_ROOT; };
-		F9A707171CAEE3AA00C2F5FE /* Cryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Cryptobox.framework; sourceTree = "<group>"; };
-		F9A707181CAEE3AA00C2F5FE /* Cryptobox.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = Cryptobox.framework.dSYM; sourceTree = "<group>"; };
-		F9A7071B1CAEE3AA00C2F5FE /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ocmock.framework; sourceTree = "<group>"; };
-		F9A7071C1CAEE3AA00C2F5FE /* ocmock.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = ocmock.framework.dSYM; sourceTree = "<group>"; };
-		F9A7071D1CAEE3AA00C2F5FE /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = PINCache.framework; sourceTree = "<group>"; };
-		F9A7071E1CAEE3AA00C2F5FE /* PINCache.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = PINCache.framework.dSYM; sourceTree = "<group>"; };
-		F9A7071F1CAEE3AA00C2F5FE /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = ProtocolBuffers.framework; sourceTree = "<group>"; };
-		F9A707201CAEE3AA00C2F5FE /* ProtocolBuffers.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = ProtocolBuffers.framework.dSYM; sourceTree = "<group>"; };
-		F9A707211CAEE3AA00C2F5FE /* WireImages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireImages.framework; sourceTree = "<group>"; };
-		F9A707221CAEE3AA00C2F5FE /* WireImages.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireImages.framework.dSYM; sourceTree = "<group>"; };
-		F9A707251CAEE3AA00C2F5FE /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireSystem.framework; sourceTree = "<group>"; };
-		F9A707261CAEE3AA00C2F5FE /* WireSystem.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireSystem.framework.dSYM; sourceTree = "<group>"; };
-		F9A707271CAEE3AA00C2F5FE /* WireProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireProtos.framework; sourceTree = "<group>"; };
-		F9A707281CAEE3AA00C2F5FE /* WireProtos.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireProtos.framework.dSYM; sourceTree = "<group>"; };
-		F9A707291CAEE3AA00C2F5FE /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireTesting.framework; sourceTree = "<group>"; };
-		F9A7072A1CAEE3AA00C2F5FE /* WireTesting.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireTesting.framework.dSYM; sourceTree = "<group>"; };
-		F9A7072B1CAEE3AA00C2F5FE /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireTransport.framework; sourceTree = "<group>"; };
-		F9A7072C1CAEE3AA00C2F5FE /* WireTransport.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireTransport.framework.dSYM; sourceTree = "<group>"; };
-		F9A7072D1CAEE3AA00C2F5FE /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = WireUtilities.framework; sourceTree = "<group>"; };
-		F9A7072E1CAEE3AA00C2F5FE /* WireUtilities.framework.dSYM */ = {isa = PBXFileReference; lastKnownFileType = wrapper.dsym; path = WireUtilities.framework.dSYM; sourceTree = "<group>"; };
 		F9A708041CAEEB7400C2F5FE /* ManagedObjectContextSaveNotificationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedObjectContextSaveNotificationTests.m; sourceTree = "<group>"; };
 		F9A708051CAEEB7400C2F5FE /* ManagedObjectContextTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ManagedObjectContextTests.m; sourceTree = "<group>"; };
 		F9A708061CAEEB7400C2F5FE /* NSManagedObjectContext+TestHelpers.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObjectContext+TestHelpers.h"; sourceTree = "<group>"; };
@@ -1302,7 +1274,6 @@
 		F9C9A6A61CAD7C7F0039E10C /* ZMMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMessage.h; sourceTree = "<group>"; };
 		F9C9A6A71CAD7C7F0039E10C /* ZMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUser.h; sourceTree = "<group>"; };
 		F9C9A6AF1CAD7D1F0039E10C /* ZMManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMManagedObject.h; sourceTree = "<group>"; };
-		F9C9A6B51CAD80BC0039E10C /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireProtos.framework; path = Carthage/Build/iOS/WireProtos.framework; sourceTree = "<group>"; };
 		F9C9A6B71CAD80BC0039E10C /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
 		F9C9A7641CAE8DFC0039E10C /* ZMAddressBookContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAddressBookContact.h; sourceTree = "<group>"; };
@@ -1333,7 +1304,6 @@
 			files = (
 				F93265281D895C1C0076AAD6 /* WireUtilities.framework in Frameworks */,
 				F93265271D895A910076AAD6 /* WireTransport.framework in Frameworks */,
-				F9C9A6B81CAD80BC0039E10C /* ProtocolBuffers.framework in Frameworks */,
 				F9C9A6741CAD78160039E10C /* PINCache.framework in Frameworks */,
 				878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */,
 				54CF1D9E1E939F84003D18E8 /* WireCryptobox.framework in Frameworks */,
@@ -1357,13 +1327,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				F1FDF30221B17AD700E037A1 /* SwiftProtobuf.framework in Frameworks */,
-				F9A707351CAEE3FA00C2F5FE /* ocmock.framework in Frameworks */,
-				F9A707321CAEE3C900C2F5FE /* WireSystem.framework in Frameworks */,
 				F9A7070B1CAEE38500C2F5FE /* WireProtos.framework in Frameworks */,
 				F9C9A8101CAED9A00039E10C /* WireTesting.framework in Frameworks */,
-				F9A707331CAEE3C900C2F5FE /* WireTransport.framework in Frameworks */,
-				F9A707341CAEE3C900C2F5FE /* WireUtilities.framework in Frameworks */,
-				F9A7070A1CAEE38500C2F5FE /* ProtocolBuffers.framework in Frameworks */,
 				F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */,
 				878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */,
 			);
@@ -1956,34 +1921,6 @@
 			path = Tests/Resources/en.lproj;
 			sourceTree = SOURCE_ROOT;
 		};
-		F9A7070E1CAEE3AA00C2F5FE /* iOS */ = {
-			isa = PBXGroup;
-			children = (
-				F9A707171CAEE3AA00C2F5FE /* Cryptobox.framework */,
-				F9A707181CAEE3AA00C2F5FE /* Cryptobox.framework.dSYM */,
-				F9A7071B1CAEE3AA00C2F5FE /* ocmock.framework */,
-				F9A7071C1CAEE3AA00C2F5FE /* ocmock.framework.dSYM */,
-				F9A7071D1CAEE3AA00C2F5FE /* PINCache.framework */,
-				F9A7071E1CAEE3AA00C2F5FE /* PINCache.framework.dSYM */,
-				F9A7071F1CAEE3AA00C2F5FE /* ProtocolBuffers.framework */,
-				F9A707201CAEE3AA00C2F5FE /* ProtocolBuffers.framework.dSYM */,
-				F9A707211CAEE3AA00C2F5FE /* WireImages.framework */,
-				F9A707221CAEE3AA00C2F5FE /* WireImages.framework.dSYM */,
-				F9A707251CAEE3AA00C2F5FE /* WireSystem.framework */,
-				F9A707261CAEE3AA00C2F5FE /* WireSystem.framework.dSYM */,
-				F9A707271CAEE3AA00C2F5FE /* WireProtos.framework */,
-				F9A707281CAEE3AA00C2F5FE /* WireProtos.framework.dSYM */,
-				F9A707291CAEE3AA00C2F5FE /* WireTesting.framework */,
-				F9A7072A1CAEE3AA00C2F5FE /* WireTesting.framework.dSYM */,
-				F9A7072B1CAEE3AA00C2F5FE /* WireTransport.framework */,
-				F9A7072C1CAEE3AA00C2F5FE /* WireTransport.framework.dSYM */,
-				F9A7072D1CAEE3AA00C2F5FE /* WireUtilities.framework */,
-				F9A7072E1CAEE3AA00C2F5FE /* WireUtilities.framework.dSYM */,
-			);
-			name = iOS;
-			path = Carthage/Build/iOS;
-			sourceTree = "<group>";
-		};
 		F9A708031CAEEB7400C2F5FE /* ManagedObjectContext */ = {
 			isa = PBXGroup;
 			children = (
@@ -2321,11 +2258,9 @@
 				878B822F20A1C7AF007455CA /* HTMLString.framework */,
 				54CF1D9C1E939F84003D18E8 /* WireCryptobox.framework */,
 				54CF1D9D1E939F84003D18E8 /* WireLinkPreview.framework */,
-				F9A7070E1CAEE3AA00C2F5FE /* iOS */,
 				F9C9A8381CAEDABF0039E10C /* ocmock.framework */,
 				F9C9A8391CAEDABF0039E10C /* WireSystem.framework */,
 				F9C9A79D1CAEAAF20039E10C /* WireTesting.framework */,
-				F9C9A6B51CAD80BC0039E10C /* ProtocolBuffers.framework */,
 				F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */,
 				F9C9A6B71CAD80BC0039E10C /* WireTransport.framework */,
 				F9C9A6711CAD78160039E10C /* PINCache.framework */,
@@ -2771,7 +2706,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireTransport.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireProtos.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
