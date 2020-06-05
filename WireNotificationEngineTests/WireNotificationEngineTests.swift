@@ -16,15 +16,23 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import XCTest
+import WireDataModel
+import WireTesting
+@testable import WireNotificationEngine
 
-class ViewController: UIViewController {
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
+class WireNotificationEngineTests: ZMTBaseTest {
+    
+    override func setUp() {
+        super.setUp()
     }
-
-
+    
+    override func tearDown() {
+        super.tearDown()
+    }
+    
+    func testExample() {
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(true)
+    }
 }
-
