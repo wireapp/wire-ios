@@ -102,10 +102,8 @@
 		BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1669016A1D707509000FE4AF /* WireRequestStrategy.framework */; };
 		BF7D9BEA1D8C353A00949267 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF66512F1D8C2ED50074F367 /* OCMock.framework */; };
 		BF7D9BED1D8C353A00949267 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6651311D8C2ED50074F367 /* PINCache.framework */; };
-		BF7D9BEE1D8C353A00949267 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */; };
 		BF7D9BF31D8C355100949267 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF66512F1D8C2ED50074F367 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF7D9BF51D8C355100949267 /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651311D8C2ED50074F367 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BF7D9BF61D8C355100949267 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */; };
 		D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */; };
 		D5D65A072074C23D00D7F3C3 /* AssetRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */; };
@@ -232,7 +230,6 @@
 				54E03A3A1E93BFE10089AC69 /* WireUtilities.framework in CopyFiles */,
 				BF7D9BF31D8C355100949267 /* OCMock.framework in CopyFiles */,
 				BF7D9BF51D8C355100949267 /* PINCache.framework in CopyFiles */,
-				BF7D9BF61D8C355100949267 /* ProtocolBuffers.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -343,7 +340,6 @@
 		BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+RequestGenerator.swift"; sourceTree = "<group>"; };
 		BF66512F1D8C2ED50074F367 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		BF6651311D8C2ED50074F367 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
-		BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		BFF9446520F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageV2DownloadRequestStrategyTests.swift; sourceTree = "<group>"; };
 		D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetRequestFactoryTests.swift; sourceTree = "<group>"; };
 		F13ADE7C21B5355F00B6E736 /* SwiftProtobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftProtobuf.framework; path = Carthage/Build/iOS/SwiftProtobuf.framework; sourceTree = "<group>"; };
@@ -462,7 +458,6 @@
 				878B823520A1D092007455CA /* HTMLString.framework in Frameworks */,
 				BF7D9BEA1D8C353A00949267 /* OCMock.framework in Frameworks */,
 				BF7D9BED1D8C353A00949267 /* PINCache.framework in Frameworks */,
-				BF7D9BEE1D8C353A00949267 /* ProtocolBuffers.framework in Frameworks */,
 				BF7D9BE11D8C351900949267 /* WireRequestStrategy.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -591,7 +586,6 @@
 				54E03A281E93BFDC0089AC69 /* WireUtilities.framework */,
 				BF66512F1D8C2ED50074F367 /* OCMock.framework */,
 				BF6651311D8C2ED50074F367 /* PINCache.framework */,
-				BF6651321D8C2ED50074F367 /* ProtocolBuffers.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
