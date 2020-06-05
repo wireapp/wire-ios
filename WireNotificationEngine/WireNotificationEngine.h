@@ -16,15 +16,14 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+#import <Foundation/Foundation.h>
 
-class ViewController: UIViewController {
+//! Project version number for WireNotificationEngine.
+FOUNDATION_EXPORT double WireNotificationEngineVersionNumber;
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
+//! Project version string for WireNotificationEngine.
+FOUNDATION_EXPORT const unsigned char WireNotificationEngineVersionString[];
 
+// In this header, you should import all the public headers of your framework using statements like #import <WireNotificationEngine/PublicHeader.h>
 
-}
 
