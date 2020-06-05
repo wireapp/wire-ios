@@ -11,7 +11,6 @@
 		5470D4321D77165800FDE440 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* WireDataModel.framework */; };
 		5470D4551D77169900FDE440 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* WireCryptobox.framework */; };
 		5470D4581D77169900FDE440 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
-		5470D4591D77169900FDE440 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
 		5470D45A1D77169900FDE440 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* WireImages.framework */; };
 		5470D45B1D77169900FDE440 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4501D77169900FDE440 /* WireLinkPreview.framework */; };
 		5470D45C1D77169900FDE440 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* WireSystem.framework */; };
@@ -20,7 +19,6 @@
 		5470D45F1D77169900FDE440 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4541D77169900FDE440 /* WireUtilities.framework */; };
 		54B04A621D77359900CED57C /* WireCryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A671D77359900CED57C /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A681D77359900CED57C /* WireLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4501D77169900FDE440 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54B04A691D77359900CED57C /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -34,7 +32,6 @@
 		BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */; };
 		CE3EB58B1DFEBDCE001FE3AE /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* WireCryptobox.framework */; };
 		CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44D1D77169900FDE440 /* PINCache.framework */; };
-		CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */; };
 		CE3EB5901DFEBDCE001FE3AE /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44F1D77169900FDE440 /* WireImages.framework */; };
 		CE3EB5911DFEBDCE001FE3AE /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* WireDataModel.framework */; };
 		CE3EB5921DFEBDCE001FE3AE /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4511D77169900FDE440 /* WireSystem.framework */; };
@@ -92,7 +89,6 @@
 				F125E9AD1E28D603006583A2 /* WireMockTransport.framework in CopyFiles */,
 				54B04A621D77359900CED57C /* WireCryptobox.framework in CopyFiles */,
 				54B04A651D77359900CED57C /* PINCache.framework in CopyFiles */,
-				54B04A661D77359900CED57C /* ProtocolBuffers.framework in CopyFiles */,
 				54B04A671D77359900CED57C /* WireImages.framework in CopyFiles */,
 				54B04A681D77359900CED57C /* WireLinkPreview.framework in CopyFiles */,
 				54B04A691D77359900CED57C /* WireSystem.framework in CopyFiles */,
@@ -125,7 +121,6 @@
 		5470D4311D77165800FDE440 /* WireDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireDataModel.framework; path = Carthage/Build/iOS/WireDataModel.framework; sourceTree = "<group>"; };
 		5470D44A1D77169900FDE440 /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
 		5470D44D1D77169900FDE440 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
-		5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		5470D44F1D77169900FDE440 /* WireImages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireImages.framework; path = Carthage/Build/iOS/WireImages.framework; sourceTree = "<group>"; };
 		5470D4501D77169900FDE440 /* WireLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireLinkPreview.framework; path = Carthage/Build/iOS/WireLinkPreview.framework; sourceTree = "<group>"; };
 		5470D4511D77169900FDE440 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
@@ -173,7 +168,6 @@
 				5470D45A1D77169900FDE440 /* WireImages.framework in Frameworks */,
 				5470D4321D77165800FDE440 /* WireDataModel.framework in Frameworks */,
 				5470D45E1D77169900FDE440 /* WireTransport.framework in Frameworks */,
-				5470D4591D77169900FDE440 /* ProtocolBuffers.framework in Frameworks */,
 				5470D45C1D77169900FDE440 /* WireSystem.framework in Frameworks */,
 				5470D45F1D77169900FDE440 /* WireUtilities.framework in Frameworks */,
 				5470D45B1D77169900FDE440 /* WireLinkPreview.framework in Frameworks */,
@@ -194,7 +188,6 @@
 				CE3EB5991DFEBDCF001FE3AE /* WireRequestStrategy.framework in Frameworks */,
 				CE3EB58B1DFEBDCE001FE3AE /* WireCryptobox.framework in Frameworks */,
 				CE3EB58E1DFEBDCE001FE3AE /* PINCache.framework in Frameworks */,
-				CE3EB58F1DFEBDCE001FE3AE /* ProtocolBuffers.framework in Frameworks */,
 				CE3EB5901DFEBDCE001FE3AE /* WireImages.framework in Frameworks */,
 				CE3EB5911DFEBDCE001FE3AE /* WireDataModel.framework in Frameworks */,
 				CE3EB5921DFEBDCE001FE3AE /* WireSystem.framework in Frameworks */,
@@ -301,7 +294,6 @@
 				CE3EB5971DFEBDCF001FE3AE /* WireRequestStrategy.framework */,
 				5470D44A1D77169900FDE440 /* WireCryptobox.framework */,
 				5470D44D1D77169900FDE440 /* PINCache.framework */,
-				5470D44E1D77169900FDE440 /* ProtocolBuffers.framework */,
 				5470D44F1D77169900FDE440 /* WireImages.framework */,
 				5470D4501D77169900FDE440 /* WireLinkPreview.framework */,
 				5470D4511D77169900FDE440 /* WireSystem.framework */,
@@ -492,7 +484,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireImages.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireDataModel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
