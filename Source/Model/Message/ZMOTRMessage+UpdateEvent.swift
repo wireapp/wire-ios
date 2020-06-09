@@ -45,7 +45,7 @@ extension ZMOTRMessage {
                 appendInvalidSystemMessage(forUpdateEvent: updateEvent, toConversation: conversation, inContext: moc)
                 return nil
         }
-        zmLog.debug("Processing:\n\(message.debugDescription)")
+        zmLog.debug("Processing:\n\(message)")
         
         // Update the legal hold state in the conversation
         conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timeStamp() ?? Date())
