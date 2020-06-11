@@ -45,7 +45,7 @@ extension ClientMessageTests_OTR {
             XCTAssertTrue(self.syncMOC.saveOrRollback())
             
             // when
-            guard let dataAndStrategy = textMessage.encryptedMessagePayloadData(conversation, externalData: nil)
+            guard let dataAndStrategy = textMessage.encryptForTransport(for: conversation)
             else { return XCTFail() }
             
             // then
@@ -79,7 +79,7 @@ extension ClientMessageTests_OTR {
             self.syncUser3Client1.failedToEstablishSession = true
             
             //when
-            guard let dataAndStrategy = message.encryptedMessagePayloadData() else {
+            guard let dataAndStrategy = message.encryptForTransport() else {
                 XCTFail()
                 return
             }
@@ -105,7 +105,7 @@ extension ClientMessageTests_OTR {
             self.syncUser3Client1.failedToEstablishSession = true
             
             //when
-            guard let dataAndStrategy = message.encryptedMessagePayloadData() else {
+            guard let dataAndStrategy = message.encryptForTransport() else {
                 XCTFail()
                 return
             }
@@ -129,7 +129,7 @@ extension ClientMessageTests_OTR {
             let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else {
+            guard let payloadAndStrategy = message.encryptForTransport() else {
                 XCTFail()
                 return
             }
@@ -154,7 +154,7 @@ extension ClientMessageTests_OTR {
             XCTAssertTrue(message.isEphemeral)
             
             //when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
             
             //then
             switch payloadAndStrategy.strategy {
@@ -193,7 +193,7 @@ extension ClientMessageTests_OTR {
             let sut = syncMessage.deleteForEveryone()
 
             // when
-            guard let payloadAndStrategy = sut?.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = sut?.encryptForTransport() else { return XCTFail() }
             
             //then
             switch payloadAndStrategy.strategy {
@@ -233,7 +233,7 @@ extension ClientMessageTests_OTR {
             syncMessage.sender = nil
             var payload : (data: Data, strategy: MissingClientsStrategy)?
             self.performIgnoringZMLogError {
-                 payload = sut?.encryptedMessagePayloadData()
+                 payload = sut?.encryptForTransport()
             }
             
             //then
@@ -258,7 +258,7 @@ extension ClientMessageTests_OTR {
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
             
             // then
             self.assertMessageMetadata(payloadAndStrategy.data)
@@ -281,7 +281,7 @@ extension ClientMessageTests_OTR {
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
             // when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
             
             // then
             self.assertMessageMetadata(payloadAndStrategy.data)
@@ -322,7 +322,7 @@ extension ClientMessageTests_OTR {
             let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
             
             //when
-            guard let payloadAndStrategy = confirmationMessage?.encryptedMessagePayloadData()
+            guard let payloadAndStrategy = confirmationMessage?.encryptForTransport()
             else { return XCTFail()}
             
             //then
@@ -367,7 +367,7 @@ extension ClientMessageTests_OTR {
             let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
             
             //when
-            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+            guard let _ = confirmationMessage?.encryptForTransport()
                 else { return XCTFail()}
         }
     }
@@ -398,7 +398,7 @@ extension ClientMessageTests_OTR {
             let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
 
             //when
-            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+            guard let _ = confirmationMessage?.encryptForTransport()
                 else { return XCTFail()}
         }
     }
@@ -425,7 +425,7 @@ extension ClientMessageTests_OTR {
             let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
 
             //when
-            guard let _ = confirmationMessage?.encryptedMessagePayloadData()
+            guard let _ = confirmationMessage?.encryptForTransport()
                 else { return XCTFail()}
         }
     }

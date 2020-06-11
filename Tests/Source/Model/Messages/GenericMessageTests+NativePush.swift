@@ -50,7 +50,7 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
             conversation.conversationType = .oneOnOne
 
             // when
-            let (data, _) = message.encryptedMessagePayloadData(conversation, externalData: nil)!
+            let (data, _) = message.encryptForTransport(for: conversation)!
             let otrMessage = NewOtrMessage.with {
                try? $0.merge(serializedData: data)
             }
