@@ -31,7 +31,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
             
             // when
-            guard let payloadAndStrategy = message.encryptedMessagePayloadData() else { return XCTFail() }
+            guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
             
             // then
             switch payloadAndStrategy.strategy {

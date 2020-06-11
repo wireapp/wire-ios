@@ -341,7 +341,7 @@ extension ZMClientMessageTests_Ephemeral {
             let textMessage = conversation.append(text: "foo", fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
-            guard let _ = textMessage.encryptedMessagePayloadData()
+            guard let _ = textMessage.encryptForTransport()
                 else { return XCTFail()}
         }
     }
