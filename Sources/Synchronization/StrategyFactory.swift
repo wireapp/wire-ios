@@ -73,7 +73,6 @@ class StrategyFactory {
                                         applicationStatus: applicationStatus,
                                         pushNotificationStatus: pushNotificationStatus,
                                         notificationsTracker: notificationsTracker,
-                                        eventIDsCollection: eventIDsCollection,
                                         eventProcessor: eventProcessor)
     }
 }

@@ -28,7 +28,6 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
                 notificationsTracker: NotificationsTracker,
-                eventIDsCollection: PreviouslyReceivedEventIDsCollection,
                 eventProcessor: UpdateEventProcessor) {
         
         super.init(withManagedObjectContext: managedObjectContext,
@@ -36,7 +35,6 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
         
         sync = NotificationStreamSync(moc: managedObjectContext,
                                       notificationsTracker: notificationsTracker,
-                                      eventIDsCollection: eventIDsCollection,
                                       delegate: self)
         self.eventProcessor = eventProcessor
     }
