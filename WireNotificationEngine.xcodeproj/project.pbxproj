@@ -31,6 +31,24 @@
 		0602565D248933A800E060E1 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; };
 		0602565E248933B000E060E1 /* WireLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
+		060ED6E6249CF4F900412C4A /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; };
+		060ED6E7249CF4F900412C4A /* WireLinkPreview.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6E9249CF4FE00412C4A /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; };
+		060ED6EA249CF4FE00412C4A /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6EB249CF50400412C4A /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564E248932C800E060E1 /* WireUtilities.framework */; };
+		060ED6EC249CF50400412C4A /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564E248932C800E060E1 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6EE249CF50A00412C4A /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6ED249CF50A00412C4A /* WireTransport.framework */; };
+		060ED6EF249CF50A00412C4A /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6ED249CF50A00412C4A /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6F0249CF51000412C4A /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; };
+		060ED6F1249CF51000412C4A /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6F3249CF51800412C4A /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */; };
+		060ED6F4249CF51800412C4A /* WireRequestStrategy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6F5249CF51E00412C4A /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; };
+		060ED6F6249CF51E00412C4A /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6F7249CF52400412C4A /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564A248932BA00E060E1 /* WireProtos.framework */; };
+		060ED6F8249CF52400412C4A /* WireProtos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564A248932BA00E060E1 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		060ED6F9249CF53100412C4A /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; };
+		060ED6FA249CF53100412C4A /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		06394AA42497B31900380494 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9E2497AF5100380494 /* WireTransport.framework */; };
 		06394AA62497B32100380494 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9C2497AF4A00380494 /* WireRequestStrategy.framework */; };
 		06394AA82497B32700380494 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9A2497AF4500380494 /* WireMockTransport.framework */; };
@@ -84,6 +102,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		060ED6E8249CF4F900412C4A /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				060ED6F6249CF51E00412C4A /* WireSystem.framework in Embed Frameworks */,
+				060ED6EA249CF4FE00412C4A /* WireCryptobox.framework in Embed Frameworks */,
+				060ED6EC249CF50400412C4A /* WireUtilities.framework in Embed Frameworks */,
+				060ED6FA249CF53100412C4A /* WireImages.framework in Embed Frameworks */,
+				060ED6E7249CF4F900412C4A /* WireLinkPreview.framework in Embed Frameworks */,
+				060ED6EF249CF50A00412C4A /* WireTransport.framework in Embed Frameworks */,
+				060ED6F4249CF51800412C4A /* WireRequestStrategy.framework in Embed Frameworks */,
+				060ED6F8249CF52400412C4A /* WireProtos.framework in Embed Frameworks */,
+				060ED6F1249CF51000412C4A /* WireDataModel.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		067ECB462487A93E00701956 /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -110,6 +147,8 @@
 		0602564A248932BA00E060E1 /* WireProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireProtos.framework; path = Carthage/Build/iOS/WireProtos.framework; sourceTree = "<group>"; };
 		0602564E248932C800E060E1 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
 		0602565C248933A800E060E1 /* WireLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireLinkPreview.framework; path = Carthage/Build/iOS/WireLinkPreview.framework; sourceTree = "<group>"; };
+		060ED6ED249CF50A00412C4A /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
+		060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = Carthage/Build/iOS/WireRequestStrategy.framework; sourceTree = "<group>"; };
 		06394A9A2497AF4500380494 /* WireMockTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireMockTransport.framework; path = "../Main/wire-ios-share-engine/Carthage/Build/iOS/WireMockTransport.framework"; sourceTree = "<group>"; };
 		06394A9C2497AF4A00380494 /* WireRequestStrategy.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireRequestStrategy.framework; path = "../Main/wire-ios-share-engine/Carthage/Build/iOS/WireRequestStrategy.framework"; sourceTree = "<group>"; };
 		06394A9E2497AF5100380494 /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = "../Main/wire-ios-share-engine/Carthage/Build/iOS/WireTransport.framework"; sourceTree = "<group>"; };
@@ -158,6 +197,15 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				060ED6F5249CF51E00412C4A /* WireSystem.framework in Frameworks */,
+				060ED6E9249CF4FE00412C4A /* WireCryptobox.framework in Frameworks */,
+				060ED6EB249CF50400412C4A /* WireUtilities.framework in Frameworks */,
+				060ED6F9249CF53100412C4A /* WireImages.framework in Frameworks */,
+				060ED6E6249CF4F900412C4A /* WireLinkPreview.framework in Frameworks */,
+				060ED6EE249CF50A00412C4A /* WireTransport.framework in Frameworks */,
+				060ED6F3249CF51800412C4A /* WireRequestStrategy.framework in Frameworks */,
+				060ED6F7249CF52400412C4A /* WireProtos.framework in Frameworks */,
+				060ED6F0249CF51000412C4A /* WireDataModel.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -191,7 +239,9 @@
 		060256312489322000E060E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */,
 				06394A9E2497AF5100380494 /* WireTransport.framework */,
+				060ED6ED249CF50A00412C4A /* WireTransport.framework */,
 				06394A9C2497AF4A00380494 /* WireRequestStrategy.framework */,
 				06394A9A2497AF4500380494 /* WireMockTransport.framework */,
 				0602565C248933A800E060E1 /* WireLinkPreview.framework */,
@@ -363,6 +413,7 @@
 				067ECB372487A93D00701956 /* Frameworks */,
 				067ECB382487A93D00701956 /* Resources */,
 				0697128E2497B81900C32169 /* Copy Carthage Frameworks */,
+				060ED6E8249CF4F900412C4A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
