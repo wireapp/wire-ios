@@ -113,30 +113,30 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
     let deliveryConfirmationDummy : DeliveryConfirmationDummy
-    
+
     /// The authentication status used to verify a user is authenticated
     public let authenticationStatus: AuthenticationStatusProvider
-    
+
     /// The client registration status used to lookup if a user has registered a self client
     public let clientRegistrationStatus : ClientRegistrationDelegate
 
     public let linkPreviewDetector: LinkPreviewDetectorType
-    
-    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider , clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
+
+    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.deliveryConfirmationDummy = DeliveryConfirmationDummy()
         self.linkPreviewDetector = linkPreviewDetector
     }
-    
+
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
         self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
     }
-    
+
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
             return .eventProcessing
@@ -144,29 +144,29 @@ class ApplicationStatusDirectory : ApplicationStatus {
             return .unauthenticated
         }
     }
-    
+
     public var operationState: OperationState {
-        return .foreground
+        return .background
     }
 
     public let notificationFetchStatus: BackgroundNotificationFetchStatus = .done
-    
+
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return self.clientRegistrationStatus
     }
-    
+
     public var requestCancellation: ZMRequestCancellation {
         return transportSession
     }
-    
+
     public var deliveryConfirmation: DeliveryConfirmationDelegate {
         return deliveryConfirmationDummy
     }
-    
+
     func requestSlowSync() {
         // we don't do slow syncing in the share engine
     }
-    
+
 }
 
 /// A Wire session to share content from a share extension
@@ -177,14 +177,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
 /// - warning: creating multiple sessions in the same process
 /// is not supported and will result in undefined behaviour
 public class SharingSession {
-    
-    /// The failure reason of a `SharingSession` initialization
-    /// - NeedsMigration: The database needs a migration which is only done in the main app
-    /// - LoggedOut: No user is logged in
-    /// - missingSharedContainer: The shared container is missing
-    public enum InitializationError: Error {
-        case needsMigration, loggedOut, missingSharedContainer
-    }
     
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
@@ -201,8 +193,6 @@ public class SharingSession {
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
 
-    public let analyticsEventPersistence: ShareExtensionAnalyticsPersistence
-
     private var contextSaveObserverToken: NSObjectProtocol?
 
     let transportSession: ZMTransportSession
@@ -214,11 +204,6 @@ public class SharingSession {
         return userInterfaceContext.conversationListDirectory()
     }
     
-    /// Whether all prerequsisties for sharing are met
-    public var canShare: Bool {
-        return applicationStatusDirectory.authenticationStatus.state == .authenticated && applicationStatusDirectory.clientRegistrationStatus.clientIsReadyForRequests
-    }
-
     private let operationLoop: RequestGeneratingOperationLoop
 
     private let strategyFactory: StrategyFactory
@@ -240,7 +225,6 @@ public class SharingSession {
                             ) throws {
         
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        guard !StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL) else { throw InitializationError.needsMigration }
         
         let group = DispatchGroup()
         
@@ -295,7 +279,6 @@ public class SharingSession {
                   transportSession: ZMTransportSession,
                   cachesDirectory: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
-                  analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
                   strategyFactory: StrategyFactory
@@ -304,14 +287,10 @@ public class SharingSession {
         self.contextDirectory = contextDirectory
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
-        self.analyticsEventPersistence = analyticsEventPersistence
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
         
-        guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
-        
-        setupCaches(at: cachesDirectory)
         setupObservers()
     }
     
@@ -345,14 +324,12 @@ public class SharingSession {
         )
         
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
-        let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
         
         try self.init(
             contextDirectory: contextDirectory,
             transportSession: transportSession,
             cachesDirectory: cachesDirectory,
             saveNotificationPersistence: saveNotificationPersistence,
-            analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
             strategyFactory: strategyFactory
@@ -368,17 +345,6 @@ public class SharingSession {
         transportSession.tearDown()
         strategyFactory.tearDown()
     }
-    
-    private func setupCaches(at cachesDirectory: URL) {
-        
-        let userImageCache = UserImageLocalCache(location: cachesDirectory)
-        userInterfaceContext.zm_userImageCache = userImageCache
-        syncContext.zm_userImageCache = userImageCache
-        
-        let fileAssetcache = FileAssetCache(location: cachesDirectory)
-        userInterfaceContext.zm_fileAssetCache = fileAssetcache
-        syncContext.zm_fileAssetCache = fileAssetcache
-    }
 
     private func setupObservers() {
         contextSaveObserverToken = NotificationCenter.default.addObserver(
@@ -391,18 +357,5 @@ public class SharingSession {
             }
         )
     }
-//
-//    public func enqueue(changes: @escaping () -> Void) {
-//        enqueue(changes: changes, completionHandler: nil)
-//    }
-//
-//    public func enqueue(changes: @escaping () -> Void, completionHandler: (() -> Void)?) {
-//        userInterfaceContext.performGroupedBlock { [weak self] in
-//            changes()
-//            self?.userInterfaceContext.saveOrRollback()
-//            completionHandler?()
-//        }
-//    }
-
 }
 
