@@ -614,6 +614,7 @@
 /* Begin XCBuildConfiguration section */
 		066042A6247FE76C00A5F161 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D392487B01C002F82A6 /* project-debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -674,6 +675,7 @@
 		};
 		066042A7247FE76C00A5F161 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D362487B01C002F82A6 /* project.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				CLANG_ANALYZER_NONNULL = YES;
@@ -728,6 +730,7 @@
 		};
 		066042A9247FE76C00A5F161 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -748,6 +751,7 @@
 		};
 		066042AA247FE76C00A5F161 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D332487B01C002F82A6 /* ios-test-host.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -768,6 +772,7 @@
 		};
 		067ECB442487A93E00701956 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -807,6 +812,7 @@
 		};
 		067ECB452487A93E00701956 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D2F2487B01C002F82A6 /* wire-ios-notification-engine.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -845,6 +851,7 @@
 		};
 		067ECB572487AB6000701956 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -869,6 +876,7 @@
 		};
 		067ECB582487AB6000701956 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 06BD1D322487B01C002F82A6 /* ios-test-target.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
