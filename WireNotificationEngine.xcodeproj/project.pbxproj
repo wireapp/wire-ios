@@ -40,8 +40,6 @@
 		067ECB5D2487ABA100701956 /* WireNotificationEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 067ECB3A2487A93D00701956 /* WireNotificationEngine.framework */; };
 		067ECB5E2487ABF000701956 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604299247FE76A00A5F161 /* SceneDelegate.swift */; };
 		067ECB602487ABF700701956 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
-		069712892497B44700C32169 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9E2497AF5100380494 /* WireTransport.framework */; };
-		069712902497B83D00C32169 /* WireTransport.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 06394A9E2497AF5100380494 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		069712912497B96E00C32169 /* OperationLoop.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06394AA12497B24600380494 /* OperationLoop.swift */; };
 		069712942497C17600C32169 /* StrategyFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712922497C15900C32169 /* StrategyFactory.swift */; };
 		069712972497C1BF00C32169 /* SharingSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069712952497C1BC00C32169 /* SharingSession.swift */; };
@@ -94,16 +92,6 @@
 			files = (
 			);
 			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		0697128F2497B83100C32169 /* CopyFiles */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				069712902497B83D00C32169 /* WireTransport.framework in CopyFiles */,
-			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -170,7 +158,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				069712892497B44700C32169 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -376,7 +363,6 @@
 				067ECB372487A93D00701956 /* Frameworks */,
 				067ECB382487A93D00701956 /* Resources */,
 				0697128E2497B81900C32169 /* Copy Carthage Frameworks */,
-				0697128F2497B83100C32169 /* CopyFiles */,
 			);
 			buildRules = (
 			);
