@@ -1,1 +1,1 @@
-github "wireapp/wire-ios-request-strategy" ~> 201.0
+github "wireapp/wire-ios-request-strategy" ~> "refactor/decoupling-MissingUpdateEventsTranscoder"
