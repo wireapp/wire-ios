@@ -1558,6 +1558,7 @@
             messageToBeMarkedAsRead = message;
         }
     }
+    [self.uiMOC saveOrRollback];
     
     // when
     [conversation markMessagesAsReadUntil:messageToBeMarkedAsRead];
@@ -1565,6 +1566,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, messageToBeMarkedAsRead.serverTimestamp);
 }
 
@@ -1580,6 +1582,7 @@
     
     message = [self insertNonUnreadDotGeneratingMessageIntoConversation:conversation];
     conversation.lastServerTimeStamp = message.serverTimestamp;
+    [self.uiMOC saveOrRollback];
     
     // when
     [conversation markMessagesAsReadUntil:message];
@@ -1587,6 +1590,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, message.serverTimestamp);
 }
 
@@ -1605,12 +1609,15 @@
             messageToBeMarkedAsRead = message;
         }
     }
+    [self.uiMOC saveOrRollback];
     
     // when
     [conversation markMessagesAsReadUntil:messageToBeMarkedAsRead];
     [conversation savePendingLastRead];
+    WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, messageToBeMarkedAsRead.serverTimestamp);
 }
 
@@ -1651,12 +1658,14 @@
     for (int i = 0; i < 3; ++i) {
         message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     }
+    [self.uiMOC saveOrRollback];
 
     // when
     [conversation markMessagesAsReadUntil:conversation.lastMessage];
     WaitForAllGroupsToBeEmpty(0.5);
 
     // then
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqualObjects(conversation.lastReadServerTimeStamp, message.serverTimestamp);
 }
 
@@ -1678,8 +1687,13 @@
     conversation.remoteIdentifier = NSUUID.createUUID;
     ZMMessage *message = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     message.sender = self.createUser;
+    [self.uiMOC saveOrRollback];
+    
     [conversation markAsRead];
+    XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    
     // WHEN & THEN
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertTrue([conversation canMarkAsUnread]);
 }
 
@@ -1690,12 +1704,16 @@
     conversation.conversationType = ZMConversationTypeConnection;
     conversation.remoteIdentifier = NSUUID.createUUID;
 
-    [self.uiMOC saveOrRollback];
-
     ZMMessage* unreadMessage = [self insertDownloadedMessageAfterMessageIntoConversation:conversation];
     unreadMessage.sender = self.createUser;
+    [self.uiMOC saveOrRollback];
+    
+    // WHEN
     [conversation markAsRead];
     XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
+    
+    // THEN
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqual(conversation.firstUnreadMessage, nil);
 
     // WHEN
@@ -1703,6 +1721,7 @@
     XCTAssertTrue([self waitForAllGroupsToBeEmptyWithTimeout:0.5]);
     
     // THEN
+    [self.uiMOC refreshObject:conversation mergeChanges:NO];
     XCTAssertEqual(conversation.firstUnreadMessage, unreadMessage);
 }
 
@@ -3219,6 +3238,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:uiConv mergeChanges:NO];
     XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [firstCallDate timeIntervalSince1970], 0.5);
     
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -3237,6 +3257,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:uiConv mergeChanges:NO];
     XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [secondCallDate timeIntervalSince1970], 0.5);
     
     [self.syncMOC performGroupedBlockAndWait:^{
@@ -3255,6 +3276,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // then
+    [self.uiMOC refreshObject:uiConv mergeChanges:NO];
     XCTAssertEqualWithAccuracy([uiConv.lastReadServerTimeStamp timeIntervalSince1970], [thirdCallDate timeIntervalSince1970], 0.5);
 }
 
