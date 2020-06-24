@@ -232,6 +232,16 @@ extension ZMConversation {
     
     // MARK: - Mark as read
     
+    /// Mark all messages in the conversation as read
+    @objc
+    public func markAsRead() {
+        guard let timestamp = lastServerTimeStamp else { return }
+        
+        enqueueMarkAsReadUpdate(timestamp)
+        savePendingLastRead()
+    }
+    
+    /// Mark messages up until the given message as read
     @objc(markMessagesAsReadUntil:)
     public func markMessagesAsRead(until message: ZMConversationMessage) {
         guard let messageTimestamp = message.serverTimestampIncludingChildMessages else { return }
@@ -249,13 +259,15 @@ extension ZMConversation {
         
         guard let unreadTimestamp = message.isSent ? messageTimestamp : unreadMessagesIncludingInvisible(until: messageTimestamp).last?.serverTimestamp else { return }
         
-        enqueueUpdateLastRead(unreadTimestamp)
+        enqueueMarkAsReadUpdate(unreadTimestamp)
     }
     
-    /// Update the last read timestamp.
+    /// Enqueue an mark-as-read update.
     ///
-    /// NOTE: This method only has an effect when called from the UI context and it's throttled so it's fine to call it repeatedly.
-    fileprivate func enqueueUpdateLastRead(_ timestamp: Date) {
+    /// - parameter timestamp: Point in time from which all older messages should be considered read.
+    ///
+    /// This method only has an effect when called from the UI context and it's throttled so it's fine to call it repeatedly.
+    fileprivate func enqueueMarkAsReadUpdate(_ timestamp: Date) {
         guard let managedObjectContext = managedObjectContext, managedObjectContext.zm_isUserInterfaceContext else { return }
         
         updatePendingLastRead(timestamp)
@@ -271,25 +283,39 @@ extension ZMConversation {
         }
     }
     
+    /// Perform the an mark-as-read update by updating the last-read timestamp and
+    /// create read confirmations for the newly read messages.
+    ///
+    /// - parameter timestamp: Point in time from which all older messages should be considered read.
+    ///
+    /// This method can only be run from the UI context but the actual work will happen
+    /// on the sync context since that's the context where we update timestamps.
+    fileprivate func performMarkAsReadUpdate(_ timestamp: Date) {
+        guard
+            managedObjectContext?.zm_isUserInterfaceContext == true,
+            let syncMOC = managedObjectContext?.zm_sync
+        else {
+            return
+        }
+        
+        let objectID = self.objectID
+        
+        syncMOC.performGroupedBlock {
+            let conversation = syncMOC.object(with: objectID) as? ZMConversation
+            conversation?.confirmUnreadMessagesAsRead(until: timestamp)
+            conversation?.updateLastRead(timestamp, synchronize: true)
+            syncMOC.saveOrRollback()
+        }
+    }
+    
     @objc
     public func savePendingLastRead() {
         guard let timestamp = pendingLastReadServerTimestamp else { return }
-        confirmUnreadMessagesAsRead(until: timestamp)
-        updateLastRead(timestamp, synchronize: false)
+        performMarkAsReadUpdate(timestamp)
         pendingLastReadServerTimestamp = nil
         lastReadTimestampUpdateCounter = 0
-        managedObjectContext?.enqueueDelayedSave()
     }
-    
-    /// Mark all messages in the conversation as read
-    @objc
-    public func markAsRead() {
-        guard let timestamp = lastServerTimeStamp else { return }
         
-        enqueueUpdateLastRead(timestamp)
-        savePendingLastRead()
-    }
-    
     /// Calculates the the last unread knock, missed call and total unread unread count. This should be re-calculated
     /// when the last read timetamp changes or a message is inserted / deleted.
     @objc
