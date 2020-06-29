@@ -20,19 +20,19 @@ import WireRequestStrategy
 
 public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
     
-    private var sync: NotificationStreamSync!
+    var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
     
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
-                notificationsTracker: NotificationsTracker,
+                notificationsTracker: NotificationsTracker?,
                 eventProcessor: UpdateEventProcessor) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
-        
+       
         sync = NotificationStreamSync(moc: managedObjectContext,
                                       notificationsTracker: notificationsTracker,
                                       delegate: self)
@@ -40,6 +40,10 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
+        return requestGenerators.nextRequest()
+    }
+    
+    public override func nextRequest() -> ZMTransportRequest? {
         return requestGenerators.nextRequest()
     }
     

@@ -225,6 +225,7 @@ final class RequestGeneratingOperationLoop {
         operationLoop.changeClosure =  { [weak self] changes in self?.objectsDidChange(changes: changes) }
         operationLoop.requestAvailableClosure = { [weak self] in self?.enqueueRequests() }
         requestGeneratorObserver.observedGenerator = { [weak self] in self?.requestGeneratorStore.nextRequest() }
+        self.requestGeneratorStore.nextRequest() //Temp
     }
 
     fileprivate func objectsDidChange(changes: Set<NSManagedObject>) {

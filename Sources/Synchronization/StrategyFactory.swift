@@ -27,8 +27,7 @@ class StrategyFactory {
     let applicationStatus: ApplicationStatus
     let pushNotificationStatus: PushNotificationStatus
     let eventProcessor: UpdateEventProcessor
-    let notificationsTracker: NotificationsTracker
-    let eventIDsCollection: PreviouslyReceivedEventIDsCollection //Temp
+    let notificationsTracker: NotificationsTracker?
     private(set) var strategies = [AnyObject]()
 
     private var tornDown = false
@@ -37,14 +36,12 @@ class StrategyFactory {
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          eventProcessor: UpdateEventProcessor,
-         notificationsTracker: NotificationsTracker,
-         eventIDsCollection: PreviouslyReceivedEventIDsCollection) {
+         notificationsTracker: NotificationsTracker?) {
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
         self.pushNotificationStatus = pushNotificationStatus
         self.eventProcessor = eventProcessor
         self.notificationsTracker = notificationsTracker
-        self.eventIDsCollection = eventIDsCollection
         self.strategies = createStrategies()
     }
 

@@ -217,12 +217,11 @@ public class SharingSession {
     
     public convenience init(applicationGroupIdentifier: String,
                             accountIdentifier: UUID,
-                            hostBundleIdentifier: String,
+//                            hostBundleIdentifier: String,
                             environment: BackendEnvironmentProvider,
-                            analytics: AnalyticsType,
-                            eventProcessor: UpdateEventProcessor,
-                            eventIDsCollection: PreviouslyReceivedEventIDsCollection
-                            ) throws {
+                            analytics: AnalyticsType?,
+                            eventProcessor: UpdateEventProcessor
+    ) throws {
         
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         
@@ -270,8 +269,7 @@ public class SharingSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            eventProcessor: eventProcessor,
-            eventIDsCollection: eventIDsCollection
+            eventProcessor: eventProcessor
         )
     }
     
@@ -291,27 +289,25 @@ public class SharingSession {
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
         
-        setupObservers()
+//        setupObservers()
     }
     
     public convenience init(contextDirectory: ManagedObjectContextDirectory,
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
-                            analytics: AnalyticsType,
-                            eventProcessor: UpdateEventProcessor,
-                            eventIDsCollection: PreviouslyReceivedEventIDsCollection) throws {
+                            analytics: AnalyticsType?,
+                            eventProcessor: UpdateEventProcessor) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
-       
-        let notificationsTracker = NotificationsTracker(analytics: analytics)
-        let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
+
+        let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
+        let strategyFactory = StrategyFactory(syncContext: contextDirectory.uiContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
                                               eventProcessor: eventProcessor,
-                                              notificationsTracker: notificationsTracker,
-                                              eventIDsCollection: eventIDsCollection)
+                                              notificationsTracker: notificationsTracker)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         
@@ -322,6 +318,9 @@ public class SharingSession {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
+        print("<<< OperationLoop was created \(operationLoop)")
+//        let test = strategyFactory.strategies[0] as! PushNotificationStrategy).sync.listPaginator!
+//        (strategyFactory.strategies[0] as! PushNotificationStrategy).sync.listPaginator!.didReceive(<#T##response: ZMTransportResponse!##ZMTransportResponse!#>, forSingleRequest: test.)
         
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         
@@ -346,16 +345,15 @@ public class SharingSession {
         strategyFactory.tearDown()
     }
 
-    private func setupObservers() {
-        contextSaveObserverToken = NotificationCenter.default.addObserver(
-            forName: contextWasMergedNotification,
-            object: nil,
-            queue: .main,
-            using: { [weak self] note in
-                self?.saveNotificationPersistence.add(note)
-                DarwinNotification.shareExtDidSaveNote.post()
-            }
-        )
-    }
+//    private func setupObservers() {
+//        contextSaveObserverToken = NotificationCenter.default.addObserver(
+//            forName: contextWasMergedNotification,
+//            object: nil,
+//            queue: .main,
+//            using: { [weak self] note in
+//                self?.saveNotificationPersistence.add(note)
+//                DarwinNotification.shareExtDidSaveNote.post()
+//            }
+//        )
+//    }
 }
-
