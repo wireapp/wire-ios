@@ -289,6 +289,7 @@ public class SharingSession {
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
         
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
 //        setupObservers()
     }
     
@@ -319,8 +320,6 @@ public class SharingSession {
             transportSession: transportSession
         )
         print("<<< OperationLoop was created \(operationLoop)")
-//        let test = strategyFactory.strategies[0] as! PushNotificationStrategy).sync.listPaginator!
-//        (strategyFactory.strategies[0] as! PushNotificationStrategy).sync.listPaginator!.didReceive(<#T##response: ZMTransportResponse!##ZMTransportResponse!#>, forSingleRequest: test.)
         
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         
@@ -333,6 +332,7 @@ public class SharingSession {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory
         )
+        
     }
 
     deinit {
