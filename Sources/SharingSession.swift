@@ -203,10 +203,9 @@ public class SharingSession {
     public convenience init(applicationGroupIdentifier: String,
                             accountIdentifier: UUID,
                             environment: BackendEnvironmentProvider,
-                            analytics: AnalyticsType?,
-                            eventProcessor: UpdateEventProcessor
+                            analytics: AnalyticsType?
     ) throws {
-        
+       
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         
         let group = DispatchGroup()
@@ -252,8 +251,7 @@ public class SharingSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            analytics: analytics,
-            eventProcessor: eventProcessor
+            analytics: analytics
         )
     }
     
@@ -280,8 +278,7 @@ public class SharingSession {
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
-                            analytics: AnalyticsType?,
-                            eventProcessor: UpdateEventProcessor) throws {
+                            analytics: AnalyticsType?) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
@@ -290,7 +287,6 @@ public class SharingSession {
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
-                                              eventProcessor: eventProcessor,
                                               notificationsTracker: notificationsTracker)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
@@ -302,7 +298,6 @@ public class SharingSession {
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
         )
-        print("<<< OperationLoop was created \(operationLoop)")
         
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         
@@ -326,33 +321,5 @@ public class SharingSession {
         transportSession.reachability.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
-    }
-}
-
-extension SharingSession: ZMSyncStateDelegate {
-    public func didStartSlowSync() {
-    }
-    
-    public func didFinishSlowSync() {
-    }
-    
-    public func didStartQuickSync() {
-    }
-    
-    public func didFinishQuickSync() {
-    }
-    
-    public func didRegister(_ userClient: UserClient!) {
-    }
-    
-    func notifyThirdPartyServices() {
-    }
-    
-}
-
-extension SharingSession: UpdateEventProcessor {
-    
-    public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        
     }
 }

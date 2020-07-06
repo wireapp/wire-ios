@@ -27,8 +27,7 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
-                notificationsTracker: NotificationsTracker?,
-                eventProcessor: UpdateEventProcessor) {
+                notificationsTracker: NotificationsTracker?) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -36,7 +35,7 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
         sync = NotificationStreamSync(moc: managedObjectContext,
                                       notificationsTracker: notificationsTracker,
                                       delegate: self)
-        self.eventProcessor = eventProcessor
+        self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
     }
     
@@ -75,5 +74,12 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
     
     public func failedFetchingEvents() {
         pushNotificationStatus.didFailToFetchEvents()
+    }
+}
+
+extension PushNotificationStrategy: UpdateEventProcessor {
+    
+    public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        
     }
 }
