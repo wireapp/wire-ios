@@ -23,22 +23,6 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-//class PushMessageHandlerDummy : NSObject, PushMessageHandler {
-//
-//    func process(_ message: ZMMessage) {
-//        // nop
-//    }
-//
-//    public func process(_ event: ZMUpdateEvent) {
-//        // nop
-//    }
-//
-//    func didFailToSend(_ message: ZMMessage) {
-//        // nop
-//    }
-//
-//}
-
 class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
 
     static var sendDeliveryReceipts: Bool {
@@ -112,6 +96,7 @@ extension BackendEnvironmentProvider {
 class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
+//    let syncStatus : SyncStatus
     let deliveryConfirmationDummy : DeliveryConfirmationDummy
 
     /// The authentication status used to verify a user is authenticated
@@ -122,7 +107,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
     public let linkPreviewDetector: LinkPreviewDetectorType
 
-    public init(transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
+    public init(managedObjectContext: NSManagedObjectContext, transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType/*, syncStateDelegate: ZMSyncStateDelegate*/) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
@@ -134,7 +119,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
-        self.init(transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
+        self.init(managedObjectContext: syncContext,transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
     }
 
     public var synchronizationState: SynchronizationState {
@@ -217,7 +202,6 @@ public class SharingSession {
     
     public convenience init(applicationGroupIdentifier: String,
                             accountIdentifier: UUID,
-//                            hostBundleIdentifier: String,
                             environment: BackendEnvironmentProvider,
                             analytics: AnalyticsType?,
                             eventProcessor: UpdateEventProcessor
@@ -290,7 +274,6 @@ public class SharingSession {
         self.strategyFactory = strategyFactory
         
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
-//        setupObservers()
     }
     
     public convenience init(contextDirectory: ManagedObjectContextDirectory,
@@ -304,7 +287,7 @@ public class SharingSession {
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
 
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
-        let strategyFactory = StrategyFactory(syncContext: contextDirectory.uiContext,
+        let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
                                               eventProcessor: eventProcessor,
@@ -344,16 +327,32 @@ public class SharingSession {
         transportSession.tearDown()
         strategyFactory.tearDown()
     }
+}
 
-//    private func setupObservers() {
-//        contextSaveObserverToken = NotificationCenter.default.addObserver(
-//            forName: contextWasMergedNotification,
-//            object: nil,
-//            queue: .main,
-//            using: { [weak self] note in
-//                self?.saveNotificationPersistence.add(note)
-//                DarwinNotification.shareExtDidSaveNote.post()
-//            }
-//        )
-//    }
+extension SharingSession: ZMSyncStateDelegate {
+    public func didStartSlowSync() {
+    }
+    
+    public func didFinishSlowSync() {
+    }
+    
+    public func didStartQuickSync() {
+    }
+    
+    public func didFinishQuickSync() {
+    }
+    
+    public func didRegister(_ userClient: UserClient!) {
+    }
+    
+    func notifyThirdPartyServices() {
+    }
+    
+}
+
+extension SharingSession: UpdateEventProcessor {
+    
+    public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        
+    }
 }
