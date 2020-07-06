@@ -154,14 +154,12 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
 }
 
-/// A Wire session to share content from a share extension
+/// A syncing layer for the notification processing
 /// - note: this is the entry point of this framework. Users of
 /// the framework should create an instance as soon as possible in
-/// the lifetime of the extension, and hold on to that session
+/// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
-/// - warning: creating multiple sessions in the same process
-/// is not supported and will result in undefined behaviour
-public class SharingSession {
+public class NotificationSession {
     
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
