@@ -37,6 +37,7 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
                                       notificationsTracker: notificationsTracker,
                                       delegate: self)
         self.eventProcessor = eventProcessor
+        self.pushNotificationStatus = pushNotificationStatus
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
