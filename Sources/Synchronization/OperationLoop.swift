@@ -23,6 +23,75 @@ import WireRequestStrategy
 
 let contextWasMergedNotification = Notification.Name("zm_contextWasSaved")
 
+public final class RequestGeneratorStore {
+
+    let requestGenerators: [ZMTransportRequestGenerator]
+    public let changeTrackers : [ZMContextChangeTracker]
+    private var isTornDown = false
+
+    private let strategies : [AnyObject]
+
+    public init(strategies: [AnyObject]) {
+
+        self.strategies = strategies
+
+        var requestGenerators : [ZMTransportRequestGenerator] = []
+        var changeTrackers : [ZMContextChangeTracker] = []
+
+        for strategy in strategies {
+            if let requestGeneratorSource = strategy as? ZMRequestGeneratorSource {
+                for requestGenerator in requestGeneratorSource.requestGenerators {
+                    requestGenerators.append({
+                        return requestGenerator.nextRequest()
+                    })
+                }
+            }
+
+            if let contextChangeTrackerSource = strategy as? ZMContextChangeTrackerSource {
+                changeTrackers.append(contentsOf: contextChangeTrackerSource.contextChangeTrackers)
+            }
+
+            if let contextChangeTracker = strategy as? ZMContextChangeTracker {
+                changeTrackers.append(contextChangeTracker)
+            }
+
+            if let requestStrategy = strategy as? RequestStrategy {
+                requestGenerators.append({
+                    requestStrategy.nextRequest()
+                })
+            }
+        }
+
+        self.requestGenerators = requestGenerators
+        self.changeTrackers = changeTrackers
+    }
+
+    deinit {
+        precondition(isTornDown, "Need to call `tearDown` before deallocating this object")
+    }
+
+    public func tearDown() {
+        strategies.forEach {
+            if $0.responds(to: #selector(ZMObjectSyncStrategy.tearDown)) {
+                ($0 as? ZMObjectSyncStrategy)?.tearDown()
+            }
+        }
+
+        isTornDown = true
+    }
+
+    public func nextRequest() -> ZMTransportRequest? {
+        for requestGenerator in requestGenerators {
+            if let request = requestGenerator() {
+                return request
+            }
+        }
+
+        return nil
+    }
+}
+
+
 final class RequestGeneratorObserver {
     
     private let context : NSManagedObjectContext
