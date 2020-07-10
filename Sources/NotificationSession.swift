@@ -249,7 +249,9 @@ public class NotificationSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            analytics: analytics
+            analytics: analytics/*,
+            sharedContainerURL: sharedContainerURL,
+            accountIdentifier: accountIdentifier*/
         )
     }
     
@@ -276,16 +278,20 @@ public class NotificationSession {
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
-                            analytics: AnalyticsType?) throws {
+                            analytics: AnalyticsType?/*,
+                            sharedContainerURL: URL,
+                            accountIdentifier: UUID*/) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
 
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
+//        let eventContext = NSManagedObjectContext.createEventContext(withSharedContainerURL: sharedContainerURL, userIdentifier: accountIdentifier)
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
-                                              notificationsTracker: notificationsTracker)
+                                              notificationsTracker: notificationsTracker/*,
+                                              eventContext: eventContext*/)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         

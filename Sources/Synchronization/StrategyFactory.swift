@@ -28,14 +28,17 @@ class StrategyFactory {
     let pushNotificationStatus: PushNotificationStatus
     let notificationsTracker: NotificationsTracker?
     private(set) var strategies = [AnyObject]()
+//    private var eventContext: NSManagedObjectContext!
 
     private var tornDown = false
 
     init(syncContext: NSManagedObjectContext,
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
-         notificationsTracker: NotificationsTracker?) {
+         notificationsTracker: NotificationsTracker?/*,
+         eventContext: NSManagedObjectContext*/) {
         self.syncContext = syncContext
+//        self.eventContext = eventContext
         self.applicationStatus = applicationStatus
         self.pushNotificationStatus = pushNotificationStatus
         self.notificationsTracker = notificationsTracker
@@ -66,7 +69,10 @@ class StrategyFactory {
         return PushNotificationStrategy(withManagedObjectContext: syncContext,
                                         applicationStatus: applicationStatus,
                                         pushNotificationStatus: pushNotificationStatus,
-                                        notificationsTracker: notificationsTracker)
+                                        notificationsTracker: notificationsTracker/*,
+                                        eventMOC: eventContext,
+                                        syncMOC: syncContext*/
+        )
     }
 }
 
