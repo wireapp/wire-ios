@@ -16,14 +16,15 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import UIKit
+import Foundation
 
-class ViewController: UIViewController {
+enum AuthenticationState {
+    case authenticated, unauthenticated
+}
 
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        // Do any additional setup after loading the view.
-    }
+protocol AuthenticationStatusProvider {
+
+    var state: AuthenticationState { get }
 
 }
 
