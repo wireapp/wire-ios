@@ -103,7 +103,6 @@ final class RequestGeneratorObserver {
     
     public func nextRequest() -> ZMTransportRequest? {
         guard let request = observedGenerator?() else { return nil }
-        
         return request
     }
     
