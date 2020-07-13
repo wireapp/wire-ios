@@ -24,8 +24,9 @@ import WireSyncEngine
 import avs
 
 struct Stream: Equatable {
-    let userId: UUID
-    let clientId: String
+    let streamId: AVSClient
+    let participantName: String?
+    let microphoneState: MicrophoneState?
 }
 
 struct VideoStream: Equatable {
@@ -36,7 +37,6 @@ struct VideoStream: Equatable {
 protocol VideoGridConfiguration {
     var floatingVideoStream: VideoStream? { get }
     var videoStreams: [VideoStream] { get }
-    var isMuted: Bool { get }
     var networkQuality: NetworkQuality { get }
 }
 
@@ -49,25 +49,22 @@ extension VideoGridConfiguration {
     func isEqual(toConfiguration other: VideoGridConfiguration) -> Bool {
         return floatingVideoStream == other.floatingVideoStream &&
             videoStreams == other.videoStreams &&
-            isMuted == other.isMuted &&
             networkQuality == other.networkQuality
     }
     
 }
 
 extension ZMEditableUser {
-    
-    var selfStream: Stream {
+    var selfStreamId: AVSClient {
+        
         guard let selfUser = ZMUser.selfUser(),
               let userId = selfUser.remoteIdentifier,
               let clientId = selfUser.selfClient()?.remoteIdentifier
         else {
             fatal("Could not create self user stream which should always exist")
         }
-        
-        return Stream(userId: userId, clientId: clientId)
+        return AVSClient(userId: userId, clientId: clientId)
     }
-    
 }
 
 extension CGSize {
@@ -84,47 +81,39 @@ extension CGSize {
     }
 }
 
+extension Notification.Name {
+    static let videoGridVisibilityChanged = Notification.Name(rawValue: "VideoGridVisibilityChanged")
+}
 
+// MARK: - VideoGridViewController
 final class VideoGridViewController: UIViewController {
-
+    static let isCoveredKey = "isCovered"
+    
     private var gridVideoStreams: [Stream] = []
     private let gridView = GridView()
     private let thumbnailViewController = PinnableThumbnailViewController()
-    private let muteIndicatorView = MuteIndicatorView()
     private let networkConditionView = NetworkConditionIndicatorView()
-    fileprivate let mediaManager: AVSMediaManagerInterface
+    private let mediaManager: AVSMediaManagerInterface
+    private var selfPreviewView: SelfVideoPreviewView?
 
     var previewOverlay: UIView? {
         return thumbnailViewController.contentView
     }
 
-    private var selfPreviewView: SelfVideoPreviewView?
-
     /// Update view visibility when this view controller is covered or not
     var isCovered: Bool = true {
         didSet {
+            NotificationCenter.default.post(name: .videoGridVisibilityChanged, object: nil, userInfo: [VideoGridViewController.isCoveredKey: isCovered])
+            
             displayIndicatorViewsIfNeeded()
             UIView.animate(
                 withDuration: 0.2,
                 delay: 0,
                 options: [.curveEaseInOut, .beginFromCurrentState],
                 animations: {
-                    self.muteIndicatorView.alpha = self.isCovered ? 0.0 : 1.0
                     self.networkConditionView.alpha = self.isCovered ? 0.0 : 1.0
-            },
-                completion: nil
-            )
+            })
         }
-    }
-
-    func displayIndicatorViewsIfNeeded() {
-        networkConditionView.networkQuality = configuration.networkQuality
-        networkConditionView.isHidden = shouldHideNetworkCondition
-        muteIndicatorView.isHidden = shouldHideMuteIndicator
-    }
-
-    var shouldHideMuteIndicator: Bool {
-        return isCovered || !configuration.isMuted
     }
 
     var shouldHideNetworkCondition: Bool {
@@ -136,6 +125,11 @@ final class VideoGridViewController: UIViewController {
             guard !configuration.isEqual(toConfiguration: oldValue) else { return }
             updateState()
         }
+    }
+    
+    func displayIndicatorViewsIfNeeded() {
+        networkConditionView.networkQuality = configuration.networkQuality
+        networkConditionView.isHidden = shouldHideNetworkCondition
     }
 
     init(configuration: VideoGridConfiguration,
@@ -154,14 +148,16 @@ final class VideoGridViewController: UIViewController {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+}
 
+// MARK: - Setup
+extension VideoGridViewController {
     func setupViews() {
         gridView.translatesAutoresizingMaskIntoConstraints = false
         thumbnailViewController.view.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(gridView)
         addToSelf(thumbnailViewController)
 
-        view.addSubview(muteIndicatorView)
         view.addSubview(networkConditionView)
 
         networkConditionView.accessibilityIdentifier = "network-conditions-indicator"
@@ -171,17 +167,15 @@ final class VideoGridViewController: UIViewController {
         gridView.fitInSuperview()
         [thumbnailViewController].forEach{ $0.view.fitInSuperview() }
 
-        constrain(view, muteIndicatorView, networkConditionView) { view, muteIndicatorView, networkConditionView in
-            let bottomOffset: CGFloat = UIScreen.safeArea.bottom + (UIScreen.hasNotch ? 8 : 24)
-            
-            muteIndicatorView.centerX == view.centerX
-            muteIndicatorView.bottom == view.bottom - bottomOffset
-            muteIndicatorView.height == CGFloat.MuteIndicator.containerHeight
+        constrain(view, networkConditionView) { view, networkConditionView in
             networkConditionView.centerX == view.centerX
             networkConditionView.top == view.safeAreaLayoutGuideOrFallback.top + 24
         }
     }
+}
 
+// MARK: - Interface
+extension VideoGridViewController {
     public func switchFillMode(location: CGPoint) {
         for view in gridView.videoStreamViews {
             let convertedRect = self.view.convert(view.frame, from: view.superview)
@@ -191,43 +185,42 @@ final class VideoGridViewController: UIViewController {
             }
         }
     }
+}
 
-    func updateState() {
+// MARK: - Grid Update
+extension VideoGridViewController {
+    private func updateState() {
         Log.calling.debug("\nUpdating video configuration from:\n\(videoConfigurationDescription())")
-
-        let selfStream = ZMUser.selfUser().selfStream
-        let selfInGrid = configuration.videoStreams.contains { $0.stream == selfStream }
-        let selfInFloatingOverlay = nil != configuration.floatingVideoStream
-        let isShowingSelf = selfInGrid || selfInFloatingOverlay
-
-        // Create self preview if there is none but we should show it
-        if isShowingSelf && nil == selfPreviewView {
-            selfPreviewView = SelfVideoPreviewView(stream: selfStream)
-            selfPreviewView?.translatesAutoresizingMaskIntoConstraints = false
-        }
-
-        // It's important to remove remove the existing preview view before moving it to the grid/floating location
-        if selfInGrid {
-            updateFloatingVideo(with: configuration.floatingVideoStream)
-            updateVideoGrid(with: configuration.videoStreams)
-        } else {
-            updateVideoGrid(with: configuration.videoStreams)
-            updateFloatingVideo(with: configuration.floatingVideoStream)
-        }
-
-        // Clear self preview we we shouldn't show it anymore
-        if !isShowingSelf, let _ = selfPreviewView {
-            selfPreviewView = nil
-        }
-
+        
+        updateSelfPreview()
+        
+        updateFloatingVideo(with: configuration.floatingVideoStream)
+        
+        updateVideoGrid(with: configuration.videoStreams)
+        
         displayIndicatorViewsIfNeeded()
         
-        // Update grid view axis
         updateGridViewAxis()
-
+        
         Log.calling.debug("\nUpdated video configuration to:\n\(videoConfigurationDescription())")
     }
-
+    
+    private func updateSelfPreview() {
+        guard
+            let selfStreamId = ZMUser.selfUser()?.selfStreamId,
+            let selfStream = stream(with: selfStreamId) else {
+                return
+        }
+        
+        if selfPreviewView == nil {
+            selfPreviewView = SelfVideoPreviewView(stream: selfStream)
+        }
+        
+        if selfPreviewView?.stream != selfStream {
+            selfPreviewView?.stream = selfStream
+        }
+    }
+    
     private func updateFloatingVideo(with state: VideoStream?) {
         // No stream, remove floating video if there is any
         guard let state = state else {
@@ -236,7 +229,7 @@ final class VideoGridViewController: UIViewController {
         }
 
         // We only support the self preview in the floating overlay
-        guard state.stream == ZMUser.selfUser()?.selfStream else {
+        guard state.stream.streamId == ZMUser.selfUser()?.selfStreamId else {
             return Log.calling.error("Invalid operation: Non self preview in overlay")
         }
 
@@ -246,54 +239,27 @@ final class VideoGridViewController: UIViewController {
             thumbnailViewController.setThumbnailContentView(previewView, contentSize: .previewSize(for: traitCollection))
         }
     }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
-        thumbnailViewController.updateThumbnailContentSize(.previewSize(for: traitCollection), animated: false)
-        updateGridViewAxis()
-    }
-
-    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        coordinator.animate(alongsideTransition: { [updateGridViewAxis] _ in updateGridViewAxis() })
-    }
-
-    private func updateGridViewAxis() {
-        let newAxis = gridAxis(for: traitCollection)
-        guard newAxis != gridView.layoutDirection else { return }
-        gridView.layoutDirection = newAxis
-    }
-
-    private func gridAxis(for traitCollection: UITraitCollection) -> UICollectionView.ScrollDirection {
-        let isLandscape = UIApplication.shared.statusBarOrientation.isLandscape
-        switch (traitCollection.userInterfaceIdiom, traitCollection.horizontalSizeClass, isLandscape) {
-        case (.pad, .regular, true): return .horizontal
-        default: return .vertical
-        }
-    }
-
-    private func videoConfigurationDescription() -> String {
-        return """
-        showing self preview: \(selfPreviewView != nil)
-        videos in grid: [\(gridVideoStreams)]\n
-        """
-    }
-
+    
     private func updateVideoGrid(with videoStreams: [VideoStream]) {
         let streams = videoStreams.map { $0.stream }
-        let removed = gridVideoStreams.filter { !streams.contains($0) }
-        let added = streams.filter { !gridVideoStreams.contains($0) }
+        let streamIds = streams.map { $0.streamId }
+        
+        let currentStreamIds = gridVideoStreams.map { $0.streamId }
+        
+        let removed = gridVideoStreams.filter { !streamIds.contains($0.streamId) }
+        let added = streams.filter { !currentStreamIds.contains($0.streamId) }
 
         removed.forEach(removeStream)
         added.forEach(addStream)
-
-        updatePausedStates(with: videoStreams)
+        
+        updateStates(with: videoStreams)
     }
-
-    private func updatePausedStates(with videoStreams: [VideoStream]) {
+    
+    private func updateStates(with videoStreams: [VideoStream]) {
         videoStreams.forEach {
-            (streamView(for: $0.stream) as? VideoPreviewView)?.isPaused = $0.isPaused
+            let view = (streamView(for: $0.stream) as? VideoPreviewView)
+            view?.isPaused = $0.isPaused
+            view?.stream = $0.stream
         }
     }
 
@@ -301,7 +267,7 @@ final class VideoGridViewController: UIViewController {
         Log.calling.debug("Adding video stream: \(stream)")
 
         let view: UIView = {
-            if stream == ZMUser.selfUser()?.selfStream, let previewView = selfPreviewView {
+            if stream.streamId == ZMUser.selfUser()?.selfStreamId, let previewView = selfPreviewView {
                 return previewView
             } else {
                 return VideoPreviewView(stream: stream)
@@ -321,11 +287,59 @@ final class VideoGridViewController: UIViewController {
         gridView.remove(view: videoView)
         gridVideoStreams.firstIndex(of: stream).apply { gridVideoStreams.remove(at: $0) }
     }
+}
 
-    private func streamView(for stream: Stream) -> UIView? {
-        return gridView.videoStreamViews.first {
-            ($0 as? AVSIdentifierProvider)?.stream == stream
+// MARK: - Grid View Axis
+extension VideoGridViewController {
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        guard traitCollection.horizontalSizeClass != previousTraitCollection?.horizontalSizeClass else { return }
+        thumbnailViewController.updateThumbnailContentSize(.previewSize(for: traitCollection), animated: false)
+        updateGridViewAxis()
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        coordinator.animate(alongsideTransition: { [updateGridViewAxis] _ in updateGridViewAxis() })
+    }
+    
+    private func updateGridViewAxis() {
+        let newAxis = gridAxis(for: traitCollection)
+        guard newAxis != gridView.layoutDirection else { return }
+        gridView.layoutDirection = newAxis
+    }
+    
+    private func gridAxis(for traitCollection: UITraitCollection) -> UICollectionView.ScrollDirection {
+        let isLandscape = UIApplication.shared.statusBarOrientation.isLandscape
+        switch (traitCollection.userInterfaceIdiom, traitCollection.horizontalSizeClass, isLandscape) {
+        case (.pad, .regular, true): return .horizontal
+        default: return .vertical
         }
     }
+}
 
+// MARK: - Helpers
+extension VideoGridViewController {
+    private func streamView(for stream: Stream) -> UIView? {
+        return gridView.videoStreamViews.first {
+            ($0 as? AVSIdentifierProvider)?.stream.streamId == stream.streamId
+        }
+    }
+    
+    private func stream(with streamId: AVSClient) -> Stream? {
+        var stream = configuration.videoStreams.first(where: { $0.stream.streamId == streamId })?.stream
+        
+        if stream == nil && configuration.floatingVideoStream?.stream.streamId == streamId {
+            stream = configuration.floatingVideoStream?.stream
+        }
+        
+        return stream
+    }
+    
+    private func videoConfigurationDescription() -> String {
+        return """
+        showing self preview: \(selfPreviewView != nil)
+        videos in grid: [\(gridVideoStreams)]\n
+        """
+    }
 }
