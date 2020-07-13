@@ -18,19 +18,23 @@
 
 import WireRequestStrategy
 
+public protocol  UpdateEventsDelegate: class {
+    func didReceive(events: [ZMUpdateEvent], in moc: NSManagedObjectContext)
+}
+
 public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
-//    private var eventDecoder: EventDecoder!
+    private var delegate: UpdateEventsDelegate?
+    private var moc: NSManagedObjectContext!
     
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
-                notificationsTracker: NotificationsTracker?/*,
-                eventMOC: NSManagedObjectContext,
-                syncMOC: NSManagedObjectContext*/) {
+                notificationsTracker: NotificationsTracker?,
+                updateEventsDelegate: UpdateEventsDelegate?) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -40,7 +44,8 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
                                       delegate: self)
         self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
-//        eventDecoder = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
+        self.delegate = updateEventsDelegate
+        self.moc = managedObjectContext
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
@@ -84,49 +89,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 extension PushNotificationStrategy: UpdateEventProcessor {
     
     public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        //        if ignoreBuffer || isReadyToProcessEvents {
-        consume(updateEvents: updateEvents)
-        //        } else {
-        //            Logging.eventProcessing.info("Buffering \(updateEvents.count) event(s)")
-        //            updateEvents.forEach(eventsBuffer.addUpdateEvent)
-        //        }
+    
+        delegate?.didReceive(events: updateEvents, in: moc)
     }
     
-    public func consume(updateEvents: [ZMUpdateEvent]) {
-    
-        for event in updateEvents {
-            
-        }
-//        eventDecoder.processEvents(updateEvents) { [weak self] (decryptedUpdateEvents) in
-//            guard let `self` = self else { return }
-//            
-//            let date = Date()
-//            let fetchRequest = prefetchRequest(updateEvents: decryptedUpdateEvents)
-//            let prefetchResult = syncMOC.executeFetchRequestBatchOrAssert(fetchRequest)
-//            
-//            Logging.eventProcessing.info("Consuming: [\n\(decryptedUpdateEvents.map({ "\tevent: \(ZMUpdateEvent.eventTypeString(for: $0.type) ?? "Unknown")" }).joined(separator: "\n"))\n]")
-//            
-//            for event in decryptedUpdateEvents {
-//                for eventConsumer in self.eventConsumers {
-//                    eventConsumer.processEvents([event], liveEvents: true, prefetchResult: prefetchResult)
-//                }
-//                self.eventProcessingTracker?.registerEventProcessed()
-//            }
-//            localNotificationDispatcher?.processEvents(decryptedUpdateEvents, liveEvents: true, prefetchResult: nil)
-//            
-//            if let messages = fetchRequest.noncesToFetch as? Set<UUID>,
-//                let conversations = fetchRequest.remoteIdentifiersToFetch as? Set<UUID> {
-//                let confirmationMessages = ZMConversation.confirmDeliveredMessages(messages, in: conversations, with: syncMOC)
-//                for message in confirmationMessages {
-//                    self.applicationStatusDirectory?.deliveryConfirmation.needsToConfirmMessage(message.nonce!)
-//                }
-//            }
-//            
-//            syncMOC.saveOrRollback()
-//            
-//            Logging.eventProcessing.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker?.debugDescription ?? "")")
-//            
-//        }
-//        
-    }
 }
