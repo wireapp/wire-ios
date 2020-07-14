@@ -96,7 +96,7 @@ extension BackendEnvironmentProvider {
 class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
-//    let syncStatus : SyncStatus
+
     let deliveryConfirmationDummy : DeliveryConfirmationDummy
 
     /// The authentication status used to verify a user is authenticated
@@ -201,7 +201,8 @@ public class NotificationSession {
     public convenience init(applicationGroupIdentifier: String,
                             accountIdentifier: UUID,
                             environment: BackendEnvironmentProvider,
-                            analytics: AnalyticsType?
+                            analytics: AnalyticsType?,
+                            delegate: UpdateEventsDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -249,7 +250,8 @@ public class NotificationSession {
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
-            analytics: analytics
+            analytics: analytics,
+            delegate: delegate
         )
     }
     
@@ -276,7 +278,8 @@ public class NotificationSession {
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
-                            analytics: AnalyticsType?) throws {
+                            analytics: AnalyticsType?,
+                            delegate: UpdateEventsDelegate?) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
@@ -285,7 +288,8 @@ public class NotificationSession {
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
-                                              notificationsTracker: notificationsTracker)
+                                              notificationsTracker: notificationsTracker,
+                                              updateEventsDelegate: delegate)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         

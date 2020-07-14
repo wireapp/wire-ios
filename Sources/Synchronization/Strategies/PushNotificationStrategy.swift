@@ -18,16 +18,23 @@
 
 import WireRequestStrategy
 
+public protocol UpdateEventsDelegate: class {
+    func didReceive(events: [ZMUpdateEvent], in moc: NSManagedObjectContext)
+}
+
 public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
+    private var delegate: UpdateEventsDelegate?
+    private var moc: NSManagedObjectContext!
     
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
-                notificationsTracker: NotificationsTracker?) {
+                notificationsTracker: NotificationsTracker?,
+                updateEventsDelegate: UpdateEventsDelegate?) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -37,6 +44,8 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
                                       delegate: self)
         self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
+        self.delegate = updateEventsDelegate
+        self.moc = managedObjectContext
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
@@ -80,6 +89,8 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 extension PushNotificationStrategy: UpdateEventProcessor {
     
     public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        
+    
+        delegate?.didReceive(events: updateEvents, in: moc)
     }
+    
 }
