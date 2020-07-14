@@ -18,7 +18,7 @@
 
 import WireRequestStrategy
 
-public protocol  UpdateEventsDelegate: class {
+public protocol UpdateEventsDelegate: class {
     func didReceive(events: [ZMUpdateEvent], in moc: NSManagedObjectContext)
 }
 
