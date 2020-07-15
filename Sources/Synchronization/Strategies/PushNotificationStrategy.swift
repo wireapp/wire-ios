@@ -30,11 +30,17 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     private var delegate: UpdateEventsDelegate?
     private var moc: NSManagedObjectContext!
     
+    var eventDecoder: EventDecoder!
+    var eventMOC: NSManagedObjectContext!
+    
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
                 notificationsTracker: NotificationsTracker?,
-                updateEventsDelegate: UpdateEventsDelegate?) {
+                updateEventsDelegate: UpdateEventsDelegate?,
+                sharedContainerURL: URL,
+                accountIdentifier: UUID,
+                syncMOC: NSManagedObjectContext) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -46,6 +52,8 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
         self.pushNotificationStatus = pushNotificationStatus
         self.delegate = updateEventsDelegate
         self.moc = managedObjectContext
+        self.eventMOC = NSManagedObjectContext.createEventContext(withSharedContainerURL: sharedContainerURL, userIdentifier: accountIdentifier)
+        self.eventDecoder = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
@@ -89,8 +97,9 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 extension PushNotificationStrategy: UpdateEventProcessor {
     
     public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-    
-        delegate?.didReceive(events: updateEvents, in: moc)
+        eventDecoder.processEvents(updateEvents, block: { (decryptedUpdateEvents) in
+             delegate?.didReceive(events: decryptedUpdateEvents, in: moc)
+        }, isNewNotificationVersion: true)
     }
     
 }
