@@ -251,7 +251,9 @@ public class NotificationSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            delegate: delegate
+            delegate: delegate,
+            sharedContainerURL: sharedContainerURL,
+            accountIdentifier: accountIdentifier
         )
     }
     
@@ -279,17 +281,21 @@ public class NotificationSession {
                             cachesDirectory: URL,
                             accountContainer: URL,
                             analytics: AnalyticsType?,
-                            delegate: UpdateEventsDelegate?) throws {
+                            delegate: UpdateEventsDelegate?,
+                            sharedContainerURL: URL,
+                            accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
-
+        
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
-                                              updateEventsDelegate: delegate)
+                                              updateEventsDelegate: delegate,
+                                              sharedContainerURL: sharedContainerURL,
+                                              accountIdentifier: accountIdentifier)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         

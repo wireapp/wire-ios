@@ -29,6 +29,9 @@ class StrategyFactory {
     let notificationsTracker: NotificationsTracker?
     private(set) var strategies = [AnyObject]()
     private(set) var delegate: UpdateEventsDelegate?
+    
+    private(set) var sharedContainerURL: URL
+    private(set) var accountIdentifier: UUID
 
     private var tornDown = false
 
@@ -36,12 +39,18 @@ class StrategyFactory {
          applicationStatus: ApplicationStatus,
          pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
-         updateEventsDelegate: UpdateEventsDelegate?) {
+         updateEventsDelegate: UpdateEventsDelegate?,
+         sharedContainerURL: URL,
+         accountIdentifier: UUID) {
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
         self.pushNotificationStatus = pushNotificationStatus
         self.notificationsTracker = notificationsTracker
         self.delegate = updateEventsDelegate
+        
+        self.sharedContainerURL = sharedContainerURL
+        self.accountIdentifier = accountIdentifier
+        
         self.strategies = createStrategies()
     }
 
@@ -70,7 +79,11 @@ class StrategyFactory {
                                         applicationStatus: applicationStatus,
                                         pushNotificationStatus: pushNotificationStatus,
                                         notificationsTracker: notificationsTracker,
-                                        updateEventsDelegate: delegate
+                                        updateEventsDelegate: delegate,
+                                        sharedContainerURL: sharedContainerURL,
+                                        accountIdentifier: accountIdentifier,
+                                        syncMOC: syncContext
+                                        
         )
     }
 }
