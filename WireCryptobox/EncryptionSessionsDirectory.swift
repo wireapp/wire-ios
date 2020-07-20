@@ -564,6 +564,11 @@ extension EncryptionSession {
                          &vectorBacking)
         }
         
+        if (result != CBOX_DUPLICATE_MESSAGE && result != CBOX_DUPLICATE_MESSAGE) {
+            let encodedData = HexDumpUnsafeLoggingData(data: cypher)
+            zmLog.safePublic("Failed to decrypt cyphertext: \(encodedData)")
+        }
+        
         try result.throwIfError()
 
         self.hasChanges = true
