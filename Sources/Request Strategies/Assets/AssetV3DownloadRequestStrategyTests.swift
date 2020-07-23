@@ -367,7 +367,7 @@ extension AssetV3DownloadRequestStrategyTests {
         
         // THEN
         syncMOC.performGroupedBlockAndWait {
-            XCTAssertEqual(message.fileMessageData?.downloadState, .remote)
+            XCTAssertTrue(message.isZombieObject)
         }
     }
 

@@ -100,12 +100,12 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
     }
 
     fileprivate func handleResponse(_ response: ZMTransportResponse, forMessage assetClientMessage: ZMAssetClientMessage) {
-        var downloadSuccess = false
+        var decryptSuccess = false
         
         assetClientMessage.isDownloading = false
         
         if response.result == .success {
-            downloadSuccess = storeAndDecrypt(data: response.rawData!, for: assetClientMessage)
+            decryptSuccess = storeAndDecrypt(data: response.rawData!, for: assetClientMessage)
         }
 //        When the backend redirects to the cloud service to get the image, it could be that the
 //        network bandwidth of the device is really bad. If the time interval is pretty long before
@@ -114,16 +114,20 @@ fileprivate let zmLog = ZMSLog(tag: "Asset V3")
         else if response.result == .permanentError, response.httpStatus != 403 {
             zmLog.debug("asset unavailable on remote (\(response.httpStatus)), deleting")
             managedObjectContext.delete(assetClientMessage)
-        }
-        else {
+        } else {
             zmLog.debug("error downloading asset (\(response.httpStatus))")
             return
         }
 
+        if !decryptSuccess {
+            zmLog.debug("asset unavailable to decrypt, deleting")
+            managedObjectContext.delete(assetClientMessage)
+        }
+        
         // we've just downloaded some data, we need to refresh the category of the message.
         assetClientMessage.updateCategoryCache()
         
-        if downloadSuccess {
+        if decryptSuccess {
             NotificationDispatcher.notifyNonCoreDataChanges(objectID: assetClientMessage.objectID,
                                                             changedKeys: [#keyPath(ZMAssetClientMessage.hasDownloadedFile)],
                                                             uiContext: self.managedObjectContext.zm_userInterface!)

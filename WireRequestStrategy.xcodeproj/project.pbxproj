@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */; };
 		1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2231D75AB2D007108C2 /* MockEntity.m */; };
 		1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2251D75AB2D007108C2 /* MockEntity2.m */; };
 		1621D22A1D75AB2D007108C2 /* MockModelObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */; };
@@ -182,7 +181,6 @@
 		F184021A2073C6B100E9F4CC /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F18402032073C2FF00E9F4CC /* video.mp4 */; };
 		F19561EF202A1309005347C0 /* DependencyEntitySyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */; };
 		F19561F1202A1325005347C0 /* ZMSingleRequestSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902201D709110000FE4AF /* ZMSingleRequestSyncTests.m */; };
-		F19561F3202A1349005347C0 /* RequestAvailableNotificationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */; };
 		F19561F5202A1361005347C0 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */; };
 		F19561F7202A1389005347C0 /* ZMLocallyInsertedObjectSetTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1669021B1D709110000FE4AF /* ZMLocallyInsertedObjectSetTests.m */; };
 		F19561F9202A13B4005347C0 /* ZMChangeTrackerBootstrapTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 1666AA2B1D93FA0B00164C06 /* ZMChangeTrackerBootstrapTests.m */; };
@@ -236,7 +234,6 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotification.swift; sourceTree = "<group>"; };
 		1621D2221D75AB2D007108C2 /* MockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity.h; sourceTree = "<group>"; };
 		1621D2231D75AB2D007108C2 /* MockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockEntity.m; sourceTree = "<group>"; };
 		1621D2241D75AB2D007108C2 /* MockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity2.h; sourceTree = "<group>"; };
@@ -250,7 +247,6 @@
 		1621D2321D75B221007108C2 /* NSManagedObjectContext+TestHelpers.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObjectContext+TestHelpers.m"; sourceTree = "<group>"; };
 		1621D2721D7715EA007108C2 /* ZMObjectSyncStrategy.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMObjectSyncStrategy.h; sourceTree = "<group>"; };
 		1621D2731D7715EA007108C2 /* ZMObjectSyncStrategy.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMObjectSyncStrategy.m; sourceTree = "<group>"; };
-		1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RequestAvailableNotificationTests.swift; sourceTree = "<group>"; };
 		1622946A221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetV3UploadRequestStrategy.swift; sourceTree = "<group>"; };
 		1622946C221C56E500A98679 /* AssetsPreprocessor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsPreprocessor.swift; sourceTree = "<group>"; };
 		16229482221EBB8000A98679 /* ZMImagePreprocessingTracker.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMImagePreprocessingTracker.h; sourceTree = "<group>"; };
@@ -937,8 +933,6 @@
 				F18401952073BE0800E9F4CC /* CryptoBoxUpdateEventsTests.swift */,
 				F18401982073BE0800E9F4CC /* ZMConversation+Notifications.swift */,
 				BF1F52C51ECC74E5002FB553 /* Array+RequestGenerator.swift */,
-				1621D21F1D75A71E007108C2 /* RequestAvailableNotification.swift */,
-				1621D2801D783529007108C2 /* RequestAvailableNotificationTests.swift */,
 				F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */,
 				D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */,
 			);
@@ -1165,7 +1159,6 @@
 				F18401A32073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
-				1621D2201D75A71E007108C2 /* RequestAvailableNotification.swift in Sources */,
 				F18401C32073BE0800E9F4CC /* AssetV3DownloadRequestStrategy.swift in Sources */,
 				F18401BF2073BE0800E9F4CC /* AssetClientMessageRequestStrategy.swift in Sources */,
 				547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */,
@@ -1208,7 +1201,6 @@
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
 				F18401DB2073C25300E9F4CC /* CryptoBoxUpdateEventsTests.swift in Sources */,
-				F19561F3202A1349005347C0 /* RequestAvailableNotificationTests.swift in Sources */,
 				D5D65A062073C8F800D7F3C3 /* AssetRequestFactoryTests.swift in Sources */,
 				1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */,
 				F18401EC2073C26700E9F4CC /* AssetV3PreviewDownloadRequestStrategyTests.swift in Sources */,
