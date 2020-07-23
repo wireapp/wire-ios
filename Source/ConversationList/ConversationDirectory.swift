@@ -50,7 +50,7 @@ public protocol ConversationDirectoryType {
     /// Create a new folder with a given name
     func createFolder(_ name: String) -> LabelType?
     
-    /// Retrive a conversation list by a given type
+    /// Retrieve a conversation list by a given type
     func conversations(by: ConversationListType) -> [ZMConversation]
     
     /// Observe changes to the conversation lists & folders

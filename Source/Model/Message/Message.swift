@@ -40,6 +40,10 @@ public extension ZMConversationMessage {
         return fileMessageData != nil && !fileMessageData!.v3_isImage
     }
 
+    var isPDF: Bool {
+        return isFile && fileMessageData?.isPDF ?? false
+    }
+    
     var isPass: Bool {
         return isFile && fileMessageData!.isPass
     }
@@ -125,6 +129,11 @@ public class Message: NSObject {
         return message.isFile
     }
 
+    @objc(isPDFMessage:)
+    public class func isPDF(_ message: ZMConversationMessage) -> Bool {
+        return message.isPDF
+    }
+    
     @objc(isVideoMessage:)
     public class func isVideo(_ message: ZMConversationMessage) -> Bool {
         return message.isVideo

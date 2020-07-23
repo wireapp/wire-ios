@@ -194,6 +194,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
     
+    public var hasDigitalSignatureEnabled: Bool {
+        return user?.hasDigitalSignatureEnabled ?? false
+    }
+    
     public var teamRole: TeamRole {
         guard let user = user else {
             return (internalTeamPermissions?.rawValue).flatMap(TeamRole.init(rawPermissions:)) ?? .none

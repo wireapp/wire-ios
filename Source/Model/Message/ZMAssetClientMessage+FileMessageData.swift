@@ -85,14 +85,21 @@ import MobileCoreServices
     /// if MIME type is indicating the audio content
     var isAudio: Bool { get }
     
+    /// if MIME type is indicating the pdf content
+    var isPDF: Bool { get }
+    
     /// Whether the file message represents a v3 image
     var v3_isImage: Bool { get }
     
     /// Fetch preview image data from disk
     func fetchImagePreviewData(queue: DispatchQueue, completionHandler: @escaping (_ imageData: Data?) -> Void)
     
+    /// Signing a PDF document
+    func signPDFDocument(observer: SignatureObserver) -> Any?
+    
+    /// retrieve a PDF signature
+    func retrievePDFSignature()
 }
-
 
 extension ZMAssetClientMessage: ZMFileMessageData {
     
@@ -250,6 +257,10 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         return richAssetType == .audio
     }
     
+    public var isPDF: Bool {
+        return mimeType == "application/pdf"
+    }
+    
     public var v3_isImage: Bool {
         return underlyingMessage?.v3_isImage ?? false
     }
@@ -289,8 +300,46 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     public func requestImagePreviewDownload() {
         asset?.requestPreviewDownload()
     }
+    
+    public func signPDFDocument(observer: SignatureObserver) -> Any? {
+        guard
+            let managedObjectContext = managedObjectContext,
+            let syncContext = managedObjectContext.zm_sync,
+            let fileURL = fileURL,
+            let PDFData = try? Data(contentsOf: fileURL)
+        else {
+            return nil
+        }
+        
+        let token = SignatureStatus.addObserver(observer,
+                                                context: managedObjectContext)
+        
+        let asset = underlyingMessage?.assetData
+        syncContext.performGroupedBlock {
+            let status = SignatureStatus(asset: asset,
+                                         data: PDFData,
+                                         managedObjectContext: syncContext)
+            status.store()
+            status.signDocument()
+        }
+        
+        return token
+    }
+    
+    public func retrievePDFSignature() {
+        guard
+            let managedObjectContext = managedObjectContext,
+            let syncContext = managedObjectContext.zm_sync
+        else {
+            return
+        }
+        
+        syncContext.performGroupedBlock {
+            syncContext.signatureStatus?.retrieveSignature()
+        }
+    }
 }
-
+    
 extension ZMAssetClientMessage {
     
     public func cancelTransfer() {

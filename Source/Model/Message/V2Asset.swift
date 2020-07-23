@@ -162,7 +162,7 @@ extension V2Asset: AssetProxyType {
 
         return moc.zm_fileAssetCache.assetData(assetClientMessage, format: format, encrypted: encrypted)
     }
-
+    
     public func requestFileDownload() {
         guard assetClientMessage.fileMessageData != nil || assetClientMessage.imageMessageData != nil else { return }
         guard !assetClientMessage.objectID.isTemporaryID, let moc = self.moc.zm_userInterface else { return }
