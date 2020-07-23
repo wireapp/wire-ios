@@ -89,6 +89,7 @@ private let zmLog = ZMSLog(tag: "AssetPreviewDownloading")
         )
 
         if !success {
+            managedObjectContext.delete(assetClientMessage)
             zmLog.error("Unable to decrypt preview image for file message: \(assetClientMessage), \(asset)")
         }
 
