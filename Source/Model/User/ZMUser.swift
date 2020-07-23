@@ -32,6 +32,10 @@ extension ZMUser: UserType {
         return team?.name
     }
     
+    public var hasDigitalSignatureEnabled: Bool {
+        return team?.fetchFeatureFlag(with: .digitalSignature)?.isEnabled ?? false
+    }
+    
     public var previewImageData: Data? {
         return imageSmallProfileData
     }
