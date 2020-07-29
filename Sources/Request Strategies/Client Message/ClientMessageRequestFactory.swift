@@ -89,7 +89,7 @@ extension String {
              .ignoreAllMissingClientsNotFromUsers(_):
             return self
         case .ignoreAllMissingClients:
-            return self + "?ignore_missing"
+            return self + "?ignore_missing=true"
         }
     }
 }
