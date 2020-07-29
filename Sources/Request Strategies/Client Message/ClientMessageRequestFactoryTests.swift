@@ -109,3 +109,35 @@ extension ClientMessageRequestFactoryTests {
     }
     
 }
+
+// MARK: - Targeted messages
+extension ClientMessageRequestFactoryTests {
+
+    func testThatItCreatesRequestToPostTargetedOTRTextMessage() {
+
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let text = "Antani"
+            let entity = GenericMessageEntity(conversation: self.groupConversation,
+                                              message: GenericMessage(content: Text(content: text)),
+                                              targetRecipients: .clients([self.otherUser: Set(arrayLiteral: self.otherClient)]),
+                                              completionHandler: nil)
+
+            // WHEN
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(entity, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+                return XCTFail("No request")
+            }
+
+            // THEN
+            XCTAssertEqual(request.method, ZMTransportRequestMethod.methodPOST)
+            XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages?ignore_missing=true")
+
+            guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
+                return XCTFail("Invalid message")
+            }
+
+            XCTAssertEqual(receivedMessage.textData?.content, text)
+        }
+    }
+}
