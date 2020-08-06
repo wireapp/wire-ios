@@ -120,6 +120,7 @@
 		877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */ = {isa = PBXBuildFile; fileRef = 877F50201E729CCF00894C90 /* excessive_diacritics.txt */; };
 		87B6489C2076078A002FC9E7 /* Composition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B6489B2076078A002FC9E7 /* Composition.swift */; };
 		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
+		A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1EF24D9814D001AF38E /* Keychain.swift */; };
 		A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC1237D9927008A9BC6 /* UIColor+Hex.swift */; };
 		A9CDCDC4237D9A14008A9BC6 /* UIColor+Mixing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC3237D9A14008A9BC6 /* UIColor+Mixing.swift */; };
 		A9CDCDC6237D9A6E008A9BC6 /* UIColor+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */; };
@@ -368,6 +369,7 @@
 		877F50201E729CCF00894C90 /* excessive_diacritics.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = excessive_diacritics.txt; sourceTree = "<group>"; };
 		87B6489B2076078A002FC9E7 /* Composition.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Composition.swift; sourceTree = "<group>"; };
 		87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ExtremeCombiningCharactersValidator.swift; sourceTree = "<group>"; };
+		A9A3B1EF24D9814D001AF38E /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		A9CDCDC1237D9927008A9BC6 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Hex.swift"; path = "Source/Public/UIColor+Hex.swift"; sourceTree = SOURCE_ROOT; };
 		A9CDCDC3237D9A14008A9BC6 /* UIColor+Mixing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Mixing.swift"; sourceTree = "<group>"; };
 		A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Equatable.swift"; sourceTree = "<group>"; };
@@ -548,6 +550,7 @@
 		3E88BD3A1B1F3EA300232589 /* Source */ = {
 			isa = PBXGroup;
 			children = (
+				A9A3B1EE24D9811B001AF38E /* Keychain */,
 				871939C421D4D93600738968 /* ZMMobileProvisionParser.m */,
 				54CA31141B74F2C400B820C0 /* Public */,
 				F9C9A79F1CAEACB10039E10C /* Validation */,
@@ -720,6 +723,14 @@
 				5E39FC58225B55F200C682B8 /* PasswordValidationResult.swift */,
 			);
 			path = Password;
+			sourceTree = "<group>";
+		};
+		A9A3B1EE24D9811B001AF38E /* Keychain */ = {
+			isa = PBXGroup;
+			children = (
+				A9A3B1EF24D9814D001AF38E /* Keychain.swift */,
+			);
+			path = Keychain;
 			sourceTree = "<group>";
 		};
 		A9CDCDBE237D98BF008A9BC6 /* UIColor */ = {
@@ -1067,6 +1078,7 @@
 				F15BDB1E20889773002F36E8 /* TearDownCapable.swift in Sources */,
 				EF18C7D21F9E37CA0085A832 /* String+Filename.swift in Sources */,
 				54181A541F594F6B00155ABC /* FileManager+Protection.swift in Sources */,
+				A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */,
 				7C8BFFE522FD611700B3C8A5 /* ZMEmailAddressValidator.swift in Sources */,
 				7C8BFFE322FD5D9600B3C8A5 /* ZMAccentColorValidator.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
