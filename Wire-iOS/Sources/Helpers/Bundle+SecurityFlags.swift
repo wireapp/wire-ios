@@ -18,12 +18,14 @@
 
 import Foundation
 
-public enum SecurityFlags {
+enum SecurityFlags {
     case clipboard
     case saveMessage
     case profileCameraRoll
+    case gifAction
+    case externalFilePicker
     
-    public var bundleKey: String {
+    var bundleKey: String {
         switch self {
         case .clipboard:
             return "ClipboardEnabled"
@@ -31,10 +33,14 @@ public enum SecurityFlags {
             return "SaveMessageEnabled"
         case .profileCameraRoll:
             return "ProfileCameraRollEnabled"
+        case .gifAction:
+            return "FileGifActionEnabled"
+        case .externalFilePicker:
+            return "ExternalFilePickerEnabled"
         }
     }
     
-    public var isEnabled: Bool {
+    var isEnabled: Bool {
         return Bundle.appMainBundle.infoForKey(bundleKey) == "1"
     }
 }
