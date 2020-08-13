@@ -198,5 +198,7 @@
 	<string>${GENERATE_LINK_PREVIEW_ENABLED}</string>
 	<key>ForceCBREnabled</key>
 	<string>${FORCE_CBR_ENABLED}</string>
+	<key>OpenFilePreviewEnabled</key>
+	<string>${OPEN_FILE_PREVIEW_ENABLED}</string>
 </dict>
 </plist>
