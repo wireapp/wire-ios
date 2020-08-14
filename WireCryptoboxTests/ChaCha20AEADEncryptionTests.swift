@@ -19,13 +19,13 @@
 import XCTest
 @testable import WireCryptobox
 
-class AES256GCMEncryptionTests: XCTestCase {
+class ChaCha20AEADEncryptionTests: XCTestCase {
 
     private let context = Data.secureRandomData(length: 8)
 
     // MARK: - Helpers
 
-    private typealias Sut = AES256GCMEncryption
+    private typealias Sut = ChaCha20Poly1305.AEADEncryption
 
     private func generateRandomCiphertext(length: UInt) -> Data {
         // Large enough to include authentication bytes in the ciphertext.
