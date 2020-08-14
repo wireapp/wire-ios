@@ -19,15 +19,17 @@
 import XCTest
 @testable import WireCryptobox
 
-class ChaCha20FileHeaderTests: XCTestCase {
-    
+private typealias Sut = ChaCha20Poly1305.StreamEncryption
+
+class ChaCha20StreamEncryptionFileHeaderTests: XCTestCase {
+
     func testThatWrittenFileHeaderCanBeRead() throws {
         // given
         let uuid = UUID()
-        let header = try ChaCha20Encryption.Header(uuid: uuid)
+        let header = try Sut.Header(uuid: uuid)
 
         // when
-        _ = try ChaCha20Encryption.Header(buffer: header.buffer)
+        _ = try Sut.Header(buffer: header.buffer)
     }
     
     func testThatFileHeaderCanBeReadFromBuffer() throws {
@@ -35,7 +37,7 @@ class ChaCha20FileHeaderTests: XCTestCase {
         let buffer = Data(base64Encoded: "V0JVSQAAAQ8CgQ/ikb7pIkWDhhDkY7uMxemLjGnPNJ2ohITEekzYAzAxygPF36PpKw9HXrGZWg==")!
         
         // when
-        let header = try ChaCha20Encryption.Header(buffer: [UInt8](buffer))
+        let header = try Sut.Header(buffer: [UInt8](buffer))
         
         // then
         XCTAssertEqual(header.salt, [15, 2, 129, 15 ,226 ,145, 190, 233, 34, 69, 131, 134, 16, 228, 99, 187])
@@ -48,8 +50,8 @@ class ChaCha20FileHeaderTests: XCTestCase {
         
         // when
         do {
-            _ = try ChaCha20Encryption.Header(buffer: buffer)
-        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
+            _ = try Sut.Header(buffer: buffer)
+        } catch Sut.EncryptionError.malformedHeader {
             // success
             return
         } catch {
@@ -65,8 +67,8 @@ class ChaCha20FileHeaderTests: XCTestCase {
         
         // when
         do {
-            _ = try ChaCha20Encryption.Header(buffer: buffer)
-        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
+            _ = try Sut.Header(buffer: buffer)
+        } catch Sut.EncryptionError.malformedHeader {
             // success
             return
         } catch {
@@ -78,7 +80,7 @@ class ChaCha20FileHeaderTests: XCTestCase {
     
 }
 
-class ChaCha20EncryptionTests: XCTestCase {
+class ChaCha20StreamEncryptionTests: XCTestCase {
     
     var directoryURL: URL!
     
@@ -104,40 +106,40 @@ class ChaCha20EncryptionTests: XCTestCase {
         return directoryURL.appendingPathComponent(UUID().uuidString)
     }
     
-    func encrypt(_ message: Data, passphrase: ChaCha20Encryption.Passphrase) throws -> Data {
+    private func encrypt(_ message: Data, passphrase: Sut.Passphrase) throws -> Data {
         let inputStream = InputStream(data: message)
         var outputBuffer = Array<UInt8>(repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         
-        let bytesWritten = try ChaCha20Encryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        let bytesWritten = try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         
         return Data(outputBuffer.prefix(bytesWritten))
     }
     
-    func decrypt(_ chipherMessage: Data, passphrase: ChaCha20Encryption.Passphrase) throws -> Data {
+    private func decrypt(_ chipherMessage: Data, passphrase: Sut.Passphrase) throws -> Data {
         var outputBuffer = Array<UInt8>(repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
         let inputStream = InputStream(data: chipherMessage)
-        let decryptedBytes = try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         
         return Data(outputBuffer.prefix(decryptedBytes))
     }
     
-    func encryptToURL(_ message: Data, passphrase: ChaCha20Encryption.Passphrase) throws -> URL {
+    private func encryptToURL(_ message: Data, passphrase: Sut.Passphrase) throws -> URL {
         let inputURL = createTemporaryURL()
         let outputURL = createTemporaryURL()
         try message.write(to: inputURL)
         let inputStream = InputStream(url: inputURL)!
         let outputStream = OutputStream(url: outputURL, append: false)!
-        try ChaCha20Encryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         return outputURL
     }
     
-    func decryptFromURL(_ url: URL, passphrase: ChaCha20Encryption.Passphrase, file: StaticString = #file, line: UInt = #line) throws -> Data {
+    private func decryptFromURL(_ url: URL, passphrase: Sut.Passphrase, file: StaticString = #file, line: UInt = #line) throws -> Data {
         let outputURL = createTemporaryURL()
         let outputStream = OutputStream(url: outputURL, append: false)!
         let inputStream = InputStream(url: url)!
-        let decryptedBytes = try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        let decryptedBytes = try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
         XCTAssertGreaterThan(decryptedBytes, 0, file: file, line: line)
         return try Data(contentsOf: outputURL)
     }
@@ -147,7 +149,7 @@ class ChaCha20EncryptionTests: XCTestCase {
     func testThatEncryptionAndDecryptionWorks() throws {
         
         // given
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
         let messageData =  message.data(using: .utf8)!
         
@@ -163,7 +165,7 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // given
         let expectedMessage = "123456789"
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID(uuidString: "71DE4781-9EC7-4ED4-BADE-690C5A9732C6")!)
         let encryptedMessage =  Data(base64Encoded: "V0JVSQAAAT5xxW76YX91IgLvJwXeC5x+q/8To15mBzbsA6rc5Dzf7xRyWH+LYv+bscKxj3c7Fl7trr/9qt78lgA5ZtyjK7d2ZBdSYl4HLskPjyUIseTjAZjGKt+7MEXp8aVBey8ooGep")!
         
         // when
@@ -176,7 +178,7 @@ class ChaCha20EncryptionTests: XCTestCase {
     func testThatEncryptionAndDecryptionWorks_ToDisk() throws {
         
         // given
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789"
         let messageData =  message.data(using: .utf8)!
         
@@ -196,12 +198,12 @@ class ChaCha20EncryptionTests: XCTestCase {
         let inputStream = InputStream(data: messageData)
         var outputBuffer = Array<UInt8>(repeating: 0, count: 1)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 1)
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         
         // then when
         do {
-            try ChaCha20Encryption.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        } catch ChaCha20Encryption.EncryptionError.writeError {
+            try Sut.encrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        } catch Sut.EncryptionError.writeError {
             return // success
         } catch {
             XCTFail()
@@ -213,7 +215,7 @@ class ChaCha20EncryptionTests: XCTestCase {
     func testThatItThrowsReadErrorOnEmptyData() {
         
         // given
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let malformedMessageData =  "".data(using: .utf8)!
         var outputBuffer = Array<UInt8>(repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
@@ -221,8 +223,8 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        } catch ChaCha20Encryption.EncryptionError.readError {
+            try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        } catch Sut.EncryptionError.readError {
             return // success
         } catch {
             XCTFail()
@@ -234,7 +236,7 @@ class ChaCha20EncryptionTests: XCTestCase {
     func testThatItThrowsMalformedHeaderOnBadData() {
         
         // given
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let malformedMessageData =  "malformed12345678901234567890123456789012345678901234567890".data(using: .utf8)!
         var outputBuffer = Array<UInt8>(repeating: 0, count: 256)
         let outputStream = OutputStream(toBuffer: &outputBuffer, capacity: 256)
@@ -242,8 +244,8 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
+            try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        } catch Sut.EncryptionError.malformedHeader {
             return // success
         } catch {
             XCTFail()
@@ -255,7 +257,7 @@ class ChaCha20EncryptionTests: XCTestCase {
     func testThatItThrowsWriteErrorWhenOutputStreamFailsWhileDecrypting() {
         
         // given
-        let passphrase = ChaCha20Encryption.Passphrase(password: "1235678", uuid: UUID())
+        let passphrase = Sut.Passphrase(password: "1235678", uuid: UUID())
         let message = "123456789".data(using: .utf8)!
         let encryptedData = try! encrypt(message, passphrase: passphrase)
         
@@ -265,8 +267,8 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            try ChaCha20Encryption.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
-        } catch ChaCha20Encryption.EncryptionError.writeError {
+            try Sut.decrypt(input: inputStream, output: outputStream, passphrase: passphrase)
+        } catch Sut.EncryptionError.writeError {
             return // success
         } catch {
             XCTFail()
@@ -283,9 +285,9 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            let encryptedMessage = try encrypt(message, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid1))
-            _ = try decrypt(encryptedMessage, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
-        } catch ChaCha20Encryption.EncryptionError.mismatchingUUID {
+            let encryptedMessage = try encrypt(message, passphrase: Sut.Passphrase(password: password, uuid: uuid1))
+            _ = try decrypt(encryptedMessage, passphrase: Sut.Passphrase(password: password, uuid: uuid2))
+        } catch Sut.EncryptionError.mismatchingUUID {
             return // success
         } catch {
             XCTFail()
@@ -302,11 +304,11 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            let encryptedMessage = try encrypt(message, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid1))
+            let encryptedMessage = try encrypt(message, passphrase: Sut.Passphrase(password: password, uuid: uuid1))
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[3] = 65 // replace I with A (A = Android)
-            _ = try decrypt(Data(modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
-        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
+            _ = try decrypt(Data(modifiedMessage), passphrase: Sut.Passphrase(password: password, uuid: uuid2))
+        } catch Sut.EncryptionError.malformedHeader {
             return // success
         } catch {
             XCTFail()
@@ -323,11 +325,11 @@ class ChaCha20EncryptionTests: XCTestCase {
         
         // then when
         do {
-            let encryptedMessage = try encrypt(message, passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid1))
+            let encryptedMessage = try encrypt(message, passphrase: Sut.Passphrase(password: password, uuid: uuid1))
             var modifiedMessage = [UInt8](encryptedMessage)
             modifiedMessage[6] = 2 // change version number
-            _ = try decrypt(Data(modifiedMessage), passphrase: ChaCha20Encryption.Passphrase(password: password, uuid: uuid2))
-        } catch ChaCha20Encryption.EncryptionError.malformedHeader {
+            _ = try decrypt(Data(modifiedMessage), passphrase: Sut.Passphrase(password: password, uuid: uuid2))
+        } catch Sut.EncryptionError.malformedHeader {
             return // success
         } catch {
             XCTFail()

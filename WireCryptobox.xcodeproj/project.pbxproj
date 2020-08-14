@@ -12,8 +12,8 @@
 		0928E36D1BA0908F0057232E /* WireCryptobox.h in Headers */ = {isa = PBXBuildFile; fileRef = 0928E36C1BA0908F0057232E /* WireCryptobox.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09E393C31BAC2E5600F3EA1B /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928E2341BA0777A0057232E /* WireCryptobox.framework */; };
 		16460B7F206D456F0096B616 /* cbox.h in Headers */ = {isa = PBXBuildFile; fileRef = 16460B7E206D456F0096B616 /* cbox.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		16460B81206D46CA0096B616 /* ChaCha20Encryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */; };
-		16460B83206D47460096B616 /* ChaCha20EncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */; };
+		16460B81206D46CA0096B616 /* StreamEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B80206D46CA0096B616 /* StreamEncryption.swift */; };
+		16460B83206D47460096B616 /* ChaCha20StreamEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16460B82206D47460096B616 /* ChaCha20StreamEncryptionTests.swift */; };
 		54060B7D1DB771B400AEA9BB /* Logs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54060B7C1DB771B400AEA9BB /* Logs.swift */; };
 		5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5421C5F81D2C152C00048251 /* NSData+CBox.swift */; };
 		5471A6591D24215B0092A9A9 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 5471A6581D24215B0092A9A9 /* main.m */; };
@@ -98,9 +98,10 @@
 		87AE8D4A207BB3380058715E /* crypto_sign_edwards25519sha512batch.h in Headers */ = {isa = PBXBuildFile; fileRef = 87AE8D09207BB3370058715E /* crypto_sign_edwards25519sha512batch.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		87B43C2F20F3973F0031DE41 /* EncryptionContextCachingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */; };
 		87B43C5920F4AAA00031DE41 /* GenericHash.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B43C5820F4AAA00031DE41 /* GenericHash.swift */; };
-		EEA2B85D24DAD1E700C6659E /* AES256GCMEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AES256GCMEncryption.swift */; };
-		EEA2B85F24DC26BD00C6659E /* AES256GCMEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* AES256GCMEncryptionTests.swift */; };
+		EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */; };
+		EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */; };
 		EEA2B86124DC3F1600C6659E /* Byte.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEA2B86024DC3F1600C6659E /* Byte.swift */; };
+		EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */ = {isa = PBXBuildFile; fileRef = EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */; };
 		F503032B1B8CFA2C0053E406 /* libcryptobox.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F50303291B8CFA2C0053E406 /* libcryptobox.a */; };
 		F503032C1B8CFA2C0053E406 /* libsodium.a in Frameworks */ = {isa = PBXBuildFile; fileRef = F503032A1B8CFA2C0053E406 /* libsodium.a */; };
 /* End PBXBuildFile section */
@@ -153,8 +154,8 @@
 		0928E36E1BA0909D0057232E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		0928E3751BA17E300057232E /* WireCryptobox.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireCryptobox.xcconfig; sourceTree = "<group>"; };
 		16460B7E206D456F0096B616 /* cbox.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = cbox.h; sourceTree = "<group>"; };
-		16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Encryption.swift; sourceTree = "<group>"; };
-		16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20EncryptionTests.swift; sourceTree = "<group>"; };
+		16460B80206D46CA0096B616 /* StreamEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamEncryption.swift; sourceTree = "<group>"; };
+		16460B82206D47460096B616 /* ChaCha20StreamEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20StreamEncryptionTests.swift; sourceTree = "<group>"; };
 		54060B7C1DB771B400AEA9BB /* Logs.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Logs.swift; sourceTree = "<group>"; };
 		5421C5F81D2C152C00048251 /* NSData+CBox.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+CBox.swift"; sourceTree = "<group>"; };
 		5471A6551D24215B0092A9A9 /* WireCryptoboxTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireCryptoboxTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -248,9 +249,10 @@
 		87B43C5820F4AAA00031DE41 /* GenericHash.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GenericHash.swift; sourceTree = "<group>"; };
 		BA7EF9691B7109B600204A8E /* WireCryptoboxTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireCryptoboxTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BA7EF96F1B7109B600204A8E /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		EEA2B85C24DAD1E700C6659E /* AES256GCMEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES256GCMEncryption.swift; sourceTree = "<group>"; };
-		EEA2B85E24DC26BD00C6659E /* AES256GCMEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AES256GCMEncryptionTests.swift; sourceTree = "<group>"; };
+		EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AEADEncryption.swift; sourceTree = "<group>"; };
+		EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20AEADEncryptionTests.swift; sourceTree = "<group>"; };
 		EEA2B86024DC3F1600C6659E /* Byte.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Byte.swift; sourceTree = "<group>"; };
+		EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChaCha20Poly1305.swift; sourceTree = "<group>"; };
 		EFF7A46D2271DBB100F1AC33 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		EFF7A46E2271DBB100F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
@@ -465,8 +467,7 @@
 				5471A6731D242D740092A9A9 /* PointerWrapper.swift */,
 				54060B7C1DB771B400AEA9BB /* Logs.swift */,
 				54EA12231D2A9AA400D2CFD1 /* CryptoBoxError.swift */,
-				16460B80206D46CA0096B616 /* ChaCha20Encryption.swift */,
-				EEA2B85C24DAD1E700C6659E /* AES256GCMEncryption.swift */,
+				EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */,
 				EEA2B86024DC3F1600C6659E /* Byte.swift */,
 				87B43C5820F4AAA00031DE41 /* GenericHash.swift */,
 				0928E36F1BA090A00057232E /* Supporting Files */,
@@ -480,8 +481,8 @@
 				BA7EF96E1B7109B600204A8E /* Supporting Files */,
 				54A1573E1D23C00500EB3B4F /* EncryptionContextTests.swift */,
 				87B43C2D20F396F60031DE41 /* EncryptionContextCachingTests.swift */,
-				16460B82206D47460096B616 /* ChaCha20EncryptionTests.swift */,
-				EEA2B85E24DC26BD00C6659E /* AES256GCMEncryptionTests.swift */,
+				16460B82206D47460096B616 /* ChaCha20StreamEncryptionTests.swift */,
+				EEA2B85E24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift */,
 				54B949911D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift */,
 				870121FB20F4D2F6001E6342 /* GenericHashBuilderTests.swift */,
 				54B949931D2541350041CC55 /* TestHelper.swift */,
@@ -505,6 +506,16 @@
 				F50303281B8CFA2C0053E406 /* lib */,
 			);
 			name = Libraries;
+			sourceTree = "<group>";
+		};
+		EEF6714424E682EA00BDB9B9 /* ChaCha20Poly1305 */ = {
+			isa = PBXGroup;
+			children = (
+				EEF6714224E681DE00BDB9B9 /* ChaCha20Poly1305.swift */,
+				16460B80206D46CA0096B616 /* StreamEncryption.swift */,
+				EEA2B85C24DAD1E700C6659E /* AEADEncryption.swift */,
+			);
+			path = ChaCha20Poly1305;
 			sourceTree = "<group>";
 		};
 		F10C8E221E9296BA00020408 /* Frameworks */ = {
@@ -768,9 +779,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				EEA2B85D24DAD1E700C6659E /* AES256GCMEncryption.swift in Sources */,
-				16460B81206D46CA0096B616 /* ChaCha20Encryption.swift in Sources */,
+				EEA2B85D24DAD1E700C6659E /* AEADEncryption.swift in Sources */,
+				16460B81206D46CA0096B616 /* StreamEncryption.swift in Sources */,
 				638792A623956F9300FD23CF /* Data+SafeForLogging.swift in Sources */,
+				EEF6714324E681DE00BDB9B9 /* ChaCha20Poly1305.swift in Sources */,
 				5421C5F91D2C152C00048251 /* NSData+CBox.swift in Sources */,
 				54EA12241D2A9AA400D2CFD1 /* CryptoBoxError.swift in Sources */,
 				5471A6741D242D740092A9A9 /* PointerWrapper.swift in Sources */,
@@ -797,12 +809,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				87B43C2F20F3973F0031DE41 /* EncryptionContextCachingTests.swift in Sources */,
-				EEA2B85F24DC26BD00C6659E /* AES256GCMEncryptionTests.swift in Sources */,
+				EEA2B85F24DC26BD00C6659E /* ChaCha20AEADEncryptionTests.swift in Sources */,
 				54B949921D253E2E0041CC55 /* EncryptionSessionsDirectoryTests.swift in Sources */,
 				870121FD20F4D2FE001E6342 /* GenericHashBuilderTests.swift in Sources */,
 				54A1573F1D23C00500EB3B4F /* EncryptionContextTests.swift in Sources */,
 				54B949941D2541350041CC55 /* TestHelper.swift in Sources */,
-				16460B83206D47460096B616 /* ChaCha20EncryptionTests.swift in Sources */,
+				16460B83206D47460096B616 /* ChaCha20StreamEncryptionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
