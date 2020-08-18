@@ -800,7 +800,7 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
     ZMSystemMessage *message = [[ZMSystemMessage alloc] initWithNonce:NSUUID.UUID managedObjectContext:moc];
     message.systemMessageType = type;
     message.visibleInConversation = conversation;
-    message.serverTimestamp = updateEvent.timeStamp;
+    message.serverTimestamp = updateEvent.timestamp;
     
     [message updateWithUpdateEvent:updateEvent forConversation:conversation];
     

@@ -45,7 +45,7 @@ extension ZMClientMessage {
             return createNewGenericMessage(with: data)
             
         }
-        existingMessageData?.data = data
+        existingMessageData?.setProtobuf(data)
         return existingMessageData
     }
     
@@ -54,7 +54,7 @@ extension ZMClientMessage {
             fatalError()
         }
         let messageData = ZMGenericMessageData.insertNewObject(in: moc)
-        messageData.data = data
+        messageData.setProtobuf(data)
         messageData.message = self
         return messageData
     }

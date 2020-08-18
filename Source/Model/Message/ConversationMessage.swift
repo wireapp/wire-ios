@@ -142,6 +142,8 @@ public protocol ZMConversationMessage : NSObjectProtocol {
 
     /// Used to trigger link attachments update for this message.
     var needsLinkAttachmentsUpdate: Bool { get set }
+    
+    var isSilenced: Bool { get }
 }
 
 public protocol ConversationCompositeMessage {
@@ -245,6 +247,10 @@ extension ZMMessage : ZMConversationMessage {
             syncConversation.calculateLastUnreadMessages()
             syncContext.saveOrRollback()
         }
+    }
+    
+    public var isSilenced: Bool {
+        return conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
     }
 }
 

@@ -29,7 +29,7 @@ extension ZMOTRMessage {
         let selfUser = ZMUser.selfUser(in: moc)
         
         guard
-            let senderID = updateEvent.senderUUID(),
+            let senderID = updateEvent.senderUUID,
             let conversation = self.conversation(for: updateEvent, in: moc, prefetchResult: prefetchResult),
             !isSelf(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier)
             else {
@@ -48,7 +48,7 @@ extension ZMOTRMessage {
         zmLog.debug("Processing:\n\(message)")
         
         // Update the legal hold state in the conversation
-        conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timeStamp() ?? Date())
+        conversation.updateSecurityLevelIfNeededAfterReceiving(message: message, timestamp: updateEvent.timestamp ?? Date())
         
         if !message.knownMessage {
             UnknownMessageAnalyticsTracker.tagUnknownMessage(with: moc.analytics)
@@ -108,14 +108,14 @@ extension ZMOTRMessage {
                     return nil
                 }
                 
-                clientMessage?.senderClientID = updateEvent.senderClientID()
-                clientMessage?.serverTimestamp = updateEvent.timeStamp()
+                clientMessage?.senderClientID = updateEvent.senderClientID
+                clientMessage?.serverTimestamp = updateEvent.timestamp
                 
                 if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
                     let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
                     clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
                 }
-            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID() {
+            } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
                 return nil
             }
             
@@ -154,10 +154,10 @@ extension ZMOTRMessage {
     }
     
     private static func appendInvalidSystemMessage(forUpdateEvent event: ZMUpdateEvent, toConversation conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
-        guard let remoteId = event.senderUUID(),
+        guard let remoteId = event.senderUUID,
             let sender = ZMUser(remoteID: remoteId, createIfNeeded: false, in: moc) else {
                 return
         }
-        conversation.appendInvalidSystemMessage(at: event.timeStamp() ?? Date(), sender: sender)
+        conversation.appendInvalidSystemMessage(at: event.timestamp ?? Date(), sender: sender)
     }
 }

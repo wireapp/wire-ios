@@ -235,7 +235,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
                 assetData.hasPreview {
                 do {
                     let genericMessageData = try genericMessage.serializedData()
-                    data.data =  genericMessageData
+                    data.setProtobuf(genericMessageData)
                 } catch {}
             }
         }

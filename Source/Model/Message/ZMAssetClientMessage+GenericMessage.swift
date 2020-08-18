@@ -71,7 +71,7 @@ extension ZMAssetClientMessage {
         if let imageFormat = genericMessage.imageAssetData?.imageFormat(),
             let existingMessageData = genericMessageDataFromDataSet(for: imageFormat)
         {
-            existingMessageData.data = data
+            existingMessageData.setProtobuf(data)
             return existingMessageData
         } else {
             return createNewGenericMessage(with: data)
@@ -82,7 +82,7 @@ extension ZMAssetClientMessage {
     func createNewGenericMessage(with data: Data) -> ZMGenericMessageData {
         guard let moc = self.managedObjectContext else { fatalError() }
         let messageData = ZMGenericMessageData.insertNewObject(in: moc)
-        messageData.data = data
+        messageData.setProtobuf(data)
         messageData.asset = self
         moc.processPendingChanges()
         return messageData

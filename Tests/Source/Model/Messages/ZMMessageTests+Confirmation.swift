@@ -338,7 +338,7 @@ extension ZMMessageTests_Confirmation {
         
         // then
         XCTAssertEqual(sut.readReceipts.count, 1)
-        XCTAssertEqual(sut.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID())
+        XCTAssertEqual(sut.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID)
     }
     
     func testThatItAddsDeliveryReceipt_WhenItReceivesMultipleReadConfirmations(){
@@ -367,9 +367,9 @@ extension ZMMessageTests_Confirmation {
         
         // then
         XCTAssertEqual(messsage1.readReceipts.count, 1)
-        XCTAssertEqual(messsage1.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID())
+        XCTAssertEqual(messsage1.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID)
         XCTAssertEqual(messsage2.readReceipts.count, 1)
-        XCTAssertEqual(messsage2.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID())
+        XCTAssertEqual(messsage2.readReceipts.first?.user.remoteIdentifier, updateEvent.senderUUID)
     }
     
     func testThatItDeliveryReceiptsAreOrdedByTimestamp_WhenItReceivesReadConfirmation(){

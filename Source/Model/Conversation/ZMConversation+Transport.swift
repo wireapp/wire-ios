@@ -77,14 +77,14 @@ extension ZMConversation {
     }
     
     public func updateCleared(fromPostPayloadEvent event: ZMUpdateEvent ) {
-        if let timeStamp = event.timeStamp() {
+        if let timeStamp = event.timestamp {
             updateCleared(timeStamp, synchronize: true)
         }
     }
     
     @objc
     public func update(updateEvent: ZMUpdateEvent) {
-        if let timeStamp = updateEvent.timeStamp() {
+        if let timeStamp = updateEvent.timestamp {
             self.updateServerModified(timeStamp)
         }
     }
@@ -237,7 +237,7 @@ extension ZMConversation {
     
     @objc(shouldAddEvent:)
     public func shouldAdd(event: ZMUpdateEvent) -> Bool {
-        if let clearedTime = self.clearedTimeStamp, let time = event.timeStamp(),
+        if let clearedTime = self.clearedTimeStamp, let time = event.timestamp,
             clearedTime.compare(time) != .orderedAscending {
             return false
         }
