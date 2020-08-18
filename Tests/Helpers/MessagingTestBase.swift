@@ -216,7 +216,7 @@ extension MessagingTestBase {
 // MARK: - Internal data provisioning
 extension MessagingTestBase {
     
-    fileprivate func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
+    func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()

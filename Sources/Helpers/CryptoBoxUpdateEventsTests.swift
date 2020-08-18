@@ -34,8 +34,8 @@ class CryptoboxUpdateEventsTests: MessagingTestBase {
             let decryptedEvent = self.decryptedUpdateEventFromOtherClient(message: generic)
             
             // THEN
-            XCTAssertEqual(decryptedEvent.senderUUID(), self.otherUser.remoteIdentifier!)
-            XCTAssertEqual(decryptedEvent.recipientClientID(), self.selfClient.remoteIdentifier!)
+            XCTAssertEqual(decryptedEvent.senderUUID, self.otherUser.remoteIdentifier!)
+            XCTAssertEqual(decryptedEvent.recipientClientID, self.selfClient.remoteIdentifier!)
             
             guard let decryptedMessage = ZMClientMessage.createOrUpdate(from: decryptedEvent, in: self.syncMOC, prefetchResult: nil) else {
                 return XCTFail()

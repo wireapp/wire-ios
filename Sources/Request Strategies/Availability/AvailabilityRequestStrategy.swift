@@ -151,7 +151,7 @@ extension AvailabilityRequestStrategy: ZMEventConsumer {
     public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
         for event in events {
             guard
-                let senderUUID = event.senderUUID(), event.isGenericMessageEvent,
+                let senderUUID = event.senderUUID, event.isGenericMessageEvent,
                 let message = GenericMessage(from: event), message.hasAvailability
             else {
                 continue

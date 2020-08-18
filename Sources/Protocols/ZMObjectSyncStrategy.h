@@ -49,6 +49,8 @@ NS_ASSUME_NONNULL_BEGIN
 
 @optional
 
+- (void)processEventsWhileInBackground:(NSArray<ZMUpdateEvent *> *)events NS_SWIFT_NAME(processEventsWhileInBackground(_:));
+
 /// If conforming to these mothods the object strategy will be asked to extract relevant messages (by nonce)
 /// and conversations from the events array. All messages and conversations will be prefetched and
 /// passed to @c processEvents:liveEvents:prefetchResult as last parameter
