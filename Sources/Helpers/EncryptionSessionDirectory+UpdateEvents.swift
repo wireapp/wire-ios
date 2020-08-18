@@ -88,9 +88,9 @@ extension EncryptionSessionsDirectory {
         }
         
         var conversation : ZMConversation?
-        if let conversationUUID = event.conversationUUID() {
+        if let conversationUUID = event.conversationUUID {
             conversation = ZMConversation(remoteID: conversationUUID, createIfNeeded: false, in: moc)
-            conversation?.appendDecryptionFailedSystemMessage(at: event.timeStamp()!, sender: sender.user!, client: sender, errorCode: Int(error?.rawValue ?? 0))
+            conversation?.appendDecryptionFailedSystemMessage(at: event.timestamp!, sender: sender.user!, client: sender, errorCode: Int(error?.rawValue ?? 0))
         }
         
         let userInfo: [String: Any] = [
@@ -134,12 +134,12 @@ extension EncryptionSessionsDirectory {
     
     /// Create user and client if needed. The client will not be trusted
     fileprivate func createClientIfNeeded(from updateEvent: ZMUpdateEvent, in moc: NSManagedObjectContext) -> UserClient? {
-        guard let senderUUID = updateEvent.senderUUID(), let senderClientID = updateEvent.senderClientID() else { return nil }
+        guard let senderUUID = updateEvent.senderUUID, let senderClientID = updateEvent.senderClientID else { return nil }
         
         let user = ZMUser(remoteID: senderUUID, createIfNeeded: true, in: moc)!
         let client = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: user, createIfNeeded: true)!
         
-        client.discoveryDate = updateEvent.timeStamp()
+        client.discoveryDate = updateEvent.timestamp
         
         return client
     }

@@ -64,6 +64,8 @@
 		166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */; };
 		166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 166902111D70851E000FE4AF /* ZMOutstandingItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		16751E8524CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */; };
+		16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */; };
 		168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */; };
 		16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */; };
 		16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */; };
@@ -309,6 +311,8 @@
 		166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimedSingleRequestSyncTests.m; sourceTree = "<group>"; };
 		166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSyncTests.m; sourceTree = "<group>"; };
 		166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSyncTests.m; sourceTree = "<group>"; };
+		16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategy.swift; sourceTree = "<group>"; };
+		16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategyTests.swift; sourceTree = "<group>"; };
 		168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsPreprocessorTests.swift; sourceTree = "<group>"; };
 		16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSync.swift; sourceTree = "<group>"; };
 		16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSyncTests.swift; sourceTree = "<group>"; };
@@ -586,6 +590,15 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		16751E8324CF724F0099AE09 /* Delivery Receipts */ = {
+			isa = PBXGroup;
+			children = (
+				16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */,
+				16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */,
+			);
+			path = "Delivery Receipts";
+			sourceTree = "<group>";
+		};
 		F12CD7932035FC4400EAAEBC /* Resources */ = {
 			isa = PBXGroup;
 			children = (
@@ -626,6 +639,7 @@
 		F184014D2073BE0800E9F4CC /* Request Strategies */ = {
 			isa = PBXGroup;
 			children = (
+				16751E8324CF724F0099AE09 /* Delivery Receipts */,
 				F14B7AD5222006A100458624 /* User */,
 				F184014E2073BE0800E9F4CC /* Client Message */,
 				F18401572073BE0800E9F4CC /* Generic Message */,
@@ -1180,6 +1194,7 @@
 				F18401A62073BE0800E9F4CC /* MissingClientsRequestStrategy.swift in Sources */,
 				166901DD1D7081C7000FE4AF /* ZMLocallyModifiedObjectSyncStatus.m in Sources */,
 				F18401BB2073BE0800E9F4CC /* LinkPreviewAssetDownloadRequestStrategy.swift in Sources */,
+				16751E8524CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1243,6 +1258,7 @@
 				F18401E72073C26200E9F4CC /* MissingClientsRequestStrategyTests.swift in Sources */,
 				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
 				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,
+				16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */,
 				F18401F12073C26C00E9F4CC /* AssetV3DownloadRequestStrategyTests.swift in Sources */,
 				F18402012073C2EA00E9F4CC /* RequestStrategyTestBase.swift in Sources */,
 			);

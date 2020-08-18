@@ -22,6 +22,7 @@ import Foundation
 
     public enum Recipients {
         case conversationParticipants
+        case users(Set<ZMUser>)
         case clients([ZMUser: Set<UserClient>])
     }
 
@@ -83,13 +84,17 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
         switch targetRecipients {
         case .conversationParticipants:
             return message.encryptForTransport(for: conversation)
+        case .users(let users):
+            return message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
         case .clients(let clientsByUser):
             return message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
         }
     }
 
     public var debugInfo: String {
-        if case .calling? = message.content {
+        if case .confirmation = message.content {
+            return "Confirmation Message"
+        } else if case .calling? = message.content {
             return "Calling Message"
         } else if case .clientAction? = message.content {
             switch message.clientAction {

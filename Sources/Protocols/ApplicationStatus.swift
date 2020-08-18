@@ -46,7 +46,6 @@ public protocol ApplicationStatus : class {
     
     var clientRegistrationDelegate : ClientRegistrationDelegate { get }
     var requestCancellation : ZMRequestCancellation { get }
-    var deliveryConfirmation : DeliveryConfirmationDelegate { get }
 
     var notificationFetchStatus: BackgroundNotificationFetchStatus { get }
     

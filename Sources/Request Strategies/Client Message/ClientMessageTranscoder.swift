@@ -130,11 +130,7 @@ extension ClientMessageTranscoder: ZMUpstreamTranscoder {
         }
         
         request.add(completionHandler)
-        
-        if message.underlyingMessage?.hasConfirmation == true && self.applicationStatus!.deliveryConfirmation.needsToSyncMessages {
-            request.forceToVoipSession()
-        }
-        
+                
         self.messageExpirationTimer.stop(for: message)
         if let expiration = message.expirationDate {
             request.expire(at: expiration)
@@ -163,20 +159,10 @@ extension ClientMessageTranscoder {
     func insertMessage(from event: ZMUpdateEvent, prefetchResult: ZMFetchRequestBatchResult?) {
         switch event.type {
         case .conversationClientMessageAdd, .conversationOtrMessageAdd, .conversationOtrAssetAdd:
-            
-            // process generic message first, b/c if there is no updateResult, then
-            // a the event from a deleted message wouldn't delete the notification.
-            if event.source == .pushNotification || event.source == .webSocket {
-                self.localNotificationDispatcher.process(event)
-            }
-            
+                        
             guard let message = ZMOTRMessage.createOrUpdate(from: event, in: managedObjectContext, prefetchResult: prefetchResult) else { return }
             
             message.markAsSent()
-            
-            if event.source == .pushNotification || event.source == .webSocket {
-                self.localNotificationDispatcher.process(message)
-            }
             
         default:
             break
@@ -208,7 +194,8 @@ extension ClientMessageTranscoder {
             message.managedObjectContext?.delete(message)
         }
         if genericMessage.hasConfirmation {
-            self.applicationStatus?.deliveryConfirmation.didConfirmMessage(message.nonce!)
+            // NOTE: this will only be read confirmations since delivery confirmations
+            // are not sent using the ClientMessageTranscoder
             message.managedObjectContext?.delete(message)
         }
     }
