@@ -24,36 +24,8 @@ import WireRequestStrategy
 import WireLinkPreview
 
 class PushMessageHandlerDummy : NSObject, PushMessageHandler {
-
-    func process(_ message: ZMMessage) {
-        // nop
-    }
-
-    public func process(_ event: ZMUpdateEvent) {
-        // nop
-    }
     
     func didFailToSend(_ message: ZMMessage) {
-        // nop
-    }
-    
-}
-
-class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
-    
-    static var sendDeliveryReceipts: Bool {
-        return false
-    }
-    
-    var needsToSyncMessages: Bool {
-        return false
-    }
-    
-    func needsToConfirmMessage(_ messageNonce: UUID) {
-        // nop
-    }
-    
-    func didConfirmMessage(_ messageNonce: UUID) {
         // nop
     }
     
@@ -112,7 +84,6 @@ extension BackendEnvironmentProvider {
 class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
-    let deliveryConfirmationDummy : DeliveryConfirmationDummy
     
     /// The authentication status used to verify a user is authenticated
     public let authenticationStatus: AuthenticationStatusProvider
@@ -126,7 +97,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
-        self.deliveryConfirmationDummy = DeliveryConfirmationDummy()
         self.linkPreviewDetector = linkPreviewDetector
     }
     
@@ -158,11 +128,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
     public var requestCancellation: ZMRequestCancellation {
         return transportSession
     }
-    
-    public var deliveryConfirmation: DeliveryConfirmationDelegate {
-        return deliveryConfirmationDummy
-    }
-    
+        
     func requestSlowSync() {
         // we don't do slow syncing in the share engine
     }
