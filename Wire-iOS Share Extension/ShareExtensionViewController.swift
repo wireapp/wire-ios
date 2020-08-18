@@ -496,15 +496,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
             return
         }
         
-        // TODO jacob handle database lock scenario
-        
-        let scenario: AppLock.AuthenticationScenario =
-            .screenLock(requireBiometrics: AppLock.rules.useBiometricsOrAccountPassword,
-                        grantAccessIfPolicyCannotBeEvaluated: !AppLock.rules.forceAppLock)
-        
-        AppLock.evaluateAuthentication(scenario: scenario,
-                                       description: "share_extension.privacy_security.lock_app.description".localized)
-        { [weak self] (result, _) in
+        AppLock.evaluateAuthentication(description: "share_extension.privacy_security.lock_app.description".localized) { [weak self] (result) in
             DispatchQueue.main.async {
                 if case .granted = result {
                     self?.localAuthenticationStatus = .granted
