@@ -95,9 +95,6 @@
 @interface LocalNotificationDispatcher (Push) <PushMessageHandler>
 @end
 
-@interface BackgroundAPNSConfirmationStatus (Protocol) <DeliveryConfirmationDelegate>
-@end
-
 @interface ZMClientRegistrationStatus (Protocol) <ClientRegistrationDelegate>
 @end
 
@@ -133,7 +130,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                                     flowManager:flowManager
                                      applicationStatusDirectory:applicationStatusDirectory];
 
-        self.eventsBuffer = [[ZMUpdateEventsBuffer alloc] initWithUpdateEventConsumer:self];
+        self.eventsBuffer = [[ZMUpdateEventsBuffer alloc] initWithUpdateEventProcessor:self];
         self.userClientRequestStrategy = [[UserClientRequestStrategy alloc] initWithClientRegistrationStatus:applicationStatusDirectory.clientRegistrationStatus
                                                                                           clientUpdateStatus:applicationStatusDirectory.clientUpdateStatus
                                                                                                      context:self.syncMOC
@@ -155,6 +152,7 @@ ZM_EMPTY_ASSERTING_INIT()
                                    [[AssetClientMessageRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory],
                                    [[AssetV3PreviewDownloadRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory],
                                    self.clientMessageTranscoder,
+                                   [[DeliveryReceiptRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC clientRegistrationDelegate:applicationStatusDirectory.clientRegistrationStatus],
                                    [[AvailabilityRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory],
                                    [[UserPropertyRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory],
                                    [[UserProfileRequestStrategy alloc] initWithManagedObjectContext:self.syncMOC
@@ -214,7 +212,7 @@ ZM_EMPTY_ASSERTING_INIT()
     self.connectionTranscoder = [[ZMConnectionTranscoder alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory syncStatus:applicationStatusDirectory.syncStatus];
     self.userTranscoder = [[ZMUserTranscoder alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory syncStatus:applicationStatusDirectory.syncStatus];
     self.selfStrategy = [[ZMSelfStrategy alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory clientRegistrationStatus:applicationStatusDirectory.clientRegistrationStatus syncStatus:applicationStatusDirectory.syncStatus];
-    self.conversationTranscoder = [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory localNotificationDispatcher:self.localNotificationDispatcher syncStatus:applicationStatusDirectory.syncStatus];
+    self.conversationTranscoder = [[ZMConversationTranscoder alloc] initWithManagedObjectContext:self.syncMOC applicationStatus:applicationStatusDirectory syncStatus:applicationStatusDirectory.syncStatus];
     self.clientMessageTranscoder = [[ClientMessageTranscoder alloc] initIn:self.syncMOC localNotificationDispatcher:localNotificationsDispatcher applicationStatus:applicationStatusDirectory];
     self.missingUpdateEventsTranscoder = [[ZMMissingUpdateEventsTranscoder alloc] initWithManagedObjectContext:self.syncMOC
                                                                                           notificationsTracker:nil
@@ -284,9 +282,8 @@ ZM_EMPTY_ASSERTING_INIT()
     [self.applicationStatusDirectory.syncStatus pushChannelDidClose];
 }
 
-- (void)didFinishSync
+- (void)applyHotFixes
 {
-    [self processAllEventsInBuffer];
     [self.hotFix applyPatches];
 }
 
@@ -336,7 +333,6 @@ ZM_EMPTY_ASSERTING_INIT()
 - (void)processAllEventsInBuffer
 {
     [self.eventsBuffer processAllEventsInBuffer];
-    [self.syncMOC enqueueDelayedSave];
 }
 
 

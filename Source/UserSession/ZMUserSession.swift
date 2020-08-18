@@ -206,6 +206,7 @@ public class ZMUserSession: NSObject, ZMManagedObjectContextProvider {
             self.localNotificationDispatcher = LocalNotificationDispatcher(in: storeProvider.contextDirectory.syncContext)
             self.configureTransportSession()
             self.applicationStatusDirectory = self.createApplicationStatusDirectory()
+            self.syncStrategy = operationLoop?.syncStrategy
             self.operationLoop = operationLoop ?? self.createOperationLoop()
             self.urlActionProcessors = self.createURLActionProcessors()
             self.callStateObserver = CallStateObserver(localNotificationDispatcher: self.localNotificationDispatcher!,
@@ -409,7 +410,7 @@ extension ZMUserSession: ZMNetworkStateDelegate {
         }
     }
     
-    private func updateNetworkState() {
+    func updateNetworkState() {
         let state: ZMNetworkState
         
         if isNetworkOnline {
@@ -456,10 +457,13 @@ extension ZMUserSession: ZMSyncStateDelegate {
     }
     
     public func didFinishQuickSync() {
-        syncStrategy?.didFinishSync()
+        guard let syncStrategy = syncStrategy else { return }
+        
+        syncStrategy.processAllEventsInBuffer()
+        let hasMoreEventsToProcess = syncStrategy.processEventsAfterFinishingQuickSync()
         
         managedObjectContext.performGroupedBlock { [weak self] in
-            self?.isPerformingSync = false
+            self?.isPerformingSync = hasMoreEventsToProcess
             self?.updateNetworkState()
             self?.notifyThirdPartyServices()
         }

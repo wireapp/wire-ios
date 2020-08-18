@@ -116,7 +116,7 @@ extension Notification.Name {
     public var isSyncing : Bool {
         return currentSyncPhase.isSyncing
     }
-    
+        
     public init(managedObjectContext: NSManagedObjectContext, syncStateDelegate: ZMSyncStateDelegate) {
         self.managedObjectContext = managedObjectContext
         self.syncStateDelegate = syncStateDelegate
