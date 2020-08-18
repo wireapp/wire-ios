@@ -37,4 +37,12 @@ extension ZMUpdateEvent {
             return nil
         }
     }
+    
+    public var userIDs: [UUID] {
+        guard let dataPayload = (payload as NSDictionary).dictionary(forKey: "data"),
+            let userIds = dataPayload["user_ids"] as? [String] else {
+                return []
+        }
+        return userIds.compactMap({ UUID.init(uuidString: $0)})
+    }
 }

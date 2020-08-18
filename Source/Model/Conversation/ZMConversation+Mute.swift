@@ -125,36 +125,38 @@ extension ZMUser {
     
 }
 
-extension ZMConversationMessage {
-    
-    public var isSilenced: Bool {
-        guard let conversation = self.conversation else {
+public extension ZMConversation {
+    func isMessageSilenced(_ message: GenericMessage?, senderID: UUID?) -> Bool {
+        guard let managedObjectContext = self.managedObjectContext else {
             return false
         }
-        
-        guard let sender = self.sender, !sender.isSelfUser else {
+
+        let selfUser = ZMUser.selfUser(in: managedObjectContext)
+        if let senderID = senderID,
+            let sender = ZMUser.fetch(withRemoteIdentifier: senderID, in: managedObjectContext), sender.isSelfUser {
             return true
         }
-        
-        if conversation.mutedMessageTypesIncludingAvailability == .none {
+
+        if self.mutedMessageTypesIncludingAvailability == .none {
             return false
         }
-        
+
         // We assume that all composite messages are alarming messages
-        guard (self as? ConversationCompositeMessage)?.compositeMessageData == nil else {
+        guard message?.compositeData == nil else {
             return false
         }
-        
-        guard let textMessageData = self.textMessageData else {
+
+        guard let textMessageData = message?.textData else {
             return true
         }
-        
-        if conversation.mutedMessageTypesIncludingAvailability == .regular && (textMessageData.isMentioningSelf || textMessageData.isQuotingSelf) {
+
+        let quotedMessageId = UUID(uuidString: textMessageData.quote.quotedMessageID)
+        let quotedMessage = ZMOTRMessage.fetch(withNonce: quotedMessageId, for: self, in: managedObjectContext)
+
+        if self.mutedMessageTypesIncludingAvailability == .regular && (textMessageData.isMentioningSelf(selfUser) || textMessageData.isQuotingSelf(quotedMessage)) {
             return false
-        }
-        else {
+        } else {
             return true
         }
     }
-    
 }

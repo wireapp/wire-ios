@@ -42,31 +42,6 @@ extension ZMConversation {
         return confirmationMessages
     }
     
-    public static func confirmDeliveredMessages(_ messages: Set<UUID>, in conversations: Set<UUID>, with managedObjectContext: NSManagedObjectContext) -> [ZMMessage] {
-        guard let conversationObjects = ZMConversation.fetchObjects(withRemoteIdentifiers: conversations, in: managedObjectContext) as? Set<ZMConversation> else { return [] }
-        var confirmationMessages: [ZMMessage] = []
-        
-        for conversation in conversationObjects {
-            guard let confirmation = conversation.appendConfirmationMessage(for: messages, in: managedObjectContext)
-                else { continue }
-            confirmationMessages.append(confirmation)
-        }
-        
-        return confirmationMessages
-    }
-    
-    private func appendConfirmationMessage(for messages: Set<UUID>, in managedObjectContext: NSManagedObjectContext) -> ZMMessage? {
-        guard let messageObjects = ZMOTRMessage.fetchObjects(withRemoteIdentifiers: messages, in: managedObjectContext) as? Set<ZMOTRMessage>
-            else { return nil }
-        
-        let deliveredMessages = messageObjects.filter { $0.conversation == self && $0.needsDeliveryConfirmation }.compactMap(\.nonce)
-        
-        guard deliveredMessages.count > 0 else { return nil }
-        
-        guard let confirmation = Confirmation.init(messageIds: deliveredMessages, type: .delivered) else { return nil }
-        return append(message: confirmation, hidden: true)
-    }
-    
     @discardableResult @objc
     public func appendMessageReceiptModeChangedMessage(fromUser user: ZMUser, timestamp: Date, enabled: Bool) -> ZMSystemMessage {
         let message = appendSystemMessage(

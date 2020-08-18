@@ -90,7 +90,7 @@ extension ZMClientMessage {
     
     @nonobjc func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
         guard let nonce = self.nonce,
-              let senderUUID = updateEvent.senderUUID(),
+              let senderUUID = updateEvent.senderUUID,
               let originalText = underlyingMessage?.textData,
               let updatedText = updatedMessage.textData,
               senderUUID == sender?.remoteIdentifier,

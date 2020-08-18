@@ -25,7 +25,7 @@
 
 @implementation ZMUpdateEvent (WireDataModel)
 
-- (NSDate *)timeStamp
+- (NSDate *)timestamp
 {
     if (self.isTransient || self.type == ZMUpdateEventTypeUserConnection) {
         return nil;

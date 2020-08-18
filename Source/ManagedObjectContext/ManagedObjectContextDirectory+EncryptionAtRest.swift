@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,16 +18,22 @@
 
 import Foundation
 
-extension ZMConversation {
-    
-    /// Verifies that a sender of an update event is part of the conversation. If they are not,
-    /// it means that our local state is out of sync and we need to update the list of participants.
-    @objc
-    public func verifySender(of updateEvent: ZMUpdateEvent, moc: NSManagedObjectContext) {
+public extension ManagedObjectContextDirectory {
 
-        guard let senderUUID = updateEvent.senderUUID,
-              let user = ZMUser(remoteID: senderUUID, createIfNeeded: true, in: moc) else { return }
+    /// Synchronously stores the given encryption keys in each managed object context.
 
-        addParticipantAndSystemMessageIfMissing(user, date: updateEvent.timestamp?.addingTimeInterval(-0.01))
+    func storeEncryptionKeysInAllContexts(encryptionKeys: EncryptionKeys) {
+        for context in [uiContext, syncContext, searchContext] {
+            context?.performAndWait { context?.encryptionKeys = encryptionKeys }
+        }
     }
+
+    /// Synchronously clears the encryption keys in each managed object context.
+
+    func clearEncryptionKeysInAllContexts() {
+        for context in [uiContext, syncContext, searchContext] {
+            context?.performAndWait { context?.encryptionKeys = nil }
+        }
+    }
+
 }

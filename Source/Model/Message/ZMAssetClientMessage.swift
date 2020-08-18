@@ -235,6 +235,10 @@ import Foundation
         super.startDestructionIfNeeded()
     }
     
+    public override var isSilenced: Bool {
+        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+    } 
+    
     // Private implementation
     @NSManaged fileprivate var assetID_data: Data
     @NSManaged fileprivate var preprocessedSize_data: Data

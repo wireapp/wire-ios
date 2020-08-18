@@ -796,7 +796,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     NSUUID *nonce = [NSUUID UUID];
     (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturn:nonce] messageNonce];
-    (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturn:serverTimeStamp] timeStamp];
+    (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturn:serverTimeStamp] timestamp];
     (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturn:conversation.remoteIdentifier] conversationUUID];
     (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturn:from] senderUUID];
     return updateEvent;

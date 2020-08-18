@@ -534,7 +534,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(conversation.lastModifiedDate, oldDate)
         XCTAssertEqual(conversation.lastServerTimeStamp, oldDate)
         XCTAssertEqual(newMessage?.serverTimestamp, oldDate)
-        XCTAssertEqual(newMessage?.updatedAt, updateEvent!.timeStamp())
+        XCTAssertEqual(newMessage?.updatedAt, updateEvent!.timestamp)
         
         XCTAssertEqual(conversation.estimatedUnreadCount, 0)
     }

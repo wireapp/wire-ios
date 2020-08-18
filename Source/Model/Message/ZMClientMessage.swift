@@ -220,4 +220,8 @@ extension ZMClientMessage {
     public override var fileMessageData: ZMFileMessageData? {
         return nil
     }
+    
+    public override var isSilenced: Bool {
+        return conversation?.isMessageSilenced(underlyingMessage, senderID: sender?.remoteIdentifier) ?? true
+    }
 }

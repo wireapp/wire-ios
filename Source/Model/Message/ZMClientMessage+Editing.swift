@@ -43,7 +43,7 @@ extension ZMClientMessage {
     
     func processMessageEdit(_ messageEdit: MessageEdit, from updateEvent: ZMUpdateEvent) -> Bool {
         guard let nonce = updateEvent.messageNonce,
-              let senderUUID = updateEvent.senderUUID(),
+              let senderUUID = updateEvent.senderUUID,
               let originalText = underlyingMessage?.textData,
               case .text? = messageEdit.content,
               senderUUID == sender?.remoteIdentifier
@@ -56,7 +56,7 @@ extension ZMClientMessage {
         }
         updateNormalizedText()
         self.nonce = nonce
-        updatedTimestamp = updateEvent.timeStamp()
+        updatedTimestamp = updateEvent.timestamp
         reactions.removeAll()
         linkAttachments = nil
         

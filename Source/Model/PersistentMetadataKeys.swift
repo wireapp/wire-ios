@@ -24,6 +24,7 @@ public enum PersistentMetadataKey: String {
     case pushToken = "pushToken"
     case pushKitToken = "ZMPushKitToken"
     case importedFromBackup = "importedFromBackup"
+    case encryptMessagesAtRest = "encryptMessagesAtRest"
     
 }
 

@@ -25,11 +25,11 @@
 @interface ZMUpdateEvent (WireDataModel)
 
 /// May be nil (e.g. transient events)
-- (nullable NSDate *)timeStamp;
-- (nullable NSUUID *)senderUUID;
-- (nullable NSUUID *)conversationUUID;
-- (nullable NSString *)senderClientID;
-- (nullable NSString *)recipientClientID;
+@property (readonly, nullable) NSDate *timestamp;
+@property (readonly, nullable) NSUUID *senderUUID;
+@property (readonly, nullable) NSUUID *conversationUUID;
+@property (readonly, nullable) NSString *senderClientID;
+@property (readonly, nullable) NSString *recipientClientID;
 
 - (nonnull NSMutableSet *)usersFromUserIDsInManagedObjectContext:(nonnull NSManagedObjectContext *)context createIfNeeded:(BOOL)createIfNeeded;
 
