@@ -12,7 +12,6 @@
 		0641A8C6239A581A00B24621 /* MockRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0641A8C5239A581A00B24621 /* MockRole.swift */; };
 		09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */; };
 		09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */; };
-		09E393C91BAC3FA300F3EA1B /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		09E393ED1BB012EA00F3EA1B /* MockTransportSession+Clients.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */; };
 		09E393EE1BB012EA00F3EA1B /* MockTransportSession+Clients.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */; };
 		09E393F51BB0336A00F3EA1B /* MockPreKey.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393F31BB0336A00F3EA1B /* MockPreKey.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -150,7 +149,6 @@
 				BF0F778E1E93AC860060494E /* WireUtilities.framework in CopyFiles */,
 				BF0F778F1E93AC860060494E /* WireSystem.framework in CopyFiles */,
 				BF0F77901E93AC860060494E /* OCMock.framework in CopyFiles */,
-				09E393C91BAC3FA300F3EA1B /* ProtocolBuffers.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -164,7 +162,6 @@
 		0928E1FB1B975CFE0057232E /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+OTR.h"; sourceTree = "<group>"; };
 		09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+OTR.m"; sourceTree = "<group>"; };
-		09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+Clients.h"; sourceTree = "<group>"; };
 		09E393EC1BB012EA00F3EA1B /* MockTransportSession+Clients.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+Clients.m"; sourceTree = "<group>"; };
 		09E393F31BB0336A00F3EA1B /* MockPreKey.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockPreKey.h; sourceTree = "<group>"; };
@@ -594,7 +591,6 @@
 				BF0F777E1E93AC550060494E /* WireUtilities.framework */,
 				BF0F777F1E93AC550060494E /* WireSystem.framework */,
 				BF0F77801E93AC550060494E /* OCMock.framework */,
-				09E393C71BAC3F9A00F3EA1B /* ProtocolBuffers.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
