@@ -24,14 +24,20 @@ extension ZMUpdateEvent {
         
     func needsDeliveryConfirmation(_ currentDate: Date = Date(),
                                    managedObjectContext: NSManagedObjectContext) -> Bool {
+
         guard
+            let message = GenericMessage(from: self),
+            message.needsDeliveryConfirmation,
             let conversationID = conversationUUID,
-            let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: managedObjectContext), conversation.conversationType == .oneOnOne,
+            let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: managedObjectContext),
+            conversation.conversationType == .oneOnOne,
             let senderUUID = senderUUID,
-                senderUUID != ZMUser.selfUser(in: managedObjectContext).remoteIdentifier,
+            senderUUID != ZMUser.selfUser(in: managedObjectContext).remoteIdentifier,
             let serverTimestamp = timestamp,
             let daysElapsed = Calendar.current.dateComponents([.day], from: serverTimestamp, to: currentDate).day
-        else { return false }
+        else {
+            return false
+        }
         
         return daysElapsed <= ZMUpdateEvent.deliveryConfirmationDayThreshold
     }
@@ -99,10 +105,8 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     }
     
     func deliveryReceipts(for events: [ZMUpdateEvent]) -> [DeliveryReceipt] {
-        let eventsByConversation = events.filter { (event) -> Bool in
-            return event.type.isOne(of: .conversationOtrMessageAdd, .conversationOtrAssetAdd)
-        }.partition(by: \.conversationUUID)
-        
+        let eventsByConversation = events.partition(by: \.conversationUUID)
+
         var deliveryReceipts: [DeliveryReceipt] = []
         
         eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
@@ -128,4 +132,17 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         return deliveryReceipts
     }
     
+}
+
+private extension GenericMessage {
+
+    var needsDeliveryConfirmation: Bool {
+        switch content {
+        case .text, .image, .asset, .knock, .external, .location, .ephemeral, .composite:
+            return true
+        default:
+            return false
+        }
+    }
+
 }

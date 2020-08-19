@@ -81,6 +81,20 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
             XCTAssertEqual(deliveryReceipts.first?.conversation, self.oneToOneConversation)
         }
     }
+
+    func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsADeliveryReceipt() {
+        syncMOC.performGroupedAndWait { _ in
+            // given
+            let confirmation = GenericMessage(content: Confirmation(messageId: .create()))
+            let event = self.createUpdateEvent(message: confirmation, from: self.otherUser, in: self.oneToOneConversation)
+
+            // when
+            let deliveryReceipts = self.sut.deliveryReceipts(for: [event])
+
+            // then
+            XCTAssertEqual(deliveryReceipts.count, 0)
+        }
+    }
     
     func testThatDeliveryReceiptIsNotCreatedFromUpdateEvent_WhenMessageIsSentInGroupConversation() {
         syncMOC.performGroupedAndWait { _ in
@@ -173,24 +187,34 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     
     // MARK: Helpers
     
-    func createTextUpdateEvent(from: ZMUser,
+    func createTextUpdateEvent(from sender: ZMUser,
                                in conversation: ZMConversation,
                                timestamp: Date = Date()) -> ZMUpdateEvent {
-        let conversationID = conversation.remoteIdentifier!.transportString()
-        let message = GenericMessage(content: WireProtos.Text(content: "Hello World"))
-        let dict = ["recipient": self.selfClient.remoteIdentifier!,
-                    "sender": self.selfClient.remoteIdentifier!,
-                    "text": try! message.serializedData().base64String()] as NSDictionary
 
-        let updateEvent = ZMUpdateEvent(fromEventStreamPayload: ([
-            "type": "conversation.otr-message-add",
-            "data":dict,
-            "from" : from.remoteIdentifier!.transportString(),
-            "conversation": conversationID,
-            "time":Date().transportString()] as NSDictionary), uuid: nil)!
-        
-        return updateEvent
+        let message = GenericMessage(content: WireProtos.Text(content: "Hello World"))
+        return createUpdateEvent(message: message, from: sender, in: conversation, timestamp: timestamp)
     }
- 
+
+    func createUpdateEvent(message: GenericMessage,
+                           from sender: ZMUser,
+                           in conversation: ZMConversation,
+                           timestamp: Date = Date() ) -> ZMUpdateEvent {
+
+        let dict: NSDictionary = [
+            "recipient": self.selfClient.remoteIdentifier!,
+            "sender": self.selfClient.remoteIdentifier!,
+            "text": try! message.serializedData().base64String()
+        ]
+
+        let payload: NSDictionary = [
+            "type": "conversation.otr-message-add",
+            "data": dict,
+            "from": sender.remoteIdentifier!.transportString(),
+            "conversation": conversation.remoteIdentifier!.transportString(),
+            "time": timestamp.transportString()
+        ]
+
+        return ZMUpdateEvent(fromEventStreamPayload: payload, uuid: nil)!
+    }
 
 }
