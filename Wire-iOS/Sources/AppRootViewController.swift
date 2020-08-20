@@ -273,7 +273,7 @@ final class AppRootViewController: UIViewController, SpinnerCapable {
 
             viewController = navigationController
 
-        case .authenticated(completedRegistration: let completedRegistration, databaseIsLocked: _):
+        case .authenticated(completedRegistration: let completedRegistration):
             UIColor.setAccentOverride(.undefined)
             mainWindow.tintColor = UIColor.accent()
             executeAuthenticatedBlocks()
@@ -406,7 +406,7 @@ final class AppRootViewController: UIViewController, SpinnerCapable {
     }
 
     func performWhenAuthenticated(_ block : @escaping () -> Void) {
-        if case .authenticated = appStateController.appState {
+        if appStateController.appState == .authenticated(completedRegistration: false) {
             block()
         } else {
             authenticatedBlocks.append(block)
