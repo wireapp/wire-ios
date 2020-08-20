@@ -36,7 +36,9 @@ public enum LinkAttachmentType: Int {
  */
 
 @objc(ZMLinkAttachment)
-public class LinkAttachment: NSObject, NSCoding {
+public class LinkAttachment: NSObject, NSSecureCoding {
+    
+    public static var supportsSecureCoding = true
 
     /// The type of the attached media.
     @objc public let type: LinkAttachmentType
