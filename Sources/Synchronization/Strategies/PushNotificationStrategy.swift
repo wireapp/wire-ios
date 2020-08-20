@@ -84,7 +84,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 latestEventId = event.uuid
             }
         }
-        eventProcessor.process(updateEvents: parsedEvents, ignoreBuffer: true)
+        eventProcessor.storeAndProcessUpdateEvents(parsedEvents, ignoreBuffer: true)
         pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: hasMoreToFetch)
         
     }
@@ -95,11 +95,14 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 }
 
 extension PushNotificationStrategy: UpdateEventProcessor {
+    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
+            self.delegate?.didReceive(events: decryptedUpdateEvents, in: self.moc)
+        })
+    }
     
-    public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-        eventDecoder.processEvents(updateEvents, block: { (decryptedUpdateEvents) in
-             delegate?.didReceive(events: decryptedUpdateEvents, in: moc)
-        }, isNewNotificationVersion: true)
+    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        
     }
     
 }
