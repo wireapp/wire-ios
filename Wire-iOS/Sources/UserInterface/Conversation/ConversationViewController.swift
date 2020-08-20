@@ -22,6 +22,7 @@ import WireCommonComponents
 
 final class ConversationViewController: UIViewController {
     unowned let zClientViewController: ZClientViewController
+    private let session: ZMUserSessionInterface
     private let visibleMessage: ZMConversationMessage?
 
     var conversation: ZMConversation {
@@ -38,7 +39,6 @@ final class ConversationViewController: UIViewController {
     
     private(set) var startCallController: ConversationCallController!
     
-    let session: ZMUserSessionInterface
     let contentViewController: ConversationContentViewController
     let inputBarController: ConversationInputBarViewController
 

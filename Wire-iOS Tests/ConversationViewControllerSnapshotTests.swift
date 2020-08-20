@@ -55,28 +55,3 @@ final class ConversationViewControllerSnapshotTests: XCTestCase, CoreDataFixture
         verify(matching: sut)
     }
 }
-
-// MARK: - Disable / Enable search in conversations
-
-extension ConversationViewControllerSnapshotTests {
-    
-    func testThatTheSearchButtonIsDisabledIfMessagesAreEncryptedInTheDataBase() {
-        // given
-        
-        // when
-        mockZMUserSession.encryptMessagesAtRest = true
-        
-        // then
-        XCTAssertFalse(sut.collectionsBarButtonItem.isEnabled)
-    }
-    
-    func testThatTheSearchButtonIsEnabledIfMessagesAreNotEncryptedInTheDataBase() {
-        // given
-        
-        // when
-        mockZMUserSession.encryptMessagesAtRest = false
-        
-        // then
-        XCTAssertTrue(sut.collectionsBarButtonItem.isEnabled)
-    }
-}
