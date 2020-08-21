@@ -139,11 +139,17 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     }
     
     public var fileURL: URL? {
-        guard let assetURL = asset?.fileURL,
+        guard
+            let assetURL = asset?.fileURL,
+            let temporaryDirectoryURL = temporaryDirectoryURL,
             let filename = filename,
-            let temporaryDirectoryURL = temporaryDirectoryURL else { return nil }
+            !(filename as NSString).lastPathComponent.isEmpty
+        else {
+            return nil
+        }
         
-        var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(filename)
+        let secureFilename = (filename as NSString).lastPathComponent
+        var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(secureFilename)
         
         if let fileExtension = fileExtension,
             richAssetType == .audio,
