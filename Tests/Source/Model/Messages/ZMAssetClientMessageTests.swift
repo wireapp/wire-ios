@@ -40,7 +40,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
     }
     
     override func createFileMetadata(filename: String? = nil) -> ZMFileMetadata {
-        let metadata = super.createFileMetadata()
+        let metadata = super.createFileMetadata(filename: filename)
         currentTestURL = metadata.fileURL
         return metadata
     }
@@ -107,6 +107,24 @@ class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
 // MARK: - ZMAsset / ZMFileMessageData
 
 extension ZMAssetClientMessageTests {
+    
+    func testThatItCreatesFileAssetMessageWithNotRelativePath()
+    {
+        // given
+        let metadata = createFileMetadata(filename: "../../fileName")
+        let sut = appendFileMessage(to: conversation, fileMetaData: metadata)
+        
+        // then
+        XCTAssertNotNil(sut)
+        XCTAssertNotNil(sut?.fileURL)
+
+        guard let absoluteString = sut?.fileURL?.absoluteString else {
+            XCTFail("asset doesn't have a file URL")
+            return
+        }
+        
+        XCTAssertFalse(absoluteString.contains("../"))
+    }
     
     func testThatItCreatesFileAssetMessageInTheRightStateToBeUploaded()
     {
