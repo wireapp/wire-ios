@@ -92,6 +92,10 @@ import UIKit
         completionHandler: @escaping (ManagedObjectContextDirectory) -> Void
         )
     {
+        if #available(iOSApplicationExtension 12.0, *) {
+            ExtendedSecureUnarchiveFromData.register()
+        }
+        
         let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         FileManager.default.createAndProtectDirectory(at: accountDirectory)
         
