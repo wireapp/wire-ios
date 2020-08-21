@@ -81,7 +81,7 @@ public class LinkAttachment: NSObject, NSSecureCoding {
             let type = LinkAttachmentType(rawValue: aDecoder.decodeInteger(forKey: #keyPath(type))),
             let title = aDecoder.decodeObject(of: NSString.self, forKey: #keyPath(title)) as String?,
             let permalink = aDecoder.decodeObject(of: NSURL.self, forKey: #keyPath(permalink)) as URL?,
-            let thumbnails = aDecoder.decodeObject(of: NSArray.self, forKey: #keyPath(thumbnails)) as? [URL],
+            let thumbnails = aDecoder.decodeObject(of: [NSArray.self, NSURL.self], forKey: #keyPath(thumbnails)) as? [URL],
             let originalRange = aDecoder.decodeObject(of: NSValue.self, forKey: #keyPath(originalRange))?.rangeValue
         else {
             return nil
