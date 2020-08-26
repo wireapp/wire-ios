@@ -175,7 +175,7 @@ public class NotificationSession {
                             accountIdentifier: UUID,
                             environment: BackendEnvironmentProvider,
                             analytics: AnalyticsType?,
-                            delegate: UpdateEventsDelegate?
+                            delegate: LocalNotificationsDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -254,7 +254,7 @@ public class NotificationSession {
                             cachesDirectory: URL,
                             accountContainer: URL,
                             analytics: AnalyticsType?,
-                            delegate: UpdateEventsDelegate?,
+                            delegate: LocalNotificationsDelegate?,
                             sharedContainerURL: URL,
                             accountIdentifier: UUID) throws {
         
@@ -266,7 +266,7 @@ public class NotificationSession {
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
-                                              updateEventsDelegate: delegate,
+                                              localNotificationsDelegate: delegate,
                                               sharedContainerURL: sharedContainerURL,
                                               accountIdentifier: accountIdentifier)
         
