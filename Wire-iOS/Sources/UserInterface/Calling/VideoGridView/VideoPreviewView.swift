@@ -29,6 +29,12 @@ final class VideoPreviewView: BaseVideoPreviewView {
         }
     }
 
+    var shouldFill: Bool = true {
+        didSet {
+            updateFillMode()
+        }
+    }
+
     private var previewView: AVSVideoView?
     private let blurView = UIVisualEffectView(effect: UIBlurEffect(style: .dark))
     private let pausedLabel = UILabel(
