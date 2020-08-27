@@ -23,8 +23,8 @@ public protocol NotificationSessionDelegate: class {
 }
 
 public struct ClientNotification {
-    var title: String
-    var body: String
+    public var title: String
+    public var body: String
 }
 
 public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
