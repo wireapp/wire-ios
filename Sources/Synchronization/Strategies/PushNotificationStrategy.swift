@@ -97,7 +97,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 extension PushNotificationStrategy: UpdateEventProcessor {
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
-            let localNotifications = self.didConvert(decryptedUpdateEvents, liveEvents: true, prefetchResult: nil, moc: self.moc).compactMap { $0 }
+            let localNotifications = self.didConvert(decryptedUpdateEvents, moc: self.moc).compactMap { $0 }
             var alert: (String, String) = ("", "")
             var showNotification = true
             switch localNotifications.count {
@@ -127,21 +127,13 @@ extension PushNotificationStrategy: UpdateEventProcessor {
 // MARK: - Converting events to localNotifications
 
 extension PushNotificationStrategy {
-    private func didConvert(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?, moc: NSManagedObjectContext) -> [ZMLocalNotification?] {
-        var localNotifications: [ZMLocalNotification?] = []
-        let conversationMap =  prefetchResult?.conversationsByRemoteIdentifier ?? [:]
-        let eventsToForward = events.filter { $0.source.isOne(of: .pushNotification, .webSocket) }
-        
-        eventsToForward.forEach { event in
+    private func didConvert(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification?] {
+        return events.compactMap { event in
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
-                // Fetch the conversation here to avoid refetching every time we try to create a notification
-                conversation = conversationMap[conversationID] ?? ZMConversation.fetch(withRemoteIdentifier: conversationID, in: moc)
+                conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: moc)
             }
-            
-            let note = ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
-            localNotifications.append(note)
+            return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
         }
-        return localNotifications
     }
 }
