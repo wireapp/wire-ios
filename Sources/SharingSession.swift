@@ -109,7 +109,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
     
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .eventProcessing
+            return .online
         } else {
             return .unauthenticated
         }
@@ -118,8 +118,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
     public var operationState: OperationState {
         return .foreground
     }
-
-    public let notificationFetchStatus: BackgroundNotificationFetchStatus = .done
     
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return self.clientRegistrationStatus
