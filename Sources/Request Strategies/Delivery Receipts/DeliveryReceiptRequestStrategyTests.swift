@@ -21,6 +21,7 @@ import XCTest
 
 class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     
+    var mockApplicationStatus: MockApplicationStatus!
     var mockClientRegistrationStatus: MockClientRegistrationStatus!
     var secondOneToOneConveration: ZMConversation!
     var secondUser: ZMUser!
@@ -28,9 +29,13 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
     
     override func setUp() {
         super.setUp()
+        mockApplicationStatus = MockApplicationStatus()
+        mockApplicationStatus.mockSynchronizationState = .online
         mockClientRegistrationStatus = MockClientRegistrationStatus()
         
-        sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC, clientRegistrationDelegate: mockClientRegistrationStatus)
+        sut = DeliveryReceiptRequestStrategy(managedObjectContext: syncMOC,
+                                             applicationStatus: mockApplicationStatus,
+                                             clientRegistrationDelegate: mockClientRegistrationStatus)
         
         syncMOC.performGroupedBlockAndWait {
             let user = ZMUser.insertNewObject(in: self.syncMOC)
@@ -46,6 +51,7 @@ class DeliveryReceiptRequestStrategyTests: MessagingTestBase {
         secondUser = nil
         secondOneToOneConveration = nil
         mockClientRegistrationStatus = nil
+        mockApplicationStatus = nil
         super.tearDown()
     }
     

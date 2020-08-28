@@ -30,7 +30,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
     override func setUp() {
         super.setUp()
         applicationStatus = MockApplicationStatus()
-        applicationStatus.mockSynchronizationState = .eventProcessing
+        applicationStatus.mockSynchronizationState = .online
         sut = ImageV2DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: applicationStatus)
     }
     

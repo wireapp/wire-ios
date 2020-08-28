@@ -29,7 +29,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         
         self.syncMOC.performGroupedAndWait { moc in
             self.applicationStatus = MockApplicationStatus()
-            self.applicationStatus.mockSynchronizationState = .eventProcessing
+            self.applicationStatus.mockSynchronizationState = .online
             self.sut = UserRichProfileRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
         }
     }

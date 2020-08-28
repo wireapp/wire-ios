@@ -28,7 +28,7 @@ import WireTransport
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
-        configuration = [.allowsRequestsDuringEventProcessing]
+        configuration = [.allowsRequestsWhileOnline]
         
         let downloadPredicate = NSPredicate { (object, _) -> Bool in
             guard let message = object as? ZMAssetClientMessage else { return false }

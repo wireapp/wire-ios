@@ -28,7 +28,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        mockApplicationStatus.mockSynchronizationState = .online
         sut = AssetV3UploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
     }
 

@@ -25,7 +25,9 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
     weak public var applicationStatus : ApplicationStatus?
     
     public let managedObjectContext : NSManagedObjectContext
-    public var configuration : ZMStrategyConfigurationOption = [.allowsRequestsDuringEventProcessing, .allowsRequestsDuringNotificationStreamFetch]
+    public var configuration : ZMStrategyConfigurationOption = [
+        .allowsRequestsWhileOnline
+    ]
     
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
         self.managedObjectContext = managedObjectContext
@@ -63,23 +65,24 @@ private let zmLog = ZMSLog(tag: "Request Configuration")
             prerequisites.insert(.allowsRequestsWhileUnauthenticated)
         }
         
-        if applicationStatus.synchronizationState == .synchronizing {
-            prerequisites.insert(.allowsRequestsDuringSync)
+        if applicationStatus.synchronizationState == .slowSyncing {
+            prerequisites.insert(.allowsRequestsDuringSlowSync)
+        }
+                
+        if applicationStatus.synchronizationState == .establishingWebsocket {
+            prerequisites.insert(.allowsRequestsWhileWaitingForWebsocket)
         }
         
-        if applicationStatus.synchronizationState == .eventProcessing {
-            prerequisites.insert(.allowsRequestsDuringEventProcessing)
+        if applicationStatus.synchronizationState == .quickSyncing {
+            prerequisites.insert(.allowsRequestsDuringQuickSync)
+        }
+        
+        if applicationStatus.synchronizationState == .online {
+            prerequisites.insert(.allowsRequestsWhileOnline)
         }
         
         if applicationStatus.operationState == .background {
             prerequisites.insert(.allowsRequestsWhileInBackground)
-        }
-
-        if applicationStatus.notificationFetchStatus == .inProgress {
-            // Don't create requests while we are still fetching the notification stream in the background.
-            // Otherwise we risk already sending out OTR messages when we have to fetch
-            // multiple pages of the stream (in case we have been offline for a while).
-            prerequisites.insert(.allowsRequestsDuringNotificationStreamFetch)
         }
 
         return prerequisites

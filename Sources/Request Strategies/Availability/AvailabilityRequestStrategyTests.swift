@@ -30,7 +30,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedAndWait { moc in
             self.applicationStatus = MockApplicationStatus()
-            self.applicationStatus.mockSynchronizationState = .eventProcessing
+            self.applicationStatus.mockSynchronizationState = .online
             self.sut = AvailabilityRequestStrategy(withManagedObjectContext: moc, applicationStatus: self.applicationStatus)
         }
     }

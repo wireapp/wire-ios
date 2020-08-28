@@ -37,7 +37,7 @@ class MissingClientsRequestStrategyTests: MessagingTestBase {
 
         self.syncMOC.performGroupedAndWait { syncMOC in
             self.mockApplicationStatus = MockApplicationStatus()
-            self.mockApplicationStatus.mockSynchronizationState = .eventProcessing
+            self.mockApplicationStatus.mockSynchronizationState = .online
             self.sut = MissingClientsRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.mockApplicationStatus)
         }
     }

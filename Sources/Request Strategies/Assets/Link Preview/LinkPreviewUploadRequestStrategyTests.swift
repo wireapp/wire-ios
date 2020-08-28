@@ -30,7 +30,7 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         self.syncMOC.performGroupedAndWait { syncMOC in
             self.applicationStatus = MockApplicationStatus()
-            self.applicationStatus.mockSynchronizationState = .eventProcessing
+            self.applicationStatus.mockSynchronizationState = .online
             self.sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
         }
     }
