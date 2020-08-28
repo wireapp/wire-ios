@@ -33,7 +33,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        mockApplicationStatus.mockSynchronizationState = .online
 
         self.sut = LinkPreviewAssetUploadRequestStrategy(managedObjectContext: self.syncMOC, applicationStatus: mockApplicationStatus, linkPreviewPreprocessor: nil, previewImagePreprocessor: nil)
     }

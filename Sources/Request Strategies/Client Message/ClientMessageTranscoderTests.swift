@@ -30,7 +30,7 @@ class ClientMessageTranscoderTests: MessagingTestBase {
         super.setUp()
         self.localNotificationDispatcher = MockPushMessageHandler()
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        mockApplicationStatus.mockSynchronizationState = .online
         mockAttachmentsDetector = MockAttachmentDetector()
         LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
         sut = ClientMessageTranscoder(in: syncMOC, localNotificationDispatcher: localNotificationDispatcher, applicationStatus: mockApplicationStatus)

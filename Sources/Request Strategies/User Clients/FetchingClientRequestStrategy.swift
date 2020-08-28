@@ -58,7 +58,9 @@ public final class FetchingClientRequestStrategy : AbstractRequestStrategy {
         
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
-        self.configuration = [.allowsRequestsDuringEventProcessing, .allowsRequestsDuringNotificationStreamFetch, .allowsRequestsWhileInBackground]
+        self.configuration = [.allowsRequestsWhileOnline,
+                              .allowsRequestsDuringQuickSync,
+                              .allowsRequestsWhileInBackground]
         self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
                                                                           context: self.managedObjectContext.notificationContext,
                                                                           object: nil)

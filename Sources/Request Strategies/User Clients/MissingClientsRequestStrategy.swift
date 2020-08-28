@@ -36,9 +36,9 @@ public final class MissingClientsRequestStrategy: AbstractRequestStrategy, ZMUps
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
         self.configuration =  [
-            .allowsRequestsDuringEventProcessing,
+            .allowsRequestsWhileOnline,
             .allowsRequestsWhileInBackground,
-            .allowsRequestsDuringNotificationStreamFetch
+            .allowsRequestsDuringQuickSync
         ]
         self.modifiedSync = ZMUpstreamModifiedObjectSync(transcoder: self, entityName: UserClient.entityName(), update: modifiedPredicate(), filter: nil, keysToSync: [ZMUserClientMissingKey], managedObjectContext: managedObjectContext)
     }

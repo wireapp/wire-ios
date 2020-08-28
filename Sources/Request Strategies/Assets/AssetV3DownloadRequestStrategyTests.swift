@@ -51,7 +51,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         super.setUp()
         
         mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .eventProcessing
+        mockApplicationStatus.mockSynchronizationState = .online
         sut = AssetV3DownloadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: mockApplicationStatus)
         
         self.syncMOC.performGroupedBlockAndWait {

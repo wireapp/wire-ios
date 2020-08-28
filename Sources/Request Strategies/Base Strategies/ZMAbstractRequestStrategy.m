@@ -56,7 +56,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Request Configuration";
 {
     ZMStrategyConfigurationOption option = 0;
     
-    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsDuringEventProcessing; index++) {
+    for (NSUInteger index = 0; option <= ZMStrategyConfigurationOptionAllowsRequestsDuringQuickSync; index++) {
         option = 1 << index;
         
         if ((prerequisites & option) == option && (configuration & option) != option) {

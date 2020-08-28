@@ -44,23 +44,28 @@ extension ZMUpdateEvent {
 }
 
 @objcMembers
-public final class DeliveryReceiptRequestStrategy: NSObject, RequestStrategy {
+public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
     
-    private let managedObjectContext: NSManagedObjectContext
     private let genericMessageStrategy: GenericMessageRequestStrategy
     
     // MARK: - Init
     
     public init(managedObjectContext: NSManagedObjectContext,
+                applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
         
-        self.managedObjectContext = managedObjectContext
         self.genericMessageStrategy = GenericMessageRequestStrategy(context: managedObjectContext, clientRegistrationDelegate: clientRegistrationDelegate)
+        
+        super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
+        
+        self.configuration = [.allowsRequestsWhileInBackground,
+                              .allowsRequestsWhileOnline,
+                              .allowsRequestsWhileWaitingForWebsocket]
     }
     
     // MARK: - Methods
     
-    public func nextRequest() -> ZMTransportRequest? {
+    public override func nextRequestIfAllowed() -> ZMTransportRequest? {
         return genericMessageStrategy.nextRequest()
     }
 }

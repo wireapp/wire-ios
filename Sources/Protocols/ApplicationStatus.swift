@@ -18,19 +18,13 @@
 
 import Foundation
 
-@objc public protocol BackgroundNotificationFetchStatusProvider {
-    var status: BackgroundNotificationFetchStatus { get }
-}
-
-@objc public enum BackgroundNotificationFetchStatus: UInt8 {
-    case done, inProgress
-}
-
 @objc(ZMSynchronizationState)
 public enum SynchronizationState : UInt {
     case unauthenticated
-    case synchronizing
-    case eventProcessing
+    case slowSyncing
+    case establishingWebsocket
+    case quickSyncing
+    case online
 }
 
 @objc(ZMOperationState)
@@ -42,13 +36,10 @@ public enum OperationState : UInt {
 @objc(ZMApplicationStatus)
 public protocol ApplicationStatus : class {
     var synchronizationState : SynchronizationState { get }
-    var operationState : OperationState { get }
-    
+    var operationState : OperationState { get }    
     var clientRegistrationDelegate : ClientRegistrationDelegate { get }
     var requestCancellation : ZMRequestCancellation { get }
 
-    var notificationFetchStatus: BackgroundNotificationFetchStatus { get }
-    
     func requestSlowSync()
 
 }
