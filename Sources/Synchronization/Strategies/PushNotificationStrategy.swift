@@ -123,7 +123,7 @@ extension PushNotificationStrategy: UpdateEventProcessor {
 
 // MARK: - Converting events to localNotifications
 extension PushNotificationStrategy {
-    private func convertToLocalNotifications(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification?] {
+    private func convertToLocalNotifications(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification] {
         return events.compactMap { event in
             var conversation: ZMConversation?
             if let conversationID = event.conversationUUID {
