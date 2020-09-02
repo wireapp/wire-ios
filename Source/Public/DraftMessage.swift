@@ -17,11 +17,12 @@
 //
 
 import Foundation
+import WireCryptobox
 
 /// This object holds information about a message draft that has not yet been sent
 /// by the user but was put into the input field.
 @objcMembers public final class DraftMessage: NSObject {
-
+    
     /// The text of the message.
     public let text: String
     /// The mentiones contained in the text.
@@ -107,23 +108,42 @@ fileprivate struct StorableQuote: Codable {
 
 @objc extension ZMConversation {
     
+    private static let log = ZMSLog(tag: "EAR")
+    
     /// Internal storage of the serialized `draftMessage`.
     @NSManaged var draftMessageData: Data?
+    
+    /// Nonce of the encrypted `draftMessage`, this is nil if draft is not encrypted.
+    @NSManaged var draftMessageNonce: Data?
 
     /// The draft message of the conversation.
     public var draftMessage: DraftMessage? {
         set {
             if let value = newValue {
-                draftMessageData = try? JSONEncoder().encode(value.storable)
+                guard let encodedData = try? JSONEncoder().encode(value.storable) else { return }
+                
+                do {
+                    let (data, nonce) = try encryptDataIfNeeded(data: encodedData, in: managedObjectContext!)
+                    
+                    draftMessageData = data
+                    draftMessageNonce = nonce
+                } catch {
+                    Self.log.warn("Could not encrypt draft message data: \(error.localizedDescription)")
+                }
             } else {
                 draftMessageData = nil
+                draftMessageNonce = nil
             }
         }
         
         get {
-            guard let data = draftMessageData, let context = managedObjectContext else { return nil }
+            guard
+                let data = draftMessageData,
+                let context = managedObjectContext,
+                let decryptedData = try? decryptDataIfNeeded(data: data, in: context)
+            else { return nil }
             do {
-                let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: data)
+                let storable = try JSONDecoder().decode(StorableDraftMessage.self, from: decryptedData)
                 return storable.draftMessage(in: context, for: self)
             } catch {
                 draftMessageData = nil
@@ -132,6 +152,18 @@ fileprivate struct StorableQuote: Codable {
         }
 
     }
+    
+    @nonobjc
+    private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
+        guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
+        return try moc.encryptData(data: data)
+    }
+    
+    private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
+        guard let nonce = draftMessageNonce else { return data }
+        return try moc.decryptData(data: data, nonce: nonce)
+    }
+    
 }
 
 // MARK: - Storable Helper
