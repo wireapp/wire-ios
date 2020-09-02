@@ -77,6 +77,7 @@ NSString *const ZMConversationLabelsKey = @"labels";
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
 static NSString *const DraftMessageDataKey = @"draftMessageData";
+static NSString *const DraftMessageNonceKey = @"draftMessageNonce";
 static NSString *const IsPendingConnectionConversationKey = @"isPendingConnectionConversation";
 static NSString *const LastModifiedDateKey = @"lastModifiedDate";
 static NSString *const LastReadMessageKey = @"lastReadMessage";
@@ -312,6 +313,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationConversationTypeKey,
             CreatorKey,
             DraftMessageDataKey,
+            DraftMessageNonceKey,
             LastModifiedDateKey,
             ZMNormalizedUserDefinedNameKey,
             ZMConversationParticipantRolesKey,
