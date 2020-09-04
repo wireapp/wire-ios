@@ -289,7 +289,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
+        establishSessionFromAliceToBob()
         
         // WHEN
         statusAlice = nil
@@ -306,7 +306,7 @@ extension EncryptionSessionsDirectoryTests {
     func testThatNewlyCreatedSessionsAreNotSavedWhenDiscarding() {
         
         // GIVEN
-        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
+        establishSessionFromAliceToBob()
         
         // WHEN
         statusAlice.discardCache()
@@ -324,7 +324,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(1))
+        establishSessionFromAliceToBob()
         let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
         _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
         self.recreateStatuses() // force save
@@ -346,7 +346,7 @@ extension EncryptionSessionsDirectoryTests {
     func testThatItCanNotDecodeAfterDiscardingCache() {
         
         // GIVEN
-        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(34))
+        establishSessionFromAliceToBob()
         
         // WHEN
         statusAlice.discardCache()
@@ -454,7 +454,7 @@ extension EncryptionSessionsDirectoryTests {
         
         // GIVEN
         let plainText = "foo".data(using: String.Encoding.utf8)!
-        try! statusAlice.createClientSession(Person.Bob.identifier, base64PreKeyString: statusBob.generatePrekey(34))
+        establishSessionFromAliceToBob()
         
         // WHEN
         self.recreateStatuses() // force save
@@ -558,6 +558,170 @@ extension EncryptionSessionsDirectoryTests {
         XCTAssertTrue(checkThatAMessageCanBeSent(.Bob))
     }
 }
+
+// MARK: - Extended logging
+extension EncryptionSessionsDirectoryTests {
+    
+    func testThatItLogsEncryptionWhenExtendedLoggingIsSet() {
+        
+        // GIVEN
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        let logExpectation = expectation(description: "Encrypting")
+        
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
+            if level == ZMLogLevel_t.public &&
+                tag == "cryptobox" &&
+                entry.text.starts(with: "Extensive logging: encrypted to cyphertext:")
+            {
+                logExpectation.fulfill()
+            }
+        }
+                
+        // WHEN
+        _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // THEN
+        waitForExpectations(timeout: 0.2)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItDoesNotLogEncryptionWhenExtendedLoggingIsNotSet() {
+        
+        // GIVEN
+        // set logging for a different identifier
+        let wrongIdentifier = EncryptionSessionIdentifier(userId: "foo", clientId: "bar")
+        statusAlice.setExtendedLogging(identifier: wrongIdentifier, enabled: true)
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
+            XCTFail("Should not have logged")
+        }
+        
+        // WHEN
+        _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItDoesNotLogEncryptionWhenRemovingExtendedLogging() {
+        
+        // GIVEN
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
+        // disable
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: false)
+
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
+            XCTFail("Should not have logged")
+        }
+        
+        // WHEN
+        _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
+        
+        // GIVEN
+        statusBob.setExtendedLogging(identifier: Person.Alice.identifier, enabled: true)
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        let logExpectation = expectation(description: "Encrypting")
+        let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
+            if level == ZMLogLevel_t.public &&
+                tag == "cryptobox" &&
+                entry.text.starts(with: "Extensive logging: decrypting prekey cyphertext:")
+            {
+                logExpectation.fulfill()
+            }
+        }
+                
+        // WHEN
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        
+        // THEN
+        waitForExpectations(timeout: 0.2)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItLogsDecryptionWhenExtendedLoggingIsSet_nonPrekeyMessage() {
+        
+        // GIVEN
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionBetweenAliceAndBob()
+        statusBob.setExtendedLogging(identifier: Person.Alice.identifier, enabled: true)
+        let logExpectation = expectation(description: "Encrypting")
+        let message = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
+            if level == ZMLogLevel_t.public &&
+                tag == "cryptobox" &&
+                entry.text.starts(with: "Extensive logging: decrypting cyphertext:")
+            {
+                logExpectation.fulfill()
+            }
+        }
+                
+        // WHEN
+        _ = try! statusBob.decrypt(message, from: Person.Alice.identifier)
+        
+        // THEN
+        waitForExpectations(timeout: 0.2)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
+    func testThatItDoesNotLogDecryptionWhenExtendedLoggingIsNotSet() {
+        
+        // GIVEN
+        // set logging for a different identifier
+        let wrongIdentifier = EncryptionSessionIdentifier(userId: "foo", clientId: "bar")
+        statusBob.setExtendedLogging(identifier: wrongIdentifier, enabled: true)
+
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        
+        let prekeyMessage = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
+            XCTFail("Should not have logged")
+        }
+        
+        // WHEN
+        _ = try! statusBob.createClientSessionAndReturnPlaintext(for: Person.Alice.identifier, prekeyMessage: prekeyMessage)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+}
+
 
 // MARK: - Helpers
 
