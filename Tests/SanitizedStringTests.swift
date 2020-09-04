@@ -61,6 +61,21 @@ class SanitizedStringTests: XCTestCase {
         let result = SanitizedString(stringLiteral: "some \(Item.redacted) item")
         XCTAssertEqual(result, interpolated)
     }
+    
+    func testAddition() {
+        XCTAssertEqual(
+            SanitizedString(value: "<redacted>foo"),
+            SanitizedString("\(item)") + SanitizedString(value: "foo")
+        )
+        XCTAssertEqual(
+            SanitizedString(value: "<redacted><redacted>"),
+            SanitizedString("\(item)") + item
+        )
+        XCTAssertEqual(
+            SanitizedString(value: "<redacted>nil"),
+            SanitizedString("\(item)") + Optional<Item>(nil)
+        )
+    }
 }
 
 extension SanitizedStringTests {
@@ -69,6 +84,13 @@ extension SanitizedStringTests {
         let value = SafeValueForLogging(sut)
         let result: SanitizedString = "\(value)"
         XCTAssertEqual(sut, result.value)
+    }
+    
+    func testSanitizedString() {
+        let sut = SanitizedString("some")
+        let value = SafeValueForLogging(sut)
+        let result: SanitizedString = "\(value)"
+        XCTAssertEqual(sut, result)
     }
     
     func testInt() {
