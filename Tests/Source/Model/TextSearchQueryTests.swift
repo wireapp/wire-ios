@@ -101,6 +101,21 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
         XCTAssertEqual(match, firstMessage)
         verifyAllMessagesAreIndexed(in: conversation)
     }
+    
+    func testThatItDoesntPopulateTheNormalizedTextField_WhenEncryptMessagesAtRestIsEnabled() {
+        uiMOC.encryptMessagesAtRest = true
+        uiMOC.encryptionKeys = validEncryptionKeys
+        
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.remoteIdentifier = .create()
+        
+        // When
+        let message = conversation.append(text: "This is the first message in the conversation") as! ZMMessage
+        XCTAssert(uiMOC.saveOrRollback())
+        
+        // Then
+        XCTAssertEqual(message.normalizedText, "")
+    }
 
     func testThatItPopulatesTheNormalizedTextFieldAndReturnsTheQueryResults() {
         // Given

@@ -36,9 +36,12 @@ extension ZMClientMessage {
     /// Reccomputes the message's `normalizedText` property if the message
     /// has a message text, otherwise sets it to an empty String.
     override func updateNormalizedText() {
-        // We check if the message is obfuscated first to avoid checking the
-        // protobuf for the textMessageData and return early.
-        if isObfuscated {
+        // We we don't to set or update the normalized text if the message is obfuscated
+        // or if messages are encrypted at rest since that would leak a plain text version
+        // of the message.
+        guard !isObfuscated,
+              managedObjectContext?.encryptMessagesAtRest == false
+        else {
             normalizedText = ""
             return
         }

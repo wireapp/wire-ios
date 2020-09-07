@@ -96,6 +96,8 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
             self.syncMOC.saveOrRollback()
         }
         
+        self.uiMOC.refreshAllObjects()
+        
         self.selfUser = try! self.uiMOC.existingObject(with: self.syncSelfUser.objectID) as! ZMUser
         self.selfClient1 = try! self.uiMOC.existingObject(with: self.syncSelfClient1.objectID) as! UserClient
         self.uiMOC.setPersistentStoreMetadata(self.selfClient1.remoteIdentifier!, key: "PersistedClientId")
