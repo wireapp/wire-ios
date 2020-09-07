@@ -56,8 +56,12 @@ private let zmLog = ZMSLog(tag: "background-activity")
     /// Whether any tasks are active.
     @objc public var isActive: Bool {
         return isolationQueue.sync {
-            return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
+            return hasValidCurrentBackgroundTask
         }
+    }
+    
+    private var hasValidCurrentBackgroundTask: Bool {
+        return self.currentBackgroundTask != nil && self.currentBackgroundTask != UIBackgroundTaskIdentifier.invalid
     }
 
     @objc var mainQueue: DispatchQueue = .main
@@ -65,6 +69,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     var currentBackgroundTask: UIBackgroundTaskIdentifier?
     var activities: Set<BackgroundActivity> = []
+    var allTasksEndedHandlers: [() -> Void] = []
 
     // MARK: - Starting Background Activities
 
@@ -84,12 +89,28 @@ private let zmLog = ZMSLog(tag: "background-activity")
      * Starts a background activity if possible.
      * - parameter name: The name of the task, for debugging purposes.
      * - parameter handler: The code to execute to clean up the state as the app is about to be suspended. This value can be set later.
-     * - warning: If this method returns `nil`, you should **not** perform the work yu are planning to do.
+     * - warning: If this method returns `nil`, you should **not** perform the work you are planning to do.
      */
 
     @objc(startBackgroundActivityWithName:expirationHandler:)
     public func startBackgroundActivity(withName name: String, expirationHandler: @escaping (() -> Void)) -> BackgroundActivity? {
         return startActivityIfPossible(name, expirationHandler)
+    }
+    
+    /**
+     * Notifies when all background activites have completed or expired.
+     * - parameter completionHandler: The code to exectute when the background activites are completed.
+     *
+     * If there are no running background tasks the completion handler will be called immediately.
+     */
+    public func notifyWhenAllBackgroundActivitiesEnd(completionHandler: @escaping (() -> Void)) {
+        isolationQueue.sync {
+            guard hasValidCurrentBackgroundTask else {
+                return completionHandler()
+            }
+            
+            allTasksEndedHandlers.append(completionHandler)
+        }
     }
 
     // MARK: - Management
@@ -199,6 +220,11 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Ends the current background task.
     private func finishBackgroundTask() {
+        allTasksEndedHandlers.forEach { handler in
+            handler()
+        }
+        allTasksEndedHandlers.removeAll()
+        
         // No need to keep any activities after finishing
         activities.removeAll()
         if let currentBackgroundTask = self.currentBackgroundTask {

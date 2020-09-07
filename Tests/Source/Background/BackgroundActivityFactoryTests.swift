@@ -120,7 +120,64 @@ class BackgroundActivityFactoryTests: XCTestCase {
         XCTAssertFalse(factory.isActive)
         XCTAssertTrue(factory.activities.isEmpty)
         XCTAssertEqual(activityManager.numberOfTasks, 0)
-    }    
+    }
+    
+    func testItNotifiesThatAllBackgroundActivititesEnded_WhenTaskExpires() {
+        // GIVEN
+        let endHandlerExpectation = expectation(description: "The end handler is called.")
+        let activity = factory.startBackgroundActivity(withName: "Activity 1") {}
+        
+        factory.notifyWhenAllBackgroundActivitiesEnd {
+            endHandlerExpectation.fulfill()
+        }
+
+        // WHEN
+        XCTAssertNotNil(activity)
+        activityManager.triggerExpiration()
+
+        // THEN
+        waitForExpectations(timeout: 0.5, handler: nil)
+        XCTAssertFalse(factory.isActive)
+        XCTAssertTrue(factory.activities.isEmpty)
+        XCTAssertEqual(activityManager.numberOfTasks, 0)
+    }
+    
+    func testItNotifiesThatAllBackgroundActivititesEnded_WhenTaskEnds() throws {
+        // GIVEN
+        let endHandlerExpectation = expectation(description: "The end handler is called.")
+        let activity = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 1") {})
+        
+        factory.notifyWhenAllBackgroundActivitiesEnd {
+            endHandlerExpectation.fulfill()
+        }
+
+        // WHEN
+        factory.endBackgroundActivity(activity)
+
+        // THEN
+        waitForExpectations(timeout: 0.5, handler: nil)
+        XCTAssertFalse(factory.isActive)
+        XCTAssertTrue(factory.activities.isEmpty)
+        XCTAssertEqual(activityManager.numberOfTasks, 0)
+    }
+    
+    func testItDoesntNotifyThatAllBackgroundActivititesEnded_WhenTaskEndsIfThereAreMoreTasks() throws {
+        // GIVEN
+        let activity1 = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 1") {})
+        _ = try XCTUnwrap(factory.startBackgroundActivity(withName: "Activity 2") {})
+        
+        factory.notifyWhenAllBackgroundActivitiesEnd {
+            XCTFail()
+        }
+
+        // WHEN
+        factory.endBackgroundActivity(activity1)
+
+        // THEN
+        XCTAssertTrue(factory.isActive)
+        XCTAssertFalse(factory.activities.isEmpty)
+        XCTAssertEqual(activityManager.numberOfTasks, 1)
+    }
 }
 
 // MARK: - Helpers
@@ -131,6 +188,7 @@ extension BackgroundActivityFactory {
         currentBackgroundTask = nil
         activities.removeAll()
         activityManager = nil
+        allTasksEndedHandlers = []
         mainQueue = .main
     }
 
