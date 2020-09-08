@@ -66,6 +66,9 @@ public final class EncryptionContext : NSObject {
         case discard
     }
     
+    /// Set of session identifier that require full debugging logs
+    private var extensiveLoggingSessions = Set<EncryptionSessionIdentifier>()
+    
     /// Underlying C-style implementation
     let implementation = _CBox()
     
@@ -129,8 +132,12 @@ extension EncryptionContext {
     public func perform(_ block: (_ sessionsDirectory: EncryptionSessionsDirectory) -> () ) {
         self.acquireDirectoryLock()
         if self.currentSessionsDirectory == nil {
-            self.currentSessionsDirectory = EncryptionSessionsDirectory(generatingContext: self,
-                                                                        encryptionPayloadCache: cache)
+            self.currentSessionsDirectory =
+                EncryptionSessionsDirectory(
+                    generatingContext: self,
+                    encryptionPayloadCache: cache,
+                    extensiveLoggingSessions: extensiveLoggingSessions
+            )
         }
         performCount += 1
         block(self.currentSessionsDirectory!)
@@ -156,3 +163,23 @@ extension EncryptionContext {
     }
 }
 
+extension EncryptionContext {
+    
+    /// Enables or disables extended logging for any message encrypted from or to
+    /// a specific session.
+    /// note: if the session is already cached in memory, this will apply from the
+    /// next time the session is reloaded
+    func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
+        if (enabled) {
+            self.extensiveLoggingSessions.insert(identifier)
+        } else {
+            self.extensiveLoggingSessions.remove(identifier)
+        }
+    }
+    
+    /// Disable extensive logging on all sessions
+    func disableExtendedLoggingOnAllSessions() {
+        self.extensiveLoggingSessions.removeAll()
+    }
+
+}

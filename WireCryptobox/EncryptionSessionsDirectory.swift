@@ -58,7 +58,7 @@ public final class EncryptionSessionsDirectory : NSObject {
     var debug_disableContextValidityCheck = false
     
     /// Set of session identifier that require full debugging logs
-    private var extensiveLoggingSessions = Set<EncryptionSessionIdentifier>()
+    let extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
     
     /// Context that created this status
     fileprivate weak var generatingContext: EncryptionContext!
@@ -82,10 +82,15 @@ public final class EncryptionSessionsDirectory : NSObject {
     /// load once and save once at the end.
     fileprivate var pendingSessionsCache : [EncryptionSessionIdentifier : EncryptionSession] = [:]
     
-    init(generatingContext: EncryptionContext, encryptionPayloadCache: Cache<GenericHash, Data>) {
+    init(
+        generatingContext: EncryptionContext,
+        encryptionPayloadCache: Cache<GenericHash, Data>,
+        extensiveLoggingSessions: Set<EncryptionSessionIdentifier>
+    ) {
         self.generatingContext = generatingContext
         self.localFingerprint = generatingContext.implementation.localFingerprint
         self.encryptionPayloadCache = encryptionPayloadCache
+        self.extensiveLoggingSessions = extensiveLoggingSessions
         super.init()
         zmLog.safePublic("Loaded encryption status - local fingerprint \(localFingerprint)")
     }
@@ -111,24 +116,7 @@ public final class EncryptionSessionsDirectory : NSObject {
     deinit {
         self.commitCache()
     }
-    
-    /// Enables or disables extended logging for any message encrypted from or to
-    /// a specific session.
-    /// note: if the session is already cached in memory, this will apply from the
-    /// next time the session is reloaded
-    func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
-        if (enabled) {
-            self.extensiveLoggingSessions.insert(identifier)
-        } else {
-            self.extensiveLoggingSessions.remove(identifier)
-        }
-    }
-    
-    /// Disable extensive logging on all sessions
-    func disableExtendedLoggingOnAllSessions() {
-        self.extensiveLoggingSessions.removeAll()
-    }
-    
+        
     private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
         let builder = GenericHashBuilder()
         builder.append(data)

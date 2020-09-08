@@ -18,7 +18,7 @@
 
 
 import XCTest
-import WireCryptobox
+@testable import WireCryptobox
 
 class EncryptionContextTests: XCTestCase {
 
@@ -151,7 +151,7 @@ class EncryptionContextTests: XCTestCase {
         
         // GIVEN
         let tempDir = createTempFolder()
-        
+
         let mainContext = EncryptionContext(path: tempDir)
         
         let someTextToEncrypt = "ENCRYPT THIS!"
@@ -203,5 +203,73 @@ class EncryptionContextTests: XCTestCase {
         }
         
         self.waitForExpectations(timeout: 0) { _ in }
+    }
+    
+}
+
+// MARK: - Logging
+extension EncryptionContextTests {
+    
+    func testThatItSetsExtendedLoggingOnSessions() {
+        
+        // GIVEN
+        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let tempDir = createTempFolder()
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        // WHEN
+        mainContext.setExtendedLogging(identifier: identifier, enabled: true)
+        
+        // THEN
+        mainContext.perform {
+            XCTAssertEqual($0.extensiveLoggingSessions, Set([identifier]))
+        }
+    }
+    
+    func testThatItDoesSetExtendedLoggingOnSessions() {
+        
+        // GIVEN
+        let tempDir = createTempFolder()
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        // THEN
+        mainContext.perform {
+            XCTAssert($0.extensiveLoggingSessions.isEmpty)
+        }
+    }
+    
+    
+    func testThatItDoesNotLogEncryptionWhenRemovingExtendedLogging() {
+
+        // GIVEN
+        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let tempDir = createTempFolder()
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        // WHEN
+        mainContext.setExtendedLogging(identifier: identifier, enabled: true)
+        mainContext.setExtendedLogging(identifier: identifier, enabled: false)
+        
+        // THEN
+        mainContext.perform {
+            XCTAssert($0.extensiveLoggingSessions.isEmpty)
+        }
+    }
+    
+    func testThatItDoesNotLogEncryptionWhenRemovingAllExtendedLogging() {
+
+        // GIVEN
+        let identifier = EncryptionSessionIdentifier(userId: "user", clientId: "foo")
+        let tempDir = createTempFolder()
+        let mainContext = EncryptionContext(path: tempDir)
+        
+        // WHEN
+        mainContext.setExtendedLogging(identifier: identifier, enabled: true)
+        mainContext.disableExtendedLoggingOnAllSessions()
+        
+        // THEN
+        mainContext.perform {
+            XCTAssert($0.extensiveLoggingSessions.isEmpty)
+        }
     }
 }
