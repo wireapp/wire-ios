@@ -124,6 +124,11 @@ public final class EncryptionSessionsDirectory : NSObject {
         }
     }
     
+    /// Disable extensive logging on all sessions
+    func disableExtendedLoggingOnAllSessions() {
+        self.extensiveLoggingSessions.removeAll()
+    }
+    
     private func hash(for data: Data, recipient: EncryptionSessionIdentifier) -> GenericHash {
         let builder = GenericHashBuilder()
         builder.append(data)
@@ -279,8 +284,11 @@ extension EncryptionSessionsDirectory: EncryptionSessionManager {
 
         let extensiveLogging = self.extensiveLoggingSessions.contains(identifier)
         if (extensiveLogging) {
-            zmLog.safePublic(
-                "Extensive logging: decrypting prekey cyphertext: session \(identifier): result \(result): \(prekeyMessage)", level: .public
+            EncryptionSession.logSessionAndCyphertext(
+                sessionId: identifier,
+                reason: "decrypting prekey cyphertext",
+                data: prekeyMessage,
+                sessionURL: filePath(for: identifier)
             )
         }
         try result.throwIfError()
@@ -537,6 +545,38 @@ class EncryptionSession {
     }
 }
 
+// MARK: - Logging
+extension EncryptionSession {
+    
+    func logSessionAndCyphertext(
+        reason: SanitizedString,
+        data: Data
+    )
+    {
+        EncryptionSession.logSessionAndCyphertext(
+            sessionId: self.id,
+            reason: reason,
+            data: data,
+            sessionURL: self.path)
+    }
+    
+    static func logSessionAndCyphertext(
+        sessionId: EncryptionSessionIdentifier,
+        reason: SanitizedString,
+        data: Data,
+        sessionURL: URL
+    ) {
+        let encodedData = HexDumpUnsafeLoggingData(data: data)
+        let sessionContent = (try? Data(contentsOf: sessionURL))
+            .map { HexDumpUnsafeLoggingData(data: $0) }
+        zmLog.safePublic(
+            SanitizedString("Extensive logging (session \(sessionId)): ") +
+            SanitizedString("\(reason): cyphertext: \(encodedData); ") +
+            SanitizedString("session content: \(sessionContent)"),
+            level: .public)
+    }
+}
+
 // MARK: - Encryption
 public protocol Encryptor: class {
     /// Encrypts data for a client
@@ -595,12 +635,13 @@ extension EncryptionSession {
         
         let resultRequiresLogging = result != CBOX_DUPLICATE_MESSAGE && result != CBOX_SUCCESS
         if (resultRequiresLogging || self.isExtensiveLoggingEnabled) {
-            let encodedData = HexDumpUnsafeLoggingData(data: cypher)
             if (self.isExtensiveLoggingEnabled) {
-                zmLog.safePublic(
-                    "Extensive logging: decrypting cyphertext: session \(id): result \(result): \(encodedData)", level: .public
+                self.logSessionAndCyphertext(
+                    reason: "decrypting cyphertext: result \(result)",
+                    data: cypher
                 )
             } else {
+                let encodedData = HexDumpUnsafeLoggingData(data: cypher)
                 zmLog.safePublic("Failed to decrypt cyphertext: session \(id): \(encodedData)", level: .public)
             }
         }
@@ -630,8 +671,10 @@ extension EncryptionSession {
         let data = Data.moveFromCBoxVector(vectorBacking)!
         
         if (self.isExtensiveLoggingEnabled) {
-            let encodedData = HexDumpUnsafeLoggingData(data: data)
-            zmLog.safePublic("Extensive logging: encrypted to cyphertext: session \(id): \(encodedData)", level: .public)
+            self.logSessionAndCyphertext(
+                reason: "encrypted to cyphertext",
+                data: data
+            )
         }
         return data
     }

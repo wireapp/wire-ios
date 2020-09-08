@@ -571,12 +571,11 @@ extension EncryptionSessionsDirectoryTests {
         establishSessionFromAliceToBob()
         let logExpectation = expectation(description: "Encrypting")
         
-        
         // EXPECT
         let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
-                entry.text.starts(with: "Extensive logging: encrypted to cyphertext:")
+                entry.text.contains("encrypted to cyphertext: cyphertext")
             {
                 logExpectation.fulfill()
             }
@@ -637,6 +636,27 @@ extension EncryptionSessionsDirectoryTests {
         ZMSLog.removeLogHook(token: token)
     }
     
+    func testThatItDoesNotLogEncryptionWhenRemovingAllExtendedLogging() {
+        
+        // GIVEN
+        statusAlice.setExtendedLogging(identifier: Person.Bob.identifier, enabled: true)
+        statusAlice.disableExtendedLoggingOnAllSessions()
+        
+        let plainText = "foo".data(using: String.Encoding.utf8)!
+        establishSessionFromAliceToBob()
+        
+        // EXPECT
+        let token = ZMSLog.addEntryHook { (_level, _tag, entry, isSafe) in
+            XCTFail("Should not have logged")
+        }
+        
+        // WHEN
+        _ = try! statusAlice.encrypt(plainText, for: Person.Bob.identifier)
+        
+        // AFTER
+        ZMSLog.removeLogHook(token: token)
+    }
+    
     func testThatItLogsDecryptionWhenExtendedLoggingIsSet_prekeyMessage() {
         
         // GIVEN
@@ -651,7 +671,7 @@ extension EncryptionSessionsDirectoryTests {
         let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
-                entry.text.starts(with: "Extensive logging: decrypting prekey cyphertext:")
+                entry.text.contains("decrypting prekey cyphertext:")
             {
                 logExpectation.fulfill()
             }
@@ -681,7 +701,7 @@ extension EncryptionSessionsDirectoryTests {
         let token = ZMSLog.addEntryHook { (level, tag, entry, isSafe) in
             if level == ZMLogLevel_t.public &&
                 tag == "cryptobox" &&
-                entry.text.starts(with: "Extensive logging: decrypting cyphertext:")
+                entry.text.contains("decrypting cyphertext:")
             {
                 logExpectation.fulfill()
             }
