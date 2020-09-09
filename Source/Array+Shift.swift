@@ -26,7 +26,7 @@ extension Array {
     /// [1, 2, 3]
     /// shifted by 1 => [3, 1, 2]
     /// shifted by -1 => [2, 3, 1]
-    func shifted(by amount: Int) -> Array {
+    public func shifted(by amount: Int) -> Array {
         // accounts for negative amount:
         // - addition: results in the positive equivalent of amount to shift
         // - modulo: ensures we stay in range
