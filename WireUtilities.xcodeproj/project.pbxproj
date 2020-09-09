@@ -101,6 +101,8 @@
 		5E9EA4C422423EA800D401B2 /* ArraySafeIndexTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */; };
 		5EE020C6214A9FC5001669F0 /* ZMAtomicInteger.h in Headers */ = {isa = PBXBuildFile; fileRef = 5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */ = {isa = PBXBuildFile; fileRef = 5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */; };
+		6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */ = {isa = PBXBuildFile; fileRef = 632378692508D34D00AD4346 /* Array+Shift.swift */; };
+		6323786C2508D51C00AD4346 /* ArrayShiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */; };
 		7C358075231E534600D994FD /* ZMAccentColorValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C358072231E524A00D994FD /* ZMAccentColorValidatorTests.m */; };
 		7C35807A231E5DA000D994FD /* ZMEmailAddressValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C358077231E5D9300D994FD /* ZMEmailAddressValidatorTests.m */; };
 		7C35807F231E5F5B00D994FD /* ZMPhoneNumberValidatorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 7C35807C231E5ED300D994FD /* ZMPhoneNumberValidatorTests.m */; };
@@ -351,6 +353,8 @@
 		5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArraySafeIndexTests.swift; sourceTree = "<group>"; };
 		5EE020C4214A9FC5001669F0 /* ZMAtomicInteger.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMAtomicInteger.h; sourceTree = "<group>"; };
 		5EE020C5214A9FC5001669F0 /* ZMAtomicInteger.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAtomicInteger.m; sourceTree = "<group>"; };
+		632378692508D34D00AD4346 /* Array+Shift.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Array+Shift.swift"; sourceTree = "<group>"; };
+		6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayShiftTests.swift; sourceTree = "<group>"; };
 		7C358072231E524A00D994FD /* ZMAccentColorValidatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMAccentColorValidatorTests.m; sourceTree = "<group>"; };
 		7C358077231E5D9300D994FD /* ZMEmailAddressValidatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMEmailAddressValidatorTests.m; sourceTree = "<group>"; };
 		7C35807C231E5ED300D994FD /* ZMPhoneNumberValidatorTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ZMPhoneNumberValidatorTests.m; sourceTree = "<group>"; };
@@ -590,6 +594,7 @@
 				EE1E354121E7739400F1144B /* DarwinNotificationCenter.swift */,
 				16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */,
 				5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */,
+				632378692508D34D00AD4346 /* Array+Shift.swift */,
 				5E39FC53225B37EC00C682B8 /* Password */,
 			);
 			path = Source;
@@ -833,6 +838,7 @@
 				5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */,
 				5E39FC5A225B747600C682B8 /* PasswordRuleSetTests.swift */,
 				EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */,
+				6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1106,6 +1112,7 @@
 				3E88BF6F1B1F693F00232589 /* NSDate+Utility.m in Sources */,
 				543B04A11BC6B693008C2912 /* NSData+ZMSCrypto.m in Sources */,
 				5EE020C7214A9FC5001669F0 /* ZMAtomicInteger.m in Sources */,
+				6323786A2508D34D00AD4346 /* Array+Shift.swift in Sources */,
 				D504CD372090CB2900A78DAA /* Flip.swift in Sources */,
 				163FB9081F22302C00802AF4 /* DispatchGroupQueue.swift in Sources */,
 				54CA31291B74F36B00B820C0 /* Functional.swift in Sources */,
@@ -1148,6 +1155,7 @@
 				54181A581F59516600155ABC /* FileManager+ProtectionTests.swift in Sources */,
 				871939C821D4D9B000738968 /* ZMMobileProvisionParserTests.m in Sources */,
 				EECE48C71FFBE45D0015BAE8 /* FixedWidthInteger_RandomTests.swift in Sources */,
+				6323786C2508D51C00AD4346 /* ArrayShiftTests.swift in Sources */,
 				546E8A591B750384009EBA02 /* NSManagedObjectContext+WireUtilitiesTests.m in Sources */,
 				BF3C1B1020DA7339001CE126 /* Equatable+OneOfTests.swift in Sources */,
 				EE1E357421E796F100F1144B /* DarwinNotificationCenterTests.swift in Sources */,
