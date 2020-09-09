@@ -169,7 +169,7 @@ extension EncryptionContext {
     /// a specific session.
     /// note: if the session is already cached in memory, this will apply from the
     /// next time the session is reloaded
-    func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
+    public func setExtendedLogging(identifier: EncryptionSessionIdentifier, enabled: Bool) {
         if (enabled) {
             self.extensiveLoggingSessions.insert(identifier)
         } else {
@@ -178,7 +178,7 @@ extension EncryptionContext {
     }
     
     /// Disable extensive logging on all sessions
-    func disableExtendedLoggingOnAllSessions() {
+    public func disableExtendedLoggingOnAllSessions() {
         self.extensiveLoggingSessions.removeAll()
     }
 
