@@ -99,7 +99,7 @@ private let zmLog = ZMSLog(tag: "background-activity")
     
     /**
      * Notifies when all background activites have completed or expired.
-     * - parameter completionHandler: The code to exectute when the background activites are completed.
+     * - parameter completionHandler: The code to exectute when the background activites are completed. The execution happens on the main queue.
      *
      * If there are no running background tasks the completion handler will be called immediately.
      */
@@ -220,10 +220,14 @@ private let zmLog = ZMSLog(tag: "background-activity")
 
     /// Ends the current background task.
     private func finishBackgroundTask() {
-        allTasksEndedHandlers.forEach { handler in
-            handler()
+        
+        let allTasksEndedHandlers = self.allTasksEndedHandlers
+        self.allTasksEndedHandlers.removeAll()
+        mainQueue.async {
+            allTasksEndedHandlers.forEach { handler in
+                handler()
+            }
         }
-        allTasksEndedHandlers.removeAll()
         
         // No need to keep any activities after finishing
         activities.removeAll()
