@@ -20,26 +20,49 @@
 import Foundation
 import WireDataModel
 import WireRequestStrategy
+import WireUtilities
 
 
 extension ZMConversation: Conversation {
 
+    private static let logger = ZMSLog(tag: "Message Processing")
+
     public var name: String { return displayName }
         
     public func appendTextMessage(_ message: String, fetchLinkPreview: Bool) -> Sendable? {
-        return append(text: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
+        do {
+            return try appendText(content: message, fetchLinkPreview: fetchLinkPreview) as? Sendable
+        } catch {
+            Self.logger.warn("Failed to append text message from Share Ext. Reason: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     public func appendImage(_ data: Data) -> Sendable? {
-        return append(imageFromData: data) as? Sendable
+        do {
+            return try appendImage(from: data) as? Sendable
+        } catch {
+            Self.logger.warn("Failed to append image message from Share Ext. Reason: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     public func appendFile(_ metadata: ZMFileMetadata) -> Sendable? {
-        return append(file: metadata) as? Sendable
+        do {
+            return try appendFile(with: metadata) as? Sendable
+        } catch {
+            Self.logger.warn("Failed to append file message from Share Ext. Reason: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     public func appendLocation(_ location: LocationData) -> Sendable? {
-        return append(location: location) as? Sendable
+        do {
+            return try appendLocation(with: location) as? Sendable
+        } catch {
+            Self.logger.warn("Failed to append location message from Share Ext. Reason: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     /// Adds an observer for when the conversation verification status degrades
