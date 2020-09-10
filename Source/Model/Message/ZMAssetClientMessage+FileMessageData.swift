@@ -214,35 +214,46 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         }
         
         set {
-            
             // This method has to inject this value in the currently existing thumbnail message.
             // Unfortunately it is immutable. So I need to create a copy, modify and then replace.
-            guard let thumbnailMessage = genericMessage(dataType: .thumbnail) else { return }
-            var message = GenericMessage()
-            guard var assetData = thumbnailMessage.assetData,
+            guard
+                let thumbnailMessage = genericMessage(dataType: .thumbnail),
+                var assetData = thumbnailMessage.assetData,
                 assetData.hasPreview,
-                assetData.preview.hasRemote else { return }
+                assetData.preview.hasRemote
+            else {
+                return
+            }
+
             assetData.preview.remote.assetID = newValue ?? ""
-            
-            try? message.merge(serializedData: thumbnailMessage.serializedData())
-            message.update(asset: assetData)
-            replaceGenericMessageForThumbnail(with: message)
+
+            do {
+                var message = GenericMessage()
+                try message.merge(serializedData: thumbnailMessage.serializedData())
+                message.update(asset: assetData)
+                try replaceGenericMessageForThumbnail(with: message)
+            } catch {
+                Logging.messageProcessing.warn("Failed to set thumbnail asset id. Reason: \(error.localizedDescription)")
+            }
         }
     }
     
-    private func replaceGenericMessageForThumbnail(with genericMessage: GenericMessage) {
+    private func replaceGenericMessageForThumbnail(with genericMessage: GenericMessage) throws {
         cachedUnderlyingAssetMessage = nil
-        
-        dataSet
-        .map { $0 as! ZMGenericMessageData }
-        .forEach { data in
-            let dataMessage = data.underlyingMessage
-            if let assetData = dataMessage?.assetData,
-                assetData.hasPreview {
-                do {
-                    let genericMessageData = try genericMessage.serializedData()
-                    data.setProtobuf(genericMessageData)
-                } catch {}
+
+        for data in dataSet {
+            guard
+                let messageData = data as? ZMGenericMessageData,
+                let assetData = messageData.underlyingMessage?.assetData,
+                assetData.hasPreview
+            else {
+                continue
+            }
+
+            do {
+                try messageData.setGenericMessage(genericMessage)
+            } catch {
+                throw ProcessingError.failedToProcessMessageData(reason: error.localizedDescription)
             }
         }
     }

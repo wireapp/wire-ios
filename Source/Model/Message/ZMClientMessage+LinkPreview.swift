@@ -89,18 +89,25 @@ extension ZMClientMessage {
     }
     
     @nonobjc func applyLinkPreviewUpdate(_ updatedMessage: GenericMessage, from updateEvent: ZMUpdateEvent) {
-        guard let nonce = self.nonce,
-              let senderUUID = updateEvent.senderUUID,
-              let originalText = underlyingMessage?.textData,
-              let updatedText = updatedMessage.textData,
-              senderUUID == sender?.remoteIdentifier,
-              originalText.content == updatedText.content
-        else { return }
+        guard
+            let nonce = self.nonce,
+            let senderUUID = updateEvent.senderUUID,
+            let originalText = underlyingMessage?.textData,
+            let updatedText = updatedMessage.textData,
+            senderUUID == sender?.remoteIdentifier,
+            originalText.content == updatedText.content
+        else {
+            return
+        }
         
         let expiresAfter = deletionTimeout > 0 ? deletionTimeout : nil
         let message = GenericMessage(content: originalText.updateLinkPreview(from: updatedText), nonce: nonce, expiresAfter: expiresAfter)
-        guard let data = try? message.serializedData() else { return }
-        add(data)
+
+        do {
+            try setUnderlyingMessage(message)
+        } catch {
+            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
+        }
     }
 }
 
@@ -198,8 +205,12 @@ extension ZMClientMessage: ZMImageOwner {
             }
             
             do {
-                add(try GenericMessage(content: messageUpdate, nonce: nonce).serializedData())
-            } catch { return }
+                let genericMessage = GenericMessage(content: messageUpdate, nonce: nonce)
+                try setUnderlyingMessage(genericMessage)
+            } catch {
+                Logging.messageProcessing.warn("Failed to link preview image data. Reason: \(error.localizedDescription)")
+                return
+            }
         }
         
         moc.enqueueDelayedSave()

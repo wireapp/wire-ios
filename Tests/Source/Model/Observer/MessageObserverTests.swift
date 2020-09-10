@@ -126,7 +126,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         // when
         self.checkThatItNotifiesTheObserverOfAChange(
             message,
-            modifier: { $0.add(imageMessage) },
+            modifier: { try! $0.setUnderlyingMessage(imageMessage) },
             expectedChangedField: #keyPath(MessageChangeInfo.imageChanged)
         )
     }
@@ -146,7 +146,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: Text(content: name), nonce: nonce)
         do {
-            clientMessage.add(try genericMessage.serializedData())
+            try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             XCTFail()
         }
@@ -166,10 +166,9 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         // when
-        let genericMessageData = try? updateGenericMessage.serializedData()
         checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
-            modifier: { $0.add(genericMessageData) },
+            modifier: { try! $0.setUnderlyingMessage(updateGenericMessage) },
             expectedChangedFields: [#keyPath(MessageChangeInfo.linkPreviewChanged), #keyPath(MessageChangeInfo.underlyingMessageChanged)]
         )
     }
@@ -189,7 +188,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessage() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
         // when
@@ -202,7 +201,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsAddedOnMessageFromADifferentUser() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
@@ -219,7 +218,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionIsUpdateForAUserOnMessage() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let selfUser = ZMUser.selfUser(in: self.uiMOC)
         message.addReaction("LOVE IT, HUH", forUser: selfUser)
@@ -235,7 +234,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenAReactionFromADifferentUserIsAddedOnTopOfSelfReaction() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
 
         let otherUser = ZMUser.insertNewObject(in:uiMOC)
         otherUser.name = "Hans"
@@ -255,7 +254,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
 
     func testThatItNotifiesObserversWhenDeliveredChanges(){
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         XCTAssertFalse(message.delivered)
         uiMOC.saveOrRollback()
         
@@ -299,7 +298,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
 
     func testThatItNotifiesWhenUserReadsTheMessage() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
         
         
@@ -315,7 +314,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
     
     func testThatItNotifiesWhenUserReadsTheMessage_Asset() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(imageFromData: verySmallJPEGData())  as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData())  as! ZMAssetClientMessage
         uiMOC.saveOrRollback()
         
         // when
@@ -334,7 +333,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         let nonce = UUID.create()
         let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)
         do {
-            clientMessage.add(try genericMessage.serializedData())
+            try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             XCTFail()
         }
@@ -342,10 +341,9 @@ class MessageObserverTests : NotificationDispatcherTestBase {
         uiMOC.saveOrRollback()
         
         // when
-        let genericMessageData = try? update.serializedData()
         self.checkThatItNotifiesTheObserverOfAChange(
             clientMessage,
-            modifier: { $0.add(genericMessageData) },
+            modifier: { try! $0.setUnderlyingMessage(update) },
             expectedChangedFields: [ #keyPath(MessageChangeInfo.underlyingMessageChanged), #keyPath(MessageChangeInfo.linkPreviewChanged)]
         )
 
@@ -353,7 +351,7 @@ class MessageObserverTests : NotificationDispatcherTestBase {
 
     func testThatItNotifiesWhenLinkAttachmentIsAdded() {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        let message = conversation.append(text: "foo") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "foo") as! ZMClientMessage
         uiMOC.saveOrRollback()
 
         let attachment = LinkAttachment(type: .youTubeVideo, title: "Pingu Season 1 Episode 1",

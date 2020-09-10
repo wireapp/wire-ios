@@ -103,8 +103,11 @@ class ClientMessageTests: BaseZMClientMessageTests {
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
 
         do {
-            existingMessage.add(try message.serializedData())
-        } catch {}
+            try existingMessage.setUnderlyingMessage(message)
+        } catch {
+            XCTFail()
+        }
+
         existingMessage.visibleInConversation = conversation
         existingMessage.sender = self.selfUser
         existingMessage.senderClientID = selfClient.remoteIdentifier
@@ -166,8 +169,11 @@ class ClientMessageTests: BaseZMClientMessageTests {
        let existingMessage = ZMClientMessage(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
-            existingMessage.add(try message.serializedData())
-        } catch {}
+            try existingMessage.setUnderlyingMessage(message)
+        } catch {
+            XCTFail()
+        }
+
         existingMessage.visibleInConversation = conversation;
         existingMessage.sender = self.selfUser;
         existingMessage.senderClientID = selfClient.remoteIdentifier;
@@ -245,8 +251,10 @@ class ClientMessageTests: BaseZMClientMessageTests {
             }
             let genericMessage = GenericMessage(content: text, nonce: nonce)
             do {
-                message.add(try genericMessage.serializedData())
-            } catch {}
+                try message.setUnderlyingMessage(genericMessage)
+            } catch {
+                XCTFail()
+            }
             
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -274,8 +282,10 @@ class ClientMessageTests: BaseZMClientMessageTests {
             second.text = textSecond
             
             do {
-                message.add(try second.serializedData())
-            } catch {}
+                try message.setUnderlyingMessage(second)
+            } catch {
+                XCTFail()
+            }
             
             // then
             XCTAssertEqual(message.dataSet.count, 1)
@@ -337,7 +347,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: WireProtos.Knock.with { $0.hotKnock = true }, nonce: UUID.create())
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -431,7 +441,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -476,7 +486,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -522,7 +532,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -568,7 +578,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: UUID.create())
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -624,7 +634,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -681,7 +691,7 @@ extension ClientMessageTests {
         let existingMessage = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
         let message = GenericMessage(content: Text(content: initialText, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce, expiresAfter: 3600)
         do {
-            try existingMessage.add(message.serializedData())
+            try existingMessage.setUnderlyingMessage(message)
         } catch {
             XCTFail()
         }
@@ -733,7 +743,7 @@ extension ClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let existingMessage = conversation.append(text: "Initial") as! ZMClientMessage
+        let existingMessage = try! conversation.appendText(content: "Initial") as! ZMClientMessage
         existingMessage.nonce = nonce
         existingMessage.visibleInConversation = conversation
         let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)

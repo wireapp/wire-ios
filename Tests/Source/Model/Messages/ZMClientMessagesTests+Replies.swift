@@ -22,9 +22,9 @@ import XCTest
 class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
     
     func testQuoteRelationshipIsEstablishedWhenSendingMessage() {
-        let quotedMessage = conversation.append(text: "I have a proposal", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "I have a proposal", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: UUID()) as! ZMClientMessage
         
-        let message = conversation.append(text: "That's fine", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID()) as! ZMTextMessageData
+        let message = try! conversation.appendText(content: "That's fine", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID()) as! ZMTextMessageData
         
         XCTAssertEqual(message.quote, quotedMessage)
     }
@@ -32,7 +32,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
     func testQuoteRelationshipIsEstablishedWhenReceivingMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
-        let quotedMessage = conversation.append(text: "The sky is blue") as? ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
         let replyMessage = GenericMessage(content: Text(content: "I agree", replyingTo: quotedMessage))
         let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
@@ -52,7 +52,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
     func testQuoteRelationshipIsEstablishedWhenReceivingEphemeralMessage() {
         // given
         let conversation = ZMConversation.insertNewObject(in: uiMOC); conversation.remoteIdentifier = UUID.create()
-        let quotedMessage = conversation.append(text: "The sky is blue") as? ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "The sky is blue") as? ZMClientMessage
         let replyMessage = GenericMessage(content: Ephemeral(content: Text(content: "I agree", replyingTo: quotedMessage), expiresAfter: 1000))
         let data = ["sender": NSString.createAlphanumerical(), "text": try? replyMessage.serializedData().base64EncodedString()]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)

@@ -41,8 +41,13 @@ class BaseCompositeMessageTests: BaseZMMessageTests {
             $0.messageID = nonce.transportString()
         }
         let message = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
-        let data = try! genericMessage.serializedData()
-        message.add(data)
+
+        do {
+            try message.setUnderlyingMessage(genericMessage)
+        } catch {
+            XCTFail()
+        }
+
         return message
     }
     

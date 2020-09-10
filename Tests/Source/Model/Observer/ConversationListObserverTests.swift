@@ -600,7 +600,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
         self.token = ConversationListChangeInfo.addListObserver( testObserver, for: conversationList, managedObjectContext: self.uiMOC)
         
         // when
-        let message = conversation.append(text: "hello")
+        let message = try? conversation.appendText(content: "hello")
         self.uiMOC.saveOrRollback()
         
         guard let user = conversation.participantRoles.first?.user else { XCTFail(); return }

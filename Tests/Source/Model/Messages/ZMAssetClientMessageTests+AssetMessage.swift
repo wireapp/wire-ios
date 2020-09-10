@@ -39,7 +39,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatReturnsAssetsForImageMessage() {
         // given
-        let message = conversation.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         
         // then
         XCTAssertEqual(message.assets.count, 1)
@@ -47,7 +47,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatReturnsAssetsForFileMessage() {
         // given
-        let message = conversation.append(file: fileMetadata) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         
         // then
         XCTAssertEqual(message.assets.count, 1)
@@ -55,7 +55,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatReturnsAssetsForVideoMessage() {
         // given
-        let message = conversation.append(file: videoMetadata) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: videoMetadata) as! ZMAssetClientMessage
         
         // then
         XCTAssertEqual(message.assets.count, 1)
@@ -63,7 +63,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatReturnsAssetsForVideoMessage_WithThumbnail() {
         // given
-        let message = conversation.append(file: videoMetadataWithThumbnail) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: videoMetadataWithThumbnail) as! ZMAssetClientMessage
         
         // then
         XCTAssertEqual(message.assets.count, 2)
@@ -73,7 +73,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatProcessingStateIsProcessing_WhenEncryptedDataIsMissing() {
         // given
-        let message = conversation.append(file: fileMetadata) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         
         // then
         XCTAssertEqual(message.processingState, .preprocessing)
@@ -81,7 +81,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatProcessingStateIsProcessing_WhenEncryptedDataIsPartiallyMissing() {
         // given
-        let message = conversation.append(file: videoMetadataWithThumbnail) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: videoMetadataWithThumbnail) as! ZMAssetClientMessage
         message.assets.last?.encrypt()
         
         // then
@@ -90,7 +90,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatProcessingStateIsUploading_WhenEncryptedDataIsPresent() {
         // given
-        let message = conversation.append(file: fileMetadata) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         message.assets.first?.encrypt()
         
         // then
@@ -99,7 +99,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
     
     func testThatProcessingStateIsUploading_WhenWhenAssetsIsPartiallyUploaded() {
         // given
-        let message = conversation.append(file: videoMetadataWithThumbnail) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: videoMetadataWithThumbnail) as! ZMAssetClientMessage
         message.assets.last?.updateWithPreprocessedData(verySmallJPEGData(), imageProperties: ZMIImageProperties(size: CGSize(width: 5, height: 5), length: 100, mimeType: "image/jpeg"))
         message.assets.forEach({ $0.encrypt() })
         message.assets.first?.updateWithAssetId("123", token: "abc")
@@ -110,7 +110,7 @@ class ZMAssetClientMessageTests_AssetMessage: BaseZMClientMessageTests {
 
     func testThatProcessingStateIsDone_WhenAssetsIsUploaded() {
         // given
-        let message = conversation.append(file: fileMetadata) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: fileMetadata) as! ZMAssetClientMessage
         message.assets.first?.encrypt()
         message.assets.first?.updateWithAssetId("123", token: "abc")
         

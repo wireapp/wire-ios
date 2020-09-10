@@ -75,7 +75,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
+            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             self.syncUser3Client1.failedToEstablishSession = true
             
             //when
@@ -101,7 +101,7 @@ extension ClientMessageTests_OTR {
             
             //given
             let messageRequiringExternal = self.textMessageRequiringExternalMessage(6)
-            let message = self.syncConversation.append(text: messageRequiringExternal) as! ZMClientMessage
+            let message = try! self.syncConversation.appendText(content: messageRequiringExternal) as! ZMClientMessage
             self.syncUser3Client1.failedToEstablishSession = true
             
             //when
@@ -126,7 +126,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             
             //given
-            let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
+            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             //when
             guard let payloadAndStrategy = message.encryptForTransport() else {
@@ -150,7 +150,7 @@ extension ClientMessageTests_OTR {
             
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            guard let message = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage else { XCTFail(); return }
+            let message = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             XCTAssertTrue(message.isEphemeral)
             
             //when
@@ -174,7 +174,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            syncMessage = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
             self.syncMOC.saveOrRollback()
@@ -211,7 +211,7 @@ extension ClientMessageTests_OTR {
         self.syncMOC.performGroupedBlockAndWait {
             //given
             self.syncConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 10))
-            syncMessage = self.syncConversation.append(text: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
+            syncMessage = try! self.syncConversation.appendText(content: self.name, fetchLinkPreview: true, nonce: UUID.create()) as? ZMClientMessage
             syncMessage.sender = self.syncUser1
             XCTAssertTrue(syncMessage.isEphemeral)
             self.syncMOC.saveOrRollback()
@@ -253,7 +253,7 @@ extension ClientMessageTests_OTR {
             // given
             self.syncConversation.lastReadServerTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            guard let message = ZMConversation.appendSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }
+            guard let message = try? ZMConversation.updateSelfConversation(withLastReadOf: self.syncConversation) else { return XCTFail() }
             
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
@@ -276,7 +276,7 @@ extension ClientMessageTests_OTR {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
+            guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
             
             self.expectedRecipients = [self.syncSelfUser.remoteIdentifier!.transportString(): [self.syncSelfClient2.remoteIdentifier!]]
             
@@ -315,11 +315,13 @@ extension ClientMessageTests_OTR {
             
             self.syncMOC.saveOrRollback()
                         
-            let textMessage = conversation.append(text: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
+            let textMessage = try! conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
+
+            let genericMessage = GenericMessage(content: Confirmation(messageId: textMessage.nonce!, type: .delivered))
+            let confirmationMessage = try? conversation.appendClientMessage(with: genericMessage, expires: false, hidden: true)
             
             //when
             guard let payloadAndStrategy = confirmationMessage?.encryptForTransport()
@@ -360,11 +362,13 @@ extension ClientMessageTests_OTR {
             
             self.syncMOC.saveOrRollback()
                                     
-            let textMessage = conversation.append(text: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
+            let textMessage = try! conversation.appendText(content: self.stringLargeEnoughToRequireExternal, fetchLinkPreview: true, nonce: UUID.create()) as! ZMClientMessage
             
             textMessage.sender = self.syncUser1
             textMessage.senderClientID = senderID
-            let confirmationMessage = conversation.append(message: Confirmation(messageId: textMessage.nonce!, type: .delivered), hidden: true)
+
+            let confirmation = GenericMessage(content: Confirmation(messageId: textMessage.nonce!, type: .delivered))
+            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
             
             //when
             guard let _ = confirmationMessage?.encryptForTransport()
@@ -387,15 +391,16 @@ extension ClientMessageTests_OTR {
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
             let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             do {
-                clientmessage.add(try genericMessage.serializedData())
+                try clientmessage.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail()
             }
             clientmessage.visibleInConversation = conversation
             
             self.syncMOC.saveOrRollback()
-            
-            let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
+
+            let confirmation = GenericMessage(content: Confirmation(messageId: clientmessage.nonce!, type: .delivered))
+            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
 
             //when
             guard let _ = confirmationMessage?.encryptForTransport()
@@ -412,17 +417,18 @@ extension ClientMessageTests_OTR {
             conversation.addParticipantAndUpdateConversationState(user: self.syncUser1, role: nil)
             
             let genericMessage = GenericMessage(content: Text(content: "yo"), nonce: UUID.create())
-            let clientmessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
+            let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             do {
-                clientmessage.add(try genericMessage.serializedData())
+                try clientMessage.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail()
             }
-            clientmessage.visibleInConversation = conversation
+            clientMessage.visibleInConversation = conversation
             
             self.syncMOC.saveOrRollback()
-            
-            let confirmationMessage = conversation.append(message: Confirmation(messageId: clientmessage.nonce!, type: .delivered), hidden: true)
+
+            let confirmation = GenericMessage(content: Confirmation(messageId: clientMessage.nonce!, type: .delivered))
+            let confirmationMessage = try? conversation.appendClientMessage(with: confirmation, expires: false, hidden: true)
 
             //when
             guard let _ = confirmationMessage?.encryptForTransport()

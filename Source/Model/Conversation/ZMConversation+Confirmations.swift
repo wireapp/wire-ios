@@ -32,11 +32,20 @@ extension ZMConversation {
         var confirmationMessages: [ZMClientMessage] = []
         
         for messages in unreadMessagesNeedingConfirmation.partition(by: \.sender).values {
-            guard !messages.isEmpty else { continue }
-            
-            if let confirmation = Confirmation.init(messageIds: messages.compactMap(\.nonce), type: .read), let confirmationMessage = append(message: confirmation, hidden: true) {
-                confirmationMessages.append(confirmationMessage)
+            guard
+                !messages.isEmpty,
+                let confirmation = Confirmation(messageIds: messages.compactMap(\.nonce), type: .read)
+            else {
+                continue
             }
+
+            do {
+                let confirmationMessage = try appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
+                confirmationMessages.append(confirmationMessage)
+            } catch {
+                Logging.messageProcessing.warn("Failed to append confirmation. Reason: \(error.localizedDescription)")
+            }
+
         }
         
         return confirmationMessages

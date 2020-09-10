@@ -16,25 +16,24 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import WireDataModel
+extension ZMMessage {
 
-extension ZMBaseManagedObjectTest {
-    
-    func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessage(withText: self.name)
-    }
+    public enum ProcessingError: LocalizedError {
 
-    func createClientTextMessage(withText text: String) -> ZMClientMessage? {
-        let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
-        let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try message.setUnderlyingMessage(textMessage)
-        } catch {
-            XCTFail()
+        case missingManagedObjectContext
+        case failedToProcessMessageData(reason: String)
+
+        public var errorDescription: String? {
+            switch self {
+            case .missingManagedObjectContext:
+                return "Missing managed object context."
+            case .failedToProcessMessageData(let reason):
+                return "Failed to process message data. Reason: \(reason)"
+            }
         }
-        return message
+
     }
+
 }

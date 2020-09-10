@@ -28,7 +28,7 @@ extension ZMClientMessageTests_Reaction {
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = .create()
         
-        let message = conversation.append(text: "JCVD, full split please") as! ZMMessage
+        let message = try! conversation.appendText(content: "JCVD, full split please") as! ZMMessage
         message.sender = sender
         uiMOC.saveOrRollback()
 

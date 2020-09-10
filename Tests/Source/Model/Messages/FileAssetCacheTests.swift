@@ -37,7 +37,7 @@ class FileAssetCacheTests: BaseZMMessageTests
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.remoteIdentifier = UUID()
         
-        let message = conversation.append(text: "123")!
+        let message = try! conversation.appendText(content: "123")
         
         return message
     }

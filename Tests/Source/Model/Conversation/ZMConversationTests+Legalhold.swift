@@ -459,7 +459,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
 
             // WHEN
-            let message = conversation.append(text: "Legal hold is coming to town") as! ZMOTRMessage
+            let message = try! conversation.appendText(content: "Legal hold is coming to town") as! ZMOTRMessage
             Thread.sleep(forTimeInterval: 0.05)
 
             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)
@@ -490,7 +490,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
             
             // WHEN
-            let message = conversation.append(text: "Legal hold is coming to town") as! ZMOTRMessage
+            let message = try! conversation.appendText(content: "Legal hold is coming to town") as! ZMOTRMessage
             message.delivered = true
             message.serverTimestamp = Date().addingTimeInterval(-ZMMessage.defaultExpirationTime() * 2)
             message.textMessageData?.editText("Legal hold is leaving", mentions: [], fetchLinkPreview: false)
@@ -524,7 +524,7 @@ class ZMConversationTests_Legalhold: ZMConversationTestsBase {
             XCTAssertEqual(conversation.legalHoldStatus, .disabled)
 
             // WHEN
-            let message = conversation.append(text: "Legal hold is coming") as! ZMOTRMessage
+            let message = try! conversation.appendText(content: "Legal hold is coming") as! ZMOTRMessage
             message.sender = otherUser
 
             let legalHoldClient = self.createClient(ofType: .legalHold, class: .legalHold, for: otherUser)

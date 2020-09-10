@@ -31,7 +31,7 @@ class TransferStateMigrationTests: DiskDatabaseTest {
     func verifyThatLegacyTransferStateIsMigrated(_ rawLegacyTranferState: Int, expectedTranferState: AssetTransferState, line: UInt = #line) throws {
         // Given
         let conversation = createConversation()
-        let assetMessage = conversation.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let assetMessage = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         moc.stalenessInterval = 0.0
         moc.willChangeValue(forKey: #keyPath(ZMAssetClientMessage.transferState))
         assetMessage.setPrimitiveValue(rawLegacyTranferState, forKey: #keyPath(ZMAssetClientMessage.transferState))

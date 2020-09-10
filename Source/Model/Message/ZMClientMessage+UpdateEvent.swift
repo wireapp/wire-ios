@@ -20,14 +20,18 @@ import Foundation
 
 extension ZMClientMessage {
     override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = GenericMessage(from: updateEvent) else {
+        guard let message = GenericMessage(from: updateEvent) else { return }
+
+        guard initialUpdate else {
+            applyLinkPreviewUpdate(message, from: updateEvent)
             return
         }
-        if !initialUpdate {
-            applyLinkPreviewUpdate(message, from: updateEvent)
-        } else if let data = try? message.serializedData() {
-            add(data)
+
+        do {
+            try setUnderlyingMessage(message)
             updateNormalizedText()
+        } catch {
+            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
         }
     }
 }

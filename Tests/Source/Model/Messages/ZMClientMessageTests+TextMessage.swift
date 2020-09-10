@@ -50,7 +50,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.linkPreview = [linkPreview]
         }
         do {
-            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
         } catch {
             XCTFail()
         }
@@ -80,7 +80,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.linkPreview = [LinkPreview(articleMetadata: article)]
         }
         do {
-            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
         } catch {
             XCTFail()
         }
@@ -114,7 +114,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.linkPreview = [updated]
         }
         do {
-            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
         } catch {
             XCTFail()
         }
@@ -145,7 +145,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.linkPreview = [LinkPreview(twitterMetadata: preview)]
         }
         do {
-            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
         } catch {
             XCTFail()
         }
@@ -203,7 +203,7 @@ class ZMClientMessageTests_TextMessage: BaseZMMessageTests {
             $0.linkPreview = [updated]
         }
         do {
-            clientMessage.add(try GenericMessage(content: text, nonce: nonce).serializedData())
+            try clientMessage.setUnderlyingMessage(GenericMessage(content: text, nonce: nonce))
         } catch {
             XCTFail()
         }

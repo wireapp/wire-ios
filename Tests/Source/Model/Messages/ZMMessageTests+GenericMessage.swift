@@ -33,7 +33,7 @@ class ZMMessageTests_GenericMessage: BaseZMClientMessageTests {
             let textMessage = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
             let msg = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.syncMOC)
             do {
-                try msg.add(textMessage.serializedData())
+                try msg.setUnderlyingMessage(textMessage)
             } catch {
                 XCTFail()
             }
@@ -100,7 +100,7 @@ extension ZMMessageTests_GenericMessage {
         let knock = GenericMessage(content: Knock.with { $0.hotKnock = false }, nonce: UUID.create())
         let message = ZMClientMessage.init(nonce: UUID.create(), managedObjectContext: self.uiMOC)
         do {
-            try message.add(knock.serializedData())
+            try message.setUnderlyingMessage(knock)
         } catch {
             XCTFail()
         }
@@ -123,7 +123,7 @@ extension ZMMessageTests_GenericMessage {
         conversation.remoteIdentifier = UUID.create()
 
         // when
-        let message = conversation.append(text: "Test") as! ZMOTRMessage
+        let message = try! conversation.appendText(content: "Test") as! ZMOTRMessage
         let dataSet = message.dataSet
 
         XCTAssertNotNil(message.managedObjectContext)
@@ -145,7 +145,7 @@ extension ZMMessageTests_GenericMessage {
         conversation.remoteIdentifier = UUID.create()
 
         // when
-        let message = conversation.append(imageFromData: self.verySmallJPEGData()) as! ZMOTRMessage
+        let message = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMOTRMessage
         let dataSet = message.dataSet
 
         XCTAssertNotNil(message.managedObjectContext)

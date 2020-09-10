@@ -31,7 +31,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             let knock = GenericMessage(content: Knock.with { $0.hotKnock = false })
             let message = ZMClientMessage(nonce: UUID(), managedObjectContext: self.syncMOC)
             do {
-                message.add(try knock.serializedData())
+                try message.setUnderlyingMessage(knock)
             } catch {
                 XCTFail()
             }
@@ -95,7 +95,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             
             let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
             do {
-                message.add(try textMessage.serializedData())
+                try message.setUnderlyingMessage(textMessage)
             } catch {
                 XCTFail()
             }
@@ -141,7 +141,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
             
             let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
             do {
-                message.add(try textMessage.serializedData())
+                try message.setUnderlyingMessage(textMessage)
             } catch {
                 XCTFail()
             }
@@ -293,7 +293,7 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         
         let textMessage = GenericMessage(content: Text(content: "@joe hello", mentions: [mention], linkPreviews: [], replyingTo: nil), nonce: nonce)
         do {
-            message2.add(try textMessage.serializedData())
+            try message2.setUnderlyingMessage(textMessage)
         } catch {
             XCTFail()
         }

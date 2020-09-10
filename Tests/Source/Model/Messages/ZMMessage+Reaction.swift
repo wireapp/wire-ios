@@ -25,7 +25,7 @@ class ZMMessage_Reaction: BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let message = conversation.append(text: self.name) as! ZMMessage
+        let message = try! conversation.appendText(content: self.name) as! ZMMessage
         message.markAsSent()
         self.uiMOC.saveOrRollback()
         

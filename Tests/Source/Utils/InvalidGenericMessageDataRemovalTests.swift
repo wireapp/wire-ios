@@ -25,7 +25,7 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesNotRemoveValidGenericMessageData() throws {
         // Given
         let conversation = createConversation()
-        let textMessage = conversation.append(text: "Hello world")! as! ZMClientMessage
+        let textMessage = try! conversation.appendText(content: "Hello world") as! ZMClientMessage
         let genericMessageData = textMessage.dataSet.firstObject! as! ZMGenericMessageData
         try self.moc.save()
         
@@ -40,7 +40,7 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesRemoveInvalidGenericMessageData() throws {
         // Given
         let conversation = createConversation()
-        let textMessage = conversation.append(text: "Hello world")! as! ZMClientMessage
+        let textMessage = try! conversation.appendText(content: "Hello world") as! ZMClientMessage
         let genericMessageData = textMessage.dataSet.firstObject! as! ZMGenericMessageData
         try self.moc.save()
         
@@ -63,7 +63,7 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesNotRemoveValidGenericMessageData_Asset() throws {
         // Given
         let conversation = createConversation()
-        let assetMessage = conversation.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
+        let assetMessage = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMAssetClientMessage
         let genericMessageData = assetMessage.dataSet.firstObject! as! ZMGenericMessageData
         try self.moc.save()
 
@@ -78,7 +78,7 @@ class InvalidGenericMessageDataRemovalTests: DiskDatabaseTest {
     func testThatItDoesRemoveInvalidGenericMessageData_Asset() throws {
         // Given
         let conversation = createConversation()
-        let assetMessage = conversation.append(imageFromData: self.verySmallJPEGData()) as! ZMAssetClientMessage
+        let assetMessage = try! conversation.appendImage(from: self.verySmallJPEGData()) as! ZMAssetClientMessage
         let genericMessageData = assetMessage.dataSet.firstObject! as! ZMGenericMessageData
         try self.moc.save()
         

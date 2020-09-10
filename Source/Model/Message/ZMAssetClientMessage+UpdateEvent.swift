@@ -20,11 +20,15 @@ import Foundation
 
 extension ZMAssetClientMessage {
     override open func update(with updateEvent: ZMUpdateEvent, initialUpdate: Bool) {
-        guard let message = GenericMessage(from: updateEvent) else {
+        guard let message = GenericMessage(from: updateEvent) else { return }
+
+        do {
+            try setUnderlyingMessage(message)
+        } catch {
+            assertionFailure("Failed to set generic message: \(error.localizedDescription)")
             return
         }
 
-        add(message)
         version = 3 // We assume received assets are V3 since backend no longer supports sending V2 assets.
         
         guard

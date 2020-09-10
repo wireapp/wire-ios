@@ -21,15 +21,17 @@ import Foundation
 import WireCryptobox
 
 extension ZMConversation {
-    static func appendHideMessageToSelfConversation(_ message: ZMMessage) {
-        guard let messageId = message.nonce,
+    static func appendHideMessageToSelfConversation(_ message: ZMMessage) throws {
+        guard
+            let messageId = message.nonce,
             let conversation = message.conversation,
-            let conversationId = conversation.remoteIdentifier else {
-                return
+            let conversationId = conversation.remoteIdentifier
+        else {
+            return
         }
         
         let genericMessage = GenericMessage(content: MessageHide(conversationId: conversationId, messageId: messageId))
-        ZMConversation.appendSelfConversation(genericMessage: genericMessage, managedObjectContext: message.managedObjectContext!)
+        _ = try ZMConversation.appendMessageToSelfConversation(genericMessage, in: message.managedObjectContext!)
     }
 }
 
@@ -46,7 +48,13 @@ extension ZMMessage {
     
     @objc public func hideForSelfUser() {
         guard !isZombieObject else { return }
-        ZMConversation.appendHideMessageToSelfConversation(self)
+
+        do {
+            try ZMConversation.appendHideMessageToSelfConversation(self)
+        } catch {
+            Logging.messageProcessing.warn("Failed to append hide message. Reason: \(error.localizedDescription)")
+            return
+        }
 
         // To avoid reinserting when receiving an edit we delete the message locally
         removeClearingSender(true)
@@ -61,12 +69,17 @@ extension ZMMessage {
     @discardableResult @objc func deleteForEveryone() -> ZMClientMessage? {
         guard !isZombieObject, let sender = sender , (sender.isSelfUser || isEphemeral) else { return nil }
         guard let conversation = conversation, let messageNonce = nonce else { return nil}
-        
-        let message =  conversation.append(message: MessageDelete(messageId: messageNonce), hidden: true)
-        
-        removeClearingSender(false)
-        updateCategoryCache()
-        return message
+
+        do {
+            let genericMessage = GenericMessage(content: MessageDelete(messageId: messageNonce))
+            let message = try conversation.appendClientMessage(with: genericMessage, expires: false, hidden: true)
+            removeClearingSender(false)
+            updateCategoryCache()
+            return message
+        } catch {
+            Logging.messageProcessing.warn("Failed delete message for everyone. Reason: \(error.localizedDescription)")
+            return nil
+        }
     }
     
     @objc var isEditableMessage : Bool {

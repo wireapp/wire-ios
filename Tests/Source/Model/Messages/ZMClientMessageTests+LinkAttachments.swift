@@ -25,10 +25,10 @@ class ZMClientMessageTests_LinkAttachments: BaseZMClientMessageTests {
         let sender = ZMUser.insertNewObject(in: uiMOC)
         sender.remoteIdentifier = .create()
 
-        let message1 = conversation.append(text: "Hello world") as! ZMMessage
+        let message1 = try! conversation.appendText(content: "Hello world") as! ZMMessage
         message1.sender = sender
 
-        let message2 = conversation.append(text: "Hello world", fetchLinkPreview: false) as! ZMMessage
+        let message2 = try! conversation.appendText(content: "Hello world", fetchLinkPreview: false) as! ZMMessage
         message2.sender = sender
         uiMOC.saveOrRollback()
 
@@ -55,7 +55,7 @@ class ZMClientMessageTests_LinkAttachments: BaseZMClientMessageTests {
                                                          thumbnails: [thumbnail],
                                                          originalRange: NSRange(location: 20, length: 43))
 
-        var message: ZMClientMessage? = conversation.append(text: "Hello world", nonce: nonce) as? ZMClientMessage
+        var message: ZMClientMessage? = try? conversation.appendText(content: "Hello world", nonce: nonce) as? ZMClientMessage
         message?.sender = sender
         message?.linkAttachments = [attachment]
         uiMOC.saveOrRollback()

@@ -25,22 +25,18 @@ import Foundation
     /// In memory cache
     var cachedUnderlyingAssetMessage: GenericMessage? = nil
     
-    internal convenience init?(asset: WireProtos.Asset,
-                               nonce: UUID,
-                               managedObjectContext: NSManagedObjectContext,
-                               expiresAfter timeout: TimeInterval = 0) {
+    internal convenience init(asset: WireProtos.Asset,
+                              nonce: UUID,
+                              managedObjectContext: NSManagedObjectContext,
+                              expiresAfter timeout: TimeInterval = 0) throws {
+
         self.init(nonce: nonce, managedObjectContext: managedObjectContext)
         
         transferState = .uploading
         version = 3
         
         let genericMessage = GenericMessage(content: asset, nonce: nonce, expiresAfter: timeout)
-        
-        do {
-            _ = mergeWithExistingData(data: try genericMessage.serializedData())
-        } catch {
-            return nil
-        }
+        try mergeWithExistingData(message: genericMessage)
     }
     
     public override var hashOfContent: Data? {
@@ -414,8 +410,9 @@ struct CacheAsset: Asset {
         }
         
         do {
-            _ = owner.mergeWithExistingData(data: try genericMessage.serializedData())
+            try owner.mergeWithExistingData(message: genericMessage)
         } catch {
+            Logging.messageProcessing.warn("Failed to update asset id. Reason: \(error.localizedDescription)")
             return
         }
         
@@ -442,7 +439,12 @@ struct CacheAsset: Asset {
         case .thumbnail:
             genericMessage.updateAssetPreview(withImageProperties: imageProperties)
         }
-        owner.add(genericMessage)
+
+        do {
+            try owner.setUnderlyingMessage(genericMessage)
+        } catch {
+            Logging.messageProcessing.warn("Failed to update preprocessed image data. Reason: \(error.localizedDescription)")
+        }
     }
     
     func encrypt() {
@@ -467,8 +469,12 @@ struct CacheAsset: Asset {
                 genericMessage.updateAssetPreview(withUploadedOTRKey: keys.otrKey, sha256: keys.sha256!)
             }
         }
-        
-        owner.add(genericMessage)
+
+        do {
+            try owner.setUnderlyingMessage(genericMessage)
+        } catch {
+            Logging.messageProcessing.warn("Failed to encrypt asset message data. Reason: \(error.localizedDescription)")
+        }
     }
     
 }

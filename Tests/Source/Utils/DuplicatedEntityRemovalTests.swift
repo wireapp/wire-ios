@@ -72,7 +72,7 @@ final class DuplicatedEntityRemovalTests: DiskDatabaseTest {
     }
 
     func messages(conversation: ZMConversation) -> [ZMMessage] {
-        return (0..<5).map { conversation.append(text: "Message \($0)")! as! ZMMessage }
+        return (0..<5).map { try! conversation.appendText(content: "Message \($0)") as! ZMMessage }
     }
 }
 
