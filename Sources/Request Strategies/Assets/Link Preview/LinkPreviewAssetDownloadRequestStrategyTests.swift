@@ -116,7 +116,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         let genericMessage = GenericMessage(content: text, nonce: nonce)
 
         self.syncMOC.performGroupedAndWait { syncMOC in
-            let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
@@ -141,7 +141,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
             text.linkPreview.append(linkPreview)
             let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: 20)
-            let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
@@ -159,7 +159,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
     func testThatItDoesNotGenerateARequestForAMessageWithoutALinkPreview() {
         let message = syncMOC.performGroupedAndWait { moc -> ZMMessage in
             let genericMessage = GenericMessage(content: Text(content: self.name))
-            return self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            return try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
         }
         
         syncMOC.performGroupedBlockAndWait {
@@ -190,7 +190,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
             var text = Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil)
             text.linkPreview.append(linkPreview)
             let genericMessage = GenericMessage(content: text, nonce: nonce)
-            let message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            let message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
             syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 256))
 
@@ -214,7 +214,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         self.syncMOC.performGroupedAndWait { syncMOC in
             // GIVEN
-            message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
             syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length:256))
 
@@ -246,7 +246,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
 
         self.syncMOC.performGroupedAndWait { syncMOC in
 
-            message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
 
             // WHEN
@@ -279,7 +279,7 @@ extension LinkPreviewAssetDownloadRequestStrategyTests {
         var message: ZMMessage!
         self.syncMOC.performGroupedAndWait { syncMOC in
 
-            message = self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)!
+            message = try! self.oneToOneconversationOnSync.appendClientMessage(with: genericMessage)
             _ = try? syncMOC.obtainPermanentIDs(for: [message])
         
             // WHEN

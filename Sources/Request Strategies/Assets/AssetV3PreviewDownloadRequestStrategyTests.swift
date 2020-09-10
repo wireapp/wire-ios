@@ -60,13 +60,18 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
     
     fileprivate func createMessage(in conversation: ZMConversation) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
         
-        let message = conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (otrKey, sha) = (Data.randomEncryptionKey(), Data.randomEncryptionKey())
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: conversation.messageDestructionTimeoutValue)
         uploaded.updateUploaded(assetId: assetId, token: token)
-        
-        message.add(uploaded)
+
+        do {
+            try message.setUnderlyingMessage(uploaded)
+        } catch {
+            XCTFail()
+        }
+
         message.updateTransferState(.uploaded, synchronize: false)
         syncMOC.saveOrRollback()
         
@@ -115,8 +120,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             // GIVEN
             let (message, _, _) = self.createMessage(in: self.conversation)!
             let (previewGenericMessage, _) = self.createPreview(with: message.nonce!)
-            
-            message.add(previewGenericMessage)
+
+            do {
+                try message.setUnderlyingMessage(previewGenericMessage)
+            } catch {
+                XCTFail()
+            }
+
             XCTAssertFalse(message.hasDownloadedPreview)
             
             // THEN
@@ -132,7 +142,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             let (message, _, _) = self.createMessage(in: self.conversation)!
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
-            message.add(preview.genericMessage)
+
+            do {
+                try message.setUnderlyingMessage(preview.genericMessage)
+            } catch {
+                XCTFail()
+            }
+
             XCTAssertFalse(message.hasDownloadedPreview)
             
             // WHEN
@@ -157,7 +173,12 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
             message = self.createMessage(in: self.conversation)!.message
             let preview = self.createPreview(with: message.nonce!)
             previewMeta = preview.meta
-            message.add(preview.genericMessage)
+
+            do {
+                try message.setUnderlyingMessage(preview.genericMessage)
+            } catch {
+                XCTFail()
+            }
             
             // WHEN
             message.fileMessageData?.requestImagePreviewDownload()
@@ -195,8 +216,13 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         // WHEN
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_fileAssetCache.storeAssetData(message, format: .medium, encrypted: false, data: .secureRandomData(length: 42))
-            
-            message.add(previewGenericMessage)
+
+            do {
+                try message.setUnderlyingMessage(previewGenericMessage)
+            } catch {
+                XCTFail()
+            }
+
             message.fileMessageData?.requestImagePreviewDownload()
         }
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -218,8 +244,12 @@ class AssetV3PreviewDownloadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedBlockAndWait {
             message = self.createMessage(in: self.conversation)!.message
             let (previewGenericMessage, _) = self.createPreview(with: message.nonce!, otr: key, sha: sha)
-        
-            message.add(previewGenericMessage)
+
+            do {
+                try message.setUnderlyingMessage(previewGenericMessage)
+            } catch {
+                XCTFail()
+            }
         }
         
         // WHEN

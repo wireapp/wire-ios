@@ -579,7 +579,7 @@ extension MissingClientsRequestStrategyTests {
     
     /// Creates a message missing a client
     func message(missingRecipient: UserClient) -> ZMClientMessage {
-        let message = self.groupConversation.append(text: "Test message with missing") as! ZMClientMessage
+        let message = try! self.groupConversation.appendText(content: "Test message with missing") as! ZMClientMessage
         message.missesRecipient(missingRecipient)
         return message
     }

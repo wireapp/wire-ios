@@ -74,13 +74,19 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         sha: Data  = Data.randomEncryptionKey()
         ) -> (message: ZMAssetClientMessage, assetId: String, assetToken: String)? {
 
-        let message = aConversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+        let message = try! aConversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
         let (assetId, token) = (UUID.create().transportString(), UUID.create().transportString())
         var uploaded = GenericMessage(content: WireProtos.Asset(withUploadedOTRKey: otrKey, sha256: sha), nonce: message.nonce!, expiresAfter: aConversation.messageDestructionTimeoutValue)
 
         uploaded.updateUploaded(assetId: assetId, token: token)
         message.updateTransferState(.uploaded, synchronize: false)
-        message.add(uploaded)
+
+        do {
+            try message.setUnderlyingMessage(uploaded)
+        } catch {
+            XCTFail()
+        }
+
         deleteDownloadedFileFor(message: message)
         XCTAssertEqual(message.version, 3)
         syncMOC.saveOrRollback()
@@ -202,7 +208,7 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
         syncMOC.performGroupedBlockAndWait {
             
             // Given
-            let message = self.conversation.append(file: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
+            let message = try! self.conversation.appendFile(with: ZMFileMetadata(fileURL: testDataURL)) as! ZMAssetClientMessage
             message.updateTransferState(.uploaded, synchronize: false)
             self.deleteDownloadedFileFor(message: message)
             self.syncMOC.saveOrRollback()

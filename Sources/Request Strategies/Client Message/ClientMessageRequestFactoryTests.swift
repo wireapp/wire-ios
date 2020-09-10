@@ -35,7 +35,7 @@ extension ClientMessageRequestFactoryTests {
             
             // GIVEN
             let text = "Antani"
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
@@ -62,10 +62,10 @@ extension ClientMessageRequestFactoryTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = "Antani"
-            let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             message.sender = self.otherUser
             let confirmation = Confirmation(messageId: message.nonce!, type: .delivered)
-            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)!
+            let confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
             
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: self.oneToOneConversation.remoteIdentifier!) else {
@@ -91,7 +91,7 @@ extension ClientMessageRequestFactoryTests {
             // GIVEN
             let text = "Boo"
             self.groupConversation.messageDestructionTimeout = .local(.tenSeconds)
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             
             // WHEN
             guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {

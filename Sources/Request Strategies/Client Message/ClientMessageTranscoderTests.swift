@@ -118,7 +118,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = "Lorem ipsum"
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             message.sender = self.otherUser
             self.syncMOC.saveOrRollback()
             
@@ -136,7 +136,7 @@ extension ClientMessageTranscoderTests {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
-            let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -162,7 +162,7 @@ extension ClientMessageTranscoderTests {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -188,11 +188,11 @@ extension ClientMessageTranscoderTests {
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
             let text = "Lorem ipsum"
-            let message = self.oneToOneConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setExpectsReadConfirmation(true)
             do {
-                message.add(try genericMessage.serializedData())
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -224,11 +224,11 @@ extension ClientMessageTranscoderTests {
             XCTAssertTrue(conversation.isUnderLegalHold)
 
             let text = "Lorem ipsum"
-            let message = conversation.append(text: text) as! ZMClientMessage
+            let message = try! conversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setLegalHoldStatus(.disabled)
             do {
-                message.add(try genericMessage.serializedData())
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -254,11 +254,11 @@ extension ClientMessageTranscoderTests {
             XCTAssertFalse(conversation.isUnderLegalHold)
 
             let text = "Lorem ipsum"
-            let message = conversation.append(text: text) as! ZMClientMessage
+            let message = try! conversation.appendText(content: text) as! ZMClientMessage
             var genericMessage = message.underlyingMessage!
             genericMessage.setLegalHoldStatus(.enabled)
             do {
-                message.add(try genericMessage.serializedData())
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -281,7 +281,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = "Lorem ipsum"
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -309,7 +309,7 @@ extension ClientMessageTranscoderTests {
             
             // GIVEN
             let text = String(repeating: "Hi", count: 100000)
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
             
             // WHEN
@@ -349,7 +349,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let text = String(repeating: "Hi", count: 100000)
-            let message = self.groupConversation.append(text: text) as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
 
             // WHEN
             self.syncMOC.saveOrRollback()

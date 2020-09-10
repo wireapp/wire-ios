@@ -45,7 +45,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     @discardableResult func createFileMessage(transferState: AssetTransferState = .uploading, hasCompletedPreprocessing: Bool = true,  line: UInt = #line) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
         let url = Bundle(for: AssetClientMessageRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
-        let message = targetConversation.append(file: ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())) as! ZMAssetClientMessage
+        let message = try! targetConversation.appendFile(with: ZMFileMetadata(fileURL: url, thumbnail: verySmallJPEGData())) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
         
         if hasCompletedPreprocessing {
@@ -64,7 +64,7 @@ class AssetV3UploadRequestStrategyTests: MessagingTestBase {
     
     @discardableResult func createImageMessage(transferState: AssetTransferState = .uploading, line: UInt = #line) -> ZMAssetClientMessage {
         let targetConversation = groupConversation!
-        let message = targetConversation.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! targetConversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         message.updateTransferState(transferState, synchronize: true)
         
         for asset in message.assets {

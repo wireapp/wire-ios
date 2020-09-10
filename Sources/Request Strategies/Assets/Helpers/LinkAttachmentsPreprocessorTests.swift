@@ -63,7 +63,7 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
         if isEphemeral {
             conversation.messageDestructionTimeout = .local(.tenSeconds)
         }
-        let message = conversation.append(text: text, mentions: mentions) as! ZMClientMessage
+        let message = try! conversation.appendText(content: text, mentions: mentions) as! ZMClientMessage
         message.needsLinkAttachmentsUpdate = needsUpdate
         return message
     }
@@ -152,7 +152,12 @@ class LinkAttachmentsPreprocessorTests: MessagingTestBase {
             // GIVEN
             let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
             conversation.remoteIdentifier = UUID.create()
-            message = conversation.appendKnock() as? ZMClientMessage
+
+            do {
+                try message = conversation.appendKnock() as? ZMClientMessage
+            } catch {
+                XCTFail()
+            }
 
             // WHEN
             self.sut.objectsDidChange([message])

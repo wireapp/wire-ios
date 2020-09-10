@@ -41,7 +41,7 @@ class AssetsPreprocessorTests: MessagingTestBase {
 
     func testThatItPreprocessAssetMessage() {
         // given
-        let message = conversation.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         let asset = message.assets.first!
         
         // when
@@ -55,7 +55,7 @@ class AssetsPreprocessorTests: MessagingTestBase {
     
     func testThatItPreprocessAssetMessageWithMultipleAssets() {
         // given
-        let message = conversation.append(file: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
         let assets = message.assets
         XCTAssertEqual(assets.count, 2)
         
@@ -75,7 +75,7 @@ class AssetsPreprocessorTests: MessagingTestBase {
     
     func testThatItMarksTheTransferStateAsModifiedAfterItsDoneProcessing() {
         // given
-        let message = conversation.append(imageFromData: verySmallJPEGData()) as! ZMAssetClientMessage
+        let message = try! conversation.appendImage(from: verySmallJPEGData()) as! ZMAssetClientMessage
         
         // when
         sut.objectsDidChange(Set(arrayLiteral: message))
