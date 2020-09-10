@@ -33,7 +33,7 @@ extension ClientMessageTranscoderTests {
             // GIVEN
             self.sut = nil
             self.groupConversation.messageDestructionTimeout = .local(.tenSeconds)
-            let message = self.groupConversation.append(text: "Foo")! as! ZMClientMessage
+            let message = try! self.groupConversation.appendText(content: "Foo") as! ZMClientMessage
             message.markAsSent()
             self.syncMOC.saveOrRollback()
             
@@ -52,7 +52,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             self.groupConversation.messageDestructionTimeout = .local(MessageDestructionTimeoutValue(rawValue: 1))
-            message = self.groupConversation.append(text: "Foo")! as? ZMClientMessage
+            message = try? self.groupConversation.appendText(content: "Foo") as? ZMClientMessage
             message.markAsSent()
             self.syncMOC.saveOrRollback()
             XCTAssertFalse(message.isObfuscated)

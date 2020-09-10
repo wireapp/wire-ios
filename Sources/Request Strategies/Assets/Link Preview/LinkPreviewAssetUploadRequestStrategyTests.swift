@@ -51,20 +51,20 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         if isEphemeral {
             conversation.messageDestructionTimeout = .local(.tenSeconds)
         }
-        let message = conversation.append(text: text) as! ZMClientMessage
+        let message = try! conversation.appendText(content: text) as! ZMClientMessage
         message.linkPreviewState = linkPreviewState
         if isEphemeral {
             XCTAssertTrue(message.isEphemeral)
             let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!, expiresAfter: 10)
             do {
-                message.add(try genericMessage.serializedData())
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
         } else {
             let genericMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [linkPreview]), nonce: message.nonce!)
             do {
-                message.add(try genericMessage.serializedData())
+                try message.setUnderlyingMessage(genericMessage)
             } catch {
                 XCTFail("Error in adding data: \(error)")
             }
@@ -108,7 +108,7 @@ class LinkPreviewAssetUploadRequestStrategyTests: MessagingTestBase {
         }
         let genericMessage = GenericMessage(content: text, nonce: message.nonce!, expiresAfter: message.deletionTimeout)
         do {
-            message.add(try genericMessage.serializedData())
+            try message.setUnderlyingMessage(genericMessage)
         } catch {
             fatal("Failure adding genericMessage")
         }

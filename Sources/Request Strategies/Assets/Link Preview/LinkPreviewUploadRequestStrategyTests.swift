@@ -156,7 +156,7 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     // MARK: - Helper
 
     func insertMessage(with state: ZMLinkPreviewState, file: StaticString = #file, line: UInt = #line) -> ZMClientMessage {
-        let message = groupConversation.append(text: "Test message") as! ZMClientMessage
+        let message = try! groupConversation.appendText(content: "Test message") as! ZMClientMessage
         message.linkPreviewState = state
         XCTAssert(syncMOC.saveOrRollback(), file: file, line: line)
 

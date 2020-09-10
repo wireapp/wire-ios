@@ -29,7 +29,7 @@ extension ClientMessageTranscoderTests {
         self.syncMOC.performGroupedBlockAndWait {
             
             // GIVEN
-            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))!
+            let confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
             
@@ -46,7 +46,7 @@ extension ClientMessageTranscoderTests {
         syncMOC.performGroupedBlockAndWait {
 
             // Given
-            let confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))!
+            let confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 
@@ -73,7 +73,7 @@ extension ClientMessageTranscoderTests {
         var confirmationMessage: ZMMessage!
         self.syncMOC.performGroupedBlockAndWait {
 
-            confirmationMessage = self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
             self.syncMOC.saveOrRollback()
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
 

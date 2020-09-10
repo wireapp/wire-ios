@@ -57,9 +57,14 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let encryptedData = imageData.zmEncryptPrefixingPlainTextIV(key: key)
         let sha = encryptedData.zmSHA256Digest()
         let keys = ZMImageAssetEncryptionKeys(otrKey: key, sha256: sha)
+
+        do {
+            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
+            try message.setUnderlyingMessage(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
+        } catch {
+            XCTFail()
+        }
         
-        message.add(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .medium), nonce: message.nonce!))
-        message.add(GenericMessage(content: ImageAsset(mediumProperties: properties, processedProperties: properties, encryptionKeys: keys, format: .preview), nonce: message.nonce!))
         message.version = 2
         message.assetId = assetId
         message.sender = sender
@@ -76,7 +81,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         let nonce = UUID.create()
         let fileURL = Bundle(for: ImageV2DownloadRequestStrategyTests.self).url(forResource: "Lorem Ipsum", withExtension: "txt")!
         let metadata = ZMFileMetadata(fileURL: fileURL)
-        let message = conversation.append(file: metadata, nonce: nonce) as! ZMAssetClientMessage
+        let message = try! conversation.appendFile(with: metadata, nonce: nonce) as! ZMAssetClientMessage
         
         syncMOC.saveOrRollback()
         
