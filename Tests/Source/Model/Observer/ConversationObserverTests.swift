@@ -288,9 +288,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         
         // when
         self.checkThatItNotifiesTheObserverOfAChange(conversation,
-                                                     modifier: { conversation, _ in
-                                                        _ = conversation.append(text: "foo")
-            },
+                                                     modifier: { conversation, _ in try! conversation.appendText(content: "foo")},
                                                      expectedChangedFields: ["messagesChanged", "lastModifiedDateChanged"],
                                                      expectedChangedKeys: ["allMessages", "lastModifiedDate"])
     }
@@ -841,7 +839,7 @@ final class ConversationObserverTests : NotificationDispatcherTestBase {
         self.token = ConversationChangeInfo.add(observer: observer, for: conversation)
         
         // when
-        conversation.append(text: "Foo")
+        try! conversation.appendText(content: "Foo")
         self.uiMOC.saveOrRollback()
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
 
@@ -1069,7 +1067,7 @@ extension ConversationObserverTests {
             
             self.startMeasuring()
             for _ in 1...count {
-                conversation.append(text: "hello")
+                try! conversation.appendText(content: "hello")
                 self.uiMOC.saveOrRollback()
             }
             XCTAssertEqual(observer.notifications.count, count)
@@ -1095,7 +1093,7 @@ extension ConversationObserverTests {
             
             self.startMeasuring()
             for _ in 1...count {
-                conversation.append(text: "hello")
+                try! conversation.appendText(content: "hello")
             }
             self.uiMOC.saveOrRollback()
             XCTAssertEqual(observer.notifications.count, 1)
@@ -1122,7 +1120,7 @@ extension ConversationObserverTests {
                 let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
                 self.uiMOC.saveOrRollback()
                 _ = ConversationChangeInfo.add(observer: observer, for: conversation)
-                conversation.append(text: "hello")
+                try! conversation.appendText(content: "hello")
                 self.uiMOC.saveOrRollback()
             }
             self.stopMeasuring()

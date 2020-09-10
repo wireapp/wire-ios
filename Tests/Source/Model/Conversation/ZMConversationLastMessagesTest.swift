@@ -37,7 +37,7 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         
         // WHEN
         (0...40).forEach { i in
-            conversation.append(text: "\(i)")
+            try! conversation.appendText(content: "\(i)")
         }
         
         // THEN
@@ -50,7 +50,7 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         
         // WHEN
         (0...40).forEach { i in
-            conversation.append(text: "\(i)")
+            try! conversation.appendText(content: "\(i)")
         }
         
         // THEN
@@ -66,7 +66,7 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         (0...40).forEach { i in
-            conversation.append(text: "\(i)")
+            try! conversation.appendText(content: "\(i)")
         }
 
         // THEN
@@ -83,11 +83,11 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
 
         // WHEN
         (1...10).forEach { i in
-            conversation.append(text: "\(i)")
+            try! conversation.appendText(content: "\(i)")
         }
 
         (1...10).forEach { i in
-            otherConversation.append(text: "Other \(i)")
+            try! otherConversation.appendText(content: "Other \(i)")
         }
 
         // THEN
@@ -105,7 +105,7 @@ public class ZMConversationLastMessagesTest: ZMBaseManagedObjectTest {
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         
         // when
-        let message = conversation.append(text: "Test Message") as! ZMMessage
+        let message = try! conversation.appendText(content: "Test Message") as! ZMMessage
         message.sender = ZMUser.selfUser(in: self.uiMOC)
         message.markAsSent()
         message.textMessageData?.editText("Edited Test Message", mentions: [], fetchLinkPreview: true)

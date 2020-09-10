@@ -50,7 +50,7 @@ class ClientMessageTests_ZMImageOwner: BaseZMClientMessageTests {
             genericMessage = GenericMessage(content: MessageEdit(replacingMessageID: UUID.create(), text: text), nonce: nonce)
         }
         do {
-            clientMessage.add(try genericMessage.serializedData())
+            try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
             XCTFail()
         }

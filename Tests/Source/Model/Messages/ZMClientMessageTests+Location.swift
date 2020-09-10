@@ -37,7 +37,7 @@ class ClientMessageTests_Location: BaseZMMessageTests {
         
         // when
         let clientMessage = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
-        clientMessage.add(try message.serializedData())
+        try clientMessage.setUnderlyingMessage(message)
         
         // then
         let locationMessageData = clientMessage.locationMessageData

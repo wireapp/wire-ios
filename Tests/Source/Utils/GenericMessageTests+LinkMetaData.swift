@@ -86,9 +86,9 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         let text = Text(content: "Text", mentions: [], linkPreviews: [preview], replyingTo: nil)
         let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: nil)
         do {
-            clientMessage.add(try genericMessage.serializedData())
+            try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
-            return
+            XCTFail()
         }
         
         // when
@@ -116,9 +116,9 @@ class GenericMessageTests_LinkMetaData: BaseZMMessageTests {
         let text = Text(content: "sample text", mentions: [], linkPreviews: [article], replyingTo: nil)
         let genericMessage = GenericMessage(content: text, nonce: nonce, expiresAfter: nil)
         do {
-            clientMessage.add(try genericMessage.serializedData())
+            try clientMessage.setUnderlyingMessage(genericMessage)
         } catch {
-            return
+            XCTFail()
         }
         
         // when

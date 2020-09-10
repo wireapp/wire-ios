@@ -68,7 +68,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.append(text: "foo") as! ZMClientMessage
+        let lastMessage = try! conversation.appendText(content: "foo") as! ZMClientMessage
         lastMessage.serverTimestamp = Date().addingTimeInterval(10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()
@@ -96,7 +96,7 @@ class ZMClientMessageTests_Unarchiving : BaseZMClientMessageTests {
         conversation.isArchived = true
         uiMOC.saveOrRollback()
 
-        let lastMessage = conversation.append(text: "foo") as! ZMClientMessage
+        let lastMessage = try! conversation.appendText(content: "foo") as! ZMClientMessage
         lastMessage.serverTimestamp = Date().addingTimeInterval(-10)
         conversation.lastServerTimeStamp = lastMessage.serverTimestamp!
         conversation.clearMessageHistory()

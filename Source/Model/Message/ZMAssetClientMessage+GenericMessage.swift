@@ -19,7 +19,7 @@
 import Foundation
 
 extension ZMAssetClientMessage {
-    
+
     func genericMessageDataFromDataSet(for format: ZMImageFormat) -> ZMGenericMessageData? {
         return self.dataSet.lazy
             .compactMap { $0 as? ZMGenericMessageData }
@@ -52,40 +52,51 @@ extension ZMAssetClientMessage {
         }
         return cachedUnderlyingAssetMessage
     }
+
+    /// Set the underlying protobuf message data.
+    ///
+    /// - Parameter message: The protobuf message object to be associated with this asset client message.
+    /// - Throws `ProcessingError` if the protobuf data can't be processed.
     
-    public func add(_ genericMessage: GenericMessage) {
-        do {
-        _ = self.mergeWithExistingData(data: try genericMessage.serializedData())
-        } catch {
-            return
-        }
+    public func setUnderlyingMessage(_ message: GenericMessage) throws {
+        try mergeWithExistingData(message: message)
     }
-    
-    func mergeWithExistingData(data: Data) -> ZMGenericMessageData? {
+
+    @discardableResult
+    func mergeWithExistingData(message: GenericMessage) throws -> ZMGenericMessageData {
         cachedUnderlyingAssetMessage = nil
-      
-        guard let genericMessage = try? GenericMessage(serializedData: data) else {
-            return nil
+
+        guard
+            let imageFormat = message.imageAssetData?.imageFormat(),
+            let existingMessageData = genericMessageDataFromDataSet(for: imageFormat)
+        else {
+            return try createNewGenericMessageData(with: message)
         }
 
-        if let imageFormat = genericMessage.imageAssetData?.imageFormat(),
-            let existingMessageData = genericMessageDataFromDataSet(for: imageFormat)
-        {
-            existingMessageData.setProtobuf(data)
+        do {
+            try existingMessageData.setGenericMessage(message)
             return existingMessageData
-        } else {
-            return createNewGenericMessage(with: data)
+        } catch {
+            throw ProcessingError.failedToProcessMessageData(reason: error.localizedDescription)
         }
     }
-    
-    /// Creates a new generic message from the given data
-    func createNewGenericMessage(with data: Data) -> ZMGenericMessageData {
-        guard let moc = self.managedObjectContext else { fatalError() }
+
+    func createNewGenericMessageData(with message: GenericMessage) throws -> ZMGenericMessageData {
+        guard let moc = managedObjectContext else {
+            throw ProcessingError.missingManagedObjectContext
+        }
+
         let messageData = ZMGenericMessageData.insertNewObject(in: moc)
-        messageData.setProtobuf(data)
-        messageData.asset = self
-        moc.processPendingChanges()
-        return messageData
+
+        do {
+            try messageData.setGenericMessage(message)
+            messageData.asset = self
+            moc.processPendingChanges()
+            return messageData
+        } catch {
+            moc.delete(messageData)
+            throw ProcessingError.failedToProcessMessageData(reason: error.localizedDescription)
+        }
     }
     
     func underlyingMessageMergedFromDataSet(filter: (GenericMessage)->Bool) -> GenericMessage? {

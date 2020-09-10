@@ -27,7 +27,7 @@ class ZMClientMessageTests_Mentions: BaseZMClientMessageTests {
         let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         
         do {
-            message.add(try GenericMessage(content: text).serializedData())
+            try message.setUnderlyingMessage(GenericMessage(content: text))
         } catch {
             XCTFail()
         }

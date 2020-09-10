@@ -19,43 +19,25 @@
 import Foundation
 
 extension ZMClientMessage {
+
     override open func obfuscate() {
         super.obfuscate()
-        if underlyingMessage?.knockData == nil {
-            guard let obfuscatedMessage = underlyingMessage?.obfuscatedMessage() else {
-                return
-            }
-            deleteContent()
-            do {
-                let data = try obfuscatedMessage.serializedData()
-                mergeWithExistingData(data)
-            }  catch {}
+
+        guard
+            let underlyingMessage = underlyingMessage,
+            !underlyingMessage.hasKnock,
+            let obfuscatedMessage = underlyingMessage.obfuscatedMessage()
+        else {
+            return
+        }
+
+        deleteContent()
+
+        do {
+            try mergeWithExistingData(obfuscatedMessage)
+        } catch {
+            Logging.messageProcessing.warn("Failed to merge obfuscated message. Reason: \(error.localizedDescription)")
         }
     }
-    
-    @objc(mergeWithExistingData:)
-    func mergeWithExistingData(_ data: Data) -> ZMGenericMessageData? {
-        cachedUnderlyingMessage = nil
-        
-        let existingMessageData = dataSet
-            .compactMap { $0 as? ZMGenericMessageData }
-            .first
-        
-        guard existingMessageData != nil else {
-            return createNewGenericMessage(with: data)
-            
-        }
-        existingMessageData?.setProtobuf(data)
-        return existingMessageData
-    }
-    
-    private func createNewGenericMessage(with data: Data) -> ZMGenericMessageData? {
-        guard let moc = self.managedObjectContext else {
-            fatalError()
-        }
-        let messageData = ZMGenericMessageData.insertNewObject(in: moc)
-        messageData.setProtobuf(data)
-        messageData.message = self
-        return messageData
-    }
+
 }

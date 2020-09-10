@@ -30,10 +30,10 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let user1 = createUser()
         let user2 = createUser()
         
-        let message1 = conversation.append(text: "text1") as! ZMClientMessage
-        let message2 = conversation.append(text: "text2") as! ZMClientMessage
-        let message3 = conversation.append(text: "text3") as! ZMClientMessage
-        let message4 = conversation.append(text: "text4") as! ZMClientMessage
+        let message1 = try! conversation.appendText(content: "text1") as! ZMClientMessage
+        let message2 = try! conversation.appendText(content: "text2") as! ZMClientMessage
+        let message3 = try! conversation.appendText(content: "text3") as! ZMClientMessage
+        let message4 = try! conversation.appendText(content: "text4") as! ZMClientMessage
         
         [message1, message2, message3, message4].forEach({ $0.expectsReadConfirmation = true })
         
@@ -69,9 +69,9 @@ class ZMConversationTests_Confirmations: ZMConversationTestsBase {
         let user1 = createUser()
         let user2 = createUser()
         
-        let message1 = conversation.append(text: "text1") as! ZMClientMessage
-        let message2 = conversation.append(text: "text2") as! ZMClientMessage
-        let message3 = conversation.append(text: "text3") as! ZMClientMessage
+        let message1 = try! conversation.appendText(content: "text1") as! ZMClientMessage
+        let message2 = try! conversation.appendText(content: "text2") as! ZMClientMessage
+        let message3 = try! conversation.appendText(content: "text3") as! ZMClientMessage
         
         [message1, message2, message3].forEach({ $0.expectsReadConfirmation = true })
         

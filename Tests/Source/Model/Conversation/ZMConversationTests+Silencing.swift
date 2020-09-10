@@ -152,7 +152,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let conversation = archivedConversation(with: .regular)
         
         // WHEN
-        let quotedMessage = conversation.append(text: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
         quotedMessage.sender = selfUser
         
         // appending the message unarchives the conversation, so archive it again.
@@ -179,7 +179,7 @@ class ZMConversationTests_Silencing: ZMConversationTestsBase {
         let conversation = archivedConversation(with: .all)
         
         // WHEN
-        let quotedMessage = conversation.append(text: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "Hello!", mentions: [], replyingTo: nil, fetchLinkPreview: false, nonce: .create()) as! ZMClientMessage
         quotedMessage.sender = selfUser
         
         // appending the message unarchives the conversation, so archive it again.

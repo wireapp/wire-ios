@@ -105,7 +105,7 @@ class SnapshotCenterTests : BaseZMMessageTests {
         }
         conv.mutedMessageTypes = .all
         conv.removeParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: uiMOC))
-        conv.append(text: "foo")
+        try! conv.appendText(content: "foo")
         conv.resetLocallyModifiedKeys(conv.keysThatHaveLocalModifications)
         _ = sut.extractChangedKeysFromSnapshot(for: conv)
         

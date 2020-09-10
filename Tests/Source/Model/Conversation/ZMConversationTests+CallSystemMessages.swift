@@ -121,7 +121,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
             let user = self.createUser(onMoc: self.syncMOC)
             let timestamp = Date()
             let first = conversation.appendMissedCallMessage(fromUser: user, at: timestamp)
-            let intermediate = conversation.append(text: "Answer the call, please!") as! ZMMessage
+            let intermediate = try! conversation.appendText(content: "Answer the call, please!") as! ZMMessage
 
             // when
             let second = conversation.appendMissedCallMessage(fromUser: user, at: timestamp.addingTimeInterval(100))
@@ -211,7 +211,7 @@ class ZMConversationCallSystemMessageTests: ZMConversationTestsBase {
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         let user = createUser()
         let first = conversation.appendPerformedCallMessage(with: 42, caller: user)
-        let intermediate = conversation.append(text: "Answer the call, please!") as! ZMMessage
+        let intermediate = try! conversation.appendText(content: "Answer the call, please!") as! ZMMessage
 
         // when
         let second = conversation.appendPerformedCallMessage(with: 42, caller: user)

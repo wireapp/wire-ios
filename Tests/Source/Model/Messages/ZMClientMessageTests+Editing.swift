@@ -20,7 +20,8 @@ import XCTest
 @testable import WireDataModel
 
 class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
-    func testThatItEditsTheMessage() {
+
+    func testThatItEditsTheMessage() throws {
         // GIVEN
         let conversationID = UUID.create()
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
@@ -32,8 +33,9 @@ class ZMClientMessageTests_Editing: BaseZMClientMessageTests {
         let nonce = UUID.create()
         let message = ZMClientMessage(nonce: nonce, managedObjectContext: uiMOC)
         message.sender = user
-        let data = try? GenericMessage(content: Text(content: "text")).serializedData()
-        message.add(data)
+
+        try message.setUnderlyingMessage(GenericMessage(content: Text(content: "text")))
+
         conversation.append(message)
         
         let edited = MessageEdit.with {
@@ -64,7 +66,7 @@ class ZMClientMessageTests_TextMessageData : BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let message = conversation.append(text: "hello") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "hello") as! ZMClientMessage
         message.delivered = true
         
         // when
@@ -80,7 +82,7 @@ class ZMClientMessageTests_TextMessageData : BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let message = conversation.append(text: "hello") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "hello") as! ZMClientMessage
         message.delivered = true
         message.addReaction("🤠", forUser: selfUser)
         XCTAssertFalse(message.reactions.isEmpty)
@@ -98,8 +100,8 @@ class ZMClientMessageTests_TextMessageData : BaseZMClientMessageTests {
         let conversation = ZMConversation.insertNewObject(in:uiMOC)
         conversation.remoteIdentifier = UUID.create()
         
-        let quotedMessage = conversation.append(text: "Let's grab some lunch") as! ZMClientMessage
-        let message = conversation.append(text: "Yes!", replyingTo: quotedMessage) as! ZMClientMessage
+        let quotedMessage = try! conversation.appendText(content: "Let's grab some lunch") as! ZMClientMessage
+        let message = try! conversation.appendText(content: "Yes!", replyingTo: quotedMessage) as! ZMClientMessage
         message.delivered = true
         XCTAssertTrue(message.hasQuote)
         
@@ -129,7 +131,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMClientMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMClientMessage
         message.sender = sender
         message.markAsSent()
         message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
@@ -170,7 +172,7 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         
         // WHEN
-        let message: ZMMessage = conversation.append(text: "ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂") as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: "ť̹̱͉̥̬̪̝ͭ͗͊̕e͇̺̳̦̫̣͕ͫͤ̅s͇͎̟͈̮͎̊̾̌͛ͭ́͜t̗̻̟̙͑ͮ͊ͫ̂") as! ZMMessage
         
         // THEN
         XCTAssertEqual(message.textMessageData?.messageText, "test̻̟̙")
@@ -183,7 +185,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMClientMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMClientMessage
         message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
         message.linkPreviewState = ZMLinkPreviewState.done
         message.markAsSent()
@@ -205,7 +207,7 @@ extension ZMClientMessageTests_Editing {
         let fetchLinkPreview = false
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText, mentions: [], fetchLinkPreview: fetchLinkPreview, nonce: UUID.create()) as! ZMClientMessage
+        let message = try! conversation.appendText(content: oldText, mentions: [], fetchLinkPreview: fetchLinkPreview, nonce: UUID.create()) as! ZMClientMessage
         message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
         message.markAsSent()
         
@@ -225,7 +227,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = conversation.append(text: oldText) as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
         message.serverTimestamp = Date.init(timeIntervalSinceNow: -20)
         message.expire()
         XCTAssertEqual(message.deliveryState, ZMDeliveryState.failedToSend)
@@ -246,7 +248,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMMessage
         message.serverTimestamp = originalDate
         message.markAsSent()
         
@@ -276,7 +278,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMMessage
         message.serverTimestamp = originalDate
         message.markAsSent()
         
@@ -305,7 +307,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message: ZMClientMessage = conversation.append(text: oldText) as! ZMClientMessage
+        let message: ZMClientMessage = try! conversation.appendText(content: oldText) as! ZMClientMessage
         message.serverTimestamp = originalDate
         message.markAsSent()
         
@@ -374,8 +376,8 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let quotedMessage = conversation.append(text: "Quote") as! ZMMessage
-        let message = conversation.append(text: oldText,
+        let quotedMessage = try! conversation.appendText(content: "Quote") as! ZMMessage
+        let message = try! conversation.appendText(content: oldText,
                                           mentions: [],
                                           replyingTo: quotedMessage,
                                           fetchLinkPreview: false,
@@ -410,14 +412,14 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         conversation.conversationType = ZMConversationType.oneOnOne
         
-        let message = conversation.append(text: oldText, mentions: [], fetchLinkPreview: false, nonce: UUID.create()) as! ZMClientMessage
+        let message = try! conversation.appendText(content: oldText, mentions: [], fetchLinkPreview: false, nonce: UUID.create()) as! ZMClientMessage
         var genericMessage = message.underlyingMessage!
         genericMessage.setExpectsReadConfirmation(true)
         
         do {
-            message.add(try genericMessage.serializedData())
+            try message.setUnderlyingMessage(genericMessage)
         } catch {
-            return
+            XCTFail()
         }
         
         let updateEvent = createMessageEditUpdateEvent(oldNonce: message.nonce!, newNonce: UUID.create(), conversationID: conversation.remoteIdentifier!, senderID: senderID!, newText: newText)
@@ -444,7 +446,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMMessage
         
         message.addReaction("👻", forUser: self.selfUser)
         self.uiMOC.saveOrRollback()
@@ -487,7 +489,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMMessage
         message.visibleInConversation = nil
         message.hiddenInConversation = conversation
         
@@ -513,7 +515,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message = conversation.append(text: oldText) as! ZMMessage
+        let message = try! conversation.appendText(content: oldText) as! ZMMessage
         message.sender = sender
         message.serverTimestamp = oldDate
         
@@ -551,7 +553,7 @@ extension ZMClientMessageTests_Editing {
         conversation.remoteIdentifier = UUID.create()
         
         // insert message locally
-        let message: ZMMessage = conversation.append(text: oldText) as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
         message.sender = sender
         message.serverTimestamp = oldDate
         
@@ -585,7 +587,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = conversation.append(text: "Hallo") as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
         
         let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
         otherUser.remoteIdentifier = UUID.create()
@@ -620,7 +622,7 @@ extension ZMClientMessageTests_Editing {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = conversation.append(text: "Hallo") as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: "Hallo") as! ZMMessage
         
         let otherUser = ZMUser.insertNewObject(in:self.uiMOC)
         otherUser.remoteIdentifier = UUID.create()
@@ -660,7 +662,7 @@ extension ZMClientMessageTests_Editing {
         
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.remoteIdentifier = UUID.create()
-        let message: ZMMessage = conversation.append(text: oldText) as! ZMMessage
+        let message: ZMMessage = try! conversation.appendText(content: oldText) as! ZMMessage
         message.sender = sender
         message.nonce = oldNonce
         

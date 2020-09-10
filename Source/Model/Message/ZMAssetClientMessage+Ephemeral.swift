@@ -56,7 +56,11 @@ extension ZMAssetClientMessage {
         deleteContent()
         
         if let obfuscatedMessage = obfuscatedMessage {
-            _ = try? createNewGenericMessage(with: obfuscatedMessage.serializedData())
+            do {
+                _ = try createNewGenericMessageData(with: obfuscatedMessage)
+            } catch {
+                Logging.messageProcessing.warn("Failed to process obfuscated message. Reason: \(error.localizedDescription)")
+            }
         }
     }
     

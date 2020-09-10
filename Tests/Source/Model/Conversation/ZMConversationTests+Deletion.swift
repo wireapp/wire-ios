@@ -24,7 +24,7 @@ class ZMConversationTests_Deletion: ZMConversationTestsBase {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let fileMetadata = createFileMetadata()
-        let message = sut.append(file: fileMetadata)!
+        let message = try! sut.appendFile(with: fileMetadata)
         let cacheKey = FileAssetCache.cacheKeyForAsset(message)!
         self.uiMOC.zm_fileAssetCache.storeAssetData(message, encrypted: false, data: Data.secureRandomData(ofLength: 100))
         XCTAssertNotNil(uiMOC.zm_fileAssetCache.assetData(cacheKey))

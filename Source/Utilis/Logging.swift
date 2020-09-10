@@ -16,25 +16,10 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 
-@testable import WireDataModel
+enum Logging {
 
-extension ZMBaseManagedObjectTest {
-    
-    func createClientTextMessage() -> ZMClientMessage? {
-        return createClientTextMessage(withText: self.name)
-    }
+    static let messageProcessing = ZMSLog(tag: "Message Processing")
 
-    func createClientTextMessage(withText text: String) -> ZMClientMessage? {
-        let nonce = UUID.create()
-        let message = ZMClientMessage.init(nonce: nonce, managedObjectContext: self.uiMOC)
-        let textMessage = GenericMessage(content: Text(content: text, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
-        do {
-            try message.setUnderlyingMessage(textMessage)
-        } catch {
-            XCTFail()
-        }
-        return message
-    }
 }

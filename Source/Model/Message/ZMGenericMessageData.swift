@@ -22,8 +22,6 @@ import WireCryptobox
 @objc(ZMGenericMessageData)
 @objcMembers public class ZMGenericMessageData: ZMManagedObject {
 
-    private static let log = ZMSLog(tag: "EAR")
-
     // MARK: - Static
 
     override open class func entityName() -> String {
@@ -37,48 +35,9 @@ import WireCryptobox
 
     // MARK: - Managed Properties
 
-    /// The underlying storage of `data`.
+    /// The (possibly encrypted) serialized Profobuf data.
 
-    @NSManaged private var primitiveData: Data
-
-    /// The serialized Protobuf data.
-
-    private var data: Data? {
-        get {
-            guard let moc = managedObjectContext else { return nil }
-
-            willAccessValue(forKey: Self.dataKey)
-            let d = primitiveData
-            didAccessValue(forKey: Self.dataKey)
-
-            do {
-                return try decryptDataIfNeeded(data: d, in: moc)
-            } catch {
-                Self.log.warn("Could not decrypt message data: \(error.localizedDescription)")
-            }
-
-            return nil
-        }
-
-        set {
-            guard
-                let newData = newValue,
-                let moc = managedObjectContext
-            else {
-                return
-            }
-
-            do {
-                let (data, nonce) = try encryptDataIfNeeded(data: newData, in: moc)
-                willChangeValue(forKey: Self.dataKey)
-                primitiveData = data
-                didChangeValue(forKey: Self.dataKey)
-                self.nonce = nonce
-            } catch {
-                Self.log.warn("Could not encrypt message data: \(error.localizedDescription)")
-            }
-        }
-    }
+    @NSManaged private var data: Data
 
     /// The nonce used to encrypt `data`, if applicable.
 
@@ -94,11 +53,15 @@ import WireCryptobox
 
     // MARK: - Properties
 
-    /// The deserialized Protobuf object.
+    /// The deserialized Protobuf object, if available.
 
     public var underlyingMessage: GenericMessage? {
-        guard let data = data else { return nil }
-        return try? GenericMessage(serializedData: data)
+        do {
+            return try GenericMessage(serializedData: getProtobufData())
+        } catch {
+            Logging.messageProcessing.warn("Could not retrieve GenericMessage: \(error.localizedDescription)")
+            return nil
+        }
     }
 
     /// Whether the Protobuf data is encrypted in the database.
@@ -114,22 +77,82 @@ import WireCryptobox
 
     // MARK: - Methods
 
-    /// Set the protobuf data.
-    ///
-    /// - Parameter data: Serialized data representing a protobuf object.
+    private func getProtobufData() throws -> Data {
+        guard let moc = managedObjectContext else {
+            throw ProcessingError.missingManagedObjectContext
+        }
 
-    public func setProtobuf(_ data: Data) {
-        self.data = data
+        return try decryptDataIfNeeded(data: data, in: moc)
     }
 
-    private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
-        guard let nonce = nonce else { return data }
-        return try moc.decryptData(data: data, nonce: nonce)
+    /// Set the generic message.
+    ///
+    /// This method will attempt to serialize the protobuf object and store its data in this
+    /// instance.
+    ///
+    /// - Parameter message: The protobuf object whose serialized data will be stored.
+    /// - Throws: `ProcessingError` if the data can't be stored.
+
+    public func setGenericMessage(_ message: GenericMessage) throws {
+        guard let protobufData = try? message.serializedData() else {
+            throw ProcessingError.failedToSerializeMessage
+        }
+
+        guard let moc = managedObjectContext else {
+            throw ProcessingError.missingManagedObjectContext
+        }
+
+        let (data, nonce) = try encryptDataIfNeeded(data: protobufData, in: moc)
+        self.data = data
+        self.nonce = nonce
     }
 
     private func encryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> (data: Data, nonce: Data?) {
         guard moc.encryptMessagesAtRest else { return (data, nonce: nil) }
-        return try moc.encryptData(data: data)
+
+        do {
+            return try moc.encryptData(data: data)
+        } catch let error as NSManagedObjectContext.EncryptionError {
+            throw ProcessingError.failedToEncrypt(reason: error)
+        }
     }
-    
+
+    private func decryptDataIfNeeded(data: Data, in moc: NSManagedObjectContext) throws -> Data {
+        guard let nonce = nonce else { return data }
+
+        do {
+            return try moc.decryptData(data: data, nonce: nonce)
+        } catch let error as NSManagedObjectContext.EncryptionError {
+            throw ProcessingError.failedToDecrypt(reason: error)
+        }
+    }
+
+}
+
+// MARK: - Encryption Error
+
+extension ZMGenericMessageData {
+
+    enum ProcessingError: LocalizedError {
+
+        case missingManagedObjectContext
+        case failedToSerializeMessage
+        case failedToEncrypt(reason: NSManagedObjectContext.EncryptionError)
+        case failedToDecrypt(reason: NSManagedObjectContext.EncryptionError)
+
+        var errorDescription: String? {
+            switch self {
+            case .missingManagedObjectContext:
+                return "A managed object context is required to process the message data."
+            case .failedToSerializeMessage:
+                return "The message data couldn't not be serialized."
+            case .failedToEncrypt(reason: let encryptionError):
+                return "The message data could not be encrypted. \(encryptionError.errorDescription ?? "")"
+            case .failedToDecrypt(reason: let encryptionError):
+                return "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
+            }
+        }
+
+    }
+
 }

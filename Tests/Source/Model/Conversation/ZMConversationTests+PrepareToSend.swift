@@ -28,7 +28,7 @@ class ZMConversationPrepareToSendTests : ZMConversationTestsBase {
         conversation.securityLevel = .secureWithIgnored
         
         // WHEN
-        let message = conversation.append(text: "Foo") as! ZMMessage
+        let message = try! conversation.appendText(content: "Foo") as! ZMMessage
         self.uiMOC.saveOrRollback()
         
         // THEN
@@ -43,7 +43,7 @@ class ZMConversationPrepareToSendTests : ZMConversationTestsBase {
         // GIVEN
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
         conversation.securityLevel = .secure
-        let message = conversation.append(text: "Foo") as! ZMMessage
+        let message = try! conversation.appendText(content: "Foo") as! ZMMessage
         message.expire()
         self.uiMOC.saveOrRollback()
 

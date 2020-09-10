@@ -46,21 +46,21 @@ extension ZMClientMessage: ZMTextMessageData {
     }
     
     public func editText(_ text: String, mentions: [Mention], fetchLinkPreview: Bool) {
-        guard let nonce = nonce, isEditableMessage else {
-            return
-        }
+        guard let nonce = nonce, isEditableMessage else { return }
         
         // Quotes are ignored in edits but keep it to mark that the message has quote for us locally
         let editedText = Text(content: text, mentions: mentions, linkPreviews: [], replyingTo: self.quote as? ZMOTRMessage)
         let editNonce = UUID()
-        let updatedMessage = GenericMessage(content: MessageEdit(replacingMessageID: nonce,
-                                                                 text: editedText),
-                                            nonce: editNonce)
+        let content = MessageEdit(replacingMessageID: nonce, text: editedText)
+        let updatedMessage = GenericMessage(content: content, nonce: editNonce)
+
         do {
-            self.add(try updatedMessage.serializedData())
+            try setUnderlyingMessage(updatedMessage)
         } catch {
+            Logging.messageProcessing.warn("Failed to edit text message. Reason: \(error.localizedDescription)")
             return
         }
+
         updateNormalizedText()
         
         self.nonce = editNonce

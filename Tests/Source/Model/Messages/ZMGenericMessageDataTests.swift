@@ -37,12 +37,11 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let genericMessage = createGenericMessage(text: "Hello, world")
-        let messageData = try genericMessage.serializedData()
 
         uiMOC.encryptMessagesAtRest = false
 
         // When
-        sut.setProtobuf(messageData)
+        try sut.setGenericMessage(genericMessage)
 
         // Then
         XCTAssertFalse(sut.isEncrypted)
@@ -54,13 +53,12 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let genericMessage = createGenericMessage(text: "Hello, world")
-        let messageData = try genericMessage.serializedData()
 
         uiMOC.encryptMessagesAtRest = true
         uiMOC.encryptionKeys = validEncryptionKeys
 
         // When
-        sut.setProtobuf(messageData)
+        try sut.setGenericMessage(genericMessage)
 
         // Then
         XCTAssertTrue(sut.isEncrypted)
@@ -78,11 +76,10 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
-        let newMessageData = try newGenericMessage.serializedData()
 
         uiMOC.encryptionKeys = nil
 
-        sut.setProtobuf(newMessageData)
+        XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
         uiMOC.encryptionKeys = encryptionKeys
@@ -110,11 +107,10 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
         // When
         let newGenericMessage = createGenericMessage(text: "Goodbye!")
-        let newMessageData = try newGenericMessage.serializedData()
 
         uiMOC.encryptionKeys = malformedEncryptionKeys
 
-        sut.setProtobuf(newMessageData)
+        XCTAssertThrowsError(try sut.setGenericMessage(newGenericMessage))
 
         // Then
         uiMOC.encryptionKeys = encryptionKeys
@@ -143,12 +139,11 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
     @discardableResult
     private func createAndStoreEncryptedData(sut: ZMGenericMessageData, text: String) throws -> GenericMessage {
         let genericMessage = createGenericMessage(text: text)
-        let messageData = try genericMessage.serializedData()
 
         uiMOC.encryptMessagesAtRest = true
         uiMOC.encryptionKeys = validEncryptionKeys
 
-        sut.setProtobuf(messageData)
+        try sut.setGenericMessage(genericMessage)
 
         XCTAssertEqual(sut.underlyingMessage, genericMessage)
 

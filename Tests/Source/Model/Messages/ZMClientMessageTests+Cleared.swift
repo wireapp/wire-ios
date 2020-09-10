@@ -28,7 +28,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             // given
             self.syncConversation.clearedTimeStamp = Date()
             self.syncConversation.remoteIdentifier = UUID()
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
+            guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else { return XCTFail() }
             
             // when
             guard let payloadAndStrategy = message.encryptForTransport() else { return XCTFail() }
@@ -51,7 +51,7 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
             self.syncConversation.clearedTimeStamp = Date()
 
             // when
-            guard let message = ZMConversation.appendSelfConversation(withClearedOf: self.syncConversation) else {
+            guard let message = try? ZMConversation.updateSelfConversation(withClearedOf: self.syncConversation) else {
                 XCTFail()
                 return
             }
@@ -66,12 +66,12 @@ final class ClientMessageTests_Cleared: BaseZMClientMessageTests {
         self.syncMOC.performGroupedBlockAndWait {
 
             self.syncConversation.remoteIdentifier = UUID()
-            let message1 = self.syncConversation.append(text: "B") as! ZMMessage
+            let message1 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
             message1.expire()
 
-            self.syncConversation.append(text: "A")
+            try! self.syncConversation.appendText(content: "A")
 
-            let message3 = self.syncConversation.append(text: "B") as! ZMMessage
+            let message3 = try! self.syncConversation.appendText(content: "B") as! ZMMessage
             message3.expire()
 
             self.syncConversation.lastServerTimeStamp = message3.serverTimestamp

@@ -158,7 +158,7 @@ class NewUnreadMessageObserverTests : NotificationDispatcherTestBase {
         
         let msg1 = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
         do {
-            msg1.add(try genMsg.serializedData())
+            try msg1.setUnderlyingMessage(genMsg)
         } catch {
             XCTFail()
         }
