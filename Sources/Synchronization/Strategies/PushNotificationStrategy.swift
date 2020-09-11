@@ -102,7 +102,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 extension PushNotificationStrategy: UpdateEventProcessor {
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
-            let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc).compactMap { $0 }
+            let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
             var alert = ClientNotification(title: "", body: "")
             if localNotifications.count == 1 {
                 if let notification = localNotifications.first {
