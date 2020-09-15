@@ -23,7 +23,7 @@ import LocalAuthentication
 /// EncryptionKeys is responsible for creating / deleting the encryptions keys
 /// which are used for supporting encryption at rest
 ///
-public struct EncryptionKeys: Equatable {
+public struct EncryptionKeys {
     
     enum KeychainItem {
         case privateKey(_ account: Account, _ context: LAContext?, _ prompt: String?)
@@ -142,7 +142,7 @@ public struct EncryptionKeys: Equatable {
     ///
     /// This key is used to encrypt/decrypt
     /// messages in the database.
-    public let databaseKey: Data
+    public let databaseKey: VolatileData
     
     private static let databaseKeyAlgorithm: SecKeyAlgorithm = .eciesEncryptionCofactorX963SHA256AESGCM
     
@@ -163,13 +163,13 @@ public struct EncryptionKeys: Equatable {
     public init(account: Account, context: LAContext? = nil, authenticationMessage: String? = nil) throws {
         self.publicKey = try Self.fetchItem(.publicKey(account))
         self.privateKey = try Self.fetchItem(.privateKey(account, context, authenticationMessage))
-        self.databaseKey = try Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey)
+        self.databaseKey = try VolatileData(from: Self.decryptDatabaseKey(Self.fetchItem(.databaseKey(account)), privateKey: privateKey))
     }
     
     init(publicKey: SecKey, privateKey: SecKey, databaseKey: Data) {
         self.publicKey = publicKey
         self.privateKey = privateKey
-        self.databaseKey = databaseKey
+        self.databaseKey = VolatileData(from: databaseKey)
     }
     
     // MARK: Create & Destroy keys
@@ -350,4 +350,16 @@ public struct EncryptionKeys: Equatable {
         }
     }
     
+}
+
+// MARK: - Equatable
+
+extension EncryptionKeys: Equatable {
+
+    public static func == (lhs: EncryptionKeys, rhs: EncryptionKeys) -> Bool {
+        return
+            lhs.publicKey == rhs.publicKey &&
+            lhs.privateKey == rhs.privateKey &&
+            lhs.databaseKey._storage == rhs.databaseKey._storage
+    }
 }
