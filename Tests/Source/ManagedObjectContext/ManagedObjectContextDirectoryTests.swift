@@ -64,3 +64,4 @@ class ManagedObjectContextDirectoryTests: DatabaseBaseTest {
     }
 
 }
+

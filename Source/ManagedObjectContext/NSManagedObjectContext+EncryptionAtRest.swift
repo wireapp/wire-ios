@@ -58,7 +58,7 @@ extension NSManagedObjectContext {
         let context = contextData()
 
         do {
-            let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(message: data, context: context, key: key)
+            let (ciphertext, nonce) = try ChaCha20Poly1305.AEADEncryption.encrypt(message: data, context: context, key: key._storage)
             return (ciphertext, nonce)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             throw EncryptionError.cryptobox(error: error)
@@ -71,7 +71,7 @@ extension NSManagedObjectContext {
         let context = contextData()
 
         do {
-            return try ChaCha20Poly1305.AEADEncryption.decrypt(ciphertext: data, nonce: nonce, context: context, key: key)
+            return try ChaCha20Poly1305.AEADEncryption.decrypt(ciphertext: data, nonce: nonce, context: context, key: key._storage)
         } catch let error as ChaCha20Poly1305.AEADEncryption.EncryptionError {
             throw EncryptionError.cryptobox(error: error)
         }
