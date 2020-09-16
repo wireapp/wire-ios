@@ -360,6 +360,7 @@ public class NotificationSession {
                 return
             }
             
+            ////TODO katerina: update the badge
             // once notification processing is finished, it's safe to update the badge
             let completionHandler = {
                 completion()
@@ -373,11 +374,12 @@ public class NotificationSession {
     
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable : Any], completionHandler: @escaping () -> Void) {
         syncContext.performGroupedBlock {
-//            guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
-//                return completionHandler()
-//            }
-            let nonce = UUID()
+            guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+                return completionHandler()
+            }
             self.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
+                
+                 ////TODO katerina: ?
 //                 self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
 //                    guard let strongSelf = self else { return }
 //                    strongSelf.syncMOC.performGroupedBlock {
@@ -388,7 +390,7 @@ public class NotificationSession {
         }
     }
     
-    func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
+    private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
               let rawNotificationType = notificationData[PushChannelKeys.notificationType.rawValue] as? String,
               let notificationType = PushNotificationType(rawValue: rawNotificationType) else {
@@ -407,7 +409,15 @@ public class NotificationSession {
         return nil
     }
     
-    func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable : Any]) -> UUID? {
+    private var apsSignalKeyStore: APSSignalingKeysStore? {
+        let selfUser = ZMUser.selfUser(in: syncContext)
+        guard let selfClient = selfUser.selfClient() else {
+            return nil
+        }
+        return APSSignalingKeysStore.init(userClient: selfClient)
+    }
+    
+    private func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable : Any]) -> UUID? {
         //    @"aps" : @{ @"alert": @{@"loc-args": @[],
         //                          @"loc-key"   : @"push.notification.new_message"}
         //              },
@@ -416,19 +426,19 @@ public class NotificationSession {
         //                @"type" : @"cipher"
         //
         
-//        guard let apsSignalKeyStore = apsSignalKeyStore else {
-//            Logging.network.debug("Could not initiate APSSignalingKeystore")
-//            return nil
-//        }
-//        
-//        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
-//            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
-//            return nil
-//        }
-//        
-//        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
-//            return UUID(uuidString: rawUUID)
-//        }
+        guard let apsSignalKeyStore = apsSignalKeyStore else {
+            Logging.network.debug("Could not initiate APSSignalingKeystore")
+            return nil
+        }
+        
+        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
+            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
+            return nil
+        }
+        
+        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+            return UUID(uuidString: rawUUID)
+        }
         
         return nil
     }
