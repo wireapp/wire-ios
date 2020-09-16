@@ -23,6 +23,27 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
+
+let PushChannelUserIDKey = "user"
+let PushChannelDataKey = "data"
+
+////TODO katerina: move to the request strategy
+extension Dictionary {
+    
+    internal func accountId() -> UUID? {
+        guard let userInfoData = self[PushChannelDataKey as! Key] as? [String: Any] else {
+            Logging.push.safePublic("No data dictionary in notification userInfo payload");
+            return nil
+        }
+    
+        guard let userIdString = userInfoData[PushChannelUserIDKey] as? String else {
+            return nil
+        }
+    
+        return UUID(uuidString: userIdString)
+    }
+}
+
 class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     
     let context : NSManagedObjectContext
@@ -161,6 +182,8 @@ public class NotificationSession {
     private let operationLoop: RequestGeneratingOperationLoop
 
     private let strategyFactory: StrategyFactory
+    
+    private var pushNotificationStatus: PushNotificationStatus
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -169,14 +192,18 @@ public class NotificationSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init(applicationGroupIdentifier: String,
-                            accountIdentifier: UUID,
-                            environment: BackendEnvironmentProvider,
-                            analytics: AnalyticsType?,
-                            delegate: NotificationSessionDelegate?
+    public convenience init?(payload: UNMutableNotificationContent,
+                             applicationGroupIdentifier: String,
+                             environment: BackendEnvironmentProvider,
+                             analytics: AnalyticsType?, //TODO: it's always nil now
+                             delegate: NotificationSessionDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
+        
+        guard let accountIdentifier = payload.userInfo.accountId() else {
+            return nil
+        }
         
         let group = DispatchGroup()
         
@@ -224,7 +251,8 @@ public class NotificationSession {
             analytics: analytics,
             delegate: delegate,
             sharedContainerURL: sharedContainerURL,
-            accountIdentifier: accountIdentifier
+            accountIdentifier: accountIdentifier,
+            payload: payload
         )
     }
     
@@ -234,7 +262,8 @@ public class NotificationSession {
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory
+                  strategyFactory: StrategyFactory,
+                  pushNotificationStatus: PushNotificationStatus
         ) throws {
         
         self.contextDirectory = contextDirectory
@@ -243,6 +272,7 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
+        self.pushNotificationStatus = pushNotificationStatus
         
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
@@ -254,7 +284,8 @@ public class NotificationSession {
                             analytics: AnalyticsType?,
                             delegate: NotificationSessionDelegate?,
                             sharedContainerURL: URL,
-                            accountIdentifier: UUID) throws {
+                            accountIdentifier: UUID,
+                            payload: UNMutableNotificationContent) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
@@ -287,9 +318,14 @@ public class NotificationSession {
             saveNotificationPersistence: saveNotificationPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory
+            strategyFactory: strategyFactory,
+            pushNotificationStatus: pushNotificationStatus
         )
         
+        self.receivedPushNotification(with: payload.userInfo) {
+            Logging.push.safePublic("Processing push payload completed")
+            //self?.notificationsTracker?.registerNotificationProcessingCompleted()
+        }
     }
 
     deinit {
@@ -300,5 +336,43 @@ public class NotificationSession {
         transportSession.reachability.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
+    }
+    
+    private func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
+        Logging.network.debug("Received push notification with payload: \(payload)")
+                
+        syncContext.performGroupedBlock {
+            if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
+                Logging.push.safePublic("Not displaying notification because app is not authenticated")
+                completion()
+                return
+            }
+            
+            // once notification processing is finished, it's safe to update the badge
+            let completionHandler = {
+                completion()
+//                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
+//                self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
+            }
+            
+            self.fetchEvents(fromPushChannelPayload: payload, completionHandler: completionHandler)
+        }
+    }
+    
+    func fetchEvents(fromPushChannelPayload payload: [AnyHashable : Any], completionHandler: @escaping () -> Void) {
+        syncContext.performGroupedBlock {
+//            guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+//                return completionHandler()
+//            }
+            let nonce = UUID()
+            self.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
+//                 self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
+//                    guard let strongSelf = self else { return }
+//                    strongSelf.syncMOC.performGroupedBlock {
+                        completionHandler()
+//                    }
+//                }
+            })
+        }
     }
 }
