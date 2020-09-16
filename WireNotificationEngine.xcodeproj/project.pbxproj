@@ -41,8 +41,6 @@
 		06394AA42497B31900380494 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9E2497AF5100380494 /* WireTransport.framework */; };
 		06394AA62497B32100380494 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9C2497AF4A00380494 /* WireRequestStrategy.framework */; };
 		06394AA82497B32700380494 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9A2497AF4500380494 /* WireMockTransport.framework */; };
-		0655FBC22511F9010070611E /* avs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0655FBC12511F9010070611E /* avs.framework */; };
-		0655FBC32511F90A0070611E /* avs.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0655FBC12511F9010070611E /* avs.framework */; };
 		066042A1247FE76C00A5F161 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 066042A0247FE76C00A5F161 /* Assets.xcassets */; };
 		067ECB3E2487A93D00701956 /* WireNotificationEngine.h in Headers */ = {isa = PBXBuildFile; fileRef = 067ECB3C2487A93D00701956 /* WireNotificationEngine.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		067ECB522487AB6000701956 /* WireNotificationEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 067ECB512487AB6000701956 /* WireNotificationEngineTests.swift */; };
@@ -160,7 +158,6 @@
 				060ED6E9249CF4FE00412C4A /* WireCryptobox.framework in Frameworks */,
 				060ED6EB249CF50400412C4A /* WireUtilities.framework in Frameworks */,
 				060ED6F9249CF53100412C4A /* WireImages.framework in Frameworks */,
-				0655FBC22511F9010070611E /* avs.framework in Frameworks */,
 				060ED6E6249CF4F900412C4A /* WireLinkPreview.framework in Frameworks */,
 				060ED6EE249CF50A00412C4A /* WireTransport.framework in Frameworks */,
 				060ED6F3249CF51800412C4A /* WireRequestStrategy.framework in Frameworks */,
@@ -180,7 +177,6 @@
 				06394AA62497B32100380494 /* WireRequestStrategy.framework in Frameworks */,
 				0602563B2489325E00E060E1 /* WireTesting.framework in Frameworks */,
 				0602563F2489327000E060E1 /* WireCryptobox.framework in Frameworks */,
-				0655FBC32511F90A0070611E /* avs.framework in Frameworks */,
 				060256412489327F00E060E1 /* PINCache.framework in Frameworks */,
 				060256452489328E00E060E1 /* WireImages.framework in Frameworks */,
 				060256472489329500E060E1 /* WireDataModel.framework in Frameworks */,
@@ -490,7 +486,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireMockTransport.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/avs.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputFileListPaths = (
