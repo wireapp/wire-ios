@@ -369,7 +369,6 @@
 				067ECB362487A93D00701956 /* Sources */,
 				067ECB372487A93D00701956 /* Frameworks */,
 				067ECB382487A93D00701956 /* Resources */,
-				0697128E2497B81900C32169 /* Copy Carthage Frameworks */,
 			);
 			buildRules = (
 			);
@@ -491,25 +490,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
-			);
-			name = "Copy Carthage Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-		0697128E2497B81900C32169 /* Copy Carthage Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/WireTransport.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputFileListPaths = (
