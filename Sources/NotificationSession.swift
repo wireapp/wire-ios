@@ -153,6 +153,18 @@ class ApplicationStatusDirectory : ApplicationStatus {
 /// for the entire lifetime.
 public class NotificationSession {
     
+    fileprivate enum PushChannelKeys: String {
+        case data = "data"
+        case identifier = "id"
+        case notificationType = "type"
+    }
+
+    fileprivate enum PushNotificationType: String {
+        case plain = "plain"
+        case cipher = "cipher"
+        case notice = "notice"
+    }
+
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
         return contextDirectory.uiContext
@@ -375,4 +387,51 @@ public class NotificationSession {
             })
         }
     }
+    
+    func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
+        guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
+              let rawNotificationType = notificationData[PushChannelKeys.notificationType.rawValue] as? String,
+              let notificationType = PushNotificationType(rawValue: rawNotificationType) else {
+            return nil
+        }
+        
+        switch notificationType {
+        case .plain, .notice:
+            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+                return UUID(uuidString: rawUUID)
+            }
+        case .cipher:
+            return messageNonce(fromEncryptedPushChannelData: notificationData)
+        }
+        
+        return nil
+    }
+    
+    func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable : Any]) -> UUID? {
+        //    @"aps" : @{ @"alert": @{@"loc-args": @[],
+        //                          @"loc-key"   : @"push.notification.new_message"}
+        //              },
+        //    @"data": @{ @"data" : @"SomeEncryptedBase64EncodedString",
+        //                @"mac"  : @"someMacHashToVerifyTheIntegrityOfTheEncodedPayload",
+        //                @"type" : @"cipher"
+        //
+        
+//        guard let apsSignalKeyStore = apsSignalKeyStore else {
+//            Logging.network.debug("Could not initiate APSSignalingKeystore")
+//            return nil
+//        }
+//        
+//        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
+//            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
+//            return nil
+//        }
+//        
+//        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
+//            return UUID(uuidString: rawUUID)
+//        }
+        
+        return nil
+    }
 }
+
+
