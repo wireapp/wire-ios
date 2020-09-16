@@ -360,7 +360,7 @@ public class NotificationSession {
                 return
             }
             
-            ////TODO katerina: update the badge
+            ////TODO katerina: update the badge count
             // once notification processing is finished, it's safe to update the badge
             let completionHandler = {
                 completion()
