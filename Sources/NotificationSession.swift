@@ -23,27 +23,6 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-
-let PushChannelUserIDKey = "user"
-let PushChannelDataKey = "data"
-
-////TODO katerina: move to the request strategy
-extension Dictionary {
-    
-    internal func accountId() -> UUID? {
-        guard let userInfoData = self[PushChannelDataKey as! Key] as? [String: Any] else {
-            Logging.push.safePublic("No data dictionary in notification userInfo payload");
-            return nil
-        }
-    
-        guard let userIdString = userInfoData[PushChannelUserIDKey] as? String else {
-            return nil
-        }
-    
-        return UUID(uuidString: userIdString)
-    }
-}
-
 class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     
     let context : NSManagedObjectContext
@@ -106,7 +85,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
     public let linkPreviewDetector: LinkPreviewDetectorType
 
-    public init(managedObjectContext: NSManagedObjectContext, transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType/*, syncStateDelegate: ZMSyncStateDelegate*/) {
+    public init(managedObjectContext: NSManagedObjectContext, transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
@@ -141,7 +120,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
     }
 
     func requestSlowSync() {
-        // we don't do slow syncing in the share engine
+        // we don't do slow syncing in the notification engine
     }
 
 }
@@ -204,18 +183,14 @@ public class NotificationSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init?(payload: UNMutableNotificationContent,
-                             applicationGroupIdentifier: String,
+    public convenience init?(applicationGroupIdentifier: String,
+                             accountIdentifier: UUID,
                              environment: BackendEnvironmentProvider,
                              analytics: AnalyticsType?, //TODO: it's always nil now
                              delegate: NotificationSessionDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        
-        guard let accountIdentifier = payload.userInfo.accountId() else {
-            return nil
-        }
         
         let group = DispatchGroup()
         
@@ -263,8 +238,7 @@ public class NotificationSession {
             analytics: analytics,
             delegate: delegate,
             sharedContainerURL: sharedContainerURL,
-            accountIdentifier: accountIdentifier,
-            payload: payload
+            accountIdentifier: accountIdentifier
         )
     }
     
@@ -296,8 +270,7 @@ public class NotificationSession {
                             analytics: AnalyticsType?,
                             delegate: NotificationSessionDelegate?,
                             sharedContainerURL: URL,
-                            accountIdentifier: UUID,
-                            payload: UNMutableNotificationContent) throws {
+                            accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
@@ -333,11 +306,6 @@ public class NotificationSession {
             strategyFactory: strategyFactory,
             pushNotificationStatus: pushNotificationStatus
         )
-        
-        self.receivedPushNotification(with: payload.userInfo) {
-            Logging.push.safePublic("Processing push payload completed")
-            //self?.notificationsTracker?.registerNotificationProcessingCompleted()
-        }
     }
 
     deinit {
@@ -350,20 +318,20 @@ public class NotificationSession {
         strategyFactory.tearDown()
     }
     
-    private func receivedPushNotification(with payload: [AnyHashable: Any], completion: @escaping () -> Void) {
+    public func processPushNotification(with payload: [AnyHashable: Any], completion: @escaping (Bool) -> Void) {
         Logging.network.debug("Received push notification with payload: \(payload)")
                 
         syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
                 Logging.push.safePublic("Not displaying notification because app is not authenticated")
-                completion()
+                completion(false)
                 return
             }
             
             ////TODO katerina: update the badge count
             // once notification processing is finished, it's safe to update the badge
             let completionHandler = {
-                completion()
+                completion(true)
 //                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
 //                self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
             }
@@ -379,13 +347,8 @@ public class NotificationSession {
             }
             self.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
                 
-                 ////TODO katerina: ?
-//                 self.callEventStatus.waitForCallEventProcessingToComplete { [weak self] in
-//                    guard let strongSelf = self else { return }
-//                    strongSelf.syncMOC.performGroupedBlock {
-                        completionHandler()
-//                    }
-//                }
+                ////TODO katerina: check callEventStatus
+                completionHandler()
             })
         }
     }
@@ -403,41 +366,7 @@ public class NotificationSession {
                 return UUID(uuidString: rawUUID)
             }
         case .cipher:
-            return messageNonce(fromEncryptedPushChannelData: notificationData)
-        }
-        
-        return nil
-    }
-    
-    private var apsSignalKeyStore: APSSignalingKeysStore? {
-        let selfUser = ZMUser.selfUser(in: syncContext)
-        guard let selfClient = selfUser.selfClient() else {
             return nil
-        }
-        return APSSignalingKeysStore.init(userClient: selfClient)
-    }
-    
-    private func messageNonce(fromEncryptedPushChannelData encryptedPayload: [AnyHashable : Any]) -> UUID? {
-        //    @"aps" : @{ @"alert": @{@"loc-args": @[],
-        //                          @"loc-key"   : @"push.notification.new_message"}
-        //              },
-        //    @"data": @{ @"data" : @"SomeEncryptedBase64EncodedString",
-        //                @"mac"  : @"someMacHashToVerifyTheIntegrityOfTheEncodedPayload",
-        //                @"type" : @"cipher"
-        //
-        
-        guard let apsSignalKeyStore = apsSignalKeyStore else {
-            Logging.network.debug("Could not initiate APSSignalingKeystore")
-            return nil
-        }
-        
-        guard let decryptedPayload = apsSignalKeyStore.decryptDataDictionary(encryptedPayload) else {
-            Logging.network.debug("Failed to decrypt data dictionary from push payload: \(encryptedPayload)")
-            return nil
-        }
-        
-        if let data = decryptedPayload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
-            return UUID(uuidString: rawUUID)
         }
         
         return nil
