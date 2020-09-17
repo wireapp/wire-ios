@@ -131,18 +131,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 public class NotificationSession {
-    
-    fileprivate enum PushChannelKeys: String {
-        case data = "data"
-        case identifier = "id"
-        case notificationType = "type"
-    }
-
-    fileprivate enum PushNotificationType: String {
-        case plain = "plain"
-        case cipher = "cipher"
-        case notice = "notice"
-    }
 
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
@@ -353,23 +341,19 @@ public class NotificationSession {
         }
     }
     
+    ////TODO: need to verify with the BE response 
     private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
-              let rawNotificationType = notificationData[PushChannelKeys.notificationType.rawValue] as? String,
-              let notificationType = PushNotificationType(rawValue: rawNotificationType) else {
-            return nil
+            let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
+            let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String else {
+                return nil
         }
-        
-        switch notificationType {
-        case .plain, .notice:
-            if let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any], let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String {
-                return UUID(uuidString: rawUUID)
-            }
-        case .cipher:
-            return nil
-        }
-        
-        return nil
+        return UUID(uuidString: rawUUID)
+    }
+    
+    private enum PushChannelKeys: String {
+        case data = "data"
+        case identifier = "id"
     }
 }
 
