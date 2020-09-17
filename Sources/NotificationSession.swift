@@ -23,26 +23,6 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-class DeliveryConfirmationDummy : NSObject, DeliveryConfirmationDelegate {
-
-    static var sendDeliveryReceipts: Bool {
-        return false
-    }
-
-    var needsToSyncMessages: Bool {
-        return false
-    }
-
-    func needsToConfirmMessage(_ messageNonce: UUID) {
-        // nop
-    }
-
-    func didConfirmMessage(_ messageNonce: UUID) {
-        // nop
-    }
-
-}
-
 class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     
     let context : NSManagedObjectContext
@@ -97,8 +77,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
 
-    let deliveryConfirmationDummy : DeliveryConfirmationDummy
-
     /// The authentication status used to verify a user is authenticated
     public let authenticationStatus: AuthenticationStatusProvider
 
@@ -111,7 +89,6 @@ class ApplicationStatusDirectory : ApplicationStatus {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
-        self.deliveryConfirmationDummy = DeliveryConfirmationDummy()
         self.linkPreviewDetector = linkPreviewDetector
     }
 
@@ -124,7 +101,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
 
     public var synchronizationState: SynchronizationState {
         if clientRegistrationStatus.clientIsReadyForRequests {
-            return .eventProcessing
+            return .online
         } else {
             return .unauthenticated
         }
@@ -134,18 +111,12 @@ class ApplicationStatusDirectory : ApplicationStatus {
         return .background
     }
 
-    public let notificationFetchStatus: BackgroundNotificationFetchStatus = .done
-
     public var clientRegistrationDelegate: ClientRegistrationDelegate {
         return self.clientRegistrationStatus
     }
 
     public var requestCancellation: ZMRequestCancellation {
         return transportSession
-    }
-
-    public var deliveryConfirmation: DeliveryConfirmationDelegate {
-        return deliveryConfirmationDummy
     }
 
     func requestSlowSync() {
@@ -202,7 +173,7 @@ public class NotificationSession {
                             accountIdentifier: UUID,
                             environment: BackendEnvironmentProvider,
                             analytics: AnalyticsType?,
-                            delegate: UpdateEventsDelegate?
+                            delegate: NotificationSessionDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -251,7 +222,9 @@ public class NotificationSession {
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
             accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            delegate: delegate
+            delegate: delegate,
+            sharedContainerURL: sharedContainerURL,
+            accountIdentifier: accountIdentifier
         )
     }
     
@@ -279,17 +252,21 @@ public class NotificationSession {
                             cachesDirectory: URL,
                             accountContainer: URL,
                             analytics: AnalyticsType?,
-                            delegate: UpdateEventsDelegate?) throws {
+                            delegate: NotificationSessionDelegate?,
+                            sharedContainerURL: URL,
+                            accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
-
+        
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
-                                              updateEventsDelegate: delegate)
+                                              notificationSessionDelegate: delegate,
+                                              sharedContainerURL: sharedContainerURL,
+                                              accountIdentifier: accountIdentifier)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         
