@@ -18,8 +18,13 @@
 
 import WireRequestStrategy
 
-public protocol UpdateEventsDelegate: class {
-    func didReceive(events: [ZMUpdateEvent], in moc: NSManagedObjectContext)
+public protocol NotificationSessionDelegate: class {
+    func modifyNotification(_ alert: ClientNotification, messageCount: Int)
+}
+
+public struct ClientNotification {
+    public var title: String
+    public var body: String
 }
 
 public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
@@ -27,14 +32,20 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
     private var eventProcessor: UpdateEventProcessor!
-    private var delegate: UpdateEventsDelegate?
+    private var delegate: NotificationSessionDelegate?
     private var moc: NSManagedObjectContext!
+    
+    var eventDecoder: EventDecoder!
+    var eventMOC: NSManagedObjectContext!
     
     public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
                 notificationsTracker: NotificationsTracker?,
-                updateEventsDelegate: UpdateEventsDelegate?) {
+                notificationSessionDelegate: NotificationSessionDelegate?,
+                sharedContainerURL: URL,
+                accountIdentifier: UUID,
+                syncMOC: NSManagedObjectContext) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -44,8 +55,10 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
                                       delegate: self)
         self.eventProcessor = self
         self.pushNotificationStatus = pushNotificationStatus
-        self.delegate = updateEventsDelegate
+        self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
+        self.eventMOC = NSManagedObjectContext.createEventContext(withSharedContainerURL: sharedContainerURL, userIdentifier: accountIdentifier)
+        self.eventDecoder = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
@@ -76,7 +89,7 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
                 latestEventId = event.uuid
             }
         }
-        eventProcessor.process(updateEvents: parsedEvents, ignoreBuffer: true)
+        eventProcessor.storeUpdateEvents(parsedEvents, ignoreBuffer: true)
         pushNotificationStatus.didFetch(eventIds: eventIds, lastEventId: latestEventId, finished: hasMoreToFetch)
         
     }
@@ -87,10 +100,36 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 }
 
 extension PushNotificationStrategy: UpdateEventProcessor {
-    
-    public func process(updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
-    
-        delegate?.didReceive(events: updateEvents, in: moc)
+    public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
+            let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
+            var alert = ClientNotification(title: "", body: "")
+            if localNotifications.count == 1 {
+                if let notification = localNotifications.first {
+                    alert.title = notification.title ?? ""
+                    alert.body = notification.body
+                }
+            }
+            // The notification service extension API doesn't support generating multiple user notifications. In this case, the body text will be replaced in the UI project.
+            
+            self.delegate?.modifyNotification(alert, messageCount: localNotifications.count)
+        })
     }
     
+    public func storeAndProcessUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
+        // Events will be processed in the foreground
+    }
+}
+
+// MARK: - Converting events to localNotifications
+extension PushNotificationStrategy {
+    private func convertToLocalNotifications(_ events: [ZMUpdateEvent], moc: NSManagedObjectContext) -> [ZMLocalNotification] {
+        return events.compactMap { event in
+            var conversation: ZMConversation?
+            if let conversationID = event.conversationUUID {
+                conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: moc)
+            }
+            return ZMLocalNotification(event: event, conversation: conversation, managedObjectContext: moc)
+        }
+    }
 }
