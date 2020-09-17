@@ -131,7 +131,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 public class NotificationSession {
-
+    
     /// The `NSManagedObjectContext` used to retrieve the conversations
     var userInterfaceContext: NSManagedObjectContext {
         return contextDirectory.uiContext
@@ -356,5 +356,3 @@ public class NotificationSession {
         case identifier = "id"
     }
 }
-
-
