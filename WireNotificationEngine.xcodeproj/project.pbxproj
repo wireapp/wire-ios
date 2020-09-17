@@ -13,7 +13,6 @@
 		0602563B2489325E00E060E1 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563A2489325E00E060E1 /* WireTesting.framework */; };
 		0602563F2489327000E060E1 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; };
 		060256412489327F00E060E1 /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256402489327F00E060E1 /* PINCache.framework */; };
-		060256432489328200E060E1 /* ProtocolBuffers.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256422489328200E060E1 /* ProtocolBuffers.framework */; };
 		060256452489328E00E060E1 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; };
 		060256472489329500E060E1 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; };
 		060256492489329E00E060E1 /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; };
@@ -25,30 +24,20 @@
 		060256552489337100E060E1 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060256562489337100E060E1 /* WireDataModel.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060256572489337100E060E1 /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		060256582489337100E060E1 /* ProtocolBuffers.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256422489328200E060E1 /* ProtocolBuffers.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060256592489337100E060E1 /* PINCache.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 060256402489327F00E060E1 /* PINCache.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0602565A2489337100E060E1 /* WireCryptobox.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0602565D248933A800E060E1 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; };
 		0602565E248933B000E060E1 /* WireLinkPreview.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		0602566024893CEC00E060E1 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06604297247FE76A00A5F161 /* AppDelegate.swift */; };
 		060ED6E6249CF4F900412C4A /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; };
-		060ED6E7249CF4F900412C4A /* WireLinkPreview.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602565C248933A800E060E1 /* WireLinkPreview.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6E9249CF4FE00412C4A /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; };
-		060ED6EA249CF4FE00412C4A /* WireCryptobox.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602563E2489327000E060E1 /* WireCryptobox.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6EB249CF50400412C4A /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564E248932C800E060E1 /* WireUtilities.framework */; };
-		060ED6EC249CF50400412C4A /* WireUtilities.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564E248932C800E060E1 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6EE249CF50A00412C4A /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6ED249CF50A00412C4A /* WireTransport.framework */; };
-		060ED6EF249CF50A00412C4A /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6ED249CF50A00412C4A /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6F0249CF51000412C4A /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; };
-		060ED6F1249CF51000412C4A /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256462489329400E060E1 /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6F3249CF51800412C4A /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */; };
-		060ED6F4249CF51800412C4A /* WireRequestStrategy.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6F5249CF51E00412C4A /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; };
-		060ED6F6249CF51E00412C4A /* WireSystem.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256482489329E00E060E1 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6F7249CF52400412C4A /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564A248932BA00E060E1 /* WireProtos.framework */; };
-		060ED6F8249CF52400412C4A /* WireProtos.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 0602564A248932BA00E060E1 /* WireProtos.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		060ED6F9249CF53100412C4A /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; };
-		060ED6FA249CF53100412C4A /* WireImages.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 060256442489328E00E060E1 /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		06394AA42497B31900380494 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9E2497AF5100380494 /* WireTransport.framework */; };
 		06394AA62497B32100380494 /* WireRequestStrategy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9C2497AF4A00380494 /* WireRequestStrategy.framework */; };
 		06394AA82497B32700380494 /* WireMockTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 06394A9A2497AF4500380494 /* WireMockTransport.framework */; };
@@ -65,7 +54,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		067ECB3F2487A93D00701956 /* PBXContainerItemProxy */ = {
+		0605DB94251190B900443219 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 0660428C247FE76A00A5F161 /* Project object */;
 			proxyType = 1;
@@ -94,40 +83,10 @@
 				060256552489337100E060E1 /* WireSystem.framework in CopyFiles */,
 				060256562489337100E060E1 /* WireDataModel.framework in CopyFiles */,
 				060256572489337100E060E1 /* WireImages.framework in CopyFiles */,
-				060256582489337100E060E1 /* ProtocolBuffers.framework in CopyFiles */,
 				060256592489337100E060E1 /* PINCache.framework in CopyFiles */,
 				0602565A2489337100E060E1 /* WireCryptobox.framework in CopyFiles */,
 				06025651248932E300E060E1 /* HTMLString.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		060ED6E8249CF4F900412C4A /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				060ED6F6249CF51E00412C4A /* WireSystem.framework in Embed Frameworks */,
-				060ED6EA249CF4FE00412C4A /* WireCryptobox.framework in Embed Frameworks */,
-				060ED6EC249CF50400412C4A /* WireUtilities.framework in Embed Frameworks */,
-				060ED6FA249CF53100412C4A /* WireImages.framework in Embed Frameworks */,
-				060ED6E7249CF4F900412C4A /* WireLinkPreview.framework in Embed Frameworks */,
-				060ED6EF249CF50A00412C4A /* WireTransport.framework in Embed Frameworks */,
-				060ED6F4249CF51800412C4A /* WireRequestStrategy.framework in Embed Frameworks */,
-				060ED6F8249CF52400412C4A /* WireProtos.framework in Embed Frameworks */,
-				060ED6F1249CF51000412C4A /* WireDataModel.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		067ECB462487A93E00701956 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -139,7 +98,6 @@
 		0602563A2489325E00E060E1 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		0602563E2489327000E060E1 /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
 		060256402489327F00E060E1 /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
-		060256422489328200E060E1 /* ProtocolBuffers.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ProtocolBuffers.framework; path = Carthage/Build/iOS/ProtocolBuffers.framework; sourceTree = "<group>"; };
 		060256442489328E00E060E1 /* WireImages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireImages.framework; path = Carthage/Build/iOS/WireImages.framework; sourceTree = "<group>"; };
 		060256462489329400E060E1 /* WireDataModel.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireDataModel.framework; path = Carthage/Build/iOS/WireDataModel.framework; sourceTree = "<group>"; };
 		060256482489329E00E060E1 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
@@ -155,6 +113,7 @@
 		064496892487BFB200576799 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		0644968A2487BFB200576799 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		0644968B2487BFB200576799 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
+		0655FBC12511F9010070611E /* avs.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = avs.framework; path = Carthage/Build/iOS/avs.framework; sourceTree = "<group>"; };
 		06604294247FE76A00A5F161 /* WireNotificationEngine.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireNotificationEngine.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		06604297247FE76A00A5F161 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		066042A0247FE76C00A5F161 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -219,7 +178,6 @@
 				0602563B2489325E00E060E1 /* WireTesting.framework in Frameworks */,
 				0602563F2489327000E060E1 /* WireCryptobox.framework in Frameworks */,
 				060256412489327F00E060E1 /* PINCache.framework in Frameworks */,
-				060256432489328200E060E1 /* ProtocolBuffers.framework in Frameworks */,
 				060256452489328E00E060E1 /* WireImages.framework in Frameworks */,
 				060256472489329500E060E1 /* WireDataModel.framework in Frameworks */,
 				060256492489329E00E060E1 /* WireSystem.framework in Frameworks */,
@@ -237,6 +195,7 @@
 		060256312489322000E060E1 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				0655FBC12511F9010070611E /* avs.framework */,
 				060ED6F2249CF51800412C4A /* WireRequestStrategy.framework */,
 				06394A9E2497AF5100380494 /* WireTransport.framework */,
 				060ED6ED249CF50A00412C4A /* WireTransport.framework */,
@@ -248,7 +207,6 @@
 				060256482489329E00E060E1 /* WireSystem.framework */,
 				060256462489329400E060E1 /* WireDataModel.framework */,
 				060256442489328E00E060E1 /* WireImages.framework */,
-				060256422489328200E060E1 /* ProtocolBuffers.framework */,
 				060256402489327F00E060E1 /* PINCache.framework */,
 				0602563E2489327000E060E1 /* WireCryptobox.framework */,
 				0602563A2489325E00E060E1 /* WireTesting.framework */,
@@ -389,12 +347,10 @@
 				06604290247FE76A00A5F161 /* Sources */,
 				06604291247FE76A00A5F161 /* Frameworks */,
 				06604292247FE76A00A5F161 /* Resources */,
-				067ECB462487A93E00701956 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				067ECB402487A93D00701956 /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineHost;
 			productName = "wire-ios-notification-engine";
@@ -409,8 +365,6 @@
 				067ECB362487A93D00701956 /* Sources */,
 				067ECB372487A93D00701956 /* Frameworks */,
 				067ECB382487A93D00701956 /* Resources */,
-				0697128E2497B81900C32169 /* Copy Carthage Frameworks */,
-				060ED6E8249CF4F900412C4A /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -434,6 +388,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				0605DB95251190B900443219 /* PBXTargetDependency */,
 				067ECB552487AB6000701956 /* PBXTargetDependency */,
 			);
 			name = WireNotificationEngineTests;
@@ -521,7 +476,6 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireRequestStrategy.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/ProtocolBuffers.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireImages.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireDataModel.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
@@ -531,25 +485,7 @@
 				"$(SRCROOT)/Carthage/Build/iOS/WireTesting.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/SwiftProtobuf.framework",
-			);
-			name = "Copy Carthage Frameworks";
-			outputFileListPaths = (
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-		0697128E2497B81900C32169 /* Copy Carthage Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputFileListPaths = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/WireTransport.framework",
+				"$(SRCROOT)/Carthage/Build/iOS/WireMockTransport.framework",
 			);
 			name = "Copy Carthage Frameworks";
 			outputFileListPaths = (
@@ -595,10 +531,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		067ECB402487A93D00701956 /* PBXTargetDependency */ = {
+		0605DB95251190B900443219 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 067ECB392487A93D00701956 /* WireNotificationEngine */;
-			targetProxy = 067ECB3F2487A93D00701956 /* PBXContainerItemProxy */;
+			targetProxy = 0605DB94251190B900443219 /* PBXContainerItemProxy */;
 		};
 		067ECB552487AB6000701956 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
