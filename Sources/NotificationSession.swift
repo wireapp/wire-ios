@@ -171,11 +171,11 @@ public class NotificationSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init?(applicationGroupIdentifier: String,
-                             accountIdentifier: UUID,
-                             environment: BackendEnvironmentProvider,
-                             analytics: AnalyticsType?,
-                             delegate: NotificationSessionDelegate?
+    public convenience init(applicationGroupIdentifier: String,
+                            accountIdentifier: UUID,
+                            environment: BackendEnvironmentProvider,
+                            analytics: AnalyticsType?,
+                            delegate: NotificationSessionDelegate?
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
@@ -341,7 +341,7 @@ public class NotificationSession {
         }
     }
     
-    ////TODO: need to verify with the BE response 
+    ////TODO: need to verify with the BE response
     private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
         guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
             let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
