@@ -186,7 +186,7 @@ public class NotificationSession {
     public convenience init?(applicationGroupIdentifier: String,
                              accountIdentifier: UUID,
                              environment: BackendEnvironmentProvider,
-                             analytics: AnalyticsType?, //TODO: it's always nil now
+                             analytics: AnalyticsType?,
                              delegate: NotificationSessionDelegate?
     ) throws {
        
