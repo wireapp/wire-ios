@@ -269,6 +269,7 @@ public class NotificationSession {
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
+                                              pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
                                               notificationSessionDelegate: delegate,
                                               sharedContainerURL: sharedContainerURL,
