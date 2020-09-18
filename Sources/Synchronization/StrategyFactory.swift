@@ -37,7 +37,7 @@ class StrategyFactory {
 
     init(syncContext: NSManagedObjectContext,
          applicationStatus: ApplicationStatusDirectory,
-        pushNotificationStatus: PushNotificationStatus,
+         pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
          notificationSessionDelegate: NotificationSessionDelegate?,
          sharedContainerURL: URL,
