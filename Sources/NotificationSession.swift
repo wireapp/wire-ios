@@ -23,7 +23,7 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-public class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
+class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     
     let context : NSManagedObjectContext
     
@@ -31,7 +31,7 @@ public class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
         self.context = context
     }
     
-    public var clientIsReadyForRequests: Bool {
+    var clientIsReadyForRequests: Bool {
         if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
             return !clientId.isEmpty
         }
@@ -39,7 +39,7 @@ public class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
         return false
     }
     
-    public func didDetectCurrentClientDeletion() {
+    func didDetectCurrentClientDeletion() {
         // nop
     }
 }
@@ -73,7 +73,7 @@ extension BackendEnvironmentProvider {
     }
 }
 
-public class ApplicationStatusDirectory : ApplicationStatus {
+class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
 
@@ -128,7 +128,7 @@ public class ApplicationStatusDirectory : ApplicationStatus {
         return transportSession
     }
 
-    public func requestSlowSync() {
+    func requestSlowSync() {
         // we don't do slow syncing in the notification engine
     }
 

@@ -27,7 +27,7 @@ public struct ClientNotification {
     public var body: String
 }
 
-public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
+final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
@@ -38,7 +38,7 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
     
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+     init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatusDirectory,
                 notificationsTracker: NotificationsTracker?,
                 notificationSessionDelegate: NotificationSessionDelegate?,
