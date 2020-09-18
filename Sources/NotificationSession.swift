@@ -84,19 +84,28 @@ class ApplicationStatusDirectory : ApplicationStatus {
     public let clientRegistrationStatus : ClientRegistrationDelegate
 
     public let linkPreviewDetector: LinkPreviewDetectorType
+    
+    public var pushNotificationStatus: PushNotificationStatus
 
-    public init(managedObjectContext: NSManagedObjectContext, transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType) {
+    public init(managedObjectContext: NSManagedObjectContext,
+                transportSession: ZMTransportSession,
+                authenticationStatus: AuthenticationStatusProvider,
+                clientRegistrationStatus: ClientRegistrationStatus,
+                linkPreviewDetector: LinkPreviewDetectorType,
+                pushNotificationStatus: PushNotificationStatus) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.linkPreviewDetector = linkPreviewDetector
+        self.pushNotificationStatus = pushNotificationStatus
     }
 
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
-        self.init(managedObjectContext: syncContext,transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
+         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: syncContext)
+        self.init(managedObjectContext: syncContext,transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector, pushNotificationStatus: pushNotificationStatus)
     }
 
     public var synchronizationState: SynchronizationState {
@@ -161,8 +170,6 @@ public class NotificationSession {
     private let operationLoop: RequestGeneratingOperationLoop
 
     private let strategyFactory: StrategyFactory
-    
-    private var pushNotificationStatus: PushNotificationStatus
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -236,8 +243,7 @@ public class NotificationSession {
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory,
-                  pushNotificationStatus: PushNotificationStatus
+                  strategyFactory: StrategyFactory
         ) throws {
         
         self.contextDirectory = contextDirectory
@@ -246,7 +252,6 @@ public class NotificationSession {
         self.applicationStatusDirectory = applicationStatusDirectory
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
-        self.pushNotificationStatus = pushNotificationStatus
         
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
@@ -261,12 +266,11 @@ public class NotificationSession {
                             accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
-        let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
         
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
-                                              pushNotificationStatus: pushNotificationStatus,
+                                              pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
                                               notificationSessionDelegate: delegate,
                                               sharedContainerURL: sharedContainerURL,
@@ -291,8 +295,7 @@ public class NotificationSession {
             saveNotificationPersistence: saveNotificationPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory,
-            pushNotificationStatus: pushNotificationStatus
+            strategyFactory: strategyFactory
         )
     }
 
@@ -329,16 +332,14 @@ public class NotificationSession {
     }
     
     func fetchEvents(fromPushChannelPayload payload: [AnyHashable : Any], completionHandler: @escaping () -> Void) {
-        syncContext.performGroupedBlock {
-            guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
-                return completionHandler()
-            }
-            self.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
-                
-                ////TODO katerina: check callEventStatus
-                completionHandler()
-            })
+        guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+            return completionHandler()
         }
+        self.applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
+            
+            ////TODO katerina: check callEventStatus
+            completionHandler()
+        })
     }
     
     ////TODO: need to verify with the BE response
