@@ -39,7 +39,8 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     var eventMOC: NSManagedObjectContext!
     
      init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
-                applicationStatus: ApplicationStatusDirectory,
+                applicationStatus: ApplicationStatus,
+                pushNotificationStatus: PushNotificationStatus,
                 notificationsTracker: NotificationsTracker?,
                 notificationSessionDelegate: NotificationSessionDelegate?,
                 sharedContainerURL: URL,
@@ -52,7 +53,7 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
                                       notificationsTracker: notificationsTracker,
                                       delegate: self)
         self.eventProcessor = self
-        self.pushNotificationStatus = applicationStatus.pushNotificationStatus
+        self.pushNotificationStatus = pushNotificationStatus
         self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventMOC = NSManagedObjectContext.createEventContext(withSharedContainerURL: sharedContainerURL, userIdentifier: accountIdentifier)

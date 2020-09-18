@@ -26,6 +26,7 @@ class StrategyFactory {
     unowned let syncContext: NSManagedObjectContext
     let applicationStatus: ApplicationStatusDirectory
     let notificationsTracker: NotificationsTracker?
+    let pushNotificationStatus: PushNotificationStatus
     private(set) var strategies = [AnyObject]()
     private(set) var delegate: NotificationSessionDelegate?
     
@@ -36,12 +37,14 @@ class StrategyFactory {
 
     init(syncContext: NSManagedObjectContext,
          applicationStatus: ApplicationStatusDirectory,
+        pushNotificationStatus: PushNotificationStatus,
          notificationsTracker: NotificationsTracker?,
          notificationSessionDelegate: NotificationSessionDelegate?,
          sharedContainerURL: URL,
          accountIdentifier: UUID) {
         self.syncContext = syncContext
         self.applicationStatus = applicationStatus
+        self.pushNotificationStatus = pushNotificationStatus
         self.notificationsTracker = notificationsTracker
         self.delegate = notificationSessionDelegate
         
@@ -74,6 +77,7 @@ class StrategyFactory {
     private func createPushNotificationStrategy() -> PushNotificationStrategy {
         return PushNotificationStrategy(withManagedObjectContext: syncContext,
                                         applicationStatus: applicationStatus,
+                                        pushNotificationStatus: pushNotificationStatus,
                                         notificationsTracker: notificationsTracker,
                                         notificationSessionDelegate: delegate,
                                         sharedContainerURL: sharedContainerURL,
