@@ -18,11 +18,11 @@
 
 import Foundation
 
-enum AuthenticationState {
+public enum AuthenticationState {
     case authenticated, unauthenticated
 }
 
-protocol AuthenticationStatusProvider {
+public protocol AuthenticationStatusProvider {
 
     var state: AuthenticationState { get }
 

@@ -23,7 +23,7 @@ import WireTransport
 import WireRequestStrategy
 import WireLinkPreview
 
-class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
+public class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
     
     let context : NSManagedObjectContext
     
@@ -31,7 +31,7 @@ class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
         self.context = context
     }
     
-    var clientIsReadyForRequests: Bool {
+    public var clientIsReadyForRequests: Bool {
         if let clientId = context.persistentStoreMetadata(forKey: "PersistedClientId") as? String { // TODO move constant into shared framework
             return !clientId.isEmpty
         }
@@ -39,7 +39,7 @@ class ClientRegistrationStatus : NSObject, ClientRegistrationDelegate {
         return false
     }
     
-    func didDetectCurrentClientDeletion() {
+    public func didDetectCurrentClientDeletion() {
         // nop
     }
 }
@@ -73,7 +73,7 @@ extension BackendEnvironmentProvider {
     }
 }
 
-class ApplicationStatusDirectory : ApplicationStatus {
+public class ApplicationStatusDirectory : ApplicationStatus {
 
     let transportSession : ZMTransportSession
 
@@ -104,7 +104,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
-         let pushNotificationStatus = PushNotificationStatus(managedObjectContext: syncContext)
+        let pushNotificationStatus = PushNotificationStatus(managedObjectContext: syncContext)
         self.init(managedObjectContext: syncContext,transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector, pushNotificationStatus: pushNotificationStatus)
     }
 
@@ -128,7 +128,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
         return transportSession
     }
 
-    func requestSlowSync() {
+    public func requestSlowSync() {
         // we don't do slow syncing in the notification engine
     }
 
@@ -266,11 +266,9 @@ public class NotificationSession {
                             accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
-        
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
-                                              pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
                                               notificationSessionDelegate: delegate,
                                               sharedContainerURL: sharedContainerURL,
