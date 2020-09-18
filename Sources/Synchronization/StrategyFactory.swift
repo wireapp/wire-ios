@@ -24,7 +24,7 @@ import WireLinkPreview
 class StrategyFactory {
 
     unowned let syncContext: NSManagedObjectContext
-    let applicationStatus: ApplicationStatusDirectory
+    let applicationStatus: ApplicationStatus
     let notificationsTracker: NotificationsTracker?
     let pushNotificationStatus: PushNotificationStatus
     private(set) var strategies = [AnyObject]()
