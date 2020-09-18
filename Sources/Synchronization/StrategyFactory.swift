@@ -81,8 +81,7 @@ class StrategyFactory {
                                         notificationsTracker: notificationsTracker,
                                         notificationSessionDelegate: delegate,
                                         sharedContainerURL: sharedContainerURL,
-                                        accountIdentifier: accountIdentifier,
-                                        syncMOC: syncContext
+                                        accountIdentifier: accountIdentifier
                                         
         )
     }

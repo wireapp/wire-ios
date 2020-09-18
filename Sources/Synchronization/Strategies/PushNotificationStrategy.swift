@@ -27,7 +27,7 @@ public struct ClientNotification {
     public var body: String
 }
 
-public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
+final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGeneratorSource {
     
     var sync: NotificationStreamSync!
     private var pushNotificationStatus: PushNotificationStatus!
@@ -38,14 +38,13 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
     var eventDecoder: EventDecoder!
     var eventMOC: NSManagedObjectContext!
     
-    public init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
+     init(withManagedObjectContext managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 pushNotificationStatus: PushNotificationStatus,
                 notificationsTracker: NotificationsTracker?,
                 notificationSessionDelegate: NotificationSessionDelegate?,
                 sharedContainerURL: URL,
-                accountIdentifier: UUID,
-                syncMOC: NSManagedObjectContext) {
+                accountIdentifier: UUID) {
         
         super.init(withManagedObjectContext: managedObjectContext,
                    applicationStatus: applicationStatus)
@@ -58,20 +57,24 @@ public final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestG
         self.delegate = notificationSessionDelegate
         self.moc = managedObjectContext
         self.eventMOC = NSManagedObjectContext.createEventContext(withSharedContainerURL: sharedContainerURL, userIdentifier: accountIdentifier)
-        self.eventDecoder = EventDecoder(eventMOC: eventMOC, syncMOC: syncMOC)
+        self.eventDecoder = EventDecoder(eventMOC: eventMOC, syncMOC: managedObjectContext)
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
     }
     
     public override func nextRequest() -> ZMTransportRequest? {
-        return requestGenerators.nextRequest()
+        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
            return [sync]
        }
+    
+    public var isFetchingStreamForAPNS: Bool {
+        return self.pushNotificationStatus.hasEventsToFetch
+    }
 }
 
 extension PushNotificationStrategy: NotificationStreamSyncDelegate {

@@ -84,18 +84,26 @@ class ApplicationStatusDirectory : ApplicationStatus {
     public let clientRegistrationStatus : ClientRegistrationDelegate
 
     public let linkPreviewDetector: LinkPreviewDetectorType
+    
+    public var pushNotificationStatus: PushNotificationStatus
 
-    public init(managedObjectContext: NSManagedObjectContext, transportSession: ZMTransportSession, authenticationStatus: AuthenticationStatusProvider, clientRegistrationStatus: ClientRegistrationStatus, linkPreviewDetector: LinkPreviewDetectorType/*, syncStateDelegate: ZMSyncStateDelegate*/) {
+    public init(managedObjectContext: NSManagedObjectContext,
+                transportSession: ZMTransportSession,
+                authenticationStatus: AuthenticationStatusProvider,
+                clientRegistrationStatus: ClientRegistrationStatus,
+                linkPreviewDetector: LinkPreviewDetectorType) {
         self.transportSession = transportSession
         self.authenticationStatus = authenticationStatus
         self.clientRegistrationStatus = clientRegistrationStatus
         self.linkPreviewDetector = linkPreviewDetector
+        self.pushNotificationStatus = PushNotificationStatus(managedObjectContext: managedObjectContext)
     }
 
     public convenience init(syncContext: NSManagedObjectContext, transportSession: ZMTransportSession) {
         let authenticationStatus = AuthenticationStatus(transportSession: transportSession)
         let clientRegistrationStatus = ClientRegistrationStatus(context: syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
+        
         self.init(managedObjectContext: syncContext,transportSession: transportSession, authenticationStatus: authenticationStatus, clientRegistrationStatus: clientRegistrationStatus, linkPreviewDetector: linkPreviewDetector)
     }
 
@@ -120,7 +128,7 @@ class ApplicationStatusDirectory : ApplicationStatus {
     }
 
     func requestSlowSync() {
-        // we don't do slow syncing in the share engine
+        // we don't do slow syncing in the notification engine
     }
 
 }
@@ -257,12 +265,10 @@ public class NotificationSession {
                             accountIdentifier: UUID) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
-        let pushNotificationStatus = PushNotificationStatus(managedObjectContext: contextDirectory.syncContext)
-        
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
         let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
                                               applicationStatus: applicationStatusDirectory,
-                                              pushNotificationStatus: pushNotificationStatus,
+                                              pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
                                               notificationSessionDelegate: delegate,
                                               sharedContainerURL: sharedContainerURL,
@@ -289,7 +295,6 @@ public class NotificationSession {
             operationLoop: operationLoop,
             strategyFactory: strategyFactory
         )
-        
     }
 
     deinit {
@@ -300,5 +305,53 @@ public class NotificationSession {
         transportSession.reachability.tearDown()
         transportSession.tearDown()
         strategyFactory.tearDown()
+    }
+    
+    public func processPushNotification(with payload: [AnyHashable: Any], completion: @escaping (Bool) -> Void) {
+        Logging.network.debug("Received push notification with payload: \(payload)")
+                
+        syncContext.performGroupedBlock {
+            if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
+                Logging.push.safePublic("Not displaying notification because app is not authenticated")
+                completion(false)
+                return
+            }
+            
+            ////TODO katerina: update the badge count
+            // once notification processing is finished, it's safe to update the badge
+            let completionHandler = {
+                completion(true)
+//                let unreadCount = Int(ZMConversation.unreadConversationCount(in: self.syncManagedObjectContext))
+//                self.sessionManager?.updateAppIconBadge(accountID: accountID, unreadCount: unreadCount)
+            }
+            
+            self.fetchEvents(fromPushChannelPayload: payload, completionHandler: completionHandler)
+        }
+    }
+    
+    func fetchEvents(fromPushChannelPayload payload: [AnyHashable : Any], completionHandler: @escaping () -> Void) {
+        guard let nonce = self.messageNonce(fromPushChannelData: payload) else {
+            return completionHandler()
+        }
+        self.applicationStatusDirectory.pushNotificationStatus.fetch(eventId: nonce, completionHandler: {
+            
+            ////TODO katerina: check callEventStatus
+            completionHandler()
+        })
+    }
+    
+    ////TODO: need to verify with the BE response
+    private func messageNonce(fromPushChannelData payload: [AnyHashable : Any]) -> UUID? {
+        guard let notificationData = payload[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
+            let data = notificationData[PushChannelKeys.data.rawValue] as? [AnyHashable : Any],
+            let rawUUID = data[PushChannelKeys.identifier.rawValue] as? String else {
+                return nil
+        }
+        return UUID(uuidString: rawUUID)
+    }
+    
+    private enum PushChannelKeys: String {
+        case data = "data"
+        case identifier = "id"
     }
 }
