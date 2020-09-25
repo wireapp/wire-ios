@@ -61,11 +61,13 @@ final class PushNotificationStrategy: AbstractRequestStrategy, ZMRequestGenerato
     }
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
+//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
+        return requestGenerators.nextRequest()
     }
     
     public override func nextRequest() -> ZMTransportRequest? {
-        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
+//        return isFetchingStreamForAPNS ? requestGenerators.nextRequest() : nil
+        return requestGenerators.nextRequest()
     }
     
     public var requestGenerators: [ZMRequestGenerator] {
