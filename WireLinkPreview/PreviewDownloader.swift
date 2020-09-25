@@ -19,7 +19,7 @@
 
 import Foundation
 
-private let userAgent = "WireLinkPreview"
+private let userAgent = "Wire LinkPreview Bot"
 
 protocol PreviewDownloaderType {
     func requestOpenGraphData(fromURL url: URL, completion: @escaping (OpenGraphData?) -> Void)

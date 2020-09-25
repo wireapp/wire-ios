@@ -213,7 +213,7 @@ class PreviewDownloaderTests: XCTestCase {
         sut.requestOpenGraphData(fromURL: url, completion: completion)
         
         // then
-        let expected = "WireLinkPreview"
+        let expected = "Wire LinkPreview Bot"
         XCTAssertEqual(mockSession.dataTaskWithURLCallCount, 1)
         let request = mockSession.dataTaskWithURLParameters.first
         let agent = request?.allHTTPHeaderFields?["User-Agent"]
