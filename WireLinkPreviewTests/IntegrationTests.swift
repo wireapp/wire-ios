@@ -21,13 +21,13 @@ import XCTest
 
 class IntegrationTests: XCTestCase {
 
-    func disabled_testThatItParsesSampleDataTwitter() {
+    func testThatItParsesSampleDataTwitter() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 1, type: "article", siteNameString: "Twitter", userGeneratedImage: false, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.twitterData()
         assertThatItCanParseSampleData(mockData, expected: expectation)
     }
     
-    func disabled_testThatItParsesSampleDataTwitterWithImages() {
+    func testThatItParsesSampleDataTwitterWithImages() {
         let expectation = OpenGraphDataExpectation(numberOfImages: 4, type: "article", siteNameString: "Twitter", userGeneratedImage: true, hasDescription: true, hasFoursquareMetaData: false)
         let mockData = OpenGraphMockDataProvider.twitterDataWithImages()
         assertThatItCanParseSampleData(mockData, expected: expectation)
