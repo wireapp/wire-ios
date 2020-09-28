@@ -766,7 +766,8 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let uiConversation = try! self.uiMOC.existingObject(with: conversation.objectID) as! ZMConversation
         uiConversation.acknowledgePrivacyWarning(withResendIntent: false)
         
-        self.syncMOC.performGroupedAndWait { _ in
+        self.syncMOC.performGroupedAndWait { moc in
+            moc.refreshAllObjects()
             
             // THEN
             XCTAssertTrue(message1.isExpired)
