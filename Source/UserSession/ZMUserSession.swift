@@ -215,6 +215,7 @@ public class ZMUserSession: NSObject, ZMManagedObjectContextProvider {
                                                        callNotificationStyleProvider: self)
         }
 
+        registerForCalculateBadgeCountNotification()
         registerForRegisteringPushTokenNotification()
         registerForBackgroundNotifications()
         enableBackgroundFetch()
@@ -304,6 +305,12 @@ public class ZMUserSession: NSObject, ZMManagedObjectContextProvider {
                                                 userInfo: ["path": path])
             }
         }
+    }
+    
+    private func registerForCalculateBadgeCountNotification() {
+        tokens.append(NotificationInContext.addObserver(name: .calculateBadgeCount, context: managedObjectContext.notificationContext) { [weak self] (_) in
+            self?.calculateBadgeCount()
+        })
     }
     
     private func registerForBackgroundNotifications() {
