@@ -19,7 +19,8 @@
 
 import Foundation
 
-@objc public protocol AnalyticsType: NSObjectProtocol {
+@objc
+public protocol AnalyticsType: NSObjectProtocol {
 
     func tagEvent(_ event: String)
     func tagEvent(_ event: String, attributes: [String: NSObject])
