@@ -658,5 +658,4 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         self.internalTeamPermissions = permissions
         self.internalTeamCreatedBy = createdBy
     }
-    
 }
