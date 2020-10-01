@@ -30,5 +30,6 @@ public class MockEnvironment: NSObject, BackendEnvironmentProvider {
     public var teamsURL: URL = URL(string: "http://example.com")!
     public var accountsURL: URL = URL(string: "http://example.com")!
     public var websiteURL: URL = URL(string: "http://example.com")!
+    public var countlyURL: URL = URL(string: "http://example.com")!
     public var environmentType: EnvironmentTypeProvider = EnvironmentTypeProvider(environmentType: .production)
 }

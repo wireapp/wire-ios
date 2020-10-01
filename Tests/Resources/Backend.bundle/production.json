@@ -6,7 +6,8 @@
         "blackListURL" : "https://clientblacklist.wire.com/prod",
         "teamsURL" : "https://teams.wire.com",
         "accountsURL" : "https://accounts.wire.com",
-        "websiteURL" : "https://wire.com"
+        "websiteURL" : "https://wire.com",
+        "countlyURL" : "https://countly.wire.com"
     },
     "title" : "Production",
     "pinned_keys" : [
