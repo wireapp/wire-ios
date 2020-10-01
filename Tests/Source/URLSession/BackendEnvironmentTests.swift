@@ -53,7 +53,8 @@ class BackendEnvironmentTests: XCTestCase {
             blackListURL: baseURL.appendingPathComponent("blacklist"),
             teamsURL: baseURL.appendingPathComponent("teams"),
             accountsURL: baseURL.appendingPathComponent("accounts"),
-            websiteURL: baseURL)
+            websiteURL: baseURL,
+            countlyURL: baseURL.appendingPathComponent("dummyCountlyURL"))
         let trust = ServerCertificateTrust(trustData: [])
         let environmentType = EnvironmentType.custom(url: configURL)
         let backendEnvironment = BackendEnvironment(title: title, environmentType: environmentType, endpoints: endpoints, certificateTrust: trust)

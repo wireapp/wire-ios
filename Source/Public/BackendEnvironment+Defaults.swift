@@ -54,14 +54,15 @@ extension BackendEnvironment {
                 let endpoints: BackendEndpoints
             }
             
-            let endpoints = BackendEndpoints(backendURL: self.endpoints.backendURL,
-                                             backendWSURL: self.endpoints.backendWSURL,
-                                             blackListURL: self.endpoints.blackListURL,
-                                             teamsURL: self.endpoints.teamsURL,
-                                             accountsURL: self.endpoints.accountsURL,
-                                             websiteURL: self.endpoints.websiteURL)
+            let backendEndpoints = BackendEndpoints(backendURL: endpoints.backendURL,
+                                                    backendWSURL: endpoints.backendWSURL,
+                                                    blackListURL: endpoints.blackListURL,
+                                                    teamsURL: endpoints.teamsURL,
+                                                    accountsURL: endpoints.accountsURL,
+                                                    websiteURL: endpoints.websiteURL,
+                                                    countlyURL: endpoints.countlyURL)
             
-            let data = SerializedData(title: title, endpoints: endpoints)
+            let data = SerializedData(title: title, endpoints: backendEndpoints)
             let encoded = try? JSONEncoder().encode(data)
             userDefaults.set(encoded, forKey: BackendEnvironment.defaultsKey)
         default:

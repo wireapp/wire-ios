@@ -5,7 +5,8 @@
         "blackListURL" : "https://clientblacklist.wire.com/staging",
         "teamsURL" : "https://wire-teams-staging.zinfra.io",
         "accountsURL" : "https://wire-account-staging.zinfra.io",
-        "websiteURL" : "https://wire.com"
+        "websiteURL" : "https://wire.com",
+        "countlyURL" : "https://countly.wire.com"
     },
     "title" : "Staging",
     "pinned_keys" : [

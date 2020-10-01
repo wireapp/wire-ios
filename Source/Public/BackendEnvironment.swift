@@ -140,7 +140,11 @@ extension BackendEnvironment: BackendEnvironmentProvider {
     public var websiteURL: URL {
         return endpoints.websiteURL
     }
-    
+
+    public var countlyURL: URL {
+        return endpoints.countlyURL
+    }
+
     public func verifyServerTrust(trust: SecTrust, host: String?) -> Bool {
         return certificateTrust.verifyServerTrust(trust: trust, host: host)
     }

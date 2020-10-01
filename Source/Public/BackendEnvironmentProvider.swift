@@ -43,6 +43,7 @@ import Foundation
     var teamsURL: URL { get }
     var accountsURL: URL { get }
     var websiteURL: URL { get }
+    var countlyURL: URL { get }
 }
 
 @objc public protocol BackendEnvironmentProvider: BackendTrustProvider, BackendEndpointsProvider {
