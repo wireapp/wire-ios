@@ -114,12 +114,13 @@ extension ZMSyncStrategy: UpdateEventProcessor {
                 }
                 self.eventProcessingTracker?.registerEventProcessed()
             }
+            ZMConversation.calculateLastUnreadMessages(in: syncMOC)
             syncMOC.saveOrRollback()
             
             Logging.eventProcessing.debug("Events processed in \(-date.timeIntervalSinceNow): \(self.eventProcessingTracker?.debugDescription ?? "")")
         }
     }
-     
+    
     @objc(prefetchRequestForUpdateEvents:)
     public func prefetchRequest(updateEvents: [ZMUpdateEvent]) -> ZMFetchRequestBatch {
         var messageNounces: Set<UUID> = Set()
@@ -145,4 +146,3 @@ extension ZMSyncStrategy: UpdateEventProcessor {
     
 
 }
-
