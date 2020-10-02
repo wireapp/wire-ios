@@ -47,6 +47,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"Conversations";
 NSString *const ZMConversationConnectionKey = @"connection";
 NSString *const ZMConversationHasUnreadMissedCallKey = @"hasUnreadMissedCall";
 NSString *const ZMConversationHasUnreadUnsentMessageKey = @"hasUnreadUnsentMessage";
+NSString *const ZMConversationNeedsToCalculateUnreadMessagesKey = @"needsToCalculateUnreadMessages";
 NSString *const ZMConversationIsArchivedKey = @"internalIsArchived";
 NSString *const ZMConversationMutedStatusKey = @"mutedStatus";
 NSString *const ZMConversationAllMessagesKey = @"allMessages";
@@ -233,12 +234,28 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 {
     [super awakeFromFetch];
     self.lastReadTimestampSaveDelay = ZMConversationDefaultLastReadTimestampSaveDelay;
+    if (self.managedObjectContext.zm_isSyncContext && self.needsToCalculateUnreadMessages) {
+        // From the documentation: The managed object context’s change processing is explicitly disabled around this method so that you can use public setters to establish transient values and other caches without dirtying the object or its context.
+        // Therefore we need to do a dispatch async  here in a performGroupedBlock to update the unread properties outside of awakeFromFetch
+        ZM_WEAK(self);
+        [self.managedObjectContext performGroupedBlock:^{
+            ZM_STRONG(self);
+            [self calculateLastUnreadMessages];
+        }];
+    }
 }
 
 - (void)awakeFromInsert;
 {
     [super awakeFromInsert];
     self.lastReadTimestampSaveDelay = ZMConversationDefaultLastReadTimestampSaveDelay;
+    
+    if (self.managedObjectContext.zm_isSyncContext && self.needsToCalculateUnreadMessages) {
+        // From the documentation: You are typically discouraged from performing fetches within an implementation of awakeFromInsert. Although it is allowed, execution of the fetch request can trigger the sending of internal Core Data notifications which may have unwanted side-effects. Since we fetch the unread messages here, we should do a dispatch async
+        [self.managedObjectContext performGroupedBlock:^{
+            [self calculateLastUnreadMessages];
+        }];
+    }
 }
 
 -(NSArray <ZMUser *> *)sortedActiveParticipants
@@ -306,6 +323,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             VoiceChannelKey,
             ZMConversationHasUnreadMissedCallKey,
             ZMConversationHasUnreadUnsentMessageKey,
+            ZMConversationNeedsToCalculateUnreadMessagesKey,
             ZMConversationAllMessagesKey,
             ZMConversationHiddenMessagesKey,
             ZMConversationLastServerTimeStampKey,

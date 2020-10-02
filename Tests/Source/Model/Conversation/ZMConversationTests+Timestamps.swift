@@ -159,6 +159,48 @@ class ZMConversationTests_Timestamps: ZMConversationTestsBase {
         }
     }
     
+    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedWhenMessageFromUpdateEventIsInserted() {
+        
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            
+            let nonce = UUID.create()
+            let message = GenericMessage(content: Text(content: self.name, mentions: [], linkPreviews: [], replyingTo: nil), nonce: nonce)
+            let contentData = try? message.serializedData()
+            let data = contentData?.base64String()
+            
+            let payload = self.payloadForMessage(in: conversation, type: EventConversationAddClientMessage , data: data!)
+            let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
+            XCTAssertNotNil(event)
+            
+            // when
+            var sut: ZMClientMessage?
+            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.syncMOC, prefetchResult: nil)
+            
+            // then
+            XCTAssertEqual(sut?.conversation, conversation)
+            XCTAssertTrue(conversation.needsToCalculateUnreadMessages)
+        }
+    }
+    
+    func testThatNeedsToCalculateUnreadMessagesFlagIsUpdatedAfterCallingtTheCalculateLastUnreadMessages() {
+        
+        // given
+        syncMOC.performGroupedBlockAndWait {
+            let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+            conversation.remoteIdentifier = UUID.create()
+            conversation.needsToCalculateUnreadMessages = true
+                        
+            // when
+            conversation.calculateLastUnreadMessages()
+            
+            // then
+            XCTAssertFalse(conversation.needsToCalculateUnreadMessages)
+        }
+    }
+    
     // MARK: - Cleared Date
     
     func testThatClearedTimestampIsUpdated() {

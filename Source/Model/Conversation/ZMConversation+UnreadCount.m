@@ -91,6 +91,7 @@ NSString *const ZMConversationLastReadLocalTimestampKey = @"lastReadLocalTimesta
 @dynamic internalEstimatedUnreadSelfMentionCount;
 @dynamic internalEstimatedUnreadSelfReplyCount;
 @dynamic hasUnreadUnsentMessage;
+@dynamic needsToCalculateUnreadMessages;
 
 + (NSUInteger)unreadConversationCountInContext:(NSManagedObjectContext *)moc;
 {    

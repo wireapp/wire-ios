@@ -38,6 +38,9 @@
 /// and reset when the visible window changes
 @property (nonatomic) BOOL hasUnreadUnsentMessage;
 
+/// Returns whether unread messages should be re-calculated
+@property (nonatomic) BOOL needsToCalculateUnreadMessages;
+
 @property (nonatomic, readonly) BOOL hasUnreadMessagesInOtherConversations;
 
 @property (nonatomic, readonly) ZMConversationListIndicator unreadListIndicator;

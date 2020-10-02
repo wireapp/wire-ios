@@ -178,6 +178,9 @@ extension ZMConversation {
         return NSCompoundPredicate(andPredicateWithSubpredicates: [basePredicate, predicate1, predicate2])
     }
     
+    class func predicateForConversationsNeedingToBeCalculatedUnreadMessages() -> NSPredicate {
+         return NSPredicate(format: "%K == YES", ZMConversationNeedsToCalculateUnreadMessagesKey)
+    }
 }
 
 extension String {
