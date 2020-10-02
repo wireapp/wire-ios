@@ -44,6 +44,7 @@ class ClientMessageTests: BaseZMClientMessageTests {
         // then
         XCTAssertNotNil(sut)
         XCTAssertEqual(sut?.conversation, conversation)
+        XCTAssertTrue(conversation.needsToCalculateUnreadMessages)
         XCTAssertEqual(sut?.sender?.remoteIdentifier.transportString(), payload["from"] as? String)
         XCTAssertEqual(sut?.serverTimestamp?.transportString(), payload["time"] as? String)
         
@@ -80,6 +81,7 @@ class ClientMessageTests: BaseZMClientMessageTests {
         // then
         XCTAssertNotNil(sut)
         XCTAssertEqual(sut?.conversation, conversation)
+        XCTAssertTrue(conversation.needsToCalculateUnreadMessages)
         XCTAssertEqual(sut?.sender?.remoteIdentifier.transportString(), payload["from"] as? String)
         XCTAssertEqual(sut?.serverTimestamp?.transportString(), payload["time"] as? String)
         XCTAssertEqual(sut?.senderClientID, senderClientID)
