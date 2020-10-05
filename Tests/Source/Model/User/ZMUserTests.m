@@ -2545,5 +2545,19 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     XCTAssertFalse(untrusted);
 }
 
+- (void)testThatAnalyticsIdentifierIsEncodedAsUUIDTransportString
+{
+    // given
+    ZMUser *user = [ZMUser selfUserInContext:self.uiMOC];
+    
+    // when
+    NSUUID *sut = [NSUUID uuidWithTransportString:user.analyticsIdentifier];
+    
+    // then
+    XCTAssertNotNil(user.analyticsIdentifier);
+    XCTAssertNotNil(sut);
+}
+
+
 @end
 
