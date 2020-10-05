@@ -150,7 +150,7 @@ final class HTMLStringBuffer {
             stringValue = String(cString: ptr)
         }
 
-        return removeEntities ? stringValue.removingHTMLEntities : stringValue
+        return removeEntities ? stringValue.removingHTMLEntities() : stringValue
     }
 
 }
