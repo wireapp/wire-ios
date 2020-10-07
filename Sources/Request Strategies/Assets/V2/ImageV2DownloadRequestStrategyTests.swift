@@ -199,6 +199,7 @@ class ImageV2DownloadRequestStrategyTests: MessagingTestBase {
         
         syncMOC.performGroupedAndWait { moc in
             // GIVEN
+            moc.processPendingChanges() // Make sure the deletion has been processed
             let message = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc, prefetchResult: nil)
             
             // THEN
