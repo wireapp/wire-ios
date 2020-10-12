@@ -141,7 +141,7 @@ extension BackendEnvironment: BackendEnvironmentProvider {
         return endpoints.websiteURL
     }
 
-    public var countlyURL: URL {
+    public var countlyURL: URL? {
         return endpoints.countlyURL
     }
 
