@@ -39,12 +39,7 @@ final public class ParticipantRoleChangeInfo : ObjectChangeInfo {
     static let ParticipantRoleChangeInfoKey = "participantRoleChanges"
 
     static func changeInfo(for participantRole: ParticipantRole, changes: Changes) -> ParticipantRoleChangeInfo? {
-        guard changes.hasChangeInfo else { return nil }
-        
-        let changeInfo = ParticipantRoleChangeInfo(object: participantRole)
-        changeInfo.changeInfos = changes.originalChanges
-        changeInfo.changedKeys = changes.changedKeys
-        return changeInfo
+        return ParticipantRoleChangeInfo(object: participantRole, changes: changes)
     }
     
     public required init(object: NSObject) {

@@ -87,11 +87,11 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
     
     func testThatItNotifiesObserversWhenConversationListsAreReloaded() {
         // given
-        sut.isDisabled = true
+        sut.isEnabled = false
         self.token = ConversationListChangeInfo.addReloadObserver(testConversationListReloadObserver, managedObjectContext: uiMOC)
         
         // when
-        sut.isDisabled = false
+        sut.isEnabled = true
         
         // then
         XCTAssertEqual(testConversationListReloadObserver.conversationListsReloadCount, 1)

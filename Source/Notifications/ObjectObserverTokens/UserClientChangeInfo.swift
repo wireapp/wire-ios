@@ -75,11 +75,7 @@ public enum UserClientChangeInfoKey: String {
     
     
     static func changeInfo(for client: UserClient, changes: Changes) -> UserClientChangeInfo? {
-        guard changes.changedKeys.count > 0 || changes.originalChanges.count > 0 else { return nil }
-        let changeInfo = UserClientChangeInfo(object: client)
-        changeInfo.changeInfos = changes.originalChanges
-        changeInfo.changedKeys = changes.changedKeys
-        return changeInfo
+        return UserClientChangeInfo(object: client, changes: changes)
     }
     
 }

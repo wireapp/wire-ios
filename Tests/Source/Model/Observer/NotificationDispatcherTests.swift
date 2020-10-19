@@ -314,7 +314,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
             
             // when
-            sut.isDisabled = true
+            sut.isEnabled = false
             user.name = "bar"
             uiMOC.saveOrRollback()
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -329,13 +329,13 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.name = "foo"
         uiMOC.saveOrRollback()
-        sut.isDisabled = true
+        sut.isEnabled = false
         
         let observer = UserObserver()
         withExtendedLifetime(UserChangeInfo.add(observer: observer, for: user, in: self.uiMOC)) { () -> () in
             
             // when
-            sut.isDisabled = false
+            sut.isEnabled = true
             user.name = "bar"
             uiMOC.saveOrRollback()
             XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -446,7 +446,7 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
         XCTAssertFalse(consumer.didCallStopObserving)
         
         // when
-        sut.isDisabled = true
+        sut.isEnabled = false
         
         // then
         XCTAssertTrue(consumer.didCallStopObserving)
@@ -455,12 +455,12 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
     func testThatItNotifiesChangeInfoConsumersWhenObservationStarts_enabled(){
         // given
         let consumer = ChangeConsumer()
-        sut.isDisabled = true
+        sut.isEnabled = false
         sut.addChangeInfoConsumer(consumer)
         XCTAssertFalse(consumer.didCallStartObserving)
         
         // when
-        sut.isDisabled = false
+        sut.isEnabled = true
         
         // then
         XCTAssertTrue(consumer.didCallStartObserving)
@@ -520,5 +520,102 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
             XCTAssertTrue(changeInfo.nameChanged)
         }
     }
-    
+
+    // MARK: - Operation Mode
+
+    func testThatItCollectsMinimalChangesWhileInEconomicalMode() {
+        // Given
+        sut.operationMode = .economical
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        withExtendedLifetime(ConversationChangeInfo.add(observer: conversationObserver, for: conversation)) { () -> () in
+            // When the conversation changes
+            conversation.userDefinedName = "foo"
+            conversation.mutedMessageTypes = .mentionsAndReplies
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // Go back to normal mode to trigger notification.
+            sut.operationMode = .normal
+
+            // Then there is a notification with minimal changes.
+            let changeInfos = conversationObserver.notifications
+            XCTAssertEqual(changeInfos.count, 1)
+
+            guard let changeInfo = changeInfos.first else { return XCTFail() }
+            XCTAssertTrue(changeInfo.changedKeys.isEmpty)
+            XCTAssertTrue(changeInfo.considerAllKeysChanged)
+        }
+    }
+
+    func testThatItOnlyFiresANotificationWhenLeavingEconomicalMode() {
+        // Given
+        sut.operationMode = .economical
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        withExtendedLifetime(ConversationChangeInfo.add(observer: conversationObserver, for: conversation)) { () -> () in
+            // Make some changes
+            conversation.userDefinedName = "foo"
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            XCTAssertTrue(conversationObserver.notifications.isEmpty)
+
+            // When
+            sut.operationMode = .normal
+
+            // Then
+            let changeInfos = conversationObserver.notifications
+            XCTAssertEqual(changeInfos.count, 1)
+        }
+    }
+
+    func testThatItOperatesNormalWhenAfterReturningToNormalMode() {
+        // Given
+        sut.operationMode = .economical
+
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        withExtendedLifetime(ConversationChangeInfo.add(observer: conversationObserver, for: conversation)) { () -> () in
+            // Make some changes
+            conversation.userDefinedName = "foo"
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // When
+            sut.operationMode = .normal
+
+            // Notification for economical mode is fired.
+            let changeInfos = conversationObserver.notifications
+            XCTAssertEqual(changeInfos.count, 1)
+
+            guard let changeInfo = changeInfos.first else { return XCTFail() }
+            XCTAssertTrue(changeInfo.changedKeys.isEmpty)
+            XCTAssertTrue(changeInfo.considerAllKeysChanged)
+
+            conversationObserver.notifications.removeAll()
+
+            // Make some more changes in normal mode.
+            conversation.userDefinedName = "bar"
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+            // Then a normal change notification is received.
+            let newChangeInfos = conversationObserver.notifications
+            XCTAssertEqual(newChangeInfos.count, 1)
+
+            guard let newChangeInfo = newChangeInfos.first else { return XCTFail() }
+            XCTAssertEqual(newChangeInfo.changedKeys, [#keyPath(ZMConversation.displayName)])
+            XCTAssertFalse(newChangeInfo.considerAllKeysChanged)
+        }
+    }
+
 }
