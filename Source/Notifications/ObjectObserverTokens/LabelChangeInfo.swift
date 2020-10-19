@@ -37,11 +37,7 @@ extension Label : ObjectInSnapshot {
     public let label: LabelType
     
     static func changeInfo(for label: Label, changes: Changes) -> LabelChangeInfo? {
-        guard changes.changedKeys.count > 0 || changes.originalChanges.count > 0 else { return nil }
-        let changeInfo = LabelChangeInfo(object: label)
-        changeInfo.changeInfos = changes.originalChanges
-        changeInfo.changedKeys = changes.changedKeys
-        return changeInfo
+        return LabelChangeInfo(object: label, changes: changes)
     }
     
     public required init(object: NSObject) {

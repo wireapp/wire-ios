@@ -67,10 +67,8 @@ extension ZMUser : ObjectInSnapshot {
     static let UserClientChangeInfoKey = "clientChanges"
     
     static func changeInfo(for user: ZMUser, changes: Changes) -> UserChangeInfo? {
-        guard changes.changedKeys.count > 0 || changes.originalChanges.count > 0 else { return nil }
-
         var originalChanges = changes.originalChanges
-        let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject : [String : Any]]
+        let clientChanges = originalChanges.removeValue(forKey: UserClientChangeInfoKey) as? [NSObject: [String: Any]]
         
         if let clientChanges = clientChanges {
             var userClientChangeInfos = [UserClientChangeInfo]()
@@ -81,12 +79,9 @@ extension ZMUser : ObjectInSnapshot {
             }
             originalChanges[UserClientChangeInfoKey] = userClientChangeInfos as NSObject?
         }
-        guard originalChanges.count > 0 || changes.changedKeys.count > 0 else { return nil }
-        
-        let changeInfo = UserChangeInfo(object: user)
-        changeInfo.changeInfos = originalChanges
-        changeInfo.changedKeys = changes.changedKeys
-        return changeInfo
+
+        let modifiedChanges = changes.merged(with: Changes(originalChanges: originalChanges))
+        return UserChangeInfo(object: user, changes: modifiedChanges)
     }
     
     public required init(object: NSObject) {

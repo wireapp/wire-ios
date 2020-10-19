@@ -112,7 +112,7 @@ import WireUtilities
 }
 
 extension NotificationInContext {
-    
+
     private enum UserInfoKeys: String {
         case changedKeys
         case changeInfo

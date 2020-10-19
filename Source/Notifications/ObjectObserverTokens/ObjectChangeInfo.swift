@@ -21,34 +21,48 @@ import Foundation
 
 
 /// MARK: Base class for observer / change info
-public protocol ObjectChangeInfoProtocol : NSObjectProtocol {
+public protocol ObjectChangeInfoProtocol: NSObjectProtocol {
     
+    var changeInfos: [String: NSObject?] { get set }
+
     init(object: NSObject)
+
     func setValue(_ value: Any?, forKey key: String)
+
     func value(forKey key: String) -> Any?
-    var changeInfos : [String : NSObject?] {get set}
 
 }
 
-open class ObjectChangeInfo : NSObject, ObjectChangeInfoProtocol {
+open class ObjectChangeInfo: NSObject, ObjectChangeInfoProtocol {
     
-    let object : NSObject
+    let object: NSObject
+
+    open var changedKeys = Set<String>()
+    open var changeInfos = [String: NSObject?]()
+
+    var considerAllKeysChanged = false
+
+    convenience init?(object: NSObject, changes: Changes) {
+        guard changes.hasChangeInfo else { return nil }
+        self.init(object: object)
+        changedKeys = changes.changedKeys
+        changeInfos = changes.originalChanges
+        considerAllKeysChanged = changes.mayHaveUnknownChanges
+    }
     
     public required init(object: NSObject) {
         self.object = object
     }
-    open var changedKeys : Set<String> = Set()
-    open var changeInfos : [String : NSObject?] = [:]
-    
-    
+
     func changedKeysContain(keys: String...) -> Bool {
-        return !changedKeys.isDisjoint(with: keys)
+        return considerAllKeysChanged || !changedKeys.isDisjoint(with: keys)
     }
     
-    var customDebugDescription : String {
+    var customDebugDescription: String {
         guard let managedObject = object as? NSManagedObject else {
             return "ChangeInfo for \(object) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
         }
+        
         return "ChangeInfo for \(managedObject.objectID) with changedKeys: \(changedKeys), changeInfos: \(changeInfos)"
     }
 }
@@ -71,17 +85,5 @@ extension ObjectChangeInfo {
         }
     }
     
-    static func changeInfoForNewMessageNotification(with name: Notification.Name, changedMessages messages: Set<ZMMessage>) -> ObjectChangeInfo? {
-        switch name {
-        case Notification.Name.NewUnreadUnsentMessage:
-            return NewUnreadUnsentMessageChangeInfo(messages: Array(messages) as [ZMConversationMessage])
-        case Notification.Name.NewUnreadMessage:
-            return NewUnreadMessagesChangeInfo(messages: Array(messages) as [ZMConversationMessage])
-        case Notification.Name.NewUnreadKnock:
-            return NewUnreadKnockMessagesChangeInfo(messages: Array(messages) as [ZMConversationMessage])
-        default:
-            return nil
-        }
-    }
 }
 
