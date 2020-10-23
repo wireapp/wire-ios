@@ -57,11 +57,6 @@
                BlueprintName = "WireLinkPreviewTests"
                ReferencedContainer = "container:WireLinkPreview.xcodeproj">
             </BuildableReference>
-            <SkippedTests>
-               <Test
-                  Identifier = "IntegrationTests/testThatItParsesSampleDataYahooSports()">
-               </Test>
-            </SkippedTests>
          </TestableReference>
       </Testables>
    </TestAction>
