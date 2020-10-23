@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2016 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 // 
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,7 +32,9 @@ final class ImageDownloader: NSObject, ImageDownloaderType {
     let resultsQueue: OperationQueue
     let session: URLSessionType
     
-    init(resultsQueue: OperationQueue, workerQueue: OperationQueue = OperationQueue(), session: URLSessionType? = nil) {
+    init(resultsQueue: OperationQueue, 
+         workerQueue: OperationQueue = OperationQueue(), 
+         session: URLSessionType? = nil) {
         self.resultsQueue = resultsQueue
         self.workerQueue = workerQueue
         self.workerQueue.name = String(describing: type(of: self)) + "Queue"
