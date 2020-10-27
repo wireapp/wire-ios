@@ -462,13 +462,19 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
     NSPredicate *conversationPredicate = [NSPredicate predicateWithFormat:@"%K == %@ OR %K == %@", ZMMessageConversationKey, conversation.objectID, ZMMessageHiddenInConversationKey, conversation.objectID];
     
     NSPredicate *predicate = [NSCompoundPredicate andPredicateWithSubpredicates:@[noncePredicate, conversationPredicate]];
-    NSFetchRequest *fetchRequest = [self.class sortedFetchRequestWithPredicate:predicate];
+    NSFetchRequest *fetchRequest = [ZMMessage sortedFetchRequestWithPredicate:predicate];
     fetchRequest.fetchLimit = 2;
     fetchRequest.includesSubentities = YES;
     
     NSArray* fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
     VerifyString([fetchResult count] <= 1, "More than one message with the same nonce in the same conversation");
-    return fetchResult.firstObject;
+    ZMMessage *message = fetchResult.firstObject;
+    
+    if ([message.entity isKindOfEntity:entity]) {
+        return message;
+    } else {
+        return nil;
+    }
 }
 
 
