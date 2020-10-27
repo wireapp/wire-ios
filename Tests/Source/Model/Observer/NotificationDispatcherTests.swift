@@ -47,7 +47,8 @@ extension ObjectChangeInfo {
         return sut
     }
     var sut : NotificationDispatcher!
-    var conversationObserver : ConversationObserver!
+    var conversationObserver: ConversationObserver!
+    var newUnreadMessageObserver: NewUnreadMessageObserver!
     var mergeNotifications = [Notification]()
     
     /// Holds a reference to the observer token, so that we don't release it during the test
@@ -56,6 +57,7 @@ extension ObjectChangeInfo {
     
     override public func setUp() {
         super.setUp()
+        newUnreadMessageObserver = NewUnreadMessageObserver()
         conversationObserver = ConversationObserver()
         sut = NotificationDispatcher(managedObjectContext: uiMOC)
         NotificationCenter.default.addObserver(self, selector: #selector(NotificationDispatcherTestBase.contextDidMerge(_:)), name: Notification.Name.NSManagedObjectContextDidSave, object: syncMOC)
@@ -67,6 +69,7 @@ extension ObjectChangeInfo {
         self.sut.tearDown()
         self.sut = nil
         self.conversationObserver = nil
+        self.newUnreadMessageObserver = nil
         self.mergeNotifications = []
         self.token = nil
         super.tearDown()
@@ -141,6 +144,55 @@ class NotificationDispatcherTests : NotificationDispatcherTestBase {
                 return XCTFail()
             }
             XCTAssertTrue(changeInfo.nameChanged)
+        }
+    }
+    
+    func testThatItNotifiesAboutUnreadMessages(){
+        
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.lastReadServerTimeStamp = Date()
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) { () -> () in
+         
+            // when
+            let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+            message.visibleInConversation = conversation
+            message.serverTimestamp = Date()
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            
+            // then
+            XCTAssertEqual(newUnreadMessageObserver.notifications.first?.messages.count, 1)
+        }
+    }
+    
+    func testThatItDoesntNotifyAboutOldUnreadMessages(){
+        
+        // given
+        let conversation = ZMConversation.insertNewObject(in: uiMOC)
+        conversation.lastReadServerTimeStamp = Date()
+        let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+        message.visibleInConversation = conversation
+        message.serverTimestamp = Date()
+        uiMOC.saveOrRollback()
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        
+        withExtendedLifetime(NewUnreadMessagesChangeInfo.add(observer: newUnreadMessageObserver, managedObjectContext: uiMOC)) { () -> () in
+         
+            // when
+            let message = ZMClientMessage(nonce: UUID(), managedObjectContext: uiMOC)
+            message.visibleInConversation = conversation
+            message.serverTimestamp = Date()
+            uiMOC.saveOrRollback()
+            XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+            
+            // then
+            XCTAssertEqual(newUnreadMessageObserver.notifications.first?.messages.count, 1)
         }
     }
     
