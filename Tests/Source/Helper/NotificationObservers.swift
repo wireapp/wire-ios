@@ -63,6 +63,24 @@ class MessageObserver : NSObject, ZMMessageObserver {
     }
 }
 
+class NewUnreadMessageObserver: NSObject, ZMNewUnreadMessagesObserver {
+    
+    var token: NSObjectProtocol?
+    var notifications : [NewUnreadMessagesChangeInfo] = []
+    
+    override init() {}
+    
+    init(context: NSManagedObjectContext) {
+        super.init()
+        token = NewUnreadMessagesChangeInfo.add(observer: self, managedObjectContext: context)
+    }
+    
+    func didReceiveNewUnreadMessages(_ changeInfo: NewUnreadMessagesChangeInfo) {
+        notifications.append(changeInfo)
+    }
+    
+}
+
 
 final class ConversationObserver: NSObject, ZMConversationObserver {
     

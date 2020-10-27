@@ -325,6 +325,8 @@ import CoreData
     private func fireAllNotifications() {
         let detectedChanges = changeDetector.consumeChanges()
         var changesByClass = [ClassIdentifier: [ObjectChangeInfo]]()
+        let unreadMessages = self.unreadMessages
+        self.unreadMessages = UnreadMessages()
 
         detectedChanges.forEach { changeInfo in
             guard let objectInSnapshot = changeInfo.object as? ObjectInSnapshot else { return }
