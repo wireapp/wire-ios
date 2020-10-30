@@ -199,7 +199,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
     
     /// File name as was sent or `nil` in case of an image asset
     public var filename: String? {
-        return underlyingMessage?.assetData?.original.name.removingExtremeCombiningCharacters
+        return underlyingMessage?.assetData?.original.name.normalizedFilename
     }
     
     public var thumbnailAssetID: String? {
