@@ -294,6 +294,7 @@ extension ZMAssetClientMessageTests {
         let sut = ZMAssetClientMessage(nonce: UUID.create(), managedObjectContext: uiMOC)
         sut.sender = selfUser
         let mimeType = "text/plain"
+        let name = "example.txt"
         XCTAssertTrue(uiMOC.saveOrRollback())
         XCTAssertNotNil(sut)
         
