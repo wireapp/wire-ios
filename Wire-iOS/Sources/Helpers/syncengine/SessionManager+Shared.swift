@@ -36,7 +36,7 @@ extension SessionManager {
         let hasAudioPermissions = AVCaptureDevice.authorizationStatus(for: AVMediaType.audio) == AVAuthorizationStatus.authorized
         let isCallKitSupported = !UIDevice.isSimulator
         
-        if isCallKitEnabled && isCallKitSupported && hasAudioPermissions {
+        if isCallKitEnabled && isCallKitSupported && hasAudioPermissions && !isLockScreenEnabled {
             self.callNotificationStyle = .callKit
         }
         else {

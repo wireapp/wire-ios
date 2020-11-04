@@ -132,4 +132,13 @@ extension AppLockViewController: AppLockUserInterface {
     func setReauth(visible: Bool) {
         lockView.showReauth = visible
     }
+    
+    func setIncomingCallHeader(visible: Bool) {
+        if let callConversation = ZMUserSession.shared()?.priorityCallConversation, visible {
+            lockView.showIncomingCall = true
+            lockView.callerDisplayName = (callConversation.voiceChannel?.initiator?.name) ?? "conversation.status.someone".localized //TODO: ask the design team
+        } else {
+            lockView.showIncomingCall = false
+        }
+    }
 }
