@@ -25,7 +25,7 @@
 
 @interface NSManagedObjectContext (ZMSGroupQueue) <ZMSGroupQueue>
 
-@property (nonatomic, readonly) DispatchGroupContext *dispatchGroupContext;
+@property (nonatomic, readonly, null_unspecified ) DispatchGroupContext *dispatchGroupContext;
 
 - (void)createDispatchGroups;
 
@@ -39,29 +39,30 @@
 /// the receiver's queue.
 ///
 /// @sa  dispatch_group_notify()
-- (void)notifyWhenGroupIsEmpty:(dispatch_block_t)block ZM_NON_NULL(1);
+- (void)notifyWhenGroupIsEmpty:(dispatch_block_t _Null_unspecified )block ZM_NON_NULL(1);
 
 /// Adds a group to the receiver. All blocks associated with the receiver's group will
 /// also be associated with this group.
 ///
 /// This is used for testing. It is not thread safe.
-- (void)addGroup:(ZMSDispatchGroup *)dispatchGroup ZM_NON_NULL(1);
+- (void)addGroup:(ZMSDispatchGroup *_Null_unspecified)dispatchGroup ZM_NON_NULL(1);
 
 /// List of all groups associated with this context
-- (NSArray *)allGroups;
+- (NSArray *_Null_unspecified)allGroups;
 
 /// Performs a block and wait for completion.
 /// @note: The block is not retained after its execution. This means that if the queue
 /// is not running (e.g. blocked by a deadlock), the block and all its captured variables
 /// will be retained, otherwise it will eventually be released.
 /// @attention: Be *very careful* not to create deadlocks.
-- (void)performGroupedBlockAndWait:(dispatch_block_t)block ZM_NON_NULL(1);
+- (void)performGroupedBlockAndWait:(dispatch_block_t _Null_unspecified )block ZM_NON_NULL(1);
 
-/// Executes the fetch request or asserts in case of failure
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
+/// Executes a fetch request and asserts in case of error
+/// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
+- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
 
-- (NSArray *)enterAllGroups;
-- (void)leaveAllGroups:(NSArray *)groups;
+- (NSArray *_Null_unspecified)enterAllGroups;
+- (void)leaveAllGroups:(NSArray *_Null_unspecified)groups;
 
 @property (nonatomic) int pendingSaveCounter;
 
