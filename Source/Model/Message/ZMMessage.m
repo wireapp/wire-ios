@@ -480,9 +480,10 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 
 + (NSPredicate *)predicateForMessagesThatWillExpire;
 {
-    return [NSPredicate predicateWithFormat:@"%K == 0 && %K != NIL",
+    return [NSPredicate predicateWithFormat:@"%K == 0 && %K > %@",
             ZMMessageIsExpiredKey,
-            ZMMessageExpirationDateKey];
+            ZMMessageExpirationDateKey,
+            [NSDate dateWithTimeIntervalSince1970:0]];
 }
 
 
