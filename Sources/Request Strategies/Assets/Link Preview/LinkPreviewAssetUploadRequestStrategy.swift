@@ -44,15 +44,15 @@ extension ZMImagePreprocessingTracker {
         let imageFetchPredicate = NSPredicate(format: "%K == %d",ZMClientMessage.linkPreviewStateKey, ZMLinkPreviewState.downloaded.rawValue)
         let needsProccessing = NSPredicate { object, _ in
             guard let message = object as? ZMClientMessage else { return false }
-            return nil != managedObjectContext.zm_fileAssetCache.assetData(message, format: .original, encrypted: false)
+            return managedObjectContext.zm_fileAssetCache.hasDataOnDisk(message, format: .original, encrypted: false)
         }
         
         let previewImagePreprocessor = ZMImagePreprocessingTracker(
-            managedObjectContext:       managedObjectContext,
-            imageProcessingQueue:       OperationQueue(),
-            fetch:             imageFetchPredicate,
-            needsProcessingPredicate:   needsProccessing,
-            entityClass:                ZMClientMessage.self
+            managedObjectContext: managedObjectContext,
+            imageProcessingQueue: OperationQueue(),
+            fetch: imageFetchPredicate,
+            needsProcessingPredicate: needsProccessing,
+            entityClass: ZMClientMessage.self
         )
         return previewImagePreprocessor
     }
