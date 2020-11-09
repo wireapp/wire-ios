@@ -20,6 +20,8 @@ import Foundation
 
 /// An extension of the NSSecureUnarchiveFromData which supports encoding/decoding our
 /// custom classes.
+///
+/// NOTE: Every transformable property should use this secure transformer.
 @available(iOS 12.0, iOSApplicationExtension 12.0, *)
 public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransformer {
     
@@ -33,7 +35,8 @@ public class ExtendedSecureUnarchiveFromData: NSSecureUnarchiveFromDataTransform
     }
 
     public override class var allowedTopLevelClasses: [AnyClass] {
-        super.allowedTopLevelClasses + [LinkAttachment.self]
+        // NOTE: NSSet is included for compatibility with iOS 12
+        super.allowedTopLevelClasses + [LinkAttachment.self, NSSet.self]
     }
     
 }
