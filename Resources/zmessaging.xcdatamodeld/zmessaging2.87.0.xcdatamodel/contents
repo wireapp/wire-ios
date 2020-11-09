@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.87.0">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19H2" minimumToolsVersion="Xcode 4.3" sourceLanguage="Objective-C" userDefinedModelVersionIdentifier="2.87.0">
     <entity name="Action" representedClassName=".Action" syncable="YES">
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="role" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
@@ -38,14 +38,14 @@
         <attribute name="existsOnBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="lastUpdateDateInGMT" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="message" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="status" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="conversation" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="connection" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="to" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="connection" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Conversation" representedClassName="ZMConversation" syncable="YES">
-        <attribute name="accessModeStrings" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="accessModeStrings" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="accessRoleString" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="archivedChangedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="clearedTimeStamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
@@ -67,7 +67,7 @@
         <attribute name="lastUnreadMissedCallDate" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="legalHoldStatus" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="localMessageDestructionTimeout" optional="YES" attributeType="Double" defaultValueString="0" usesScalarValueType="NO" elementID="messageDestructionTimeout" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="mutedStatus" attributeType="Integer 32" defaultValueString="NO" usesScalarValueType="NO" elementID="mutedStatus" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToCalculateUnreadMessages" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
@@ -102,7 +102,7 @@
     <entity name="FeatureFlag" representedClassName=".FeatureFlag" syncable="YES">
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="isEnabled" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="updatedTimestamp" optional="YES" attributeType="Date" usesScalarValueType="NO" syncable="YES"/>
         <relationship name="team" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Team" inverseName="featureFlags" inverseEntity="Team" syncable="YES"/>
     </entity>
@@ -125,7 +125,7 @@
     <entity name="KnockMessage" representedClassName="ZMKnockMessage" parentEntity="Message" syncable="YES"/>
     <entity name="Label" representedClassName=".Label" syncable="YES">
         <attribute name="markedForDeletion" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="remoteIdentifier" optional="YES" transient="YES" syncable="YES"/>
         <attribute name="remoteIdentifier_data" optional="YES" attributeType="Binary" syncable="YES"/>
@@ -151,7 +151,7 @@
         <attribute name="isExpired" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="isObfuscated" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="linkAttachments" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="needsLinkAttachmentsUpdate" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="nonce" optional="YES" transient="YES" syncable="YES"/>
@@ -191,13 +191,13 @@
         <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" syncable="YES"/>
     </entity>
     <entity name="ParticipantRole" representedClassName=".ParticipantRole" syncable="YES">
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <relationship name="conversation" maxCount="1" deletionRule="Nullify" destinationEntity="Conversation" inverseName="participantRoles" inverseEntity="Conversation" syncable="YES"/>
         <relationship name="role" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Role" inverseName="participantRoles" inverseEntity="Role" syncable="YES"/>
         <relationship name="user" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="participantRoles" inverseEntity="User" syncable="YES"/>
     </entity>
     <entity name="Reaction" representedClassName=".Reaction" syncable="YES">
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="unicodeValue" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="message" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Message" inverseName="reactions" inverseEntity="Message" syncable="YES"/>
         <relationship name="users" toMany="YES" deletionRule="Nullify" destinationEntity="User" inverseName="reactions" inverseEntity="User" syncable="YES"/>
@@ -257,7 +257,7 @@
         <attribute name="isAccountDeleted" optional="YES" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="legalHoldRequest" optional="YES" attributeType="Binary" syncable="YES"/>
         <attribute name="managedBy" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="needsPropertiesUpdate" optional="YES" attributeType="Boolean" defaultValueString="YES" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsRichProfileUpdate" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
@@ -305,7 +305,7 @@
         <attribute name="label" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="markedToDelete" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="model" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="NSSecureUnarchiveFromData" syncable="YES"/>
+        <attribute name="modifiedKeys" optional="YES" attributeType="Transformable" valueTransformerName="ExtendedSecureUnarchiveFromData" syncable="YES"/>
         <attribute name="needsToBeUpdatedFromBackend" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToNotifyUser" attributeType="Boolean" defaultValueString="NO" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="needsToUploadSignalingKeys" optional="YES" attributeType="Boolean" usesScalarValueType="NO" syncable="YES"/>
