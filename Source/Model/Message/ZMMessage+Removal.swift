@@ -27,6 +27,7 @@ extension ZMMessage {
         guard let predicate = ZMClientMessage.predicateForObjectsThatNeedToBeInsertedUpstream() else {
             return
         }
+        
         let requestForInsertedMessages = ZMClientMessage.sortedFetchRequest(with: predicate)
         
         let possibleMatches = self.managedObjectContext?.executeFetchRequestOrAssert(requestForInsertedMessages) as? [ZMClientMessage]

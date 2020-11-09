@@ -22,7 +22,7 @@
 
 @implementation NSManagedObjectContext (TestHelpers)
 
-- (void)performGroupedBlockAndWaitWithReasonableTimeout:(dispatch_block_t)block;
+- (void)performGroupedBlockThenWaitForReasonableTimeout:(dispatch_block_t)block;
 {
     NSTimeInterval timeInterval2 = [ZMBaseManagedObjectTest timeToUseForOriginalTime:100];
     NSDate *end = [NSDate dateWithTimeIntervalSinceNow:timeInterval2];

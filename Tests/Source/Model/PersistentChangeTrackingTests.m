@@ -59,7 +59,7 @@
     
     // That
     
-    [self.syncMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.syncMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         
         NSArray *users = [self.syncMOC executeFetchRequestOrAssert:request];
         if(users.count != 2u) { // The self user will be in there, too

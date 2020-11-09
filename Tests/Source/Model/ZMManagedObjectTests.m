@@ -272,7 +272,7 @@
     
     // when
     __block NSSet *keysWithLocalModifications;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         MockEntity *mockEntity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
 
         // when
@@ -295,7 +295,7 @@
     // given
     [self.testMOC markAsUIContext];
     __block MockEntity *mockEntity;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         mockEntity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         
         // when
@@ -307,7 +307,7 @@
     }];
 
     __block NSSet *keysThatHaveLocalModifications;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         keysThatHaveLocalModifications = mockEntity.keysThatHaveLocalModifications;
     }];
     
@@ -327,7 +327,7 @@
     // given
     NSUUID *entityUUID = [NSUUID createUUID];
     [self.testMOC markAsUIContext];
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         MockEntity *mockEntity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         mockEntity.testUUID = entityUUID;
         mockEntity.field = 99;
@@ -338,7 +338,7 @@
 
     // when
     __block NSSet *keysWithLocalModifications;
-    [self.alternativeTestMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.alternativeTestMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         MockEntity *fetchedEntity = [self mockEntityWithUUID:entityUUID inMoc:self.alternativeTestMOC];
         keysWithLocalModifications = fetchedEntity.keysThatHaveLocalModifications;
     }];
@@ -396,7 +396,7 @@
     // given
     [self.testMOC markAsUIContext];
     __block MockEntity *mockEntity;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         mockEntity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         mockEntity.testUUID = [NSUUID createUUID];
         mockEntity.field = 5;
@@ -409,7 +409,7 @@
     // when
     NSSet *keysToReset = [NSSet setWithObjects:@"field2", @"testUUID_data", @"bogus_unknown_attr", nil];
     __block NSSet *keysWithLocalModifications;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         [mockEntity resetLocallyModifiedKeys:keysToReset];
         keysWithLocalModifications = mockEntity.keysThatHaveLocalModifications;
     }];
@@ -427,7 +427,7 @@
     __block MockEntity *mockEntity;
     __block MockEntity *otherMockEntity1;
     __block MockEntity *otherMockEntity2;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         mockEntity = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         otherMockEntity1 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         otherMockEntity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
@@ -435,7 +435,7 @@
     
     // when
     __block NSSet *keysWithLocalModifications;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         mockEntity.field = 2;
         mockEntity.field2 = @"Joe Doe";
         [mockEntity.mockEntities addObjectsFromArray:@[otherMockEntity1, otherMockEntity2]];
@@ -454,7 +454,7 @@
     __block MockEntity *entity1;
     __block MockEntity *entity2;
     __block MockEntity *entity3;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         entity1 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         entity3 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
@@ -479,7 +479,7 @@
     __block MockEntity *entity1;
     __block MockEntity *entity2;
     __block MockEntity *entity3;
-    [self.testMOC performGroupedBlockAndWaitWithReasonableTimeout:^{
+    [self.testMOC performGroupedBlockThenWaitForReasonableTimeout:^{
         entity1 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         entity2 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];
         entity3 = [MockEntity insertNewObjectInManagedObjectContext:self.testMOC];

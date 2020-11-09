@@ -189,7 +189,7 @@ class StorageStackTests: DatabaseBaseTest {
             XCTFail("No context")
             return
         }
-        let messageCount = try uiContext.count(for: ZMClientMessage.sortedFetchRequest()!)
+        let messageCount = try uiContext.count(for: ZMClientMessage.sortedFetchRequest())
         XCTAssertGreaterThan(messageCount, 0)
         
     }

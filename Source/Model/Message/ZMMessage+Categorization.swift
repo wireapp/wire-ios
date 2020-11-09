@@ -88,7 +88,7 @@ extension ZMMessage {
             : nil
         
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [orPredicate, excludingPredicate, conversationPredicate].compactMap { $0 })
-        return self.sortedFetchRequest(with: finalPredicate)!
+        return self.sortedFetchRequest(with: finalPredicate)
     }
     
     public static func fetchRequestMatching(matchPairs: [CategoryMatch],
@@ -108,7 +108,7 @@ extension ZMMessage {
             : nil
         
         let finalPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, conversationPredicate].compactMap { $0 })
-        return self.sortedFetchRequest(with: finalPredicate)!
+        return self.sortedFetchRequest(with: finalPredicate)
     }
     
 }
@@ -233,7 +233,7 @@ public struct MessageCategory : OptionSet {
     
     public let rawValue: Int32
     
-    public static let none = MessageCategory(rawValue: 0)
+    public static let none = MessageCategory([])
     public static let undefined = MessageCategory(rawValue: 1 << 0)
     public static let text = MessageCategory(rawValue: 1 << 1)
     public static let link = MessageCategory(rawValue: 1 << 2)
