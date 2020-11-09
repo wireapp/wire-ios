@@ -32,8 +32,12 @@ extension ZMConversation {
     /// at any point in the past had been secure
     static func migrateAllSecureWithIgnored(in moc: NSManagedObjectContext) {
         let predicate = ZMConversation.predicateSecureWithIgnored()
+
         let request = ZMConversation.sortedFetchRequest(with: predicate)
-        let allConversations = moc.executeFetchRequestOrAssert(request) as! [ZMConversation]
+        
+        guard let allConversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
+            fatal("fetchOrAssert failed")
+        }
 
         for conversation in allConversations {
             conversation.securityLevel = .notSecure
@@ -54,8 +58,11 @@ extension ZMConversation {
         let selfUser = ZMUser.selfUser(in: moc)
         
         let request = ZMConversation.sortedFetchRequest()
-        let allConversations = moc.executeFetchRequestOrAssert(request) as! [ZMConversation]
         
+        guard let allConversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
+            fatal("fetchOrAssert failed")
+        }
+                
         for conversation in allConversations {
             
             let oldKey = "isSelfAnActiveMember"
@@ -110,13 +117,17 @@ extension ZMConversation {
         
         // Mark group conversation membership to be refetched
         let selfUser = ZMUser.selfUser(in: moc)
+        
         let groupConversationsFetch = ZMConversation.sortedFetchRequest(
             with: NSPredicate(format: "%K == %d",
                               ZMConversationConversationTypeKey,
-                              ZMConversationType.group.rawValue
-            )
-        )
-        (moc.executeFetchRequestOrAssert(groupConversationsFetch) as! [ZMConversation]).forEach {
+                              ZMConversationType.group.rawValue))
+        
+        guard let conversations = moc.fetchOrAssert(request: groupConversationsFetch) as? [ZMConversation] else {
+                fatal("fetchOrAssert failed")
+        }
+        
+        conversations.forEach {
             guard $0.isSelfAnActiveMember else { return }
             $0.needsToBeUpdatedFromBackend = true
             $0.needsToDownloadRoles = $0.team == nil || $0.team != selfUser.team
@@ -132,7 +143,13 @@ extension ZMConversation {
         
         let oldKey = "lastServerSyncedActiveParticipants"
         
-        (moc.executeFetchRequestOrAssert(ZMConversation.sortedFetchRequest()) as! [ZMConversation]).forEach { convo in
+        let request = ZMConversation.sortedFetchRequest()
+        
+        guard let conversations = moc.fetchOrAssert(request: request) as? [ZMConversation] else {
+                fatal("fetchOrAssert failed")
+        }
+        
+        conversations.forEach { convo in
             let users = (convo.value(forKey: oldKey) as! NSOrderedSet).array as? [ZMUser]
             users?.forEach { user in
                 let participantRole = ParticipantRole.insertNewObject(in: moc)

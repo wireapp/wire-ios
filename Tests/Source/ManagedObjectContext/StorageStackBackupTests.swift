@@ -143,7 +143,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
 
         // then
         guard case .success = result else { return XCTFail() }
-        let fetchConversations = ZMConversation.sortedFetchRequest()!
+        let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
     }
 
@@ -161,7 +161,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         // then
         guard case .success = result else { return XCTFail() }
         let anotherDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
-        let fetchConversations = ZMConversation.sortedFetchRequest()!
+        let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try anotherDirectory.uiContext.count(for: fetchConversations), 1)
     }
 
@@ -189,7 +189,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
             let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
             context.persistentStoreCoordinator = coordinator
             context.performAndWait {
-                let request = ZMConversation.sortedFetchRequest()!
+                let request = ZMConversation.sortedFetchRequest()
                 let convs = try? context.fetch(request)
                 XCTAssertEqual(convs?.count, 1)
             }
@@ -216,7 +216,7 @@ class StorageStackBackupTests: DatabaseBaseTest {
         // then
         guard case .success = result else { return XCTFail() }
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        let fetchConversations = ZMConversation.sortedFetchRequest()!
+        let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
     }
     

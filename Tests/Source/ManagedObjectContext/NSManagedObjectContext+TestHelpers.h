@@ -23,6 +23,6 @@
 
 @interface NSManagedObjectContext (TestHelpers)
 
-- (void)performGroupedBlockAndWaitWithReasonableTimeout:(dispatch_block_t)block;
+- (void)performGroupedBlockThenWaitForReasonableTimeout:(dispatch_block_t)block;
 
 @end

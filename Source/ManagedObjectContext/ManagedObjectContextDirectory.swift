@@ -17,10 +17,10 @@
 //
 
 import Foundation
-import WireUtilities
 
 /// List of context
-@objcMembers public class ManagedObjectContextDirectory: NSObject {
+@objcMembers
+public class ManagedObjectContextDirectory: NSObject {
     
     init(persistentStoreCoordinator: NSPersistentStoreCoordinator,
          accountDirectory: URL,
@@ -156,8 +156,11 @@ extension NSManagedObjectContext {
     
     // This function setup the user info on the context, the session and self user must be initialised before end.
     fileprivate func setupLocalCachedSessionAndSelfUser() {
-        let session = self.executeFetchRequestOrAssert(ZMSession.sortedFetchRequest()).first as! ZMSession
-        self.userInfo[SessionObjectIDKey] = session.objectID
+        let request = ZMSession.sortedFetchRequest()
+        
+        guard let session = fetchOrAssert(request: request).first as? ZMSession else { return }
+        
+        userInfo[SessionObjectIDKey] = session.objectID
         ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
     }
     

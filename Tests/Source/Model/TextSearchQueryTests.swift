@@ -563,7 +563,7 @@ class TextSearchQueryTests: BaseZMClientMessageTests {
             ZMClientMessage.predicateForNotIndexedMessages(),
             ZMClientMessage.predicateForMessages(inConversationWith: conversation.remoteIdentifier!)
         ])
-        let request = ZMClientMessage.sortedFetchRequest(with: predicate)!
+        let request = ZMClientMessage.sortedFetchRequest(with: predicate)
         let notIndexedMessageCount = (try? uiMOC.count(for: request)) ?? 0
 
         if notIndexedMessageCount > 0 {

@@ -499,7 +499,7 @@ extension DuplicatedEntityRemovalTests {
         self.moc.saveOrRollback()
 
         // THEN
-        let allClients = try self.moc.fetch(UserClient.sortedFetchRequest()!)
+        let allClients = try self.moc.fetch(UserClient.sortedFetchRequest())
         XCTAssertEqual(user1.clients.count, 0)
         XCTAssertEqual(allClients.count, 0)
     }

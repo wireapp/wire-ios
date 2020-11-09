@@ -495,14 +495,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"NSManagedObjectContext";
     return store;
 }
 
-- (NSArray *)executeFetchRequestOrAssert:(NSFetchRequest *)request;
-{
-    NSError *error;
-    NSArray *result = [self executeFetchRequest:request error:&error];
-    RequireString(result != nil, "Error in fetching: %lu", (long) error.code);
-    return result;
-}
-
 @end
 
 

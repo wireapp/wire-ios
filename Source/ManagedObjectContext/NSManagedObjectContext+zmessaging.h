@@ -85,10 +85,6 @@ extern NSString * _Nonnull const IsEventContextKey;
 /// immediately if the receiver has a lot of pending changes.
 - (void)enqueueDelayedSaveWithGroup:(nullable ZMSDispatchGroup *)group;
 
-/// Executes a fetch request and asserts in case of error
-/// For generic requests in Swift please refer to `func fetchOrAssert<T>(request: NSFetchRequest<T>) -> [T]`
-- (nonnull NSArray *)executeFetchRequestOrAssert:(nonnull NSFetchRequest *)request;
-
 /// Fetch metadata for key from in-memory non-persisted metadata
 /// or from persistent store metadata, in that order
 - (nullable id)persistentStoreMetadataForKey:(nonnull NSString *)key;
