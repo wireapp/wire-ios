@@ -211,3 +211,9 @@ extension Ephemeral: MessageCapable {
         message.ephemeral = self
     }
 }
+
+extension DataTransfer: MessageCapable {
+    public func setContent(on message: inout GenericMessage) {
+        message.dataTransfer = self
+    }
+}

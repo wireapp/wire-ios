@@ -62,26 +62,39 @@ extension ZMOTRMessage {
         switch content {
         case .lastRead where conversation.isSelfConversation:
             ZMConversation.updateConversation(withLastReadFromSelfConversation: message.lastRead, inContext: moc)
+
         case .cleared where conversation.isSelfConversation:
             ZMConversation.updateConversation(withClearedFromSelfConversation: message.cleared, inContext: moc)
+
         case .hidden where conversation.isSelfConversation:
             ZMMessage.remove(remotelyHiddenMessage: message.hidden, inContext: moc)
+
+        case let .dataTransfer(dataTransfer) where conversation.isSelfConversation:
+            guard let trackingIdentifier = dataTransfer.trackingIdentifierData else { break }
+            ZMUser.selfUser(in: moc).analyticsIdentifier = trackingIdentifier
+
         case .deleted:
             ZMMessage.remove(remotelyDeletedMessage: message.deleted, inConversation: conversation, senderID: senderID, inContext: moc)
+
         case .reaction:
             // if we don't understand the reaction received, discard it
             guard Reaction.validate(unicode: message.reaction.emoji) else {
                 return nil
             }
             ZMMessage.add(reaction: message.reaction, senderID: senderID, conversation: conversation, inContext: moc)
+
         case .confirmation:
             ZMMessageConfirmation.createMessageConfirmations(message.confirmation, conversation: conversation, updateEvent: updateEvent)
+
         case .buttonActionConfirmation:
             ZMClientMessage.updateButtonStates(withConfirmation: message.buttonActionConfirmation, forConversation: conversation, inContext: moc)
+
         case .edited:
             return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
+
         case .clientAction, .calling, .availability:
             return nil
+
         default:
             guard
                 conversation.shouldAdd(event: updateEvent),

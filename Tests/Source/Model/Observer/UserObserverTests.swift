@@ -40,6 +40,7 @@ class UserObserverTests : NotificationDispatcherTestBase {
         case richProfile = "richProfileChanged"
         case legalHoldStatus = "legalHoldStatusChanged"
         case isUnderLegalHold = "isUnderLegalHoldChanged"
+        case analyticsIdentifier = "analyticsIdentifierChanged"
     }
     
     let userInfoChangeKeys: [UserInfoChangeKey] = UserInfoChangeKey.allCases
@@ -626,6 +627,18 @@ extension UserObserverTests {
         self.checkThatItNotifiesTheObserverOfAChange(user,
                                                      modifier: { _ in client.deviceClass = .legalHold },
                                                      expectedChangedField: .isUnderLegalHold)
+    }
+
+    func testThatItNotifiesTheObserverOfAnalyticsIdentifierChange() {
+        // given
+        let user = ZMUser.selfUser(in: uiMOC)
+        user.analyticsIdentifier = "foo"
+
+
+        // when
+        self.checkThatItNotifiesTheObserverOfAChange(user,
+                                                     modifier: { $0.analyticsIdentifier = "bar" },
+                                                     expectedChangedField: .analyticsIdentifier)
     }
 
 }
