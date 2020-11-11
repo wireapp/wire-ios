@@ -707,7 +707,6 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
     
     if (selfUser == nil) {
         selfUser = [ZMUser insertNewObjectInManagedObjectContext:moc];
-        selfUser.analyticsIdentifier = [[NSUUID UUID] transportString];
         RequireString([moc obtainPermanentIDsForObjects:@[selfUser] error:&error],
                       "Failed to get ID for self user: %lu", (long) error.code);
     }

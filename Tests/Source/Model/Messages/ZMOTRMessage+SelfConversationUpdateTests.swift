@@ -17,6 +17,7 @@
 // 
 
 import XCTest
+@testable import WireDataModel
 
 class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
     
@@ -78,6 +79,90 @@ class ZMOTRMessage_SelfConversationUpdateEventTests: BaseZMClientMessageTests {
             XCTAssertFalse(toBehiddenMessage.hasBeenDeleted)
         }
         
+    }
+
+    // MARK: - Analytics Data Transfer
+
+    func test_AfterProcessingDataTransferMessage_ContainingTrackingIdentifier_SelfUserIsUpdated() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let team = self.createTeam(in: self.syncMOC)
+            self.createMembership(in: self.syncMOC, user: selfUser, team: team)
+            selfUser.analyticsIdentifier = "foo"
+
+            let trackingIdentifier = UUID.create()
+
+            let event = self.createUpdateEvent(
+                trackingIdentifier: trackingIdentifier,
+                conversation: .selfConversation(in: self.syncMOC),
+                sender: selfUser
+            )
+
+            // When
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
+
+            // Then
+            XCTAssertEqual(selfUser.analyticsIdentifier, trackingIdentifier.transportString())
+        }
+    }
+
+    func test_WeIgnoreDataTransferMessage_IfNotSentFromSelfUser() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let team = self.createTeam(in: self.syncMOC)
+            self.createMembership(in: self.syncMOC, user: selfUser, team: team)
+            selfUser.analyticsIdentifier = "foo"
+
+            let event = self.createUpdateEvent(
+                trackingIdentifier: .create(),
+                conversation: .selfConversation(in: self.syncMOC),
+                sender: self.createUser(in: self.syncMOC)
+            )
+
+            // When
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
+
+            // Then
+            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+        }
+    }
+
+    func test_WeIgnoreDataTransferMessage_IfNotSentInSelfConversation() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let selfUser = ZMUser.selfUser(in: self.syncMOC)
+            let team = self.createTeam(in: self.syncMOC)
+            self.createMembership(in: self.syncMOC, user: selfUser, team: team)
+            selfUser.analyticsIdentifier = "foo"
+
+            let event = self.createUpdateEvent(
+                trackingIdentifier: .create(),
+                conversation: self.conversation,
+                sender: self.createUser(in: self.syncMOC)
+            )
+
+            // When
+            ZMOTRMessage.createOrUpdate(from: event, in: self.syncMOC, prefetchResult: nil)
+
+            // Then
+            XCTAssertEqual(selfUser.analyticsIdentifier, "foo")
+        }
+    }
+
+    private func createUpdateEvent(trackingIdentifier: UUID, conversation: ZMConversation, sender: ZMUser) -> ZMUpdateEvent {
+        let message = GenericMessage(content: DataTransfer(trackingIdentifier: trackingIdentifier))
+        let nonce = UUID.create()
+
+        return createUpdateEvent(
+            nonce,
+            conversationID: conversation.remoteIdentifier!,
+            timestamp: Date(),
+            genericMessage: message,
+            senderID: sender.remoteIdentifier!,
+            eventSource: ZMUpdateEventSource.download
+        )
     }
     
 }

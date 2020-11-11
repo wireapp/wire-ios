@@ -80,6 +80,10 @@ public extension GenericMessage {
     var hasLocation: Bool {
         return messageData is Location
     }
+
+    var hasDataTransfer: Bool {
+        return messageData is DataTransfer
+    }
 }
 
 // MARK: - Ephemeral
