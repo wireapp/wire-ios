@@ -25,7 +25,7 @@ extension MockTransportSession {
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "UserClient")
         request.predicate = NSPredicate(format: "identifier == %@", senderClientId)
-        let client = managedObjectContext.executeFetchRequestOrAssert(request)?.first as? MockUserClient
+        let client = managedObjectContext.executeFetchRequestOrAssert(request).first as? MockUserClient
         return client
     }
     
