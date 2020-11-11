@@ -47,8 +47,7 @@ public typealias LaunchOptions = [UIApplication.LaunchOptionsKey : Any]
     func sessionManagerWillOpenAccount(_ account: Account,
                                        from selectedAccount: Account?,
                                        userSessionCanBeTornDown: @escaping () -> Void)
-    func sessionManagerWillMigrateAccount(_ account: Account)
-    func sessionManagerWillMigrateLegacyAccount()
+    func sessionManagerWillMigrateAccount()
     func sessionManagerDidBlacklistCurrentVersion()
     func sessionManagerDidBlacklistJailbrokenDevice()
 }
@@ -453,25 +452,28 @@ public final class SessionManager : NSObject, SessionManagerType {
             // In order to do so we open the old database and get the user identifier.
             LocalStoreProvider.fetchUserIDFromLegacyStore(
                 in: sharedContainerURL,
-                migration: { [weak self] in self?.delegate?.sessionManagerWillMigrateLegacyAccount() },
-                completion: { [weak self] identifier in
-                    guard let `self` = self else { return }
-                    identifier.apply(self.migrateAccount)
-                    
-                    self.selectInitialAccount(self.accountManager.selectedAccount, launchOptions: launchOptions)
+                migration: { [weak self] in self?.delegate?.sessionManagerWillMigrateAccount() },
+                completion: { [weak self] userIdentifier in
+                    guard let strongSelf = self, let userIdentifier = userIdentifier else {
+                        self?.createUnauthenticatedSession()
+                        return
+                    }
+                    let account = strongSelf.migrateAccount(with: userIdentifier)
+                    self?.selectInitialAccount(account, launchOptions: launchOptions)
             })
         }
     }
 
     /// Creates an account with the given identifier and migrates its cookie storage.
-    private func migrateAccount(with identifier: UUID) {
+    private func migrateAccount(with identifier: UUID) -> Account {
         let account = Account(userName: "", userIdentifier: identifier)
         accountManager.addAndSelect(account)
         let migrator = ZMPersistentCookieStorageMigrator(userIdentifier: identifier, serverName: authenticatedSessionFactory.environment.backendURL.host!)
         _ = migrator.createStoreMigratingLegacyStoreIfNeeded()
+        return account
     }
 
-    private func selectInitialAccount(_ account: Account?, launchOptions: LaunchOptions) {
+    private func selectInitialAccount(_ account: Account, launchOptions: LaunchOptions) {
         if let url = launchOptions[UIApplication.LaunchOptionsKey.url] as? URL {
             if (try? URLAction(url: url))?.causesLogout == true {
                 // Do not log in if the launch URL action causes a logout
@@ -618,16 +620,16 @@ public final class SessionManager : NSObject, SessionManagerType {
          - account: account for which to load the session
          - completion: called when session is loaded or when session fails to load
      */
-    func loadSession(for account: Account?, completion: @escaping (ZMUserSession?) -> Void) {
-        guard let authenticatedAccount = account, environment.isAuthenticated(authenticatedAccount) else {
+    func loadSession(for account: Account, completion: @escaping (ZMUserSession?) -> Void) {
+        guard environment.isAuthenticated(account) else {
             completion(nil)
             
-            if let account = account, configuration.wipeOnCookieInvalid {
+            if configuration.wipeOnCookieInvalid {
                 delete(account: account, reason: .sessionExpired)
             } else {
-                createUnauthenticatedSession(accountId: account?.userIdentifier)
+                createUnauthenticatedSession(accountId: account.userIdentifier)
                 let error = NSError(code: .accessTokenExpired,
-                                    userInfo: account?.loginCredentials?.dictionaryRepresentation)
+                                    userInfo: account.loginCredentials?.dictionaryRepresentation)
                 delegate?.sessionManagerDidFailToLogin(account: account,
                                                        from: accountManager.selectedAccount,
                                                        error: error)
@@ -636,11 +638,11 @@ public final class SessionManager : NSObject, SessionManagerType {
             return
         }
         
-        activateSession(for: authenticatedAccount, completion: completion)
+        activateSession(for: account, completion: completion)
     }
     
     fileprivate func activateSession(for account: Account, completion: @escaping (ZMUserSession) -> Void) {
-        self.withSession(for: account) { session in
+        self.withSession(for: account, notifyAboutMigration: true) { session in
             self.activeUserSession = session
             
             log.debug("Activated ZMUserSession for account \(String(describing: account.userName)) — \(account.userIdentifier)")
@@ -665,7 +667,9 @@ public final class SessionManager : NSObject, SessionManagerType {
     }
     
     // Loads user session for @c account given and executes the @c action block.
-    func withSession(for account: Account, perform completion: @escaping (ZMUserSession)->()) {
+    func withSession(for account: Account,
+                     notifyAboutMigration: Bool = false,
+                     perform completion: @escaping (ZMUserSession)->()) {
         log.debug("Request to load session for \(account)")
         let group = self.dispatchGroup
         group?.enter()
@@ -682,7 +686,11 @@ public final class SessionManager : NSObject, SessionManagerType {
                     applicationContainer: self.sharedContainerURL,
                     userIdentifier: account.userIdentifier,
                     dispatchGroup: self.dispatchGroup,
-                    migration: { [weak self] in self?.delegate?.sessionManagerWillMigrateAccount(account) },
+                    migration: { [weak self] in
+                        if notifyAboutMigration {
+                            self?.delegate?.sessionManagerWillMigrateAccount()
+                        }
+                    },
                     completion: { provider in
                         let userSession = self.startBackgroundSession(for: account, with: provider)
                         completion(userSession)
