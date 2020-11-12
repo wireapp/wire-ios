@@ -34,21 +34,27 @@ class BaseSharingSessionTests: ZMTBaseTest {
     var moc: NSManagedObjectContext!
     var sharingSession: SharingSession!
     var authenticationStatus: FakeAuthenticationStatus!
+    var accountIdentifier: UUID!
 
     override func setUp() {
         super.setUp()
 
+        accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
         let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
         var directory: ManagedObjectContextDirectory!
         StorageStack.shared.createStorageAsInMemory = true
-        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: UUID.create(), applicationContainer: url) {
+        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountIdentifier,
+                                                                applicationContainer: url) {
             directory = $0
         }
+        directory.uiContext.add(dispatchGroup)
+        directory.syncContext.add(dispatchGroup)
+        directory.searchContext.add(dispatchGroup)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
-        let mockTransport = MockTransportSession(dispatchGroup: ZMSDispatchGroup(label: "ZMSharingSession"))
+        let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         let transportSession = mockTransport.mockedTransportSession()
 
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: url)
@@ -89,6 +95,14 @@ class BaseSharingSessionTests: ZMTBaseTest {
         )
 
         moc = sharingSession.userInterfaceContext
+        
+        setupSelfUser()
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+    }
+    
+    func setupSelfUser() {
+        ZMUser.selfUser(in: sharingSession.userInterfaceContext).remoteIdentifier = accountIdentifier
+        sharingSession.userInterfaceContext.saveOrRollback()
     }
 
     override func tearDown() {
