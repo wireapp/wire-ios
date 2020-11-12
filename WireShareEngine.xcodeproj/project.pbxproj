@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
+		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
 		5470D4321D77165800FDE440 /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D4311D77165800FDE440 /* WireDataModel.framework */; };
 		5470D4551D77169900FDE440 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D44A1D77169900FDE440 /* WireCryptobox.framework */; };
@@ -102,6 +104,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+EncryptionAtRest.swift"; sourceTree = "<group>"; };
+		166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F21D76E1B000FDE440 /* WireShareEngineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WireShareEngineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5470D3F91D76E1B000FDE440 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -241,6 +245,7 @@
 				5470D3F91D76E1B000FDE440 /* Info.plist */,
 				BFA18BD31D806050005C281B /* BaseSharingSessionTests.swift */,
 				F125E9B41E28DB06006583A2 /* SharingSessionTests.swift */,
+				166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */,
 				CEB50AEB1DF9BADF00211B30 /* OperationLoopTests.swift */,
 				CE7FBFC31E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift */,
 			);
@@ -323,6 +328,7 @@
 				F1DABF9A1E9B8B6100AD2324 /* Sendable.swift */,
 				F1DABF9B1E9B8B6100AD2324 /* SendableBatchObserver.swift */,
 				F1DABF9C1E9B8B6100AD2324 /* SharingSession.swift */,
+				165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */,
 				F1DABF9D1E9B8B6100AD2324 /* SharingTarget.swift */,
 				F1DABF9E1E9B8B6100AD2324 /* StrategyFactory.swift */,
 				F1DABF9F1E9B8B6100AD2324 /* WireShareEngine.h */,
@@ -510,6 +516,7 @@
 			files = (
 				F1DABFA31E9B8B6100AD2324 /* Conversation.swift in Sources */,
 				F1DABFAB1E9B8B6100AD2324 /* ZMConversation+Conversation.swift in Sources */,
+				165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */,
 				F1DABFA21E9B8B6100AD2324 /* AuthenticationStatusProvider.swift in Sources */,
 				F1DABFA41E9B8B6100AD2324 /* OperationLoop.swift in Sources */,
 				F1DABFA91E9B8B6100AD2324 /* StrategyFactory.swift in Sources */,
@@ -528,6 +535,7 @@
 				CE7FBFC41E015C5900E1C4C9 /* RequestGeneratorStoreTests.swift in Sources */,
 				BFA18BD41D806050005C281B /* BaseSharingSessionTests.swift in Sources */,
 				CEB50AEC1DF9BADF00211B30 /* OperationLoopTests.swift in Sources */,
+				166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */,
 				F125E9B51E28DB06006583A2 /* SharingSessionTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

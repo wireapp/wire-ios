@@ -172,7 +172,7 @@ public class SharingSession {
 
     let transportSession: ZMTransportSession
     
-    private var contextDirectory: ManagedObjectContextDirectory!
+    var contextDirectory: ManagedObjectContextDirectory!
     
     /// The `ZMConversationListDirectory` containing all conversation lists
     private var directory: ZMConversationListDirectory {
