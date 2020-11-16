@@ -242,10 +242,6 @@ fileprivate extension VoiceChannel {
             || isIncomingVideoCall                                   // This is an incoming video call
     }
     
-    var connectedParticipants: [CallParticipant] {
-        return participants.filter { $0.state.isConnected }
-    }
-
     func sortedConnectedParticipants() -> [CallParticipant] {
         return connectedParticipants.sorted { lhs, rhs in
             lhs.user.name?.lowercased() < rhs.user.name?.lowercased()
@@ -261,6 +257,9 @@ fileprivate extension VoiceChannel {
 }
 
 extension VoiceChannel {
+    var connectedParticipants: [CallParticipant] {
+        return participants.filter { $0.state.isConnected }
+    }
 
     var degradationState: CallDegradationState {
         switch state {
