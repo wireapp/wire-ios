@@ -176,12 +176,6 @@ import UIKit
                 dispatchGroup: dispatchGroup)
             MemoryReferenceDebugger.register(directory)
 
-            directory.syncContext.performAndWait {
-                if let imported = directory.syncContext.persistentStoreMetadata(forKey: PersistentMetadataKey.importedFromBackup.rawValue) as? NSNumber, imported.boolValue {
-                    directory.syncContext.prepareToImportBackup()
-                }
-            }
-
             completionHandler(directory)
         }
     }
