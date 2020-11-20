@@ -120,9 +120,6 @@ extension StorageStack {
                     ofType: NSSQLiteStoreType
                 )
 
-                // Mark the database as imported from a history backup
-                try markAsImported(coordinator: coordinator, location: backupLocation, options: options)
-
                 // Create & write metadata
                 let metadata = BackupMetadata(userIdentifier: accountIdentifier, clientIdentifier: clientIdentifier)
                 try metadata.write(to: metadataURL)
@@ -137,21 +134,20 @@ extension StorageStack {
         }
     }
     
-    private static func markAsImported(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
+    private static func prepareForImporting(coordinator: NSPersistentStoreCoordinator, location: URL, options: [String: Any]) throws {
         // Add persistent store at the new location to allow creation of NSManagedObjectContext
         let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: location, options: options)
         let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.persistentStoreCoordinator = coordinator
-        var storeMetadata = store.metadata
         
-        // Mark the db as backed up
-        storeMetadata?[PersistentMetadataKey.importedFromBackup.rawValue] = NSNumber(booleanLiteral: true)
-        store.metadata = storeMetadata
-
-        // Save context & forward error
         try context.performGroupedAndWait { context in
+            // Mark the db as backed up
+            context.prepareToImportBackup()
             try context.save()
         }
+        
+        // Close the store, not doing so could lead to data loss when copying the store files.
+        try coordinator.remove(store)
     }
     
     public enum BackupImportError: Error {
@@ -202,6 +198,8 @@ extension StorageStack {
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
                 let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
                 
+                try prepareForImporting(coordinator: coordinator, location: backupStoreFile, options: options)
+                
                 // Import the persistent store to the account data directory
                 try coordinator.replacePersistentStore(
                     at: accountStoreFile,
@@ -210,8 +208,8 @@ extension StorageStack {
                     sourceOptions: options,
                     ofType: NSSQLiteStoreType
                 )
-
-                log.info("succesfully imported backup with metadata: \(metadata)")
+                
+                log.info("successfully imported backup with metadata: \(metadata)")
 
                 DispatchQueue.main.async(group: dispatchGroup) {
                     completion(.success(accountDirectory))

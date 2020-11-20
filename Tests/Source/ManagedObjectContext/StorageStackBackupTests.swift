@@ -164,44 +164,6 @@ class StorageStackBackupTests: DatabaseBaseTest {
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try anotherDirectory.uiContext.count(for: fetchConversations), 1)
     }
-
-    func testThatItMarksStoreAsBackupWhenExporting() throws {
-        // given
-        let uuid = UUID()
-        var directory: ManagedObjectContextDirectory? = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(moc: directory!.uiContext, participants: [])
-        directory!.uiContext.saveOrRollback()
-
-        // when
-        guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
-        StorageStack.reset()
-        directory = nil
-
-        // then
-        switch result {
-        case let .success(backup):
-            let model = NSManagedObjectModel.loadModel()
-            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
-            let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
-            let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
-            XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
-            let store = try coordinator.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: storeFile, options: options)
-            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-            context.persistentStoreCoordinator = coordinator
-            context.performAndWait {
-                let request = ZMConversation.sortedFetchRequest()
-                let convs = try? context.fetch(request)
-                XCTAssertEqual(convs?.count, 1)
-            }
-
-            guard let metadata = store.metadata else { return XCTFail() }
-            guard let imported = metadata[PersistentMetadataKey.importedFromBackup.rawValue] else { return XCTFail() }
-            guard let flag = imported as? NSNumber else { return XCTFail() }
-            XCTAssertTrue(flag.boolValue)
-        case .failure:
-            XCTFail()
-        }
-    }
     
     // MARK: - Import
     
@@ -218,6 +180,36 @@ class StorageStackBackupTests: DatabaseBaseTest {
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()
         XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
+    }
+    
+    func testThatMetadataIsDeletedWhenImportingBackup() {
+        // given
+        let uuid = UUID()
+        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        
+        // Set metadata on DB which we expect to be cleared when importing from a backup
+        directory.uiContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
+        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
+        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
+        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        directory.uiContext.forceSaveOrRollback()
+        
+        guard let backup = createBackup(accountIdentifier: uuid)?.value else { return XCTFail() }
+        
+        // Delete account
+        StorageStack.reset()
+        clearStorageFolder()
+        
+        // when
+        guard let result = importBackup(accountIdentifier: uuid, backup: backup) else { return XCTFail() }
+        guard case .success = result else { return XCTFail() }
+        let importedDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
+        
+        // then
+        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
+        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
+        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
+        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
     }
     
     func testThatItFailsWhenImportingBackupIntoWrongAccount() {
