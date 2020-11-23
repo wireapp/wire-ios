@@ -46,6 +46,4 @@ extension XCTestCase {
         return EncryptionKeys(publicKey: publicKeySec, privateKey: privateKeySec, databaseKey: databaseKey.dropFirst())
     }
     
-    
-    
 }
