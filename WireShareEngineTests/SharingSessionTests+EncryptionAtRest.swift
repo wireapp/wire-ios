@@ -37,7 +37,6 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
     
     func testThatDatabaseIsUnlocked_WhenEncryptionAtRestIsDisabled() {
         // given
-        encryptionAtRestEnabled = false
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         // then
@@ -46,8 +45,9 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
     
     func testThatDatabaseIsLocked_BeforeUnlockingDatabase() throws {
         // given
-        encryptionAtRestEnabled = true
+        enableEncryptionAtRest()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        sharingSession.contextDirectory.clearEncryptionKeysInAllContexts()
                 
         // then
         XCTAssertTrue(sharingSession.isDatabaseLocked)
@@ -55,7 +55,7 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
             
     func testThatDatabaseIsUnlocked_AfterUnlockingDatabase() throws {
         // given
-        encryptionAtRestEnabled = true
+        enableEncryptionAtRest()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
                 
         // when
@@ -68,26 +68,17 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
     }
     
     // MARK: - Helpers
-        
-    var encryptionAtRestEnabled: Bool {
-        
-        set {
-            let account = Account(userName: "", userIdentifier: accountIdentifier)
-            
-            try! EncryptionKeys.deleteKeys(for: account)
-            sharingSession.contextDirectory.clearEncryptionKeysInAllContexts()
-            
-            if newValue {
-                _ = try! EncryptionKeys.createKeys(for: account)
-            }
-            
-            sharingSession.userInterfaceContext.encryptMessagesAtRest = newValue
-            sharingSession.userInterfaceContext.saveOrRollback()
-        }
-        
-        get {
-            return sharingSession.userInterfaceContext.encryptMessagesAtRest
-        }
-    }
     
+    func enableEncryptionAtRest() {
+        let account = Account(userName: "", userIdentifier: accountIdentifier)
+        
+        try! EncryptionKeys.deleteKeys(for: account)
+        sharingSession.contextDirectory.clearEncryptionKeysInAllContexts()
+        
+        let encryptionKeys = try! EncryptionKeys.createKeys(for: account)
+        try! sharingSession.userInterfaceContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
+        
+        sharingSession.userInterfaceContext.saveOrRollback()
+    }
+        
 }
