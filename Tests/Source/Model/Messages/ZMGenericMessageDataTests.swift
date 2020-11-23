@@ -38,7 +38,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
         let genericMessage = createGenericMessage(text: "Hello, world")
 
-        uiMOC.encryptMessagesAtRest = false
+        XCTAssertFalse(uiMOC.encryptMessagesAtRest)
 
         // When
         try sut.setGenericMessage(genericMessage)

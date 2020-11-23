@@ -152,7 +152,25 @@ extension ZMGenericMessageData {
                 return "The message data could not be decrypted. \(encryptionError.errorDescription ?? "")"
             }
         }
+    }
 
+}
+
+extension ZMGenericMessageData: EncryptionAtRestMigratable {
+
+    static let predicateForObjectsNeedingMigration: NSPredicate? = nil
+
+    func migrateTowardEncryptionAtRest(in moc: NSManagedObjectContext) throws {
+        let (ciphertext, nonce) = try moc.encryptData(data: data)
+        self.data = ciphertext
+        self.nonce = nonce
+    }
+
+    func migrateAwayFromEncryptionAtRest(in moc: NSManagedObjectContext) throws {
+        guard let nonce = nonce else { return }
+        let plaintext = try moc.decryptData(data: data, nonce: nonce)
+        self.data = plaintext
+        self.nonce = nil
     }
 
 }

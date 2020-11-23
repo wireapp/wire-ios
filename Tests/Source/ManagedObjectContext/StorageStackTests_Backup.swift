@@ -20,7 +20,7 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-class StorageStackBackupTests: DatabaseBaseTest {
+class StorageStackTests_Backup: DatabaseBaseTest {
 
     override func setUp() {
         super.setUp()
@@ -35,11 +35,14 @@ class StorageStackBackupTests: DatabaseBaseTest {
         super.tearDown()
     }
     
-    func createBackup(accountIdentifier: UUID, file: StaticString =
-        #file, line: UInt = #line) -> Result<URL>? {
+    func createBackup(accountIdentifier: UUID, encryptionKeys: EncryptionKeys? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
 
         var result: Result<URL>?
-        StorageStack.backupLocalStorage(accountIdentifier: accountIdentifier, clientIdentifier: name, applicationContainer: applicationContainer, dispatchGroup: self.dispatchGroup) {
+        StorageStack.backupLocalStorage(accountIdentifier: accountIdentifier,
+                                        clientIdentifier: name,
+                                        applicationContainer: applicationContainer,
+                                        dispatchGroup: self.dispatchGroup,
+                                        encryptionKeys: encryptionKeys) {
             result = $0.map { $0.url }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
@@ -130,7 +133,63 @@ class StorageStackBackupTests: DatabaseBaseTest {
         default: XCTFail("unexpected error type")
         }
     }
+    
+    func testThatItDisablesEncryptionAtRest_WhenEARIsEnableAndEncryptionKeysAreValid() throws {
+        // given
+        let uuid = UUID()
+        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        directory.uiContext.encryptMessagesAtRest = true
+        directory.uiContext.encryptionKeys = validEncryptionKeys
+        
+        // when
+        guard let result = createBackup(accountIdentifier: uuid,
+                                        encryptionKeys: validEncryptionKeys) else {
+            return XCTFail()
+        }
+        directory.uiContext.saveOrRollback()
+        
+        // then
+        switch result {
+        case let .success(backup):
+            let model = NSManagedObjectModel.loadModel()
+            let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
+            let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
+            XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
+            let context = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
+            context.persistentStoreCoordinator = coordinator
+            XCTAssertFalse(context.encryptMessagesAtRest)
+        case .failure:
+            XCTFail()
+        }
+    }
+    
+    func testThatItFailsWhenEARIsEnabledAndEncryptionKeysAreNil() throws {
+        // given
+        let uuid = UUID()
+        let directory = createStorageStackAndWaitForCompletion(userID: uuid)
+        directory.uiContext.encryptMessagesAtRest = true
+        directory.uiContext.encryptionKeys = nil
+        directory.uiContext.saveOrRollback()
+        
+        // when
+        guard let result = createBackup(accountIdentifier: uuid,
+                                        encryptionKeys: nil) else {
+            return XCTFail()
+        }
 
+        guard case let .failure(error) = result else { return XCTFail() }
+        
+        // then
+        switch error as? StorageStack.BackupError {
+        case .failedToWrite(let failureError):
+            switch failureError as? StorageStack.BackupError {
+            case .missingEAREncryptionKey: break
+            default: XCTFail("unexpected error type")
+        }
+        default: XCTFail("unexpected error type")
+        }
+    }
+    
     func testThatItPreservesOriginalDataAfterBackup() {
         // given
         let uuid = UUID()

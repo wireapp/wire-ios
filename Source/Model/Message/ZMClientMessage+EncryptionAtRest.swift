@@ -18,9 +18,16 @@
 
 import Foundation
 
-enum Logging {
+extension ZMClientMessage: EncryptionAtRestMigratable {
 
-    static let messageProcessing = ZMSLog(tag: "Message Processing")
-    static let localStorage = ZMSLog(tag: "local-storage")
+    static let predicateForObjectsNeedingMigration: NSPredicate? = nil
+
+    func migrateTowardEncryptionAtRest(in moc: NSManagedObjectContext) {
+        normalizedText = ""
+    }
+
+    func migrateAwayFromEncryptionAtRest(in moc: NSManagedObjectContext) {
+        updateNormalizedText()
+    }
 
 }
