@@ -225,6 +225,7 @@ extension StorageStack {
             if context.encryptMessagesAtRest {
                 guard let encryptionKeys = encryptionKeys else { throw BackupError.missingEAREncryptionKey }
                 try context.disableEncryptionAtRest(encryptionKeys: encryptionKeys)
+                _ = context.makeMetadataPersistent()
                 try context.save()
             }
         }
