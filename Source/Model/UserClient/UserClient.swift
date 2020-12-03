@@ -46,7 +46,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             return activationLocationLatitude?.doubleValue ?? 0.0
         }
         set {
-            activationLocationLatitude = NSNumber(value: activationLatitude)
+            activationLocationLatitude = NSNumber(value: newValue)
         }
     }
 
@@ -55,7 +55,7 @@ public class UserClient: ZMManagedObject, UserClientType {
             return activationLocationLongitude?.doubleValue ?? 0.0
         }
         set {
-            activationLocationLongitude = NSNumber(value: activationLongitude)
+            activationLocationLongitude = NSNumber(value: newValue)
         }
     }
     
