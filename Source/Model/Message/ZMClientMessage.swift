@@ -153,7 +153,7 @@ import Foundation
         case .edited:
             if let nonce = self.nonce(fromPostPayload: payload),
                 self.nonce != nonce {
-                ZMSLog(tag: "send message response nonce does not match")
+                Logging.messageProcessing.error("sent message response nonce does not match")
                 return
             }
             

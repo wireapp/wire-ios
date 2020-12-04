@@ -204,7 +204,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
                               inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
                                       prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
-- (void)removePendingDeliveryReceipts;
 - (void)updateWithUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent forConversation:(ZMConversation * _Nonnull)conversation;
 
 /// Returns whether the data represents animated GIF
