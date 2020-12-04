@@ -27,7 +27,7 @@ public struct Permissions: OptionSet {
     }
 
     // MARK: - Base Values
-    public static let none                        = Permissions(rawValue: 0x0000)
+    public static let none                        = Permissions([])
     public static let createConversation          = Permissions(rawValue: 0x0001) /// create all kind of conversation
     public static let deleteConversation          = Permissions(rawValue: 0x0002)
     public static let addTeamMember               = Permissions(rawValue: 0x0004)

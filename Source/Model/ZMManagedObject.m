@@ -741,7 +741,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 - (NSString *)nonpersistedObjectIdentifer;
 {
-    return [NSString stringWithFormat:@"Z%tx", (long long) self];
+    return [NSString stringWithFormat:@"Z%tx", (unsigned long) self];
 }
 
 + (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
