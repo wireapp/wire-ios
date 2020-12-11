@@ -229,4 +229,7 @@ public protocol UserType: NSObjectProtocol {
     /// Whether the user is group admin in the conversation.
     @objc(isGroupAdminInConversation:)
     func isGroupAdmin(in conversation: ZMConversation) -> Bool
+        
+    /// Whether all user's devices are verified by the selfUser
+    var isTrusted: Bool { get }
 }
