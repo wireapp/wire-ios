@@ -24,6 +24,15 @@ extension ZMUser: UserConnectionType { }
 
 extension ZMUser: UserType {
 
+    /// Whether all user's devices are verified by the selfUser
+    public var isTrusted: Bool {
+        let selfUser = managedObjectContext.map(ZMUser.selfUser)
+        let selfClient = selfUser?.selfClient()
+        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
+        
+        return !hasUntrustedClients
+    }
+    
     public func isGuest(in conversation: ZMConversation) -> Bool {
         return _isGuest(in: conversation)
     }
@@ -332,18 +341,6 @@ extension NSManagedObject: SafeForLoggingStringConvertible {
         let moc: String = self.managedObjectContext?.description ?? "nil"
         
         return "\(type(of: self)) \(Unmanaged.passUnretained(self).toOpaque()): moc=\(moc) objectID=\(self.objectID)"
-    }
-}
-
-extension ZMUser {
-    
-    /// Whether all user's devices are verified by the selfUser
-    @objc public var isTrusted: Bool {
-        let selfUser = managedObjectContext.map(ZMUser.selfUser)
-        let selfClient = selfUser?.selfClient()
-        let hasUntrustedClients = self.clients.contains(where: { ($0 != selfClient) && !(selfClient?.trustedClients.contains($0) ?? false) })
-        
-        return !hasUntrustedClients
     }
 }
 
