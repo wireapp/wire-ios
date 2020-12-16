@@ -515,7 +515,7 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 // is received from the notification stream.
 - (void)updateWithTransportData:(NSDictionary *)transportData authoritative:(BOOL)authoritative
 {
-    NSDictionary *serviceData = transportData[@"service"];
+    NSDictionary *serviceData = [transportData optionalDictionaryForKey:@"service"];
     if (serviceData != nil) {
         NSString *serviceIdentifier = [serviceData optionalStringForKey:@"id"];
         if (serviceIdentifier != nil) {
