@@ -2290,37 +2290,6 @@
 
 #pragma mark - Knocking
 
-- (ZMConversation *)createConversationWithMessages;
-{
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.syncMOC];
-    conversation.remoteIdentifier = NSUUID.createUUID;
-    for (NSString *text in @[@"A", @"B", @"C", @"D", @"E"]) {
-        [conversation appendMessageWithText:text];
-    }
-    XCTAssert([self.syncMOC saveOrRollback]);
-    return conversation;
-}
-
-- (void)testThatItCanInsertAKnock;
-{
-    [self.syncMOC performGroupedBlockAndWait:^{
-        
-        // given
-        ZMConversation *conversation = [self createConversationWithMessages];
-        ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
-        
-        // when
-        id<ZMConversationMessage> knock = [conversation appendKnock];
-        id<ZMConversationMessage> msg = conversation.lastMessage;
-        
-        // then
-        XCTAssertEqual(knock, msg);
-        XCTAssertNotNil(knock.knockMessageData);
-        XCTAssertEqual(knock.sender, selfUser);
-    }];
-
-}
-
 - (void)waitForInterval:(NSTimeInterval)interval {
     [self spinMainQueueWithTimeout:interval];
 }
