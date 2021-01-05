@@ -46,9 +46,13 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     /// Unique identifier for the message
     var nonce: UUID? { get }
         
-    /// The user who sent the message
+    /// The user who sent the message (internal)
+    @available(*, deprecated, message: "Use `senderUser` instead")
     var sender: ZMUser? { get }
-    
+
+    /// The user who sent the message
+    var senderUser: UserType? { get }
+
     /// The timestamp as received by the server
     var serverTimestamp: Date? { get }
     
@@ -157,7 +161,8 @@ public extension ZMConversationMessage {
 
     func isUserSender(_ user: UserType) -> Bool {
         guard let zmUser = user as? ZMUser else { return false }
-        return zmUser == sender
+        
+        return zmUser == senderUser as? ZMUser
     }
 }
 
@@ -195,6 +200,10 @@ extension ZMMessage {
 // MARK:- Conversation Message protocol implementation
 
 extension ZMMessage : ZMConversationMessage {
+    public var senderUser: UserType? {
+        return sender
+    }
+    
     @NSManaged public var linkAttachments: [LinkAttachment]?
     @NSManaged public var needsLinkAttachmentsUpdate: Bool
     @NSManaged public var replies: Set<ZMMessage>
