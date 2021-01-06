@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,25 @@
 
 import Foundation
 
-public enum PersistentMetadataKey: String {
-    
-    case lastUpdateEventID = "LastUpdateEventID"
-    case pushToken = "pushToken"
-    case pushKitToken = "ZMPushKitToken"
-    case encryptMessagesAtRest = "encryptMessagesAtRest"
-    case appLock = "appLock"
-}
 
+public extension AppLockController {
+
+    /// Delete the passcode from the keychain.
+
+    func deletePasscode() throws {
+        try Keychain.deleteItem(keychainItem)
+    }
+
+    /// Store the given passcode in the keychain.
+
+    func storePasscode(_ passcode: String) throws {
+        try Keychain.storeItem(keychainItem, value: passcode.data(using: .utf8)!)
+    }
+
+    /// Fetch the passcode from the keychain.
+
+    func fetchPasscode() -> Data? {
+        return try? Keychain.fetchItem(keychainItem)
+    }
+
+}
