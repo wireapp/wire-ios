@@ -198,6 +198,8 @@ public class SharingSession {
     private let operationLoop: RequestGeneratingOperationLoop
 
     private let strategyFactory: StrategyFactory
+    
+    public let appLockController: AppLockType
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
     /// - parameter databaseDirectory: The `NSURL` of the shared group container
@@ -206,7 +208,11 @@ public class SharingSession {
     /// no user is currently logged in.
     /// - returns: The initialized session object if no error is thrown
     
-    public convenience init(applicationGroupIdentifier: String, accountIdentifier: UUID, hostBundleIdentifier: String, environment: BackendEnvironmentProvider) throws {
+    public convenience init(applicationGroupIdentifier: String,
+                            accountIdentifier: UUID,
+                            hostBundleIdentifier: String,
+                            environment: BackendEnvironmentProvider,
+                            appLockConfig: AppLockController.Config) throws {
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
         guard !StorageStack.shared.needsToRelocateOrMigrateLocalStack(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL) else { throw InitializationError.needsMigration }
         
@@ -252,8 +258,8 @@ public class SharingSession {
             contextDirectory: directory,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL)
-        )
+            accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            appLockConfig: appLockConfig)
     }
     
     internal init(contextDirectory: ManagedObjectContextDirectory,
@@ -263,7 +269,8 @@ public class SharingSession {
                   analyticsEventPersistence: ShareExtensionAnalyticsPersistence,
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
-                  strategyFactory: StrategyFactory
+                  strategyFactory: StrategyFactory,
+                  appLockConfig: AppLockController.Config
         ) throws {
         
         self.contextDirectory = contextDirectory
@@ -274,13 +281,20 @@ public class SharingSession {
         self.operationLoop = operationLoop
         self.strategyFactory = strategyFactory
         
+        let selfUser = ZMUser.selfUser(in: contextDirectory.uiContext)
+        self.appLockController = AppLockController(config: appLockConfig, selfUser: selfUser)
+        
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
         setupCaches(at: cachesDirectory)
         setupObservers()
     }
     
-    public convenience init(contextDirectory: ManagedObjectContextDirectory, transportSession: ZMTransportSession, cachesDirectory: URL, accountContainer: URL) throws {
+    public convenience init(contextDirectory: ManagedObjectContextDirectory,
+                            transportSession: ZMTransportSession,
+                            cachesDirectory: URL,
+                            accountContainer: URL,
+                            appLockConfig: AppLockController.Config) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
         let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: contextDirectory.syncContext)
@@ -312,7 +326,8 @@ public class SharingSession {
             analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory
+            strategyFactory: strategyFactory,
+            appLockConfig: appLockConfig
         )
     }
 

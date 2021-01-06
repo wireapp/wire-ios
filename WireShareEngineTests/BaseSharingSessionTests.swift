@@ -91,7 +91,8 @@ class BaseSharingSessionTests: ZMTBaseTest {
             analyticsEventPersistence: analyticsEventPersistence,
             applicationStatusDirectory: applicationStatusDirectory,
             operationLoop: operationLoop,
-            strategyFactory: strategyFactory
+            strategyFactory: strategyFactory,
+            appLockConfig: AppLockController.Config.defaultConfig
         )
 
         moc = sharingSession.userInterfaceContext
@@ -113,4 +114,10 @@ class BaseSharingSessionTests: ZMTBaseTest {
         super.tearDown()
     }
 
+}
+
+extension AppLockController.Config {
+    static var defaultConfig: AppLockController.Config {
+        Self.init(useBiometricsOrCustomPasscode: false, forceAppLock: false, timeOut: 10)
+    }
 }
