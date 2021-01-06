@@ -90,7 +90,7 @@ extension EncryptionSessionsDirectory {
         var conversation : ZMConversation?
         if let conversationUUID = event.conversationUUID {
             conversation = ZMConversation(remoteID: conversationUUID, createIfNeeded: false, in: moc)
-            conversation?.appendDecryptionFailedSystemMessage(at: event.timestamp!, sender: sender.user!, client: sender, errorCode: Int(error?.rawValue ?? 0))
+            conversation?.appendDecryptionFailedSystemMessage(at: event.timestamp, sender: sender.user!, client: sender, errorCode: Int(error?.rawValue ?? 0))
         }
         
         let userInfo: [String: Any] = [
