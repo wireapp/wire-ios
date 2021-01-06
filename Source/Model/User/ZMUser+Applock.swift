@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2020 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,12 +18,13 @@
 
 import Foundation
 
-public enum PersistentMetadataKey: String {
-    
-    case lastUpdateEventID = "LastUpdateEventID"
-    case pushToken = "pushToken"
-    case pushKitToken = "ZMPushKitToken"
-    case encryptMessagesAtRest = "encryptMessagesAtRest"
-    case appLock = "appLock"
+public extension ZMUser {
+    var isAppLockActive: Bool {
+        get {
+            return managedObjectContext?.isAppLockEnabled ?? false
+        }
+        set {
+            managedObjectContext?.isAppLockEnabled = newValue
+        }
+    }
 }
-

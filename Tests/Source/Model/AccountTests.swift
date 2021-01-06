@@ -130,4 +130,20 @@ final class AccountTests: ZMConversationTestsBase {
         XCTAssertEqual(account, sameAccount)
     }
 
+    func testThatKeychainItemsAreDeleted() throws {
+        // Given
+        let id = UUID.create()
+        let sut = Account(userName: "Alice", userIdentifier: id)
+        let item = AppLockController.PasscodeKeychainItem(userId: id)
+
+        try Keychain.storeItem(item, value: "passscode".data(using: .utf8)!)
+        XCTAssertNoThrow(try Keychain.fetchItem(item))
+
+        // When
+        sut.deleteKeychainItems()
+
+        // Then
+        XCTAssertThrowsError(try Keychain.fetchItem(item))
+    }
+
 }
