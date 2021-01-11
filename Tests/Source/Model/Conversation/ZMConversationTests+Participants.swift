@@ -121,6 +121,23 @@ final class ConversationParticipantsTests : ZMConversationTestsBase {
         XCTAssertEqual(conversation.allMessages.count, 0)
     }
     
+    func testThatItDoesntCreateAConnectionIfSelfUserIsMissing() {
+        // given
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        let user = ZMUser.insertNewObject(in: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        let connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.connection = connection
+        conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
+        
+        // when
+        conversation.addParticipantAndSystemMessageIfMissing(selfUser, date: Date())
+        
+        // then
+        XCTAssertNotEqual(selfUser.connection, connection)
+    }
+    
     func testThatItAddsParticipants() {
         // given
         let conversation = ZMConversation.insertNewObject(in: self.uiMOC)

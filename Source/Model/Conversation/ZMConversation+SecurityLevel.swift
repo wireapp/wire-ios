@@ -321,7 +321,7 @@ extension ZMConversation {
     public func addParticipantAndSystemMessageIfMissing(_ user: ZMUser, date dateOptional: Date?) {
         let date = dateOptional ?? Date()
 
-        guard !localParticipants.contains(user) else { return }
+        guard !user.isSelfUser, !localParticipants.contains(user) else { return }
         
         zmLog.debug("Sender: \(user.remoteIdentifier?.transportString() ?? "n/a") missing from participant list: \(localParticipants.map{ $0.remoteIdentifier} )")
         

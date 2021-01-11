@@ -34,7 +34,8 @@ extension PersistedDataPatch {
         PersistedDataPatch(version: "167.3.0", block: AvailabilityBehaviourChange.notifyAvailabilityBehaviourChange),
         PersistedDataPatch(version: "198.0.0", block: ZMConversation.introduceParticipantRoles),
         PersistedDataPatch(version: "220.0.4", block: InvalidConnectionRemoval.removeInvalid),
-        PersistedDataPatch(version: "234.0.0", block: TransferApplockKeychain.migrateKeychainItems)
+        PersistedDataPatch(version: "234.0.0", block: TransferApplockKeychain.migrateKeychainItems),
+        PersistedDataPatch(version: "234.1.1", block: InvalidConnectionRemoval.removeInvalid),
     ]
 
 }
