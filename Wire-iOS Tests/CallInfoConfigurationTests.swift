@@ -57,7 +57,8 @@ final class CallInfoConfigurationTests: XCTestCase {
         return (mockUsers[0..<count]).map({ CallParticipant(user: $0,
                                                                        userId: UUID(),
                                                                        clientId: "123",
-                                                                       state: state) })
+                                                                       state: state,
+                                                                       isActiveSpeaker: false) })
     }
 
     // MARK: - OneToOne Audio
