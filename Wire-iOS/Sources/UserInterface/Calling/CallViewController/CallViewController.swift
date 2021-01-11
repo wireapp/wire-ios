@@ -81,7 +81,8 @@ final class CallViewController: UIViewController {
                            voiceChannel.addParticipantObserver(self),
                            voiceChannel.addConstantBitRateObserver(self),
                            voiceChannel.addNetworkQualityObserver(self),
-                           voiceChannel.addMuteStateObserver(self)]
+                           voiceChannel.addMuteStateObserver(self),
+                           voiceChannel.addActiveSpeakersObserver(self)]
         proximityMonitorManager?.stateChanged = { [weak self] raisedToEar in
             self?.proximityStateDidChange(raisedToEar)
         }
@@ -301,6 +302,12 @@ extension CallViewController: WireCallCenterCallStateObserver {
         hapticsController.updateCallState(callState)
     }
 
+}
+
+extension CallViewController: ActiveSpeakersObserver {
+    func callCenterDidChangeActiveSpeakers() {
+        updateConfiguration()
+    }
 }
 
 //MARK: - WireCallCenterCallParticipantObserver
