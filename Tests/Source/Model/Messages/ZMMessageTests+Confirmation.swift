@@ -147,6 +147,24 @@ extension ZMMessageTests_Confirmation {
         XCTAssertFalse(message.needsReadConfirmation)
     }
 
+    func testThatCompositeMessage_NeedsReadConfirmation_WhenItExpectsAReadConfirmation() {
+        // given
+        let user = createUser(in: uiMOC)
+        let conversation = createConversation(in: uiMOC)
+        conversation.conversationType = .oneOnOne
+
+        ZMUser.selfUser(in: uiMOC).readReceiptsEnabled = true
+
+        let content = Composite.with {
+            $0.expectsReadConfirmation = true
+        }
+
+        let message = insertMessage(conversation, content: content, fromSender: user, timestamp: Date()) as! ZMClientMessage
+
+        // then
+        XCTAssertTrue(message.needsReadConfirmation)
+    }
+
 }
 
 // MARK: - Deletion
@@ -512,9 +530,15 @@ extension ZMMessageTests_Confirmation {
 // MARK: - Helpers
 extension ZMMessageTests_Confirmation {
     
-    func insertMessage(_ conversation: ZMConversation, fromSender: ZMUser? = nil, timestamp: Date = .init(), moc: NSManagedObjectContext? = nil, eventSource: ZMUpdateEventSource = .download) -> ZMMessage {
+    func insertMessage(_ conversation: ZMConversation,
+                       content: MessageCapable = Text(content: "foo"),
+                       fromSender: ZMUser? = nil,
+                       timestamp: Date = .init(),
+                       moc: NSManagedObjectContext? = nil,
+                       eventSource: ZMUpdateEventSource = .download) -> ZMMessage {
+
         let nonce = UUID.create()
-        let genericMessage = GenericMessage(content: Text(content: "foo"), nonce: nonce)
+        let genericMessage = GenericMessage(content: content, nonce: nonce)
         let messageEvent = createUpdateEvent(
             nonce,
             conversationID: conversation.remoteIdentifier!,

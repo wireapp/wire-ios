@@ -20,6 +20,7 @@ import XCTest
 @testable import WireDataModel
 
 class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
+
     func testThatItCalculatesLastUnreadMessages() {
         syncMOC.performGroupedBlockAndWait {
             // given
@@ -50,4 +51,27 @@ class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
             XCTAssertFalse(conversation.needsToCalculateUnreadMessages)
         }
     }
+
+    func testThat_ItDoesNotUpdateLastReadTimestamp_AfterUpdatingMessage() {
+        syncMOC.performGroupedBlockAndWait {
+            // Given
+            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
+            conversation.conversationType = .group
+            conversation.remoteIdentifier = .create()
+            conversation.lastServerTimeStamp = .distantPast
+            conversation.lastReadServerTimeStamp = .distantPast
+
+            let message = ZMClientMessage(nonce: .create(), managedObjectContext: self.syncMOC)
+            let messageTimestamp = Date()
+            message.serverTimestamp = messageTimestamp
+
+            // When
+            conversation.updateTimestampsAfterUpdatingMessage(message)
+
+            // Then
+            XCTAssertEqual(conversation.lastServerTimeStamp, messageTimestamp)
+            XCTAssertEqual(conversation.lastReadServerTimeStamp, .distantPast)
+        }
+    }
+
 }
