@@ -21,22 +21,41 @@ import LocalAuthentication
 
 private let zmLog = ZMSLog(tag: "AppLockController")
 
+public protocol LAContextProtocol {
+
+    var evaluatedPolicyDomainState: Data? { get }
+
+    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
+    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
+}
+
+extension LAContext: LAContextProtocol {}
+
 public protocol AppLockType {
     var isActive: Bool { get set }
     var lastUnlockedDate: Date { get set }
     var isCustomPasscodeNotSet: Bool { get }
     var needsToNotifyUser: Bool { get set }
     var config: AppLockController.Config { get }
-
+    
     func evaluateAuthentication(scenario: AppLockController.AuthenticationScenario,
                                 description: String,
-                                with callback: @escaping (AppLockController.AuthenticationResult, LAContext) -> Void)
+                                context: LAContextProtocol,
+                                with callback: @escaping (AppLockController.AuthenticationResult, LAContextProtocol) -> Void)
+
     func persistBiometrics()
 
     func deletePasscode() throws
     func storePasscode(_ passcode: String) throws
     func fetchPasscode() -> Data?
+}
 
+public extension AppLockType {
+    func evaluateAuthentication(scenario: AppLockController.AuthenticationScenario,
+                                description: String,
+                                with callback: @escaping (AppLockController.AuthenticationResult, LAContextProtocol) -> Void) {
+        evaluateAuthentication(scenario: scenario, description: description, context: LAContext(), with: callback)
+    }
 }
 
 public extension AppLockType {
@@ -102,9 +121,8 @@ public final class AppLockController: AppLockType {
             feature.needsToNotifyUser =  newValue
         }
     }
-    
-    /// a weak reference to LAContext, it should be nil when evaluatePolicy is done.
-    private weak var weakLAContext: LAContext? = nil 
+        
+    lazy var biometricsState: BiometricsStateProtocol =  BiometricsState()
 
     lazy var keychainItem: PasscodeKeychainItem = .init(user: selfUser)
     
@@ -122,18 +140,16 @@ public final class AppLockController: AppLockType {
     // Creates a new LAContext and evaluates the authentication settings of the user.
     public func evaluateAuthentication(scenario: AuthenticationScenario,
                                        description: String,
-                                       with callback: @escaping (AuthenticationResult, LAContext) -> Void) {
+                                       context: LAContextProtocol = LAContext(),
+                                       with callback: @escaping (AuthenticationResult, LAContextProtocol) -> Void) {
         
-        guard self.weakLAContext == nil else { return }
         
-        let context: LAContext = LAContext()
         var error: NSError?
-        
-        self.weakLAContext = context
-        
+                
         let canEvaluatePolicy = context.canEvaluatePolicy(scenario.policy, error: &error)
+        let biometricsChanged = biometricsState.biometricsChanged(in: context)
         
-        if scenario.supportsUserFallback && (BiometricsState.biometricsChanged(in: context) || !canEvaluatePolicy) {
+        if (biometricsChanged || !canEvaluatePolicy) && scenario.usesCustomPasscodeAsFallback {
             callback(.needCustomPasscode, context)
             return
         }
@@ -142,7 +158,7 @@ public final class AppLockController: AppLockType {
             context.evaluatePolicy(scenario.policy, localizedReason: description, reply: { (success, error) -> Void in
                 var authResult: AuthenticationResult = success ? .granted : .denied
                 
-                if scenario.supportsUserFallback, let laError = error as? LAError, laError.code == .userFallback {
+                if scenario.usesCustomPasscodeAsFallback, let laError = error as? LAError, laError.code == .userFallback {
                     authResult = .needCustomPasscode
                 }
                 
@@ -155,7 +171,7 @@ public final class AppLockController: AppLockType {
     }
     
     public func persistBiometrics() {
-        BiometricsState.persist()
+        biometricsState.persistState()
     }
     
     
@@ -201,47 +217,13 @@ public final class AppLockController: AppLockType {
             }
         }
         
-        var supportsUserFallback: Bool {
+        var usesCustomPasscodeAsFallback: Bool {
             switch self {
-            case .screenLock:
-                return true
+            case .screenLock(requireBiometrics: let requireBiometrics):
+                return requireBiometrics
             case .databaseLock:
                 return false
             }
         }
-    }
-}
-
-// MARK: - BiometricsState
-
-public class BiometricsState {
-    private static let UserDefaultsDomainStateKey = "DomainStateKey"
-    
-    private static var lastPolicyDomainState: Data? {
-        get {
-            return UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: UserDefaultsDomainStateKey)
-        }
-    }
-    
-    private static var currentPolicyDomainState: Data?
-    
-    // Tells us if biometrics database has changed (ex: fingerprints added or removed)
-    public static func biometricsChanged(in context: LAContext) -> Bool {
-        currentPolicyDomainState = context.evaluatedPolicyDomainState
-        guard let currentState = currentPolicyDomainState,
-            let lastState = lastPolicyDomainState,
-            currentState == lastState else {
-                return true
-        }
-        return false
-    }
-    
-    /// Persists the state of the biometric credentials.
-    /// Should be called after a successful unlock with account password
-    public static func persist() {
-        lastPolicyDomainState = currentPolicyDomainState
     }
 }
