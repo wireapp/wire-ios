@@ -915,27 +915,39 @@
 - (void)testThatGroupConversationInTeamWithOnlyBotIsConsideredGroup
 {
     // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    user1.providerIdentifier = [[NSUUID createUUID] transportString];
-    user1.serviceIdentifier = [[NSUUID createUUID] transportString];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
+
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    user1.providerIdentifier = [[NSUUID createUUID] transportString];
+    user1.serviceIdentifier = [[NSUUID createUUID] transportString];
     [conversation addParticipantAndUpdateConversationStateWithUser:user1 role:nil];
+
+    XCTAssertEqual(conversation.localParticipants.count, 2);
     
     // then
-    XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
+    XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
 }
 
 - (void)testThatGroupConversationWithNameInTeamWithOnlyTwoParticipantsIsNotConsideredOneToOne
 {
     // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.userDefinedName = @"Some conversation";
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
+
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:user1 role:nil];
+
+    XCTAssertEqual(conversation.localParticipants.count, 2);
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -944,12 +956,18 @@
 - (void)testThatGroupConversationInTeamWithMoreThanTwoParticipantsIsNotConsideredOneToOne
 {
     // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
-    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
+
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMUser *user2 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation addParticipantsAndUpdateConversationStateWithUsers:[NSSet setWithObjects:user1, user2, nil] role:nil];
+
+    XCTAssertTrue(conversation.localParticipants.count > 2);
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -958,10 +976,16 @@
 - (void)testThatGroupConversationInPersonalSpaceWithOnlyTwoParticipantsIsNotConsideredOneToOne
 {
     // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
+
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:user1 role:nil];
+
+    XCTAssertEqual(conversation.localParticipants.count, 2);
     
     // then
     XCTAssertEqual(conversation.conversationType, ZMConversationTypeGroup);
@@ -973,12 +997,15 @@
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
     conversation.teamRemoteIdentifier = [NSUUID createUUID];
+
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
 
     ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:user1 role:nil];
-    
+
+    XCTAssertEqual(conversation.conversationType, ZMConversationTypeOneOnOne);
+
     // then
     XCTAssertNotNil(conversation.connectedUser);
     XCTAssertEqual(conversation.connectedUser, user1);
@@ -987,11 +1014,17 @@
 - (void)testThatGroupConversationWithOnlyTwoParticipantsDoesNotReturnAConnectedUser
 {
     // given
-    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation.conversationType = ZMConversationTypeGroup;
+
+    ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
+    [conversation addParticipantAndUpdateConversationStateWithUser:selfUser role:nil];
+
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     [conversation addParticipantAndUpdateConversationStateWithUser:user1 role:nil];
-    
+
+    XCTAssertEqual(conversation.localParticipants.count, 2);
+
     // then
     XCTAssertNil(conversation.connectedUser);
 }

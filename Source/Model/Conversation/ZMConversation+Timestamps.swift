@@ -203,11 +203,6 @@ extension ZMConversation {
             updateLastModified(timestamp)
         }
         
-        if let sender = message.sender, sender.isSelfUser {
-            // if the message was sent by the self user we don't want to send a lastRead event, since we consider this message to be already read
-            updateLastRead(timestamp, synchronize: false)
-        }
-        
         self.needsToCalculateUnreadMessages = true
     }
     

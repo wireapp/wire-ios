@@ -46,7 +46,6 @@ extension ZMOTRMessage {
         
         if conversation.conversationType == .oneOnOne {
             var expectsReadConfirmation: Bool {
-                
                 switch genericMessage.content {
                 case .ephemeral(let data)?:
                     return data.expectsReadConfirmation
@@ -58,12 +57,16 @@ extension ZMOTRMessage {
                     return data.expectsReadConfirmation
                 case .asset(let data)?:
                     return data.expectsReadConfirmation
+                case .composite(let data):
+                    return data.expectsReadConfirmation
                 default:
                     return false
                 }
             }
-            
-            return (expectsReadConfirmation && ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled)
+
+            let readReceiptsEnabled = ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled
+            return expectsReadConfirmation && readReceiptsEnabled
+
         } else if conversation.conversationType == .group {
             return expectsReadConfirmation
         }
