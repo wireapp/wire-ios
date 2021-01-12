@@ -52,26 +52,4 @@ class ZMConversationTests_UnreadMessages: ZMConversationTestsBase {
         }
     }
 
-    func testThat_ItDoesNotUpdateLastReadTimestamp_AfterUpdatingMessage() {
-        syncMOC.performGroupedBlockAndWait {
-            // Given
-            let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
-            conversation.conversationType = .group
-            conversation.remoteIdentifier = .create()
-            conversation.lastServerTimeStamp = .distantPast
-            conversation.lastReadServerTimeStamp = .distantPast
-
-            let message = ZMClientMessage(nonce: .create(), managedObjectContext: self.syncMOC)
-            let messageTimestamp = Date()
-            message.serverTimestamp = messageTimestamp
-
-            // When
-            conversation.updateTimestampsAfterUpdatingMessage(message)
-
-            // Then
-            XCTAssertEqual(conversation.lastServerTimeStamp, messageTimestamp)
-            XCTAssertEqual(conversation.lastReadServerTimeStamp, .distantPast)
-        }
-    }
-
 }
