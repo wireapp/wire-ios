@@ -217,9 +217,17 @@ extension AppLockControllerTest {
         performIgnoringZMLogError {
             self.assert(
                 input: (scenario: .screenLock(requireBiometrics: false), canEvaluate: false,  biometricsChanged: false),
+                output: .needCustomPasscode
+            )
+        }
+        
+        performIgnoringZMLogError {
+            self.assert(
+                input: (scenario: .databaseLock, canEvaluate: false,  biometricsChanged: false),
                 output: .unavailable
             )
         }
+        
     }
 }
 
