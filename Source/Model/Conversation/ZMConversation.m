@@ -122,6 +122,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @property (nonatomic) BOOL internalIsArchived;
 
 @property (nonatomic) NSDate *pendingLastReadServerTimestamp;
+@property (nonatomic) NSDate *previousLastReadServerTimestamp;
 @property (nonatomic) NSDate *lastReadServerTimeStamp;
 @property (nonatomic) NSDate *lastServerTimeStamp;
 @property (nonatomic) NSDate *clearedTimeStamp;
@@ -163,6 +164,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic nonTeamRoles;
 
 @synthesize pendingLastReadServerTimestamp;
+@synthesize previousLastReadServerTimestamp;
 @synthesize lastReadTimestampSaveDelay;
 @synthesize lastReadTimestampUpdateCounter;
 
