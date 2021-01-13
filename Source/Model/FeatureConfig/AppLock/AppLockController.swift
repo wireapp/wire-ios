@@ -154,6 +154,11 @@ public final class AppLockController: AppLockType {
             return
         }
         
+        if case .screenLock = scenario, !canEvaluatePolicy {
+            callback(.needCustomPasscode, context)
+            return
+        }
+        
         if canEvaluatePolicy {
             context.evaluatePolicy(scenario.policy, localizedReason: description, reply: { (success, error) -> Void in
                 var authResult: AuthenticationResult = success ? .granted : .denied
