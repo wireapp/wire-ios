@@ -24,11 +24,12 @@ extension ZMConversation {
     
     /// Confirm unread received messages as read.
     ///
-    /// - parameter until: unread messages received up until this timestamp will be confirmed as read.
+    /// - Parameters:
+    ///     - range: Unread messages received within this date range will be confirmed as read.
+
     @discardableResult
-    func confirmUnreadMessagesAsRead(until timestamp: Date) -> [ZMClientMessage] {
-        
-        let unreadMessagesNeedingConfirmation = unreadMessages(until: timestamp).filter({ $0.needsReadConfirmation })
+    func confirmUnreadMessagesAsRead(in range: ClosedRange<Date>) -> [ZMClientMessage] {
+        let unreadMessagesNeedingConfirmation = unreadMessages(in: range).filter(\.needsReadConfirmation)
         var confirmationMessages: [ZMClientMessage] = []
         
         for messages in unreadMessagesNeedingConfirmation.partition(by: \.sender).values {

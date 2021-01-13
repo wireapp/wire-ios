@@ -102,6 +102,7 @@ NS_ASSUME_NONNULL_END
 @property (nonatomic) BOOL internalIsArchived;
 
 @property (nonatomic, nullable) NSDate *pendingLastReadServerTimestamp;
+@property (nonatomic, nullable) NSDate *previousLastReadServerTimestamp;
 @property (nonatomic, nullable) NSDate *lastServerTimeStamp;
 @property (nonatomic, nullable) NSDate *lastReadServerTimeStamp;
 @property (nonatomic, nullable) NSDate *clearedTimeStamp;
