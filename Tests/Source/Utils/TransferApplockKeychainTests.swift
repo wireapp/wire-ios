@@ -70,21 +70,23 @@ class TransferAppLockKeychainTests: DiskDatabaseTest {
         // Given
         let legacyItem = AppLockController.PasscodeKeychainItem.legacyItem
         let passcode = "hello".data(using: .utf8)!
-        let userIds = (1...3).map { _ in UUID.create() }
 
         try Keychain.updateItem(legacyItem, value: passcode)
         XCTAssertEqual(try? Keychain.fetchItem(legacyItem), passcode)
 
         // When
-        TransferApplockKeychain.migrateAppLockPasscodes(forAccountIds: userIds)
+        TransferApplockKeychain.migrateAppLockPasscode(in: moc)
 
         // Then
-        let items = userIds.map(AppLockController.PasscodeKeychainItem.init)
-        for item in items { XCTAssertEqual(try Keychain.fetchItem(item), passcode) }
-        XCTAssertNil(try? Keychain.fetchItem(legacyItem))
+        let item = AppLockController.PasscodeKeychainItem(user: ZMUser.selfUser(in: moc))
+        XCTAssertEqual(try Keychain.fetchItem(item), passcode)
+
+        // We shouldn't delete the legacy item because it's shared between all accounts.
+        XCTAssertEqual(try? Keychain.fetchItem(legacyItem), passcode)
 
         // Clean up
-        for item in items { try Keychain.deleteItem(item) }
+        try Keychain.deleteItem(item)
+        try Keychain.deleteItem(legacyItem)
     }
 
 }
