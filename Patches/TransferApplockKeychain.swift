@@ -22,12 +22,7 @@ struct TransferApplockKeychain {
     
     static func migrateKeychainItems(in moc: NSManagedObjectContext) {
         migrateIsAppLockActiveState(in: moc)
-
-        guard let accountManager = Bundle.main.sharedContainerURL.map(AccountManager.init) else {
-            fatalError("Failed to migrated app lock passcode. Reason: couldn't initialize AccountManager,")
-        }
-
-        migrateAppLockPasscodes(forAccountIds: accountManager.accounts.map(\.userIdentifier))
+        migrateAppLockPasscode(in: moc)
     }
     
     /// Save the enable state of the applock feature in the managedObjectContext instead of the keychain.
@@ -49,7 +44,9 @@ struct TransferApplockKeychain {
     /// Migrate the single legacy passcode (account agnostic) to potentially several (account specific)
     /// keychain entries.
 
-    static func migrateAppLockPasscodes(forAccountIds ids: [UUID]) {
+    static func migrateAppLockPasscode(in moc: NSManagedObjectContext) {
+        guard let selfUserId = ZMUser.selfUser(in: moc).remoteIdentifier else { return }
+
         let legacyKeychainItem = AppLockController.PasscodeKeychainItem.legacyItem
 
         guard
@@ -59,17 +56,8 @@ struct TransferApplockKeychain {
             return
         }
 
-        do {
-            for id in ids {
-                let item = AppLockController.PasscodeKeychainItem(userId: id)
-                try Keychain.storeItem(item, value: passcode)
-            }
-
-            try Keychain.deleteItem(legacyKeychainItem)
-
-        } catch {
-            fatalError("Failed to migrate app lock passcode. Reason: \(error.localizedDescription)")
-        }
+        let item = AppLockController.PasscodeKeychainItem(userId: selfUserId)
+        try? Keychain.storeItem(item, value: passcode)
     }
 
 }
