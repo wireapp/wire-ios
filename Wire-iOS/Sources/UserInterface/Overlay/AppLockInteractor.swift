@@ -89,7 +89,7 @@ final class AppLockInteractor {
     }
 
     var timeout: UInt {
-        return 10
+        return appLock?.config.appLockTimeout ?? .max
     }
 
 }
@@ -111,21 +111,16 @@ extension AppLockInteractor: AppLockInteractorInput {
     }
     
     func evaluateAuthentication(description: String) {
-        appLock?.evaluateAuthentication(scenario: authenticationScenario, description: description.localized) { [weak self] result, context in
+        appLock?.evaluateAuthentication(scenario: authenticationScenario,
+                                        description: description.localized) { [weak self] result, context in
             guard let `self` = self else { return }
-
-            var newResult = result
-
-            if case .needCustomPasscode = newResult {
-                newResult = .unavailable
-            }
                         
             self.dispatchQueue.async {
-                if case .granted = newResult, let context = context as? LAContext {
+                if case .granted = result, let context = context as? LAContext {
                     try? self.userSession?.unlockDatabase(with: context)
                 }
                 
-                self.output?.authenticationEvaluated(with: newResult)
+                self.output?.authenticationEvaluated(with: result)
             }
         }
     }

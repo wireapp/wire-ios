@@ -31,7 +31,7 @@ extension SettingsPropertyFactory {
     }
     
     var timeout: UInt {
-        return 10
+        return appLock?.config.appLockTimeout ?? .max
     }
     
     var isAppLockForced: Bool {
