@@ -188,7 +188,7 @@ extension StorageStack {
                 
                 // Create target directory
                 try fileManager.createDirectory(at: accountStoreFile.deletingLastPathComponent(), withIntermediateDirectories: true, attributes: nil)
-                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
+                let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
                 
                 try prepareStoreForBackupImport(coordinator: coordinator, location: backupStoreFile, options: options)
                 
