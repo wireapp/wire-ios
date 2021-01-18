@@ -44,7 +44,7 @@ private final class AppLockUserInterfaceMock: AppLockUserInterface {
         callback?(true)
     }
     
-    func presentWarningScreen(callback: ResultHandler?) {
+    func presentWarningScreen(completion: Completion?) {
         presentWarningScreenCalled = true
     }
     
