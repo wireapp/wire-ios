@@ -353,40 +353,6 @@ static NSString * const DataKey = @"data";
     XCTAssertEqual(d[TaskKey], self.taskA);
 }
 
-- (void)testThatItAddsAuthenticationTokenToRedirect
-{
-    // given
-    NSString *initialURL = @"https://example.com/initial";
-    NSString *finalURL = @"https://example.com/final";
-    NSString *tokenValue = @"abc123456";
-    NSString *tokenKey = @"Authorization";
-    
-    NSMutableURLRequest *originalRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:initialURL]];
-    [originalRequest setValue:tokenValue forHTTPHeaderField:tokenKey];
-    NSURLSessionDataTask *originalTask = [self.sut.backingSession dataTaskWithRequest:originalRequest];
-    
-    NSURLRequest *newRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:finalURL]];
-    
-    XCTestExpectation *completionHandlerCalled = [self expectationWithDescription:@"Completion handler invoked"];
-    
-    NSHTTPURLResponse *response = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:@"foo"] statusCode:302 HTTPVersion:@"1.1" headerFields:@{}];
-    
-    // when
-    [self.sut URLSession:self.sut.backingSession
-                    task:originalTask
-willPerformHTTPRedirection:response
-              newRequest:newRequest
-       completionHandler:^(NSURLRequest * _Nullable req) {
-        XCTAssertEqualObjects(req.URL, [NSURL URLWithString:finalURL]);
-        XCTAssertEqualObjects(req.allHTTPHeaderFields[tokenKey], tokenValue);
-        
-        [completionHandlerCalled fulfill];
-    }];
-    
-    // then
-    XCTAssertTrue([self waitForCustomExpectationsWithTimeout:0]);
-}
-
 - (void)testThatItDoesNotFollowRedirectsIfSpecified
 {
     // given
