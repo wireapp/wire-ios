@@ -251,7 +251,8 @@ public class SharingSession {
             cookieStorage: cookieStorage,
             reachability: reachability,
             initialAccessToken: nil,
-            applicationGroupIdentifier: applicationGroupIdentifier
+            applicationGroupIdentifier: applicationGroupIdentifier,
+            applicationVersion: "1.0.0"
         )
         
         try self.init(
