@@ -74,15 +74,25 @@ final public class UnauthenticatedTransportSession: NSObject, UnauthenticatedTra
     private var numberOfRunningRequests = ZMAtomicInteger(integer: 0)
     private let baseURL: URL
     private var session: SessionProtocol!
+    private let userAgent: ZMUserAgent
     public var environment: BackendEnvironmentProvider
     fileprivate let reachability: ReachabilityProvider
     
-    public init(environment: BackendEnvironmentProvider, urlSession: SessionProtocol? = nil, reachability: ReachabilityProvider) {
+    public init(environment: BackendEnvironmentProvider,
+                urlSession: SessionProtocol? = nil,
+                reachability: ReachabilityProvider,
+                applicationVersion: String) {
         self.baseURL = environment.backendURL
         self.environment = environment
         self.reachability = reachability
+        self.userAgent = ZMUserAgent()
+        
         super.init()
-        self.session = urlSession ?? URLSession(configuration: .ephemeral, delegate: self, delegateQueue: nil)
+        
+        let configuration = URLSessionConfiguration.ephemeral
+        configuration.httpAdditionalHeaders = ["User-Agent": ZMUserAgent.userAgent(withAppVersion: applicationVersion)]
+        
+        self.session = urlSession ?? URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
     }
     
     
@@ -197,7 +207,6 @@ extension NSMutableURLRequest {
 
     @objc(configureWithRequest:) func configure(with request: ZMTransportRequest) {
         httpMethod = request.methodAsString
-        ZMUserAgent.setUserAgentOn(self)
         request.setAcceptedResponseMediaTypeOnHTTP(self)
         request.setBodyDataAndMediaTypeOnHTTP(self)
         request.setAdditionalHeaderFieldsOnHTTP(self)

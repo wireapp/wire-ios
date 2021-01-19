@@ -78,7 +78,8 @@ static NSString * const DataKey = @"data";
                                                   trustProvider:self.trustProvider
                                                        delegate:self
                                                   delegateQueue:self.queue
-                                                     identifier:@"test-session"];
+                                                     identifier:@"test-session"
+                                                      userAgent:@"TestSession"];
 
     self.URLRequestA = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://a.example.com/"]];
     self.URLRequestB = [NSURLRequest requestWithURL:[NSURL URLWithString:@"https://b.example.com/"]];
@@ -160,6 +161,11 @@ static NSString * const DataKey = @"data";
     XCTAssertEqual(self.completedTasks.count, 1u);
     NSDictionary *d = self.completedTasks.firstObject;
     XCTAssertEqual(d[RequestKey], request);
+}
+
+- (void)testThatUserAgentIsAddedToAdditionalHeaders
+{
+    XCTAssertEqualObjects(self.sut.configuration.HTTPAdditionalHeaders[@"User-Agent"], @"TestSession");
 }
 
 - (void)testThatItCancelsTheTimerWhenTheTaskCompletes;
@@ -528,7 +534,7 @@ willPerformHTTPRedirection:response
 
 - (void)setupMockBackgroundSession
 {    
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:[NSURLSessionConfiguration ephemeralSessionConfiguration] trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier userAgent:@"TestSession"];
     self.sut.backingSession = [OCMockObject niceMockForClass:NSURLSession.class];
     
     [(NSURLSession *)[[(id)self.sut.backingSession stub] andReturn:[NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"]] configuration];
@@ -543,7 +549,7 @@ willPerformHTTPRedirection:response
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier userAgent:@"TestSession"];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
     
@@ -680,7 +686,7 @@ willPerformHTTPRedirection:response
     [self spinMainQueueWithTimeout:0.1];
 
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:@"test-session"];
-    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier];
+    self.sut = (id) [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.trustProvider delegate:self delegateQueue:self.queue identifier:ZMURLSessionBackgroundIdentifier userAgent:@"TestSession"];
     WaitForAllGroupsToBeEmpty(0.5);
     [self spinMainQueueWithTimeout:0.1];
 

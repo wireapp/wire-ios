@@ -335,6 +335,7 @@ static XCTestCase *currentTestCase;
 @property (nonatomic) FakeReachability *reachability;
 @property (nonatomic) MockBackgroundActivityManager *activityManager;
 @property (nonatomic) MockEnvironment *environment;
+@property (nonatomic) NSString *userAgent;
 
 @end
 
@@ -378,6 +379,7 @@ static XCTestCase *currentTestCase;
     currentTestCase = self;
     [super setUp];
 
+    self.userAgent = @"ZMTransportSessionTests User Agent";
     self.scheduler = [[FakeTransportRequestScheduler alloc] init];
     self.userIdentifier = NSUUID.createUUID;
     self.dataTask = [OCMockObject mockForClass:FakeDataTask.class];
@@ -412,7 +414,8 @@ static XCTestCase *currentTestCase;
                 environment:self.environment
                 pushChannelClass:FakePushChannel.class
                 cookieStorage:self.cookieStorage
-                initialAccessToken:nil];
+                initialAccessToken:nil
+                userAgent:self.userAgent];
 
     __weak id weakSelf = self;
     [self.sut setAccessTokenRenewalFailureHandler:^(ZMTransportResponse *response) {
@@ -552,7 +555,8 @@ static XCTestCase *currentTestCase;
                 environment:self.environment
                 pushChannelClass:nil
                 cookieStorage:self.cookieStorage
-                initialAccessToken:nil];
+                initialAccessToken:nil
+                userAgent:self.userAgent];
     
     self.sut.accessToken = self.validAccessToken;
     XCTestExpectation *expectation = [self expectationWithDescription:@"Completion handler called"];
@@ -770,7 +774,8 @@ static XCTestCase *currentTestCase;
                                environment:self.environment
                                pushChannelClass:nil
                                cookieStorage:self.cookieStorage
-                               initialAccessToken:nil];
+                               initialAccessToken:nil
+                               userAgent:self.userAgent];
     
     sut.accessToken = self.validAccessToken;
     id<ZMTransportData> payload = @{@"numbers": @[@4, @8, @15, @16, @23, @42]};
@@ -1640,7 +1645,7 @@ static XCTestCase *currentTestCase;
 {
     XCTAssertNotNil(currentFakePushChannel);
     XCTAssertEqualObjects(currentFakePushChannel.URL, self.environment.backendWSURL);
-    XCTAssertEqualObjects(currentFakePushChannel.userAgentString, [ZMUserAgent userAgentValue]);
+    XCTAssertEqualObjects(currentFakePushChannel.userAgentString, self.userAgent);
     XCTAssertEqualObjects(currentFakePushChannel.scheduler, self.scheduler);
 }
 
@@ -1855,7 +1860,7 @@ static XCTestCase *currentTestCase;
         configuration = NSURLSessionConfiguration.defaultSessionConfiguration;
     }
     
-    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.environment delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:backgroundSession ? ZMURLSessionBackgroundIdentifier : @"default-session"];
+    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.environment delegate:delegate delegateQueue:NSOperationQueue.mainQueue identifier:backgroundSession ? ZMURLSessionBackgroundIdentifier : @"default-session" userAgent:@"TestSession"];
     if (backgroundSession) {
         XCTAssertTrue(session.isBackgroundSession);
     }
@@ -2320,7 +2325,7 @@ static XCTestCase *currentTestCase;
     
     id mockDelegate = [OCMockObject niceMockForProtocol:@protocol(ZMURLSessionDelegate)];
     NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration backgroundSessionConfigurationWithIdentifier:self.name];
-    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.environment delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session"];
+    ZMURLSession *session = [[ZMURLSession alloc] initWithConfiguration:configuration trustProvider:self.environment delegate:mockDelegate delegateQueue:self.queue identifier:@"test-session" userAgent:@"TestSession"];
     XCTestExpectation *expectation = [self expectationWithDescription:@"It should call the completion handler on the main thread"];
     
     // when

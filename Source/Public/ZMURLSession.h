@@ -41,7 +41,8 @@ extern NSString * const ZMURLSessionVoipIdentifier;
                         trustProvider:(id<BackendTrustProvider>)trustProvider
                              delegate:(id<ZMURLSessionDelegate>)delegate
                         delegateQueue:(NSOperationQueue *)queue
-                           identifier:(NSString *)identifier;
+                           identifier:(NSString *)identifier
+                            userAgent:(NSString *)userAgent;
 
 - (void)setTimeoutTimer:(ZMTimer *)timer forTask:(NSURLSessionTask *)task;
 

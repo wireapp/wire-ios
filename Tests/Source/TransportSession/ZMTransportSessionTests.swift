@@ -81,7 +81,7 @@ class ZMTransportSessionTests_Initialization: ZMTBaseTest {
         cookieStorage = ZMPersistentCookieStorage(forServerName: serverName, userIdentifier: userIdentifier)
         reachability = FakeReachability()
         environment = MockEnvironment()
-        sut = ZMTransportSession(environment: environment, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier)
+        sut = ZMTransportSession(environment: environment, cookieStorage: cookieStorage, reachability: reachability, initialAccessToken: nil, applicationGroupIdentifier: containerIdentifier, applicationVersion: "1.0")
     }
     
     override func tearDown() {

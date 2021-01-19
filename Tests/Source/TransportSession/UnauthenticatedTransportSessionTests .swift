@@ -95,7 +95,8 @@ final class UnauthenticatedTransportSessionTests: ZMTBaseTest {
         let environment = BackendEnvironment(title: name, environmentType: .production, endpoints: endpoints, certificateTrust: trust)
         sut = UnauthenticatedTransportSession(environment: environment,
                                               urlSession: sessionMock,
-                                              reachability: MockReachability())
+                                              reachability: MockReachability(),
+                                              applicationVersion: "1.0")
     }
 
     override func tearDown() {

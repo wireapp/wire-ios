@@ -81,14 +81,19 @@ ZM_EMPTY_ASSERTING_INIT();
     return self;
 }
 
-- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration trustProvider:(id<BackendTrustProvider>)trustProvider
- delegate:(id<ZMURLSessionDelegate>)delegate delegateQueue:(NSOperationQueue *)queue identifier:(NSString *)identifier
+- (instancetype)initWithConfiguration:(NSURLSessionConfiguration *)configuration
+                        trustProvider:(id<BackendTrustProvider>)trustProvider
+                             delegate:(id<ZMURLSessionDelegate>)delegate
+                        delegateQueue:(NSOperationQueue *)queue
+                           identifier:(NSString *)identifier
+                            userAgent:(NSString *)userAgent
 {
     Require(configuration != nil);
     Require(delegate != nil);
     Require(queue != nil);
     self = [self initWithDelegate:delegate identifier:identifier];
     if(self) {
+        configuration.HTTPAdditionalHeaders = @{ @"User-Agent": userAgent };
         self.backingSession = [NSURLSession sessionWithConfiguration:configuration delegate:self delegateQueue:queue];
         self.backingSession.sessionDescription = identifier;
         self.trustProvider = trustProvider;
