@@ -183,7 +183,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.acceptedResponseMediaTypes = ZMTransportAcceptTransportData;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
-        self.contentDebugInformationHash = 0;
+        self.contentDebugInformationHash = payload.hash;
     }
     return self;
 }
@@ -262,6 +262,7 @@ typedef NS_ENUM(NSUInteger, ZMTransportRequestSessionType) {
         self.acceptedResponseMediaTypes = ZMTransportAcceptTransportData;
         self.shouldCompress = shouldCompress;
         self.debugInformation = [NSMutableArray array];
+        self.contentDebugInformationHash = data.hash;
     }
     return self;
 }
