@@ -325,24 +325,14 @@ willPerformHTTPRedirection:(NSHTTPURLResponse * __unused)response
 {
     ZMTransportRequest *orginalRequest = [self requestForTask:task];
     if (orginalRequest.doesNotFollowRedirects) {
-        if(completionHandler) {
+        if (completionHandler) {
             completionHandler(nil);
         }
         return;
     }
-    NSURLRequest *finalRequest = request;
-    NSString *AuthenticationHeaderName = @"Authorization";
     
-    // add authentication token
-    NSString *authToken = task.originalRequest.allHTTPHeaderFields[AuthenticationHeaderName];
-    if(authToken != nil) {
-        NSMutableURLRequest *mutableRequest = [request mutableCopy];
-        [mutableRequest setValue:authToken forHTTPHeaderField:AuthenticationHeaderName];
-        finalRequest = mutableRequest;
-    }
-    
-    if(completionHandler) {
-        completionHandler(finalRequest);
+    if (completionHandler) {
+        completionHandler(request);
     }
 }
 
