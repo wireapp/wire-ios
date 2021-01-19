@@ -49,15 +49,6 @@
 
 @end
 
-
-@interface ZMUserSessionTestsBase ()
-
-@property (nonatomic) OperationStatus *operationStatus;
-
-@end
-
-
-
 @implementation ZMUserSessionTestsBase
 
 - (void)setUp
@@ -75,20 +66,6 @@
     self.mockSessionManager = [[MockSessionManager alloc] init];
     self.mediaManager = [[MockMediaManager alloc] init];
     self.flowManagerMock = [[FlowManagerMock alloc] init];
-    self.requestAvailableNotification = [OCMockObject mockForClass:ZMRequestAvailableNotification.class];
-    
-    self.clientRegistrationStatus = [[ZMClientRegistrationStatus alloc] initWithManagedObjectContext:self.syncMOC cookieStorage:self.cookieStorage registrationStatusDelegate:nil];
-    self.proxiedRequestStatus = [[ProxiedRequestsStatus alloc] initWithRequestCancellation:self.transportSession];
-    self.operationStatus = [[OperationStatus alloc] init];
-    self.mockSyncStateDelegate = [[MockSyncStateDelegate alloc] init];
-    self.mockSyncStatus = [[SyncStatus alloc] initWithManagedObjectContext:self.syncMOC syncStateDelegate:self.mockSyncStateDelegate];
-    
-    id applicationStatusDirectory = [OCMockObject niceMockForClass:[ApplicationStatusDirectory class]];
-    [(ApplicationStatusDirectory *)[[(id)applicationStatusDirectory stub] andReturn:self.clientRegistrationStatus] clientRegistrationStatus];
-    [(ApplicationStatusDirectory *)[[(id)applicationStatusDirectory stub] andReturn:self.proxiedRequestStatus] proxiedRequestStatus];
-    [(ApplicationStatusDirectory *)[[(id)applicationStatusDirectory stub] andReturn:self.operationStatus] operationStatus];
-    [(ApplicationStatusDirectory *)[[(id)applicationStatusDirectory stub] andReturn:self.mockSyncStatus] syncStatus];
-    
     self.storeProvider = [[MockLocalStoreProvider alloc] initWithSharedContainerDirectory:self.sharedContainerURL userIdentifier:self.userIdentifier contextDirectory:self.contextDirectory];
     [ZMUser selfUserInContext:self.syncMOC].remoteIdentifier = [NSUUID createUUID];
     
@@ -118,11 +95,6 @@
 
 - (void)tearDown
 {
-    [self.clientRegistrationStatus tearDown];
-    self.clientRegistrationStatus = nil;
-    self.proxiedRequestStatus = nil;
-    self.operationStatus = nil;
-    
     [self tearDownUserInfoObjectsOfMOC:self.syncMOC];
     [self.syncMOC.userInfo removeAllObjects];
     
@@ -145,8 +117,6 @@
     self.sut.thirdPartyServicesDelegate = nil;
     self.mockSessionManager = nil;
     self.transportSession = nil;
-    [self.requestAvailableNotification stopMocking];
-    self.requestAvailableNotification = nil;
     self.mediaManager = nil;
     self.flowManagerMock = nil;
     id tempSut = self.sut;
