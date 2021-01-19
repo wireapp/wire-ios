@@ -34,14 +34,15 @@
 @interface ZMTransportSession ()
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
-                        requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                            reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-                                   queue:(NSOperationQueue *)queue
-                                   group:(ZMSDispatchGroup *)group
-                             environment:(id<BackendEnvironmentProvider>)environment
-                        pushChannelClass:(Class)pushChannelClass
-                           cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                      initialAccessToken:(ZMAccessToken *)initialAccessToken NS_DESIGNATED_INITIALIZER;
+                            requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
+                                reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
+                                       queue:(NSOperationQueue *)queue
+                                       group:(ZMSDispatchGroup *)group
+                                 environment:(id<BackendEnvironmentProvider>)environment
+                            pushChannelClass:(Class)pushChannelClass
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                          initialAccessToken:(ZMAccessToken *)initialAccessToken
+                                   userAgent:(NSString *)userAgent NS_DESIGNATED_INITIALIZER;
 
 - (NSURLSessionTask *)suspendedTaskForRequest:(ZMTransportRequest *)request onSession:(ZMURLSession *)session;
 

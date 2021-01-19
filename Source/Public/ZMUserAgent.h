@@ -23,9 +23,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface ZMUserAgent : NSObject
 
-+ (void)setUserAgentOnRequest:(NSMutableURLRequest *)request;
-+ (NSString *)userAgentValue;
-+ (void)setWireAppVersion:(NSString *)appVersion;
++ (NSString *)userAgentWithAppVersion:(NSString *)appVersion;
 
 @end
 

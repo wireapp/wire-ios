@@ -191,7 +191,6 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     self.activity = [[BackgroundActivityFactory sharedFactory] startBackgroundActivityWithName:@"Network request: POST /access"];
     NSURL *URL = [NSURL URLWithString:@"/access" relativeToURL:self.baseURL];
     NSMutableURLRequest *request = [[NSMutableURLRequest alloc] initWithURL:URL];
-    [ZMUserAgent setUserAgentOnRequest:request];
     [request setHTTPMethod:@"POST"];
     [request addValue:[ZMTransportCodec encodedContentType] forHTTPHeaderField:@"Content-Type"];
     [request addValue:[ZMTransportCodec encodedContentType] forHTTPHeaderField:@"Accept"];

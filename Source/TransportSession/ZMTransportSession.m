@@ -70,9 +70,6 @@ static NSInteger const DefaultMaximumRequests = 6;
 @property (nonatomic, weak) id<ZMPushChannelConsumer> pushChannelConsumer;
 @property (nonatomic, weak) id<ZMSGroupQueue> pushChannelGroupQueue;
 
-
-@property (nonatomic, copy, readonly) NSString *userAgentValue;
-
 @property (nonatomic, readonly) ZMSDispatchGroup *workGroup;
 @property (nonatomic, readonly) ZMTransportRequestScheduler *requestScheduler;
 
@@ -101,7 +98,8 @@ static NSInteger const DefaultMaximumRequests = 6;
                        cookieStorage:nil
                         reachability:nil
                   initialAccessToken:nil
-          applicationGroupIdentifier:nil];
+          applicationGroupIdentifier:nil
+                  applicationVersion:@"1.0"];
 }
 
 + (void)setUpConfiguration:(NSURLSessionConfiguration *)configuration;
@@ -169,68 +167,74 @@ static NSInteger const DefaultMaximumRequests = 6;
                        reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
                  initialAccessToken:(ZMAccessToken *)initialAccessToken
          applicationGroupIdentifier:(NSString *)applicationGroupIdentifier
+                  applicationVersion:(NSString *)appliationVersion
 {
+    NSString *userAgent = [ZMUserAgent userAgentWithAppVersion:appliationVersion];
     NSUUID *userIdentifier = cookieStorage.userIdentifier;
     NSOperationQueue *queue = [NSOperationQueue zm_serialQueueWithName:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession" userIdentifier:userIdentifier]];
     ZMSDispatchGroup *group = [ZMSDispatchGroup groupWithLabel:[ZMTransportSession identifierWithPrefix:@"ZMTransportSession init" userIdentifier:userIdentifier]];
     
     NSString *foregroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionForegroundIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:foregroundIdentifier];
+    ZMURLSession *foregroundSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] foregroundSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:foregroundIdentifier userAgent:userAgent];
     
     NSString *backgroundIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionBackgroundIdentifier userIdentifier:userIdentifier];
     NSURLSessionConfiguration *backgroundSessionConfiguration = [[self class] backgroundSessionConfigurationWithSharedContainerIdentifier:applicationGroupIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration trustProvider:environment delegate:self delegateQueue:queue identifier:backgroundIdentifier];
+    ZMURLSession *backgroundSession = [[ZMURLSession alloc] initWithConfiguration:backgroundSessionConfiguration trustProvider:environment delegate:self delegateQueue:queue identifier:backgroundIdentifier  userAgent:userAgent];
     NSString *voipIdentifier = [ZMTransportSession identifierWithPrefix:ZMURLSessionVoipIdentifier userIdentifier:userIdentifier];
-    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:voipIdentifier];
+    ZMURLSession *voipSession = [[ZMURLSession alloc] initWithConfiguration:[[self class] voipSessionConfiguration] trustProvider:environment delegate:self delegateQueue:queue identifier:voipIdentifier  userAgent:userAgent];
 
     ZMTransportRequestScheduler *scheduler = [[ZMTransportRequestScheduler alloc] initWithSession:self operationQueue:queue group:group reachability:reachability];
     
     CurrentURLSessionsDirectory *sessionsDirectory = [[CurrentURLSessionsDirectory alloc]
-                                         initWithForegroundSession:foregroundSession
-                                         backgroundSession:backgroundSession
-                                         voipSession:voipSession
-                                         ];
+                                                      initWithForegroundSession:foregroundSession
+                                                      backgroundSession:backgroundSession
+                                                      voipSession:voipSession
+                                                      ];
 
     return [self initWithURLSessionsDirectory:sessionsDirectory
-                         requestScheduler:scheduler
-                             reachability:reachability
-                                    queue:queue
-                                    group:group
-                             environment:environment
-                            cookieStorage:cookieStorage
-                       initialAccessToken:initialAccessToken];
+                             requestScheduler:scheduler
+                                 reachability:reachability
+                                        queue:queue
+                                        group:group
+                                  environment:environment
+                                cookieStorage:cookieStorage
+                           initialAccessToken:initialAccessToken
+                                    userAgent:userAgent];
 }
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
-                        requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                            reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-                                   queue:(NSOperationQueue *)queue
-                                   group:(ZMSDispatchGroup *)group
-                             environment:(id<BackendEnvironmentProvider>)environment
-                           cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                      initialAccessToken:(ZMAccessToken *)initialAccessToken
+                            requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
+                                reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
+                                       queue:(NSOperationQueue *)queue
+                                       group:(ZMSDispatchGroup *)group
+                                 environment:(id<BackendEnvironmentProvider>)environment
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                          initialAccessToken:(ZMAccessToken *)initialAccessToken
+                                   userAgent:(NSString *)userAgent
 {
     return [self initWithURLSessionsDirectory:directory
-                         requestScheduler:requestScheduler
-                             reachability:reachability
-                                    queue:queue
-                                    group:group
-                             environment:environment
-                         pushChannelClass:nil
-                            cookieStorage:cookieStorage
-                       initialAccessToken:initialAccessToken];
+                             requestScheduler:requestScheduler
+                                 reachability:reachability
+                                        queue:queue
+                                        group:group
+                                  environment:environment
+                             pushChannelClass:nil
+                                cookieStorage:cookieStorage
+                           initialAccessToken:initialAccessToken
+                                    userAgent:userAgent];
 }
 
 
 - (instancetype)initWithURLSessionsDirectory:(id<URLSessionsDirectory, TearDownCapable>)directory
-                        requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
-                            reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
-                                   queue:(NSOperationQueue *)queue
-                                   group:(ZMSDispatchGroup *)group
-                             environment:(id<BackendEnvironmentProvider>)environment
-                        pushChannelClass:(Class)pushChannelClass
-                           cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
-                      initialAccessToken:(ZMAccessToken *)initialAccessToken
+                            requestScheduler:(ZMTransportRequestScheduler *)requestScheduler
+                                reachability:(id<ReachabilityProvider, TearDownCapable>)reachability
+                                       queue:(NSOperationQueue *)queue
+                                       group:(ZMSDispatchGroup *)group
+                                 environment:(id<BackendEnvironmentProvider>)environment
+                            pushChannelClass:(Class)pushChannelClass
+                               cookieStorage:(ZMPersistentCookieStorage *)cookieStorage
+                          initialAccessToken:(ZMAccessToken *)initialAccessToken
+                                   userAgent:(NSString *)userAgent
 {
     self = [super init];
     if (self) {
@@ -261,7 +265,7 @@ static NSInteger const DefaultMaximumRequests = 6;
         if (pushChannelClass == nil) {
             pushChannelClass = ZMTransportPushChannel.class;
         }
-        self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:[ZMUserAgent userAgentValue] environment:environment];
+        self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler userAgentString:userAgent environment:environment];
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL
                                                                   cookieStorage:self.cookieStorage
                                                                        delegate:self
