@@ -135,6 +135,11 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
     fileprivate var internalPreviewImageData: Data?
     fileprivate var internalCompleteImageData: Data?
     
+    @objc
+    public var hasTeam: Bool {
+        return user?.hasTeam ?? false
+    }
+    
     /// Whether all user's devices are verified by the selfUser
     public var isTrusted: Bool {
         return user?.isTrusted ?? false
@@ -362,7 +367,7 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canRemoveService(from: conversation) == true
     }
 
-    public func canAddUser(to conversation: ZMConversation) -> Bool {
+    public func canAddUser(to conversation: ConversationLike) -> Bool {
         return user?.canAddUser(to: conversation) == true
     }
 
@@ -374,7 +379,7 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canDeleteConversation(conversation) == true
     }
     
-    public func canModifyTitle(in conversation: ZMConversation) -> Bool {
+    public func canModifyTitle(in conversation: ConversationLike) -> Bool {
         return user?.canModifyTitle(in: conversation) == true
     }
 
@@ -382,19 +387,19 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canModifyOtherMember(in: conversation) == true
     }
     
-    public func canModifyEphemeralSettings(in conversation: ZMConversation) -> Bool {
+    public func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool {
         return user?.canModifyEphemeralSettings(in: conversation) == true
     }
     
-    public func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool {
+    public func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool {
         return user?.canModifyReadReceiptSettings(in: conversation) == true
     }
     
-    public func canModifyNotificationSettings(in conversation: ZMConversation) -> Bool {
+    public func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool {
         return user?.canModifyNotificationSettings(in: conversation) == true
     }
     
-    public func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool {
+    public func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool {
         return user?.canModifyAccessControlSettings(in: conversation) == true
     }
 
@@ -402,7 +407,7 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         return user?.canLeave(conversation) == true
     }
 
-    public func isGroupAdmin(in conversation: ZMConversation) -> Bool {
+    public func isGroupAdmin(in conversation: ConversationLike) -> Bool {
         return user?.isGroupAdmin(in: conversation) == true
     }
     
@@ -619,8 +624,8 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         }
     }
     
-    public func isGuest(in conversation: ZMConversation) -> Bool {
-        guard let user = self.user else { return false }
+    public func isGuest(in conversation: ConversationLike) -> Bool {
+        guard let user = user else { return false }
         
         return user.isGuest(in: conversation)
     }

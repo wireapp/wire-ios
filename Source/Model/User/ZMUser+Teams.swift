@@ -18,12 +18,6 @@
 
 
 public extension ZMUser {
-
-    @objc var hasTeam: Bool {
-        /// Other users won't have a team object, but a teamIdentifier.
-        return nil != team || nil != teamIdentifier
-    }
-
     @objc var team: Team? {
         return membership?.team
     }

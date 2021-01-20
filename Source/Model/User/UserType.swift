@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2018 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -130,7 +130,7 @@ public protocol UserType: NSObjectProtocol {
     func requestCompleteProfileImage()
     
     /// Whether this user is a guest in a conversation
-    func isGuest(in conversation: ZMConversation) -> Bool
+    func isGuest(in conversation: ConversationLike) -> Bool
     
     /// Fetch a profile image with the given size on the given queue
     func imageData(for size: ProfileImageSize, queue: DispatchQueue, completion: @escaping (_ imageData: Data?) -> Void)
@@ -188,7 +188,7 @@ public protocol UserType: NSObjectProtocol {
 
     /// Whether the user can add another user to the conversation.
     @objc(canAddUserToConversation:)
-    func canAddUser(to conversation: ZMConversation) -> Bool
+    func canAddUser(to conversation: ConversationLike) -> Bool
 
     /// Whether the user can remove another user from the conversation.
     @objc(canRemoveUserFromConversation:)
@@ -204,23 +204,23 @@ public protocol UserType: NSObjectProtocol {
     
     /// Whether the user can toggle the read receipts setting in the conversation.
     @objc(canModifyReadReceiptSettingsInConversation:)
-    func canModifyReadReceiptSettings(in conversation: ZMConversation) -> Bool
+    func canModifyReadReceiptSettings(in conversation: ConversationLike) -> Bool
     
     /// Whether the user can toggle the emphemeral setting in the conversation.
     @objc(canModifyEphemeralSettingsInConversation:)
-    func canModifyEphemeralSettings(in conversation: ZMConversation) -> Bool
+    func canModifyEphemeralSettings(in conversation: ConversationLike) -> Bool
     
     /// Whether the user can change the notification level setting in the conversation.
     @objc(canModifyNotificationSettingsInConversation:)
-    func canModifyNotificationSettings(in conversation: ZMConversation) -> Bool
+    func canModifyNotificationSettings(in conversation: ConversationLike) -> Bool
     
     /// Whether the user can toggle the access level setting in the conversation.
     @objc(canModifyAccessControlSettingsInConversation:)
-    func canModifyAccessControlSettings(in conversation: ZMConversation) -> Bool
+    func canModifyAccessControlSettings(in conversation: ConversationLike) -> Bool
     
     /// Whether the user can update the title of the conversation.
     @objc(canModifyTitleInConversation:)
-    func canModifyTitle(in conversation: ZMConversation) -> Bool
+    func canModifyTitle(in conversation: ConversationLike) -> Bool
 
     /// Whether the user can leave the conversation.
     @objc(canLeave:)
@@ -228,8 +228,12 @@ public protocol UserType: NSObjectProtocol {
 
     /// Whether the user is group admin in the conversation.
     @objc(isGroupAdminInConversation:)
-    func isGroupAdmin(in conversation: ZMConversation) -> Bool
+    func isGroupAdmin(in conversation: ConversationLike) -> Bool
         
     /// Whether all user's devices are verified by the selfUser
     var isTrusted: Bool { get }
+    
+    /// the user has team or not
+    @objc
+    var hasTeam: Bool { get }
 }
