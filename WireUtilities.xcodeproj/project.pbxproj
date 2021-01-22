@@ -89,10 +89,6 @@
 		54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */; };
 		5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */; };
 		5E0A1FFC2105DE2700949B3E /* MapKeyPathTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */; };
-		5E39FC52225B350700C682B8 /* PasswordRuleSet.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC51225B350700C682B8 /* PasswordRuleSet.swift */; };
-		5E39FC55225B399D00C682B8 /* PasswordCharacterClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC54225B399D00C682B8 /* PasswordCharacterClass.swift */; };
-		5E39FC59225B55F200C682B8 /* PasswordValidationResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC58225B55F200C682B8 /* PasswordValidationResult.swift */; };
-		5E39FC5B225B747600C682B8 /* PasswordRuleSetTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E39FC5A225B747600C682B8 /* PasswordRuleSetTests.swift */; };
 		5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */; };
 		5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */; };
 		5E4BC1C6218C830500A8682E /* String+Spaces.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5E4BC1C5218C830500A8682E /* String+Spaces.swift */; };
@@ -343,10 +339,6 @@
 		54FA8E811BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "NSData+ZMSCryptoTests.swift"; path = "Source/NSData+ZMSCryptoTests.swift"; sourceTree = "<group>"; };
 		5E0A1FF82105DBBA00949B3E /* Map+KeyPath.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Map+KeyPath.swift"; sourceTree = "<group>"; };
 		5E0A1FFA2105DE2100949B3E /* MapKeyPathTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapKeyPathTests.swift; sourceTree = "<group>"; };
-		5E39FC51225B350700C682B8 /* PasswordRuleSet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRuleSet.swift; sourceTree = "<group>"; };
-		5E39FC54225B399D00C682B8 /* PasswordCharacterClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordCharacterClass.swift; sourceTree = "<group>"; };
-		5E39FC58225B55F200C682B8 /* PasswordValidationResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordValidationResult.swift; sourceTree = "<group>"; };
-		5E39FC5A225B747600C682B8 /* PasswordRuleSetTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRuleSetTests.swift; sourceTree = "<group>"; };
 		5E4BC1BB2189E6A400A8682E /* AnyProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyProperty.swift; sourceTree = "<group>"; };
 		5E4BC1BD2189EA3900A8682E /* AnyPropertyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnyPropertyTests.swift; sourceTree = "<group>"; };
 		5E4BC1C5218C830500A8682E /* String+Spaces.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Spaces.swift"; sourceTree = "<group>"; };
@@ -599,8 +591,7 @@
 				16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */,
 				5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */,
 				632378692508D34D00AD4346 /* Array+Shift.swift */,
-        EE16270F250BA12900D35062 /* VolatileData.swift */,
-				5E39FC53225B37EC00C682B8 /* Password */,
+				EE16270F250BA12900D35062 /* VolatileData.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -725,16 +716,6 @@
 			path = Public;
 			sourceTree = "<group>";
 		};
-		5E39FC53225B37EC00C682B8 /* Password */ = {
-			isa = PBXGroup;
-			children = (
-				5E39FC54225B399D00C682B8 /* PasswordCharacterClass.swift */,
-				5E39FC51225B350700C682B8 /* PasswordRuleSet.swift */,
-				5E39FC58225B55F200C682B8 /* PasswordValidationResult.swift */,
-			);
-			path = Password;
-			sourceTree = "<group>";
-		};
 		A9A3B1EE24D9811B001AF38E /* Keychain */ = {
 			isa = PBXGroup;
 			children = (
@@ -842,7 +823,6 @@
 				EE1E357321E796F100F1144B /* DarwinNotificationCenterTests.swift */,
 				16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */,
 				5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */,
-				5E39FC5A225B747600C682B8 /* PasswordRuleSetTests.swift */,
 				EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */,
 				6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */,
 			);
@@ -1080,7 +1060,6 @@
 				5E0A1FF92105DBBA00949B3E /* Map+KeyPath.swift in Sources */,
 				3E88BE3D1B1F478200232589 /* ZMDebugHelpers.m in Sources */,
 				3E88BF451B1F66B100232589 /* NSUUID+Data.m in Sources */,
-				5E39FC59225B55F200C682B8 /* PasswordValidationResult.swift in Sources */,
 				5E4BC1BC2189E6A400A8682E /* AnyProperty.swift in Sources */,
 				7C8BFFE722FD612900B3C8A5 /* ZMPhoneNumberValidator.swift in Sources */,
 				54CA313B1B74F36B00B820C0 /* Sets.swift in Sources */,
@@ -1101,7 +1080,6 @@
 				F19E554D22AFDC8D005C792D /* String+ReadableHash.swift in Sources */,
 				F9C9A7941CAEA7200039E10C /* ZMEncodedNSUUIDWithTimestamp.m in Sources */,
 				3E88BE231B1F478200232589 /* NSURL+QueryComponents.m in Sources */,
-				5E39FC55225B399D00C682B8 /* PasswordCharacterClass.swift in Sources */,
 				3E88BE431B1F478200232589 /* ZMFunctional+noARC.m in Sources */,
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
@@ -1131,7 +1109,6 @@
 				3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */,
 				87B6489C2076078A002FC9E7 /* Composition.swift in Sources */,
 				3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */,
-				5E39FC52225B350700C682B8 /* PasswordRuleSet.swift in Sources */,
 				54181A561F594FD800155ABC /* FileManager+FileProtectionLock.swift in Sources */,
 				16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */,
 				16EB9B361CE0D5A000883FCF /* UTType.swift in Sources */,
@@ -1181,7 +1158,6 @@
 				16030DC221AEA14100F8032E /* ArrayPartitionByKeyPathTests.swift in Sources */,
 				F9C9A78E1CAEA0110039E10C /* NSString_NormalizationTests.m in Sources */,
 				BFBAE9DD1E01A930003FCE49 /* String+EmojiTests.swift in Sources */,
-				5E39FC5B225B747600C682B8 /* PasswordRuleSetTests.swift in Sources */,
 				871E12351C4FEED200862958 /* UnownedNSObjectTests.swift in Sources */,
 				F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */,
 				BFA2F03920C9490500EBE97C /* FunctionOperatorTests.swift in Sources */,
