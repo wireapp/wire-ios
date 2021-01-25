@@ -139,65 +139,6 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssertFalse(guest.isTeamMember)
         XCTAssertFalse(guest.isTeamMember)
     }
-
-    func testThatItUpdatesATeamWithPayload() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            let team = Team.insertNewObject(in: self.syncMOC)
-            let userId = UUID.create()
-            let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
-
-            let payload = [
-                "name": "Wire GmbH",
-                "creator": userId.transportString(),
-                "icon": assetId,
-                "icon_key": assetKey
-            ]
-
-            // when
-            team.update(with: payload)
-
-            // then
-            XCTAssertEqual(team.creator?.remoteIdentifier, userId)
-            XCTAssertEqual(team.name, "Wire GmbH")
-            XCTAssertEqual(team.pictureAssetId, assetId)
-            XCTAssertEqual(team.pictureAssetKey, assetKey)
-        }
-    }
-
-    func testThatItUpdatesATeamWithPayloadAndMergesDuplicateCreators() {
-        syncMOC.performGroupedBlockAndWait {
-            // given
-            let team = Team.insertNewObject(in: self.syncMOC)
-            let userId = UUID.create()
-            let user1 = ZMUser.insert(in: self.syncMOC, name: "Creator")
-            user1.remoteIdentifier = userId
-            let user2 = ZMUser.insert(in: self.syncMOC, name: "Creator")
-            user2.remoteIdentifier = userId
-
-            let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
-
-            let payload = [
-                "name": "Wire GmbH",
-                "creator": userId.transportString(),
-                "icon": assetId,
-                "icon_key": assetKey
-            ]
-
-            // when
-            team.update(with: payload)
-
-            // then
-            XCTAssertEqual(team.creator?.remoteIdentifier, userId)
-            XCTAssertEqual(team.name, "Wire GmbH")
-            XCTAssertEqual(team.pictureAssetId, assetId)
-            XCTAssertEqual(team.pictureAssetKey, assetKey)
-
-            let afterMerge = ZMUser.fetchAll(with: userId, in: self.syncMOC)
-            XCTAssertEqual(afterMerge.count, 1)
-        }
-    }
-
     
     func testThatMembersMatchingQueryReturnsMembersSortedAlphabeticallyByName() {
         // given
