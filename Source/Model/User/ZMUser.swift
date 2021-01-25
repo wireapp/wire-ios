@@ -20,8 +20,6 @@ import Foundation
 import WireUtilities
 import WireSystem
 
-extension ZMUser: UserConnectionType { }
-
 extension ZMUser: UserType {
     @objc
     public var hasTeam: Bool {

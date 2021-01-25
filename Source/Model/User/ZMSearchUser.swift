@@ -111,7 +111,7 @@ extension NSManagedObjectContext
 
 
 @objc
-public class ZMSearchUser: NSObject, UserType, UserConnectionType {
+public class ZMSearchUser: NSObject, UserType {
     public var providerIdentifier: String?
     public var summary: String?
     public var assetKeys: SearchUserAssetKeys?
@@ -279,6 +279,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
 
     public var isExpired: Bool {
         return user?.isExpired == true
+    }
+    
+    public var isIgnored: Bool {
+        return user?.isIgnored == true
     }
 
     public var isPendingApprovalBySelfUser: Bool {
@@ -553,6 +557,18 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
         user?.refreshTeamData()
     }
     
+    public func ignore() {
+        user?.ignore()
+    }
+    
+    public func block() {
+        user?.block()
+    }
+    
+    public func accept() {
+        connect(message: "")
+    }
+    
     public func connect(message: String) {
         
         guard canBeConnected else {
@@ -591,6 +607,10 @@ public class ZMSearchUser: NSObject, UserType, UserConnectionType {
                 }
             }
         }
+    }
+    
+    public func cancelConnectionRequest() {
+        user?.cancelConnectionRequest()
     }
     
     @objc
