@@ -441,17 +441,9 @@ extension FileAssetCacheTests {
             // given
             let sut = FileAssetCache()
             let team = Team.mockTeam(context: self.syncMOC)
-
-            let userId = UUID.create()
             let assetId = UUID.create().transportString(), assetKey = UUID.create().transportString()
-            let payload = [
-                "name": "Wire GmbH",
-                "creator": userId.transportString(),
-                "icon": assetId,
-                "icon_key": assetKey
-            ]
-
-            team.update(with: payload)
+            team.pictureAssetId = assetId
+            team.pictureAssetKey = assetKey
 
             let plainData = self.testData()
 
