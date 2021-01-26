@@ -33,6 +33,7 @@
 #import "ZMUpdateEvent+WireDataModel.h"
 
 #import <WireDataModel/WireDataModel-Swift.h>
+#import <WireCryptobox/cbox.h>
 
 
 static NSString *ZMLogTag ZM_UNUSED = @"ephemeral";
@@ -89,6 +90,7 @@ NSString * const ZMMessageLinkAttachmentsKey = @"linkAttachments";
 NSString * const ZMMessageNeedsLinkAttachmentsUpdateKey = @"needsLinkAttachmentsUpdate";
 NSString * const ZMMessageDiscoveredClientsKey = @"discoveredClients";
 NSString * const ZMMessageButtonStatesKey = @"buttonStates";
+NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 
 
 @interface ZMMessage ()
@@ -594,7 +596,8 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
                              ZMMessageLinkAttachmentsKey,
                              ZMMessageNeedsLinkAttachmentsUpdateKey,
                              ZMMessageDiscoveredClientsKey,
-                             ZMMessageButtonStatesKey
+                             ZMMessageButtonStatesKey,
+                             ZMMessageDecryptionErrorCodeKey
                              ];
         ignoredKeys = [keys setByAddingObjectsFromArray:newKeys];
     });
@@ -760,6 +763,7 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
 @dynamic parentMessage;
 @dynamic messageTimer;
 @dynamic relevantForConversationStatus;
+@dynamic decryptionErrorCode;
 
 - (instancetype)initWithNonce:(NSUUID *)nonce managedObjectContext:(NSManagedObjectContext *)managedObjectContext
 {
@@ -859,6 +863,7 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
             case ZMSystemMessageTypePerformedCall:
             case ZMSystemMessageTypeUsingNewDevice:
             case ZMSystemMessageTypeDecryptionFailed:
+            case ZMSystemMessageTypeDecryptionFailedResolved:
             case ZMSystemMessageTypeReactivatedDevice:
             case ZMSystemMessageTypeConversationIsSecure:
             case ZMSystemMessageTypeMessageDeletedForEveryone:
@@ -870,6 +875,8 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
             case ZMSystemMessageTypeReadReceiptsOn:
             case ZMSystemMessageTypeLegalHoldEnabled:
             case ZMSystemMessageTypeLegalHoldDisabled:
+            case ZMSystemMessageTypeSessionReset:
+                
                 return YES;
             case ZMSystemMessageTypeInvalid:
             case ZMSystemMessageTypeConversationNameChanged:
@@ -894,6 +901,22 @@ NSString * const ZMMessageButtonStatesKey = @"buttonStates";
         self.needsUpdatingUsers = [self.addedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock] ||
                                   [self.removedUsers anyObjectMatchingWithBlock:matchUnfetchedUserBlock];
     }
+}
+
+- (BOOL)isDecryptionErrorRecoverable {
+    if (self.decryptionErrorCode == nil) {
+        return NO;
+    }
+    
+    NSInteger errorCode = self.decryptionErrorCode.integerValue;
+    
+    if (errorCode == CBOX_TOO_DISTANT_FUTURE ||
+        errorCode == CBOX_DEGENERATED_KEY ||
+        errorCode == CBOX_PREKEY_NOT_FOUND) {
+        return YES;
+    }
+    
+    return NO;
 }
 
 + (ZMSystemMessageType)systemMessageTypeFromEventType:(ZMUpdateEventType)type

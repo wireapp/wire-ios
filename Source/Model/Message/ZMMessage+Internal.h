@@ -48,6 +48,7 @@ extern NSString * _Nonnull const ZMMessageConversationKey;
 extern NSString * _Nonnull const ZMMessageHiddenInConversationKey;
 extern NSString * _Nonnull const ZMMessageExpirationDateKey;
 extern NSString * _Nonnull const ZMMessageNameKey;
+extern NSString * _Nonnull const ZMMessageSenderClientIDKey;
 extern NSString * _Nonnull const ZMMessageNeedsToBeUpdatedFromBackendKey;
 extern NSString * _Nonnull const ZMMessageNonceDataKey;
 extern NSString * _Nonnull const ZMMessageSenderKey;
@@ -140,7 +141,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 @property (nonatomic, readonly) BOOL userIsTheSender; // Set to true if sender is the only user in users array. E.g. when a wireless user joins conversation
 @property (nonatomic) NSNumber * _Nullable messageTimer; // Only filled for .messageTimerUpdate
 @property (nonatomic) BOOL relevantForConversationStatus; // If true (default), the message is considered to be shown inside the conversation list
-
+@property (nonatomic) NSNumber * _Nullable decryptionErrorCode; // If available this will be set for decryption error messages.
 + (ZMSystemMessage * _Nullable)fetchLatestPotentialGapSystemMessageInConversation:(ZMConversation * _Nonnull)conversation;
 - (void)updateNeedsUpdatingUsersIfNeeded;
 
