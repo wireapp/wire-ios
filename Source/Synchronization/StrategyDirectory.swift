@@ -202,9 +202,6 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 withManagedObjectContext: syncMOC,
                 applicationStatus: applicationStatusDirectory,
                 syncStatus: applicationStatusDirectory.syncStatus),
-            GenericMessageNotificationRequestStrategy(
-                managedObjectContext: syncMOC,
-                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationStatus),
             UserImageAssetUpdateStrategy(
                 managedObjectContext: syncMOC,
                 applicationStatusDirectory: applicationStatusDirectory,
@@ -267,6 +264,10 @@ public class StrategyDirectory: NSObject, StrategyDirectoryProtocol {
                 managedObjectContext: syncMOC,
                 clientRegistrationStatus: applicationStatusDirectory.clientRegistrationStatus,
                 clientUpdateStatus: applicationStatusDirectory.clientUpdateStatus),
+            ResetSessionRequestStrategy(
+                managedObjectContext: syncMOC,
+                applicationStatus: applicationStatusDirectory,
+                clientRegistrationDelegate: applicationStatusDirectory.clientRegistrationDelegate),
             localNotificationDispatcher
         ]
                 
