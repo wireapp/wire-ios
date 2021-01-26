@@ -69,10 +69,12 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
     ZMSystemMessageTypeConnectionUpdate,
     ZMSystemMessageTypeMissedCall,
     ZMSystemMessageTypeNewClient,
+    ZMSystemMessageTypeSessionReset,
     ZMSystemMessageTypeIgnoredClient,
     ZMSystemMessageTypeConversationIsSecure,
     ZMSystemMessageTypePotentialGap,
     ZMSystemMessageTypeDecryptionFailed,
+    ZMSystemMessageTypeDecryptionFailedResolved,
     ZMSystemMessageTypeDecryptionFailed_RemoteIdentityChanged,
     ZMSystemMessageTypeNewConversation,
     ZMSystemMessageTypeReactivatedDevice,
@@ -142,7 +144,10 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 
 @property (nonatomic, readonly, copy, nullable) NSString *text;
 @property (nonatomic) BOOL needsUpdatingUsers;
+@property (nonatomic) BOOL isDecryptionErrorRecoverable;
 @property (nonatomic) NSTimeInterval duration;
+@property (nonatomic) NSNumber * _Nullable decryptionErrorCode; // Only filled for ZMSystemMessageTypeDecryptionFailed
+@property (nonatomic) NSString * _Nullable senderClientID; // Only filled for ZMSystemMessageTypeDecryptionFailed
 /**
   Only filled for .performedCall & .missedCall
  */

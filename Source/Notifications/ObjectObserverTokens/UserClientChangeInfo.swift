@@ -34,7 +34,8 @@ extension UserClient: ObjectInSnapshot {
         return Set([#keyPath(UserClient.trustedByClients),
                     #keyPath(UserClient.ignoredByClients),
                     #keyPath(UserClient.needsToNotifyUser),
-                    #keyPath(UserClient.fingerprint)])
+                    #keyPath(UserClient.fingerprint),
+                    #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)])
     }
     
     public var notificationName : Notification.Name {
@@ -55,20 +56,25 @@ public enum UserClientChangeInfoKey: String {
         super.init(object: object)
     }
 
-    open var trustedByClientsChanged : Bool {
+    open var trustedByClientsChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.trustedByClients))
     }
     
-    open var ignoredByClientsChanged : Bool {
+    open var ignoredByClientsChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.ignoredByClients))
     }
 
-    open var fingerprintChanged : Bool {
+    open var fingerprintChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.fingerprint))
     }
 
-    open var needsToNotifyUserChanged : Bool {
+    open var needsToNotifyUserChanged: Bool {
         return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyUser))
+    }
+    
+    open var sessionHasBeenReset: Bool {
+        return changedKeysContain(keys: #keyPath(UserClient.needsToNotifyOtherUserAboutSessionReset)) &&
+               userClient.needsToNotifyOtherUserAboutSessionReset == false
     }
 
     public let userClient: UserClient

@@ -306,11 +306,14 @@ extension ZMConversation {
         let type = (UInt32(errorCode) == CBOX_REMOTE_IDENTITY_CHANGED.rawValue) ? ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged : ZMSystemMessageType.decryptionFailed
         let clients = client.flatMap { Set(arrayLiteral: $0) } ?? Set<UserClient>()
         let serverTimestamp = date ?? timestampAfterLastMessage()
-        self.appendSystemMessage(type: type,
-                                 sender: sender,
-                                 users: nil,
-                                 clients: clients,
-                                 timestamp: serverTimestamp)
+        let systemMessage = appendSystemMessage(type: type,
+                                               sender: sender,
+                                               users: nil,
+                                               clients: clients,
+                                               timestamp: serverTimestamp)
+        
+        systemMessage.senderClientID = client?.remoteIdentifier
+        systemMessage.decryptionErrorCode = NSNumber(integerLiteral: errorCode)
     }
 
     /// Adds the user to the list of participants if not already present and inserts a .participantsAdded system message

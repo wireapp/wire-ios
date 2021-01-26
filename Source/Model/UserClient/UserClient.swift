@@ -36,6 +36,7 @@ public let ZMUserClientIgnoredKey = "ignoredClients"
 public let ZMUserClientNeedsToNotifyUserKey = "needsToNotifyUser"
 public let ZMUserClientFingerprintKey = "fingerprint"
 public let ZMUserClientRemoteIdentifierKey = "remoteIdentifier"
+public let ZMUserClientNeedsToNotifyOtherUserAboutSessionResetKey = "needsToNotifyOtherUserAboutSessionReset"
 
 private let zmLog = ZMSLog(tag: "UserClient")
 
@@ -82,6 +83,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var apsVerificationKey: Data?
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
+    @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
     private enum Keys {
@@ -316,18 +318,25 @@ public class UserClient: ZMManagedObject, UserClientType {
             
             // Mark clients as needing to be refetched
             selfClient.missesClient(syncClient)
-            syncMOC.saveOrRollback()
-            let userID = self.user!.objectID
             
-            uiMOC.performGroupedBlock {
-                // Send session reset message so other user can send us messages immediately
-                guard
-                    let user = (try? uiMOC.existingObject(with: userID)) as? ZMUser,
-                    let conversation = self.conversation(for: user) else { return }
-                
-                GenericMessageScheduleNotification.post(message: GenericMessage(clientAction: .resetSession), conversation: conversation)
-            }
+            // Mark that we need notify the other party about the session reset
+            syncClient.needsToNotifyOtherUserAboutSessionReset = true
+            
+            syncMOC.saveOrRollback()
         }
+    }
+    
+    public func resolveDecryptionFailedSystemMessages() {
+        let request = NSBatchUpdateRequest(entityName: ZMSystemMessage.entityName())
+        
+        request.predicate = NSPredicate(format: "%K = %d AND %K = %@",
+                                        ZMMessageSystemMessageTypeKey,
+                                        ZMSystemMessageType.decryptionFailed.rawValue,
+                                        ZMMessageSenderClientIDKey,
+                                        remoteIdentifier!)
+        request.propertiesToUpdate = [ZMMessageSystemMessageTypeKey:  ZMSystemMessageType.decryptionFailedResolved.rawValue]
+        request.resultType = .updatedObjectIDsResultType
+        managedObjectContext?.executeBatchUpdateRequestOrAssert(request)
     }
 
     private func conversation(for user: ZMUser) -> ZMConversation? {

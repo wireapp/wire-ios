@@ -326,22 +326,14 @@ final class UserClientTests: ZMBaseManagedObjectTest {
         }
     }
     
-    func testThatItPostsANotificationToSendASessionResetMessageWhenResettingSession() {
-        var (message, conversation): (GenericMessage?, ZMConversation?)
-
-        let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
-        let token = GenericMessageScheduleNotification.addObserver(managedObjectContext:self.uiMOC)
-        { noteMessage, noteConversation in
-            message = noteMessage
-            conversation = noteConversation
-            noteExpectation.fulfill()
-        }
-
+    func testThatItSetsNeedsToNotifyOtherUserAboutSessionReset_WhenResettingSession() {
+        var otherClient: UserClient!
+        
+        // given
         self.syncMOC.performGroupedBlockAndWait {
-            // given
-            let selfClient = self.createSelfClient(onMOC: self.syncMOC)
+            _ = self.createSelfClient(onMOC: self.syncMOC)
             
-            let otherClient = UserClient.insertNewObject(in: self.syncMOC)
+            otherClient = UserClient.insertNewObject(in: self.syncMOC)
             otherClient.remoteIdentifier = UUID.create().transportString()
             
             let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
@@ -350,80 +342,18 @@ final class UserClientTests: ZMBaseManagedObjectTest {
             
             let connection = ZMConnection.insertNewSentConnection(to: otherUser)!
             connection.status = .accepted
-            
-            selfClient.trustClient(otherClient)
-            
-            // when
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        
+        // when
+        self.syncMOC.performGroupedBlockAndWait {
             otherClient.resetSession()
         }
-
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        XCTAssertTrue(waitForCustomExpectations(withTimeout: 0.5))
 
         // then
         self.syncMOC.performGroupedBlockAndWait {
-            withExtendedLifetime(token) { () -> () in
-                XCTAssertNotNil(message)
-                XCTAssertNotNil(conversation)
-                if case .clientAction? = message?.content {} else { XCTFail() }
-                XCTAssertEqual(message?.clientAction, .resetSession)
-            }
-        }
-    }
-
-    func testThatItSendsASessionResetMessageForUserInTeamConversation() {
-        var (message, conversation): (GenericMessage?, ZMConversation?)
-
-        let noteExpectation = expectation(description: "GenericMessageScheduleNotification should be fired")
-        let token = GenericMessageScheduleNotification.addObserver(managedObjectContext: self.uiMOC)
-        { noteMessage, noteConversation in
-            message = noteMessage
-            conversation = noteConversation
-            noteExpectation.fulfill()
-        }
-        
-        withExtendedLifetime(token) {
-            var expectedConversation: ZMConversation?
-            
-            self.syncMOC.performGroupedBlockAndWait {
-                // given
-                let selfClient = self.createSelfClient(onMOC: self.syncMOC)
-                
-                let otherClient = UserClient.insertNewObject(in: self.syncMOC)
-                otherClient.remoteIdentifier = UUID.create().transportString()
-                
-                let otherUser = ZMUser.insertNewObject(in:self.syncMOC)
-                otherUser.remoteIdentifier = UUID.create()
-                otherClient.user = otherUser
-                
-                let team = Team.insertNewObject(in: self.syncMOC)
-                let selfMember = Member.insertNewObject(in: self.syncMOC)
-                selfMember.permissions = .member
-                selfMember.team = team
-                selfMember.user = selfClient.user
-                
-                let otherMember = Member.insertNewObject(in: self.syncMOC)
-                otherMember.team = team
-                otherMember.user = otherUser
-                
-                expectedConversation = otherUser.oneToOneConversation
-                selfClient.trustClient(otherClient)
-                
-                // when
-                otherClient.resetSession()
-            }
-            
-            XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
-            
-            // then
-            self.syncMOC.performGroupedBlockAndWait {
-                XCTAssertNotNil(message)
-                XCTAssertNotNil(conversation)
-                XCTAssertEqual(expectedConversation?.objectID, conversation?.objectID)
-                if case .clientAction? = message?.content {} else { XCTFail() }
-                XCTAssertEqual(message?.clientAction, .resetSession)
-            }
+            XCTAssertTrue(otherClient.needsToNotifyOtherUserAboutSessionReset)
         }
     }
     

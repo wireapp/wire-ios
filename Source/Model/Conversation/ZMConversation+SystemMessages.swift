@@ -21,6 +21,14 @@ import Foundation
 
 extension ZMConversation {
     
+    public func appendSessionResetSystemMessage(user: ZMUser, client: UserClient, at timestamp: Date) {
+        appendSystemMessage(type: .sessionReset,
+                            sender: user,
+                            users: [],
+                            clients: [client],
+                            timestamp: timestamp)
+    }
+    
     public func appendTeamMemberRemovedSystemMessage(user: ZMUser, at timestamp: Date) {
         appendSystemMessage(type: .teamMemberLeave,
                             sender: user,

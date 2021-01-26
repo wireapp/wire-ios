@@ -374,34 +374,6 @@ extension ClientMessageTests {
         XCTAssertEqual(conversation.lastMessage, existingMessage)
     }
     
-    func testThatItDoesNotCreateMessageFromClientActionMessage() {
-        // given
-        let senderClientID = NSString.createAlphanumerical()
-        let nonce = UUID.create()
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.remoteIdentifier = UUID.create()
-        
-        let contentData = try? GenericMessage(clientAction: ClientAction.resetSession, nonce: nonce).serializedData()
-        let data: NSDictionary = [
-            "sender": senderClientID,
-            "text": contentData?.base64String()
-        ]
-        let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data)
-        
-        let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
-        XCTAssertNotNil(event);
-
-        // when
-        var sut: ZMClientMessage?
-        self.performPretendingUiMocIsSyncMoc {
-            sut = ZMClientMessage.createOrUpdate(from: event!, in: self.uiMOC, prefetchResult: nil)
-        }
-
-        // then
-        XCTAssertNil(sut)
-        XCTAssertEqual(conversation.allMessages.count, 0)
-    }
-
     func testThatItDoesNotCreateMessageFromAvailabilityMessage() {
         // given
         let senderClientID = NSString.createAlphanumerical()

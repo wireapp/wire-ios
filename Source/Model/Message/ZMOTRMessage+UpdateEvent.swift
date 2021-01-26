@@ -91,8 +91,17 @@ extension ZMOTRMessage {
 
         case .edited:
             return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
-
-        case .clientAction, .calling, .availability:
+            
+        case .clientAction(.resetSession):
+            guard
+                let sender = ZMUser(remoteID: senderID, createIfNeeded: true, in: moc),
+                let senderClientID = updateEvent.senderClientID,
+                let senderClient = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: sender, createIfNeeded: true),
+                let timestamp = updateEvent.timestamp
+            else { return nil }
+            
+            conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
+        case .calling, .availability:
             return nil
 
         default:

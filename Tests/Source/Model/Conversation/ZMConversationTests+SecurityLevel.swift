@@ -509,15 +509,17 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         conversation.conversationType = .group
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.name = "Fancy One"
+        let decryptionError = CBOX_REMOTE_IDENTITY_CHANGED
         
         // when
-        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(CBOX_REMOTE_IDENTITY_CHANGED.rawValue))
+        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(decryptionError.rawValue))
         
         // then
         guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
         XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed_RemoteIdentityChanged)
+        XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, Int(decryptionError.rawValue))
     }
     
     func testThatItAppendsASystemMessageOfGeneralTypeForCBErrorCodeInvalidMessage()
@@ -527,15 +529,17 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         conversation.conversationType = .group
         let user = ZMUser.insertNewObject(in: self.uiMOC)
         user.name = "Fancy One"
+        let decryptionError = CBOX_INVALID_MESSAGE
         
         // when
-        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(CBOX_INVALID_MESSAGE.rawValue))
+        conversation.appendDecryptionFailedSystemMessage(at: Date(), sender: user, client: nil, errorCode: Int(decryptionError.rawValue))
         
         // then
         guard let lastMessage = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
         XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed)
+        XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, Int(decryptionError.rawValue))
     }
     
     func testThatContinuedUsingDeviceSystemMessageAppendedAfterLastMessage()
