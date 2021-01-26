@@ -68,8 +68,12 @@
 		166901F51D7081C7000FE4AF /* ZMUpstreamRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 166901CD1D7081C7000FE4AF /* ZMUpstreamRequest.m */; };
 		166901F61D7081C7000FE4AF /* ZMUpstreamTranscoder.h in Headers */ = {isa = PBXBuildFile; fileRef = 166901CE1D7081C7000FE4AF /* ZMUpstreamTranscoder.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		166902121D70851E000FE4AF /* ZMOutstandingItems.h in Headers */ = {isa = PBXBuildFile; fileRef = 166902111D70851E000FE4AF /* ZMOutstandingItems.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		166A22912577C06B00EF313D /* ResetSessionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */; };
 		16751E8524CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */; };
 		16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */; };
+		1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682462E257A1FB7002AF17B /* KeyPathObjectSync.swift */; };
+		16824631257A23E8002AF17B /* KeyPathObjectSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16824630257A23E8002AF17B /* KeyPathObjectSyncTests.swift */; };
+		16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */; };
 		168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */; };
 		16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */; };
 		16A86B4622A5485E00A674F8 /* IdentifierObjectSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */; };
@@ -120,7 +124,6 @@
 		F154EDC71F447B6C00CB8184 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F154EDC61F447B6C00CB8184 /* AppDelegate.swift */; };
 		F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184014F2073BE0800E9F4CC /* ClientMessageRequestFactory.swift */; };
 		F184019D2073BE0800E9F4CC /* ClientMessageTranscoder.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401522073BE0800E9F4CC /* ClientMessageTranscoder.swift */; };
-		F18401A32073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401592073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift */; };
 		F18401A42073BE0800E9F4CC /* GenericMessageRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015A2073BE0800E9F4CC /* GenericMessageRequestStrategy.swift */; };
 		F18401A62073BE0800E9F4CC /* MissingClientsRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */; };
 		F18401A92073BE0800E9F4CC /* MissingClientsRequestFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */; };
@@ -157,7 +160,6 @@
 		F18401E02073C25900E9F4CC /* ClientMessageRequestFactoryTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401542073BE0800E9F4CC /* ClientMessageRequestFactoryTests.swift */; };
 		F18401E12073C25900E9F4CC /* ClientMessageTranscoderTests+Depedency.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401552073BE0800E9F4CC /* ClientMessageTranscoderTests+Depedency.swift */; };
 		F18401E22073C25900E9F4CC /* ClientMessageTranscoderTests+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401562073BE0800E9F4CC /* ClientMessageTranscoderTests+Ephemeral.swift */; };
-		F18401E32073C25E00E9F4CC /* GenericMessageNotificationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401582073BE0800E9F4CC /* GenericMessageNotificationRequestStrategyTests.swift */; };
 		F18401E42073C25E00E9F4CC /* GenericMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015B2073BE0800E9F4CC /* GenericMessageRequestStrategyTests.swift */; };
 		F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */; };
 		F18401E62073C26200E9F4CC /* MissingClientsMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015F2073BE0800E9F4CC /* MissingClientsMapTests.swift */; };
@@ -320,8 +322,12 @@
 		166902211D709110000FE4AF /* ZMTimedSingleRequestSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTimedSingleRequestSyncTests.m; sourceTree = "<group>"; };
 		166902221D709110000FE4AF /* ZMUpstreamInsertedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamInsertedObjectSyncTests.m; sourceTree = "<group>"; };
 		166902231D709110000FE4AF /* ZMUpstreamModifiedObjectSyncTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMUpstreamModifiedObjectSyncTests.m; sourceTree = "<group>"; };
+		166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSessionRequestStrategy.swift; sourceTree = "<group>"; };
 		16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategy.swift; sourceTree = "<group>"; };
 		16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategyTests.swift; sourceTree = "<group>"; };
+		1682462E257A1FB7002AF17B /* KeyPathObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathObjectSync.swift; sourceTree = "<group>"; };
+		16824630257A23E8002AF17B /* KeyPathObjectSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathObjectSyncTests.swift; sourceTree = "<group>"; };
+		16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSessionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsPreprocessorTests.swift; sourceTree = "<group>"; };
 		16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSync.swift; sourceTree = "<group>"; };
 		16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = IdentifierObjectSyncTests.swift; sourceTree = "<group>"; };
@@ -366,8 +372,6 @@
 		F18401542073BE0800E9F4CC /* ClientMessageRequestFactoryTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ClientMessageRequestFactoryTests.swift; sourceTree = "<group>"; };
 		F18401552073BE0800E9F4CC /* ClientMessageTranscoderTests+Depedency.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTranscoderTests+Depedency.swift"; sourceTree = "<group>"; };
 		F18401562073BE0800E9F4CC /* ClientMessageTranscoderTests+Ephemeral.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ClientMessageTranscoderTests+Ephemeral.swift"; sourceTree = "<group>"; };
-		F18401582073BE0800E9F4CC /* GenericMessageNotificationRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageNotificationRequestStrategyTests.swift; sourceTree = "<group>"; };
-		F18401592073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageNotificationRequestStrategy.swift; sourceTree = "<group>"; };
 		F184015A2073BE0800E9F4CC /* GenericMessageRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageRequestStrategy.swift; sourceTree = "<group>"; };
 		F184015B2073BE0800E9F4CC /* GenericMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategy.swift; sourceTree = "<group>"; };
@@ -700,8 +704,6 @@
 		F18401572073BE0800E9F4CC /* Generic Message */ = {
 			isa = PBXGroup;
 			children = (
-				F18401592073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift */,
-				F18401582073BE0800E9F4CC /* GenericMessageNotificationRequestStrategyTests.swift */,
 				F184015A2073BE0800E9F4CC /* GenericMessageRequestStrategy.swift */,
 				F184015B2073BE0800E9F4CC /* GenericMessageRequestStrategyTests.swift */,
 			);
@@ -718,6 +720,8 @@
 				F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */,
 				F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */,
 				F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */,
+				166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */,
+				16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */,
 				1662ADB222B0E8B300D84071 /* VerifyLegalHoldRequestStrategy.swift */,
 				1662ADD022B14CBA00D84071 /* VerifyLegalHoldRequestStrategyTests.swift */,
 			);
@@ -848,6 +852,8 @@
 				1621D22D1D75AC36007108C2 /* ZMChangeTrackerBootstrap+Testing.h */,
 				16A86B2622A128A800A674F8 /* IdentifierObjectSync.swift */,
 				16A86B4522A5485E00A674F8 /* IdentifierObjectSyncTests.swift */,
+				1682462E257A1FB7002AF17B /* KeyPathObjectSync.swift */,
+				16824630257A23E8002AF17B /* KeyPathObjectSyncTests.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1189,6 +1195,7 @@
 				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
 				16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */,
+				166A22912577C06B00EF313D /* ResetSessionRequestStrategy.swift in Sources */,
 				166901E41D7081C7000FE4AF /* ZMSingleRequestSync.m in Sources */,
 				F18401BA2073BE0800E9F4CC /* LinkPreviewUploadRequestStrategy.swift in Sources */,
 				16A86B2722A128A800A674F8 /* IdentifierObjectSync.swift in Sources */,
@@ -1199,13 +1206,13 @@
 				F18401D92073BE0800E9F4CC /* EncryptionSessionDirectory+UpdateEvents.swift in Sources */,
 				F18401C72073BE0800E9F4CC /* AssetV3PreviewDownloadStrategy.swift in Sources */,
 				F18401B52073BE0800E9F4CC /* OTREntityTranscoder.swift in Sources */,
+				1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */,
 				BF1F52C61ECC74E5002FB553 /* Array+RequestGenerator.swift in Sources */,
 				5E9EA4DE2243C10400D401B2 /* LinkAttachmentsPreprocessor.swift in Sources */,
 				166901E01D7081C7000FE4AF /* ZMRemoteIdentifierObjectSync.m in Sources */,
 				F18401A42073BE0800E9F4CC /* GenericMessageRequestStrategy.swift in Sources */,
 				1621D2751D7715EA007108C2 /* ZMObjectSyncStrategy.m in Sources */,
 				166901E21D7081C7000FE4AF /* ZMRequestGenerator.m in Sources */,
-				F18401A32073BE0800E9F4CC /* GenericMessageNotificationRequestStrategy.swift in Sources */,
 				5E68F22722452CDC00298376 /* LinkPreprocessor.swift in Sources */,
 				EE997A18250654B0008336D2 /* Logging.swift in Sources */,
 				166901D41D7081C7000FE4AF /* ZMDownstreamObjectSync.m in Sources */,
@@ -1242,13 +1249,13 @@
 				547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */,
 				06D0651A256340470057836B /* FeatureControllerTest.swift in Sources */,
 				F19561F5202A1361005347C0 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */,
+				16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */,
 				164D007622256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift in Sources */,
 				BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */,
 				168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */,
 				F19561F1202A1325005347C0 /* ZMSingleRequestSyncTests.m in Sources */,
 				F19561F7202A1389005347C0 /* ZMLocallyInsertedObjectSetTests.m in Sources */,
 				F1956201202A141E005347C0 /* ZMDownstreamObjectSyncTests.m in Sources */,
-				F18401E32073C25E00E9F4CC /* GenericMessageNotificationRequestStrategyTests.swift in Sources */,
 				F18401F32073C26C00E9F4CC /* AssetClientMessageRequestStrategyTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,
 				1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */,
@@ -1263,6 +1270,7 @@
 				F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */,
 				164D00742225624E00A8F264 /* ZMImagePreprocessingTrackerTests.m in Sources */,
 				F18401DA2073C24B00E9F4CC /* ClientMessageTranscoderTests+ResponsePayload.swift in Sources */,
+				16824631257A23E8002AF17B /* KeyPathObjectSyncTests.swift in Sources */,
 				F1956204202A1506005347C0 /* ZMRequestGeneratorTests.m in Sources */,
 				1621D2661D75C755007108C2 /* ZMLocallyModifiedObjectSyncStatusTests.m in Sources */,
 				F18401FE2073C2EA00E9F4CC /* MessagingTest+Encryption.swift in Sources */,
