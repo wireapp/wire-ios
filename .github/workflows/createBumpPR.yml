@@ -12,7 +12,7 @@ jobs:
         uses: actions/checkout@v2
 
       - name: create bump PR
-        env:
+        #env:
             #GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             bash <(curl --silent https://raw.githubusercontent.com/ wire-ios-shared-resources/Scripts/createBumpPR.sh)
