@@ -20,7 +20,6 @@ import XCTest
 @testable import Wire
 import SnapshotTesting
 
-/// TODO: retire this extension
 extension ZMConversation {
 
     func add(participants: Set<ZMUser>) {
@@ -36,56 +35,63 @@ extension ZMConversation {
     }
 }
 
-private final class MockConversation: MockStableRandomParticipantsConversation, GroupDetailsConversation, SortedOtherParticipantsProvider {
-    var sortedOtherParticipants: [UserType] = []
-
-    var userDefinedName: String?
-
-    var sortedServiceUsers: [UserType] = []
-
-    var hasReadReceiptsEnabled: Bool = false
-
-    var freeParticipantSlots: Int = 1
+extension ColorSchemeVariant {
+    var name: String {
+        switch self {
+        case .light:
+            return "light"
+        case .dark:
+            return "dark"
+        }
+    }
 }
 
-final class GroupParticipantsDetailViewControllerTests: XCTestCase {
+final class GroupParticipantsDetailViewControllerTests: XCTestCase, CoreDataFixtureTestHelper {
+    
+    var coreDataFixture: CoreDataFixture!
 
     override func setUp() {
         super.setUp()
-
-        SelfUser.setupMockSelfUser()
+        coreDataFixture = CoreDataFixture()
     }
-
+    
     override func tearDown() {
-        SelfUser.provider = nil
-        
+        resetColorScheme()
+        coreDataFixture = nil
+
+        /// restore to default light scheme
+        ColorScheme.default.variant = .light
+
         super.tearDown()
     }
-
+    
     func testThatItRendersALotOfUsers() {
         // given
-        let users: [MockUserType] = (0..<20).map {
-            MockUserType.createUser(name: "User #\($0)")
-        }
-
+        let users = (0..<20).map { createUser(name: "User #\($0)") }
         let selected = Array(users.dropLast(15))
-        let conversation = MockConversation()
-        conversation.sortedOtherParticipants = users
-
-        // when & then
-        verifyInAllColorSchemes(createSut: {
+        let conversation = createGroupConversation()
+        conversation.add(participants: users)
+        
+        let colorSchemes: [ColorSchemeVariant] = [.dark, .light]
+        
+        for colorScheme in colorSchemes {
+            ColorScheme.default.variant = colorScheme
+            // when
             let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
-            return sut.wrapInNavigationController()
-        })
-
+            
+            // then
+            let wrapped = sut.wrapInNavigationController()
+            verify(matching: wrapped, testName: #function + colorScheme.name)
+        }
     }
-
+    
     func testEmptyState() {
         // given
-        let conversation = MockConversation()
-
+        let selected:[ZMUser] = []
+        let conversation = createGroupConversation()
+        
         // when
-        let sut = GroupParticipantsDetailViewController(selectedParticipants: [], conversation: conversation)
+        let sut = GroupParticipantsDetailViewController(selectedParticipants: selected, conversation: conversation)
         sut.viewModel.admins = []
         sut.viewModel.members = []
         sut.setupViews()
@@ -93,6 +99,6 @@ final class GroupParticipantsDetailViewControllerTests: XCTestCase {
 
         // then
         let wrapped = sut.wrapInNavigationController()
-        verify(matching: wrapped)
+        verify(matching: wrapped.view)
     }
 }
