@@ -16,9 +16,8 @@
 //
 
 import Foundation
-import WireSyncEngine
+import WireDataModel
 
-/// from UI project, to randomize users display in avatar icon
 protocol StableRandomParticipantsProvider {
     var stableRandomParticipants: [UserType] { get }
 }
@@ -27,23 +26,6 @@ protocol SortedOtherParticipantsProvider {
     var sortedOtherParticipants: [UserType] { get }
 }
 
-protocol ConversationStatusProvider {
-    var status: ConversationStatus { get }
-}
-
-protocol ConnectedUserProvider {
-    var connectedUserType: UserType? { get }
-}
-
-// MARK: - ZMConversation extension from sync engine
-protocol TypingStatusProvider {
-    var typingUsers: [UserType] { get }
-    func setIsTyping(_ isTyping: Bool)
-}
-
-protocol VoiceChannelProvider {
-    var voiceChannel: VoiceChannel? { get }
-}
 // MARK: - Input Bar View controller
 
 protocol InputBarConversation {
@@ -54,11 +36,12 @@ protocol InputBarConversation {
     var messageDestructionTimeoutValue: TimeInterval { get }
     var messageDestructionTimeout: MessageDestructionTimeout? { get }
 
+    func setIsTyping(_ isTyping: Bool)
 
     var isReadOnly: Bool { get }
 }
 
-typealias InputBarConversationType = InputBarConversation & TypingStatusProvider & ConversationLike
+typealias InputBarConversationType = InputBarConversation & ConversationLike
 
 extension ZMConversation: InputBarConversation {}
 
@@ -72,6 +55,7 @@ protocol GroupDetailsConversation {
     var allowGuests: Bool { get }
     var hasReadReceiptsEnabled: Bool { get }
 
+    var mutedMessageTypes: MutedMessageTypes { get }
 
     var freeParticipantSlots: Int { get }
 
@@ -82,10 +66,4 @@ typealias GroupDetailsConversationType = SortedOtherParticipantsProvider & Group
 
 
 extension ZMConversation: SortedOtherParticipantsProvider {}
-extension ZMConversation: ConversationStatusProvider {}
-
-extension ZMConversation: TypingStatusProvider {}
-extension ZMConversation: VoiceChannelProvider {}
-
 extension ZMConversation: GroupDetailsConversation {}
-

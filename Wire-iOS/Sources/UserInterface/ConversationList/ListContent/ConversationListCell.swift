@@ -20,10 +20,6 @@ import Foundation
 import WireSyncEngine
 import avs
 
-typealias MatcherConversation = Conversation & ConversationStatusProvider & TypingStatusProvider & VoiceChannelProvider
-
-typealias ConversationListCellConversation = MatcherConversation & StableRandomParticipantsProvider
-
 final class ConversationListCell: SwipeMenuCollectionCell,
                                   SectionListCellType {
     static let IgnoreOverscrollTimeInterval: TimeInterval = 0.005
@@ -31,17 +27,18 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     static var cachedSize: CGSize = .zero
 
-    var conversation: ConversationListCellConversation? {
+    var conversation: ZMConversation? {
         didSet {
-            guard !(conversation === oldValue) else { return }
+            guard conversation != oldValue else { return }
 
             typingObserverToken = nil
-            if let conversation = conversation as? ZMConversation {
-                typingObserverToken = conversation.addTypingObserver(self)
+            typingObserverToken = conversation?.addTypingObserver(self)
+            
+            updateAppearance()
+            
+            if let conversation = conversation {
                 setupConversationObserver(conversation: conversation)
             }
-
-            updateAppearance()
         }
     }
     
@@ -225,14 +222,12 @@ final class ConversationListCell: SwipeMenuCollectionCell,
 
     @objc
     private func onRightAccessorySelected(_ sender: UIButton?) {
-        guard let conversation = conversation as? ZMConversation else { return }
+        let mediaPlaybackManager = AppDelegate.shared.mediaPlaybackManager
         
-        let activeMediaPlayer = AppDelegate.shared.mediaPlaybackManager?.activeMediaPlayer
-        
-        if activeMediaPlayer != nil &&
-            activeMediaPlayer?.sourceMessage?.conversation == conversation {
+        if mediaPlaybackManager?.activeMediaPlayer != nil &&
+            mediaPlaybackManager?.activeMediaPlayer?.sourceMessage?.conversation == conversation {
             toggleMediaPlayer()
-        } else if conversation.canJoinCall {
+        } else if conversation?.canJoinCall == true {
             delegate?.conversationListCellJoinCallButtonTapped(self)
         }
     }
@@ -267,8 +262,6 @@ extension ConversationListCell: ZMTypingChangeObserver {
 
 extension ConversationListCell: AVSMediaManagerClientObserver {
     func mediaManagerDidChange(_ notification: AVSMediaManagerClientChangeNotification?) {
-        guard !ProcessInfo.processInfo.isRunningTests else { return }
-        
         // AUDIO-548 AVMediaManager notifications arrive on a background thread.
         DispatchQueue.main.async(execute: {
             if notification?.microphoneMuteChanged != nil {

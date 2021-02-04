@@ -31,7 +31,7 @@ final class ConversationCallController: NSObject {
         super.init()
     }
 
-    func startAudioCall(started: Completion?) {
+    func startAudioCall(started: (() -> Void)?) {
         let startCall = { [weak self] in
             guard let `self` = self else { return }
             self.conversation.confirmJoiningCallIfNeeded(alertPresenter: self.target) {
