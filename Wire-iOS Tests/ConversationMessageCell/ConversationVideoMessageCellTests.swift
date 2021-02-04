@@ -20,25 +20,19 @@
 
 import XCTest
 
-final class ConversationVideoMessageCellTests: XCTestCase {
+final class ConversationVideoMessageCellTests: ConversationCellSnapshotTestCase {
 
     var message: MockMessage!
-    var mockSelfUser: MockUserType!
-
+    
     override func setUp() {
         super.setUp()
-        UIColor.setAccentOverride(.vividRed)
         
-        mockSelfUser = MockUserType.createDefaultSelfUser()
-
         message = MockMessageFactory.videoMessage(sender: mockSelfUser,
-                                                  previewImage: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))
+                                                  previewImage: image(inTestBundleNamed: "unsplash_matterhorn.jpg"))!
     }
     
     override func tearDown() {
         message = nil
-        mockSelfUser = nil
-        
         MediaAssetCache.defaultImageCache.cache.removeAllObjects()
         
         super.tearDown()
@@ -62,7 +56,7 @@ final class ConversationVideoMessageCellTests: XCTestCase {
     }
     
     func testUploadedCell_fromOtherUser_withoutPreview() {
-        let message = MockMessageFactory.videoMessage()
+        let message = MockMessageFactory.videoMessage()!
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploaded
         message.backingFileMessageData.fileURL = nil
@@ -90,7 +84,7 @@ final class ConversationVideoMessageCellTests: XCTestCase {
     }
     
     func testUploadingCell_fromOtherUser_withoutPreview() {
-        let message = MockMessageFactory.videoMessage()
+        let message = MockMessageFactory.videoMessage()!
         message.senderUser = SwiftMockLoader.mockUsers().first!
         message.backingFileMessageData.transferState = .uploading
         message.backingFileMessageData.fileURL = nil

@@ -69,7 +69,7 @@ extension Array {
     }
 }
 
-extension ZMConversation: StableRandomParticipantsProvider {
+extension ZMConversation {
     /// Stable random list of the participants in the conversation. The list would be consistent between platforms
     /// because the conversation UUID is used as the random indexes source.
     var stableRandomParticipants: [UserType] {
@@ -136,14 +136,12 @@ extension Mode {
     }
 }
 
-typealias ConversationAvatarViewConversation = ConversationLike & StableRandomParticipantsProvider
-
 final class ConversationAvatarView: UIView {
     enum Context {
         // one or more users requesting connection to self user
         case connect(users: [UserType])
         // an established conversation or self user has a pending request to other users
-        case conversation(conversation: ConversationAvatarViewConversation)
+        case conversation(conversation: ZMConversation)
     }
 
     func configure(context: Context) {
@@ -159,7 +157,7 @@ final class ConversationAvatarView: UIView {
 
     private var users: [UserType] = []
 
-    private var conversation: ConversationAvatarViewConversation? = .none {
+    private var conversation: ZMConversation? = .none {
         didSet {
 
             guard let conversation = self.conversation else {
@@ -173,7 +171,7 @@ final class ConversationAvatarView: UIView {
             let stableRandomParticipants = conversation.stableRandomParticipants.filter { !$0.isSelfUser }
 
             if stableRandomParticipants.isEmpty,
-                let connectedUser = conversation.connectedUserType {
+                let connectedUser = conversation.connectedUser {
                 usersOnAvatar = [connectedUser]
             } else {
                 usersOnAvatar = stableRandomParticipants

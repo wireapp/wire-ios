@@ -388,7 +388,7 @@ final class ShareExtensionViewController: SLComposeServiceViewController {
         pushConfigurationViewController(notSignedInViewController)
     }
     
-    func updateState(conversation: WireShareEngine.Conversation?) {
+    func updateState(conversation: Conversation?) {
         conversationItem.value = conversation?.name ?? "share_extension.conversation_selection.empty.value".localized
         postContent?.target = conversation
     }

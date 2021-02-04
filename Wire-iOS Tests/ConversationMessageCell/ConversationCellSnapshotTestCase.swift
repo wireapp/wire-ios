@@ -108,7 +108,7 @@ extension XCTestCase {
         stackView.backgroundColor = snapshotBackgroundColor ?? (ColorScheme.default.variant == .light ? .white : .black)
 
         if waitForImagesToLoad {
-            _ = waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup])
+            XCTAssert(waitForGroupsToBeEmpty([MediaAssetCache.defaultImageCache.dispatchGroup]))
         }
 
         if waitForTextViewToLoad {

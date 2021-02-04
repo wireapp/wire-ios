@@ -204,7 +204,7 @@ extension ConversationTextMessageCellDescription {
 
         // Quote
         if textMessageData.hasQuote {
-            let quotedMessage = textMessageData.quoteMessage
+            let quotedMessage = textMessageData.quote
             let quoteCell = ConversationReplyCellDescription(quotedMessage: quotedMessage)
             cells.append(AnyConversationMessageCellDescription(quoteCell))
         }

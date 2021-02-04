@@ -18,12 +18,30 @@
 import Foundation
 import WireDataModel
 
-protocol StableRandomParticipantsProvider {
-    var stableRandomParticipants: [UserType] { get }
+
+protocol DisplayNameProvider {
+    var displayName: String { get }
 }
 
-protocol SortedOtherParticipantsProvider {
-    var sortedOtherParticipants: [UserType] { get }
+protocol ConnectedUserProvider {
+    var connectedUserType: UserType? { get }
+}
+
+protocol AllowGuestsProvider {
+    var allowGuests: Bool { get }
+}
+
+protocol TeamProvider {
+    var team: Team? { get }
+}
+
+protocol AccessProvider {
+    var accessMode: ConversationAccessMode? { get }
+    var accessRole: ConversationAccessRole? { get }
+}
+
+protocol MessageDestructionTimeoutProvider {
+    var messageDestructionTimeout: WireDataModel.MessageDestructionTimeout? { get }
 }
 
 // MARK: - Input Bar View controller
@@ -41,15 +59,25 @@ protocol InputBarConversation {
     var isReadOnly: Bool { get }
 }
 
-typealias InputBarConversationType = InputBarConversation & ConversationLike
+typealias InputBarConversationType = InputBarConversation & ConnectedUserProvider & DisplayNameProvider & ConversationLike
+
+extension ZMConversation: ConnectedUserProvider {
+    var connectedUserType: UserType? {
+        return connectedUser
+    }
+}
 
 extension ZMConversation: InputBarConversation {}
 
 // MARK: - GroupDetailsConversation View controllers and child VCs
 
 protocol GroupDetailsConversation {
+    var isUnderLegalHold: Bool { get }
     var userDefinedName: String? { get set }
 
+    var securityLevel: ZMConversationSecurityLevel { get }
+
+    var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }
 
     var allowGuests: Bool { get }
@@ -62,8 +90,13 @@ protocol GroupDetailsConversation {
     var teamRemoteIdentifier: UUID? { get }
 }
 
-typealias GroupDetailsConversationType = SortedOtherParticipantsProvider & GroupDetailsConversation & Conversation
+typealias GroupDetailsConversationType = GroupDetailsConversation & DisplayNameProvider & AllowGuestsProvider & TeamProvider & AccessProvider & MessageDestructionTimeoutProvider & ConnectedUserProvider & ConversationLike
 
+//TODO: Merge there with ConversationLike
+extension ZMConversation: DisplayNameProvider {}
+extension ZMConversation: AllowGuestsProvider {}
+extension ZMConversation: TeamProvider {}
+extension ZMConversation: AccessProvider {}
+extension ZMConversation: MessageDestructionTimeoutProvider {}
 
-extension ZMConversation: SortedOtherParticipantsProvider {}
 extension ZMConversation: GroupDetailsConversation {}
