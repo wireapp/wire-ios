@@ -270,7 +270,7 @@ final class ConversationSystemMessageCellDescription {
     static func cells(for message: ZMConversationMessage) -> [AnyConversationMessageCellDescription] {
         guard let systemMessageData = message.systemMessageData,
             let sender = message.senderUser,
-            let conversation = message.conversationLike else {
+            let conversation = message.conversation else {
             preconditionFailure("Invalid system message")
         }
 
@@ -319,7 +319,7 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(decryptionCell)]
 
         case .newClient, .usingNewDevice, .reactivatedDevice:
-            let newClientCell = ConversationNewDeviceSystemMessageCellDescription(message: message, systemMessageData: systemMessageData, conversation: conversation as! ZMConversation)
+            let newClientCell = ConversationNewDeviceSystemMessageCellDescription(message: message, systemMessageData: systemMessageData, conversation: conversation)
             return [AnyConversationMessageCellDescription(newClientCell)]
 
         case .ignoredClient:
@@ -343,7 +343,7 @@ final class ConversationSystemMessageCellDescription {
             return [AnyConversationMessageCellDescription(cell)]
 
         case .legalHoldEnabled, .legalHoldDisabled:
-            let cell = ConversationLegalHoldCellDescription(systemMessageType: systemMessageData.systemMessageType, conversation: conversation as! ZMConversation)
+            let cell = ConversationLegalHoldCellDescription(systemMessageType: systemMessageData.systemMessageType, conversation: conversation)
             return [AnyConversationMessageCellDescription(cell)]
             
         case .newConversation:
@@ -369,7 +369,7 @@ final class ConversationSystemMessageCellDescription {
     }
 }
 
-private extension ConversationLike {
+private extension ZMConversation {
     var isOpenGroup: Bool {
         return conversationType == .group && allowGuests
     }
@@ -555,7 +555,7 @@ class ConversationVerifiedSystemMessageSectionDescription: ConversationMessageCe
     }
 }
 
-final class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
+class ConversationStartedSystemMessageCellDescription: NSObject, ConversationMessageCellDescription {
     
     typealias View = ConversationStartedSystemMessageCell
     let configuration: View.Configuration
@@ -584,8 +584,7 @@ final class ConversationStartedSystemMessageCellDescription: NSObject, Conversat
                                             selectedUsers: model.selectedUsers,
                                             icon: model.image())
         super.init()
-        if !ProcessInfo.processInfo.isRunningTests,
-            let conversation = message.conversation {
+        if let conversation = message.conversation {
             conversationObserverToken = ConversationChangeInfo.add(observer: self, for: conversation)
         }
     }
