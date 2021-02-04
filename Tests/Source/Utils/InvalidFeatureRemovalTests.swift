@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -16,40 +16,33 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
-import XCTest
+import Foundation
 @testable import WireDataModel
 
-class FeatureLikeTests: ZMBaseManagedObjectTest {
+class InvalidFeatureRemovalTests: DiskDatabaseTest {
 
-    func testThatItStoresAFeatureLikeObject() throws {
-        try syncMOC.performGroupedAndWait { context in
+    func testAllInstancesRemoved() throws {
+        contextDirectory.syncContext.performGroupedAndWait { context in
             // Given
-            let appLock = Feature.AppLock(status: .enabled, config: .init(enforceAppLock: true, inactivityTimeoutSecs: 10))
-
             let team = Team.insertNewObject(in: context)
-            team.remoteIdentifier = .create()
+            team.remoteIdentifier = UUID()
 
+            Feature.insert(name: .appLock, status: .enabled, config: nil, team: team, context: context)
             Feature.insert(name: .appLock, status: .disabled, config: nil, team: team, context: context)
 
+            XCTAssertEqual(self.fetchInstances(in: context).count, 2)
+
             // When
-            try appLock.store(for: team, in: context)
+            InvalidFeatureRemoval.removeInvalid(in: context)
 
             // Then
-            guard let result = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
-
-            XCTAssertEqual(result.name, .appLock)
-            XCTAssertEqual(result.status, .enabled)
-            XCTAssertEqual(result.config, appLock.configData)
-            XCTAssertEqual(result.team?.remoteIdentifier, team.remoteIdentifier!)
-            return
+            XCTAssertEqual(self.fetchInstances(in: context).count, 0)
         }
     }
-}
 
-private extension Feature.AppLock {
-
-    var configData: Data {
-        return try! JSONEncoder().encode(config)
+    private func fetchInstances(in context: NSManagedObjectContext) -> [Feature] {
+        let fetchRequest = NSFetchRequest<Feature>(entityName: Feature.entityName())
+        return context.fetchOrAssert(request: fetchRequest)
     }
 
 }

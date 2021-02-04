@@ -390,6 +390,8 @@
 		EE09EEB1255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */; };
 		EE174FCE2522756700482A70 /* ZMConversationPerformanceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */; };
 		EE2B874624D9A11A00936A4E /* ManagedObjectContextDirectory+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2B874524D9A11A00936A4E /* ManagedObjectContextDirectory+EncryptionAtRest.swift */; };
+		EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */; };
+		EE2BA00925CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */; };
 		EE30F4592592423F000FC69C /* AppLockController+Passcode.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE30F4582592423F000FC69C /* AppLockController+Passcode.swift */; };
 		EE30F45B2592A357000FC69C /* AppLockController.PasscodeKeychainItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE30F45A2592A357000FC69C /* AppLockController.PasscodeKeychainItem.swift */; };
 		EE3EFE95253053B1009499E5 /* PotentialChangeDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */; };
@@ -1116,6 +1118,8 @@
 		EE09EEB0255959F000919A6B /* ZMUserTests+AnalyticsIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMUserTests+AnalyticsIdentifier.swift"; sourceTree = "<group>"; };
 		EE174FCD2522756700482A70 /* ZMConversationPerformanceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = ZMConversationPerformanceTests.swift; path = Conversation/ZMConversationPerformanceTests.swift; sourceTree = "<group>"; };
 		EE2B874524D9A11A00936A4E /* ManagedObjectContextDirectory+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ManagedObjectContextDirectory+EncryptionAtRest.swift"; sourceTree = "<group>"; };
+		EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemoval.swift; sourceTree = "<group>"; };
+		EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InvalidFeatureRemovalTests.swift; sourceTree = "<group>"; };
 		EE30F4582592423F000FC69C /* AppLockController+Passcode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppLockController+Passcode.swift"; sourceTree = "<group>"; };
 		EE30F45A2592A357000FC69C /* AppLockController.PasscodeKeychainItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLockController.PasscodeKeychainItem.swift; sourceTree = "<group>"; };
 		EE3EFE94253053B1009499E5 /* PotentialChangeDetector.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PotentialChangeDetector.swift; sourceTree = "<group>"; };
@@ -1543,6 +1547,7 @@
 				1639A8122260916E00868AB9 /* AlertAvailabilityBehaviourChange.swift */,
 				0660FEBC2580E4A900F4C19F /* TransferApplockKeychain.swift */,
 				169315EE25AC4C8100709F15 /* MigrateSenderClient.swift */,
+				EE2BA00525CB3AA8001EB606 /* InvalidFeatureRemoval.swift */,
 			);
 			path = Patches;
 			sourceTree = "<group>";
@@ -1612,6 +1617,7 @@
 				16E6F26524B8952F0015B249 /* EncryptionKeysTests.swift */,
 				0630E4BE257FA2BD00C75BFB /* TransferAppLockKeychainTests.swift */,
 				169315F025AC501300709F15 /* MigrateSenderClientTests.swift */,
+				EE2BA00725CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift */,
 			);
 			name = Utils;
 			path = Tests/Source/Utils;
@@ -3181,6 +3187,7 @@
 				541D1B331F1F8D660078C1F2 /* StorageStack.swift in Sources */,
 				BF491CCF1F02A6CF0055EE44 /* Member+Patches.swift in Sources */,
 				16E6F26424B614DC0015B249 /* EncryptionKeys.swift in Sources */,
+				EE2BA00625CB3AA8001EB606 /* InvalidFeatureRemoval.swift in Sources */,
 				1687ABAE20ECD51E0007C240 /* ZMSearchUser.swift in Sources */,
 				63298D9E24374489006B6018 /* Dictionary+ObjectForKey.swift in Sources */,
 				BF3493F21EC3623200B0C314 /* ZMUser+Teams.swift in Sources */,
@@ -3494,6 +3501,7 @@
 				EE3EFEA1253090E0009499E5 /* PotentialChangeDetectorTests.swift in Sources */,
 				1684141722282A1A00FCB9BC /* TransferStateMigrationTests.swift in Sources */,
 				16DF3B5F2289510600D09365 /* ZMConversationTests+Legalhold.swift in Sources */,
+				EE2BA00925CB3DE7001EB606 /* InvalidFeatureRemovalTests.swift in Sources */,
 				BFE3A96E1ED301020024A05B /* ZMConversationListTests+Teams.swift in Sources */,
 				16C391E2214BD438003AB3AD /* MentionTests.swift in Sources */,
 				F991CE191CB55E95004D8465 /* ZMSearchUserTests.m in Sources */,
