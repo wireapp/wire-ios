@@ -19,14 +19,14 @@
 import XCTest
 @testable import Wire
 
-final class TopPeopleCellSnapshotTests: XCTestCase {
+final class TopPeopleCellSnapshotTests: CoreDataSnapshotTestCase {
     
     var sut: TopPeopleCell!
     
     override func setUp() {
         super.setUp()
         sut = TopPeopleCell(frame: CGRect(x: 0, y: 0, width: 56, height: 78))
-        sut.user = MockUserType.createDefaultOtherUser()
+        sut.user = otherUser
         sut.backgroundColor = .black
     }
     
@@ -36,6 +36,6 @@ final class TopPeopleCellSnapshotTests: XCTestCase {
     }
 
     func testForInitState(){
-        verify(matching: sut)
+        verify(view: sut)
     }
 }
