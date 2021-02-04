@@ -237,7 +237,7 @@ final class ConversationAvatarView: UIView {
         }
     }
 
-    override var intrinsicContentSize: CGSize {
+    override public var intrinsicContentSize: CGSize {
         return CGSize(width: CGFloat.ConversationAvatarView.iconSize, height: CGFloat.ConversationAvatarView.iconSize)
     }
 
