@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 //
 
+import WireDataModel
 import WireSyncEngine
 
 /// Source of random values.
@@ -72,7 +73,7 @@ extension ZMConversation: StableRandomParticipantsProvider {
     /// Stable random list of the participants in the conversation. The list would be consistent between platforms
     /// because the conversation UUID is used as the random indexes source.
     var stableRandomParticipants: [UserType] {
-        let allUsers = sortedActiveParticipants
+        let allUsers = self.sortedActiveParticipants
         guard let remoteIdentifier = self.remoteIdentifier else {
             return allUsers
         }
@@ -161,7 +162,7 @@ final class ConversationAvatarView: UIView {
     private var conversation: ConversationAvatarViewConversation? = .none {
         didSet {
 
-            guard let conversation = conversation else {
+            guard let conversation = self.conversation else {
                 self.clippingView.subviews.forEach { $0.isHidden = true }
                 return
             }
@@ -278,7 +279,7 @@ final class ConversationAvatarView: UIView {
         return self.clippingView.bounds.size
     }
 
-    override func layoutSubviews() {
+    override public func layoutSubviews() {
         super.layoutSubviews()
         guard self.bounds != .zero else {
             return

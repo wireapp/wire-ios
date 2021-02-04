@@ -20,8 +20,8 @@ import Foundation
 import WireDataModel
 
 extension ConversationListCell: ZMConversationObserver {
-    func conversationDidChange(_ change: ConversationChangeInfo) {
-        guard change.conversation === conversation,
+    public func conversationDidChange(_ change: ConversationChangeInfo) {
+        guard change.conversation == self.conversation,
             (change.isArchivedChanged ||
             change.conversationListIndicatorChanged ||
             change.nameChanged ||
