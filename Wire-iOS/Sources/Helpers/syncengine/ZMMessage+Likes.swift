@@ -41,7 +41,7 @@ extension ZMConversationMessage {
             }
         }
         get {
-            return likers.contains{ $0.isSelfUser }
+            return likers().contains(.selfUser())
         }
     }
 
@@ -51,7 +51,7 @@ extension ZMConversationMessage {
             }.reduce(0, +) > 0
     }
 
-    var likers: [UserType] {
+    func likers() -> [ZMUser] {
         return usersReaction.filter { (reaction, _) -> Bool in
             reaction == MessageReaction.like.unicodeValue
             }.map { (_, users) in
@@ -59,8 +59,8 @@ extension ZMConversationMessage {
             }.first ?? []
     }
 
-    var sortedLikers: [UserType] {
-        return likers.sorted { $0.name < $1.name }
+    var sortedLikers: [ZMUser] {
+        return likers().sorted { $0.name < $1.name }
     }
 
     var sortedReadReceipts: [ReadReceipt] {

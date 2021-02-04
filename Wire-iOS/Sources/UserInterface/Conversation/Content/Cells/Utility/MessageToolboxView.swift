@@ -278,7 +278,7 @@ final class MessageToolboxView: UIView {
                 self.statusSeparatorLabel.isHidden = true
                 self.countdownLabel.isHidden = true
             }
-        case .reactions(let reactionsString):
+        case .reactions(let reactionsString, _):
             updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = reactionsString
                 self.detailsLabel.isHidden = false
@@ -304,7 +304,7 @@ final class MessageToolboxView: UIView {
                 self.countdownLabel.isHidden = true
             }
 
-        case .details(let timestamp, let status, let countdown):
+        case .details(let timestamp, let status, let countdown, _):
             updateContentStack(to: newPosition, animated: animated) {
                 self.detailsLabel.attributedText = timestamp
                 self.detailsLabel.isHidden = timestamp == nil
