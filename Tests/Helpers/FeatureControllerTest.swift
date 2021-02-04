@@ -36,28 +36,32 @@ class FeatureControllerTest: MessagingTestBase {
     }
 
     func testThatItSavesSingleFeature() {
-        // Given
-        let team = Team.insertNewObject(in: uiMOC)
-        team.remoteIdentifier = .create()
+        syncMOC.performGroupedAndWait { context in
+            // Given
+            let team = Team.insertNewObject(in: context)
+            team.remoteIdentifier = .create()
 
-        let membership = Member.insertNewObject(in: uiMOC)
-        membership.team = team
-        membership.user = ZMUser.selfUser(in: uiMOC)
+            let membership = Member.insertNewObject(in: context)
+            membership.team = team
+            membership.user = ZMUser.selfUser(in: context)
 
-        let feature = Feature.AppLock(
-            status: .enabled,
-            config: .init(enforceAppLock: true, inactivityTimeoutSecs: 10)
-        )
+            Feature.createDefaultInstanceIfNeeded(name: .appLock, team: team, context: context)
 
-        // When
-        sut.store(feature: feature, in: team)
-        
-        // Then
-        let fetchedFeature = Feature.fetch(name: .appLock, context: self.uiMOC)
-        XCTAssertNotNil(fetchedFeature)
-        XCTAssertEqual(fetchedFeature?.name, .appLock)
-        XCTAssertEqual(fetchedFeature?.status, .enabled)
-        XCTAssertEqual(fetchedFeature?.team?.remoteIdentifier, team.remoteIdentifier!)
+            let feature = Feature.AppLock(
+                status: .enabled,
+                config: .init(enforceAppLock: true, inactivityTimeoutSecs: 10)
+            )
+
+            // When
+            self.sut.store(feature: feature, in: team)
+
+            // Then
+            let fetchedFeature = Feature.fetch(name: .appLock, context: context)
+            XCTAssertNotNil(fetchedFeature)
+            XCTAssertEqual(fetchedFeature?.name, .appLock)
+            XCTAssertEqual(fetchedFeature?.status, .enabled)
+            XCTAssertEqual(fetchedFeature?.team?.remoteIdentifier, team.remoteIdentifier!)
+        }
     }
 
 }
