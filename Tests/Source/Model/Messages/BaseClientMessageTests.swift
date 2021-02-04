@@ -189,23 +189,25 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         }
     }
     
-    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: GenericMessage, senderID: UUID = .create(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
+    func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date = .init(), genericMessage: GenericMessage, senderID: UUID = .create(), senderClientID: String = UUID().transportString(), eventSource: ZMUpdateEventSource = .download) -> ZMUpdateEvent {
         let data = try? genericMessage.serializedData().base64String()
         return createUpdateEvent(nonce,
                                  conversationID: conversationID,
                                  timestamp: timestamp,
                                  genericMessageData: data ?? "",
                                  senderID: senderID,
+                                 senderClientID: senderClientID,
                                  eventSource: eventSource)
     }
     
-    private func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date, genericMessageData: String, senderID: UUID, eventSource: ZMUpdateEventSource) -> ZMUpdateEvent  {
+    private func createUpdateEvent(_ nonce: UUID, conversationID: UUID, timestamp: Date, genericMessageData: String, senderID: UUID, senderClientID: String, eventSource: ZMUpdateEventSource) -> ZMUpdateEvent  {
         let payload : [String : Any] = [
             "conversation": conversationID.transportString(),
             "from": senderID.transportString(),
             "time": timestamp.transportString(),
             "data": [
-                "text": genericMessageData
+                "text": genericMessageData,
+                "sender": senderClientID
             ],
             "type": "conversation.otr-message-add"
         ]

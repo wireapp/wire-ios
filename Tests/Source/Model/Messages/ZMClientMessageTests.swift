@@ -140,7 +140,6 @@ class ClientMessageTests: BaseZMClientMessageTests {
             "text": modifiedMessageData
         ]
         let payload = payloadForMessage(in: conversation, type: EventConversationAddOTRMessage, data: data, time: Date(), from: self.selfUser)
-
         
         let event = ZMUpdateEvent.eventFromEventStreamPayload(payload, uuid: nil)
         XCTAssertNotNil(event)

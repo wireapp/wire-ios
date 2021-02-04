@@ -33,6 +33,8 @@ typedef NSDictionary <NSUUID *, ZMConversation *> ZMConversationMapping;
 @property (nonatomic, readonly) ZMMessageMapping *messagesByNonce;
 @property (nonatomic, readonly) ZMConversationMapping *conversationsByRemoteIdentifier;
 
+- (void)addMessages:(NSArray <ZMMessage *>*)messages;
+
 @end
 
 
