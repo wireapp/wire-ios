@@ -410,7 +410,20 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return [self fetchMessageWithNonce:nonce
                        forConversation:conversation
                 inManagedObjectContext:moc
-                        prefetchResult:nil];
+                        prefetchResult:nil
+          assumeMissingIfNotPrefetched:NO];
+}
+
++ (instancetype)fetchMessageWithNonce:(NSUUID *)nonce
+                      forConversation:(ZMConversation *)conversation
+               inManagedObjectContext:(NSManagedObjectContext *)moc
+                       prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
+{
+    return [self fetchMessageWithNonce:nonce
+                       forConversation:conversation
+                inManagedObjectContext:moc
+                        prefetchResult:prefetchResult
+          assumeMissingIfNotPrefetched:NO];
 }
 
 
@@ -418,6 +431,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                       forConversation:(ZMConversation *)conversation
                inManagedObjectContext:(NSManagedObjectContext *)moc
                        prefetchResult:(ZMFetchRequestBatchResult *)prefetchResult
+         assumeMissingIfNotPrefetched:(BOOL)assumeMissingIfNotPrefetched
 {
     NSSet <ZMMessage *>* prefetchedMessages = prefetchResult.messagesByNonce[nonce];
     
@@ -427,6 +441,10 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                 return prefetchedMessage;
             }
         }
+    }
+
+    if (prefetchResult != nil && assumeMissingIfNotPrefetched) {
+        return nil;
     }
     
     NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];

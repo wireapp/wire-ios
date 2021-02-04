@@ -181,6 +181,12 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
                inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
                        prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult;
 
++ (instancetype _Nullable)fetchMessageWithNonce:(NSUUID * _Nonnull)nonce
+                                forConversation:(ZMConversation * _Nonnull)conversation
+                         inManagedObjectContext:(NSManagedObjectContext * _Nonnull)moc
+                                 prefetchResult:(ZMFetchRequestBatchResult * _Nullable)prefetchResult
+                   assumeMissingIfNotPrefetched:(BOOL)assumeMissingIfNotPrefetched;
+
 - (NSString * _Nonnull)shortDebugDescription;
 
 - (void)updateWithPostPayload:(NSDictionary * _Nonnull)payload updatedKeys:(NSSet * _Nonnull)updatedKeys;

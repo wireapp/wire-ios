@@ -113,7 +113,11 @@ extension ZMOTRMessage {
             }
             
             let messageClass: AnyClass = GenericMessage.entityClass(for: message)
-            var clientMessage = messageClass.fetch(withNonce: nonce, for: conversation, in: moc, prefetchResult: prefetchResult) as? ZMOTRMessage
+            var clientMessage = messageClass.fetch(withNonce: nonce,
+                                                   for: conversation,
+                                                   in: moc,
+                                                   prefetchResult: prefetchResult,
+                                                   assumeMissingIfNotPrefetched: true) as? ZMOTRMessage
             
             guard !isZombieObject(clientMessage) else {
                 return nil
@@ -137,6 +141,10 @@ extension ZMOTRMessage {
                 if isGroup(conversation: conversation, andIsSenderID: senderID, differentFromSelfUserID: selfUser.remoteIdentifier) {
                     let isComposite = (message as? ConversationCompositeMessage)?.isComposite ?? false
                     clientMessage?.expectsReadConfirmation = conversation.hasReadReceiptsEnabled || isComposite
+                }
+                
+                if let message = clientMessage {
+                    prefetchResult.add([message])
                 }
             } else if clientMessage?.senderClientID == nil || clientMessage?.senderClientID != updateEvent.senderClientID {
                 return nil
