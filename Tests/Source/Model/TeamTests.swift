@@ -215,62 +215,27 @@ final class TeamTests: ZMConversationTestsBase {
 
     // MARK: - Features
 
-    func testItCreatesDefaultsUponFirstAccess() {
-        let sut = createTeam(in: uiMOC)
-
-        for name in Feature.Name.allCases {
-            switch name {
-            case .appLock:
-                // Given
-                XCTAssertNil(Feature.fetch(name: .appLock, context: uiMOC))
-
-                // When
-                let appLock1 = sut.feature(for: Feature.AppLock.self)
-
-                // Then
-                XCTAssertEqual(appLock1.status, .enabled)
-                XCTAssertEqual(appLock1.config.enforceAppLock, false)
-                XCTAssertEqual(appLock1.config.inactivityTimeoutSecs, 60)
-            }
-        }
-    }
-
     func testItEnqueuesBackendRefreshForFeature_WhenFeatureExistsInCoreData() {
-        // Given
-        let sut = createTeam(in: uiMOC)
+        syncMOC.performGroupedAndWait { context in
+            // Given
+            let sut = self.createTeam(in: context)
 
-        let feature = Feature.createOrUpdate(
-            name: .appLock,
-            status: .enabled,
-            config: nil,
-            team: sut,
-            context: uiMOC
-        )
+            let feature = Feature.insert(
+                name: .appLock,
+                status: .enabled,
+                config: nil,
+                team: sut,
+                context: context
+            )
 
-        XCTAssertFalse(feature.needsToBeUpdatedFromBackend)
+            XCTAssertFalse(feature.needsToBeUpdatedFromBackend)
 
-        // When
-        sut.enqueueBackendRefresh(for: .appLock)
+            // When
+            sut.enqueueBackendRefresh(for: .appLock)
 
-        // Then
-        XCTAssertTrue(feature.needsToBeUpdatedFromBackend)
-    }
-    
-    func testItEnqueuesBackendRefreshForFeature_WhenThereIsNoFeatureInCoreData() {
-        // Given
-        let sut = createTeam(in: uiMOC)
-        XCTAssertNil(Feature.fetch(name: .appLock, context: uiMOC))
-        
-        // When
-        sut.enqueueBackendRefresh(for: .appLock)
-
-        // Then
-        guard let feature = Feature.fetch(name: .appLock, context: uiMOC) else {
-            XCTFail()
-            return
+            // Then
+            XCTAssertTrue(feature.needsToBeUpdatedFromBackend)
         }
-        
-        XCTAssertTrue(feature.needsToBeUpdatedFromBackend)
     }
     
 }

@@ -23,27 +23,10 @@ import LocalAuthentication
 final class AppLockControllerTest: ZMBaseManagedObjectTest {
     
     let decoder = JSONDecoder()
-    var selfUser: ZMUser!
-    var sut: AppLockController!
-    
-    override func setUp() {
-        super.setUp()
-        
-        selfUser = ZMUser.selfUser(in: uiMOC)
-        sut = createAppLockController()
-    }
-    
-    override func tearDown() {
-        selfUser = nil
-        sut = nil
-        
-        super.tearDown()
-    }
 
     func testThatForcedAppLockDoesntAffectSettings() {
-        
         //given
-        sut = createAppLockController(forceAppLock: true)
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC), forceAppLock: true)
         XCTAssertTrue(sut.config.forceAppLock)
         
         //when
@@ -55,8 +38,8 @@ final class AppLockControllerTest: ZMBaseManagedObjectTest {
     }
     
     func testThatAppLockAffectsSettings() {
-
         //given
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC))
         XCTAssertFalse(sut.config.forceAppLock)
         sut.isActive = true
 
@@ -71,6 +54,7 @@ final class AppLockControllerTest: ZMBaseManagedObjectTest {
     
     func testThatBiometricsChangedIsTrueIfDomainStatesDiffer() {
         //given
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC))
         UserDefaults.standard.set(Data(), forKey: "DomainStateKey")
         
         let context = LAContext()
@@ -84,6 +68,7 @@ final class AppLockControllerTest: ZMBaseManagedObjectTest {
     
     func testThatBiometricsChangedIsFalseIfDomainStatesDontDiffer() {
         //given
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC))
         let context = LAContext()
         var error: NSError?
         context.canEvaluatePolicy(LAPolicy.deviceOwnerAuthentication, error: &error)
@@ -96,6 +81,7 @@ final class AppLockControllerTest: ZMBaseManagedObjectTest {
     
     func testThatBiometricsStatePersistsState() {
         //given
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC))
         let evaluatedPolicyDomainStateData = "test".data(using: .utf8)
         UserDefaults.standard.set(evaluatedPolicyDomainStateData, forKey: "DomainStateKey")
         
@@ -111,81 +97,95 @@ final class AppLockControllerTest: ZMBaseManagedObjectTest {
     }
 
     func testThatItHonorsTheTeamConfiguration_WhenSelfUserIsATeamUser() {
-        
-        //given
-        XCTAssertFalse(sut.config.forceAppLock)
-        XCTAssertTrue(sut.config.isAvailable)
-        XCTAssertEqual(sut.config.appLockTimeout, 900)
-        
-        //when
-        let team = createTeam(in: uiMOC)
-        _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        
-        let config = Feature.AppLock.Config.init(enforceAppLock: true, inactivityTimeoutSecs: 30)
-        let configData = try? JSONEncoder().encode(config)
-        _ = Feature.createOrUpdate(
-            name: .appLock,
-            status: .disabled,
-            config: configData,
-            team: team,
-            context: uiMOC
-        )
-        
-        //then
-        XCTAssertTrue(sut.config.forceAppLock)
-        XCTAssertFalse(sut.config.isAvailable)
-        XCTAssertEqual(sut.config.appLockTimeout, 30)
+        syncMOC.performGroupedAndWait { context in
+            //given
+            let selfUser = ZMUser.selfUser(in: context)
+            let sut = self.createAppLockController(selfUser: selfUser)
+
+            XCTAssertFalse(sut.config.forceAppLock)
+            XCTAssertTrue(sut.config.isAvailable)
+            XCTAssertEqual(sut.config.appLockTimeout, 900)
+
+            //when
+            let team = self.createTeam(in: context)
+            _ = self.createMembership(in: context, user: selfUser, team: team)
+
+            let config = Feature.AppLock.Config.init(enforceAppLock: true, inactivityTimeoutSecs: 30)
+            let configData = try? JSONEncoder().encode(config)
+
+            _ = Feature.insert(
+                name: .appLock,
+                status: .disabled,
+                config: configData,
+                team: team,
+                context: context
+            )
+
+            //then
+            XCTAssertTrue(sut.config.forceAppLock)
+            XCTAssertFalse(sut.config.isAvailable)
+            XCTAssertEqual(sut.config.appLockTimeout, 30)
+        }
     }
     
     func testThatItHonorsForcedAppLockFromTheBaseConfiguration() {
-        
-        //given
-        sut = createAppLockController(forceAppLock: true)
-        XCTAssertTrue(sut.config.forceAppLock)
-        
-        //when
-        let team = createTeam(in: uiMOC)
-        _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        
-        let config = Feature.AppLock.Config.init(enforceAppLock: false, inactivityTimeoutSecs: 30)
-        let configData = try? JSONEncoder().encode(config)
-        _ = Feature.createOrUpdate(
-            name: .appLock,
-            status: .disabled,
-            config: configData,
-            team: team,
-            context: uiMOC
-        )
-        
-        //then
-        XCTAssertTrue(sut.config.forceAppLock)
+        syncMOC.performGroupedAndWait { context in
+            //given
+            let selfUser = ZMUser.selfUser(in: context)
+            let sut = self.createAppLockController(selfUser: selfUser, forceAppLock: true)
+
+            XCTAssertTrue(sut.config.forceAppLock)
+
+            //when
+            let team = self.createTeam(in: context)
+            _ = self.createMembership(in: context, user: selfUser, team: team)
+
+            let config = Feature.AppLock.Config.init(enforceAppLock: false, inactivityTimeoutSecs: 30)
+            let configData = try? JSONEncoder().encode(config)
+
+            _ = Feature.insert(
+                name: .appLock,
+                status: .disabled,
+                config: configData,
+                team: team,
+                context: context
+            )
+
+            //then
+            XCTAssertTrue(sut.config.forceAppLock)
+        }
     }
     
     func testThatItDoesNotHonorTheTeamConfiguration_WhenSelfUserIsNotATeamUser() {
-        
-        //given
-        XCTAssertFalse(sut.config.forceAppLock)
-        XCTAssertTrue(sut.config.isAvailable)
-        XCTAssertEqual(sut.config.appLockTimeout, 900)
-        
-        //when
-        let team = createTeam(in: uiMOC)
-        XCTAssertNil(selfUser.team)
-        
-        let config = Feature.AppLock.Config.init(enforceAppLock: true, inactivityTimeoutSecs: 30)
-        let configData = try? JSONEncoder().encode(config)
-        _ = Feature.createOrUpdate(
-            name: .appLock,
-            status: .disabled,
-            config: configData,
-            team: team,
-            context: uiMOC
-        )
-        
-        //then
-        XCTAssertFalse(sut.config.forceAppLock)
-        XCTAssertTrue(sut.config.isAvailable)
-        XCTAssertNotEqual(sut.config.appLockTimeout, 30)
+        syncMOC.performGroupedAndWait { context in
+            //given
+            let selfUser = ZMUser.selfUser(in: context)
+            let sut = self.createAppLockController(selfUser: selfUser)
+
+            XCTAssertFalse(sut.config.forceAppLock)
+            XCTAssertTrue(sut.config.isAvailable)
+            XCTAssertEqual(sut.config.appLockTimeout, 900)
+
+            //when
+            let team = self.createTeam(in: context)
+            XCTAssertNil(selfUser.team)
+
+            let config = Feature.AppLock.Config.init(enforceAppLock: true, inactivityTimeoutSecs: 30)
+            let configData = try? JSONEncoder().encode(config)
+
+            _ = Feature.insert(
+                name: .appLock,
+                status: .disabled,
+                config: configData,
+                team: team,
+                context: context
+            )
+
+            //then
+            XCTAssertFalse(sut.config.forceAppLock)
+            XCTAssertTrue(sut.config.isAvailable)
+            XCTAssertNotEqual(sut.config.appLockTimeout, 30)
+        }
     }
 }
 
@@ -237,7 +237,7 @@ extension AppLockControllerTest {
     typealias Input = (scenario: AppLockController.AuthenticationScenario, canEvaluate: Bool, biometricsChanged: Bool)
     
     private func assert(input: Input, output: AppLockController.AuthenticationResult, file: StaticString = #file, line: UInt = #line) {
-        
+        let sut = createAppLockController(selfUser: .selfUser(in: uiMOC))
         let context = MockLAContext(canEvaluate: input.canEvaluate)
         sut.biometricsState = MockBiometricsState(didChange: input.biometricsChanged)
         
@@ -249,7 +249,7 @@ extension AppLockControllerTest {
         }
     }
     
-    private func createAppLockController(useBiometricsOrCustomPasscode: Bool = false, forceAppLock: Bool = false, timeOut: UInt = 900) -> AppLockController {
+    private func createAppLockController(selfUser: ZMUser, useBiometricsOrCustomPasscode: Bool = false, forceAppLock: Bool = false, timeOut: UInt = 900) -> AppLockController {
         let config = AppLockController.Config(useBiometricsOrCustomPasscode: useBiometricsOrCustomPasscode,
                                               forceAppLock: forceAppLock,
                                               timeOut: timeOut)

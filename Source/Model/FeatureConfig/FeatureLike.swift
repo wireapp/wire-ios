@@ -55,15 +55,17 @@ public protocol FeatureLike: Codable {
 
 public extension FeatureLike {
 
-    /// Store the feature in the given context as an instance of `Feature`.
+    /// Store the feature in the given context as an instance of `Feature`,
+    /// if it exists in the database.
 
-    @discardableResult
-    func store(for team: Team, in context: NSManagedObjectContext) throws -> Feature {
-        return Feature.insert(name: Self.name,
-                              status: status,
-                              config: try JSONEncoder().encode(config),
-                              team: team,
-                              context: context)
+    func store(for team: Team, in context: NSManagedObjectContext) throws {
+        let configData = try JSONEncoder().encode(config)
+
+        Feature.update(havingName: Self.name, in: context) {
+            $0.status = status
+            $0.config = configData
+            $0.team = team
+        }
     }
 
 }
