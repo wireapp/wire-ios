@@ -20,8 +20,52 @@ import Foundation
 @testable import WireDataModel
 
 final class ConversationParticipantsTests : ZMConversationTestsBase {
-    
-    func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
+	
+	func testThatSortedOtherParticipantsReutrnsUsersSortedByName() {
+		// GIVEN
+		let sut = createConversation(in: uiMOC)
+		
+		let user1 = createUser()
+		user1.name = "Zeta"
+		
+		let user2 = createUser()
+		user2.name = "Alpha"
+		
+		let user3 = createUser()
+		user3.name = "Beta"
+		user3.providerIdentifier = "dummy ID"
+		user3.serviceIdentifier = "dummy ID"
+
+		sut.addParticipantsAndUpdateConversationState(users: Set([user1, user2, user3]), role: nil)
+		
+		// WHEN & THEN
+		XCTAssertEqual(sut.sortedOtherParticipants as! [ZMUser], [user2, user1])
+	}
+
+	func testThatSortedServiceUsersReutrnsUsersSortedByName() {
+		// GIVEN
+		let sut = createConversation(in: uiMOC)
+		
+		let user1 = createUser()
+		user1.name = "Zeta"
+		user1.providerIdentifier = "dummy ID"
+		user1.serviceIdentifier = "dummy ID"
+
+		let user2 = createUser()
+		user2.name = "Alpha"
+		user2.providerIdentifier = "dummy ID"
+		user2.serviceIdentifier = "dummy ID"
+
+		let user3 = createUser()
+		user3.name = "Beta"
+
+		sut.addParticipantsAndUpdateConversationState(users: Set([user2, user1, user3]), role: nil)
+		
+		// WHEN & THEN
+		XCTAssertEqual(sut.sortedServiceUsers as! [ZMUser], [user2, user1])
+	}
+	
+	func testThatLocalParticipantsExcludesUsersMarkedForDeletion() {
         // GIVEN
         let sut = createConversation(in: uiMOC)
         let user1 = createUser()
