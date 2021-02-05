@@ -26,11 +26,26 @@ public protocol ConversationLike: NSObjectProtocol {
     var teamRemoteIdentifier: UUID? { get }
     
     func localParticipantsContain(user: UserType) -> Bool
+
+    var sortedOtherParticipants: [UserType] { get }
+    var sortedServiceUsers: [UserType] { get }
 }
 
 extension ZMConversation: ConversationLike {
     public func localParticipantsContain(user: UserType) -> Bool {
         guard let user = user as? ZMUser else { return false }
         return localParticipants.contains(user)
+    }
+
+    private static let userNameSorter: (UserType, UserType) -> Bool = {
+        $0.name < $1.name
+    }
+
+    public var sortedOtherParticipants: [UserType] {
+        return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+    }
+    
+    public var sortedServiceUsers: [UserType] {
+        return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }
 }
