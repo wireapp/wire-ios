@@ -1,14 +1,13 @@
-name: trigger bump
+name: trigger download stream open bump PR
 
 on:
-  push:
-    branches: [ develop ]
+  workflow_dispatch:
   release:
     type: [ published ]
 
 jobs:
   dispatch:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
 
     steps:
       - name: trigger downstream(s) repo bump
