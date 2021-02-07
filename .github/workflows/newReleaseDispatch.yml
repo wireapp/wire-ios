@@ -1,4 +1,4 @@
-name: trigger download stream open bump PR
+name: dispatch to download stream repos for new release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: trigger downstream(s) repo bump
+      - name: tell downstream(s) repo this repo published a new release
         run: |
           curl -X POST https://api.github.com/repos/wireapp/wire-ios/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
