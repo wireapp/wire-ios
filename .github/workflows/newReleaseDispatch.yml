@@ -14,5 +14,5 @@ jobs:
         run: |
           curl -X POST https://api.github.com/repos/wireapp/wire-ios/dispatches \
           -H 'Accept: application/vnd.github.everest-preview+json' \
-          -u ${{ secrets.B_SECRET }} \
+          -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
