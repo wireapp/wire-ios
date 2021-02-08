@@ -2,9 +2,8 @@ name: dispatch to downstream repos for a new release tag
 
 on:
   workflow_dispatch:
-  push:
-    tags:
-    - '*'
+  release:
+    types: [published]
     
 jobs:
   dispatch:
