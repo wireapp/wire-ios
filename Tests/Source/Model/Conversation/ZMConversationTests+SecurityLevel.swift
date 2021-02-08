@@ -482,26 +482,6 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         XCTAssertFalse(hasUntrustedClients)
     }
     
-    func testThatSystemMessageAppendedToAEmptyConversationStillHasATimestamp()
-    {
-        // given
-        self.createSelfClient()
-        self.uiMOC.refreshAllObjects()
-        
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.conversationType = .group
-        conversation.lastModifiedDate = Date()
-        
-        // when
-        conversation.appendStartedUsingThisDeviceMessage()
-        
-        // then
-        guard let message = conversation.lastMessage as? ZMSystemMessage else {
-            return XCTFail()
-        }
-        XCTAssertNotNil(message.serverTimestamp)
-    }
-    
     func testThatItAppendsASystemMessageOfTypeRemoteIDChangedForCBErrorCodeRemoteIdentityChanged()
     {
         // given
@@ -541,37 +521,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         XCTAssertEqual(lastMessage.systemMessageType, ZMSystemMessageType.decryptionFailed)
         XCTAssertEqual(lastMessage.decryptionErrorCode?.intValue, Int(decryptionError.rawValue))
     }
-    
-    func testThatContinuedUsingDeviceSystemMessageAppendedAfterLastMessage()
-    {
-        // given
-        self.createSelfClient()
-        self.uiMOC.refreshAllObjects()
         
-        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
-        conversation.conversationType = .group
-        conversation.lastModifiedDate = Date()
-        let previousMessage = try! conversation.appendText(content: "test")
-        
-        // when
-        conversation.appendContinuedUsingThisDeviceMessage()
-        
-        // then
-        guard let message = conversation.lastMessage as? ZMSystemMessage else {
-            return XCTFail()
-        }
-        XCTAssertNotNil(message.serverTimestamp)
-        XCTAssertLessThan(
-            previousMessage.serverTimestamp!.timeIntervalSince1970,
-            message.serverTimestamp!.timeIntervalSince1970
-        )
-        XCTAssertEqual(
-            Date().timeIntervalSince1970,
-            message.serverTimestamp!.timeIntervalSince1970,
-            accuracy: 1.0
-        )
-    }
-    
     func testThatAConversationIsNotTrustedIfItHasNoOtherParticipants()
     {
         // GIVEN
