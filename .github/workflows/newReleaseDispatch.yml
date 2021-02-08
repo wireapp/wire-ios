@@ -3,7 +3,7 @@ name: dispatch to download stream repos for new release
 on:
   workflow_dispatch:
   release:
-    type: [ published ]
+    type: [ released ]
 
 jobs:
   dispatch:
