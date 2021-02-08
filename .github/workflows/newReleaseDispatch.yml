@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: tell downstream(s) repo this repo published a new release
+      - name: dispatch to downstream(s) repo when this repo released a new version
         run: |
           curl -X POST https://api.github.com/repos/wireapp/wire-ios/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
