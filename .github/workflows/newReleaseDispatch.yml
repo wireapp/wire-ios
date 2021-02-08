@@ -1,4 +1,4 @@
-name: dispatch to downstream repos for a new release tag
+name: dispatch to downstream repos for a new release
 
 on:
   workflow_dispatch:
@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-20.04
 
     steps:
-      - name: dispatch to downstream repos when a new tag is created
+      - name: dispatch to downstream repos when a new release is created
         run: |
           curl -X POST https://api.github.com/repos/wireapp/wire-ios/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
