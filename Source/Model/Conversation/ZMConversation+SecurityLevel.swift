@@ -255,29 +255,6 @@ extension ZMConversation {
 
     // MARK: - Messages
 
-    /// Creates system message that says that you started using this device, if you were not registered on this device
-    @objc public func appendStartedUsingThisDeviceMessage() {
-        guard ZMSystemMessage.fetchStartedUsingOnThisDeviceMessage(conversation: self) == nil else { return }
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        guard let selfClient = selfUser.selfClient() else { return }
-        self.appendSystemMessage(type: .usingNewDevice,
-                                 sender: selfUser,
-                                 users: Set(arrayLiteral: selfUser),
-                                 clients: Set(arrayLiteral: selfClient),
-                                 timestamp: timestampAfterLastMessage())
-    }
-
-    /// Creates a system message when a device has previously been used before, but was logged out due to invalid cookie and/ or invalidated client
-    @objc public func appendContinuedUsingThisDeviceMessage() {
-        let selfUser = ZMUser.selfUser(in: self.managedObjectContext!)
-        guard let selfClient = selfUser.selfClient() else { return }
-        self.appendSystemMessage(type: .reactivatedDevice,
-                                 sender: selfUser,
-                                 users: Set(arrayLiteral: selfUser),
-                                 clients: Set(arrayLiteral: selfClient),
-                                 timestamp: Date())
-    }
-
     /// Creates a system message that inform that there are pontential lost messages, and that some users were added to the conversation
     @objc public func appendNewPotentialGapSystemMessage(users: Set<ZMUser>?, timestamp: Date) {
         
