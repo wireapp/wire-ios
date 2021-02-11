@@ -337,8 +337,8 @@ class ZMConversationMessagesTests: ZMConversationTestsBase {
         let textMessage = try? conversation.appendText(content: "Hello World", replyingTo: imageMessage)
         
         // then
-        XCTAssertNotNil(textMessage?.textMessageData?.quote)
-        XCTAssertEqual(textMessage?.textMessageData?.quote?.nonce, imageMessage?.nonce)
+        XCTAssertNotNil(textMessage?.textMessageData?.quoteMessage)
+        XCTAssertEqual(textMessage?.textMessageData?.quoteMessage?.nonce, imageMessage?.nonce)
         
     }
 

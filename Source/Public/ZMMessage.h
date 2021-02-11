@@ -33,6 +33,7 @@
 @protocol ZMFileMessageData;
 @protocol UserClientType;
 @protocol UserType;
+@protocol ZMConversationMessage;
 
 #pragma mark - ZMImageMessageData
 
@@ -97,7 +98,7 @@ typedef NS_ENUM(int16_t, ZMSystemMessageType) {
 @property (nonatomic, readonly, nullable) NSString *messageText;
 @property (nonatomic, readonly, nullable) LinkMetadata *linkPreview;
 @property (nonatomic, readonly, nonnull) NSArray<Mention *> *mentions;
-@property (nonatomic, readonly, nullable) ZMMessage *quote;
+@property (nonatomic, readonly, nullable) id<ZMConversationMessage> quoteMessage;
 
 /// Returns true if the link preview will have an image
 @property (nonatomic, readonly) BOOL linkPreviewHasImage;

@@ -88,14 +88,22 @@ public extension ConversationAccessRole {
     }
 }
 
-public extension ZMConversation {
+extension ZMConversation: SwiftConversationLike {
     @NSManaged @objc dynamic internal var accessModeStrings: [String]?
     @NSManaged @objc dynamic internal var accessRoleString: String?
     
+    public var sortedActiveParticipantsUserTypes: [UserType] {
+        return sortedActiveParticipants
+    }
+
+    public var teamType: TeamType? {
+        return team
+    }
+
     /// If set to false, only team member can join the conversation.
     /// True means that a regular guest OR wireless guests could join
     /// Controls the values of `accessMode` and `accessRole`.
-    @objc var allowGuests: Bool {
+    @objc public var allowGuests: Bool {
         get {
             return accessMode != .teamOnly && accessRole != .team
         }
@@ -108,7 +116,7 @@ public extension ZMConversation {
     // The conversation access mode is stored as an array of string in CoreData, cf. `acccessModeStrings`.
     
     /// Defines how users can join a conversation.
-    var accessMode: ConversationAccessMode? {
+    public var accessMode: ConversationAccessMode? {
         get {
             guard let strings = self.accessModeStrings else {
                 return nil
@@ -126,7 +134,7 @@ public extension ZMConversation {
     }
     
     /// Defines who can join the conversation.
-    var accessRole: ConversationAccessRole? {
+    public var accessRole: ConversationAccessRole? {
         get {
             guard let strings = self.accessRoleString else {
                 return nil

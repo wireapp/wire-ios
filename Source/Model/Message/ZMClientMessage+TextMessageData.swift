@@ -22,6 +22,10 @@ extension ZMClientMessage: ZMTextMessageData {
     
     @NSManaged public var quote: ZMMessage?
     
+    public var quoteMessage: ZMConversationMessage? {
+        return quote
+    }
+    
     public override var textMessageData: ZMTextMessageData? {        
         guard underlyingMessage?.textData != nil else {
             return nil

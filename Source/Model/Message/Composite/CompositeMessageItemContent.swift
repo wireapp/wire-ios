@@ -56,6 +56,10 @@ extension CompositeMessageItemContent: ZMTextMessageData {
         return nil
     }
     
+    var quoteMessage: ZMConversationMessage? {
+        return quote
+    }
+    
     var linkPreviewHasImage: Bool {
         return false
     }

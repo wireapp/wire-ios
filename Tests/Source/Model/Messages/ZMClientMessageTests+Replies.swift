@@ -26,7 +26,7 @@ class ZMClientMessagesTests_Replies: BaseZMClientMessageTests {
         
         let message = try! conversation.appendText(content: "That's fine", mentions: [], replyingTo: quotedMessage, fetchLinkPreview: false, nonce: UUID()) as! ZMTextMessageData
         
-        XCTAssertEqual(message.quote, quotedMessage)
+        XCTAssertEqual(message.quoteMessage as! ZMMessage, quotedMessage)
     }
     
     func testQuoteRelationshipIsEstablishedWhenReceivingMessage() {
