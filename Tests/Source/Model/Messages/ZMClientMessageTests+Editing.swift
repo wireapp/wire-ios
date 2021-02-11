@@ -397,7 +397,7 @@ extension ZMClientMessageTests_Editing {
         XCTAssertEqual(message.textMessageData?.messageText, newText)
         XCTAssertTrue(message.textMessageData!.hasQuote)
         XCTAssertNotEqual(message.nonce, oldNonce)
-        XCTAssertEqual(message.textMessageData?.quote, quotedMessage)
+        XCTAssertEqual(message.textMessageData?.quoteMessage as! ZMMessage, quotedMessage)
     }
     
     func testThatReadExpectationIsKeptAfterEdit() {

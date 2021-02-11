@@ -41,6 +41,10 @@ open class ZMMessageConfirmation: ZMManagedObject, ReadReceipt {
     @NSManaged open var message: ZMMessage
     @NSManaged open var user: ZMUser
 
+    public var userType: UserType {
+        return user
+    }
+
     override open class func entityName() -> String {
         return "MessageConfirmation"
     }

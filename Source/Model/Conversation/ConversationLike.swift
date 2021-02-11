@@ -19,6 +19,8 @@
 
 import Foundation
 
+public typealias Conversation = ConversationLike & SwiftConversationLike
+
 @objc
 public protocol ConversationLike: NSObjectProtocol {
     var conversationType: ZMConversationType { get }
@@ -27,6 +29,28 @@ public protocol ConversationLike: NSObjectProtocol {
     
     func localParticipantsContain(user: UserType) -> Bool
 
+    var displayName: String { get }
+    var connectedUserType: UserType? { get }
+    var allowGuests: Bool { get }
+
+    var isUnderLegalHold: Bool { get }
+    var securityLevel: ZMConversationSecurityLevel { get }
+    
+    func verifyLegalHoldSubjects()
+
+    var sortedActiveParticipantsUserTypes: [UserType] { get }
+}
+
+// Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
+public protocol SwiftConversationLike {
+    var accessMode: ConversationAccessMode? { get }
+    var accessRole: ConversationAccessRole? { get }
+
+    var teamType: TeamType? { get }
+
+    var messageDestructionTimeout: WireDataModel.MessageDestructionTimeout? { get }
+
+    var mutedMessageTypes: MutedMessageTypes { get set }
     var sortedOtherParticipants: [UserType] { get }
     var sortedServiceUsers: [UserType] { get }
 }
@@ -36,16 +60,20 @@ extension ZMConversation: ConversationLike {
         guard let user = user as? ZMUser else { return false }
         return localParticipants.contains(user)
     }
-
-    private static let userNameSorter: (UserType, UserType) -> Bool = {
-        $0.name < $1.name
-    }
-
-    public var sortedOtherParticipants: [UserType] {
-        return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
-    }
     
-    public var sortedServiceUsers: [UserType] {
-        return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+    public var connectedUserType: UserType? {
+        return connectedUser
+	}
+	
+	private static let userNameSorter: (UserType, UserType) -> Bool = {
+		$0.name < $1.name
+	}
+	
+	public var sortedOtherParticipants: [UserType] {
+		return localParticipants.filter { !$0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
+	}
+	
+	public var sortedServiceUsers: [UserType] {
+		return localParticipants.filter { $0.isServiceUser }.sorted(by: ZMConversation.userNameSorter)
     }
 }

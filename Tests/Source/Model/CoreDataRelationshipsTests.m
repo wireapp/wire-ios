@@ -78,9 +78,9 @@
     // Check that the inverse have been set:
     [self.uiMOC processPendingChanges];
     
-    XCTAssertEqual(message1.conversation, conversation1);
-    XCTAssertEqual(message2.conversation, conversation1);
-    XCTAssertEqual(message3.conversation, conversation2);
+    XCTAssertEqual(message1.conversationLike, conversation1);
+    XCTAssertEqual(message2.conversationLike, conversation1);
+    XCTAssertEqual(message3.conversationLike, conversation2);
     
     XCTAssertEqual(conversation1.connection, connection1);
     XCTAssertEqual(connection2.conversation, conversation2);
@@ -125,9 +125,9 @@
         XCTAssertEqualObjects(c2Message2.objectID, message2.objectID);
         XCTAssertEqualObjects(c2Message3.objectID, message3.objectID);
         
-        XCTAssertEqual(c2Message1.conversation, c2Conversation1);
-        XCTAssertEqual(c2Message2.conversation, c2Conversation1);
-        XCTAssertEqual(c2Message3.conversation, c2Conversation2);
+        XCTAssertEqual(c2Message1.conversationLike, c2Conversation1);
+        XCTAssertEqual(c2Message2.conversationLike, c2Conversation1);
+        XCTAssertEqual(c2Message3.conversationLike, c2Conversation2);
         
         ZMUser *c2User1 = c2Conversation1.creator;
         XCTAssertEqualObjects(c2User1.objectID, user1.objectID);
