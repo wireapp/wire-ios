@@ -24,6 +24,7 @@ jobs:
             echo "ℹ️ creating branch..."
             TIME_STAMP=`date +"%Y-%m-%d-%H%M%S"`
             BRANCH="chore/bump_$TIME_STAMP"
+            git config --global user.email "iosx@wire.com"
             git branch $BRANCH
             git checkout $BRANCH
             
@@ -31,7 +32,11 @@ jobs:
             chmod +x updateCarfile.swift
             swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile
             rm updateCarfile.swift
-            carthage update --no-build
+            
+            ### Hack: carthage update may never done if framework dependency versions does not match. 
+            ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
+            ulimit -t 60; carthage update --no-build
+
             git add .
             git commit -m"bump components"
             git push --set-upstream origin $BRANCH
