@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,25 +18,21 @@
 
 import Foundation
 
+extension AppLockController {
 
-public extension AppLockController {
+    enum State {
 
-    /// Delete the passcode from the keychain.
+        /// The user has authenticated and hasn't left the private space.
 
-    func deletePasscode() throws {
-        try Keychain.deleteItem(keychainItem)
-    }
+        case unlocked
 
-    /// Store the given passcode in the keychain.
+        /// The user has left the private space and the timeout is exceeded.
 
-    func storePasscode(_ passcode: String) throws {
-        try Keychain.storeItem(keychainItem, value: passcode.data(using: .utf8)!)
-    }
+        case locked
 
-    /// Fetch the passcode from the keychain.
+        /// The user has left the private space for an unknown amount of time.
 
-    func fetchPasscode() -> Data? {
-        return try? Keychain.fetchItem(keychainItem)
+        case needsChecking
     }
 
 }

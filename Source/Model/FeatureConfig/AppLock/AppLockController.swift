@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,60 +19,94 @@
 import Foundation
 import LocalAuthentication
 
-private let zmLog = ZMSLog(tag: "AppLockController")
-
-public protocol LAContextProtocol {
-
-    var evaluatedPolicyDomainState: Data? { get }
-
-    func canEvaluatePolicy(_ policy: LAPolicy, error: NSErrorPointer) -> Bool
-    func evaluatePolicy(_ policy: LAPolicy, localizedReason: String, reply: @escaping (Bool, Error?) -> Void)
-}
-
-extension LAContext: LAContextProtocol {}
-
-public protocol AppLockType {
-    var isActive: Bool { get set }
-    var lastUnlockedDate: Date { get set }
-    var isCustomPasscodeNotSet: Bool { get }
-    var needsToNotifyUser: Bool { get set }
-    var config: AppLockController.Config { get }
-    
-    func evaluateAuthentication(scenario: AppLockController.AuthenticationScenario,
-                                description: String,
-                                context: LAContextProtocol,
-                                with callback: @escaping (AppLockController.AuthenticationResult, LAContextProtocol) -> Void)
-
-    func persistBiometrics()
-
-    func deletePasscode() throws
-    func storePasscode(_ passcode: String) throws
-    func fetchPasscode() -> Data?
-}
-
-public extension AppLockType {
-    func evaluateAuthentication(scenario: AppLockController.AuthenticationScenario,
-                                description: String,
-                                with callback: @escaping (AppLockController.AuthenticationResult, LAContextProtocol) -> Void) {
-        evaluateAuthentication(scenario: scenario, description: description, context: LAContext(), with: callback)
-    }
-}
-
-public extension AppLockType {
-
-    func updatePasscode(_ passcode: String) throws {
-        try deletePasscode()
-        try storePasscode(passcode)
-    }
-
-}
-
 public final class AppLockController: AppLockType {
-    
+
+    static let log = ZMSLog(tag: "AppLockController")
+
+    // MARK: - Properties
+
+    public weak var delegate: AppLockDelegate?
+
+    public var isAvailable: Bool {
+        return config.isAvailable
+    }
+
+    public var isActive: Bool {
+        get {
+            return isForced || selfUser.isAppLockActive
+        }
+
+        set {
+            guard !isForced else { return }
+            selfUser.isAppLockActive = newValue
+        }
+    }
+
+    public var isForced: Bool {
+        return config.isForced
+    }
+
+    public var timeout: UInt {
+        return config.timeout
+    }
+
+    public var isLocked: Bool {
+        guard isActive else { return false }
+
+        switch state {
+        case .unlocked:
+            return false
+
+        case .locked:
+            return true
+
+        case .needsChecking:
+            state = isTimeoutExceeded ? .locked : .unlocked
+            return state == .locked
+        }
+    }
+
+    public var requireCustomPasscode: Bool {
+        return config.requireCustomPasscode
+    }
+
+    public var isCustomPasscodeSet: Bool {
+        return fetchPasscode() != nil
+    }
+
+    public var needsToNotifyUser: Bool {
+        get {
+            guard let feature = selfUser.team?.feature(for: .appLock) else { return false }
+            return feature.needsToNotifyUser
+        }
+
+        set {
+            guard let feature = selfUser.team?.feature(for: .appLock) else { return }
+            feature.needsToNotifyUser =  newValue
+        }
+    }
+
+    // MARK: - Private properties
+
     private let selfUser: ZMUser
+
+    private(set) var state = State.locked
+
+    private(set) var lastCheckpoint = Date.distantPast
+
+    private var isTimeoutExceeded: Bool {
+        let timeSinceAuth = -lastCheckpoint.timeIntervalSinceNow
+        let timeoutWindow = 0..<Double(timeout)
+        return !timeoutWindow.contains(timeSinceAuth)
+    }
+
+    let keychainItem: PasscodeKeychainItem
+
+    var biometricsState: BiometricsStateProtocol = BiometricsState()
+
     private let baseConfig: Config
-    
-    public var config: Config {
+
+    private var config: Config {
         guard
             let team = selfUser.team,
             let feature = team.feature(for: .appLock),
@@ -82,155 +116,134 @@ public final class AppLockController: AppLockType {
         }
 
         var result = baseConfig
-        result.forceAppLock = baseConfig.forceAppLock || appLock.config.enforceAppLock
-        result.appLockTimeout = appLock.config.inactivityTimeoutSecs
+        result.isForced = baseConfig.isForced || appLock.config.enforceAppLock
+        result.timeout = appLock.config.inactivityTimeoutSecs
         result.isAvailable = (appLock.status == .enabled)
-        
+
         return result
     }
-    
-    // Returns true if user enabled the app lock feature or it has been forced by the team manager.
-    public var isActive: Bool {
-        get {
-            return config.forceAppLock || selfUser.isAppLockActive
-        }
-        set {
-            guard !config.forceAppLock else { return }
-            selfUser.isAppLockActive = newValue
-        }
-    }
-    
-    // Returns the time since last lock happened.
-    public var lastUnlockedDate: Date = Date(timeIntervalSince1970: 0)
-    
-    public var isCustomPasscodeNotSet: Bool {
-        return fetchPasscode() == nil
-    }
-    
-    public var needsToNotifyUser: Bool {
-        get {
-            guard let team = selfUser.team,
-                let feature = team.feature(for: .appLock) else {
-                    return false
-            }
-            return feature.needsToNotifyUser
-        }
-        set {
-            guard let team = selfUser.team,
-                let feature = team.feature(for: .appLock) else {
-                    return
-            }
-            feature.needsToNotifyUser =  newValue
-        }
-    }
-        
-    lazy var biometricsState: BiometricsStateProtocol =  BiometricsState()
 
-    lazy var keychainItem: PasscodeKeychainItem = .init(user: selfUser)
-    
     // MARK: - Life cycle
     
-    public init(config: Config, selfUser: ZMUser) {
+    public init(userId: UUID, config: Config, selfUser: ZMUser) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
-        
+
+        // It's safer use userId rather than selfUser.remoteIdentifier!
+        self.keychainItem = PasscodeKeychainItem(userId: userId)
         self.baseConfig = config
         self.selfUser = selfUser
     }
     
     // MARK: - Methods
-    
-    // Creates a new LAContext and evaluates the authentication settings of the user.
-    public func evaluateAuthentication(scenario: AuthenticationScenario,
+
+    public func beginTimer() {
+        guard state == .unlocked else { return }
+        state = .needsChecking
+        lastCheckpoint = Date()
+    }
+
+    /// Open the app lock.
+    ///
+    /// This method informs the delegate that the app lock opened. The delegate should
+    /// then react appropriately by transitioning away from the app lock UI.
+    ///
+    /// - Throws: AppLockError
+
+    public func open() throws {
+        guard !isLocked else { throw AppLockError.authenticationNeeded }
+        delegate?.appLockDidOpen(self)
+    }
+
+    // MARK: - Authentication
+
+    public func evaluateAuthentication(passcodePreference: AppLockPasscodePreference,
                                        description: String,
                                        context: LAContextProtocol = LAContext(),
-                                       with callback: @escaping (AuthenticationResult, LAContextProtocol) -> Void) {
-        
-        
+                                       callback: @escaping (AppLockAuthenticationResult, LAContextProtocol) -> Void) {
+        let policy = passcodePreference.policy
         var error: NSError?
-                
-        let canEvaluatePolicy = context.canEvaluatePolicy(scenario.policy, error: &error)
-        let biometricsChanged = biometricsState.biometricsChanged(in: context)
-        
-        if (biometricsChanged || !canEvaluatePolicy) && scenario.usesCustomPasscodeAsFallback {
+        let canEvaluatePolicy = context.canEvaluatePolicy(policy, error: &error)
+
+        // Changing biometrics in device settings is protected by the device passcode, but if
+        // the device passcode isn't considered secure enough, then ask for the custon passcode
+        // to accept the new biometrics state.
+        if biometricsState.biometricsChanged(in: context) && !passcodePreference.allowsDevicePasscode {
             callback(.needCustomPasscode, context)
             return
         }
-        
-        if case .screenLock = scenario, !canEvaluatePolicy {
+
+        // No device authentication possible, but can fall back to the custom passcode.
+        if !canEvaluatePolicy && passcodePreference.allowsCustomPasscode {
             callback(.needCustomPasscode, context)
             return
         }
-        
-        if canEvaluatePolicy {
-            context.evaluatePolicy(scenario.policy, localizedReason: description, reply: { (success, error) -> Void in
-                var authResult: AuthenticationResult = success ? .granted : .denied
-                
-                if scenario.usesCustomPasscodeAsFallback, let laError = error as? LAError, laError.code == .userFallback {
-                    authResult = .needCustomPasscode
-                }
-                
-                callback(authResult, context)
-            })
-        } else {
+
+        guard canEvaluatePolicy else {
             callback(.unavailable, context)
-            zmLog.error("Local authentication error: \(String(describing: error?.localizedDescription))")
+            Self.log.error("Local authentication error: \(String(describing: error?.localizedDescription))")
+            return
+        }
+
+        context.evaluatePolicy(policy, localizedReason: description) { success, error in
+            var result: AppLockAuthenticationResult = success ? .granted : .denied
+
+            if let laError = error as? LAError, laError.code == .userFallback, passcodePreference.allowsCustomPasscode {
+                result = .needCustomPasscode
+            }
+
+            if result == .granted {
+                self.state = .unlocked
+            }
+
+            callback(result, context)
         }
     }
-    
-    public func persistBiometrics() {
+
+    public func evaluateAuthentication(customPasscode: String) -> AppLockAuthenticationResult {
+        guard
+            let storedPasscode = fetchPasscode(),
+            let passcode = customPasscode.data(using: .utf8),
+            passcode == storedPasscode
+        else {
+            return .denied
+        }
+
+        state = .unlocked
         biometricsState.persistState()
+        return .granted
+    }
+
+    // MARK: - Passcode management
+
+    public func updatePasscode(_ passcode: String) throws {
+        try deletePasscode()
+        try storePasscode(passcode)
+    }
+
+    public func deletePasscode() throws {
+        try Keychain.deleteItem(keychainItem)
+    }
+
+    private func storePasscode(_ passcode: String) throws {
+        try Keychain.storeItem(keychainItem, value: passcode.data(using: .utf8)!)
+    }
+
+    func fetchPasscode() -> Data? {
+        return try? Keychain.fetchItem(keychainItem)
     }
     
-    
-    // MARK: - Types
-    
-    public struct Config {
-        public let useBiometricsOrCustomPasscode: Bool
-        public var forceAppLock: Bool
-        public var appLockTimeout: UInt
-        public var isAvailable: Bool
-        
-        public init(useBiometricsOrCustomPasscode: Bool,
-                    forceAppLock: Bool,
-                    timeOut: UInt) {
-            self.useBiometricsOrCustomPasscode = useBiometricsOrCustomPasscode
-            self.forceAppLock = forceAppLock
-            self.appLockTimeout = timeOut
-            self.isAvailable = true
-        }
+}
+
+// MARK: - TEST ONLY!
+
+extension AppLockController {
+
+    func _setState(_ state: State) {
+        self.state = state
     }
-    
-    public enum AuthenticationResult {
-        /// User sucessfully authenticated
-        case granted
-        /// User failed to authenticate or cancelled the request
-        case denied
-        /// There's no authenticated method available (no passcode is set)
-        case unavailable
-        /// Biometrics failed and custom passcode is needed
-        case needCustomPasscode
+
+    func _setLastCheckpoint(_ checkpoint: Date) {
+        lastCheckpoint = checkpoint
     }
-    
-    public enum AuthenticationScenario {
-        case screenLock(requireBiometrics: Bool)
-        case databaseLock
-        
-        var policy: LAPolicy {
-            switch self {
-            case .screenLock(requireBiometrics: let requireBiometrics):
-                return requireBiometrics ? .deviceOwnerAuthenticationWithBiometrics : .deviceOwnerAuthentication
-            case .databaseLock:
-                return .deviceOwnerAuthentication
-            }
-        }
-        
-        var usesCustomPasscodeAsFallback: Bool {
-            switch self {
-            case .screenLock(requireBiometrics: let requireBiometrics):
-                return requireBiometrics
-            case .databaseLock:
-                return false
-            }
-        }
-    }
+
 }
