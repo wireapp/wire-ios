@@ -28,10 +28,6 @@ extension AppLockController {
 
         // MARK: - Life cycle
 
-        init(user: ZMUser) {
-            self.init(userId: user.remoteIdentifier)
-        }
-
         init(userId: UUID) {
             self.init(itemIdentifier: "\(Self.legacyIdentifier)-\(userId.uuidString)")
         }

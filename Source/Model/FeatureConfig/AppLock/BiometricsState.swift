@@ -19,38 +19,41 @@
 import Foundation
 
 protocol BiometricsStateProtocol {
+
    func biometricsChanged(in context: LAContextProtocol) -> Bool
    func persistState()
+
 }
 
 final class BiometricsState: BiometricsStateProtocol {
+
     private let UserDefaultsDomainStateKey = "DomainStateKey"
     
-    private var lastPolicyDomainState: Data? {
+    var lastPolicyDomainState: Data? {
         get {
             return UserDefaults.standard.data(forKey: UserDefaultsDomainStateKey)
         }
+
         set {
             UserDefaults.standard.set(newValue, forKey: UserDefaultsDomainStateKey)
         }
     }
     
-    private var currentPolicyDomainState: Data?
-    
-    // Tells us if biometrics database has changed (ex: fingerprints added or removed)
+    var currentPolicyDomainState: Data?
+
+    /// Returns `true` if the biometrics database has changed, e.g if finger prints are
+    /// added or removed.
+
     func biometricsChanged(in context: LAContextProtocol) -> Bool {
         currentPolicyDomainState = context.evaluatedPolicyDomainState
-        guard let currentState = currentPolicyDomainState,
-            let lastState = lastPolicyDomainState,
-            currentState == lastState else {
-                return true
-        }
-        return false
+        guard let lastState = lastPolicyDomainState else { return false }
+        return currentPolicyDomainState != lastState
     }
     
-    /// Persists the state of the biometric credentials.
-    /// Should be called after a successful unlock with account password
+    /// Persists the last seen biometrics state for future comparisons.
+
      func persistState() {
         lastPolicyDomainState = currentPolicyDomainState
     }
+
 }
