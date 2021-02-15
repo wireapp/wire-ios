@@ -84,6 +84,7 @@ class BaseSharingSessionTests: ZMTBaseTest {
         )
 
         sharingSession = try! SharingSession(
+            accountIdentifier: accountIdentifier,
             contextDirectory: directory,
             transportSession: transportSession,
             cachesDirectory: url,
@@ -118,6 +119,6 @@ class BaseSharingSessionTests: ZMTBaseTest {
 
 extension AppLockController.Config {
     static var defaultConfig: AppLockController.Config {
-        Self.init(useBiometricsOrCustomPasscode: false, forceAppLock: false, timeOut: 10)
+        Self.init(isAvailable: true, isForced: false, timeout: 10, requireCustomPasscode: false)
     }
 }
