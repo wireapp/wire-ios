@@ -256,6 +256,7 @@ public class SharingSession {
         )
         
         try self.init(
+            accountIdentifier: accountIdentifier,
             contextDirectory: directory,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
@@ -263,7 +264,8 @@ public class SharingSession {
             appLockConfig: appLockConfig)
     }
     
-    internal init(contextDirectory: ManagedObjectContextDirectory,
+    internal init(accountIdentifier: UUID,
+                  contextDirectory: ManagedObjectContextDirectory,
                   transportSession: ZMTransportSession,
                   cachesDirectory: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
@@ -283,7 +285,7 @@ public class SharingSession {
         self.strategyFactory = strategyFactory
         
         let selfUser = ZMUser.selfUser(in: contextDirectory.uiContext)
-        self.appLockController = AppLockController(config: appLockConfig, selfUser: selfUser)
+        self.appLockController = AppLockController(userId: accountIdentifier, config: appLockConfig, selfUser: selfUser)
         
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
@@ -291,7 +293,8 @@ public class SharingSession {
         setupObservers()
     }
     
-    public convenience init(contextDirectory: ManagedObjectContextDirectory,
+    public convenience init(accountIdentifier: UUID,
+                            contextDirectory: ManagedObjectContextDirectory,
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
@@ -320,6 +323,7 @@ public class SharingSession {
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: accountContainer)
         
         try self.init(
+            accountIdentifier: accountIdentifier,
             contextDirectory: contextDirectory,
             transportSession: transportSession,
             cachesDirectory: cachesDirectory,
