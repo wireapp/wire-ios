@@ -26,7 +26,7 @@ extension ZMConversationMessage {
             return false
         }
 
-        let participatesInConversation = conversation.localParticipantsContain(user: ZMUser.selfUser())
+        let participatesInConversation = conversation.localParticipantsContain(user: SelfUser.current)
         let sentOrDelivered = deliveryState.isOne(of: .sent, .delivered, .read)
         let likableType = isNormal && !isKnock
         return participatesInConversation && sentOrDelivered && likableType && !isObfuscated && !isEphemeral
@@ -41,7 +41,7 @@ extension ZMConversationMessage {
             }
         }
         get {
-            return likers.contains{ $0.isSelfUser }
+            return likers.contains { $0.isSelfUser }
         }
     }
 

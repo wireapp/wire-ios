@@ -24,7 +24,7 @@ import WireDataModel
  * - note: This class needs to be NSCopying to be used in an ordered set for diffing.
  */
 
-class MessageDetailsCellDescription: NSObject {
+final class MessageDetailsCellDescription: NSObject {
 
     /// The user to display.
     let user: UserType
