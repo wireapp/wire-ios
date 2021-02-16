@@ -125,10 +125,9 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         readReceipt.serverTimestamp = Date(timeIntervalSince1970: 12345678564)
         message.readReceipts = [readReceipt]
 
-        ///liked after read
+        /// liked after read
         let users = MockUser.mockUsers().first(where: { !$0.isSelfUser })!
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [users]]
-
 
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
@@ -167,7 +166,7 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         message.conversation = createTeamGroupConversation()
         message.conversationLike = message.conversation
         sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-        
+
         // THEN
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
     }
@@ -176,12 +175,11 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // GIVEN
         message.conversation = createTeamGroupConversation()
         message.conversationLike = message.conversation
-
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-        
+
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: true, animated: false)
-        
+
         // THEN
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .receipts)
     }
@@ -190,10 +188,10 @@ final class MessageToolboxViewTests: CoreDataSnapshotTestCase {
         // GIVEN
         message.conversation = createTeamGroupConversation()
         message.backingUsersReaction = [MessageReaction.like.unicodeValue: [selfUser]]
-        
+
         // WHEN
         sut.configureForMessage(message, forceShowTimestamp: false, animated: false)
-        
+
         // THEN
         XCTAssertEqual(sut.preferredDetailsDisplayMode(), .reactions)
     }
