@@ -42,29 +42,6 @@
     return [self missedClients:recipients users:self.selfUser.connectionsAndTeamMembers sender:sender onlyForUserId:onlyForUserId];
 }
 
-- (NSDictionary *)missedClients:(NSDictionary *)recipients users:(NSSet<MockUser *> *)users sender:(MockUserClient *)sender onlyForUserId:(NSString *)onlyForUserId
-{
-    NSMutableDictionary *missedClients = [NSMutableDictionary new];
-    for (MockUser *user in users) {
-        if (onlyForUserId != nil && ![[NSUUID uuidWithTransportString:user.identifier] isEqual:[NSUUID uuidWithTransportString:onlyForUserId]]) {
-            continue;
-        }
-        NSArray *recipientClients = [recipients[user.identifier] allKeys];
-        NSSet *userClients = [user.clients mapWithBlock:^id(MockUserClient *client) {
-            if (client != sender) {
-                return client.identifier;
-            }
-            return nil;
-        }];
-        
-        NSMutableSet *userMissedClients = [userClients mutableCopy];
-        [userMissedClients minusSet:[NSSet setWithArray:recipientClients]];
-        if (userMissedClients.count > 0) {
-            missedClients[user.identifier] = userMissedClients.allObjects;
-        }
-    }
-    return missedClients;
-}
 
 - (NSDictionary *)deletedClients:(NSDictionary *)recipients conversation:(MockConversation *)conversation
 {
