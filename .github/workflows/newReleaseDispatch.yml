@@ -12,7 +12,12 @@ jobs:
     steps:
       - name: tell downstream(s) repo this repo published a new release
         run: |
-          curl -X POST https://api.github.com/repos/wireapp/wire-data-model/dispatches \
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-data-model/dispatches \
+          -H "Accept: application/vnd.github.v3+json" \
+          -u ${{ secrets.DISPATCH_SECRET }} \
+          --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-mocktransport/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
