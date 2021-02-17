@@ -18,6 +18,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: create branch
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
             BRANCH=chore/bump_$(date +%Y-%m-%d-%H%M%S)
             git config --global user.email "iosx@wire.com"
@@ -25,23 +27,21 @@ jobs:
             git branch $BRANCH
             git checkout $BRANCH
             
-      - name: process Cartfile
-        run: |
+            # process Cartfile
+
             curl --silent https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Scripts/updateCatfile.swift --output updateCarfile.swift
             chmod +x updateCarfile.swift
             swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile
             rm updateCarfile.swift
             
-      - name: Carthage update
-        run: |
+            # Carthage update
+
             ### Hack: carthage update may never done if framework dependency versions does not match. 
             ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
             ulimit -t 60; carthage update --no-build
 
-      - name: Create bumpPR
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+            # Create bump PR
+            
             git add .
             git commit -m"bump components"
             git push --set-upstream origin $BRANCH
