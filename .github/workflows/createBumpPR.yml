@@ -18,15 +18,12 @@ jobs:
         uses: actions/checkout@v2
 
       - name: create branch
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-            TIME_STAMP=`date +"%Y-%m-%d-%H%M%S"`
-            echo "BRANCH=chore/bump_$TIME_STAMP" >> $GITHUB_ENV
+            echo "BRANCH_NAME=chore/bump_$(date +%Y-%m-%d-%H%M%S)" >> $GITHUB_ENV
             git config --global user.email "iosx@wire.com"
-            echo "ℹ️ create branch: ${{ env.BRANCH }}"
-            git branch ${{ env.BRANCH }}
-            git checkout ${{ env.BRANCH }}
+            echo "ℹ️ create branch: ${{ env.BRANCH_NAME }}"
+            git branch ${{ env.BRANCH_NAME }}
+            git checkout ${{ env.BRANCH_NAME }}
             
       - name: process Cartfile
         run: |
@@ -47,6 +44,6 @@ jobs:
         run: |
             git add .
             git commit -m"bump components"
-            git push --set-upstream origin ${{ env.BRANCH }}
+            git push --set-upstream origin ${{ env.BRANCH_NAME }}
             echo "ℹ️ open bump PR"
             gh pr create --title "chore: bump components" --body "Bump framework(s) version for:\n${{ github.event.client_payload.repository }}"
