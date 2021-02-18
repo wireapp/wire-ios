@@ -73,9 +73,9 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> ZM_UNUSED session)
+    {
         selfUser.name = @"New";
-        
     }];
     WaitForAllGroupsToBeEmpty(0.5);
     
@@ -94,7 +94,7 @@
     
     // WHEN
     [self createAndOpenPushChannelAndCreateSelfUser:NO];
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> ZM_UNUSED session) {
         selfUser.name = @"New";
         
     }];
@@ -119,7 +119,7 @@
         [session simulatePushChannelClosed];
     }];
     WaitForAllGroupsToBeEmpty(0.5);
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> ZM_UNUSED session) {
         selfUser.name = @"New";
         
     }];
@@ -147,7 +147,7 @@
     
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> ZM_UNUSED session) {
         selfUser.name = newName;
         expectedUserPayload = @{
                                 @"id" : selfUserID,
@@ -180,7 +180,7 @@
     
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
         selfUser.email = [newValue stringByAppendingString:@"-email"];
         selfUser.phone = [newValue stringByAppendingString:@"-phone"];
         selfUser.accentID = 5567;
@@ -214,7 +214,7 @@
     XCTAssertEqual(self.pushChannelReceivedEvents.count, 0u);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
         selfUser.previewProfileAssetIdentifier = @"preview-id";
         selfUser.completeProfileAssetIdentifier = @"complete-id";
         expectedUserPayload = @{
@@ -285,7 +285,7 @@
     [self.pushChannelReceivedEvents removeAllObjects];
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * ZM_UNUSED session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> __unused session) {
         connection.status = @"blocked";
         expectedConnectionPayload = connection.transportData;
     }];

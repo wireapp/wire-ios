@@ -778,7 +778,7 @@
     WaitForAllGroupsToBeEmpty(0.5);
     
     // WHEN
-    [self.sut performRemoteChanges:^(MockTransportSession<MockTransportSessionObjectCreation> * session) {
+    [self.sut performRemoteChanges:^(id<MockTransportSessionObjectCreation> ZM_UNUSED session) {
         event = eventBlock(session, conversation);
     }];
     WaitForAllGroupsToBeEmpty(0.5);
