@@ -18,7 +18,56 @@
 
 import Foundation
 
-class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
+final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
+    
+    private func assertDictionaryHasKeys(a1: NSDictionary, a2: NSArray) {
+        let _k1: NSArray = (a1.allKeys as NSArray).sortedArray(using: NSSelectorFromString("compare:")) as NSArray
+        let _k2: NSArray = a2.sortedArray(using: NSSelectorFromString("compare:")) as NSArray
+        if _k1 != _k2 {
+            let expectedKeys = (_k2 as? [String])?.joined(separator: "\", \"") ?? ""
+            let actualKeys = String(describing: (_k1 as? [String])?.joined(separator: "\", \""))
+            XCTFail("'\(a1)' should have keys \"\(expectedKeys)\", has \"\(actualKeys)\"")
+        }
+    }
+    
+    func testThatItReturnsUserClientsKeys() {
+        var selfUser: MockUser!
+        var otherUser: MockUser!
+        var thirdUser: MockUser!
+        var selfClient: MockUserClient!
+        var otherUserClient: MockUserClient!
+        var secondOtherUserClient: MockUserClient!
+        
+        sut.performRemoteChanges({ session in
+            selfUser = session.insertSelfUser(withName: "foo")
+            otherUser = session.insertUser(withName: "bar")
+            thirdUser = session.insertUser(withName: "foobar")
+            selfClient = session.registerClient(for: selfUser!, label: "self1", type: "permanent", deviceClass: "phone")
+            otherUserClient = session.registerClient(for: otherUser!, label: "other1", type: "permanent", deviceClass: "phone")
+            secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
+        })
+        
+        let redunduntClientId = NSString.createAlphanumerical()
+        var payload: ZMTransportData = [selfUser.identifier: [selfClient.identifier!, redunduntClientId], otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!], thirdUser.identifier: [redunduntClientId]] as ZMTransportData
+        
+        let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .methodPOST)
+        XCTAssertEqual(response.httpStatus, 200)
+        
+        let exepctedUsers: NSArray = [selfUser.identifier, otherUser?.identifier]
+        
+        let dict = response.payload!.asDictionary()! as NSDictionary
+        assertDictionaryHasKeys(a1: dict, a2: exepctedUsers)
+        
+        var expectedClients = [selfClient?.identifier]
+        if let identifier = selfUser?.identifier {
+            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+        }
+        expectedClients = [otherUserClient?.identifier, secondOtherUserClient?.identifier]
+        if let identifier = otherUser?.identifier {
+            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+        }
+    }
+    
     func testThatItReturnsRichInfo_404_whenUserDoesNotExist() {
         //given
         let userId = "1234"
@@ -69,7 +118,7 @@ class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
         guard let payload = response.payload as? [String : [[String : String]]] else { XCTFail("Malformed response: \(String(describing: response.payload))"); return }
         
         guard let fields = payload["fields"] else { XCTFail("Malformed payload: \(payload)"); return }
-
+        
         let values = richProfile.map { ["type" : $0.type, "value" : $0.value] }
         XCTAssertEqual(fields, values)
     }
