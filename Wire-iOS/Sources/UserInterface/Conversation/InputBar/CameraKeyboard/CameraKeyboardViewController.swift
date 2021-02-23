@@ -314,7 +314,8 @@ class CameraKeyboardViewController: UIViewController, SpinnerCapable {
                 self.isLoadingViewVisible = true
             })
             
-            AVURLAsset.convertVideoToUploadFormat(at: url, fileLengthLimit: Int64(fileLengthLimit)) { resultURL, asset, error in
+            AVURLAsset.convertVideoToUploadFormat(at: url,
+                                                  fileLengthLimit: Int64(fileLengthLimit)) { resultURL, asset, error in
                 DispatchQueue.main.async(execute: {
                     self.isLoadingViewVisible = false
                 })
