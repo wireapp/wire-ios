@@ -346,17 +346,17 @@ extension WireCallCenterV3 {
         let activeSpeakers = self.activeSpeakers(conversationId: conversationId, limitedBy: limit)
         
         return callMembers.compactMap { member in
-            var isActive: Bool = false
+            var activeSpeakerState: ActiveSpeakerState = .inactive
             
             if let activeSpeaker = activeSpeakers.first(where: { $0.client == member.client }) {
-                isActive = kind.isActive(activeSpeaker: activeSpeaker)
+                activeSpeakerState = kind.state(ofActiveSpeaker: activeSpeaker)
             }
             
-            if kind == .smoothedActiveSpeakers && !isActive {
+            if kind == .smoothedActiveSpeakers && activeSpeakerState == .inactive {
                 return nil
             }
             
-            return CallParticipant(member: member, isActiveSpeaker: isActive, context: context)
+            return CallParticipant(member: member, activeSpeakerState: activeSpeakerState, context: context)
         }
     }
     
