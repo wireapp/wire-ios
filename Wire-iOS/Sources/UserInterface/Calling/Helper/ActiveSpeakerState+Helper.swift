@@ -17,23 +17,15 @@
 //
 
 import Foundation
-@testable import Wire
+import WireSyncEngine
 
-class VideoStreamStubProvider {
-    func videoStream(
-        participantName: String = "Bob",
-        client: AVSClient = AVSClient(userId: UUID(), clientId: UUID().transportString()),
-        muted: Bool = false,
-        videoState: VideoState = .started,
-        activeSpeakerState: ActiveSpeakerState = .inactive,
-        paused: Bool = false) -> VideoStream {
-        let stream = Wire.Stream(
-            streamId: client,
-            participantName: participantName,
-            microphoneState: muted ? .muted : .unmuted,
-            videoState: videoState,
-            activeSpeakerState: activeSpeakerState
-        )
-        return VideoStream(stream: stream, isPaused: paused)
+extension ActiveSpeakerState {
+    var isSpeakingNow: Bool {
+        switch self {
+        case .active(audioLevelNow: let audioLevel):
+            return audioLevel > 0
+        default:
+            return false
+        }
     }
 }
