@@ -95,7 +95,7 @@ final class VideoGridViewControllerSnapshotTests: XCTestCase {
         configuration.videoStreams = [
             stubProvider.videoStream(participantName: "Alice", activeSpeakerState: .active(audioLevelNow: 100)),
             stubProvider.videoStream(participantName: "Bob", activeSpeakerState: .active(audioLevelNow: 100)),
-            stubProvider.videoStream(participantName: "Carol", activeSpeakerState: .active(audioLevelNow: 100)),
+            stubProvider.videoStream(participantName: "Carol", activeSpeakerState: .active(audioLevelNow: 100))
         ]
         createSut()
         
