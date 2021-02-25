@@ -620,16 +620,12 @@ public final class SessionManager : NSObject, SessionManagerType {
 
             // If the user isn't logged in it's because they still need
             // to complete the login flow, which will be handle elsewhere.
-            session.checkIfLoggedIn { [weak self] isLoggedIn in
-                guard isLoggedIn else {
-                    completion(session)
-                    return
-                }
-            
-                self?.delegate?.sessionManagerDidReportLockChange(forSession: session)
-                self?.performPostUnlockActionsIfPossible(for: session)
-                completion(session)
+            if session.isLoggedIn {            
+                self.delegate?.sessionManagerDidReportLockChange(forSession: session)
+                self.performPostUnlockActionsIfPossible(for: session)
             }
+            
+            completion(session)
         }
     }
 
