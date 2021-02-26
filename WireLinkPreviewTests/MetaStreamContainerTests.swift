@@ -159,13 +159,6 @@ class MetaStreamContainerTests: XCTestCase {
         let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
         assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
     }
-        
-    func testThatItExtractsTheHead_toEndOfString_whenItDoesNotHaveEndTag() {
-        let junk = Array(repeating: "JUNK", count: MetaStreamContainer.fetchLimit).joined(separator: "-")
-        let head = "<head data-network=\"123\">\nheader\n" + junk
-        let html = "<!DOCTYPE html><html lang=\"en\">\n\(head)"
-        assertThatItExtractsTheCorrectHead(html, expectedHead: head, encoding: .ascii)
-    }
     
     // MARK: - Helper
     
