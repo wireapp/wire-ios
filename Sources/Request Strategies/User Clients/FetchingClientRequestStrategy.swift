@@ -60,6 +60,7 @@ public final class FetchingClientRequestStrategy : AbstractRequestStrategy {
         
         self.configuration = [.allowsRequestsWhileOnline,
                               .allowsRequestsDuringQuickSync,
+                              .allowsRequestsWhileWaitingForWebsocket,
                               .allowsRequestsWhileInBackground]
         self.userClientsObserverToken = NotificationInContext.addObserver(name: FetchingClientRequestStrategy.needsToUpdateUserClientsNotificationName,
                                                                           context: self.managedObjectContext.notificationContext,
