@@ -24,6 +24,7 @@ class MockURLSessionDataTask: URLSessionDataTaskType {
     var resumeCallCount = 0
     var cancelCallCount = 0
     var mockOriginalRequest: URLRequest? = nil
+    var state: URLSessionTask.State = .completed
     
     var originalRequest: URLRequest? {
         return mockOriginalRequest
@@ -31,10 +32,12 @@ class MockURLSessionDataTask: URLSessionDataTaskType {
     
     func resume() {
         resumeCallCount += 1
+        state = .running
     }
     
     func cancel() {
         cancelCallCount += 1
+        state = .canceling
     }
 }
 

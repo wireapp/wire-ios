@@ -21,9 +21,7 @@ import Foundation
 
 
 final class MetaStreamContainer {
-    
-    static let fetchLimit = 50_000 // maximum number of characters to take if we can't find </head>
-    
+        
     var bytes = Data()
     
     var stringContent: String? {
@@ -56,7 +54,7 @@ final class MetaStreamContainer {
 
     private func updateReachedEndOfHead(withData data: Data) {
         guard let string = parseString(from: data)?.lowercased() else { return }
-        if string.contains(OpenGraphXMLNode.headEnd.rawValue) || string.count > MetaStreamContainer.fetchLimit {
+        if string.contains(OpenGraphXMLNode.headEnd.rawValue) {
             reachedEndOfHead = true
         }
     }

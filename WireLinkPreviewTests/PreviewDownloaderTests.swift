@@ -119,6 +119,37 @@ class PreviewDownloaderTests: XCTestCase {
         XCTAssertEqual(mockDataTask.cancelCallCount, 1)
         XCTAssertEqual(completionCallCount, 1)
     }
+    
+    func testThatItCallsTheCompletionHandler_IfThereIsNoClosingHeadTag_AndTheDataTaskIsCompleted() {
+        // given
+        let completionExpectation = expectation(description: "It should call the completion handler")
+        var completionCallCount = 0
+        let completion: PreviewDownloader.DownloadCompletion = { _ in
+            completionCallCount += 1
+            completionExpectation.fulfill()
+        }
+        let taskID = 0
+        let firstBytes = " First Part\n ".data(using: String.Encoding.utf8)!
+        let secondBytes = " Second Part\n ".data(using: String.Encoding.utf8)!
+        
+        // when
+        sut.requestOpenGraphData(fromURL: url, completion: completion)
+        sut.processReceivedData(firstBytes, forTask: mockDataTask, withIdentifier: taskID)
+        
+        // then
+        XCTAssertEqual(mockDataTask.cancelCallCount, 0)
+        XCTAssertEqual(mockDataTask.state, .running)
+        XCTAssertEqual(completionCallCount, 0)
+        
+        // when
+        mockDataTask.state = .completed
+        sut.processReceivedData(secondBytes, forTask: mockDataTask, withIdentifier: taskID)
+        
+        // then
+        waitForExpectations(timeout: 0.2, handler: nil)
+        XCTAssertEqual(mockDataTask.cancelCallCount, 0)
+        XCTAssertEqual(completionCallCount, 1)
+    }
 
     func testThatItRemovesTheCompletionBlockAndDataContainerOnCompletion_Unsuccessful() {
         // given

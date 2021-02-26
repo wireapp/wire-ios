@@ -33,6 +33,7 @@ protocol URLSessionDataTaskType {
     
     var originalRequest: URLRequest? { get }
     var taskIdentifier: Int { get }
+    var state: URLSessionTask.State { get }
 }
 
 extension URLSessionTask: URLSessionDataTaskType {}
