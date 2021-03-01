@@ -881,6 +881,31 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertEqualObjects(user.remoteIdentifier, [payload[@"id"] UUID]);
 }
 
+- (void)testThatItAssignsQualifiedIDIfTheUserDoesNotHaveOne
+{
+    // given
+    NSUUID *remoteIdentifier = [NSUUID createUUID];
+    NSString *domain = @"example.com";
+    
+    NSDictionary *qualifedIDPayload = @{
+        @"id": remoteIdentifier.transportString,
+        @"domain": domain
+    };
+    
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    NSMutableDictionary *payload = [self samplePayloadForUserID:[NSUUID createUUID]];
+    payload[@"qualified_id"] = qualifedIDPayload; 
+    
+    // when
+    [user updateWithTransportData:payload authoritative:YES];
+
+    // then
+    XCTAssertEqualObjects(user.remoteIdentifier, [qualifedIDPayload[@"id"] UUID]);
+    XCTAssertEqualObjects(user.domain, qualifedIDPayload[@"domain"]);
+}
+
+
+
 - (void)testThatItIsMarkedAsUpdatedFromBackendWhenUpdatingWithAuthoritativeData
 {
 

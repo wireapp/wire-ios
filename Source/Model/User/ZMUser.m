@@ -94,6 +94,8 @@ static NSString *const ParticipantRolesKey = @"participantRoles";
 
 static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
 
+static NSString *const DomainKey = @"domain";
+
 @interface ZMBoxedSelfUser : NSObject
 
 @property (nonatomic, weak) ZMUser *selfUser;
@@ -406,7 +408,8 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
                                            LegalHoldRequestKey,
                                            NeedsToAcknowledgeLegalHoldStatusKey,
                                            NeedsToRefetchLabelsKey,
-                                           @"lastServerSyncedActiveConversations" // OBSOLETE
+                                           @"lastServerSyncedActiveConversations", // OBSOLETE
+                                           DomainKey
                                            ]];
         keys = [ignoredKeys copy];
     });
@@ -538,15 +541,39 @@ static NSString *const AnalyticsIdentifierKey = @"analyticsIdentifier";
         self.usesCompanyLogin = nil != ssoData;
     }
     
-    NSUUID *remoteID = [transportData[@"id"] UUID];
-    if (self.remoteIdentifier == nil) {
-        self.remoteIdentifier = remoteID;
+    
+    NSDictionary *qualifiedID = [transportData optionalDictionaryForKey:@"qualified_id"];
+    if (qualifiedID != nil) {
+        NSString *domain = [qualifiedID stringForKey:@"domain"];
+        NSUUID *remoteIdentifier = [qualifiedID[@"id"] UUID];
+        
+        if (self.domain == nil) {
+            self.domain = domain;
+        } else {
+            RequireString([self.domain isEqual:domain], "User domain do not match in update: %s vs. %s",
+                          domain.UTF8String,
+                          self.domain.UTF8String);
+        }
+        
+        if (self.remoteIdentifier == nil) {
+            self.remoteIdentifier = remoteIdentifier;
+        } else {
+            RequireString([self.remoteIdentifier isEqual:remoteIdentifier], "User ids do not match in update: %s vs. %s",
+                          remoteIdentifier.transportString.UTF8String,
+                          self.remoteIdentifier.transportString.UTF8String);
+        }
+        
     } else {
-        RequireString([self.remoteIdentifier isEqual:remoteID], "User ids do not match in update: %s vs. %s",
-                      remoteID.transportString.UTF8String,
-                      self.remoteIdentifier.transportString.UTF8String);
+        NSUUID *remoteID = [transportData[@"id"] UUID];
+        if (self.remoteIdentifier == nil) {
+            self.remoteIdentifier = remoteID;
+        } else {
+            RequireString([self.remoteIdentifier isEqual:remoteID], "User ids do not match in update: %s vs. %s",
+                          remoteID.transportString.UTF8String,
+                          self.remoteIdentifier.transportString.UTF8String);
+        }
     }
-
+                                 
     NSString *name = [transportData optionalStringForKey:@"name"];
     if (!self.isAccountDeleted && (name != nil || authoritative)) {
         self.name = name;

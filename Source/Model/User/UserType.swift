@@ -21,6 +21,9 @@ import Foundation
 @objc
 public protocol UserType: NSObjectProtocol, UserConnections {
     
+    /// The domain which the user originates from
+    var domain: String? { get }
+    
     /// The full name
     var name: String? { get }
     
