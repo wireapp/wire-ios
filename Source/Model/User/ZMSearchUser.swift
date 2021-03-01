@@ -162,13 +162,19 @@ public class ZMSearchUser: NSObject, UserType {
             return user?.phoneNumber
         }
     }
+    
+    public var domain: String? {
+        get {
+            return user?.domain
+        }
+    }
 
     public var name: String? {
         get {
             return user != nil ? user?.name : internalName
         }
     }
-    
+        
     public var handle: String? {
         get {
             return user != nil ? user?.handle : internalHandle
