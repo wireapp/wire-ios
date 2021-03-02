@@ -704,6 +704,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -713,6 +714,7 @@
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
@@ -723,6 +725,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -733,6 +736,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireImages-iosTestHost.app/WireImages-iosTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
@@ -761,6 +765,7 @@
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -770,6 +775,7 @@
 				INFOPLIST_FILE = "WireImages-iosTestHost/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.zimages-iosTestHost";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
