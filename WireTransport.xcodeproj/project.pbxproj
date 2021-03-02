@@ -900,9 +900,9 @@
 			buildPhases = (
 				09A218621B790D330076547A /* Sources */,
 				09A218631B790D330076547A /* Frameworks */,
-				87F180FE1D8698B200A6A2CB /* Install frameworks */,
 				09A218641B790D330076547A /* Resources */,
 				BF3A7A701D8C04550034FF40 /* Embed Frameworks */,
+				87F180FE1D8698B200A6A2CB /* Install frameworks */,
 			);
 			buildRules = (
 			);
@@ -1036,7 +1036,6 @@
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
-				"$(BUILT_PRODUCTS_DIR)/WireTransport.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
 				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
 			);
@@ -1216,6 +1215,7 @@
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -1228,6 +1228,7 @@
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
@@ -1276,6 +1277,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -1288,6 +1290,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Source/WireTransport-ios-tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireTransport-tests-host.app/WireTransport-tests-host";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
