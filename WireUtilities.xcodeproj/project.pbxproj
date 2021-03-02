@@ -873,9 +873,9 @@
 			buildPhases = (
 				09F028CA1B78BE2700BADDB6 /* Sources */,
 				09F028CB1B78BE2700BADDB6 /* Frameworks */,
-				F1D567B0207BA3EF00CCDD77 /* Install Frameworks */,
 				09F028CC1B78BE2700BADDB6 /* Resources */,
 				F1D567B4207BA4E800CCDD77 /* Embed Frameworks */,
+				F1D567B0207BA3EF00CCDD77 /* Install Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1012,19 +1012,18 @@
 /* Begin PBXShellScriptBuildPhase section */
 		F1D567B0207BA3EF00CCDD77 /* Install Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
+			buildActionMask = 12;
 			files = (
 			);
 			inputPaths = (
 				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
-				"$(BUILT_PRODUCTS_DIR)/WireUtilities.framework",
 			);
 			name = "Install Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks";
+			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1299,6 +1298,7 @@
 				PRODUCT_NAME = "WireUtilities-Tests";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -1311,6 +1311,7 @@
 				PRODUCT_NAME = "WireUtilities-Tests";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireUtilities-ios-tests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireUtilities-tests-host.app/WireUtilities-tests-host";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
