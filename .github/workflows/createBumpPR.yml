@@ -1,4 +1,4 @@
-name: Create bump PR v0.1.2
+name: Create bump PR v0.1.3
 
 on:
   workflow_dispatch:
@@ -31,10 +31,12 @@ jobs:
             curl --silent https://raw.githubusercontent.com/wireapp/wire-ios-shared-resources/master/Scripts/updateCatfile.swift --output updateCarfile.swift
             chmod +x updateCarfile.swift
             swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile
+            ### TODO: fix the issue that latest version not fit the xcode version. (ios-snapshot-testing)
+            # swift updateCarfile.swift ${{ secrets.DISPATCH_SECRET }} ./Cartfile.private
             rm updateCarfile.swift
             
             # Carthage update
-            ### Hack: carthage update may never done if framework dependency versions does not match. 
+            ### Hack: carthage update may never done if framework dependency versions does not match.
             ### limit the maximum amount of cpu time to 60 sec to stop the update after timeout
             ulimit -t 60; carthage update --no-build
             # Create bump PR
@@ -43,4 +45,4 @@ jobs:
             git commit -m"bump components"
             git push --set-upstream origin $BRANCH
             echo "ℹ️ open bump PR"
-            gh pr create --title "chore: bump components" --body "Bump framework(s) version for:\n${{ github.event.client_payload.repository }}"
+            gh pr create --title "chore: bump components" --body "Bump framework(s) version for: ${{ github.event.client_payload.repository }}"
