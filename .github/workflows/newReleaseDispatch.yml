@@ -17,12 +17,18 @@ jobs:
           -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
 
-          curl -X POST https://api.github.com/repos/wireapp/wire-ios-link-preview/dispatches \
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-images/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
 
-          curl -X POST https://api.github.com/repos/wireapp/wire-ios-link-preview/dispatches \
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-cryptobox/dispatches \
+          -H "Accept: application/vnd.github.v3+json" \
+          -u ${{ secrets.DISPATCH_SECRET }} \
+          --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+
+
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-transport/dispatches \
           -H "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
