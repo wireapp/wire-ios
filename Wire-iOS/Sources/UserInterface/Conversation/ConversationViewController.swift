@@ -81,9 +81,9 @@ final class ConversationViewController: UIViewController {
     }
 
     required init(session: ZMUserSessionInterface,
-                 conversation: ZMConversation,
-                 visibleMessage: ZMMessage?,
-                 zClientViewController: ZClientViewController) {
+                  conversation: ZMConversation,
+                  visibleMessage: ZMMessage?,
+                  zClientViewController: ZClientViewController) {
         self.session = session
         self.conversation = conversation
         self.visibleMessage = visibleMessage
@@ -356,7 +356,7 @@ extension ConversationViewController: InvisibleInputAccessoryViewDelegate {
             distanceFromBottom = max(0, distanceFromBottom)
         }
 
-        let closure: () -> () = {
+        let closure: () -> Void = {
             self.inputBarBottomMargin?.constant = -distanceFromBottom
             self.view.layoutIfNeeded()
         }
