@@ -1377,6 +1377,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -1389,6 +1390,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/Resources/Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireRequestStrategyTestHost.app/WireRequestStrategyTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
