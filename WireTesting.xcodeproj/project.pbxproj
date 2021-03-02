@@ -516,6 +516,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 09F1863F1B6903A4007A3DA6 /* WireTesting.xcconfig */;
 			buildSettings = {
+				GCC_TREAT_WARNINGS_AS_ERRORS = NO;
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireTesting.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 			};
@@ -538,6 +539,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -549,6 +551,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "Tests/WireTesting-iosTests-Bridging-Header.h";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
