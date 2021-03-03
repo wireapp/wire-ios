@@ -62,7 +62,7 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
                     let popover = videoEditor.popoverPresentationController
                     popover?.sourceView = self.parent?.view
 
-                    /// arrow point to camera button.
+                    // Arrow point to camera button.
                     popover?.permittedArrowDirections = .down
 
                     popover?.sourceRect = self.photoButton.popoverSourceRect(from: self)
@@ -175,13 +175,12 @@ extension ConversationInputBarViewController: CameraKeyboardViewControllerDelega
     private func executeWithCameraRollPermission(_ closure: @escaping (_ success: Bool) -> Void) {
         PHPhotoLibrary.requestAuthorization { status in
             DispatchQueue.main.async {
-            switch status {
-            case .authorized:
-                closure(true)
-            default:
-                closure(false)
-                break
-            }
+                switch status {
+                case .authorized:
+                    closure(true)
+                default:
+                    closure(false)
+                }
             }
         }
     }

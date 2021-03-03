@@ -80,18 +80,18 @@ enum StatusMessageType: Int, CaseIterable {
 
     private var localizationKeySuffix: String? {
         switch self {
-            case .mention:
-                return "mention"
-            case .reply:
-                return "reply"
-            case .missedCall:
-                return "missedcall"
-            case .knock:
-                return "knock"
-            case .text:
-                return "generic_message"
-            default:
-                return nil
+        case .mention:
+            return "mention"
+        case .reply:
+            return "reply"
+        case .missedCall:
+            return "missedcall"
+        case .knock:
+            return "knock"
+        case .text:
+            return "generic_message"
+        default:
+            return nil
         }
     }
 
@@ -249,7 +249,7 @@ final class ConversationStatusStyle {
     }
 }
 
-fileprivate let statusStyle = ConversationStatusStyle()
+private let statusStyle = ConversationStatusStyle()
 
 extension ConversationStatusMatcher {
     static var regularStyle: [NSAttributedString.Key: AnyObject] {
@@ -355,7 +355,7 @@ final class SecurityAlertMatcher: ConversationStatusMatcher {
         }
 
         let textItem = (message as? ConversationCompositeMessage)?.compositeMessageData?.items.first(where: {
-            if case .text(_) = $0 {
+            if case .text = $0 {
                 return true
             }
             return false
