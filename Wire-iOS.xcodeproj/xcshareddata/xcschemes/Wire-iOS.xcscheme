@@ -53,6 +53,9 @@
                   Identifier = "AVURLAsset_conversionTests">
                </Test>
                <Test
+                  Identifier = "ArticleViewTests/testArticleViewWithImageHavingExactSize()">
+               </Test>
+               <Test
                   Identifier = "BackgroundViewControllerTests/testThatItShowsUserWithImage()">
                </Test>
                <Test
@@ -60,6 +63,12 @@
                </Test>
                <Test
                   Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
+               </Test>
+               <Test
+                  Identifier = "ConversationVideoMessageCellTests/testFailedUploadCell_fromThisDevice()">
+               </Test>
+               <Test
+                  Identifier = "ConversationVideoMessageCellTests/testUploadedCell_fromOtherUser()">
                </Test>
                <Test
                   Identifier = "ImageMessageViewTests/testThatItRendersPortraitImage()">
