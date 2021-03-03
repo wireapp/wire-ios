@@ -98,13 +98,13 @@ final class ConversationListViewModel: NSObject {
             static func == (lhs: ConversationListViewModel.Section.Kind, rhs: ConversationListViewModel.Section.Kind) -> Bool {
                 switch (lhs, rhs) {
                 case (.conversations, .conversations):
-                    fallthrough
+                    return true
                 case (.contactRequests, .contactRequests):
-                    fallthrough
+                    return true
                 case (.contacts, .contacts):
-                    fallthrough
+                    return true
                 case (.groups, .groups):
-                    fallthrough
+                    return true
                 case (.favorites, .favorites):
                     return true
                 case (.folder(let lhsLabel), .folder(let rhsLabel)):
@@ -179,6 +179,10 @@ final class ConversationListViewModel: NSObject {
     }
 
     var folderEnabled: Bool {
+        get {
+            return state.folderEnabled
+        }
+
         set {
             guard newValue != state.folderEnabled else { return }
 
@@ -187,10 +191,6 @@ final class ConversationListViewModel: NSObject {
             updateAllSections()
             delegate?.listViewModelShouldBeReloaded()
             delegateFolderEnableState(newState: state)
-        }
-
-        get {
-            return state.folderEnabled
         }
     }
 
@@ -492,10 +492,8 @@ final class ConversationListViewModel: NSObject {
     }
 
     private func sectionNumber(for kind: Section.Kind) -> Int? {
-        for (index, section) in sections.enumerated() {
-            if section.kind == kind {
-                return index
-            }
+        for (index, section) in sections.enumerated() where section.kind == kind {
+            return index
         }
 
         return nil
@@ -691,7 +689,7 @@ final class ConversationListViewModel: NSObject {
 
 // MARK: - ZMUserObserver
 
-fileprivate let log = ZMSLog(tag: "ConversationListViewModel")
+private let log = ZMSLog(tag: "ConversationListViewModel")
 
 // MARK: - ConversationDirectoryObserver
 

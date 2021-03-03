@@ -95,7 +95,7 @@ final class SettingsPropertyFactory {
         if let user = self.selfUser as? ZMUser, let userSession = ZMUserSession.shared() {
             user.fetchMarketingConsent(in: userSession, completion: { [weak self] result in
                 switch result {
-                case .failure(_):
+                case .failure:
                     self?.marketingConsent = .none
                 case .success(let result):
                     self?.marketingConsent = SettingsPropertyValue.bool(value: result)
@@ -307,13 +307,13 @@ final class SettingsPropertyFactory {
 
             let setAction: SetAction = { [unowned self] _, value in
                 switch value {
-                    case .number(let number):
-                        self.userSession?.perform {
-                            self.userSession?.isNotificationContentHidden = number.boolValue
-                        }
+                case .number(let number):
+                    self.userSession?.perform {
+                        self.userSession?.isNotificationContentHidden = number.boolValue
+                    }
 
-                    default:
-                        throw SettingsPropertyError.WrongValue("Incorrect type: \(value) for key \(propertyName)")
+                default:
+                    throw SettingsPropertyError.WrongValue("Incorrect type: \(value) for key \(propertyName)")
                 }
             }
 
