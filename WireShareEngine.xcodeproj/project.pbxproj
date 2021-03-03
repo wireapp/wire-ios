@@ -613,6 +613,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
 		};
@@ -625,6 +626,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_OBJC_BRIDGING_HEADER = "";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireShareEngineTestHost.app/WireShareEngineTestHost";
+				VALIDATE_WORKSPACE = YES;
 			};
 			name = Release;
 		};
