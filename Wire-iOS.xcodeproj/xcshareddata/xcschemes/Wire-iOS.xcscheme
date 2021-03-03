@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1140"
+   LastUpgradeVersion = "1240"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -60,6 +60,9 @@
                </Test>
                <Test
                   Identifier = "BackgroundViewControllerTests/testThatItUpdatesForUserImageUpdate_fromAccentColor()">
+               </Test>
+               <Test
+                  Identifier = "ImageMessageViewTests/testThatItRendersPortraitImage()">
                </Test>
                <Test
                   Identifier = "ShareViewControllerTests/testThatItRendersCorrectlyShareViewController_FileMessage()">
