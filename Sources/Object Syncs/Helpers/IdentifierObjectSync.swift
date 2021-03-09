@@ -24,6 +24,8 @@ public protocol IdentifierObjectSyncTranscoder: class {
     associatedtype T: Hashable
     
     var fetchLimit: Int { get }
+
+    var isAvailable: Bool { get }
     
     func request(for identifiers: Set<T>) -> ZMTransportRequest?
     
@@ -34,11 +36,16 @@ public protocol IdentifierObjectSyncTranscoder: class {
 /// Class for syncing objects based on an identifier.
 
 public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: NSObject, ZMRequestGenerator {
-    
+
     fileprivate let managedObjectContext: NSManagedObjectContext
     fileprivate var pending: Set<Transcoder.T> = Set()
     fileprivate var downloading: Set<Transcoder.T> = Set()
     fileprivate weak var transcoder: Transcoder?
+
+    var isAvailable: Bool {
+        transcoder?.isAvailable ?? false
+
+    }
     
     /// - parameter managedObjectContext: Managed object context on which the sync will operate
     /// - parameter transcoder: Transcoder which which will create requests & parse responses

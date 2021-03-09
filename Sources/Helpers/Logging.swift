@@ -26,4 +26,8 @@ enum Logging {
 
     static let messageProcessing = ZMSLog(tag: "Message Processing")
 
+    /// For logs related to network requests.
+
+    static let network = ZMSLog(tag: "Network")
+
 }
