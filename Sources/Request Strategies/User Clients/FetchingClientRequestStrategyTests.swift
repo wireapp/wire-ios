@@ -18,9 +18,10 @@
 
 import Foundation
 import WireTesting
-import WireRequestStrategy
 import WireDataModel
 import WireCryptobox
+
+@testable import WireRequestStrategy
 
 class FetchClientRequestStrategyTests : MessagingTestBase {
     
@@ -51,7 +52,7 @@ class FetchClientRequestStrategyTests : MessagingTestBase {
     
 }
 
-// MARK: Fetching client based on needsToBeUpdatedFromBackend flag
+// MARK: - Fetching client based on needsToBeUpdatedFromBackend flag
 
 extension FetchClientRequestStrategyTests {
     
@@ -118,11 +119,160 @@ extension FetchClientRequestStrategyTests {
     
 }
 
-// MARK: Fetching Other Users Clients
+// MARK: - Fetching clients in batches
+
+extension FetchClientRequestStrategyTests {
+
+    func testThatItCreatesABatchRequest_WhenUserClientNeedsToBeUpdatedFromBackend_AndDomainIsAvailble() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            self.otherUser.domain = "example.com"
+
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+
+            // THEN
+            XCTAssertEqual(self.sut.nextRequest()?.path, "/users/list-clients")
+        }
+    }
+
+    func testThatItUpdatesTheClient_WhenReceivingTheBatchResponse() {
+        var client: UserClient!
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            let payload = [
+                "example.com": [clientUUID.transportString(): [
+                    Payload.UserClient(id: clientUUID.transportString(),
+                                       deviceClass: "phone")
+                    ]]
+            ]
+            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            self.otherUser.domain = "example.com"
+
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            let request = self.sut.nextRequest()
+            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                               httpStatus: 200,
+                                               transportSessionError: nil)
+
+            request?.complete(with: response)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertEqual(client.deviceClass, .phone)
+        }
+    }
+
+    func testThatItDeletesLocalClient_WhenNotIncludedInBatchResponse() {
+        var client: UserClient!
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let clientUUID = UUID()
+            let userID = self.otherUser.remoteIdentifier.transportString()
+            let payload: Payload.UserClientByDomain = [
+                "example.com": [userID: []]
+            ]
+            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            self.otherUser.domain = "example.com"
+
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            let request = self.sut.nextRequest()
+            request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                                        httpStatus: 200,
+                                                        transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(client.isZombieObject)
+        }
+    }
+
+    func testThatItMarksNewClientsAsMissingAndIgnored_WhenReceivingTheBatchResponse() {
+        var existingClient: UserClient!
+        let newClientID = UUID()
+
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let userID = self.otherUser.remoteIdentifier!
+            let payload = [
+                "example.com": [userID.transportString(): [
+                    Payload.UserClient(id: newClientID.transportString(),
+                                       deviceClass: "phone")
+                    ]]
+            ]
+            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            existingClient = UserClient.fetchUserClient(withRemoteId: UUID().transportString(), forUser: self.otherUser, createIfNeeded: true)!
+            self.otherUser.domain = "example.com"
+
+            // WHEN
+            existingClient.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: existingClient))
+            let request = self.sut.nextRequest()
+            request?.complete(with: ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                                        httpStatus: 200,
+                                                        transportSessionError: nil))
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        // THEN
+        syncMOC.performGroupedBlockAndWait {
+            let newClient = UserClient.fetchUserClient(withRemoteId: newClientID.transportString(), forUser: self.otherUser, createIfNeeded: false)!
+            XCTAssertFalse(self.selfClient.trustedClients.contains(newClient))
+            XCTAssertTrue(self.selfClient.ignoredClients.contains(newClient))
+            XCTAssertTrue(self.selfClient.missingClients!.contains(newClient))
+        }
+    }
+
+    func testThatItDeactivatesBatchFetchingAndSwitchesToFallback_WhenTheEndpointIsNotAvailable() {
+        var client: UserClient!
+        let clientUUID = UUID()
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(),
+                                                forUser: self.otherUser,
+                                                createIfNeeded: true)!
+            self.otherUser.domain = "example.com"
+
+            // WHEN
+            client.needsToBeUpdatedFromBackend = true
+            self.sut.objectsDidChange(Set(arrayLiteral: client))
+            let request = self.sut.nextRequest()
+            let response = ZMTransportResponse(payload: nil,
+                                               httpStatus: 404,
+                                               transportSessionError: nil)
+
+            request?.complete(with: response)
+        }
+        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
+
+        syncMOC.performGroupedBlockAndWait {
+            // THEN
+            XCTAssertEqual(self.sut.nextRequest()?.path, "/users/\(self.otherUser.remoteIdentifier!.transportString())/clients/\(clientUUID.transportString())")
+        }
+    }
+
+}
+
+// MARK: - Fetching Other Users Clients
 extension FetchClientRequestStrategyTests {
     
     func payloadForOtherClients(_ identifiers: String...) -> ZMTransportData {
-        return identifiers.reduce([]) { $0 + [["id": $1, "class" : "phone"]] } as ZMTransportData
+        return identifiers.reduce([]) { $0 + [["id": $1,
+                                               "class": "phone"]] } as ZMTransportData
     }
     
     func testThatItCreatesOtherUsersClientsCorrectly() {
@@ -130,12 +280,12 @@ extension FetchClientRequestStrategyTests {
         let (firstIdentifier, secondIdentifier) = (UUID.create().transportString(), UUID.create().transportString())
         let payload = [
             [
-                "id" : firstIdentifier,
-                "class" : "phone"
+                "id": firstIdentifier,
+                "class": "phone",
             ],
             [
                 "id" : secondIdentifier,
-                "class": "tablet"
+                "class": "tablet",
             ]
         ]
         
@@ -257,7 +407,7 @@ extension FetchClientRequestStrategyTests {
     }
 }
 
-// MARK: fetching other user's clients / RemoteIdentifierObjectSync
+// MARK: - Fetching other user's clients / RemoteIdentifierObjectSync
 extension FetchClientRequestStrategyTests {
     
     func testThatItDoesNotDeleteAnObjectWhenResponseContainsRemoteID() {
@@ -267,7 +417,7 @@ extension FetchClientRequestStrategyTests {
         self.syncMOC.performGroupedBlockAndWait {
             let user = self.otherClient.user
             user?.fetchUserClients()
-            payload = [["id" : self.otherClient.remoteIdentifier!]] as NSArray
+            payload = [["id" : self.otherClient.remoteIdentifier!, "class": "phone"]] as NSArray
         }
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.2))
@@ -292,7 +442,7 @@ extension FetchClientRequestStrategyTests {
         let remoteIdentifier = "aabbccdd0011"
         self.syncMOC.performGroupedBlockAndWait {
             self.otherUser.fetchUserClients()
-            payload = [["id" : remoteIdentifier]] as NSArray
+            payload = [["id" : remoteIdentifier, "class": "phone"]] as NSArray
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
@@ -320,7 +470,7 @@ extension FetchClientRequestStrategyTests {
             client = self.createClient(user: self.otherUser)
             XCTAssertFalse(client.hasSessionWithSelfClient)
             self.otherUser.fetchUserClients()
-            payload = [["id" : client.remoteIdentifier!]] as NSArray
+            payload = [["id" : client.remoteIdentifier!, "class": "phone"]] as NSArray
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.2))
         let response = ZMTransportResponse(payload: payload as ZMTransportData, httpStatus: 200, transportSessionError: nil)
@@ -348,7 +498,7 @@ extension FetchClientRequestStrategyTests {
         self.syncMOC.performGroupedBlockAndWait {
             sessionIdentifier = EncryptionSessionIdentifier(userId: self.otherUser!.remoteIdentifier.uuidString, clientId: remoteIdentifier)
             self.otherUser.fetchUserClients()
-            payload = [["id" : remoteIdentifier]] as NSArray
+            payload = [["id" : remoteIdentifier, "class": "phone"]] as NSArray
             self.selfClient.keysStore.encryptionContext.perform {
                 try! $0.createClientSession(sessionIdentifier, base64PreKeyString: self.selfClient.keysStore.lastPreKey()) // just a bogus key is OK
             }
@@ -374,7 +524,7 @@ extension FetchClientRequestStrategyTests {
         
         // GIVEN
         let remoteID = "otherRemoteID"
-        let payload: [[String:Any]] = [["id": remoteID]]
+        let payload: [[String:Any]] = [["id": remoteID, "class": "phone"]]
         self.syncMOC.performGroupedBlockAndWait {
             XCTAssertNotEqual(self.otherClient.remoteIdentifier, remoteID)
             let user = self.otherClient.user

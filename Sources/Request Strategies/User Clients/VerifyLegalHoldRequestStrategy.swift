@@ -75,6 +75,10 @@ extension VerifyLegalHoldRequestStrategy: IdentifierObjectSyncTranscoder {
     public var fetchLimit: Int {
         return 1
     }
+
+    public var isAvailable: Bool {
+        return true
+    }
     
     public func request(for identifiers: Set<ZMConversation>) -> ZMTransportRequest? {
         guard let conversationID = identifiers.first?.remoteIdentifier, identifiers.count == 1,

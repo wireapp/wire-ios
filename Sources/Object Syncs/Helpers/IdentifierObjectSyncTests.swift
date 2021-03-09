@@ -25,6 +25,8 @@ class MockTranscoder: IdentifierObjectSyncTranscoder {
     typealias T = UUID
     
     var fetchLimit: Int = 1
+
+    var isAvailable: Bool = true
     
     var lastRequestedIdentifiers: Set<UUID> = Set()
     func request(for identifiers: Set<UUID>) -> ZMTransportRequest? {
