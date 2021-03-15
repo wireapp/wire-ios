@@ -62,7 +62,7 @@ enum Payload {
         let creationDate: Date?
         let label: String?
         let location: Location?
-        let deviceClass: String
+        let deviceClass: String?
         let deviceModel: String?
 
         init(id: String,

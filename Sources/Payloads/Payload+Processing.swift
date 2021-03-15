@@ -22,7 +22,10 @@ extension Payload.UserClient {
     func update(_ client: WireDataModel.UserClient) {
         client.needsToBeUpdatedFromBackend = false
 
-        guard client.user?.isSelfUser == false else { return }
+        guard
+            client.user?.isSelfUser == false,
+            let deviceClass = deviceClass
+        else { return }
 
         client.deviceClass = DeviceClass(rawValue: deviceClass)
     }
