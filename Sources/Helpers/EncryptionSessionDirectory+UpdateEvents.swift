@@ -71,6 +71,7 @@ extension EncryptionSessionsDirectory {
         if createdNewSession {
             selfUser.selfClient()?.decrementNumberOfRemainingKeys()
             selfUser.selfClient()?.addNewClientToIgnored(senderClient)
+            selfUser.selfClient()?.updateSecurityLevelAfterDiscovering(Set(arrayLiteral: senderClient))
         }
         
         return decryptedEvent
