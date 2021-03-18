@@ -21,13 +21,13 @@ import Foundation
 extension NSPersistentStoreCoordinator {
     
     /// Creates a filesystem-based persistent store at the given url with the given model
-    convenience init(
+    convenience init (
         storeFile: URL,
         accountIdentifier: UUID?,
         applicationContainer: URL,
         model: NSManagedObjectModel,
-        startedMigrationCallback: (() -> Void)?)
-    {
+        startedMigrationCallback: (() -> Void)?) throws {
+
         self.init(managedObjectModel: model)
         var migrationStarted = false
         func notifyMigrationStarted() -> () {
@@ -46,15 +46,21 @@ extension NSPersistentStoreCoordinator {
         
         let containingFolder = storeFile.deletingLastPathComponent()
         FileManager.default.createAndProtectDirectory(at: containingFolder)
-        self.addPersistentStore(at: storeFile, model: model, startedMigrationCallback: notifyMigrationStarted)
+
+        try self.addPersistentStore(at: storeFile,
+                                    model: model,
+                                    startedMigrationCallback: notifyMigrationStarted)
     }
-    
-    private func addPersistentStore(at storeURL: URL, model: NSManagedObjectModel, startedMigrationCallback: ()->()) {
-        if NSPersistentStoreCoordinator.shouldMigrateStoreToNewModelVersion(at: storeURL, model: model) {
+
+    private func addPersistentStore(at storeURL: URL,
+                                    model: NSManagedObjectModel,
+                                    startedMigrationCallback: () -> Void) throws {
+        if NSPersistentStoreCoordinator.shouldMigrateStoreToNewModelVersion(at: storeURL,
+                                                                            model: model) {
             startedMigrationCallback()
-            self.migrateAndAddPersistentStore(url: storeURL)
+            try self.migrateAndAddPersistentStore(url: storeURL)
         } else {
-            self.addPersistentStoreWithNoMigration(at: storeURL)
+            try self.addPersistentStoreWithNoMigration(at: storeURL)
         }
     }
     
@@ -73,43 +79,13 @@ extension NSPersistentStoreCoordinator {
     }
     
     /// Adds the persistent store
-    fileprivate func addPersistentStoreWithNoMigration(at url: URL) {
+    fileprivate func addPersistentStoreWithNoMigration(at url: URL) throws {
         let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: false)
-        let addStore = { _ = try self.addPersistentStore(ofType: NSSQLiteStoreType, configurationName: nil, at: url, options: options) }
-        do {
-            // We try to add the store on disk
-            try addStore()
-        } catch {
-            do {
-                // In case we fail we remove the store and create a new one
-                removePersistentStoreFromDisk(at: url)
-                try addStore()
-            } catch {
-                fatal("Can not create Core Data storage at \(url). \(error)")
-            }
-        }
-    }
-    
-    /// Deleted persistent store and related files
-    fileprivate func removePersistentStoreFromDisk(at url: URL) {
-        // Enumerate all files in the store directory and find the ones that match the store name.
-        // We need to do this, because the store consists of several files.
-        let storeName = url.lastPathComponent
-        guard let values = try? url.resourceValues(forKeys: [.parentDirectoryURLKey]) else { return }
-        guard let storeFolder = values.parentDirectory else { return }
-        let fm = FileManager.default
-        guard let fileURLs = fm.enumerator(at: storeFolder, includingPropertiesForKeys: [.nameKey], options: .skipsSubdirectoryDescendants, errorHandler: nil) else { return }
-        
-        for file in fileURLs {
-            guard let url = file as? URL else { continue }
-            guard let values = try? url.resourceValues(forKeys: [.nameKey]) else { continue }
-            guard let name = values.name else { continue }
-            if name.hasPrefix(storeName) || name.hasPrefix(".\(storeName)_") {
-                try? fm.removeItem(at: url)
-            }
-        }
-    }
-    
+        try self.addPersistentStore(ofType: NSSQLiteStoreType,
+                                    configurationName: nil,
+                                    at: url,
+                                    options: options)
+    }    
 }
 
 extension NSPersistentStoreCoordinator {
@@ -127,10 +103,6 @@ extension NSPersistentStoreCoordinator {
         guard let oldModelVersion = metadata.managedObjectModelVersionIdentifier else {
             return false // if we have no version, we better wipe
         }
-        
-        // this is used to avoid migrating internal builds when we update the DB internally between releases
-        let isSameAsCurrent = model.firstVersionIdentifier == oldModelVersion
-        guard !isSameAsCurrent else { return false }
         
         // Between non-E2EE and E2EE we should not migrate the DB for privacy reasons.
         // We know that the old mom is a version supporting E2EE when it
@@ -157,24 +129,13 @@ extension NSPersistentStoreCoordinator {
     }
     
     /// Performs a migration, crashes if failed
-    fileprivate func migrateAndAddPersistentStore(url: URL) {
-        
-        let metadata = NSPersistentStoreCoordinator.metadataForStore(at: url)
+    fileprivate func migrateAndAddPersistentStore(url: URL) throws {
         let options = NSPersistentStoreCoordinator.persistentStoreOptions(supportsMigration: true)
-        do {
-            _ = try self.addPersistentStore(
-                    ofType: NSSQLiteStoreType,
-                    configurationName: nil,
-                    at: url,
-                    options: options)
-        } catch let error {
-            let oldModelVersion = metadata.managedObjectModelVersionIdentifier ?? "n/a"
-            let currentModelVersion = self.managedObjectModel.firstVersionIdentifier
-            fatal("Unable to perform migration and create SQLite Core Data store. " +
-                "Old model version: \(oldModelVersion), current version \(currentModelVersion) " +
-                "with error: \(error.localizedDescription)"
-            )
-        }
+        _ = try self.addPersistentStore(
+            ofType: NSSQLiteStoreType,
+            configurationName: nil,
+            at: url,
+            options: options)
     }
  
     /// Returns the set of options that need to be passed to the persistent sotre

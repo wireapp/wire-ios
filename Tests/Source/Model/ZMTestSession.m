@@ -182,6 +182,7 @@
                                                               applicationContainer:self.containerURL
                                                                      dispatchGroup:self.dispatchGroup
                                                           startedMigrationCallback:nil
+                                                    databaseLoadingFailureCallBack:nil
                                                                  completionHandler:^(ManagedObjectContextDirectory * directory) {
         self.contextDirectory = directory;
     }];
