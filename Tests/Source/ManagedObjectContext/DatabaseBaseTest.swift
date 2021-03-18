@@ -75,20 +75,22 @@ import WireTesting
     }
     
     /// Create storage stack at a legacy location
-    @objc public func createLegacyStore(filePath: URL, customization: ((ManagedObjectContextDirectory)->())? = nil) {
-        
-        NSPersistentStoreCoordinator.create(
-            storeFile: filePath,
-            applicationContainer: applicationContainer)
-        { (psc) in
-            let directory = ManagedObjectContextDirectory(
-                persistentStoreCoordinator: psc,
-                accountDirectory: filePath.deletingLastPathComponent(),
-                applicationContainer: self.applicationContainer)
-            MemoryReferenceDebugger.register(directory)
-            customization?(directory)
+    @objc public func createLegacyStore(filePath: URL,
+                                        customization: ((ManagedObjectContextDirectory)->())? = nil) {
+
+        guard let persistentStoreCoordinator = try? NSPersistentStoreCoordinator.create(
+                storeFile: filePath,
+                applicationContainer: applicationContainer) else {
+            return
         }
-        
+
+        let directory = ManagedObjectContextDirectory(
+            persistentStoreCoordinator: persistentStoreCoordinator,
+            accountDirectory: filePath.deletingLastPathComponent(),
+            applicationContainer: self.applicationContainer)
+        MemoryReferenceDebugger.register(directory)
+        customization?(directory)
+
         StorageStack.reset()
         self.createDummyExternalSupportFileForDatabase(storeFile: filePath)
     }
