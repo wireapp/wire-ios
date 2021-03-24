@@ -104,6 +104,10 @@ extension NSPersistentStoreCoordinator {
             return false // if we have no version, we better wipe
         }
         
+        // this is used to avoid migrating internal builds when we update the DB internally between releases
+        let isSameAsCurrent = model.firstVersionIdentifier == oldModelVersion
+        guard !isSameAsCurrent else { return false }
+        
         // Between non-E2EE and E2EE we should not migrate the DB for privacy reasons.
         // We know that the old mom is a version supporting E2EE when it
         // contains the 'ClientMessage' entity or is at least of version 1.25
