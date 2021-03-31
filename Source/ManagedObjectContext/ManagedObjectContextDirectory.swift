@@ -26,6 +26,7 @@ public class ManagedObjectContextDirectory: NSObject {
          accountDirectory: URL,
          applicationContainer: URL,
          dispatchGroup: ZMSDispatchGroup? = nil) {
+        self.storeCoordinator = persistentStoreCoordinator
         self.uiContext = ManagedObjectContextDirectory.createUIManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator, dispatchGroup: dispatchGroup)
         self.syncContext = ManagedObjectContextDirectory.createSyncManagedObjectContext(persistentStoreCoordinator: persistentStoreCoordinator,
                                                                                         accountDirectory: accountDirectory,
@@ -50,6 +51,8 @@ public class ManagedObjectContextDirectory: NSObject {
     /// sync context.
     fileprivate(set) public var searchContext: NSManagedObjectContext!
 
+    fileprivate var storeCoordinator: NSPersistentStoreCoordinator!
+
     deinit {
         self.tearDown()
     }
@@ -69,6 +72,16 @@ extension ManagedObjectContextDirectory {
 }
 
 extension ManagedObjectContextDirectory {
+
+    func closeStores() {
+        do {
+        try storeCoordinator.persistentStores.forEach({
+            try self.storeCoordinator.remove($0)
+        })
+        } catch let error {
+            Logging.localStorage.error("Error while closing persistent store: \(error)")
+        }
+    }
     
     func tearDown() {
         // this will set all contextes to nil
@@ -82,6 +95,7 @@ extension ManagedObjectContextDirectory {
         self.uiContext = nil
         self.syncContext = nil
         self.searchContext = nil
+        self.closeStores()
     }
 }
 
