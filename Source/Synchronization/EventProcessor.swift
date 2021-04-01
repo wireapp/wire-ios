@@ -64,10 +64,7 @@ class EventProcessor: UpdateEventProcessor {
         self.eventDecoder = EventDecoder(eventMOC: eventContext, syncMOC: syncContext)
         self.eventProcessingTracker = eventProcessingTracker
         self.eventBuffer = ZMUpdateEventsBuffer(updateEventProcessor: self)
-    }
-
-    deinit {
-        eventContext.tearDownEventMOC()
+        
     }
     
     // MARK: Methods
