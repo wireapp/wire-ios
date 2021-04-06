@@ -30,7 +30,7 @@
     if (self.isTransient || self.type == ZMUpdateEventTypeUserConnection) {
         return nil;
     }
-    return [self.payload dateFor:@"time"];
+    return [self.payload optionalDateForKey:@"time"];
 }
 
 - (NSUUID *)senderUUID
