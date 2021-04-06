@@ -28,6 +28,7 @@ public protocol ConversationLike: NSObjectProtocol {
     var teamRemoteIdentifier: UUID? { get }
     
     func localParticipantsContain(user: UserType) -> Bool
+    var localParticipantsCount: Int { get }
 
     var displayName: String { get }
     var connectedUserType: UserType? { get }
@@ -39,6 +40,11 @@ public protocol ConversationLike: NSObjectProtocol {
     func verifyLegalHoldSubjects()
 
     var sortedActiveParticipantsUserTypes: [UserType] { get }
+    
+    var lastMessage: ZMConversationMessage? { get }
+    var firstUnreadMessage: ZMConversationMessage? { get }
+    
+    var areServicesPresent: Bool { get }
 }
 
 // Since ConversationLike must have @objc signature(@objc UserType has a ConversationLike property), create another protocol to abstract Swift only properties
@@ -56,6 +62,10 @@ public protocol SwiftConversationLike {
 }
 
 extension ZMConversation: ConversationLike {
+    public var localParticipantsCount: Int {
+        return localParticipants.count
+    }
+    
     public func localParticipantsContain(user: UserType) -> Bool {
         guard let user = user as? ZMUser else { return false }
         return localParticipants.contains(user)

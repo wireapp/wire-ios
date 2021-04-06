@@ -622,7 +622,7 @@ extension ZMConversation {
     
     /// Returns a timestamp that is shortly (as short as possible) after the given message,
     /// or the last modified date if the message is nil
-    fileprivate func timestamp(after: ZMMessage?) -> Date? {
+    fileprivate func timestamp(after: ZMConversationMessage?) -> Date? {
         guard let timestamp = after?.serverTimestamp ?? self.lastModifiedDate else { return nil }
         return timestamp.nextNearestTimestamp
     }

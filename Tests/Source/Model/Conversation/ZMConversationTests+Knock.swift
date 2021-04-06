@@ -29,7 +29,7 @@ final class ZMConversationTests_Knock: ZMConversationTestsBase {
     
             // when
             let knock = try? conversation?.appendKnock()
-            let msg = conversation?.lastMessage
+            let msg = conversation?.lastMessage as! ZMMessage
     
             // then
             XCTAssertEqual(knock as? ZMMessage, msg)

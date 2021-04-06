@@ -370,7 +370,7 @@ extension ClientMessageTests {
 
         // then
         XCTAssertNil(sut)
-        XCTAssertEqual(conversation.lastMessage, existingMessage)
+        XCTAssertEqual(conversation.lastMessage as! ZMMessage, existingMessage)
     }
     
     func testThatItDoesNotCreateMessageFromAvailabilityMessage() {
