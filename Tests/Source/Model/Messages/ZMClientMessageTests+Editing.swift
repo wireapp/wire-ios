@@ -613,9 +613,9 @@ extension ZMClientMessageTests_Editing {
         XCTAssertTrue(message.reactions.isEmpty)
         XCTAssertEqual(conversation.allMessages.count, 1)
         
-        let editedMessage = conversation.lastMessage
-        XCTAssertTrue(editedMessage!.reactions.isEmpty)
-        XCTAssertEqual(editedMessage!.textMessageData?.messageText, "Hello")
+        let editedMessage = conversation.lastMessage as! ZMMessage
+        XCTAssertTrue(editedMessage.reactions.isEmpty)
+        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
     }
     
     func testThatItClearsReactionsWhenAMessageIsEditedRemotely() {
@@ -646,9 +646,9 @@ extension ZMClientMessageTests_Editing {
         
         // then
         XCTAssertTrue(message.reactions.isEmpty)
-        let editedMessage = conversation.lastMessage
-        XCTAssertTrue(editedMessage!.reactions.isEmpty)
-        XCTAssertEqual(editedMessage!.textMessageData?.messageText, "Hello")
+        let editedMessage = conversation.lastMessage as! ZMMessage
+        XCTAssertTrue(editedMessage.reactions.isEmpty)
+        XCTAssertEqual(editedMessage.textMessageData?.messageText, "Hello")
     }
     
     func testThatMessageNonPersistedIdentifierDoesNotChangeAfterEdit() {
