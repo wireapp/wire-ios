@@ -41,6 +41,9 @@ public protocol UserType: NSObjectProtocol, UserConnections {
 
     /// Whether this is the self user
     var isSelfUser: Bool { get }
+
+    /// Whether this user belongs to a different domain than the self user
+    var isFederated: Bool { get }
     
     /// The availability of the user
     var availability: Availability { get set }
