@@ -67,6 +67,14 @@ extension ZMUser: UserType {
         return isTrusted && selfUser.isTrusted && !clients.isEmpty
     }
 
+    public var isFederated: Bool {
+        guard let selfUser = managedObjectContext.map(ZMUser.selfUser) else {
+            return false
+        }
+
+        return selfUser.isFederating(with: self)
+    }
+
     // MARK: - Conversation Roles
 
     public func canManagedGroupRole(of user: UserType, conversation: ZMConversation) -> Bool {

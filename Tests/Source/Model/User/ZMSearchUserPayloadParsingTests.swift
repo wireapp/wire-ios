@@ -20,13 +20,19 @@ import XCTest
 @testable import WireDataModel
 
 class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
+
     func testThatItParsesTheBasicPayload() {
         // given
         let uuid = UUID()
+        let domain = "foo.bar"
         let payload: [String: Any] = ["name": "A user that was found",
                                       "handle": "@user",
                                       "accent_id": 5,
-                                      "id": uuid.transportString()]
+                                      "id": uuid.transportString(),
+                                      "qualified_id": [
+                                        "id": uuid.transportString(),
+                                        "domain": domain
+                                      ]]
         
         // when
         let user = ZMSearchUser.searchUser(from: payload, contextProvider: self)!
@@ -34,12 +40,13 @@ class ZMSearchUserPayloadParsingTests: ZMBaseManagedObjectTest {
         // then
         XCTAssertEqual(user.name, "A user that was found")
         XCTAssertEqual(user.handle, "@user")
+        XCTAssertEqual(user.domain, domain)
         XCTAssertEqual(user.remoteIdentifier, uuid)
         XCTAssertEqual(user.accentColorValue, ZMAccentColor.init(rawValue: 5))
         XCTAssertFalse(user.isServiceUser)
         XCTAssertTrue(user.canBeConnected)
     }
-    
+
     func testThatItParsesService_ProviderIdentifier() throws {
         // given
         let uuid = UUID()
