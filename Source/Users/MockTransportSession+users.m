@@ -68,6 +68,11 @@
     else if ([request matchesWithPath:@"/users/handles" method:ZMMethodPOST]) {
         return [self processUserHandleAvailabilityRequest:request.payload];
     }
+    else if ([request matchesWithPath:@"/users/by-handle/*/*" method:ZMMethodGET]) {
+        return [self processFederatedUserHandleRequest:[request RESTComponentAtIndex:2]
+                                                handle:[request RESTComponentAtIndex:3]
+                                                  path:request.path];
+    }
     else if ([request matchesWithPath:@"/users/*/prekeys" method:ZMMethodGET]) {
         return [self processSingleUserPreKeysRequest:[request RESTComponentAtIndex:1]];
     }
@@ -412,6 +417,7 @@
 }
 
 // MARK: - Handles
+
 - (ZMTransportResponse *)processUserHandleRequest:(NSString *)handle path:(NSString *)path;
 {
     NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
@@ -421,6 +427,33 @@
     NSInteger statusCode;
 
     if(users.count > 0) {
+        statusCode = 200;
+        MockUser *user = users[0];
+        id <ZMTransportData> payload = [user transportData];
+        payloadData = [NSJSONSerialization dataWithJSONObject:payload options:0 error:nil];
+    }
+    else {
+        statusCode = 404;
+    }
+
+    NSHTTPURLResponse *urlResponse = [[NSHTTPURLResponse alloc] initWithURL:[NSURL URLWithString:path] statusCode:statusCode HTTPVersion:nil headerFields:@{@"Content-Type": @"application/json"}];
+    return [[ZMTransportResponse alloc] initWithHTTPURLResponse:urlResponse data:payloadData error:nil];;
+}
+
+- (ZMTransportResponse *)processFederatedUserHandleRequest:(NSString *)domain
+                                                    handle:(NSString *)handle
+                                                      path:(NSString *)path;
+{
+    NSFetchRequest *fetchRequest = [MockUser sortedFetchRequest];
+    fetchRequest.predicate = [NSPredicate predicateWithFormat:@"handle == %@ AND domain == %@", handle, domain];
+    NSArray *users = [self.managedObjectContext executeFetchRequestOrAssert:fetchRequest];
+    NSData *payloadData;
+    NSInteger statusCode;
+
+    if (![self.federatedDomains containsObject:domain]) {
+        statusCode = 422;
+    }
+    else if (users.count > 0) {
         statusCode = 200;
         MockUser *user = users[0];
         id <ZMTransportData> payload = [user transportData];

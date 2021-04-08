@@ -66,6 +66,9 @@ typedef ZMTransportResponse * _Nullable (^ZMCustomResponseGeneratorBlock)(ZMTran
 @property (nonatomic) BOOL disableEnqueueRequests;
 @property (nonatomic) BOOL doNotRespondToRequests; //to simulate offline
 
+/// List of domains which the backend is federated with
+@property (nonatomic) NSArray<NSString *> *federatedDomains;
+
 @property (nonatomic, readonly) NSArray *updateEvents;
 
 @property (nonatomic, readwrite) id<ReachabilityProvider, TearDownCapable> reachability;

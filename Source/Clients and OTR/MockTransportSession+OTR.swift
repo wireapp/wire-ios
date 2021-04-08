@@ -31,16 +31,16 @@ extension MockTransportSession {
                NSUUID(transport: user.identifier) != NSUUID(transport: onlyForUserId) {
                 continue
             }
-            let recipientClients = (recipients?[user.identifier] as AnyObject).keys
+            let recipientClients = (recipients?[user.identifier] as? [String: Any] ?? [:]).keys
             let clients: Set<MockUserClient> = user.userClients
             let userClients = clients
                 .filter { $0 != sender }
-                .map(\.identifier)
-                
-            var userMissedClients = Set<AnyHashable>(userClients)
-            userMissedClients.subtract(Set<AnyHashable>(arrayLiteral: recipientClients))
+                .compactMap(\.identifier)
+
+            var userMissedClients = Set(userClients)
+            userMissedClients.subtract(recipientClients)
             if userMissedClients.isEmpty == false {
-                missedClients[user.identifier] = Array(arrayLiteral: userMissedClients)
+                missedClients[user.identifier] = Array(userMissedClients)
             }
         }
         return missedClients
