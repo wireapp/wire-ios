@@ -29,6 +29,7 @@ import Foundation
     public static let mutualFriendsKey = "mutual_friends"
     public static let totalMutualFriendsKey = "total_mutual_friends"
 
+    @NSManaged public var domain: String?
     @NSManaged public var email: String?
     @NSManaged public var password: String?
     @NSManaged public var phone: String?
@@ -240,6 +241,13 @@ extension MockUser {
             
             if let team = self.memberships?.first?.team {
                 payload["team"] = team.identifier
+            }
+
+            if let domain = domain {
+                payload["qualified_id"] = [
+                    "id": identifier,
+                    "domain": domain
+                ]
             }
             
             return payload

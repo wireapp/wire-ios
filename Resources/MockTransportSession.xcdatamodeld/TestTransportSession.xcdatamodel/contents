@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="16119" systemVersion="19E287" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="17709" systemVersion="20D91" minimumToolsVersion="Xcode 4.3" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
     <entity name="Action" representedClassName=".MockAction" syncable="YES">
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="roles" toMany="YES" deletionRule="Nullify" destinationEntity="Role" inverseName="actions" inverseEntity="Role" syncable="YES"/>
@@ -130,6 +130,7 @@
     <entity name="User" representedClassName=".MockUser" syncable="YES">
         <attribute name="accentID" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="NO" syncable="YES"/>
         <attribute name="completeProfileAssetIdentifier" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="domain" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="email" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="identifier" optional="YES" attributeType="String" syncable="YES"/>
@@ -188,7 +189,7 @@
         <element name="Role" positionX="18" positionY="162" width="128" height="30"/>
         <element name="Service" positionX="9" positionY="153" width="128" height="135"/>
         <element name="Team" positionX="9" positionY="153" width="128" height="210"/>
-        <element name="User" positionX="0" positionY="0" width="128" height="463"/>
+        <element name="User" positionX="0" positionY="0" width="128" height="464"/>
         <element name="UserClient" positionX="0" positionY="0" width="128" height="255"/>
     </elements>
 </model>

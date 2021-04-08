@@ -400,6 +400,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
     if (team != nil) {
         keys = [keys arrayByAddingObjectsFromArray:@[@"team"]];
     }
+
+    if (user.domain != nil) {
+        keys = [keys arrayByAddingObjectsFromArray:@[@"qualified_id"]];
+    }
     
     AssertDictionaryHasKeys(dict, keys);
     
@@ -412,6 +416,11 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
         
         if (team != nil) {
             FHAssertEqual(fr, dict[@"team"], team.identifier);
+        }
+
+        if (user.domain != nil) {
+            FHAssertEqualObjects(fr, dict[@"qualified_id"][@"domain"], user.domain);
+            FHAssertEqualObjects(fr, dict[@"qualified_id"][@"id"], user.identifier);
         }
         
         FHAssertEqualObjects(fr, dict[@"name"], user.name);
