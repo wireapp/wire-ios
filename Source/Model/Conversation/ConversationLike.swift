@@ -41,6 +41,7 @@ public protocol ConversationLike: NSObjectProtocol {
 
     var sortedActiveParticipantsUserTypes: [UserType] { get }
     
+    var relatedConnectionState: ZMConnectionStatus { get }
     var lastMessage: ZMConversationMessage? { get }
     var firstUnreadMessage: ZMConversationMessage? { get }
     
