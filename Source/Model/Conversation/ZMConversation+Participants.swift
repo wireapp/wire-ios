@@ -20,6 +20,18 @@ import Foundation
 import WireProtos
 
 extension ZMConversation {
+        
+    func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
+        let nameDescriptor = NSSortDescriptor(key: "normalizedName", ascending: true)
+        let sortedUser = (users as NSSet?)?.sortedArray(using: [nameDescriptor]) as? [ZMUser]
+
+        return sortedUser ?? []
+    }
+    
+    @objc public var sortedActiveParticipants: [ZMUser] {
+        return sortedUsers(localParticipants)
+    }
+
     
     /// Whether the roles defined for this conversation should be re-downloaded
     @NSManaged public var needsToDownloadRoles: Bool

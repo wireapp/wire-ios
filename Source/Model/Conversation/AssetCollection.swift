@@ -48,7 +48,7 @@ public class AssetCollection : NSObject, ZMCollection {
     private var assets : Dictionary<CategoryMatch, [ZMMessage]>?
     private var lastAssetMessage : ZMAssetClientMessage?
     private var lastClientMessage : ZMClientMessage?
-    private let conversation: ZMConversation
+    private let conversation: ZMConversation?
     private let matchingCategories : [CategoryMatch]
 
     enum MessagesToFetch {
@@ -72,16 +72,18 @@ public class AssetCollection : NSObject, ZMCollection {
     }
     
     private var syncMOC: NSManagedObjectContext? {
-        return conversation.managedObjectContext?.zm_sync
+        return conversation?.managedObjectContext?.zm_sync
     }
     private var uiMOC: NSManagedObjectContext? {
-        return conversation.managedObjectContext
+        return conversation?.managedObjectContext
     }
     
     /// Returns a collection that automatically fetches the assets in batches
     /// @param categoriesToFetch: The AssetCollection only returns and calls the delegate for these categories
-    public init(conversation: ZMConversation, matchingCategories : [CategoryMatch], delegate: AssetCollectionDelegate){
-        self.conversation = conversation
+    public init(conversation: ConversationLike,
+                matchingCategories : [CategoryMatch],
+                delegate: AssetCollectionDelegate){
+        self.conversation = conversation as? ZMConversation
         self.delegate = delegate
         self.matchingCategories = matchingCategories
         super.init()
@@ -92,7 +94,8 @@ public class AssetCollection : NSObject, ZMCollection {
         }
         syncMOC.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
-            guard let syncConversation = (try? syncMOC.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
+            guard let conversation = self.conversation,
+                let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
             }
             

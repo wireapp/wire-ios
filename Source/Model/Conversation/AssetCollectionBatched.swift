@@ -41,7 +41,7 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     
     private unowned var delegate : AssetCollectionDelegate
     private var assets : Dictionary<CategoryMatch, [ZMMessage]>?
-    private let conversation: ZMConversation
+    private let conversation: ZMConversation?
     private let matchingCategories : [CategoryMatch]
     private var assetMessageOffset : Int = 0
     private var clientMessageOffset : Int = 0
@@ -57,10 +57,10 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     private var tornDown = false
     
     private var syncMOC: NSManagedObjectContext? {
-        return conversation.managedObjectContext?.zm_sync
+        return conversation?.managedObjectContext?.zm_sync
     }
     private var uiMOC: NSManagedObjectContext? {
-        return conversation.managedObjectContext
+        return conversation?.managedObjectContext
     }
     
     /// Returns true when there are no assets to fetch OR when all assets have been processed OR the collection has been tornDown
@@ -70,8 +70,10 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
     
     /// Returns a collection that automatically fetches the assets in batches
     /// @param matchingCategories: The AssetCollection only returns and calls the delegate for these categories
-    public init(conversation: ZMConversation, matchingCategories: [CategoryMatch],  delegate: AssetCollectionDelegate){
-        self.conversation = conversation
+    public init(conversation: ConversationLike,
+                matchingCategories: [CategoryMatch],
+                delegate: AssetCollectionDelegate){
+        self.conversation = conversation as? ZMConversation
         self.delegate = delegate
         self.matchingCategories = matchingCategories
         super.init()
@@ -81,7 +83,8 @@ public class AssetCollectionBatched : NSObject, ZMCollection {
         }
         syncMOC.performGroupedBlock { [weak self] in
             guard let `self` = self, !self.tornDown else { return }
-            guard let syncConversation = (try? syncMOC.existingObject(with: self.conversation.objectID)) as? ZMConversation else {
+            guard let conversation = self.conversation,
+                  let syncConversation = (try? syncMOC.existingObject(with: conversation.objectID)) as? ZMConversation else {
                 return
             }
             let allAssetMessages : [ZMAssetClientMessage] = self.unCategorizedMessages(for: syncConversation)

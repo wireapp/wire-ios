@@ -137,7 +137,7 @@ public class TextSearchQuery: NSObject {
     private let syncMOC: NSManagedObjectContext
 
     private let conversationRemoteIdentifier: UUID
-    private let conversation: ZMConversation
+    private let conversation: ConversationLike
     private let originalQuery: String
     private let queryStrings: [String]
 
@@ -166,14 +166,15 @@ public class TextSearchQuery: NSObject {
     /// - parameter delegate: The delegate which will be notified with the results.
     /// - parameter configuration: An optional configuration specifying the fetch batch size (useful in tests).
     public init?(
-        conversation: ZMConversation,
+        conversation: ConversationLike,
         query: String,
         delegate: TextSearchQueryDelegate,
         configuration: TextSearchQueryFetchConfiguration = .init(notIndexedBatchSize: 200, indexedBatchSize: 200)
         ) {
 
         guard TextSearchQuery.isValid(query: query) else { return nil }
-        guard let uiMOC = conversation.managedObjectContext, let syncMOC = uiMOC.zm_sync else {
+        guard let uiMOC = (conversation as? ZMConversation)?.managedObjectContext,
+              let syncMOC = uiMOC.zm_sync else {
             fatal("NSManagedObjectContexts not accessible.")
         }
 
@@ -184,7 +185,7 @@ public class TextSearchQuery: NSObject {
         self.uiMOC = uiMOC
         self.syncMOC = syncMOC
         self.conversation = conversation
-        self.conversationRemoteIdentifier = conversation.remoteIdentifier!
+        self.conversationRemoteIdentifier = (conversation as? ZMConversation)!.remoteIdentifier!
         self.originalQuery = query
         self.queryStrings = query.normalizedForSearch().components(separatedBy: .whitespacesAndNewlines).filter(TextSearchQuery.isValid)
         self.delegate = delegate
