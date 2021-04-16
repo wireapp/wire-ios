@@ -57,6 +57,12 @@ internal enum L10n {
         internal static let title = L10n.tr("Localizable", "about.website.title")
       }
     }
+    internal enum AccountDeletedMissingPasscodeAlert {
+      /// In order to use Wire, please set a passcode in your device settings.
+      internal static let message = L10n.tr("Localizable", "account_deleted_missing_passcode_alert.message")
+      /// No Device Passcode
+      internal static let title = L10n.tr("Localizable", "account_deleted_missing_passcode_alert.title")
+    }
     internal enum AccountDeletedSessionExpiredAlert {
       /// The application did not communicate with the server for a long period of time, or your session has been remotely invalidated.
       internal static let message = L10n.tr("Localizable", "account_deleted_session_expired_alert.message")
