@@ -53,7 +53,7 @@ public protocol CancelableTask {
  * An object that performs network requests to the Giphy API.
  */
 
-@objc public protocol ZiphyURLRequester {
+public protocol ZiphyURLRequester {
     
     func performZiphyRequest(_ request: URLRequest, completionHandler: @escaping ((Data?, URLResponse?, Error?) -> Void)) -> ZiphyRequestIdentifier
 
