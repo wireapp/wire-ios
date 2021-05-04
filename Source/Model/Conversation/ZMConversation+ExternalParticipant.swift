@@ -33,6 +33,9 @@ extension ZMConversation {
         /// The conversation contains services that we should warn the self user about.
         public static let visibleServices = ExternalParticipantsState(rawValue: 1 << 1)
 
+        /// The conversation contains external partners that we should warn the self user about.
+        public static let visibleExternals = ExternalParticipantsState(rawValue: 1 << 2)
+
         public let rawValue: Int
 
         public init(rawValue: Int) {
@@ -43,7 +46,8 @@ extension ZMConversation {
     @objc
     class func keyPathsForValuesAffectingExternalParticipantsState() -> Set<String> {
         return ["participantRoles.user.isServiceUser",
-                "participantRoles.user.hasTeam"]
+                "participantRoles.user.hasTeam",
+                "participantRoles.user.isExternalPartner"]
     }
 
     /// The state of external participants in the conversation.
@@ -61,7 +65,8 @@ extension ZMConversation {
         }
 
         // Calculate the external participants state
-        let canDisplayGuests = selfUser.team != nil
+        let canDisplayGuests = !selfUser.isGuest(in: self)
+        let canDisplayExternals = selfUser.teamRole != .partner
         var state = ExternalParticipantsState()
 
         for user in otherUsers {
@@ -69,10 +74,12 @@ extension ZMConversation {
                 state.insert(.visibleServices)
             } else if canDisplayGuests && user.isGuest(in: self) {
                 state.insert(.visibleGuests)
+            } else if canDisplayExternals && user.isExternalPartner {
+                state.insert(.visibleExternals)
             }
 
             // Early exit to avoid going through all users if we can avoid it
-            if state.contains(.visibleServices) && (state.contains(.visibleGuests) || !canDisplayGuests) {
+            if state.contains(.visibleServices) && (state.contains(.visibleGuests) || !canDisplayGuests) && (state.contains(.visibleExternals) || !canDisplayExternals) {
                 break
             }
         }

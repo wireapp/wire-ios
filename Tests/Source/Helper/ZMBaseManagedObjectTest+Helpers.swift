@@ -41,11 +41,16 @@ extension ZMBaseManagedObjectTest {
         return user
     }
 
-    @discardableResult func createMembership(in moc: NSManagedObjectContext, user: ZMUser, team: Team) -> Member {
+    @discardableResult func createMembership(in moc: NSManagedObjectContext, user: ZMUser, team: Team?, with permissions: Permissions? = nil) -> Member {
         let member = Member.insertNewObject(in: moc)
         member.user = user
-        member.team = team
-        member.user?.teamIdentifier = team.remoteIdentifier
+        if let team = team {
+            member.team = team
+            member.user?.teamIdentifier = team.remoteIdentifier
+        }
+        if let permissions = permissions {
+            member.permissions = permissions
+        }
         return member
     }
 
@@ -61,5 +66,11 @@ extension ZMBaseManagedObjectTest {
         serviceUser.providerIdentifier = UUID.create().transportString()
         serviceUser.name = named
         return serviceUser
+    }
+
+    func createExternal(in moc: NSManagedObjectContext) -> ZMUser {
+        let externalUser = createUser(in: moc)
+        createMembership(in:moc, user: externalUser, team: nil, with: .partner)
+        return externalUser
     }
 }

@@ -32,15 +32,31 @@ import XCTest
  * | 1:1               | Team       | Team                 | None                    |
  * | 1:1               | Team       | Personal             | None                    |
  * | 1:1               | Team       | Service              | None                    |
+ * | 1:1               | Team       | External              | None                    |
+ * | 1:1               | External   | External             | None                    |
+ * | 1:1               | External   | Team                 | None                    |
  * |-------------------|------------|----------------------|-------------------------|
  * | Group             | Personal   | Personal             | None                    |
  * | Group             | Personal   | Team                 | None                    |
- * | Group             | Team       | Team                 | None                    |
+ * | Group             | Personal   | Service                 | None                    |
+ * | Group             | Team        | Team                 | None                    |
  * | Group             | Team       | Service              | None                    |
+ * | Group             | External       | External         | None                    |
+ * | Group             | External       | Team              | None                    |
+ * | Group             | External       | Service           | None                    |
  * | Group             | Team       | Personal             | Only Guests             |
+ * | Group             | External       | Personal             | Only Guests             |
  * | Group             | Team       | Team & Service       | Only Services           |
  * | Group             | Personal   | Team & Service       | Only Services           |
+ * | Group             | External       | Team & Service       | Only Services           |
+ * | Group             | Team       | External       | Only External           |
+ * | Group             | Personal       | External       | Only External           |
  * | Group             | Team       | Personal & Service   | Guests & Services       |
+ * | Group             | External       | Personal & Service   | Guests & Services       |
+ * | Group             | Team       | Personal & External   | Guests & External       |
+ * | Group             | Team       | Personal & External   | External & Services       |
+ * | Group             | Personal       | Personal & External   | External & Services       |
+ * | Group             | Team       | Personal & Service & External   | Guests & Services & External        |
  * +---------------------------------------------------------------------------------+
  */
 
@@ -50,6 +66,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         case personal
         case memberOfHostingTeam
         case service
+        case external
     }
 
     func testOneToOneCases() {
@@ -61,24 +78,50 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [])
         assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [])
+        assertMatrixRow(.oneOnOne, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [])
+
+        // External
+        assertMatrixRow(.oneOnOne, selfUser: .external, otherUsers: [.external], expectedResult: [])
+        assertMatrixRow(.oneOnOne, selfUser: .external, otherUsers: [.memberOfHostingTeam], expectedResult: [])
     }
 
     func testGroupCases() {
         // None
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.personal], expectedResult: [])
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.memberOfHostingTeam], expectedResult: [])
+        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.service], expectedResult: [])
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam], expectedResult: [])
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.service], expectedResult: [])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.external], expectedResult: [])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.memberOfHostingTeam], expectedResult: [])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.service], expectedResult: [])
 
         // Only Guests
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal], expectedResult: [.visibleGuests])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.personal], expectedResult: [.visibleGuests])
 
         // Only Services
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
         assertMatrixRow(.group, selfUser: .personal, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.memberOfHostingTeam, .service], expectedResult: [.visibleServices])
+
+        // Only Externals
+        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.external], expectedResult: [.visibleExternals])
+        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.external], expectedResult: [.visibleExternals])
 
         // Guests and Services
         assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal, .service], expectedResult: [.visibleGuests, .visibleServices])
+        assertMatrixRow(.group, selfUser: .external, otherUsers: [.personal, .service], expectedResult: [.visibleGuests, .visibleServices])
+
+        // Guests and Externals
+        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal, .external], expectedResult: [.visibleGuests, .visibleExternals])
+
+        // Externals and Services
+        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.external, .service], expectedResult: [.visibleExternals, .visibleServices])
+        assertMatrixRow(.group, selfUser: .personal, otherUsers: [.external, .service], expectedResult: [.visibleExternals, .visibleServices])
+
+        // Guests and Services and Externals
+        assertMatrixRow(.group, selfUser: .memberOfHostingTeam, otherUsers: [.personal, .service, .external], expectedResult: [.visibleGuests, .visibleServices, .visibleExternals])
     }
 
     // MARK: - Helpers
@@ -94,6 +137,10 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
         let conversation = createConversationWithSelfUser()
         conversation.conversationType = conversationType
 
+        if conversationType == .group {
+            conversation.userDefinedName = "Group conversation"
+        }
+
         var hostingTeam: Team?
 
         switch selfUserType {
@@ -101,6 +148,7 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             let team = createTeam(in: uiMOC)
             hostingTeam = team
             conversation.team = team
+            conversation.teamRemoteIdentifier = team.remoteIdentifier
             createMembership(in: uiMOC, user: selfUser, team: team)
 
         case .personal:
@@ -108,6 +156,9 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
 
         case .service:
             XCTFail("Self-user cannot be a service", file: file, line: line)
+
+        case .external:
+            createMembership(in: uiMOC, user: selfUser, team: nil, with: .partner)
         }
 
         for otherUserType in otherUsers {
@@ -130,6 +181,11 @@ class ZMConversationExternalParticipantsStateTests: ZMConversationTestsBase {
             case .service:
                 let service = createService(in: uiMOC, named: "Bob the Robot")
                 conversation.addParticipantAndUpdateConversationState(user: service as! ZMUser, role: nil)
+
+            case .external:
+                let external = createExternal(in: uiMOC)
+                conversation.addParticipantAndUpdateConversationState(user: external, role: nil)
+
             }
         }
 
