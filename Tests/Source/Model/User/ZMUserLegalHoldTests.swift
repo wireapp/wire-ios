@@ -90,9 +90,7 @@ class ZMUserLegalHoldTests: ModelObjectsTests {
         // THEN
         XCTAssertEqual(selfUser.legalHoldStatus, .enabled)
         XCTAssertTrue(selfUser.needsToAcknowledgeLegalHoldStatus)
-
-        let lastMessage = conversation.lastMessage as? ZMSystemMessage
-        XCTAssertEqual(lastMessage?.systemMessageType, .legalHoldEnabled)
+        XCTAssertTrue(conversation.allMessages.contains(where: { ($0 as? ZMSystemMessage)?.systemMessageType == .legalHoldEnabled }))
         XCTAssertTrue(conversation.isUnderLegalHold)
     }
 

@@ -977,7 +977,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         let otherUnverifiedUsers = self.setupUnverifiedUsers(count: 1)
         
         // THEN
-        XCTAssertEqual(conversation.allMessages.count, 2)
+        XCTAssertEqual(conversation.allMessages.count, 4)
         guard let lastMessage1 = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
@@ -988,7 +988,7 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         _ = self.simulateAdding(users: otherUnverifiedUsers, conversation: conversation, by: selfUser)
         
         // THEN
-        XCTAssertEqual(conversation.allMessages.count, 3)
+        XCTAssertEqual(conversation.allMessages.count, 5)
         guard let lastMessage2 = conversation.lastMessage as? ZMSystemMessage else {
             return XCTFail()
         }
@@ -1008,6 +1008,22 @@ class ZMConversationTests_SecurityLevel: ZMConversationTestsBase {
         // when
         conversation.addParticipantAndUpdateConversationState(user: participant, role: nil)
         
+        // then
+        XCTAssertEqual(conversation.securityLevel, .secure)
+    }
+
+    func testThatSecurityLevelIsIncreased_WhenAddingSelfUserToAnExistingConversation() {
+        // given
+        let selfUser = ZMUser.selfUser(in: self.uiMOC)
+        self.createSelfClient(onMOC: self.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: self.uiMOC)
+        conversation.conversationType = .group
+        conversation.remoteIdentifier = UUID()
+
+
+        // when
+        conversation.addParticipantAndUpdateConversationState(user: selfUser, role: nil)
+
         // then
         XCTAssertEqual(conversation.securityLevel, .secure)
     }

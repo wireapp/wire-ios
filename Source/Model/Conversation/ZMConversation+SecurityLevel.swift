@@ -206,11 +206,13 @@ extension ZMConversation {
     }
 
     private func increaseSecurityLevelIfNeeded(for cause: SecurityChangeCause) {
-        guard securityLevel != .secure &&
+        guard
+            securityLevel != .secure &&
             allUsersTrusted &&
             allParticipantsHaveClients &&
-            conversationType != .connection else {
-                return
+            conversationType.isOne(of: .group, .oneOnOne, .invalid)
+        else {
+            return
         }
 
         securityLevel = .secure
