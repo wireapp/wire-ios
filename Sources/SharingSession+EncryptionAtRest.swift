@@ -41,7 +41,7 @@ extension SharingSession: SharingSessionEncryptionAtRestInterface {
         let account = Account(userName: "", userIdentifier: userIdentifier)
         let keys = try EncryptionKeys.init(account: account, context: context)
         
-        contextDirectory.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
+        coreDataStack.storeEncryptionKeysInAllContexts(encryptionKeys: keys)
     }
     
 }

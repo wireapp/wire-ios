@@ -25,39 +25,40 @@ import WireRequestStrategy
 
 class OperationLoopTests :  ZMTBaseTest {
 
-    var uiMoc   : NSManagedObjectContext! = nil
-    var syncMoc : NSManagedObjectContext! = nil
+    var coreDataStack: CoreDataStack! = nil
     var sut : OperationLoop! = nil
+
+    var uiMoc: NSManagedObjectContext {
+        return coreDataStack.viewContext
+    }
+
+    var syncMoc: NSManagedObjectContext {
+        return coreDataStack.syncContext
+    }
     
     override func setUp() {
         super.setUp()
         let accountId = UUID()
         let directoryURL = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        
-        StorageStack.shared.createStorageAsInMemory = true
-        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountId, applicationContainer: directoryURL, dispatchGroup: self.dispatchGroup) {
-            self.uiMoc = $0.uiContext
-            self.syncMoc = $0.syncContext
+        let account = Account(userName: "", userIdentifier: accountId)
+
+        let coreDataStack = CoreDataStack(account: account,
+                                          applicationContainer: directoryURL,
+                                          inMemoryStore: true,
+                                          dispatchGroup: dispatchGroup)
+        coreDataStack.loadStores { error in
+            XCTAssertNil(error)
         }
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        
-        sut = OperationLoop(userContext: uiMoc, syncContext: syncMoc, callBackQueue: OperationQueue())
+
+        self.coreDataStack = coreDataStack
+        self.sut = OperationLoop(userContext: coreDataStack.viewContext,
+                                 syncContext: coreDataStack.syncContext, callBackQueue: OperationQueue())
     }
     
     override func tearDown() {
-        
         sut = nil
-        
-        resetState()
-    
-        uiMoc = nil
-        syncMoc = nil
-        
+        coreDataStack = nil
         super.tearDown()
-    }
-    
-    func resetState() {
-        StorageStack.reset()
     }
 }
 
@@ -93,7 +94,7 @@ extension OperationLoopTests {
         let userID = UUID()
         
         var syncUser : ZMUser! = nil
-        syncMoc.performGroupedBlock { [unowned self] in
+        coreDataStack.syncContext.performGroupedBlock { [unowned self] in
             syncUser = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMoc)!
             self.syncMoc.saveOrRollback()
         }

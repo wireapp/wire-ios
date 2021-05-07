@@ -47,7 +47,7 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
         // given
         enableEncryptionAtRest()
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        sharingSession.contextDirectory.clearEncryptionKeysInAllContexts()
+        sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
                 
         // then
         XCTAssertTrue(sharingSession.isDatabaseLocked)
@@ -73,7 +73,7 @@ class SharingSessionTests_EncryptionAtRest: BaseSharingSessionTests {
         let account = Account(userName: "", userIdentifier: accountIdentifier)
         
         try! EncryptionKeys.deleteKeys(for: account)
-        sharingSession.contextDirectory.clearEncryptionKeysInAllContexts()
+        sharingSession.coreDataStack.clearEncryptionKeysInAllContexts()
         
         let encryptionKeys = try! EncryptionKeys.createKeys(for: account)
         try! sharingSession.userInterfaceContext.enableEncryptionAtRest(encryptionKeys: encryptionKeys, skipMigration: true)
