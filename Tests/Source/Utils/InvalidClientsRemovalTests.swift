@@ -69,7 +69,7 @@ class InvalidClientsRemovalTests: DiskDatabaseTest {
     }
 
     func testThatItDoesNotDeleteSessionWhenDeletingInvalidClient() {
-        let syncMOC = contextDirectory.syncContext!
+        let syncMOC = coreDataStack.syncContext
         syncMOC.performGroupedBlockAndWait {
             // given
             let selfClient = self.createSelfClient(in: syncMOC)

@@ -229,39 +229,39 @@
 
 @implementation ZMConversationList (UserSession)
 
-+ (void)refetchAllListsInUserSession:(id<ZMManagedObjectContextProvider>)session;
++ (void)refetchAllListsInUserSession:(id<ContextProvider>)session;
 {
-    [session.managedObjectContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.managedObjectContext];
+    [session.viewContext.conversationListDirectory refetchAllListsInManagedObjectContext:session.viewContext];
 }
 
-+ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)conversationsIncludingArchivedInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return session.managedObjectContext.conversationListDirectory.conversationsIncludingArchived;
+    return session.viewContext.conversationListDirectory.conversationsIncludingArchived;
 }
 
-+ (ZMConversationList *)conversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)conversationsInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return session.managedObjectContext.conversationListDirectory.unarchivedConversations;
+    return session.viewContext.conversationListDirectory.unarchivedConversations;
 }
 
-+ (ZMConversationList *)archivedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)archivedConversationsInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return session.managedObjectContext.conversationListDirectory.archivedConversations;
+    return session.viewContext.conversationListDirectory.archivedConversations;
 }
 
-+ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)pendingConnectionConversationsInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return session.managedObjectContext.conversationListDirectory.pendingConnectionConversations;
+    return session.viewContext.conversationListDirectory.pendingConnectionConversations;
 }
 
-+ (ZMConversationList *)clearedConversationsInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMConversationList *)clearedConversationsInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return session.managedObjectContext.conversationListDirectory.clearedConversations;
+    return session.viewContext.conversationListDirectory.clearedConversations;
 }
 
 @end

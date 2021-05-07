@@ -18,25 +18,13 @@
 
 import Foundation
 
-extension ZMSearchUserTests_TeamUser: ZMManagedObjectContextProvider {
-    
-    var managedObjectContext: NSManagedObjectContext! {
-        return uiMOC
-    }
-    
-    var syncManagedObjectContext: NSManagedObjectContext! {
-        return syncMOC
-    }
-    
-}
-
 class ZMSearchUserTests_TeamUser: ModelObjectsTests {
     
     func testThatSearchUserIsRecognizedAsTeamMember_WhenBelongingToTheSameTeam() {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self,
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
                                       accentColor: .brightOrange,
@@ -52,7 +40,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self,
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
                                       accentColor: .brightOrange,
@@ -68,7 +56,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self,
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
                                       accentColor: .brightOrange,
@@ -84,7 +72,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self,
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
                                       accentColor: .brightOrange,
@@ -101,7 +89,7 @@ class ZMSearchUserTests_TeamUser: ModelObjectsTests {
         let creator = UUID()
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let searchUser = ZMSearchUser(contextProvider: self,
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                       name: "Foo",
                                       handle: "foo",
                                       accentColor: .brightOrange,

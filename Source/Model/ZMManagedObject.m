@@ -40,21 +40,29 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 @implementation ZMManagedObject
 
-+ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inUserSession:(id<ContextProvider>)userSession
 {
     VerifyReturnNil(url != nil);
     VerifyReturnNil(userSession != nil);
-    NSManagedObjectContext *moc = userSession.managedObjectContext;
-    NSPersistentStoreCoordinator *psc = moc.persistentStoreCoordinator;
+
+    return [self objectIDForURIRepresentation:url
+                       inManagedObjectContext:userSession.viewContext];
+}
+
++ (NSManagedObjectID *)objectIDForURIRepresentation:(NSURL *)url inManagedObjectContext:(NSManagedObjectContext *)context
+{
+    VerifyReturnNil(url != nil);
+    VerifyReturnNil(context != nil);
+    NSPersistentStoreCoordinator *psc = context.persistentStoreCoordinator;
     return [psc managedObjectIDForURIRepresentation:url];
 }
 
-+ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (instancetype)existingObjectWithID:(NSManagedObjectID *)identifier inUserSession:(id<ContextProvider>)userSession;
 {
     VerifyReturnNil(identifier);
     VerifyReturnNil(userSession);
     NSError *error;
-    ZMManagedObject *mo = (id) [userSession.managedObjectContext existingObjectWithID:identifier error:&error];
+    ZMManagedObject *mo = (id) [userSession.viewContext existingObjectWithID:identifier error:&error];
     if (mo != nil) {
         // [self entityName] throws an exception when called on ZMManagedObject
         //        RequireString([mo.entity.name isEqualToString:[self entityName]], @"Retrieved an object of a different entity.");
@@ -744,7 +752,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     return [NSString stringWithFormat:@"Z%tx", (unsigned long) self];
 }
 
-+ (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ZMManagedObjectContextProvider>)userSession;
++ (instancetype)existingObjectWithNonpersistedObjectIdentifer:(NSString *)identifier inUserSession:(id<ContextProvider>)userSession;
 {
     VerifyReturnNil(identifier != nil);
     intptr_t value = 0;
@@ -752,7 +760,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
         return nil;
     }
     
-    NSManagedObjectContext *moc =  userSession.managedObjectContext;
+    NSManagedObjectContext *moc = userSession.viewContext;
     for (ZMManagedObject *mo in moc.registeredObjects) {
         intptr_t otherValue = (intptr_t) ((__bridge void *) mo);
         if (otherValue == value) {

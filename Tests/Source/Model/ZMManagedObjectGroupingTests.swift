@@ -22,7 +22,7 @@ import XCTest
 
 class ZMManagedObjectGroupingTests: DatabaseBaseTest {
 
-    var mocs: ManagedObjectContextDirectory!
+    var mocs: CoreDataStack!
     
     public override func setUp() {
         super.setUp()
@@ -37,7 +37,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
     
     public func testThatItFindsNoDuplicates_None() {
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.uiContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
         
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -47,13 +47,13 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // GIVEN
         let remoteIdentifier = UUID().transportString()
         
-        let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+        let client = UserClient.insertNewObject(in: self.mocs.viewContext)
         client.remoteIdentifier = remoteIdentifier
         
-        self.mocs.uiContext.saveOrRollback()
+        self.mocs.viewContext.saveOrRollback()
         
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.uiContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
         
         // THEN
         XCTAssertEqual(duplicates.keys.count, 0)
@@ -64,14 +64,14 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         let remoteIdentifier = UUID().transportString()
         
         for _ in 1...10 {
-            let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+            let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = remoteIdentifier
         }
         
-        self.mocs.uiContext.saveOrRollback()
+        self.mocs.viewContext.saveOrRollback()
         
         // WHEN
-        let duplicates: [String: [UserClient]] = self.mocs.uiContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
+        let duplicates: [String: [UserClient]] = self.mocs.viewContext.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
         
         // THEN
         XCTAssertEqual(duplicates.keys.count, 1)
@@ -80,9 +80,9 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
     
     public func testThatItGroupsByPropertyValue_One() {
         // GIVEN
-        let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+        let client = UserClient.insertNewObject(in: self.mocs.viewContext)
         client.remoteIdentifier = UUID().transportString()
-        client.user = ZMUser.insert(in: self.mocs.uiContext, name: "User")
+        client.user = ZMUser.insert(in: self.mocs.viewContext, name: "User")
         
         // WHEN
         let grouped: [ZMUser: [UserClient]] = [client].group(by: ZMUserClientUserKey)
@@ -97,9 +97,9 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
     public func testThatItGroupsByPropertyValue_Many() {
         // GIVEN
         let range = 1...10
-        let user = ZMUser.insert(in: self.mocs.uiContext, name: "User")
+        let user = ZMUser.insert(in: self.mocs.viewContext, name: "User")
         let clients: [UserClient] = range.map { _ in
-            let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+            let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
             client.user = user
             return client
@@ -120,9 +120,9 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // GIVEN
         let range = 1...10
         let clients: [UserClient] = range.map {
-            let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+            let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
-            client.user = ZMUser.insert(in: self.mocs.uiContext, name: "User \($0)")
+            client.user = ZMUser.insert(in: self.mocs.viewContext, name: "User \($0)")
             return client
         }
         
@@ -140,7 +140,7 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         // GIVEN
         let range = 1...10
         let clients: [UserClient] = range.map { _ in
-            let client = UserClient.insertNewObject(in: self.mocs.uiContext)
+            let client = UserClient.insertNewObject(in: self.mocs.viewContext)
             client.remoteIdentifier = UUID().transportString()
             client.user = nil
             return client
@@ -151,16 +151,5 @@ class ZMManagedObjectGroupingTests: DatabaseBaseTest {
         
         // THEN
         XCTAssertEqual(grouped.keys.count, 0)
-    }
-}
-
-public final class ZMManagedObjectGroupingTestsInMemory: ZMBaseManagedObjectTest {
-    func testThatItErrorsOnInMemoryStore() throws {
-        // GIVEN && WHEN
-        self.performIgnoringZMLogError {
-            let _: [String: [UserClient]] = self.uiMOC.findDuplicated(by: #keyPath(UserClient.remoteIdentifier))
-        }
-        // THEN
-        // test did not fail
     }
 }

@@ -26,12 +26,13 @@ public class DiskDatabaseTest: ZMTBaseTest {
     var sharedContainerURL : URL!
     var accountId : UUID!
     var moc: NSManagedObjectContext {
-        return contextDirectory.uiContext
+        return coreDataStack.viewContext
     }
-    var contextDirectory: ManagedObjectContextDirectory!
+    
+    var coreDataStack: CoreDataStack!
     
     var storeURL : URL {
-        return StorageStack.accountFolder(
+        return CoreDataStack.accountDataFolder(
             accountIdentifier: accountId,
             applicationContainer: sharedContainerURL
             ).appendingPersistentStoreLocation()
@@ -55,32 +56,33 @@ public class DiskDatabaseTest: ZMTBaseTest {
         }
         
         cleanUp()
-        contextDirectory = nil
+        coreDataStack = nil
         sharedContainerURL = nil
         accountId = nil
         super.tearDown()
     }
     
     private func setupCaches() {
-        contextDirectory.uiContext.zm_userImageCache = UserImageLocalCache(location: nil)
-        contextDirectory.uiContext.zm_fileAssetCache = FileAssetCache(location: nil)
+        coreDataStack.viewContext.zm_userImageCache = UserImageLocalCache(location: nil)
+        coreDataStack.viewContext.zm_fileAssetCache = FileAssetCache(location: nil)
         
-        contextDirectory.syncContext.performGroupedBlockAndWait {
-            self.contextDirectory.syncContext.zm_fileAssetCache = self.contextDirectory.uiContext.zm_fileAssetCache
-            self.contextDirectory.syncContext.zm_userImageCache = self.contextDirectory.uiContext.zm_userImageCache
+        coreDataStack.syncContext.performGroupedBlockAndWait {
+            self.coreDataStack.syncContext.zm_fileAssetCache = self.coreDataStack.viewContext.zm_fileAssetCache
+            self.coreDataStack.syncContext.zm_userImageCache = self.coreDataStack.viewContext.zm_userImageCache
         }
     }
     
     private func createDatabase() {
-        StorageStack.reset()
-        StorageStack.shared.createStorageAsInMemory = false
-        
-        let expectation = self.expectation(description: "Created context")
-        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountId, applicationContainer: storeURL, dispatchGroup: self.dispatchGroup) {
-            self.contextDirectory = $0
-            expectation.fulfill()
+        let account = Account(userName: "", userIdentifier: accountId)
+        coreDataStack = CoreDataStack(account: account,
+                                      applicationContainer: sharedContainerURL,
+                                      inMemoryStore: false,
+                                      dispatchGroup: dispatchGroup)
+
+        coreDataStack.loadStores { error in
+            XCTAssertNil(error)
         }
-        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+
         self.moc.performGroupedBlockAndWait {
             let selfUser = ZMUser.selfUser(in: self.moc)
             selfUser.remoteIdentifier = self.accountId
@@ -91,8 +93,6 @@ public class DiskDatabaseTest: ZMTBaseTest {
         try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
             try? FileManager.default.removeItem(at: $0)
         }
-        
-        StorageStack.reset()
     }
 }
 

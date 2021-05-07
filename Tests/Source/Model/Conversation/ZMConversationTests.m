@@ -56,13 +56,6 @@
     self.lastReceivedNotification = notification;
 }
 
-- (id)mockUserSessionWithUIMOC;
-{
-    id userSession = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[userSession stub] andReturn:self.uiMOC] managedObjectContext];
-    return userSession;
-}
-
 - (ZMUser *)createUser
 {
     return [self createUserOnMoc:self.uiMOC];
@@ -1209,7 +1202,7 @@
     NOT_USED(SomeOtherConversation);
     
     // when
-    ZMConversation *fetchedConversation = [ZMConversation existingOneOnOneConversationWithUser:user inUserSession:self.mockUserSessionWithUIMOC];
+    ZMConversation *fetchedConversation = [ZMConversation existingOneOnOneConversationWithUser:user inUserSession:self.coreDataStack];
     
     // then
     XCTAssertNil(fetchedConversation);
@@ -1227,7 +1220,7 @@
     connection.conversation = connectionConversation;
     
     // when
-    ZMConversation *fetchedConversation = [ZMConversation existingOneOnOneConversationWithUser:user inUserSession:self.mockUserSessionWithUIMOC];
+    ZMConversation *fetchedConversation = [ZMConversation existingOneOnOneConversationWithUser:user inUserSession:self.coreDataStack];
 
     // then
     XCTAssertEqual(fetchedConversation, connectionConversation);
@@ -2071,9 +2064,9 @@
     ZMConversation *conversation = [self insertConversationWithParticipants:users];
     [conversation appendMessageWithText:@"0"];
     
-    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.mockUserSessionWithUIMOC];
-    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.mockUserSessionWithUIMOC];
-    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.mockUserSessionWithUIMOC];
+    ZMConversationList *activeList = [ZMConversationList conversationsInUserSession:self.coreDataStack];
+    ZMConversationList *archivedList = [ZMConversationList archivedConversationsInUserSession:self.coreDataStack];
+    ZMConversationList *clearedList = [ZMConversationList clearedConversationsInUserSession:self.coreDataStack];
     
     // when
     [conversation removeParticipantAndUpdateConversationStateWithUser:selfUser initiatingUser:nil];

@@ -743,6 +743,7 @@ static NSString *const DomainKey = @"domain";
     //store session object id in persistent metadata, so we can retrieve it from other context
     moc.userInfo[SessionObjectIDKey] = session.objectID;
     [moc setPersistentStoreMetadata:session.objectID.URIRepresentation.absoluteString forKey:SessionObjectIDAsStringKey];
+    NOT_USED([moc makeMetadataPersistent]);
     // This needs to be a 'real' save, to make sure we push the metadata:
     RequireString([moc save:&error], "Failed to save self user: %lu", (long) error.code);
 
@@ -817,10 +818,10 @@ static NSString *const DomainKey = @"domain";
 
 @implementation  ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUser> *)selfUserInUserSession:(id<ZMManagedObjectContextProvider>)session
++ (ZMUser<ZMEditableUser> *)selfUserInUserSession:(id<ContextProvider>)session
 {
     VerifyReturnNil(session != nil);
-    return [self selfUserInContext:session.managedObjectContext];
+    return [self selfUserInContext:session.viewContext];
 }
 
 @end

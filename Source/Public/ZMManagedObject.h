@@ -21,14 +21,15 @@
 
 extern NSString * _Nonnull const ZMDataPropertySuffix;
 
-@protocol ZMManagedObjectContextProvider;
+@protocol ContextProvider;
 
 @interface ZMManagedObject : NSManagedObject
 
 @property (nonatomic, readonly) BOOL isZombieObject;
 
-+ (nullable NSManagedObjectID *)objectIDForURIRepresentation:(nullable NSURL *)url inUserSession:(nullable id<ZMManagedObjectContextProvider>)userSession;
-+ (nullable instancetype)existingObjectWithID:(nullable NSManagedObjectID *)identifier inUserSession:(nullable id<ZMManagedObjectContextProvider>)userSession;
++ (nullable NSManagedObjectID *)objectIDForURIRepresentation:(nullable NSURL *)url inUserSession:(nullable id<ContextProvider>)userSession;
++ (nullable NSManagedObjectID *)objectIDForURIRepresentation:(nullable NSURL *)url inManagedObjectContext:(nullable NSManagedObjectContext *)context;
++ (nullable instancetype)existingObjectWithID:(nullable NSManagedObjectID *)identifier inUserSession:(nullable id<ContextProvider>)userSession;
 + (nullable instancetype)existingObjectWithObjectIdentifier:(nullable NSString *)identifier inManagedObjectContext:(nullable NSManagedObjectContext *)context;
 
 - (nullable NSString *)objectIDURLString;
@@ -39,6 +40,6 @@ extern NSString * _Nonnull const ZMDataPropertySuffix;
 
 @property (nonatomic, readonly, nonnull) NSString *nonpersistedObjectIdentifer;
 
-+ (nullable instancetype)existingObjectWithNonpersistedObjectIdentifer:(nullable NSString *)identifier inUserSession:(nonnull id<ZMManagedObjectContextProvider>)userSession;
++ (nullable instancetype)existingObjectWithNonpersistedObjectIdentifer:(nullable NSString *)identifier inUserSession:(nonnull id<ContextProvider>)userSession;
 
 @end

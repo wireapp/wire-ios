@@ -18,7 +18,7 @@
 
 
 @class ZMUserSession;
-@protocol ZMManagedObjectContextProvider;
+@protocol ContextProvider;
 
 
 /// Use @c ZMConversationListChangeNotification to get notified about changes.
@@ -40,12 +40,12 @@
 
 /// Refetches all conversation lists and resets the snapshots
 /// Call this when the app re-enters the foreground
-+ (void)refetchAllListsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (void)refetchAllListsInUserSession:(nonnull id<ContextProvider>)session;
 
-+ (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
-+ (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ZMManagedObjectContextProvider>)session;
++ (nonnull ZMConversationList *)conversationsIncludingArchivedInUserSession:(nonnull id<ContextProvider>)session;
++ (nonnull ZMConversationList *)conversationsInUserSession:(nonnull id<ContextProvider>)session;
++ (nonnull ZMConversationList *)archivedConversationsInUserSession:(nonnull id<ContextProvider>)session;
++ (nonnull ZMConversationList *)pendingConnectionConversationsInUserSession:(nonnull id<ContextProvider>)session;
++ (nonnull ZMConversationList *)clearedConversationsInUserSession:(nonnull id<ContextProvider>)session;
 
 @end

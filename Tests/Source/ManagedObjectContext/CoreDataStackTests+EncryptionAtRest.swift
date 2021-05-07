@@ -19,7 +19,7 @@
 import XCTest
 @testable import WireDataModel
 
-class ManagedObjectContextDirectoryTests: DatabaseBaseTest {
+class CoreDataStackTests_EncryptionAtRest: DatabaseBaseTest {
 
     func testThatItStoresAndClearsDatabaseKeyOnAllContexts() {
         // Given
@@ -31,8 +31,8 @@ class ManagedObjectContextDirectoryTests: DatabaseBaseTest {
         sut.storeEncryptionKeysInAllContexts(encryptionKeys: encryptionKeys)
 
         // Then
-        sut.uiContext.performGroupedBlockAndWait {
-            XCTAssertEqual(sut.uiContext.encryptionKeys, encryptionKeys)
+        sut.viewContext.performGroupedBlockAndWait {
+            XCTAssertEqual(sut.viewContext.encryptionKeys, encryptionKeys)
         }
 
         sut.syncContext.performGroupedBlockAndWait {
@@ -47,8 +47,8 @@ class ManagedObjectContextDirectoryTests: DatabaseBaseTest {
         sut.clearEncryptionKeysInAllContexts()
 
         // Then
-        sut.uiContext.performGroupedBlockAndWait {
-            XCTAssertNil(sut.uiContext.encryptionKeys)
+        sut.viewContext.performGroupedBlockAndWait {
+            XCTAssertNil(sut.viewContext.encryptionKeys)
         }
 
         sut.syncContext.performGroupedBlockAndWait {

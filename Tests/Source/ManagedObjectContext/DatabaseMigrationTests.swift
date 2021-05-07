@@ -31,7 +31,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion()
         
         // THEN
-        let users = try! directory.uiContext.fetch(ZMUser.sortedFetchRequest())
+        let users = try! directory.viewContext.fetch(ZMUser.sortedFetchRequest())
         XCTAssertEqual(users.count, 1) // only self user
     }
     
@@ -44,18 +44,18 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMTextMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
-        let helloWorldMessageCount = try! directory.uiContext.count(for: ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K BEGINSWITH[c] %@", "text", "Hello World")))
-        let message = directory.uiContext.executeFetchRequestOrAssert(ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K == %@", "text", "You are the best Burno"))).first as? ZMMessage
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
+        let helloWorldMessageCount = try! directory.viewContext.count(for: ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K BEGINSWITH[c] %@", "text", "Hello World")))
+        let message = directory.viewContext.executeFetchRequestOrAssert(ZMTextMessage.sortedFetchRequest(with: NSPredicate(format: "%K == %@", "text", "You are the best Burno"))).first as? ZMMessage
         let messageServerTimestampTransportString = message?.serverTimestamp?.transportString()
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         XCTAssertEqual(conversationCount, 13)
         XCTAssertEqual(messageCount, 1681)
@@ -81,16 +81,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(conversationCount, 18)
@@ -113,16 +113,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(conversationCount, 3)
@@ -145,16 +145,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(conversationCount, 2)
@@ -177,16 +177,16 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(conversationCount, 2)
@@ -209,17 +209,17 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
-        let assetClientMessagesCount = try! directory.uiContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
+        let assetClientMessagesCount = try! directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(assetClientMessagesCount, 5)
@@ -243,17 +243,17 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
         let directory = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
         
         // THEN
-        let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-        let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-        let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-        let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-        let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
-        let assetClientMessagesCount = try! directory.uiContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
+        let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+        let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+        let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+        let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+        let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
+        let assetClientMessagesCount = try! directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
         
         let userFetchRequest = ZMUser.sortedFetchRequest()
         userFetchRequest.resultType = .dictionaryResultType
         userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-        let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+        let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
         
         // THEN
         XCTAssertEqual(assetClientMessagesCount, 0)
@@ -275,20 +275,20 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             self.createDatabaseWithOlderModelVersion(versionName: storeFile)
             
             // WHEN
-            var directory: ManagedObjectContextDirectory! = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
+            var directory: CoreDataStack! = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
             
             // THEN
-            let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-            let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-            let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-            let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-            let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
-            let assetClientMessagesCount = try! directory.uiContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
+            let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+            let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+            let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+            let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+            let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
+            let assetClientMessagesCount = try! directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
             
             let userFetchRequest = ZMUser.sortedFetchRequest()
             userFetchRequest.resultType = .dictionaryResultType
             userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-            let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+            let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
             
             // THEN
             XCTAssertEqual(assetClientMessagesCount, 0)
@@ -303,7 +303,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             XCTAssertEqual(Array(userDictionaries[0..<3]) as NSArray, DatabaseMigrationTests.userDictionaryFixture2_7 as NSArray)
             
             directory = nil // need to release
-            StorageStack.reset()
             self.clearStorageFolder()
         }
     }
@@ -315,7 +314,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
              (39...57),
              (59...90)].joined().map { "2-\($0)-0" }
         
-        let modelVersion = NSManagedObjectModel.loadModel().version
+        let modelVersion = CoreDataStack.loadMessagingModel().version
         let fixtureVersion = String(databaseFixtureFileName(for: modelVersion).dropFirst("store".count))
 
         
@@ -324,7 +323,7 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             let versionsWithoutCurrent = allVersions.filter { $0 != fixtureVersion }
             createDatabaseWithOlderModelVersion(versionName: versionsWithoutCurrent.last!)
             let directory = createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
-            let currentDatabaseURL = directory.syncContext!.persistentStoreCoordinator!.persistentStores.last!.url!
+            let currentDatabaseURL = directory.syncContext.persistentStoreCoordinator!.persistentStores.last!.url!
             
             XCTFail("\nMissing current version database file: `store\(fixtureVersion).wiredatabase`. \n\n" +
                     "**HOW TO FIX THIS** \n" +
@@ -349,23 +348,23 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             self.createDatabaseWithOlderModelVersion(versionName: storeFile)
 
             // WHEN
-            var directory: ManagedObjectContextDirectory! = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
+            var directory: CoreDataStack! = self.createStorageStackAndWaitForCompletion(userID: DatabaseMigrationTests.testUUID)
 
             // THEN
-            let conversationCount = try! directory.uiContext.count(for: ZMConversation.sortedFetchRequest())
-            let messageCount = try! directory.uiContext.count(for: ZMClientMessage.sortedFetchRequest())
-            let systemMessageCount = try! directory.uiContext.count(for: ZMSystemMessage.sortedFetchRequest())
-            let connectionCount = try! directory.uiContext.count(for: ZMConnection.sortedFetchRequest())
-            let userClientCount = try! directory.uiContext.count(for: UserClient.sortedFetchRequest())
-            let assetClientMessagesCount = try! directory.uiContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
-            let messages = directory.uiContext.executeFetchRequestOrAssert(ZMMessage.sortedFetchRequest()) as! [ZMMessage]
-            let users = directory.uiContext.fetchOrAssert(request: NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
+            let conversationCount = try! directory.viewContext.count(for: ZMConversation.sortedFetchRequest())
+            let messageCount = try! directory.viewContext.count(for: ZMClientMessage.sortedFetchRequest())
+            let systemMessageCount = try! directory.viewContext.count(for: ZMSystemMessage.sortedFetchRequest())
+            let connectionCount = try! directory.viewContext.count(for: ZMConnection.sortedFetchRequest())
+            let userClientCount = try! directory.viewContext.count(for: UserClient.sortedFetchRequest())
+            let assetClientMessagesCount = try! directory.viewContext.count(for: ZMAssetClientMessage.sortedFetchRequest())
+            let messages = directory.viewContext.executeFetchRequestOrAssert(ZMMessage.sortedFetchRequest()) as! [ZMMessage]
+            let users = directory.viewContext.fetchOrAssert(request: NSFetchRequest<ZMUser>(entityName: ZMUser.entityName()))
 
 
             let userFetchRequest = ZMUser.sortedFetchRequest()
             userFetchRequest.resultType = .dictionaryResultType
             userFetchRequest.propertiesToFetch = self.userPropertiesToFetch
-            let userDictionaries = directory.uiContext.executeFetchRequestOrAssert(userFetchRequest)
+            let userDictionaries = directory.viewContext.executeFetchRequestOrAssert(userFetchRequest)
 
             // THEN
             XCTAssertEqual(assetClientMessagesCount, 0)
@@ -398,7 +397,6 @@ final class DatabaseMigrationTests: DatabaseBaseTest {
             }
 
             directory = nil // need to release
-            StorageStack.reset()
             self.clearStorageFolder()
         }
     }
@@ -458,7 +456,7 @@ extension DatabaseMigrationTests {
     }
     
     func createDatabaseWithOlderModelVersion(versionName: String, file: StaticString = #file, line: UInt = #line) {
-        let storeFile = StorageStack.accountFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
+        let storeFile = CoreDataStack.accountDataFolder(accountIdentifier: DatabaseMigrationTests.testUUID, applicationContainer: self.applicationContainer).appendingPersistentStoreLocation()
         try! FileManager.default.createDirectory(at: storeFile.deletingLastPathComponent(), withIntermediateDirectories: true)
         
         // copy old version database into the expected location

@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2019 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -18,15 +18,16 @@
 
 import Foundation
 
-extension ZMTestSession: ZMManagedObjectContextProvider {
-    
-    public var managedObjectContext: NSManagedObjectContext! {
-        return self.uiMOC
+extension NSManagedObjectContext {
+
+    // This function setup the user info on the context, the session and self user must be initialised before end.
+    func setupLocalCachedSessionAndSelfUser() {
+        let request = ZMSession.sortedFetchRequest()
+
+        guard let session = fetchOrAssert(request: request).first as? ZMSession else { return }
+
+        userInfo[SessionObjectIDKey] = session.objectID
+        ZMUser.boxSelfUser(session.selfUser, inContextUserInfo: self)
     }
-    
-    public var syncManagedObjectContext: NSManagedObjectContext! {
-        return self.syncMOC
-    }
-    
     
 }

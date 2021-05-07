@@ -21,7 +21,6 @@
 #import "ZMConversation+Internal.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "ZMManagedObject+Internal.h"
-#import "ZMTestSession.h"
 
 
 

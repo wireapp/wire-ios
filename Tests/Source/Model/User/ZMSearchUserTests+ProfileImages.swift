@@ -18,24 +18,12 @@
 
 import XCTest
 
-extension ZMSearchUserTests_ProfileImages: ZMManagedObjectContextProvider {
-    
-    var managedObjectContext: NSManagedObjectContext! {
-        return uiMOC
-    }
-    
-    var syncManagedObjectContext: NSManagedObjectContext! {
-        return syncMOC
-    }
-    
-}
-
 class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     
     func testThatItReturnsPreviewsProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
         
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
@@ -47,7 +35,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItReturnsCompleteProfileImageIfItWasPreviouslyUpdated() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
         
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)
@@ -66,7 +54,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         uiMOC.saveOrRollback()
         
         // when
-        let searchUser = ZMSearchUser(contextProvider: self, user: user)
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, user: user)
         
         // then
         XCTAssertEqual(searchUser.previewImageData, imageData)
@@ -82,7 +70,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         uiMOC.saveOrRollback()
         
         // when
-        let searchUser = ZMSearchUser(contextProvider: self, user: user)
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, user: user)
         
         // then
         XCTAssertEqual(searchUser.completeImageData, imageData)
@@ -90,7 +78,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     
     func testThatItReturnsPreviewImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
         
         // then
         XCTAssertNotNil(searchUser.smallProfileImageCacheKey)
@@ -98,7 +86,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     
     func testThatItReturnsCompleteImageProfileCacheKey() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
         
         // then
         XCTAssertNotNil(searchUser.mediumProfileImageCacheKey)
@@ -106,7 +94,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     
     func testThatItPreviewAndCompleteImageProfileCacheKeyIsDifferent() {
         // given
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID.create())
         
         // then
         XCTAssertNotEqual(searchUser.smallProfileImageCacheKey, searchUser.mediumProfileImageCacheKey)
@@ -122,7 +110,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         uiMOC.saveOrRollback()
         
         // given
-        let searchUser = ZMSearchUser(contextProvider: self, user: user)
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, user: user)
         
         // then
         XCTAssertNotNil(searchUser.smallProfileImageCacheKey)
@@ -139,7 +127,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
         uiMOC.saveOrRollback()
         
         // given
-        let searchUser = ZMSearchUser(contextProvider: self, user: user)
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, user: user)
         
         // then
         XCTAssertNotNil(searchUser.mediumProfileImageCacheKey)
@@ -149,7 +137,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchPreviewProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
         
         // when
         searchUser.updateImageData(for: .preview, imageData: imageData)
@@ -166,7 +154,7 @@ class ZMSearchUserTests_ProfileImages: ZMBaseManagedObjectTest {
     func testThatItCanFetchCompleteProfileImageOnAQueue() {
         // given
         let imageData = verySmallJPEGData()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
+        let searchUser = ZMSearchUser(contextProvider: self.coreDataStack, name: "John", handle: "john", accentColor: .brightOrange, remoteIdentifier: UUID())
         
         // when
         searchUser.updateImageData(for: .complete, imageData: imageData)

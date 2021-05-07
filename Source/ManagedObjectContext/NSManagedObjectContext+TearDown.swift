@@ -31,8 +31,8 @@ extension NSManagedObjectContext: TearDownCapable {
                 if let tearDownCapable = $0 as? TearDownCapable {
                     tearDownCapable.tearDown()
                 }
-                self.refresh($0, mergeChanges: false)
             }
+            self.reset()
         }
     }
 

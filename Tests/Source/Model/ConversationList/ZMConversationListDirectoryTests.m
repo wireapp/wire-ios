@@ -61,21 +61,21 @@
 - (void)setUp
 {
     [super setUp];
-    
+
     Team *team = [Team insertNewObjectInManagedObjectContext:self.uiMOC];
     team.remoteIdentifier = [NSUUID createUUID];
-    
+
     ZMUser *otherUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     otherUser.remoteIdentifier = [NSUUID createUUID];
-    
+
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     selfUser.remoteIdentifier = [NSUUID createUUID];
-    
+
     ZMUser *serviceUser = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
     serviceUser.serviceIdentifier = @"serviceA";
     serviceUser.providerIdentifier = @"providerA";
     serviceUser.remoteIdentifier = [NSUUID createUUID];
-    
+
     Label *folder = [Label insertNewObjectInManagedObjectContext:self.uiMOC];
     folder.name = @"folder A";
     
@@ -83,48 +83,48 @@
     self.archivedGroupConversation.conversationType = ZMConversationTypeGroup;
     self.archivedGroupConversation.isArchived = YES;
     self.archivedGroupConversation.userDefinedName = @"archivedGroupConversation";
-    
+
     self.archivedOneToOneConversation = [self createConversation];
     self.archivedOneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
     self.archivedOneToOneConversation.isArchived = YES;
     self.archivedOneToOneConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.archivedOneToOneConversation.connection.status = ZMConnectionStatusAccepted;
     self.archivedOneToOneConversation.userDefinedName = @"archivedOneToOneConversation";
-    
+
     self.incomingPendingConnectionConversation = [self createConversation];
     self.incomingPendingConnectionConversation.conversationType = ZMConversationTypeConnection;
     self.incomingPendingConnectionConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.incomingPendingConnectionConversation.connection.status = ZMConnectionStatusPending;
     self.incomingPendingConnectionConversation.userDefinedName = @"incomingPendingConnectionConversation";
-    
+
     self.outgoingPendingConnectionConversation = [self createConversation];
     self.outgoingPendingConnectionConversation.conversationType = ZMConversationTypeConnection;
     self.outgoingPendingConnectionConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.outgoingPendingConnectionConversation.connection.status = ZMConnectionStatusSent;
     self.outgoingPendingConnectionConversation.userDefinedName = @"outgoingConnectionConversation";
-    
+
     self.groupConversation = [self createConversation];
     self.groupConversation.conversationType = ZMConversationTypeGroup;
     self.groupConversation.userDefinedName = @"groupConversation";
-    
+
     self.groupConversationInFolder = [self createConversation];
     self.groupConversationInFolder.conversationType = ZMConversationTypeGroup;
     self.groupConversationInFolder.userDefinedName = @"groupConversationInFolder";
     self.groupConversationInFolder.labels = [NSSet setWithObject:folder];
-    
+
     self.oneToOneConversation = [self createConversation];
     self.oneToOneConversation.conversationType = ZMConversationTypeOneOnOne;
     self.oneToOneConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.oneToOneConversation.connection.status = ZMConnectionStatusAccepted;
     self.oneToOneConversation.userDefinedName = @"oneToOneConversation";
-    
+
     self.oneToOneConversationInFolder = [self createConversation];
     self.oneToOneConversationInFolder.conversationType = ZMConversationTypeOneOnOne;
     self.oneToOneConversationInFolder.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     self.oneToOneConversationInFolder.connection.status = ZMConnectionStatusAccepted;
     self.oneToOneConversationInFolder.userDefinedName = @"oneToOneConversationInFolder";
     self.oneToOneConversationInFolder.labels = [NSSet setWithObject:folder];
-    
+
     self.oneToOneConversationInTeam = [self createConversation];
     self.oneToOneConversationInTeam.conversationType = ZMConversationTypeGroup;
     self.oneToOneConversationInTeam.userDefinedName = nil;
@@ -135,7 +135,7 @@
     self.invalidConversation = [self createConversation];
     self.invalidConversation.conversationType = ZMConversationTypeInvalid;
     self.invalidConversation.userDefinedName = @"invalidConversation";
-    
+
     self.clearedConversation = [self createConversation];
     self.clearedConversation.conversationType = ZMConversationTypeOneOnOne;
     self.clearedConversation.connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
@@ -143,12 +143,12 @@
     self.clearedConversation.userDefinedName = @"clearedConversation";
     self.clearedConversation.clearedTimeStamp = self.clearedConversation.lastServerTimeStamp;
     self.clearedConversation.isArchived = YES;
-    
+
     self.favoritedConversation = [self createConversation];
     self.favoritedConversation.conversationType = ZMConversationTypeGroup;
     self.favoritedConversation.userDefinedName = @"favoritedConversation";
     self.favoritedConversation.isFavorite = YES;
-    
+
     self.serviceConversation = [self createConversation];
     self.serviceConversation.conversationType = ZMConversationTypeGroup;
     self.serviceConversation.userDefinedName = nil;
@@ -165,18 +165,23 @@
     
     self.invalidConversation = nil;
     self.groupConversation = nil;
+    self.groupConversationInFolder = nil;
+    self.groupConversationInFolder.labels = [NSSet set];
     self.incomingPendingConnectionConversation = nil;
     self.outgoingPendingConnectionConversation = nil;
     self.archivedOneToOneConversation = nil;
     self.archivedGroupConversation = nil;
     self.oneToOneConversation = nil;
     self.oneToOneConversationInTeam = nil;
+    self.oneToOneConversationInFolder = nil;
     self.clearedConversation = nil;
     self.favoritedConversation = nil;
     self.serviceConversation = nil;
     self.conversations = nil;
-    
+
     [super tearDown];
+
+
 }
 
 - (void)testThatItReturnsAllConversations;
@@ -281,7 +286,7 @@
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.oneToOneConversations;
     NSSet *expected = [NSSet setWithArray:@[self.oneToOneConversation, self.oneToOneConversationInTeam, self.outgoingPendingConnectionConversation, self.serviceConversation]];
-    
+
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
 }
@@ -291,7 +296,7 @@
     // when
     ZMConversationList *list = self.uiMOC.conversationListDirectory.favoriteConversations;
     NSSet *expected = [NSSet setWithArray:@[self.favoritedConversation]];
-    
+
     // then
     XCTAssertEqualObjects([NSSet setWithArray:list], expected);
 }

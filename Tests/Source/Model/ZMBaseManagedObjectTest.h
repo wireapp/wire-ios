@@ -31,7 +31,6 @@
 @class ZMConnection;
 @protocol ZMObjectStrategyDirectory;
 @class ZMAssetClientMessage;
-@class ZMTestSession;
 
 @import WireCryptobox;
 @import WireImages;
@@ -42,12 +41,15 @@
 /// This is a base test class with utility stuff for all tests.
 @interface ZMBaseManagedObjectTest : ZMTBaseTest
 
+@property (nonatomic, readonly, nonnull) NSUUID* userIdentifier;
 
-@property (nonatomic, readonly, nonnull) ZMTestSession *testSession;
+@property (nonatomic, readonly, nonnull) CoreDataStack *coreDataStack;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *uiMOC;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *syncMOC;
 @property (nonatomic, readonly, nonnull) NSManagedObjectContext *searchMOC;
 
+@property (nonatomic, readonly) BOOL shouldUseRealKeychain;
+@property (nonatomic, readonly) BOOL shouldUseInMemoryStore;
 
 /// reset ui and sync contexts
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistantStore;
@@ -75,6 +77,9 @@
 
 /// Wipes the asset caches on the managed object contexts
 - (void)wipeCaches;
+
+/// Setups the asset caches on the managed object contexts
+- (void)setupCaches;
 
 @end
 

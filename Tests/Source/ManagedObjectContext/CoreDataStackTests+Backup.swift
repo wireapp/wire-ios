@@ -20,29 +20,24 @@ import Foundation
 import XCTest
 @testable import WireDataModel
 
-class StorageStackTests_Backup: DatabaseBaseTest {
-
-    override func setUp() {
-        super.setUp()
-        StorageStack.shared.createStorageAsInMemory = false
-    }
+class CoreDataStackTests_Backup: DatabaseBaseTest {
 
     override func tearDown() {
-        StorageStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
+        CoreDataStack.clearBackupDirectory(dispatchGroup: dispatchGroup)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.backupsDirectory.path))
-        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.importsDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.backupsDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.importsDirectory.path))
         super.tearDown()
     }
     
     func createBackup(accountIdentifier: UUID, encryptionKeys: EncryptionKeys? = nil, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
 
         var result: Result<URL>?
-        StorageStack.backupLocalStorage(accountIdentifier: accountIdentifier,
-                                        clientIdentifier: name,
-                                        applicationContainer: applicationContainer,
-                                        dispatchGroup: self.dispatchGroup,
-                                        encryptionKeys: encryptionKeys) {
+        CoreDataStack.backupLocalStorage(accountIdentifier: accountIdentifier,
+                                         clientIdentifier: name,
+                                         applicationContainer: applicationContainer,
+                                         dispatchGroup: self.dispatchGroup,
+                                         encryptionKeys: encryptionKeys) {
             result = $0.map { $0.url }
         }
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
@@ -52,8 +47,11 @@ class StorageStackTests_Backup: DatabaseBaseTest {
     func importBackup(accountIdentifier: UUID, backup: URL, file: StaticString = #file, line: UInt = #line) -> Result<URL>? {
         
         var result: Result<URL>?
-        StorageStack.importLocalStorage(accountIdentifier: accountIdentifier, from: backup, applicationContainer: applicationContainer, dispatchGroup: dispatchGroup) {
-             result = $0
+        CoreDataStack.importLocalStorage(accountIdentifier: accountIdentifier,
+                                         from: backup,
+                                         applicationContainer: applicationContainer,
+                                         dispatchGroup: dispatchGroup) {
+            result = $0
         }
         
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5), file: file, line: line)
@@ -63,14 +61,13 @@ class StorageStackTests_Backup: DatabaseBaseTest {
     func createBackupAndDeleteOriginalAccount(accountIdentifier: UUID, file: StaticString = #file, line: UInt = #line) -> URL? {
         // create populated account database
         let directory = createStorageStackAndWaitForCompletion(userID: accountIdentifier)
-        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [ZMUser]())
-        directory.uiContext.saveOrRollback()
+        _ = ZMConversation.insertGroupConversation(moc: directory.viewContext, participants: [ZMUser]())
+        directory.viewContext.saveOrRollback()
         
         guard let result = createBackup(accountIdentifier: accountIdentifier) else { return nil }
         guard case .success(let url) = result else { return nil }
         
         // Delete account
-        StorageStack.reset()
         clearStorageFolder()
         
         return url
@@ -88,7 +85,7 @@ class StorageStackTests_Backup: DatabaseBaseTest {
 
         guard case let .failure(error) = result else { return XCTFail() }
 
-        switch error as? StorageStack.BackupError {
+        switch error as? CoreDataStack.BackupError {
         case .failedToRead?: break
         default: XCTFail("unexpected error type")
         }
@@ -121,14 +118,14 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         let uuid = UUID()
         _ = createStorageStackAndWaitForCompletion(userID: uuid)
         // create empty file where backup needs to be saved to
-        try Data().write(to: StorageStack.backupsDirectory)
+        try Data().write(to: CoreDataStack.backupsDirectory)
 
         // when
         guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
 
         guard case let .failure(error) = result else { return XCTFail() }
 
-        switch error as? StorageStack.BackupError {
+        switch error as? CoreDataStack.BackupError {
         case .failedToWrite?: break
         default: XCTFail("unexpected error type")
         }
@@ -138,20 +135,20 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        directory.uiContext.encryptMessagesAtRest = true
-        directory.uiContext.encryptionKeys = validEncryptionKeys
+        directory.viewContext.encryptMessagesAtRest = true
+        directory.viewContext.encryptionKeys = validEncryptionKeys
         
         // when
         guard let result = createBackup(accountIdentifier: uuid,
                                         encryptionKeys: validEncryptionKeys) else {
             return XCTFail()
         }
-        directory.uiContext.saveOrRollback()
+        directory.viewContext.saveOrRollback()
         
         // then
         switch result {
         case let .success(backup):
-            let model = NSManagedObjectModel.loadModel()
+            let model = CoreDataStack.loadMessagingModel()
             let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
             let storeFile = backup.appendingPathComponent("data").appendingStoreFile()
             XCTAssert(FileManager.default.fileExists(atPath: storeFile.path))
@@ -167,9 +164,9 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        directory.uiContext.encryptMessagesAtRest = true
-        directory.uiContext.encryptionKeys = nil
-        directory.uiContext.saveOrRollback()
+        directory.viewContext.encryptMessagesAtRest = true
+        directory.viewContext.encryptionKeys = nil
+        directory.viewContext.saveOrRollback()
         
         // when
         guard let result = createBackup(accountIdentifier: uuid,
@@ -180,9 +177,9 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         guard case let .failure(error) = result else { return XCTFail() }
         
         // then
-        switch error as? StorageStack.BackupError {
+        switch error as? CoreDataStack.BackupError {
         case .failedToWrite(let failureError):
-            switch failureError as? StorageStack.BackupError {
+            switch failureError as? CoreDataStack.BackupError {
             case .missingEAREncryptionKey: break
             default: XCTFail("unexpected error type")
         }
@@ -194,8 +191,8 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [])
-        directory.uiContext.saveOrRollback()
+        _ = ZMConversation.insertGroupConversation(moc: directory.viewContext, participants: [])
+        directory.viewContext.saveOrRollback()
 
         // when
         guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
@@ -203,16 +200,15 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         // then
         guard case .success = result else { return XCTFail() }
         let fetchConversations = ZMConversation.sortedFetchRequest()
-        XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
+        XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
 
     func testThatItPreservesOriginaDataAfterBackupIfStackIsNotActive() throws {
         // given
         let uuid = UUID()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        _ = ZMConversation.insertGroupConversation(moc: directory.uiContext, participants: [])
-        directory.uiContext.saveOrRollback()
-        StorageStack.reset()
+        _ = ZMConversation.insertGroupConversation(moc: directory.viewContext, participants: [])
+        directory.viewContext.saveOrRollback()
 
         // when
         guard let result = createBackup(accountIdentifier: uuid) else { return XCTFail() }
@@ -221,7 +217,7 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         guard case .success = result else { return XCTFail() }
         let anotherDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()
-        XCTAssertEqual(try anotherDirectory.uiContext.count(for: fetchConversations), 1)
+        XCTAssertEqual(try anotherDirectory.viewContext.count(for: fetchConversations), 1)
     }
     
     // MARK: - Import
@@ -238,7 +234,7 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         guard case .success = result else { return XCTFail() }
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         let fetchConversations = ZMConversation.sortedFetchRequest()
-        XCTAssertEqual(try directory.uiContext.count(for: fetchConversations), 1)
+        XCTAssertEqual(try directory.viewContext.count(for: fetchConversations), 1)
     }
     
     func testThatMetadataIsDeletedWhenImportingBackup() {
@@ -247,16 +243,15 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
         
         // Set metadata on DB which we expect to be cleared when importing from a backup
-        directory.uiContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
-        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
-        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
-        directory.uiContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
-        directory.uiContext.forceSaveOrRollback()
+        directory.viewContext.setPersistentStoreMetadata("1234567890", key: ZMPersistedClientIdKey)
+        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushToken.rawValue)
+        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.pushKitToken.rawValue)
+        directory.viewContext.setPersistentStoreMetadata("1234567890", key: PersistentMetadataKey.lastUpdateEventID.rawValue)
+        directory.viewContext.forceSaveOrRollback()
         
         guard let backup = createBackup(accountIdentifier: uuid)?.value else { return XCTFail() }
         
         // Delete account
-        StorageStack.reset()
         clearStorageFolder()
         
         // when
@@ -265,10 +260,10 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         let importedDirectory = createStorageStackAndWaitForCompletion(userID: uuid)
         
         // then
-        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
-        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
-        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
-        XCTAssertNil(importedDirectory.uiContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
+        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: ZMPersistedClientIdKey))
+        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushToken.rawValue))
+        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.pushKitToken.rawValue))
+        XCTAssertNil(importedDirectory.viewContext.persistentStoreMetadata(forKey: PersistentMetadataKey.lastUpdateEventID.rawValue))
     }
     
     func testThatItFailsWhenImportingBackupIntoWrongAccount() {
@@ -282,7 +277,7 @@ class StorageStackTests_Backup: DatabaseBaseTest {
     
         // then
         guard case let .failure(error) = result else { return XCTFail() }
-        switch error as? StorageStack.BackupImportError {
+        switch error as? CoreDataStack.BackupImportError {
         case .incompatibleBackup?: break
         default: XCTFail()
         }
@@ -298,7 +293,7 @@ class StorageStackTests_Backup: DatabaseBaseTest {
         
         // then
         guard case let .failure(error) = result else { return XCTFail() }
-        switch error as? StorageStack.BackupImportError {
+        switch error as? CoreDataStack.BackupImportError {
         case .failedToCopy?: break
         default: XCTFail()
         }
