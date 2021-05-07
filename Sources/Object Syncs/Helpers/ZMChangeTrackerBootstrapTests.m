@@ -19,6 +19,7 @@
 @import WireDataModel;
 @import WireTesting;
 
+#import "WireRequestStrategyTests-Swift.h"
 #import "ZMContextChangeTracker.h"
 #import "ZMChangeTrackerBootstrap.h"
 #import "ZMChangeTrackerBootstrap+Testing.h"
@@ -52,7 +53,7 @@
 @interface ZMChangeTrackerBootstrapTests : ZMTBaseTest
 
 @property (nonatomic) ZMChangeTrackerBootstrap *sut;
-@property (nonatomic) ZMTestSession *testSession;
+@property (nonatomic) CoreDataStack *coreDataStack;
 @property (nonatomic) ZMUser *user1;
 @property (nonatomic) ZMUser *user2;
 @property (nonatomic) ZMUser *selfUser;
@@ -72,28 +73,28 @@
 - (void)setUp
 {
     [super setUp];
+
+    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
+                                                       inMemoryStore:YES];
     
-    self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    [self.testSession prepareForTestNamed:self.name];
-    
-    self.user1 = [ZMUser insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.user1 = [ZMUser insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.user1.name = @"Hans";
-    self.user2 = [ZMUser insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.user2 = [ZMUser insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.user2.name = @"Gretel";
-    self.selfUser = [ZMUser selfUserInContext:self.testSession.uiMOC];
-    self.conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.selfUser = [ZMUser selfUserInContext:self.coreDataStack.viewContext];
+    self.conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.conversation1.userDefinedName = @"A Walk in the Forest";
-    self.conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.conversation2.userDefinedName = @"The Great Escape";
-    self.connection1 = [ZMConnection insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.connection1 = [ZMConnection insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.connection1.status = ZMConnectionStatusAccepted;
     self.user1.connection = self.connection1;
     self.connection1.conversation = self.conversation1;
     self.changeTracker1 = [[FakeChangeTracker alloc] init];
     self.changeTracker2 = [[FakeChangeTracker alloc] init];
-    XCTAssert([self.testSession.uiMOC saveOrRollback]);
+    XCTAssert([self.coreDataStack.viewContext saveOrRollback]);
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1, self.changeTracker2]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1, self.changeTracker2]];
 }
 
 - (void)tearDown {
@@ -107,8 +108,7 @@
     self.changeTracker2 = nil;
     self.connection1 = nil;
     self.conversation2 = nil;
-    [self.testSession tearDown];
-    self.testSession = nil;
+    self.coreDataStack = nil;
     [super tearDown];
 }
 
@@ -125,7 +125,7 @@
     
     self.changeTracker1.fetchRequest = request1;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];
@@ -154,7 +154,7 @@
     self.changeTracker1.fetchRequest = request1;
     self.changeTracker2.fetchRequest = request2;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1, self.changeTracker2]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1, self.changeTracker2]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];
@@ -184,7 +184,7 @@
     self.changeTracker1.fetchRequest = request1;
     self.changeTracker2.fetchRequest = request2;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1, self.changeTracker2]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1, self.changeTracker2]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];
@@ -214,7 +214,7 @@
     self.changeTracker1.fetchRequest = request1;
     self.changeTracker2.fetchRequest = request2;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1, self.changeTracker2]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1, self.changeTracker2]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];
@@ -232,7 +232,7 @@
     self.sut = nil;
     self.changeTracker1.fetchRequest = nil;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];
@@ -248,7 +248,7 @@
     NSFetchRequest *request1 = [NSFetchRequest fetchRequestWithEntityName:ZMConversation.entityName];
     self.changeTracker1.fetchRequest = request1;
     
-    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.testSession.uiMOC changeTrackers:@[self.changeTracker1]];
+    self.sut = [[ZMChangeTrackerBootstrap alloc] initWithManagedObjectContext:self.coreDataStack.viewContext changeTrackers:@[self.changeTracker1]];
     
     // when
     [self.sut fetchObjectsForChangeTrackers];

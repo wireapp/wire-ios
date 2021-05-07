@@ -16,6 +16,7 @@
 // along with this program. If not, see http://www.gnu.org/licenses/.
 // 
 
+#import "WireRequestStrategyTests-Swift.h"
 
 @import WireTransport;
 @import WireDataModel;
@@ -24,7 +25,7 @@
 
 @interface ZMDownstreamObjectSyncOrderingTests : ZMTBaseTest
 
-@property (nonatomic) ZMTestSession *testSession;
+@property (nonatomic) CoreDataStack *coreDataStack;
 
 @property (nonatomic) ZMConversation *conversation1;
 @property (nonatomic) ZMConversation *conversation2;
@@ -40,31 +41,30 @@
 - (void)setUp
 {
     [super setUp];
-    
-    self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    [self.testSession prepareForTestNamed:self.name];
 
-    self.conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
+                                                       inMemoryStore:YES];
+
+    self.conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.conversation1.conversationType = ZMConversationTypeGroup;
     self.conversation1.lastModifiedDate = [NSDate dateWithTimeIntervalSinceReferenceDate:417006000];
     self.conversation1.isArchived = NO;
     
     // c2 is newer, but archived
-    self.conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.testSession.uiMOC];
+    self.conversation2 = [ZMConversation insertNewObjectInManagedObjectContext:self.coreDataStack.viewContext];
     self.conversation2.conversationType = ZMConversationTypeGroup;
     self.conversation2.lastModifiedDate = [NSDate dateWithTimeIntervalSinceReferenceDate:417007000];
     self.conversation2.isArchived = YES;
     
     // message 2 is never than message 1
-    self.imageMessage1 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
-    self.imageMessage2 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.testSession.uiMOC];
+    self.imageMessage1 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
+    self.imageMessage2 = [[ZMImageMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
     self.imageMessage2.serverTimestamp = [self.imageMessage1.serverTimestamp dateByAddingTimeInterval:0.1];
 }
 
 - (void)tearDown
 {
-    [self.testSession tearDown];
-    self.testSession = nil;
+    self.coreDataStack = nil;
     self.conversation1 = nil;
     self.conversation2 = nil;
     self.imageMessage1 = nil;
