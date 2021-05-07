@@ -223,6 +223,19 @@ extension ZMUserTests_Swift {
             XCTAssertFalse(predicate.evaluate(with: user))
         }
     }
+
+    func testThatCompleteImageDownloadFilterDoesNotPickUpUsersWithInvalidAssetId() {
+        syncMOC.performGroupedBlockAndWait {
+            // GIVEN
+            let predicate = ZMUser.completeImageDownloadFilter
+            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
+            user?.completeProfileAssetIdentifier = "not+valid+id"
+            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
+
+            // THEN
+            XCTAssertFalse(predicate.evaluate(with: user))
+        }
+    }
     
     func testThatPreviewImageDownloadFilterDoesNotPickUpUsersWithCachedImages() {
         syncMOC.performGroupedBlockAndWait {
