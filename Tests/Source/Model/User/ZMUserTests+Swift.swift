@@ -191,7 +191,7 @@ extension ZMUserTests_Swift {
             // GIVEN
             let predicate = ZMUser.previewImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = "some identifier"
+            user?.previewProfileAssetIdentifier = "some-identifier"
             
             // THEN
             XCTAssert(predicate.evaluate(with: user))
@@ -203,7 +203,7 @@ extension ZMUserTests_Swift {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
             let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.completeProfileAssetIdentifier = "some identifier"
+            user?.completeProfileAssetIdentifier = "some-identifier"
             user?.setImage(data: nil, size: .complete)
             
             // THEN
