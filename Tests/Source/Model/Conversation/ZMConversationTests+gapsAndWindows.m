@@ -31,15 +31,13 @@
 - (void)testThatItInsertsANewConversationInUserSession
 {
     // given
-    id session = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[session stub] andReturn:self.uiMOC] managedObjectContext];
     ZMUser *user1 = [self createUser];
     ZMUser *user2 = [self createUser];
     ZMUser *user3 = [self createUser];
     ZMUser *selfUser = [ZMUser selfUserInContext:self.uiMOC];
     
     // when
-    ZMConversation *conversation = [ZMConversation insertGroupConversationWithSession:session
+    ZMConversation *conversation = [ZMConversation insertGroupConversationWithSession:self.coreDataStack
                                                                          participants:@[user1, user2, user3]
                                                                                  name:NULL
                                                                                  team:NULL
@@ -68,13 +66,11 @@
     ZMConversation *conversation1 = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
     conversation1.conversationType = ZMConversationTypeOneOnOne;
     [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC]; // this is used to make sure it doesn't return all objects
-    id session = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[session stub] andReturn:self.uiMOC] managedObjectContext];
     
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsInUserSession:self.coreDataStack];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -97,14 +93,11 @@
     ZMConnection *pendingConnection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
     pendingConnection.status = ZMConnectionStatusPending;
     pendingConnection.conversation = pendingConnectionConversation;
-    
-    id session = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[session stub] andReturn:self.uiMOC] managedObjectContext];
-    
+
     [self.uiMOC processPendingChanges];
     
     // when
-    NSArray *fetchedConversations = [ZMConversationList pendingConnectionConversationsInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList pendingConnectionConversationsInUserSession:self.coreDataStack];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -124,12 +117,9 @@
     conversation2.conversationType = ZMConversationTypeGroup;
     
     [self.uiMOC processPendingChanges];
-    
-    id session = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[session stub] andReturn:self.uiMOC] managedObjectContext];
-    
+
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack];
     
     // then
     XCTAssertNotNil(fetchedConversations);
@@ -149,12 +139,9 @@
     conversation2.conversationType = ZMConversationTypeGroup;
     
     XCTAssertTrue([self.uiMOC saveOrRollback]);
-    
-    id session = [OCMockObject mockForProtocol:@protocol(ZMManagedObjectContextProvider)];
-    [[[session stub] andReturn:self.uiMOC] managedObjectContext];
-    
+
     // when
-    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:session];
+    NSArray *fetchedConversations = [ZMConversationList conversationsIncludingArchivedInUserSession:self.coreDataStack];
     
     // then
     XCTAssertNotNil(fetchedConversations);

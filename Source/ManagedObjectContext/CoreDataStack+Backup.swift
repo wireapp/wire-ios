@@ -21,7 +21,7 @@ import WireUtilities
 
 private let log = ZMSLog(tag: "Backup")
 
-extension StorageStack {
+extension CoreDataStack {
 
     private static let metadataFilename = "export.json"
     private static let databaseDirectoryName = "data"
@@ -101,7 +101,7 @@ extension StorageStack {
             }
         }
         
-        let accountDirectory = StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = Self.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let storeFile = accountDirectory.appendingPersistentStoreLocation()
 
         guard fileManager.fileExists(atPath: accountDirectory.path) else { return fail(.failedToRead) }
@@ -112,7 +112,8 @@ extension StorageStack {
 
         workQueue.async(group: dispatchGroup) {
             do {
-                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: .loadModel())
+                let model = CoreDataStack.loadMessagingModel()
+                let coordinator = NSPersistentStoreCoordinator(managedObjectModel: model)
 
                 // Create target directory
                 try fileManager.createDirectory(at: databaseDirectory, withIntermediateDirectories: true, attributes: nil)
@@ -170,7 +171,7 @@ extension StorageStack {
             }
         }
         
-        let accountDirectory = accountFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
+        let accountDirectory = accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: applicationContainer)
         let accountStoreFile = accountDirectory.appendingPersistentStoreLocation()
         let backupStoreFile = backupDirectory.appendingPathComponent(databaseDirectoryName).appendingStoreFile()
         let metadataURL = backupDirectory.appendingPathComponent(metadataFilename)
@@ -179,7 +180,7 @@ extension StorageStack {
             do {
                 let metadata = try BackupMetadata(url: metadataURL)
                 
-                let model = NSManagedObjectModel.loadModel()
+                let model = CoreDataStack.loadMessagingModel()
                 if let verificationError = metadata.verify(using: accountIdentifier, modelVersionProvider: model) {
                     return fail(.incompatibleBackup(verificationError))
                 }

@@ -22,7 +22,7 @@ import XCTest
 
 class NSPersistentStoreMetadataTests : ZMBaseManagedObjectTest {
     
-    var shouldUseInMemoryStore : Bool {
+    override var shouldUseInMemoryStore : Bool {
         return false
     }
     

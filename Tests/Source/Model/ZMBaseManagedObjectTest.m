@@ -21,10 +21,10 @@
 #import <libkern/OSAtomic.h>
 #import <CommonCrypto/CommonCrypto.h>
 
+#import "WireDataModelTests-Swift.h"
 #import "NSManagedObjectContext+zmessaging.h"
 #import "NSManagedObjectContext+zmessaging-Internal.h"
 #import "MockModelObjectContextFactory.h"
-#import "ZMTestSession.h"
 
 #import "ZMUser+Internal.h"
 #import "ZMConversation+Internal.h"
@@ -33,10 +33,12 @@
 
 #import "NSString+RandomString.h"
 
+@import WireTransport.Testing;
 
 @interface ZMBaseManagedObjectTest ()
 
-@property (nonatomic) ZMTestSession *testSession;
+@property (nonatomic, readwrite) NSUUID *userIdentifier;
+@property (nonatomic) CoreDataStack *coreDataStack;
 @property (nonatomic) NSTimeInterval originalConversationLastReadTimestampTimerValue; // this will speed up the tests A LOT
 
 @end
@@ -56,25 +58,39 @@
 
 - (void)performPretendingUiMocIsSyncMoc:(void(^)(void))block;
 {
-    [self.testSession performPretendingUiMocIsSyncMoc:block];
+    if(!block) {
+        return;
+    }
+    [self.uiMOC resetContextType];
+    [self.uiMOC markAsSyncContext];
+    block();
+    [self.uiMOC resetContextType];
+    [self.uiMOC markAsUIContext];
 }
 
 - (void)performPretendingSyncMocIsUiMoc:(void(^)(void))block
 {
-    [self.testSession performPretendingSyncMocIsUiMoc:block];
+    if(!block) {
+        return;
+    }
+    [self.syncMOC resetContextType];
+    [self.syncMOC markAsUIContext];
+    block();
+    [self.syncMOC resetContextType];
+    [self.syncMOC markAsSyncContext];
 }
 
 - (void)setUp;
 {
     [super setUp];
-    
-    self.testSession = [[ZMTestSession alloc] initWithDispatchGroup:self.dispatchGroup];
-    self.testSession.shouldUseInMemoryStore = self.shouldUseInMemoryStore;
-    self.testSession.shouldUseRealKeychain = self.shouldUseRealKeychain;
-    
-    [self performIgnoringZMLogError:^{
-        [self.testSession prepareForTestNamed:self.name];
-    }];
+
+    [ZMPersistentCookieStorage setDoNotPersistToKeychain:!self.shouldUseRealKeychain];
+
+    self.originalConversationLastReadTimestampTimerValue = ZMConversationDefaultLastReadTimestampSaveDelay;
+    ZMConversationDefaultLastReadTimestampSaveDelay = 0.02;
+
+    self.userIdentifier = NSUUID.UUID;
+    self.coreDataStack = [self createCoreDataStack];
     
     NSString *testName = NSStringFromSelector(self.invocation.selector);
     NSString *methodName = [NSString stringWithFormat:@"setup%@%@", [testName substringToIndex:1].capitalizedString, [testName substringFromIndex:1]];
@@ -82,8 +98,10 @@
     if ([self respondsToSelector:selector]) {
         ZM_SILENCE_CALL_TO_UNKNOWN_SELECTOR([self performSelector:selector]);
     }
-    
+
+    [self setupKeyStore];
     [self setupTimers];
+    [self setupCaches];
 
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
 }
@@ -96,35 +114,49 @@
     [self.uiMOC zm_createMessageDeletionTimer];
 }
 
+- (void)setupKeyStore
+{
+    [self performPretendingUiMocIsSyncMoc:^{
+        NSURL *url = [CoreDataStack accountDataFolderWithAccountIdentifier:self.userIdentifier
+                                                  applicationContainer:self.storageDirectory];
+        [self.uiMOC setupUserKeyStoreInAccountDirectory:url
+                                   applicationContainer:self.storageDirectory];
+    }];
+}
+
 - (void)tearDown;
 {
+    ZMConversationDefaultLastReadTimestampSaveDelay = self.originalConversationLastReadTimestampTimerValue;
+
     WaitForAllGroupsToBeEmpty(500); // we want the test to get stuck if there is something wrong. Better than random failures
-    [self.testSession tearDown];
-    self.testSession = nil;
-    [StorageStack reset];
+    [self wipeCaches];
+    self.coreDataStack = nil;
+    [self deleteStorageDirectoryAndReturnError:nil];
     [super tearDown];
 }
 
 - (NSManagedObjectContext *)uiMOC
 {
-    return self.testSession.uiMOC;
+    return self.coreDataStack.viewContext;
 }
 
 - (NSManagedObjectContext *)syncMOC
 {
-    return self.testSession.syncMOC;
+    return self.coreDataStack.syncContext;
 }
 
 - (NSManagedObjectContext *)searchMOC
 {
-    return self.testSession.searchMOC;
+    return self.coreDataStack.searchContext;
 }
 
 - (void)resetUIandSyncContextsAndResetPersistentStore:(BOOL)resetPersistentStore
 {
-    [self.testSession resetUIandSyncContextsAndResetPersistentStore:resetPersistentStore];
+    self.coreDataStack = nil;
+    self.coreDataStack = [self createCoreDataStack];
+    [self setupTimers];
+    [self setupCaches];
 }
-
 
 @end
 
@@ -146,9 +178,27 @@
 
 @implementation ZMBaseManagedObjectTest (FilesInCache)
 
+- (void)setupCaches
+{
+    self.uiMOC.zm_userImageCache = [[UserImageLocalCache alloc] initWithLocation:nil];
+    self.uiMOC.zm_fileAssetCache = [[FileAssetCache alloc] initWithLocation:nil];
+
+    [self.syncMOC performGroupedBlockAndWait:^{
+        self.syncMOC.zm_fileAssetCache = self.uiMOC.zm_fileAssetCache;
+        self.syncMOC.zm_userImageCache = self.uiMOC.zm_userImageCache;
+    }];
+}
+
 - (void)wipeCaches
 {
-    [self.testSession wipeCaches];
+    [self.uiMOC.zm_fileAssetCache wipeCaches];
+    [self.uiMOC.zm_userImageCache wipeCache];
+
+    [self.syncMOC performGroupedBlockAndWait:^{
+        [self.syncMOC.zm_fileAssetCache wipeCaches];
+        [self.syncMOC.zm_userImageCache wipeCache];
+    }];
+    [PersonName.stringsToPersonNames removeAllObjects];
 }
 
 @end

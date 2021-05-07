@@ -26,7 +26,7 @@ class CryptoBoxTest: OtrBaseTest {
     func testThatCryptoBoxFolderIsForbiddenFromBackup() {
         // when
         let accountId = UUID()
-        let accountFolder = StorageStack.accountFolder(accountIdentifier: accountId, applicationContainer: OtrBaseTest.sharedContainerURL)
+        let accountFolder = CoreDataStack.accountDataFolder(accountIdentifier: accountId, applicationContainer: OtrBaseTest.sharedContainerURL)
         let keyStore = UserClientKeysStore(accountDirectory: accountFolder, applicationContainer: OtrBaseTest.sharedContainerURL)
         
         // then

@@ -17,32 +17,27 @@
 //
 import XCTest
 
-class StorageStackTests_Migration: DatabaseBaseTest {
+class CoreDataStackTests_Migration: DatabaseBaseTest {
     
     enum TestError: Error {
         case somethingWentWrong
     }
-    
-    override func setUp() {
-        super.setUp()
-        StorageStack.shared.createStorageAsInMemory = false
-    }
 
     override func tearDown() {
-        StorageStack.clearMigrationDirectory(dispatchGroup: dispatchGroup)
+        CoreDataStack.clearMigrationDirectory(dispatchGroup: dispatchGroup)
         XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.migrationDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
         super.tearDown()
     }
     
     func performMigration(accountIdentifier: UUID,
                           migration: @escaping (NSManagedObjectContext) throws -> Void) -> Result<Void>? {
         var result: Result<Void>?
-        StorageStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
-                                         applicationContainer: applicationContainer,
-                                         dispatchGroup: dispatchGroup,
-                                         migration: migration,
-                                         completion: { result = $0 })
+        CoreDataStack.migrateLocalStorage(accountIdentifier: accountIdentifier,
+                                          applicationContainer: applicationContainer,
+                                          dispatchGroup: dispatchGroup,
+                                          migration: migration,
+                                          completion: { result = $0 })
         XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         return result
@@ -64,10 +59,9 @@ class StorageStackTests_Migration: DatabaseBaseTest {
         
         // then
         guard case .success() = result else { return XCTFail() }
-        
-        StorageStack.reset()
+
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        let storedValue = directory.uiContext.persistentStoreMetadata(forKey: metadataKey) as? Int
+        let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertEqual(storedValue, metadataValue)
     }
     
@@ -90,11 +84,10 @@ class StorageStackTests_Migration: DatabaseBaseTest {
         }
 
         // then
-        guard case .failure(StorageStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
         
-        StorageStack.reset()
         let directory = createStorageStackAndWaitForCompletion(userID: uuid)
-        let storedValue = directory.uiContext.persistentStoreMetadata(forKey: metadataKey) as? Int
+        let storedValue = directory.viewContext.persistentStoreMetadata(forKey: metadataKey) as? Int
         XCTAssertNil(storedValue)
     }
     
@@ -109,7 +102,7 @@ class StorageStackTests_Migration: DatabaseBaseTest {
         }
         
         // then
-        guard case .failure(StorageStack.MigrationError.missingLocalStore) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.missingLocalStore) = result else { return XCTFail() }
     }
     
     func testThatLocalStoreMigration_DeletesTemporaryStore_OnSuccess() throws {
@@ -123,7 +116,7 @@ class StorageStackTests_Migration: DatabaseBaseTest {
         // then
         guard case .success() = result else { return XCTFail() }
         
-        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.migrationDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
     
     func testThatLocalStoreMigration_DeletesTemporaryStore_OnFailure() throws {
@@ -140,9 +133,9 @@ class StorageStackTests_Migration: DatabaseBaseTest {
         }
         
         // then
-        guard case .failure(StorageStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
+        guard case .failure(CoreDataStack.MigrationError.migrationFailed(TestError.somethingWentWrong)) = result else { return XCTFail() }
         
-        XCTAssertFalse(FileManager.default.fileExists(atPath: StorageStack.migrationDirectory.path))
+        XCTAssertFalse(FileManager.default.fileExists(atPath: CoreDataStack.migrationDirectory.path))
     }
 
 }

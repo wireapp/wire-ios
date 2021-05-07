@@ -18,13 +18,13 @@
 
 import Foundation
 
-public extension ManagedObjectContextDirectory {
+public extension ContextProvider {
     
     /// Retrieve or create the encryption keys necessary for enabling / disabling encryption at rest.
     ///
     /// This method should only be called on the main thread.
     
-    func encryptionKeysForSettingEncryptionAtRest(enabled: Bool, account: Account) throws -> EncryptionKeys {
+    func encryptionKeysForSettingEncryptionAtRest(enabled: Bool) throws -> EncryptionKeys {
         var encryptionKeys: EncryptionKeys
         
         if enabled {
@@ -32,7 +32,7 @@ public extension ManagedObjectContextDirectory {
             encryptionKeys = try EncryptionKeys.createKeys(for: account)
             storeEncryptionKeysInAllContexts(encryptionKeys: encryptionKeys)
         } else {
-            encryptionKeys = try uiContext.getEncryptionKeys()
+            encryptionKeys = try viewContext.getEncryptionKeys()
             clearEncryptionKeysInAllContexts()
         }
         
@@ -42,16 +42,16 @@ public extension ManagedObjectContextDirectory {
     /// Synchronously stores the given encryption keys in each managed object context.
 
     func storeEncryptionKeysInAllContexts(encryptionKeys: EncryptionKeys) {
-        for context in [uiContext, syncContext, searchContext] {
-            context?.performAndWait { context?.encryptionKeys = encryptionKeys }
+        for context in [viewContext, syncContext, searchContext] {
+            context.performAndWait { context.encryptionKeys = encryptionKeys }
         }
     }
 
     /// Synchronously clears the encryption keys in each managed object context.
 
     func clearEncryptionKeysInAllContexts() {
-        for context in [uiContext, syncContext, searchContext] {
-            context?.performAndWait { context?.encryptionKeys = nil }
+        for context in [viewContext, syncContext, searchContext] {
+            context.performAndWait { context.encryptionKeys = nil }
         }
     }
 

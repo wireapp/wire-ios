@@ -21,6 +21,11 @@ import XCTest
 @testable import WireDataModel
 
 extension ZMBaseManagedObjectTest {
+
+    var storageDirectory: URL {
+        FileManager.default.urls(for: .documentDirectory,
+                                 in: .userDomainMask).first!
+    }
     
     func createClientTextMessage() -> ZMClientMessage? {
         return createClientTextMessage(withText: self.name)
@@ -36,5 +41,30 @@ extension ZMBaseManagedObjectTest {
             XCTFail()
         }
         return message
+    }
+
+    @objc
+    func createCoreDataStack() -> CoreDataStack {
+        let account = Account(userName: "", userIdentifier: userIdentifier)
+        let stack = CoreDataStack(account: account,
+                                  applicationContainer: storageDirectory,
+                                  inMemoryStore: shouldUseInMemoryStore,
+                                  dispatchGroup: dispatchGroup)
+
+        stack.loadStores(completionHandler: { error in
+            XCTAssertNil(error)
+        })
+
+        return stack
+    }
+
+    @objc
+    func deleteStorageDirectory() throws {
+        let files = try FileManager.default
+            .contentsOfDirectory(at: storageDirectory,
+                                 includingPropertiesForKeys: nil,
+                                 options: [])
+
+        try files.forEach({ try FileManager.default.removeItem(at: $0) })
     }
 }

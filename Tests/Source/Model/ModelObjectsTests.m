@@ -56,7 +56,7 @@
 - (void)setUp
 {
     [super setUp];
-    [self createCoreDataStack];
+    [self loadManagedObjectModel];
     [self setupSelfConversation];
     WaitForAllGroupsToBeEmpty(0.2);
 }
@@ -82,11 +82,6 @@
         [self.syncMOC refreshObject:[ZMUser selfUserInContext:self.syncMOC] mergeChanges:NO];
     }];
     
-}
-
-- (void)createCoreDataStack;
-{
-    [self loadManagedObjectModel];
 }
 
 - (void)loadManagedObjectModel;

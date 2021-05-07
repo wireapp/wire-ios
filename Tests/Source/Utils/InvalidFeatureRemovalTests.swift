@@ -22,7 +22,7 @@ import Foundation
 class InvalidFeatureRemovalTests: DiskDatabaseTest {
 
     func testAllInstancesRemoved() throws {
-        contextDirectory.syncContext.performGroupedAndWait { context in
+        coreDataStack.syncContext.performGroupedAndWait { context in
             // Given
             let team = Team.insertNewObject(in: context)
             team.remoteIdentifier = UUID()

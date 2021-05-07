@@ -29,21 +29,11 @@ class ConversationCreationOptionsTests: ZMConversationTestsBase {
         let team = Team.insertNewObject(in: self.uiMOC)
         let options = ConversationCreationOptions(participants: [user], name: name, team: team, allowGuests: true)
         // when
-        let conversation = self.insertGroup(with: options)
+        let conversation = self.coreDataStack.insertGroup(with: options)
         // then
         XCTAssertEqual(conversation.displayName, name)
         XCTAssertEqual(conversation.localParticipants, Set([user, .selfUser(in: uiMOC)]))
         XCTAssertEqual(conversation.team, team)
         XCTAssertEqual(conversation.allowGuests, true)
-    }
-}
-
-extension ConversationCreationOptionsTests: ZMManagedObjectContextProvider {
-    var managedObjectContext: NSManagedObjectContext? {
-        return self.uiMOC
-    }
-    
-    var syncManagedObjectContext: NSManagedObjectContext? {
-        return self.syncMOC
     }
 }

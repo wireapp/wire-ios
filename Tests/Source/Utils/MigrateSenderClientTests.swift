@@ -24,15 +24,15 @@ class MigrateSenderClientTests: DiskDatabaseTest {
     func testSenderClientIDIsMigratedFromClientsSet() throws {
         // given
         let clientID = UUID().transportString()
-        let userClient = UserClient(context: contextDirectory.uiContext)
+        let userClient = UserClient(context: coreDataStack.viewContext)
         userClient.remoteIdentifier = clientID
-        let systemMessage = ZMSystemMessage(context: contextDirectory.uiContext)
+        let systemMessage = ZMSystemMessage(context: coreDataStack.viewContext)
         systemMessage.systemMessageType = .decryptionFailed
         systemMessage.clients = Set(arrayLiteral: userClient)
-        contextDirectory.uiContext.saveOrRollback()
+        coreDataStack.viewContext.saveOrRollback()
         
         // when
-        MigrateSenderClient.migrateSenderClientID(in: contextDirectory.uiContext)
+        MigrateSenderClient.migrateSenderClientID(in: coreDataStack.viewContext)
         
         // then
         XCTAssertEqual(systemMessage.senderClientID, clientID)

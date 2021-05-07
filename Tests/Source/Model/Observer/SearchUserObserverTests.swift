@@ -20,7 +20,7 @@
 import Foundation
 @testable import WireDataModel
 
-class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectContextProvider {
+class SearchUserObserverTests : NotificationDispatcherTestBase {
     
     class TestSearchUserObserver : NSObject, ZMUserObserver {
         
@@ -30,15 +30,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
             receivedChangeInfo.append(changeInfo)
         }
     }
-    
-    var managedObjectContext: NSManagedObjectContext! {
-        return uiMOC
-    }
-    
-    var syncManagedObjectContext: NSManagedObjectContext! {
-        return syncMOC
-    }
-    
+        
     var testObserver : TestSearchUserObserver!
     
     override func setUp() {
@@ -56,7 +48,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -77,7 +69,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         let user = ZMUser.insertNewObject(in:self.uiMOC)
         user.remoteIdentifier = UUID.create()
         self.uiMOC.saveOrRollback()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "", handle: nil, accentColor: .brightYellow, remoteIdentifier: nil, user: user)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for:searchUser, in: self.uiMOC)
@@ -98,7 +90,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
         self.token = UserChangeInfo.add(observer: testObserver, for: searchUser, in: self.uiMOC)
@@ -115,7 +107,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
     
         // given
         let remoteID = UUID.create()
-        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: remoteID)
         
         XCTAssertFalse(searchUser.isPendingApprovalByOtherUser)
         uiMOC.searchUserObserverCenter.addSearchUser(searchUser)
@@ -139,7 +131,7 @@ class SearchUserObserverTests : NotificationDispatcherTestBase, ZMManagedObjectC
         user.remoteIdentifier = UUID()
         XCTAssert(uiMOC.saveOrRollback())
 
-        let searchUser = ZMSearchUser(contextProvider: self, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: nil, user: user)
+        let searchUser = ZMSearchUser(contextProvider: coreDataStack, name: "Hans", handle: "hans", accentColor: .brightOrange, remoteIdentifier: nil, user: user)
         
         let testObserver2 = TestSearchUserObserver()
         var tokens: [AnyObject] = []

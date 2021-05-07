@@ -19,18 +19,6 @@
 import Foundation
 @testable import WireDataModel
 
-extension UserTypeTests_Materialize: ZMManagedObjectContextProvider {
-    
-    var managedObjectContext: NSManagedObjectContext! {
-        return uiMOC
-    }
-    
-    var syncManagedObjectContext: NSManagedObjectContext! {
-        return syncMOC
-    }
-    
-}
-
 class UserTypeTests_Materialize: ModelObjectsTests {
     
     func testThatWeCanMaterializeSearchUsers() {
@@ -50,12 +38,12 @@ class UserTypeTests_Materialize: ModelObjectsTests {
         // given
         let team = createTeam(in: uiMOC)
         _ = createMembership(in: uiMOC, user: selfUser, team: team)
-        let teamSearchUser = ZMSearchUser(contextProvider: self,
-                                                name: "Team",
-                                                handle: "team",
-                                                accentColor: .brightOrange,
-                                                remoteIdentifier: UUID(),
-                                                teamIdentifier: team.remoteIdentifier)
+        let teamSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
+                                          name: "Team",
+                                          handle: "team",
+                                          accentColor: .brightOrange,
+                                          remoteIdentifier: UUID(),
+                                          teamIdentifier: team.remoteIdentifier)
         uiMOC.saveOrRollback()
         
         // when
@@ -68,7 +56,7 @@ class UserTypeTests_Materialize: ModelObjectsTests {
     func testThatSearchUserWithoutRemoteIdentifierIsIgnored() {
         // given
         let userIDs = [UUID(), UUID(), UUID()]
-        let incompleteSearchUser = ZMSearchUser(contextProvider: self,
+        let incompleteSearchUser = ZMSearchUser(contextProvider: self.coreDataStack,
                                                 name: "Incomplete",
                                                 handle: "incomplete",
                                                 accentColor: .brightOrange,
@@ -104,7 +92,7 @@ class UserTypeTests_Materialize: ModelObjectsTests {
     // MARK: - Helpers
     
     func createSearchUser(name: String, remoteIdentifier: UUID = UUID()) -> ZMSearchUser {
-        return ZMSearchUser(contextProvider: self,
+        return ZMSearchUser(contextProvider: self.coreDataStack,
                             name: name.capitalized,
                             handle: name.lowercased(),
                             accentColor: .brightOrange,

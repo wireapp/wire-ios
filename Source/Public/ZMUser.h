@@ -89,7 +89,7 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 
 @interface ZMUser (Utilities)
 
-+ (ZMUser<ZMEditableUser> *_Nonnull)selfUserInUserSession:(id<ZMManagedObjectContextProvider> _Nonnull)session;
++ (ZMUser<ZMEditableUser> *_Nonnull)selfUserInUserSession:(id<ContextProvider> _Nonnull)session;
 
 @end
 
