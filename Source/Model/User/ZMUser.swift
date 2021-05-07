@@ -250,20 +250,28 @@ extension ZMUser {
     
     public static var previewImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.previewProfileAssetIdentifierKey)
+        let assetIdIsValid = NSPredicate { (user, _) -> Bool in
+            guard let user = user as? ZMUser else { return false }
+            return user.previewProfileAssetIdentifier?.isValidAssetID ?? false
+        }
         let notCached = NSPredicate() { (user, _) -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageSmallProfileData == nil
         }
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, notCached])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, assetIdIsValid, notCached])
     }
-    
+
     public static var completeImageDownloadFilter: NSPredicate {
         let assetIdExists = NSPredicate(format: "(%K != nil)", ZMUser.completeProfileAssetIdentifierKey)
+        let assetIdIsValid = NSPredicate { (user, _) -> Bool in
+            guard let user = user as? ZMUser else { return false }
+            return user.completeProfileAssetIdentifier?.isValidAssetID ?? false
+        }
         let notCached = NSPredicate() { (user, _) -> Bool in
             guard let user = user as? ZMUser else { return false }
             return user.imageMediumData == nil
         }
-        return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, notCached])
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [assetIdExists, assetIdIsValid, notCached])
     }
     
     public func updateAndSyncProfileAssetIdentifiers(previewIdentifier: String, completeIdentifier: String) {
