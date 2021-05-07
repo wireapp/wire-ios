@@ -71,6 +71,7 @@
 		166A22912577C06B00EF313D /* ResetSessionRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */; };
 		16751E8524CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */; };
 		16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */; };
+		167BCBC426087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift in Sources */ = {isa = PBXBuildFile; fileRef = 167BCBC326087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift */; };
 		1682462F257A1FB7002AF17B /* KeyPathObjectSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1682462E257A1FB7002AF17B /* KeyPathObjectSync.swift */; };
 		16824631257A23E8002AF17B /* KeyPathObjectSyncTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16824630257A23E8002AF17B /* KeyPathObjectSyncTests.swift */; };
 		16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */; };
@@ -328,6 +329,7 @@
 		166A22902577C06B00EF313D /* ResetSessionRequestStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSessionRequestStrategy.swift; sourceTree = "<group>"; };
 		16751E8424CF72970099AE09 /* DeliveryReceiptRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategy.swift; sourceTree = "<group>"; };
 		16751EBA24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeliveryReceiptRequestStrategyTests.swift; sourceTree = "<group>"; };
+		167BCBC326087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMTBaseTests+CoreDataStack.swift"; sourceTree = "<group>"; };
 		1682462E257A1FB7002AF17B /* KeyPathObjectSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathObjectSync.swift; sourceTree = "<group>"; };
 		16824630257A23E8002AF17B /* KeyPathObjectSyncTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyPathObjectSyncTests.swift; sourceTree = "<group>"; };
 		16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSessionRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -1005,6 +1007,7 @@
 				F963E8D91D955D4600098AD3 /* AssetRequestFactory.swift */,
 				D5D65A052073C8F800D7F3C3 /* AssetRequestFactoryTests.swift */,
 				EE997A17250654B0008336D2 /* Logging.swift */,
+				167BCBC326087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -1325,6 +1328,7 @@
 				1621D2671D75C776007108C2 /* ZMRemoteIdentifierObjectSyncTests.m in Sources */,
 				1621D26A1D75C782007108C2 /* ZMTimedSingleRequestSyncTests.m in Sources */,
 				16751EBB24D1BDA00099AE09 /* DeliveryReceiptRequestStrategyTests.swift in Sources */,
+				167BCBC426087F8900E9D7E3 /* ZMTBaseTests+CoreDataStack.swift in Sources */,
 				F18401F12073C26C00E9F4CC /* AssetV3DownloadRequestStrategyTests.swift in Sources */,
 				F18402012073C2EA00E9F4CC /* RequestStrategyTestBase.swift in Sources */,
 			);

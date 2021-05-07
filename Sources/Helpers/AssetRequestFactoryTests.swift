@@ -20,32 +20,30 @@ import WireTesting
 @testable import WireRequestStrategy
 
 class AssetRequestFactoryTests: ZMTBaseTest {
-    
-    var testSession: ZMTestSession!
+
+    var coreDataStack: CoreDataStack!
     
     override func setUp() {
         super.setUp()
-        self.testSession = ZMTestSession(dispatchGroup: self.dispatchGroup)
-        self.testSession.prepare(forTestNamed: self.name)
+        self.coreDataStack = createCoreDataStack()
     }
-    
+
     override func tearDown() {
         XCTAssert(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
-        self.testSession.tearDown()
-        self.testSession = nil
+        self.coreDataStack = nil
         super.tearDown()
     }
  
     func testThatItReturnsExpiringForRegularConversation() {
         // given
-        let conversation = ZMConversation.insertNewObject(in: testSession.uiMOC)
+        let conversation = ZMConversation.insertNewObject(in: coreDataStack.viewContext)
         
         // when & then
         XCTAssertEqual(AssetRequestFactory.Retention(conversation: conversation), .expiring)
     }
     
     func testThatItReturnsEternalInfrequentAccessForTeamUserConversation() {
-        guard let moc = testSession.syncMOC else { return XCTFail() }
+        let moc = coreDataStack.syncContext
         moc.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: moc)
@@ -66,7 +64,7 @@ class AssetRequestFactoryTests: ZMTBaseTest {
     }
     
     func testThatItReturnsEternalInfrequentAccessForConversationWithTeam() {
-        guard let moc = testSession.syncMOC else { return XCTFail() }
+        let moc = coreDataStack.syncContext
         moc.performGroupedBlock {
             // given
             let conversation = ZMConversation.insertNewObject(in: moc)
@@ -86,12 +84,12 @@ class AssetRequestFactoryTests: ZMTBaseTest {
     func testThatItReturnsEternalInfrequentAccessForAConversationWithAParticipantsWithTeam() {
 
         // given
-        let user = ZMUser.insertNewObject(in: self.testSession.managedObjectContext)
+        let user = ZMUser.insertNewObject(in: coreDataStack.viewContext)
         user.remoteIdentifier = UUID()
         user.teamIdentifier = .init()
         
         // when
-        guard let conversation = ZMConversation.insertGroupConversation(session: self.testSession!, participants: [user]) else { return XCTFail("no conversation") }
+        guard let conversation = ZMConversation.insertGroupConversation(session: self.coreDataStack, participants: [user]) else { return XCTFail("no conversation") }
             
         // then
         XCTAssert(conversation.containsTeamUser)

@@ -28,16 +28,19 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var otherUser: ZMUser!
     fileprivate(set) var otherClient: UserClient!
     fileprivate(set) var otherEncryptionContext: EncryptionContext!
-    fileprivate(set) var contextDirectory: ManagedObjectContextDirectory!
+    fileprivate(set) var coreDataStack: CoreDataStack!
     fileprivate(set) var accountIdentifier: UUID!
-    fileprivate(set) var sharedContainerURL: URL!
+
+    var useInMemoryStore: Bool {
+        true
+    }
     
     var syncMOC: NSManagedObjectContext! {
-        return self.contextDirectory.syncContext
+        return self.coreDataStack.syncContext
     }
     
     var uiMOC: NSManagedObjectContext! {
-        return self.contextDirectory.uiContext
+        return self.coreDataStack.viewContext
     }
 
     override func setUp() {
@@ -47,10 +50,11 @@ class MessagingTestBase: ZMTBaseTest {
         
         self.deleteAllOtherEncryptionContexts()
         self.deleteAllFilesInCache()
-        
-        self.sharedContainerURL = FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
         self.accountIdentifier = UUID()
-        self.setupManagedObjectContexes()
+        self.coreDataStack = createCoreDataStack(userIdentifier: accountIdentifier,
+                                                 inMemoryStore: useInMemoryStore)
+        setupCaches(in: coreDataStack)
+        setupTimers()
         
         self.syncMOC.performGroupedBlockAndWait {
             self.syncMOC.zm_cryptKeyStore.deleteAndCreateNewBox()
@@ -66,6 +70,7 @@ class MessagingTestBase: ZMTBaseTest {
         BackgroundActivityFactory.shared.activityManager = nil
 
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
+
         self.syncMOC.performGroupedBlockAndWait {
             self.otherUser = nil
             self.otherClient = nil
@@ -73,21 +78,14 @@ class MessagingTestBase: ZMTBaseTest {
             self.groupConversation = nil
         }
         self.stopEphemeralMessageTimers()
-        self.deleteAllFilesInCache()
-        self.deleteAllOtherEncryptionContexts()
-        
+
         _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
 
-        StorageStack.reset()
-        _ = self.waitForAllGroupsToBeEmpty(withTimeout: 10)
-
-        try? FileManager.default.contentsOfDirectory(at: sharedContainerURL, includingPropertiesForKeys: nil, options: .skipsHiddenFiles).forEach {
-            try? FileManager.default.removeItem(at: $0)
-        }
+        deleteAllFilesInCache()
+        deleteAllOtherEncryptionContexts()
 
         accountIdentifier = nil
-        sharedContainerURL = nil
-        contextDirectory = nil
+        coreDataStack = nil
 
         super.tearDown()
     }
@@ -311,36 +309,6 @@ extension MessagingTestBase {
 
 // MARK: - Contexts
 extension MessagingTestBase {
-
-    fileprivate func setupManagedObjectContexes() {
-        StorageStack.reset()
-        StorageStack.shared.createStorageAsInMemory = true
-
-        StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: accountIdentifier,
-            applicationContainer: sharedContainerURL,
-            dispatchGroup: dispatchGroup,
-            completionHandler: { self.contextDirectory = $0 }
-        )
-
-        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.1))
-
-        let fileAssetCache = FileAssetCache(location: nil)
-        self.uiMOC.userInfo["TestName"] = self.name
-        
-        self.syncMOC.performGroupedBlockAndWait {
-            self.syncMOC.userInfo["TestName"] = self.name
-            self.syncMOC.saveOrRollback()
-            
-            self.syncMOC.zm_userInterface = self.uiMOC
-            self.syncMOC.zm_fileAssetCache = fileAssetCache
-        }
-        
-        self.uiMOC.zm_sync = self.syncMOC
-        self.uiMOC.zm_fileAssetCache = fileAssetCache
-        
-        setupTimers()
-    }
 
     override var allDispatchGroups: [ZMSDispatchGroup] {
         return super.allDispatchGroups + [self.syncMOC?.dispatchGroup, self.uiMOC?.dispatchGroup].compactMap { $0 }

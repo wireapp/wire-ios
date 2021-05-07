@@ -94,8 +94,8 @@ class AssetV3DownloadRequestStrategyTests: MessagingTestBase {
     }
 
     fileprivate func deleteDownloadedFileFor(message: ZMAssetClientMessage) {
-        contextDirectory.uiContext.zm_fileAssetCache.deleteAssetData(message)
-        contextDirectory.syncContext.zm_fileAssetCache.deleteAssetData(message)
+        coreDataStack.viewContext.zm_fileAssetCache.deleteAssetData(message)
+        coreDataStack.syncContext.zm_fileAssetCache.deleteAssetData(message)
     }
     
     func testThatItMarksMessageAsDownloading_WhenRequestingFileDownload() {

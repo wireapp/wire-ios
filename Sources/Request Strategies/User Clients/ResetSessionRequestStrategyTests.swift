@@ -23,6 +23,10 @@ class ResetSessionRequestStrategyTests: MessagingTestBase {
 
     var sut: ResetSessionRequestStrategy!
     var mockApplicationStatus : MockApplicationStatus!
+
+    override var useInMemoryStore: Bool {
+        return false
+    }
     
     override func setUp() {
         super.setUp()
