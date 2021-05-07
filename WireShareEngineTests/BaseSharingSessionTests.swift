@@ -42,17 +42,15 @@ class BaseSharingSessionTests: ZMTBaseTest {
         accountIdentifier = UUID.create()
         authenticationStatus = FakeAuthenticationStatus()
         let url = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let account = Account(userName: "", userIdentifier: accountIdentifier)
+        let coreDataStack: CoreDataStack = CoreDataStack(account: account,
+                                                         applicationContainer: url,
+                                                         inMemoryStore: true,
+                                                         dispatchGroup: dispatchGroup)
 
-        var directory: ManagedObjectContextDirectory!
-        StorageStack.shared.createStorageAsInMemory = true
-        StorageStack.shared.createManagedObjectContextDirectory(accountIdentifier: accountIdentifier,
-                                                                applicationContainer: url) {
-            directory = $0
+        coreDataStack.loadStores { error in
+            XCTAssertNil(error)
         }
-        directory.uiContext.add(dispatchGroup)
-        directory.syncContext.add(dispatchGroup)
-        directory.searchContext.add(dispatchGroup)
-        XCTAssertTrue(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
         
         let mockTransport = MockTransportSession(dispatchGroup: dispatchGroup)
         let transportSession = mockTransport.mockedTransportSession()
@@ -61,11 +59,11 @@ class BaseSharingSessionTests: ZMTBaseTest {
         let analyticsEventPersistence = ShareExtensionAnalyticsPersistence(accountContainer: url)
 
         let requestGeneratorStore = RequestGeneratorStore(strategies: [])
-        let registrationStatus = ClientRegistrationStatus(context: directory.syncContext)
+        let registrationStatus = ClientRegistrationStatus(context: coreDataStack.syncContext)
         let linkPreviewDetector = LinkPreviewDetector()
         let operationLoop = RequestGeneratingOperationLoop(
-            userContext: directory.uiContext,
-            syncContext: directory.syncContext,
+            userContext: coreDataStack.viewContext,
+            syncContext: coreDataStack.syncContext,
             callBackQueue: .main,
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
@@ -78,14 +76,14 @@ class BaseSharingSessionTests: ZMTBaseTest {
         )
 
         let strategyFactory = StrategyFactory(
-            syncContext: directory.syncContext,
+            syncContext: coreDataStack.syncContext,
             applicationStatus: applicationStatusDirectory,
-            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: directory.syncContext)
+            linkPreviewPreprocessor: LinkPreviewPreprocessor(linkPreviewDetector: linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
         )
 
         sharingSession = try! SharingSession(
             accountIdentifier: accountIdentifier,
-            contextDirectory: directory,
+            coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: url,
             saveNotificationPersistence: saveNotificationPersistence,
@@ -111,7 +109,6 @@ class BaseSharingSessionTests: ZMTBaseTest {
         sharingSession = nil
         authenticationStatus = nil
         moc = nil
-        StorageStack.reset()
         super.tearDown()
     }
 
