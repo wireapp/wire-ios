@@ -103,6 +103,20 @@ extension PushNotificationStrategy: NotificationStreamSyncDelegate {
 }
 
 extension PushNotificationStrategy: UpdateEventProcessor {
+    func processEventsIfReady() -> Bool {
+        /// TODO check this
+        return true
+    }
+
+    var eventConsumers: [ZMEventConsumer] {
+        /// TODO check this
+        get {
+            return []
+        }
+        set(newValue) {
+        }
+    }
+
     public func storeUpdateEvents(_ updateEvents: [ZMUpdateEvent], ignoreBuffer: Bool) {
         eventDecoder.decryptAndStoreEvents(updateEvents, block: { (decryptedUpdateEvents) in
             let localNotifications = self.convertToLocalNotifications(decryptedUpdateEvents, moc: self.moc)
