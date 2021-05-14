@@ -139,35 +139,16 @@ class ApplicationStatusDirectory : ApplicationStatus {
 /// the lifetime of the notification extension, and hold on to that session
 /// for the entire lifetime.
 public class NotificationSession {
-    
-    /// The `NSManagedObjectContext` used to retrieve the conversations
-    var userInterfaceContext: NSManagedObjectContext {
-        return contextDirectory.uiContext
-    }
-
-    private var syncContext: NSManagedObjectContext {
-        return contextDirectory.syncContext
-    }
 
     /// Directory of all application statuses
     private let applicationStatusDirectory : ApplicationStatusDirectory
 
     /// The list to which save notifications of the UI moc are appended and persistet
     private let saveNotificationPersistence: ContextDidSaveNotificationPersistence
-
     private var contextSaveObserverToken: NSObjectProtocol?
-
-    let transportSession: ZMTransportSession
-    
-    private var contextDirectory: ManagedObjectContextDirectory!
-        
-    /// The `ZMConversationListDirectory` containing all conversation lists
-    private var directory: ZMConversationListDirectory {
-        return userInterfaceContext.conversationListDirectory()
-    }
-    
+    private let transportSession: ZMTransportSession
+    private let coreDataStack: CoreDataStack
     private let operationLoop: RequestGeneratingOperationLoop
-
     private let strategyFactory: StrategyFactory
         
     /// Initializes a new `SessionDirectory` to be used in an extension environment
@@ -185,32 +166,15 @@ public class NotificationSession {
     ) throws {
        
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
-        
-        let group = DispatchGroup()
-        
-        var directory: ManagedObjectContextDirectory!
-        group.enter()
-        StorageStack.shared.createManagedObjectContextDirectory(
-            accountIdentifier: accountIdentifier,
-            applicationContainer: sharedContainerURL,
-            startedMigrationCallback: {  },
-            completionHandler: { contextDirectory in
-                directory = contextDirectory
-                group.leave()
-            }
-        )
-        
-        var didCreateStorageStack = false
-        group.notify(queue: .global()) {
-            didCreateStorageStack = true
+
+        let account = Account(userName: "", userIdentifier: accountIdentifier)
+        let coreDataStack = CoreDataStack(account: account,
+                                          applicationContainer: sharedContainerURL)
+
+        coreDataStack.loadStores { error in
+            // TODO jacob error handling
         }
-        
-        while !didCreateStorageStack {
-            if !RunLoop.current.run(mode: RunLoop.Mode.default, before: Date(timeIntervalSinceNow: 0.002)) {
-                Thread.sleep(forTimeInterval: 0.002)
-            }
-        }
-        
+
         let cookieStorage = ZMPersistentCookieStorage(forServerName: environment.backendURL.host!, userIdentifier: accountIdentifier)
         let reachabilityGroup = ZMSDispatchGroup(dispatchGroup: DispatchGroup(), label: "Sharing session reachability")!
         let serverNames = [environment.backendURL, environment.backendWSURL].compactMap { $0.host }
@@ -221,22 +185,21 @@ public class NotificationSession {
             cookieStorage: cookieStorage,
             reachability: reachability,
             initialAccessToken: nil,
-            applicationGroupIdentifier: applicationGroupIdentifier
+            applicationGroupIdentifier: applicationGroupIdentifier,
+            applicationVersion: "1.0.0"
         )
         
         try self.init(
-            contextDirectory: directory,
+            coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: FileManager.default.cachesURLForAccount(with: accountIdentifier, in: sharedContainerURL),
-            accountContainer: StorageStack.accountFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
+            accountContainer: CoreDataStack.accountDataFolder(accountIdentifier: accountIdentifier, applicationContainer: sharedContainerURL),
             analytics: analytics,
-            delegate: delegate,
-            sharedContainerURL: sharedContainerURL,
-            accountIdentifier: accountIdentifier
+            delegate: delegate
         )
     }
     
-    internal init(contextDirectory: ManagedObjectContextDirectory,
+    internal init(coreDataStack: CoreDataStack,
                   transportSession: ZMTransportSession,
                   cachesDirectory: URL,
                   saveNotificationPersistence: ContextDidSaveNotificationPersistence,
@@ -245,7 +208,7 @@ public class NotificationSession {
                   strategyFactory: StrategyFactory
         ) throws {
         
-        self.contextDirectory = contextDirectory
+        self.coreDataStack = coreDataStack
         self.transportSession = transportSession
         self.saveNotificationPersistence = saveNotificationPersistence
         self.applicationStatusDirectory = applicationStatusDirectory
@@ -255,30 +218,27 @@ public class NotificationSession {
         RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
     
-    public convenience init(contextDirectory: ManagedObjectContextDirectory,
+    public convenience init(coreDataStack: CoreDataStack,
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
                             analytics: AnalyticsType?,
-                            delegate: NotificationSessionDelegate?,
-                            sharedContainerURL: URL,
-                            accountIdentifier: UUID) throws {
+                            delegate: NotificationSessionDelegate?) throws {
         
-        let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: contextDirectory.syncContext, transportSession: transportSession)
+        let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext,
+                                                                    transportSession: transportSession)
         let notificationsTracker = (analytics != nil) ? NotificationsTracker(analytics: analytics!) : nil
-        let strategyFactory = StrategyFactory(syncContext: contextDirectory.syncContext,
+        let strategyFactory = StrategyFactory(contextProvider: coreDataStack,
                                               applicationStatus: applicationStatusDirectory,
                                               pushNotificationStatus: applicationStatusDirectory.pushNotificationStatus,
                                               notificationsTracker: notificationsTracker,
-                                              notificationSessionDelegate: delegate,
-                                              sharedContainerURL: sharedContainerURL,
-                                              accountIdentifier: accountIdentifier)
+                                              notificationSessionDelegate: delegate)
         
         let requestGeneratorStore = RequestGeneratorStore(strategies: strategyFactory.strategies)
         
         let operationLoop = RequestGeneratingOperationLoop(
-            userContext: contextDirectory.uiContext,
-            syncContext: contextDirectory.syncContext,
+            userContext: coreDataStack.viewContext,
+            syncContext: coreDataStack.syncContext,
             callBackQueue: .main,
             requestGeneratorStore: requestGeneratorStore,
             transportSession: transportSession
@@ -287,7 +247,7 @@ public class NotificationSession {
         let saveNotificationPersistence = ContextDidSaveNotificationPersistence(accountContainer: accountContainer)
         
         try self.init(
-            contextDirectory: contextDirectory,
+            coreDataStack: coreDataStack,
             transportSession: transportSession,
             cachesDirectory: cachesDirectory,
             saveNotificationPersistence: saveNotificationPersistence,
@@ -309,8 +269,8 @@ public class NotificationSession {
     
     public func processPushNotification(with payload: [AnyHashable: Any], completion: @escaping (Bool) -> Void) {
         Logging.network.debug("Received push notification with payload: \(payload)")
-                
-        syncContext.performGroupedBlock {
+
+        coreDataStack.syncContext.performGroupedBlock {
             if self.applicationStatusDirectory.authenticationStatus.state == .unauthenticated {
                 Logging.push.safePublic("Not displaying notification because app is not authenticated")
                 completion(false)
