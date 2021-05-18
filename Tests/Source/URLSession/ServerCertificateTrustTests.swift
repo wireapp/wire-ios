@@ -127,7 +127,15 @@ class BackendTrustProviderTests: XCTestCase {
 
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: nil))
     }
-    
+
+    /// Test certificate pinning against production certificate.
+    ///
+    /// if this tests fails it's most likely because the production certificate
+    /// in `certificates.json` has expired. The production certificate can be
+    /// updated by running:
+    ///
+    ///      openssl s_client -connect wire.com:443 -showcerts
+    ///
     func testPinnedHostsWithValidCertificateIsTrustedAreTrusted() {
         // given
         guard let serverTrust = trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
@@ -163,7 +171,7 @@ class BackendTrustProviderTests: XCTestCase {
         trustVerificator.verify(url: URL(string: "https://www.youtube.com")!)
         
         // then
-        waitForExpectations(timeout: 0.5)
+        waitForExpectations(timeout: 5.0)
     }
     
     func testExternalHostWithInvalidCertificateIsNotTrusted() {
