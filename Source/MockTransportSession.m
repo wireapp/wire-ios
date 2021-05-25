@@ -738,9 +738,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
 {
     [self.pushChannelGroupQueue performGroupedBlock:^{
         self.shouldSendPushChannelEvents = NO;
-        [self.pushChannelConsumer pushChannelDidClose:(ZMPushChannelConnection * _Nonnull) nil
-                                         withResponse:nil
-                                                error:nil];
+        [self.pushChannelConsumer pushChannelDidClose];
         [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
                                                             object:self
                                                           userInfo:@{ZMPushChannelIsOpenKey: @(NO)}];
@@ -752,8 +750,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     [self.pushChannelGroupQueue performGroupedBlock:^{
         if(self.clientCompletedLogin && self.shouldKeepPushChannelOpen) {
             self.shouldSendPushChannelEvents = YES;
-            [self.pushChannelConsumer pushChannelDidOpen:(ZMPushChannelConnection * _Nonnull) nil
-                                            withResponse:(NSHTTPURLResponse * _Nonnull) nil];
+            [self.pushChannelConsumer pushChannelDidOpen];
             [[NSNotificationCenter defaultCenter] postNotificationName:ZMPushChannelStateChangeNotificationName
                                                                 object:self
                                                               userInfo:@{ZMPushChannelIsOpenKey: @(YES)}];
@@ -1083,7 +1080,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
             
             id<ZMTransportData> payload = event.transportData;
             [self.pushChannelGroupQueue performGroupedBlock:^{
-                [self.pushChannelConsumer pushChannel:(ZMPushChannelConnection * _Nonnull) nil didReceiveTransportData:payload];
+                [self.pushChannelConsumer pushChannelDidReceiveTransportData:payload];
             }];
         }
     }

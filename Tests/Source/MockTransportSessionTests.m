@@ -106,17 +106,17 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransportTests";
 
 @implementation MockTransportSessionTests
 
--(void)pushChannelDidOpen:(ZMPushChannelConnection * __unused)channel withResponse:(NSHTTPURLResponse *__unused)response;
+-(void)pushChannelDidOpen
 {
     ++self.pushChannelDidOpenCount;
 }
 
--(void)pushChannelDidClose:(ZMPushChannelConnection *__unused)channel withResponse:(NSHTTPURLResponse *__unused)response error:(NSError * __unused)error;
+-(void)pushChannelDidClose
 {
     ++self.pushChannelDidCloseCount;
 }
 
--(void)pushChannel:(ZMPushChannelConnection *__unused)channel didReceiveTransportData:(id<ZMTransportData>)data
+-(void)pushChannelDidReceiveTransportData:(id<ZMTransportData>)data
 {
     [self.pushChannelReceivedEvents addObjectsFromArray:[TestPushChannelEvent eventsArrayFromPushChannelData:data]];
 }
