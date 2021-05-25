@@ -31,7 +31,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
 
 @interface ZMPushChannelConnection ()
 
-@property (nonatomic, weak) id<ZMPushChannelConsumer> consumer;
+@property (nonatomic, weak) id<ZMPushChannelConnectionConsumer> consumer;
 @property (nonatomic, weak) id<ZMSGroupQueue> consumerQueue;
 @property (nonatomic) ZMWebSocket *webSocket;
 @property (nonatomic) dispatch_queue_t webSocketQueue;
@@ -51,12 +51,12 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     return [self initWithEnvironment:nil consumer:nil queue:nil accessToken:nil clientID:nil userAgentString:nil];
 }
 
-- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConnectionConsumer>)consumer queue:(id<ZMSGroupQueue>)queue accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 {
     return [self initWithEnvironment:environment consumer:consumer queue:queue webSocket:nil accessToken:accessToken clientID:clientID userAgentString:userAgentString];
 }
 
-- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
+- (instancetype)initWithEnvironment:(id <BackendEnvironmentProvider>)environment consumer:(id<ZMPushChannelConnectionConsumer>)consumer queue:(id<ZMSGroupQueue>)queue webSocket:(ZMWebSocket *)webSocket accessToken:(ZMAccessToken *)accessToken clientID:(NSString *)clientID userAgentString:(NSString *)userAgentString;
 {
     VerifyReturnNil(consumer != nil);
     VerifyReturnNil(queue != nil);
@@ -125,14 +125,14 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
         
         [self.webSocket close];
         
-        id<ZMPushChannelConsumer> consumer = self.consumer;
+        id<ZMPushChannelConnectionConsumer> consumer = self.consumer;
         self.consumer = nil;
         
         ZMPushChannelConnection *channel = self;
-        
+
         [self stopPingTimer];
         [queue performGroupedBlock:^{
-            [consumer pushChannelDidClose:channel withResponse:response error:error];
+            [consumer pushChannel:channel didCloseWithResponse:response error:error];
         }];
     }
 }
@@ -209,7 +209,7 @@ static NSString* ZMLogTag = ZMT_LOG_TAG_PUSHCHANNEL;
     ZM_WEAK(self);
     [self.consumerQueue performGroupedBlock:^{
         ZM_STRONG(self);
-        [self.consumer pushChannelDidOpen:self withResponse:response];
+        [self.consumer pushChannel:self didOpenWithResponse:response];
     }];
 }
 

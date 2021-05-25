@@ -20,4 +20,5 @@ import Foundation
 
 enum Logging {
     static var backendEnvironment = ZMSLog(tag: "backend-environment")
+    static var pushChannel = ZMSLog(tag: "Push channel")
 }

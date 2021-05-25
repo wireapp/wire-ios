@@ -17,6 +17,15 @@
 //
 
 #import <Foundation/Foundation.h>
+#import <WireTransport/ZMTransportData.h>
+
+@protocol ZMPushChannelConsumer <NSObject>
+
+- (void)pushChannelDidReceiveTransportData:(id<ZMTransportData> _Nonnull)data;
+- (void)pushChannelDidClose;
+- (void)pushChannelDidOpen;
+
+@end
 
 @protocol ZMPushChannel <NSObject>
 
