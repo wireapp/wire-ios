@@ -25,7 +25,7 @@
 #import "WireTransport_ios_tests-Swift.h"
 
 
-@interface ZMPushChannelConnectionTests : ZMTBaseTest <ZMPushChannelConsumer>
+@interface ZMPushChannelConnectionTests : ZMTBaseTest <ZMPushChannelConnectionConsumer>
 
 @property (nonatomic) NSMutableArray *receivedData;
 @property (nonatomic) NSInteger closeCounter;
@@ -51,7 +51,7 @@
     [self.receivedData addObject:data ?: @{}];
 }
 
-- (void)pushChannelDidClose:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response error:(nullable NSError *)error;
+- (void)pushChannel:(ZMPushChannelConnection *)channel didCloseWithResponse:(NSHTTPURLResponse *)response error:(nullable NSError *)error;
 {
     NOT_USED(response);
     NOT_USED(error);
@@ -60,7 +60,7 @@
     self.closeCounter++;
 }
 
-- (void)pushChannelDidOpen:(ZMPushChannelConnection *)channel withResponse:(NSHTTPURLResponse *)response;
+- (void)pushChannel:(ZMPushChannelConnection *)channel didOpenWithResponse:(NSHTTPURLResponse *)response;
 {
     NOT_USED(response);
     XCTAssertEqual(channel, self.sut);

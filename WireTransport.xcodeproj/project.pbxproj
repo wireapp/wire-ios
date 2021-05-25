@@ -14,9 +14,11 @@
 		09CC4AC11B7CE44900201C63 /* ZMTaskIdentifierMap.h in Headers */ = {isa = PBXBuildFile; fileRef = 09CC4AC01B7CE44900201C63 /* ZMTaskIdentifierMap.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		09F028C61B7252FC00BADDB6 /* Lorem Ipsum.txt in Resources */ = {isa = PBXBuildFile; fileRef = 09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */; };
 		160C31231E5B28A10012E4BC /* ZMPushChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 160C31221E5B28A10012E4BC /* ZMPushChannel.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		161E04B42656C5FB00DADC3D /* ZMPushChannelType.h in Headers */ = {isa = PBXBuildFile; fileRef = 161E04B22656C3F600DADC3D /* ZMPushChannelType.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */; };
 		166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166D18BA230EE8A8001288CD /* TransportSession.swift */; };
 		16B685961EC0C2F80055BEA3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16B685951EC0C2F80055BEA3 /* Security.framework */; };
+		16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7D9F6265251620049FFCA /* NativePushChannel.swift */; };
 		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
 		5431AC011DB4C8330040343C /* RequestLoopDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */; };
@@ -44,7 +46,7 @@
 		547712251B751FA700223568 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; };
 		547712291B751FD000223568 /* ocmock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5499FFC61B31C66D00835C8B /* ZMPushChannelConnection+WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF721B31C66C00835C8B /* ZMPushChannelConnection+WebSocket.h */; };
-		5499FFC81B31C66D00835C8B /* ZMPushChannelConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5499FFC81B31C66D00835C8B /* ZMPushChannelConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */; };
 		5499FFCA1B31C66D00835C8B /* ZMPushChannelConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF741B31C66C00835C8B /* ZMPushChannelConnection.m */; };
 		5499FFD01B31C66D00835C8B /* ZMTransportPushChannel.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF771B31C66C00835C8B /* ZMTransportPushChannel.h */; };
 		5499FFD21B31C66D00835C8B /* ZMTransportPushChannel.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF781B31C66C00835C8B /* ZMTransportPushChannel.m */; };
@@ -225,9 +227,11 @@
 		09F027DA1B721EBE00BADDB6 /* WireTransport.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireTransport.xcconfig; sourceTree = "<group>"; };
 		09F028C51B7252FC00BADDB6 /* Lorem Ipsum.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = "Lorem Ipsum.txt"; sourceTree = "<group>"; };
 		160C31221E5B28A10012E4BC /* ZMPushChannel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPushChannel.h; sourceTree = "<group>"; };
+		161E04B22656C3F600DADC3D /* ZMPushChannelType.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ZMPushChannelType.h; sourceTree = "<group>"; };
 		1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLAuthenticationChallengeSender.swift; sourceTree = "<group>"; };
 		166D18BA230EE8A8001288CD /* TransportSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportSession.swift; sourceTree = "<group>"; };
 		16B685951EC0C2F80055BEA3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
+		16D7D9F6265251620049FFCA /* NativePushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePushChannel.swift; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD211B1F383000232589 /* WireTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Info.plist"; sourceTree = "<group>"; };
@@ -653,6 +657,8 @@
 			children = (
 				870F5E661FBF24AD004841E3 /* NetworkSocket.swift */,
 				5499FF721B31C66C00835C8B /* ZMPushChannelConnection+WebSocket.h */,
+				161E04B22656C3F600DADC3D /* ZMPushChannelType.h */,
+				5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */,
 				5499FF741B31C66C00835C8B /* ZMPushChannelConnection.m */,
 				5499FF771B31C66C00835C8B /* ZMTransportPushChannel.h */,
 				5499FF781B31C66C00835C8B /* ZMTransportPushChannel.m */,
@@ -662,6 +668,7 @@
 				5499FF7C1B31C66C00835C8B /* ZMWebSocketFrame.m */,
 				5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */,
 				5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */,
+				16D7D9F6265251620049FFCA /* NativePushChannel.swift */,
 			);
 			path = PushChannel;
 			sourceTree = "<group>";
@@ -706,7 +713,6 @@
 				F1A522F52040264D009414E7 /* ZMUpdateEvent.swift */,
 				54CA15DE1B32F791008D3787 /* WireTransport.h */,
 				F1858A83226874C300FA2ACE /* Logging.swift */,
-				5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */,
 				5451EF9D1B7A1359002F503B /* Collections+ZMTSafeTypes.h */,
 				F91EAAC71D8860380010ACBE /* Collections+ZMSafeTypes.swift */,
 				54CA150E1B32F2C1008D3787 /* NSError+ZMTransportSession.h */,
@@ -852,6 +858,7 @@
 				5499FFD01B31C66D00835C8B /* ZMTransportPushChannel.h in Headers */,
 				5499FFDC1B31C66D00835C8B /* ZMWebSocketHandshake.h in Headers */,
 				5499FFD41B31C66D00835C8B /* ZMWebSocket.h in Headers */,
+				161E04B42656C5FB00DADC3D /* ZMPushChannelType.h in Headers */,
 				BF453F1A1CC6377200403E1C /* ZMRequestCancellation.h in Headers */,
 				160C31231E5B28A10012E4BC /* ZMPushChannel.h in Headers */,
 				54CA15711B32F2C1008D3787 /* ZMPersistentCookieStorage.h in Headers */,
@@ -1089,6 +1096,7 @@
 				54B4D9E11E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift in Sources */,
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,
 				F19E555D22B27915005C792D /* ZMTransportResponse.swift in Sources */,
+				16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */,
 				5451EFA01B7A138B002F503B /* Collections+ZMTSafeTypes.m in Sources */,
 				F1D1281821C1556E0090045E /* BackendEnvironmentProvider.swift in Sources */,
 				54CA15AF1B32F2C1008D3787 /* ZMTaskIdentifierMap.m in Sources */,

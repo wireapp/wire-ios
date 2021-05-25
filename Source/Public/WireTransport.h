@@ -41,7 +41,6 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 #import <WireTransport/ZMUserAgent.h>
 #import <WireTransport/ZMPersistentCookieStorage.h>
 #import <WireTransport/Collections+ZMTSafeTypes.h>
-#import <WireTransport/ZMPushChannelConnection.h>
 #import <WireTransport/ZMExponentialBackoff.h>
 #import <WireTransport/ZMAccessTokenHandler.h>
 #import <WireTransport/ZMKeychain.h>
@@ -54,3 +53,4 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 
 #import <WireTransport/ZMTransportRequest+Internal.h>
 #import <WireTransport/ZMServerTrust.h>
+#import <WireTransport/ZMPushChannelType.h>
