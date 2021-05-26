@@ -30,6 +30,7 @@ typedef NS_ENUM(int16_t, ZMConnectionStatus) {
     ZMConnectionStatusBlocked, ///< We have blocked this user
     ZMConnectionStatusSent, ///< We have sent a request to connect
     ZMConnectionStatusCancelled, ///< We cancel sent reqeust to connect
+    ZMConnectionStatusBlockedMissingLegalholdConsent, ///< The user is blocked due to legal hold missing consent
 };
 
 

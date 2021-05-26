@@ -151,6 +151,7 @@ struct stringAndStatus {
     {CFSTR("ignored"), ZMConnectionStatusIgnored},
     {CFSTR("sent"), ZMConnectionStatusSent},
     {CFSTR("cancelled"), ZMConnectionStatusCancelled},
+    {CFSTR("missing-legalhold-consent"), ZMConnectionStatusBlockedMissingLegalholdConsent},
     {NULL, ZMConnectionStatusInvalid},
 };
 

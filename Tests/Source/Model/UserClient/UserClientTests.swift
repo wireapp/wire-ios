@@ -83,7 +83,12 @@ final class UserClientTests: ZMBaseManagedObjectTest {
     }
     
     func testThatItTracksCorrectKeys() {
-        let expectedKeys = Set(arrayLiteral: ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey, "pushToken")
+        let expectedKeys = Set(arrayLiteral: ZMUserClientMarkedToDeleteKey,
+                               ZMUserClientNumberOfKeysRemainingKey,
+                               ZMUserClientMissingKey,
+                               ZMUserClientNeedsToUpdateSignalingKeysKey,
+                               ZMUserClientNeedsToUpdateCapabilitiesKey,
+                               "pushToken")
         let client = UserClient.insertNewObject(in: self.uiMOC)
 
         XCTAssertEqual(client.keysTrackedForLocalModifications() , expectedKeys)
@@ -509,6 +514,24 @@ extension UserClientTests {
         XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateSignalingKeysKey))
     }
     
+}
+
+// MARK : Capabilities
+
+extension UserClientTests {
+
+    func testThatItSetsKeysNeedingToBeSynced_Capabilities() {
+        // given
+        let selfClient = createSelfClient()
+
+        // when
+        UserClient.triggerSelfClientCapabilityUpdate(self.uiMOC)
+
+        // then
+        XCTAssertTrue(selfClient.needsToUpdateCapabilities)
+        XCTAssertTrue(selfClient.keysThatHaveLocalModifications.contains(ZMUserClientNeedsToUpdateCapabilitiesKey))
+    }
+
 }
 
 // MARK : fetchFingerprintOrPrekeys

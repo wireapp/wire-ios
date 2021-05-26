@@ -1362,6 +1362,25 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     XCTAssertTrue(user.canBeConnected);
 }
 
+//
+- (void)testBlockStateReasonValue_WhenAConnectionStatusIsMissingLegalholdConsent
+{
+    // given
+    ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    connection.status = ZMConnectionStatusBlockedMissingLegalholdConsent;
+    connection.to = user;
+
+    // then
+    XCTAssertEqual(user.blockState, ZMBlockStateBlockedMissingLegalholdConsent);
+    XCTAssertTrue(user.isBlocked);
+
+    XCTAssertFalse(user.isConnected);
+    XCTAssertFalse(user.isIgnored);
+    XCTAssertFalse(user.isPendingApprovalByOtherUser);
+    XCTAssertFalse(user.isPendingApprovalBySelfUser);
+    XCTAssertTrue(user.canBeConnected);
+}
 
 - (void)testThatIsPendingBySelfUserIsTrueWhenThereIsAPendingConnection
 {
@@ -2384,6 +2403,29 @@ static NSString * const domainValidCharactersLowercased = @"abcdefghijklmnopqrst
     connection.status = ZMConnectionStatusBlocked;
 
     // then
+    XCTAssertTrue(user1.isBlocked);
+    XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
+}
+
+- (void)testThatItRecalculatesBlockStateReasonExposureWhenConnectionChanges
+{
+    // given
+    ZMUser *user1 = [ZMUser insertNewObjectInManagedObjectContext:self.uiMOC];
+    ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:self.uiMOC];
+    connection.status = ZMConnectionStatusAccepted;
+    connection.to = user1;
+
+    XCTAssertEqual(user1.blockState, ZMBlockStateNone);
+
+    // expect
+
+    [self keyValueObservingExpectationForObject:user1 keyPath:@"blockStateReason" expectedValue:nil];
+
+    // when
+    connection.status = ZMConnectionStatusBlockedMissingLegalholdConsent;
+
+    // then
+    XCTAssertEqual(user1.blockState, ZMBlockStateBlockedMissingLegalholdConsent);
     XCTAssertTrue(user1.isBlocked);
     XCTAssert([self waitForCustomExpectationsWithTimeout:0.5]);
 }
