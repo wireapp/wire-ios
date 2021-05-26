@@ -782,7 +782,7 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 - (id)mockEventOfType:(ZMUpdateEventType)type forConversation:(ZMConversation *)conversation sender:(NSUUID *)senderID data:(NSDictionary *)data
 {
-    ZMUpdateEvent *updateEvent = [OCMockObject mockForClass:ZMUpdateEvent.class];
+    ZMUpdateEvent *updateEvent = [OCMockObject niceMockForClass:ZMUpdateEvent.class];
     (void)[(ZMUpdateEvent *)[[(id)updateEvent stub] andReturnValue:OCMOCK_VALUE(type)] type];
     NSDate *serverTimeStamp = conversation.lastServerTimeStamp ? [conversation.lastServerTimeStamp dateByAddingTimeInterval:5] : [NSDate date];
     NSUUID *from = senderID ?: NSUUID.createUUID;
@@ -834,46 +834,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     return systemMessage;
 }
 
-- (void)checkThatUpdateEventType:(ZMUpdateEventType)updateEventType generatesSystemMessageType:(ZMSystemMessageType)systemMessageType failureRecorder:(ZMTFailureRecorder *)fr;
-{
-    
-    // given
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    if (updateEventType != ZMUpdateEventTypeConversationConnectRequest) {
-        conversation.conversationType = ZMConversationTypeGroup;
-    }
-    else {
-        conversation.conversationType = ZMConversationTypeConnection;
-    }
-    
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    NSUUID *userID1 = [NSUUID createUUID];
-    NSUUID *userID2 = [NSUUID createUUID];
-    
-    // when
-    __block ZMSystemMessage *message;
-    [self performPretendingUiMocIsSyncMoc:^{
-        message = [self createSystemMessageFromType:updateEventType inConversation:conversation withUsersIDs:@[userID1, userID2] senderID:nil];
-    }];
-    [self.uiMOC saveOrRollback];
-    WaitForAllGroupsToBeEmpty(0.5);
-    
-    // then
-    FHAssertNotNil(fr, message);
-    FHAssertEqual(fr, message.systemMessageType, systemMessageType);
-    FHAssertEqual(fr, message.users.count, 2u);
-    ZMUser *user1 = (ZMUser *) [message.users objectsPassingTest:^BOOL(ZMUser* obj, BOOL *stop ZM_UNUSED) {
-        return [obj.remoteIdentifier isEqual:userID1];
-    }];
-    ZMUser *user2 = (ZMUser *) [message.users objectsPassingTest:^BOOL(ZMUser* obj, BOOL *stop ZM_UNUSED) {
-        return [obj.remoteIdentifier isEqual:userID2];
-    }];
-    
-    FHAssertNotNil(fr, user1);
-    FHAssertNotNil(fr, user2);
-    FHAssertEqual(fr, message, conversation.lastMessage);
-}
-
 - (void)checkThatUpdateEventTypeDoesNotGenerateMessage:(ZMUpdateEventType)updateEventType {
     
     // given
@@ -885,16 +845,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     
     // then
     XCTAssertNil(message);
-}
-
-- (void)testThatItGeneratesTheCorrectSystemMessageTypesFromUpdateEvents
-{
-    // expect a message
-    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationMemberJoin generatesSystemMessageType:ZMSystemMessageTypeParticipantsAdded failureRecorder:NewFailureRecorder()];
-
-    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationMemberLeave generatesSystemMessageType:ZMSystemMessageTypeParticipantsRemoved failureRecorder:NewFailureRecorder()];
-
-    [self checkThatUpdateEventType:ZMUpdateEventTypeConversationRename generatesSystemMessageType:ZMSystemMessageTypeConversationNameChanged failureRecorder:NewFailureRecorder()];
 }
 
 - (void)testThatItDoesNotGenerateSystemMessagesFromUpdateEventsOfTheWrongType

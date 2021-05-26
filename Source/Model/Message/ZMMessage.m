@@ -63,6 +63,7 @@ NSString * const ZMMessageSystemMessageTypeKey = @"systemMessageType";
 NSString * const ZMMessageSystemMessageClientsKey = @"clients";
 NSString * const ZMMessageTextKey = @"text";
 NSString * const ZMMessageUserIDsKey = @"users_ids";
+NSString * const ZMMessageParticipantsRemovedReasonKey = @"participantsRemovedReason";
 NSString * const ZMMessageUsersKey = @"users";
 NSString * const ZMMessageClientsKey = @"clients";
 NSString * const ZMMessageAddedUsersKey = @"addedUsers";
@@ -584,6 +585,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
                              ZMMessageSystemMessageTypeKey,
                              ZMMessageTextKey,
                              ZMMessageUserIDsKey,
+                             ZMMessageParticipantsRemovedReasonKey,
                              ZMMessageEventIDDataKey,
                              ZMMessageUsersKey,
                              ZMMessageClientsKey,
@@ -836,7 +838,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     if (![usersSet isEqual:[NSSet setWithObject:message.sender]]) {
         [usersSet removeObject:message.sender];
     }
-    
+    message.participantsRemovedReason = updateEvent.participantsRemovedReason;
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
     

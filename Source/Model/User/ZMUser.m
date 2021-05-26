@@ -871,10 +871,30 @@ static NSString *const DomainKey = @"domain";
 
 - (BOOL)isBlocked
 {
-    return self.connection != nil && self.connection.status == ZMConnectionStatusBlocked;
+    return self.blockState != ZMBlockStateNone;
 }
 
 + (NSSet *)keyPathsForValuesAffectingIsBlocked
+{
+    return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
+}
+
+- (ZMBlockState)blockState
+{
+    if (self.connection == nil) {
+        return ZMBlockStateNone;
+    }
+    switch (self.connection.status) {
+        case ZMConnectionStatusBlocked:
+            return ZMBlockStateBlocked;
+        case ZMConnectionStatusBlockedMissingLegalholdConsent:
+            return ZMBlockStateBlockedMissingLegalholdConsent;
+        default:
+            return ZMBlockStateNone;
+    }
+}
+
++ (NSSet *)keyPathsForValuesAffectingBlockStateReason
 {
     return [NSSet setWithObjects:ConnectionKey, @"connection.status", nil];
 }

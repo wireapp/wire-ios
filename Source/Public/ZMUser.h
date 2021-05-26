@@ -30,6 +30,12 @@
 
 extern NSString * _Nonnull const ZMPersistedClientIdKey;
 
+typedef NS_ENUM(int16_t, ZMBlockState) {
+    ZMBlockStateNone = 0,
+    ZMBlockStateBlocked, ///< We have blocked this user
+    ZMBlockStateBlockedMissingLegalholdConsent, ///< The user is blocked due to legal hold missing consent
+};
+
 @interface ZMUser : ZMManagedObject
 
 @property (nonatomic, readonly, nullable) NSString *emailAddress;
@@ -98,6 +104,7 @@ extern NSString * _Nonnull const ZMPersistedClientIdKey;
 @interface ZMUser (Connections)
 
 @property (nonatomic, readonly) BOOL isBlocked;
+@property (nonatomic, readonly) ZMBlockState blockState;
 @property (nonatomic, readonly) BOOL isIgnored;
 @property (nonatomic, readonly) BOOL isPendingApprovalBySelfUser;
 @property (nonatomic, readonly) BOOL isPendingApprovalByOtherUser;

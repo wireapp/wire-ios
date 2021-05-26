@@ -24,6 +24,7 @@ import WireUtilities
 
 public let ZMUserClientNumberOfKeysRemainingKey = "numberOfKeysRemaining"
 public let ZMUserClientNeedsToUpdateSignalingKeysKey = "needsToUploadSignalingKeys"
+public let ZMUserClientNeedsToUpdateCapabilitiesKey = "needsToUpdateCapabilities"
 
 public let ZMUserClientMarkedToDeleteKey = "markedToDelete"
 public let ZMUserClientMissingKey = "missingClients"
@@ -83,6 +84,7 @@ public class UserClient: ZMManagedObject, UserClientType {
     @NSManaged public var apsVerificationKey: Data?
     @NSManaged public var apsDecryptionKey: Data?
     @NSManaged public var needsToUploadSignalingKeys: Bool
+    @NSManaged public var needsToUpdateCapabilities: Bool
     @NSManaged public var needsToNotifyOtherUserAboutSessionReset: Bool
     @NSManaged public var discoveredByMessage: ZMOTRMessage?
 
@@ -163,7 +165,12 @@ public class UserClient: ZMManagedObject, UserClientType {
     }
 
     public override func keysTrackedForLocalModifications() -> Set<String> {
-        return [ZMUserClientMarkedToDeleteKey, ZMUserClientNumberOfKeysRemainingKey, ZMUserClientMissingKey, ZMUserClientNeedsToUpdateSignalingKeysKey, Keys.PushToken]
+        return [ZMUserClientMarkedToDeleteKey,
+                ZMUserClientNumberOfKeysRemainingKey,
+                ZMUserClientMissingKey,
+                ZMUserClientNeedsToUpdateSignalingKeysKey,
+                ZMUserClientNeedsToUpdateCapabilitiesKey,
+                Keys.PushToken]
     }
     
     public override static func sortKey() -> String {
@@ -748,3 +755,16 @@ extension UserClient {
 
 }
 
+// MARK: - Update SelfClient Capability
+extension UserClient {
+
+    public static func triggerSelfClientCapabilityUpdate(_ context: NSManagedObjectContext) {
+        guard let selfClient = ZMUser.selfUser(in: context).selfClient() else { return }
+
+        selfClient.needsToUpdateCapabilities = true
+        selfClient.setLocallyModifiedKeys(Set(arrayLiteral: ZMUserClientNeedsToUpdateCapabilitiesKey))
+
+        context.enqueueDelayedSave()
+    }
+
+}
