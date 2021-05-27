@@ -560,9 +560,8 @@ static NSInteger const DefaultMaximumRequests = 6;
 - (void)handlerDidReceiveAccessToken:(ZMAccessTokenHandler *)handler
 {
     NOT_USED(handler);
-    [self.requestScheduler sessionDidReceiveAccessToken:self];
-    
     self.transportPushChannel.accessToken = self.accessToken;
+    [self.requestScheduler sessionDidReceiveAccessToken:self];
 }
 
 - (void)handlerDidClearAccessToken:(ZMAccessTokenHandler *)handler
