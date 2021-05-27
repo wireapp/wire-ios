@@ -22,24 +22,36 @@ import Foundation
 @objcMembers
 class NativePushChannel: NSObject, PushChannelType {
 
-    var clientID: String?
+    var clientID: String? {
+        didSet {
+            Logging.pushChannel.debug("Setting client ID")
+            scheduleOpen()
+        }
+    }
+    
     var accessToken: AccessToken? {
         didSet {
-            open()
+            Logging.pushChannel.debug("Setting access token")
         }
     }
 
     var keepOpen: Bool = false {
         didSet {
             if keepOpen {
-                open()
+                scheduleOpen()
             } else {
                 close()
             }
         }
     }
+
+    var canOpenConnection: Bool {
+        return keepOpen && websocketURL != nil && consumer != nil
+    }
+
     let environment: BackendEnvironmentProvider
     var session: URLSession?
+    let scheduler: ZMTransportRequestScheduler
     var websocketTask: URLSessionWebSocketTask?
     weak var consumer: ZMPushChannelConsumer?
     var consumerQueue: ZMSGroupQueue?
@@ -49,6 +61,7 @@ class NativePushChannel: NSObject, PushChannelType {
                   userAgentString: String,
                   environment: BackendEnvironmentProvider) {
         self.environment = environment
+        self.scheduler = scheduler
 
         super.init()
 
@@ -66,7 +79,7 @@ class NativePushChannel: NSObject, PushChannelType {
         let didGoOnline = reachability.mayBeReachable && !reachability.oldMayBeReachable
         guard didGoOnline else { return }
 
-        open()
+        scheduleOpen()
     }
 
     func setPushChannelConsumer(_ consumer: ZMPushChannelConsumer?, queue: ZMSGroupQueue) {
@@ -76,7 +89,7 @@ class NativePushChannel: NSObject, PushChannelType {
         if consumer == nil {
             close()
         } else {
-            open()
+            scheduleOpen()
         }
     }
 
@@ -98,7 +111,12 @@ class NativePushChannel: NSObject, PushChannelType {
     }
 
     func scheduleOpen() {
-        open()
+        guard canOpenConnection else {
+            Logging.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
+            return
+        }
+        Logging.pushChannel.debug("Schedule opening..")
+        scheduler.add(ZMOpenPushChannelRequest())
     }
 
     var websocketURL: URL? {
