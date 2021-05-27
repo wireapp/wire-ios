@@ -645,6 +645,40 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
             XCTAssertEqual(movedIndexes(first), [])
         }
     }
+
+    func testThatItNotifiesObserversWhenTheUserInOneOnOneConversationGetsBlockedDueToMissingLegalholdConsent()
+    {
+        // given
+        let user = ZMUser.insertNewObject(in:self.uiMOC)
+
+        let conversation = ZMConversation.insertNewObject(in:self.uiMOC)
+        conversation.connection = ZMConnection.insertNewObject(in: self.uiMOC)
+        conversation.connection?.status = .accepted
+        conversation.conversationType = .oneOnOne
+        conversation.connection?.to = user
+        self.uiMOC.saveOrRollback()
+
+        let normalList = ZMConversation.conversationsIncludingArchived(in: self.uiMOC)
+
+        self.token = ConversationListChangeInfo.addListObserver(testObserver, for:normalList, managedObjectContext: self.uiMOC)
+
+        XCTAssertEqual(normalList.count, 1)
+
+        // when
+        user.connection!.status = .blockedMissingLegalholdConsent
+        self.uiMOC.saveOrRollback()
+
+        // then
+        XCTAssertEqual(normalList.count, 0)
+
+        XCTAssertEqual(testObserver.changes.count, 1)
+        if let first = testObserver.changes.first {
+            XCTAssertEqual(first.insertedIndexes, IndexSet())
+            XCTAssertEqual(first.deletedIndexes, IndexSet(integer: 0))
+            XCTAssertEqual(first.updatedIndexes, IndexSet())
+            XCTAssertEqual(movedIndexes(first), [])
+        }
+    }
     
     func testThatItNotifiesObserversWhenAMessageBecomesUnreadUnsent()
     {
