@@ -19,6 +19,7 @@
 import Foundation
 import Photos
 import Cartography
+import UIKit
 
 final class AssetCell: UICollectionViewCell {
 

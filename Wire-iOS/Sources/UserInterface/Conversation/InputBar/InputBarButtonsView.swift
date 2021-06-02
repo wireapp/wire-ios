@@ -19,6 +19,7 @@
 import Foundation
 import Cartography
 import WireCommonComponents
+import UIKit
 
 private struct InputBarRowConstants {
     let titleTopMargin: CGFloat = 10
