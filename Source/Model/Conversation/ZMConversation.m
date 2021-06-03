@@ -690,7 +690,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 + (NSPredicate *)userDefinedNamePredicateForSearchString:(NSString *)searchString;
 {
     NSPredicate *predicate = [NSPredicate predicateWithFormatDictionary:@{ZMNormalizedUserDefinedNameKey: @"%K MATCHES %@"}
-                                                   matchingSearchString:searchString];
+                                                   matchingSearchString:[searchString normalizedForSearch]];
     return predicate;
 }
 
