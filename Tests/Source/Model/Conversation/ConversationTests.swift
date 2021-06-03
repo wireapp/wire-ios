@@ -61,6 +61,20 @@ final class ConversationTests: ZMConversationTestsBase {
         XCTAssertEqual(result.first as? ZMConversation, conversation)
     }
 
+    func testThatItFindsConversationByUserDefinedNameWithPunctuationCharacter() {
+        // given
+        let conversation = insertMockGroupConversation(userDefinedName: "[Feature] [9:30]")
+
+        // when
+
+        let request = ZMConversation.sortedFetchRequest(with: ZMConversation.predicate(forSearchQuery: "9:3", selfUser: selfUser))
+        let result = uiMOC.executeFetchRequestOrAssert(request)
+
+        // then
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.first as? ZMConversation, conversation)
+    }
+
     func testThatItFindsConversationWithQueryStringWithTrailingSpace() {
         // given
         let conversation = insertMockGroupConversation(userDefinedName: "Sömëbodÿ")
