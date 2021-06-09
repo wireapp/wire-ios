@@ -40,6 +40,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
 
     // MARK: - Message Content
 
+    // @SF.Storage @TSFI.ClientPlatform
     func testExistingMessageContentIsEncrypted_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
@@ -102,6 +103,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
 
     // MARK: - Normalized Text
 
+    // @SF.Storage @TSFI.ClientPlatform
     func testNormalizedMessageContentIsCleared_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
@@ -149,6 +151,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
 
     // MARK: - Draft messages
 
+    // @SF.Storage @TSFI.ClientPlatform
     func testDraftMessageContentIsEncrypted_WhenEarIsEnabled() throws {
         // Given
         let conversation = createConversation(in: uiMOC)
@@ -199,6 +202,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
 
     // MARK: - Negative Tests
 
+    // @SF.Storage @TSFI.ClientPlatform
     func testItThrowsAnError_WhenDatabaseKeyIsMissing_WhenEarIsEnabled() throws {
         // Given
         uiMOC.encryptionKeys = nil
@@ -235,6 +239,7 @@ class NSManagedObjectContextTests_EncryptionAtRest: ZMBaseManagedObjectTest {
         }
     }
 
+    // @SF.Storage @TSFI.ClientPlatform
     func testMigrationIsCanceled_WhenASingleInstanceFailsToMigrate() throws {
         // Given
         let encryptionKeys1 = validEncryptionKeys

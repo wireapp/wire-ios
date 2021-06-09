@@ -49,6 +49,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         XCTAssertEqual(sut.underlyingMessage, genericMessage)
     }
 
+    // @SF.Storage @TSFI.ClientPlatform
     func test_ItEncryptsAndDecryptsProtobufData_IfEncryptionAtRest_IsEnabled() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
@@ -68,6 +69,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
 
     // MARK: - Negative Tests
 
+    // @SF.Storage @TSFI.ClientPlatform
     func test_ItDoesNotStoreData_IfDatabaseKeyIsMissing_WhenEncrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
@@ -87,6 +89,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
 
+    // @SF.Storage @TSFI.ClientPlatform
     func test_ItDoesNotReturnData_IfDatabaseKeyIsMissing_WhenDecrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
@@ -99,6 +102,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         XCTAssertNil(sut.underlyingMessage)
     }
 
+    // @SF.Storage @TSFI.ClientPlatform
     func test_ItDoesNotStoreData_IfEncryptionFails_WhenEncrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)
@@ -118,6 +122,7 @@ class ZMGenericMessageDataTests: ModelObjectsTests {
         XCTAssertEqual(sut.underlyingMessage, oldGenericMessage)
     }
 
+    // @SF.Storage @TSFI.ClientPlatform
     func test_ItDoesNotReturnData_IfDecryptionFails_WhenDecrypting() throws {
         // Given
         let sut = ZMGenericMessageData.insertNewObject(in: uiMOC)

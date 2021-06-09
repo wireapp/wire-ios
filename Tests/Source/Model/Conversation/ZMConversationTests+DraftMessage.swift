@@ -29,6 +29,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
     
     // MARK: Persist encrypted draft message
     
+    // @SF.Storage @TSFI.ClientPlatform
     func testThatItEncryptsDraftMessage_WhenEncryptionAtRestIsEnabled() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
@@ -44,6 +45,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
         XCTAssertNotNil(conversation.draftMessageNonce)
     }
     
+    // @SF.Storage @TSFI.ClientPlatform
     func testThatItDiscardsDraftMessage_WhenEncryptionAtRestIsEnabled_And_DatabaseKeyIsMissing() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
@@ -77,6 +79,7 @@ class ConversationTests_DraftMessage: ZMConversationTestsBase {
         XCTAssertEqual(conversation.draftMessage?.text, draftText)
     }
     
+    // @SF.Storage @TSFI.ClientPlatform
     func testThatEncryptedDraftMessageCantBeAccessed_WhenDatabaseKeyIsMissing() {
         // GIVEN
         uiMOC.encryptMessagesAtRest = true
