@@ -56,7 +56,8 @@ class NativePushChannelTests_ServerTrust: XCTestCase {
 
         sut = NativePushChannel(scheduler: scheduler,
                                 userAgentString: "user-agent",
-                                environment: mockEnvironment)
+                                environment: mockEnvironment,
+                                queue: .main)
     }
 
     override func tearDownWithError() throws {

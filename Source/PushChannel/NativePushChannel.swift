@@ -40,8 +40,9 @@ class NativePushChannel: NSObject, PushChannelType {
             if keepOpen {
                 scheduleOpen()
             } else {
-                close()
+                self.close()
             }
+
         }
     }
 
@@ -55,24 +56,28 @@ class NativePushChannel: NSObject, PushChannelType {
     var websocketTask: URLSessionWebSocketTask?
     weak var consumer: ZMPushChannelConsumer?
     var consumerQueue: ZMSGroupQueue?
-    var pingTimer: Timer?
+    var workQueue: OperationQueue
+    var pingTimer: ZMTimer?
 
     required init(scheduler: ZMTransportRequestScheduler,
                   userAgentString: String,
-                  environment: BackendEnvironmentProvider) {
+                  environment: BackendEnvironmentProvider,
+                  queue: OperationQueue) {
         self.environment = environment
         self.scheduler = scheduler
+        self.workQueue = queue
 
         super.init()
-
-        self.session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: .main)
+        self.session = URLSession(configuration: .ephemeral, delegate: self, delegateQueue: queue)
     }
 
     func close() {
         Logging.pushChannel.debug("Push channel was closed")
 
-        websocketTask?.cancel()
-        onClose()
+        scheduler.performGroupedBlock { [weak self] in
+            self?.websocketTask?.cancel()
+            self?.onClose()
+        }
     }
 
     func reachabilityDidChange(_ reachability: ReachabilityProvider) {
@@ -111,6 +116,12 @@ class NativePushChannel: NSObject, PushChannelType {
     }
 
     func scheduleOpen() {
+        scheduler.performGroupedBlock { [weak self] in
+            self?.scheduleOpenInternal()
+        }
+    }
+
+    private func scheduleOpenInternal() {
         guard canOpenConnection else {
             Logging.pushChannel.debug("Conditions for scheduling opening not fulfilled, waiting...")
             return
@@ -133,6 +144,7 @@ class NativePushChannel: NSObject, PushChannelType {
             switch result {
             case.failure(let error):
                 Logging.pushChannel.debug("Failed to receive message \(error)")
+                self?.onClose()
             case .success(let message):
                 guard
                     case .data(let data) = message,
@@ -167,22 +179,34 @@ class NativePushChannel: NSObject, PushChannelType {
     }
 
     private func stopPingTimer() {
-        pingTimer?.invalidate()
+        pingTimer?.cancel()
         pingTimer = nil
     }
 
-    private func startPingTimer() {
-        let timer = Timer(timeInterval: 30, repeats: true) { [weak self] (_) in
-            Logging.pushChannel.debug("Sending ping")
-            self?.websocketTask?.sendPing(pongReceiveHandler: { error in
-                if let error = error {
-                    Logging.pushChannel.debug("Failed to send ping: \(error)")
-                }
-            })
-        }
+    private func schedulePingTimer() {
+        stopPingTimer()
+        startPingTimer()
+    }
 
-        self.pingTimer = timer
-        RunLoop.main.add(timer, forMode: .default)
+    private func startPingTimer() {
+        let timer = ZMTimer(target: self, operationQueue: workQueue)
+        timer?.fire(afterTimeInterval: 30)
+        pingTimer = timer
+    }
+
+}
+
+@available(iOSApplicationExtension 13.0, iOS 13.0, *)
+extension NativePushChannel: ZMTimerClient {
+
+    func timerDidFire(_ timer: ZMTimer!) {
+        Logging.pushChannel.debug("Sending ping")
+        websocketTask?.sendPing(pongReceiveHandler: { error in
+            if let error = error {
+                Logging.pushChannel.debug("Failed to send ping: \(error)")
+            }
+        })
+        schedulePingTimer()
     }
 
 }

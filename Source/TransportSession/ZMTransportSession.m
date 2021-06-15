@@ -270,7 +270,8 @@ static NSInteger const DefaultMaximumRequests = 6;
         }
         self.transportPushChannel = [[pushChannelClass alloc] initWithScheduler:self.requestScheduler
                                                                 userAgentString:userAgent
-                                                                    environment:environment];
+                                                                    environment:environment
+                                                                          queue:queue];
 
         self.firstRequestFired = NO;
         self.accessTokenHandler = [[ZMAccessTokenHandler alloc] initWithBaseURL:self.baseURL

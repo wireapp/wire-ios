@@ -89,7 +89,8 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_PUSHCHANNEL;
 
 ZM_EMPTY_ASSERTING_INIT();
 
-- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment;
+- (instancetype)initWithScheduler:(ZMTransportRequestScheduler *)scheduler userAgentString:(NSString *)userAgentString environment:(id <BackendEnvironmentProvider>)environment
+                            queue:(NSOperationQueue * _Nonnull)queue;
 {
     return [self initWithScheduler:scheduler userAgentString:userAgentString environment:environment pushChannelClass:nil];
 }
