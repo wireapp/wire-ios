@@ -29,7 +29,8 @@ NS_SWIFT_NAME(PushChannelType)
 
 - (instancetype _Nonnull )initWithScheduler:(ZMTransportRequestScheduler * _Nonnull)scheduler
                             userAgentString:(NSString * _Nonnull)userAgentString
-                                environment:(id <BackendEnvironmentProvider> _Nonnull)environment;
+                                environment:(id <BackendEnvironmentProvider> _Nonnull)environment
+                                      queue:(NSOperationQueue * _Nonnull)queue;
 
 /// Set the consumer of push channel messsages.
 ///
