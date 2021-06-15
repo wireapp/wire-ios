@@ -38,9 +38,9 @@ struct PinnedKeysData: Decodable {
     var pinnedKeys: [TrustData]
 }
 
-class BackendTrustProviderTests: XCTestCase {
-    
-    func trustWithChain(certificateData: [Data], file: StaticString = #file, line: UInt = #line) -> SecTrust? {
+extension SecTrust {
+
+    static func trustWithChain(certificateData: [Data], file: StaticString = #file, line: UInt = #line) -> SecTrust? {
         let policy = SecPolicyCreateBasicX509()
         let certificates: [SecCertificate] = certificateData.compactMap {
             guard let cert = SecCertificateCreateWithData(nil, $0 as CFData) else { XCTFail("Failed to create certificate from data", file: file, line: line); return nil }
@@ -48,10 +48,14 @@ class BackendTrustProviderTests: XCTestCase {
         }
         var trust: SecTrust? = nil
         guard SecTrustCreateWithCertificates(certificates as CFTypeRef, policy, &trust) == 0 else { XCTFail("Failed to create trust from certificate chain", file: file, line: line); return nil }
-        
+
         return trust
     }
-    
+
+}
+
+class BackendTrustProviderTests: XCTestCase {
+
     var pinnedHosts: [String]!
     var certificates: CertificateData!
     var pinnedKeys: PinnedKeysData!
@@ -77,7 +81,6 @@ class BackendTrustProviderTests: XCTestCase {
             self.certificates = try decoder.decode(CertificateData.self, from: certsData)
         } catch {
             XCTFail("Error reading certs: \(error)")
-            
         }
         
         do {
@@ -123,7 +126,7 @@ class BackendTrustProviderTests: XCTestCase {
     
     func testThatVerificationFailsWithNoHost() {
         // given
-        guard let serverTrust = trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
 
         XCTAssertFalse(sut.verifyServerTrust(trust: serverTrust, host: nil))
     }
@@ -138,7 +141,7 @@ class BackendTrustProviderTests: XCTestCase {
     ///
     func testPinnedHostsWithValidCertificateIsTrustedAreTrusted() {
         // given
-        guard let serverTrust = trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.production) else { XCTFail("Failed to create trust"); return }
         
         // then
         for host in pinnedHosts {
@@ -148,7 +151,7 @@ class BackendTrustProviderTests: XCTestCase {
     
     func testPinnedHostsAreNotTrustedWithWrongCertificate() {
         // given
-        guard let serverTrust = trustWithChain(certificateData: certificates.external) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.external) else { XCTFail("Failed to create trust"); return }
         
         // then
         for host in pinnedHosts {
@@ -176,7 +179,7 @@ class BackendTrustProviderTests: XCTestCase {
     
     func testExternalHostWithInvalidCertificateIsNotTrusted() {
         // given
-        guard let serverTrust = trustWithChain(certificateData: certificates.invalid) else { XCTFail("Failed to create trust"); return }
+        guard let serverTrust = SecTrust.trustWithChain(certificateData: certificates.invalid) else { XCTFail("Failed to create trust"); return }
         
         // then
         let host = "www.youtube.com"

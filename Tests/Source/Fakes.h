@@ -88,3 +88,28 @@
 @interface FakeGroupQueue : NSObject <ZMSGroupQueue>
 
 @end
+
+#pragma mark - FakeSchedulerSession
+
+@interface FakeSchedulerSession : NSObject <ZMTransportRequestSchedulerSession>
+
+@property (nonatomic) BOOL canStartRequestWithAccessToken;
+@property (nonatomic) BOOL accessTokenIsAboutToExpire;
+
+@property (nonatomic) int accessTokenRequestCount;
+@property (nonatomic) NSMutableArray *sentItems;
+@property (nonatomic) NSMutableArray *rejectedItems;
+@property (nonatomic) int maximumNumberOfConcurrentRequestsChangeCount;
+@property (nonatomic) ZMReachability *reachability;
+@property (nonatomic) int offlineCount;
+
+@end
+
+@interface FakeSchedulerSession (AccessToken)
+@end
+@interface FakeSchedulerSession (Reachability)
+@end
+@interface FakeSchedulerSession (Backoff)
+@end
+@interface FakeSchedulerSession (RateLimit)
+@end
