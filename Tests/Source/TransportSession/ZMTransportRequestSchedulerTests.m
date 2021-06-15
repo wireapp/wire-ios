@@ -26,69 +26,6 @@
 #import "Fakes.h"
 #import "WireTransport_ios_tests-Swift.h"
 
-@interface FakeSchedulerSession : NSObject <ZMTransportRequestSchedulerSession>
-
-@property (nonatomic) BOOL canStartRequestWithAccessToken;
-@property (nonatomic) BOOL accessTokenIsAboutToExpire;
-
-@property (nonatomic) int accessTokenRequestCount;
-@property (nonatomic) NSMutableArray *sentItems;
-@property (nonatomic) NSMutableArray *rejectedItems;
-@property (nonatomic) int maximumNumberOfConcurrentRequestsChangeCount;
-@property (nonatomic) ZMReachability *reachability;
-@property (nonatomic) int offlineCount;
-
-@end
-
-@interface FakeSchedulerSession (AccessToken)
-@end
-@interface FakeSchedulerSession (Reachability)
-@end
-@interface FakeSchedulerSession (Backoff)
-@end
-@interface FakeSchedulerSession (RateLimit)
-@end
-
-@implementation FakeSchedulerSession
-
-- (void)sendAccessTokenRequest;
-{
-    ++self.accessTokenRequestCount;
-}
-
-- (void)sendSchedulerItem:(id<ZMTransportRequestSchedulerItem>)item;
-{
-    if (self.sentItems == nil) {
-        self.sentItems = [NSMutableArray arrayWithObject:item];
-    } else {
-        [self.sentItems addObject:item];
-    }
-}
-
-- (void)temporarilyRejectSchedulerItem:(id<ZMTransportRequestSchedulerItem>)item;
-{
-    if (self.rejectedItems == nil) {
-        self.rejectedItems = [NSMutableArray arrayWithObject:item];
-    } else {
-        [self.rejectedItems addObject:item];
-    }
-}
-
-- (void)schedulerIncreasedMaximumNumberOfConcurrentRequests:(ZMTransportRequestScheduler *)scheduler;
-{
-    NOT_USED(scheduler);
-    ++self.maximumNumberOfConcurrentRequestsChangeCount;
-}
-
-- (void)schedulerWentOffline:(ZMTransportRequestScheduler *)scheduler
-{
-    NOT_USED(scheduler);
-    ++self.offlineCount;
-}
-
-@end
-
-
 //
 //
 #pragma mark -

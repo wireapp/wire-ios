@@ -202,3 +202,28 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
         onClose()
     }
 }
+
+@available(iOSApplicationExtension 13.0, iOS 13.0, *)
+extension NativePushChannel: URLSessionDelegate {
+
+    func urlSession(_ session: URLSession,
+                    task: URLSessionTask,
+                    didReceive challenge: URLAuthenticationChallenge,
+                    completionHandler: @escaping (URLSession.AuthChallengeDisposition, URLCredential?) -> Void) {
+
+        let protectionSpace = challenge.protectionSpace
+
+        guard protectionSpace.authenticationMethod == NSURLAuthenticationMethodServerTrust else {
+            return completionHandler(.performDefaultHandling, challenge.proposedCredential)
+        }
+
+        if let serverTrust = protectionSpace.serverTrust,
+           environment.verifyServerTrust(trust: serverTrust, host: protectionSpace.host) {
+            return completionHandler(.performDefaultHandling, challenge.proposedCredential)
+        } else {
+            return completionHandler(.cancelAuthenticationChallenge, nil)
+        }
+
+    }
+
+}

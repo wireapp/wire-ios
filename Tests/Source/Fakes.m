@@ -185,3 +185,42 @@
 
 @end
 
+
+@implementation FakeSchedulerSession
+
+- (void)sendAccessTokenRequest;
+{
+    ++self.accessTokenRequestCount;
+}
+
+- (void)sendSchedulerItem:(id<ZMTransportRequestSchedulerItem>)item;
+{
+    if (self.sentItems == nil) {
+        self.sentItems = [NSMutableArray arrayWithObject:item];
+    } else {
+        [self.sentItems addObject:item];
+    }
+}
+
+- (void)temporarilyRejectSchedulerItem:(id<ZMTransportRequestSchedulerItem>)item;
+{
+    if (self.rejectedItems == nil) {
+        self.rejectedItems = [NSMutableArray arrayWithObject:item];
+    } else {
+        [self.rejectedItems addObject:item];
+    }
+}
+
+- (void)schedulerIncreasedMaximumNumberOfConcurrentRequests:(ZMTransportRequestScheduler *)scheduler;
+{
+    NOT_USED(scheduler);
+    ++self.maximumNumberOfConcurrentRequestsChangeCount;
+}
+
+- (void)schedulerWentOffline:(ZMTransportRequestScheduler *)scheduler
+{
+    NOT_USED(scheduler);
+    ++self.offlineCount;
+}
+
+@end
