@@ -626,28 +626,6 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
     return self.selfUser;
 }
 
-- (MockUser *)insertUserWithName:(NSString *)name;
-{
-    return [self insertUserWithName:name includeClient:YES];
-}
-
-- (MockUser *)insertUserWithName:(NSString *)name includeClient:(BOOL)shouldIncludeClient;
-{
-    MockUser *user = (id) [NSEntityDescription insertNewObjectForEntityForName:@"User" inManagedObjectContext:self.managedObjectContext];
-    user.name = name;
-    user.identifier = [self createUUIDString];
-    user.handle = [self createUUIDString];
-    
-    if (shouldIncludeClient) {
-        
-        MockUserClient *client = [MockUserClient insertClientWithLabel:user.identifier type:@"permanent" deviceClass:@"phone" user:user context:self.managedObjectContext];
-        
-        NSMutableSet *clients = [NSMutableSet setWithObject:client];
-        user.clients = clients;
-    }
-    return user;
-}
-
 - (NSDictionary<NSString *, MockPicture *> *)addProfilePictureToUser:(MockUser *)user
 {
     MockPicture *smallProfile = (id) [NSEntityDescription insertNewObjectForEntityForName:@"Picture" inManagedObjectContext:self.managedObjectContext];
