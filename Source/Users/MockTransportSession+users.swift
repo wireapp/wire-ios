@@ -40,4 +40,29 @@ extension MockTransportSession {
         let fields = user.richProfile ?? []
         return ZMTransportResponse(payload: ["fields" : fields ] as ZMTransportData, httpStatus: 200, transportSessionError: nil)
     }
+
+    @objc(insertUserWithName:includeClient:)
+    public func insertUserWith(name: String, includeClient: Bool) -> MockUser {
+        let user = NSEntityDescription.insertNewObject(forEntityName: "User", into: managedObjectContext) as! MockUser
+        user.name = name
+        user.identifier = UUID.create().transportString()
+        user.handle = UUID.create().transportString()
+
+        if includeClient {
+            let client = MockUserClient.insertClient(label: user.identifier,
+                                                     type: "permanent",
+                                                     deviceClass: "phone",
+                                                     for: user,
+                                                     in: managedObjectContext)
+            user.clients = NSMutableSet(array: [client!])
+        }
+
+        return user
+    }
+
+    @objc(insertUserWithName:)
+    public func insertUserWithName(name: String) -> MockUser {
+
+        return self.insertUserWith(name: name, includeClient: true)
+    }
 }

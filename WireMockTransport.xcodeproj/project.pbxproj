@@ -10,6 +10,7 @@
 		06392CFB23C36D30003186E6 /* MockParticipantRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06392CFA23C36D30003186E6 /* MockParticipantRole.swift */; };
 		0641A8C4239A56E900B24621 /* MockAction.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0641A8C3239A56E900B24621 /* MockAction.swift */; };
 		0641A8C6239A581A00B24621 /* MockRole.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0641A8C5239A581A00B24621 /* MockRole.swift */; };
+		06FC1730268053470085B2DF /* MockTransportSessionJoinConversationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06FC172F268053470085B2DF /* MockTransportSessionJoinConversationTests.swift */; };
 		09BCDB691BC7CFFC0020DCC7 /* MockTransportSession+OTR.h in Headers */ = {isa = PBXBuildFile; fileRef = 09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */; };
 		09BCDB6A1BC7CFFC0020DCC7 /* MockTransportSession+OTR.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB681BC7CFFC0020DCC7 /* MockTransportSession+OTR.m */; };
 		09E393ED1BB012EA00F3EA1B /* MockTransportSession+Clients.h in Headers */ = {isa = PBXBuildFile; fileRef = 09E393EB1BB012EA00F3EA1B /* MockTransportSession+Clients.h */; };
@@ -158,6 +159,7 @@
 		06392CFA23C36D30003186E6 /* MockParticipantRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockParticipantRole.swift; sourceTree = "<group>"; };
 		0641A8C3239A56E900B24621 /* MockAction.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockAction.swift; sourceTree = "<group>"; };
 		0641A8C5239A581A00B24621 /* MockRole.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockRole.swift; sourceTree = "<group>"; };
+		06FC172F268053470085B2DF /* MockTransportSessionJoinConversationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionJoinConversationTests.swift; sourceTree = "<group>"; };
 		0928E1FA1B975CCE0057232E /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		0928E1FB1B975CFE0057232E /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		09BCDB671BC7CFFC0020DCC7 /* MockTransportSession+OTR.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+OTR.h"; sourceTree = "<group>"; };
@@ -393,6 +395,7 @@
 				F119FC1B2044551200969615 /* MockTransportSessionConversationAccessTests.swift */,
 				F119FC1920444F9C00969615 /* MockTransportSessionConversationsTests.swift */,
 				54AE5A961B78FA62002757E9 /* MockTransportSessionConversationsTests.m */,
+				06FC172F268053470085B2DF /* MockTransportSessionJoinConversationTests.swift */,
 			);
 			path = Conversations;
 			sourceTree = "<group>";
@@ -967,6 +970,7 @@
 				F157FE94206000A700BC25F1 /* MockTransportSessionTeamTests.swift in Sources */,
 				F119FC1A20444F9C00969615 /* MockTransportSessionConversationsTests.swift in Sources */,
 				F157FE9C2060026D00BC25F1 /* MockTransportSessionTeamEventsTests.swift in Sources */,
+				06FC1730268053470085B2DF /* MockTransportSessionJoinConversationTests.swift in Sources */,
 				F157FE83205FFEBC00BC25F1 /* MockTransportPushTokenTests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

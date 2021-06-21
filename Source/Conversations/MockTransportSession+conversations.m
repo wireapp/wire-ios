@@ -45,6 +45,10 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     {
         return [self processConversationIDsQuery:request.queryParameters];
     }
+    else if ([request matchesWithPath:@"/conversations/join" method:ZMMethodGET])
+    {
+        return [self processFetchConversationIdAndNameWith:request.queryParameters];
+    }
     else if ([request matchesWithPath:@"/conversations/*" method:ZMMethodGET])
     {
         return [self processConversationsGetConversation:[request RESTComponentAtIndex:1]];
@@ -121,6 +125,9 @@ static char* const ZMLogTag ZM_UNUSED = "MockTransport";
     }
     else if ([request matchesWithPath:@"/conversations/*/roles" method:ZMMethodGET]) {
         return [self processFetchRolesForConversation:[request RESTComponentAtIndex:1] payload:[request.payload asDictionary]];
+    }
+    else if ([request matchesWithPath:@"/conversations/join" method:ZMMethodPOST]) {
+        return [self processJoinConversationWithPayload:[request.payload asDictionary]];
     }
 
     return [ZMTransportResponse responseWithPayload:nil HTTPStatus:404 transportSessionError:nil];
