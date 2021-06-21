@@ -47,23 +47,32 @@ final class MockTransportSessionUsersTests_Swift: MockTransportSessionTests {
             secondOtherUserClient = session.registerClient(for: otherUser!, label: "other2", type: "permanent", deviceClass: "phone")
         })
         
-        let redunduntClientId = NSString.createAlphanumerical()
-        var payload: ZMTransportData = [selfUser.identifier: [selfClient.identifier!, redunduntClientId], otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!], thirdUser.identifier: [redunduntClientId]] as ZMTransportData
+        let redunduntClientId = NSString.createAlphanumerical() as String
+        let payload: ZMTransportData = [
+            selfUser.identifier: [selfClient.identifier!, redunduntClientId],
+            otherUser.identifier: [otherUserClient.identifier!, secondOtherUserClient.identifier!],
+            thirdUser.identifier: [redunduntClientId]] as ZMTransportData
         
         let response: ZMTransportResponse = self.response(forPayload: payload, path: "/users/prekeys", method: .methodPOST)
         XCTAssertEqual(response.httpStatus, 200)
         
-        let exepctedUsers: NSArray = [selfUser.identifier, otherUser?.identifier]
+        let expectedUsers: NSArray = [selfUser.identifier, otherUser.identifier, thirdUser.identifier]
         
         let dict = response.payload!.asDictionary()! as NSDictionary
-        assertDictionaryHasKeys(a1: dict, a2: exepctedUsers)
-        
-        var expectedClients = [selfClient?.identifier]
+        assertDictionaryHasKeys(a1: dict, a2: expectedUsers)
+
         if let identifier = selfUser?.identifier {
+            let expectedClients = [selfClient.identifier!, redunduntClientId]
             assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
         }
-        expectedClients = [otherUserClient?.identifier, secondOtherUserClient?.identifier]
+
         if let identifier = otherUser?.identifier {
+            let expectedClients = [otherUserClient?.identifier, secondOtherUserClient?.identifier]
+            assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
+        }
+
+        if let identifier = thirdUser?.identifier {
+            let expectedClients = [redunduntClientId]
             assertDictionaryHasKeys(a1: response.payload?.asDictionary()?[identifier] as! NSDictionary, a2: expectedClients as NSArray)
         }
     }

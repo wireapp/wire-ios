@@ -48,7 +48,7 @@
     else if ([request matchesWithPath:@"/clients/*/prekeys" method:ZMMethodGET]) {
         return [self processClientPreKeysForClient:[request RESTComponentAtIndex:1]];
     }
-    return [self errorResponseWithCode:400 reason:@"invalid method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 static NSInteger const MaxUserClientsAllowed = 2;

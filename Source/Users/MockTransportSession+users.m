@@ -86,7 +86,7 @@
         return [self getUserClientsForUser:[request RESTComponentAtIndex:1]];
     }
 
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 - (ZMTransportResponse *)getUserClient:(NSString *)clientID forUser:(NSString *)userID {
@@ -238,7 +238,7 @@
     else if([request matchesWithPath:@"/self/handle" method:ZMMethodPUT]) {
         return [self putSelfHandleWithPayload:[request.payload asDictionary]];
     }
-    return [self errorResponseWithCode:400 reason:@"invalid method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 - (ZMTransportResponse *)getSelfUser
@@ -385,24 +385,30 @@
 
 - (NSDictionary *)userClientsKeys:(MockUser *)user clientIds:(NSArray *)clientIds
 {
-    NSArray *userClients = [user.clients.allObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"identifier IN %@", clientIds]];
     NSMutableDictionary *userClientsKeys = [NSMutableDictionary new];
-    
-    for (MockUserClient *client in userClients) {
-        NSDictionary *keyPayload;
+
+    for (NSString *clientID in clientIds) {
+        MockUserClient *client = [user.clients.allObjects firstObjectMatchingWithBlock:^BOOL(MockUserClient *userClient) {
+            return [userClient.identifier isEqual:clientID];
+        }];
+
         MockPreKey *key = client.prekeys.anyObject;
         if (key == nil) {
             key = client.lastPrekey;
-        }
-        else {
+        } else {
             [[client mutableSetValueForKey:@"prekeys"] removeObject:key];
         }
-        keyPayload = @{
-                       @"id": @(key.identifier),
-                       @"key": key.value
-                       };
-        userClientsKeys[client.identifier] = keyPayload;
+
+        if (key != nil) {
+            userClientsKeys[clientID] = @{
+                @"id": @(key.identifier),
+                @"key": key.value
+            };
+        } else {
+            userClientsKeys[clientID] = [NSNull null];
+        }
     }
+
     return userClientsKeys;
 }
 

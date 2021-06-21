@@ -130,7 +130,7 @@
         return [ZMTransportResponse responseWithPayload:payload HTTPStatus:200 transportSessionError:nil headers:@{@"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue]}];
     }
     
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 /// Handles "/activate"
@@ -191,7 +191,7 @@
             return [self errorResponseWithCode:404 reason:@"not-found"];
         }
     }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 
@@ -233,7 +233,7 @@
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
     
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 @end
