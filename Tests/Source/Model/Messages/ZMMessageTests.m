@@ -54,9 +54,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
 
 @end
 
-@interface ZMMessageTests : BaseZMMessageTests
-@end
-
 @implementation ZMMessageTests
 
 - (void)testThatItIgnoresNanosecondSettingServerTimestampOnInsert

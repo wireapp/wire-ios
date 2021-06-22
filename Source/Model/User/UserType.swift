@@ -46,7 +46,7 @@ public protocol UserType: NSObjectProtocol, UserConnections {
     var isFederated: Bool { get }
     
     /// The availability of the user
-    var availability: Availability { get set }
+    var availability: AvailabilityKind { get set }
     
     /// The name of the team the user belongs to.
     var teamName: String? { get }

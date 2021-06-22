@@ -35,3 +35,6 @@
 - (NSString *)expectedExternalMessageText;
 
 @end
+
+@interface ZMMessageTests : BaseZMMessageTests
+@end

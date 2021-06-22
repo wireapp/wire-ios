@@ -162,25 +162,6 @@
     }];
 }
 
-- (void)requestFileDownload {
-    // V2
-    
-    // objects with temp ID on the UI must just have been inserted so no need to download
-    if (self.objectID.isTemporaryID) {
-        return;
-    }
-    
-    NSManagedObjectContext *moc = self.managedObjectContext.zm_userInterfaceContext;
-    
-    if (moc != nil) {
-        NotificationInContext * note = [[NotificationInContext alloc] initWithName:ZMAssetClientMessage.imageDownloadNotificationName
-                                                                           context:moc.notificationContext
-                                                                            object:self.objectID
-                                                                          userInfo:nil];
-        [note post];
-    }
-}
-
 - (void)fetchPreviewDataWithQueue:(dispatch_queue_t)queue completionHandler:(void (^)(NSData *))completionHandler {
     NSManagedObjectContext *syncContext =  self.managedObjectContext.zm_syncContext;
     

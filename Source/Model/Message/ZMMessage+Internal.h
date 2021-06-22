@@ -115,7 +115,7 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 @property (nonatomic, readonly) CGSize originalSize;
 
-@end
+@end  
 
 
 

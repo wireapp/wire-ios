@@ -838,7 +838,7 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     if (![usersSet isEqual:[NSSet setWithObject:message.sender]]) {
         [usersSet removeObject:message.sender];
     }
-    message.participantsRemovedReason = updateEvent.participantsRemovedReason;
+    message.participantsRemovedReason = [self updateEventParticipantsRemovedReason:updateEvent];
     message.users = usersSet;
     message.text = messageText != nil ? messageText : name;
     

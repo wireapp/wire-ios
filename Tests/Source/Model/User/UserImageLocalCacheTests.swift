@@ -38,7 +38,7 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
         testUser = ZMUser.insertNewObject(in:self.uiMOC)
         testUser.remoteIdentifier = UUID.create()
         
-        sut = UserImageLocalCache()
+        sut = UserImageLocalCache(location: nil)
     }
     
     override func tearDown() {
@@ -61,7 +61,7 @@ class UserImageLocalCacheTests : BaseZMMessageTests {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache()
+        sut = UserImageLocalCache(location: nil)
         
         // then
         let previewImageArrived = expectation(description: "Preview image arrived")
@@ -117,7 +117,7 @@ extension UserImageLocalCacheTests {
         // when
         sut.setUserImage(testUser, imageData: largeData, size: .complete)
         sut.setUserImage(testUser, imageData: smallData, size: .preview)
-        sut = UserImageLocalCache()
+        sut = UserImageLocalCache(location: nil)
         
         // then
         XCTAssertEqual(sut.userImage(testUser, size: .complete), largeData)
