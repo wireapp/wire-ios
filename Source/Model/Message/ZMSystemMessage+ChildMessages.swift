@@ -19,6 +19,11 @@
 import Foundation
 
 extension ZMSystemMessage {
+    
+    @objc
+    static func updateEventParticipantsRemovedReason(_ updateEvent: ZMUpdateEvent) -> ZMParticipantsRemovedReason {
+            return updateEvent.participantsRemovedReason
+    }
 
     /// Equals the serverTimestamp, if no childMessages are present
     var lastChildMessageDate: Date? {

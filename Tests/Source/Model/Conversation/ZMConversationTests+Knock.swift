@@ -19,6 +19,25 @@
 import Foundation
 @testable import WireDataModel
 
+extension ZMConversationTestsBase {
+    @discardableResult
+    @objc(insertConversationWithUnread:)
+    func insertConversation(withUnread hasUnread: Bool) -> ZMConversation {
+        let messageDate = Date(timeIntervalSince1970: 230000000)
+        let conversation = ZMConversation.insertNewObject(in: syncMOC)
+        conversation.conversationType = .oneOnOne
+        conversation.lastServerTimeStamp = messageDate
+        if hasUnread {
+            let message = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: syncMOC)
+            message.serverTimestamp = messageDate
+            conversation.lastReadServerTimeStamp = messageDate.addingTimeInterval(-1000)
+            conversation.append(message)
+        }
+        syncMOC.saveOrRollback()
+        return conversation
+    }
+}
+
 final class ZMConversationTests_Knock: ZMConversationTestsBase {
     func testThatItCanInsertAKnock() {
         syncMOC.performGroupedBlockAndWait({ [self] in

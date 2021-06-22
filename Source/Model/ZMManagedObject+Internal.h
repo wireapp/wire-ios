@@ -20,7 +20,7 @@
 @import WireSystem;
 @import CoreGraphics;
 
-#import "ZMManagedObject.h"
+#import <WireDataModel/ZMManagedObject.h>
 
 typedef void(^ObjectsEnumerationBlock)(ZMManagedObject * _Nonnull, BOOL * _Nonnull stop);
 extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;

@@ -315,7 +315,7 @@ extension ZMAssetClientMessage {
     case uploading
 }
 
-struct CacheAsset: Asset {
+struct CacheAsset: AssetType {
     
     enum AssetType {
         case image, file, thumbnail
@@ -482,10 +482,10 @@ struct CacheAsset: Asset {
 
 extension ZMAssetClientMessage: AssetMessage {
     
-    public var assets: [Asset] {
+    public var assets: [AssetType] {
         guard let cache = managedObjectContext?.zm_fileAssetCache else { return [] }
         
-        var assets: [Asset] = []
+        var assets: [AssetType] = []
         
         if isFile {
             if cache.hasDataOnDisk(self, encrypted: false) {
@@ -527,7 +527,7 @@ public protocol AssetMessage {
     /// List of assets which the message contains.
     ///
     /// NOTE: The order of this list needs to be stable.
-    var assets: [Asset] { get }
+    var assets: [AssetType] { get }
     
     /// Summary of the processing state for the assets
     var processingState: AssetProcessingState { get }
@@ -535,7 +535,8 @@ public protocol AssetMessage {
 }
 
 /// Represent a single asset like file, thumbnail, image and image preview.
-public protocol Asset {
+/// rename to AssetType to prevent build error due to name conflict with Proto.Asset struct
+public protocol AssetType {
     
     /// True if the original unprocessed data is available on disk
     var hasOriginal: Bool { get }

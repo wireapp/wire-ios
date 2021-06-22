@@ -45,7 +45,7 @@ fileprivate enum AssetSize: String {
     case complete
 }
 
-fileprivate enum AssetType: String {
+fileprivate enum AssetKind: String {
     case image
 }
 
@@ -61,7 +61,7 @@ public struct SearchUserAssetKeys {
             for asset in assetsPayload {
                 guard let size = (asset[ResponseKey.assetSize.rawValue] as? String).flatMap(AssetSize.init),
                     let key = asset[ResponseKey.assetKey.rawValue] as? String,
-                    let type = (asset[ResponseKey.assetType.rawValue] as? String).flatMap(AssetType.init),
+                    let type = (asset[ResponseKey.assetType.rawValue] as? String).flatMap(AssetKind.init),
                     type == .image else { continue }
                 
                 switch size {
@@ -188,7 +188,7 @@ public class ZMSearchUser: NSObject, UserType {
         }
     }
     
-    public var availability: Availability {
+    public var availability: AvailabilityKind {
         get { return user?.availability ?? .none }
         set { user?.availability = newValue }
     }

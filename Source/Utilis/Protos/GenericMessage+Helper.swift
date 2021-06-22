@@ -529,7 +529,7 @@ public extension WireProtos.Mention {
 // MARK: - Availability
 
 extension WireProtos.Availability {
-    public init(_ availability: Availability) {
+    public init(_ availability: AvailabilityKind) {
         self = WireProtos.Availability.with {
             switch availability {
             case .none:

@@ -33,44 +33,12 @@
 @end
 
 @implementation ZMClientMessageTests
-
-- (void)testThatItDoesNotCreateTextMessagesFromUpdateEventIfThereIsAlreadyAClientMessageWithTheSameNonce
-{
-    // given
-    NSUUID *nonce = [NSUUID createUUID];
-    
-    ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:self.uiMOC];
-    conversation.remoteIdentifier = [NSUUID createUUID];
-    ZMClientMessage *clientMessage = [[ZMClientMessage alloc] initWithNonce:nonce managedObjectContext:self.uiMOC];
-    clientMessage.visibleInConversation = conversation;
-    
-    NSDictionary *data = @{
-                           @"content" : self.name,
-                           @"nonce" : nonce.transportString
-                           };
-    
-    NSDictionary *payload = [self payloadForMessageInConversation:conversation type:EventConversationAdd data:data];
-    
-    ZMUpdateEvent *event = [ZMUpdateEvent eventFromEventStreamPayload:payload uuid:nil];
-    XCTAssertNotNil(event);
-    
-    // when
-    __block ZMTextMessage *sut;
-    [self performPretendingUiMocIsSyncMoc:^{
-        sut = [ZMTextMessage createOrUpdateMessageFromUpdateEvent:event inManagedObjectContext:self.uiMOC prefetchResult:nil];
-    }];
-    
-    // then
-    XCTAssertNil(sut);
-    XCTAssertEqual(conversation.lastMessage, clientMessage);
-}
-
 - (void)testThatItStoresClientAsMissing
 {
     UserClient *client = [self createSelfClient];
     ZMClientMessage *message = [self createClientTextMessage];
     [message missesRecipient:client];
-    
+
     XCTAssertEqualObjects(message.missingRecipients, [NSSet setWithObject:client]);
 }
 
@@ -79,11 +47,11 @@
     UserClient *client = [self createSelfClient];
     ZMClientMessage *message = [self createClientTextMessage];
     [message missesRecipient:client];
-    
+
     XCTAssertEqualObjects(message.missingRecipients, [NSSet setWithObject:client]);
-    
+
     [message doesNotMissRecipient:client];
-    
+
     XCTAssertEqual(message.missingRecipients.count, 0u);
 }
 
@@ -92,7 +60,7 @@
 {
     ZMClientMessage *message = [self createClientTextMessage];
     [message setExpirationDate];
-    
+
     [message markAsSent];
     XCTAssertTrue(message.delivered);
     XCTAssertFalse(message.isExpired);
@@ -101,7 +69,7 @@
 - (void)testThatResendingClientMessageResetsExpirationDate
 {
     ZMClientMessage *message = [self createClientTextMessage];
-    
+
     [message resend];
     XCTAssertNotNil(message.expirationDate);
 }
@@ -126,10 +94,10 @@
     // given
     ZMClientMessage *message = [self createClientTextMessage];
     XCTAssertFalse([message.keysThatHaveLocalModifications containsObject:ZMClientMessage.linkPreviewStateKey]);
-    
+
     // when
     message.linkPreviewState = state;
-    
+
     // then
     XCTAssertEqual([message.keysThatHaveLocalModifications containsObject:ZMClientMessage.linkPreviewStateKey], shouldSet);
 }
