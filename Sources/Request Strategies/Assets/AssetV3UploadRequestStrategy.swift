@@ -116,7 +116,7 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         return requestForUploadingAsset(asset, for: managedObject as! ZMAssetClientMessage)
     }
     
-    private func requestForUploadingAsset(_ asset: Asset, for message: ZMAssetClientMessage) -> ZMUpstreamRequest {
+    private func requestForUploadingAsset(_ asset: AssetType, for message: ZMAssetClientMessage) -> ZMUpstreamRequest {
         guard let data = asset.encrypted else { fatal("Encrypted data not available") }
         guard let retention = message.conversation.map(AssetRequestFactory.Retention.init) else { fatal("Trying to send message that doesn't have a conversation") }
         guard let request = requestFactory.backgroundUpstreamRequestForAsset(message: message, withData: data, shareable: false, retention: retention) else { fatal("Could not create asset request") }

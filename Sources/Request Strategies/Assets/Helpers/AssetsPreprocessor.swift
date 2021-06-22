@@ -141,9 +141,9 @@ extension AssetsPreprocessor: ZMAssetsPreprocessorDelegate {
 /// Adapter which implements the ZMImageOwner protcol because it requires an NSObject
 class AssetImageOwnerAdapter: NSObject, ZMImageOwner {
     
-    let asset: Asset
+    let asset: AssetType
     
-    init(asset: Asset) {
+    init(asset: AssetType) {
         self.asset = asset
         
         super.init()
