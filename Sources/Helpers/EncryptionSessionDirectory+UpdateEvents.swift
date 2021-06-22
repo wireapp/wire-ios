@@ -27,7 +27,6 @@ extension EncryptionSessionsDirectory {
     /// Decrypts an event (if needed) and return a decrypted copy (or the original if no
     /// decryption was needed) and information about the decryption result.
     ///
-    @objc(decryptUpdateEventAndAddClient:managedObjectContext:)
     public func decryptAndAddClient(_ event: ZMUpdateEvent, in moc: NSManagedObjectContext) -> ZMUpdateEvent? {
         guard !event.wasDecrypted else { return event }
         guard event.type == .conversationOtrMessageAdd || event.type == .conversationOtrAssetAdd else {
