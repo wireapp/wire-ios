@@ -37,14 +37,14 @@ extension ZMClientMessageTests_Reaction {
     
     func updateEventForAddingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction(emoji: "❤️", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "❤️", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
     
     func updateEventForRemovingReaction(to message: ZMMessage, sender: ZMUser? = nil) -> ZMUpdateEvent {
         let sender = sender ?? message.sender!
-        let genericMessage = GenericMessage(content: WireProtos.Reaction(emoji: "", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: sender.remoteIdentifier!)
         return event
     }
@@ -87,7 +87,7 @@ extension ZMClientMessageTests_Reaction {
     func testThatItDoesNOTAppendsAReactionWhenReceivingUpdateEventWithValidReaction() {
         
         let message = insertMessage()
-        let genericMessage = GenericMessage(content: WireProtos.Reaction(emoji: "TROP BIEN", messageID: message.nonce!))
+        let genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "TROP BIEN", messageID: message.nonce!))
         let event = createUpdateEvent(UUID(), conversationID: conversation.remoteIdentifier!, genericMessage: genericMessage, senderID: message.sender!.remoteIdentifier!)
         
         // when

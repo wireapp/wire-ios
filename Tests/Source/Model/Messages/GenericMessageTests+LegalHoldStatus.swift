@@ -38,7 +38,7 @@ class GenericMessageTests_LegalHoldStatus: BaseZMClientMessageTests {
     func testThatItUpdatesLegalHoldStatusFlagForReaction() {
         
         // given
-        var genericMessage = GenericMessage(content: WireProtos.Reaction(emoji: "🤠", messageID: UUID.create()))
+        var genericMessage = GenericMessage(content: WireProtos.Reaction.createReaction(emoji: "🤠", messageID: UUID.create()))
         
         // when
         XCTAssertEqual(genericMessage.reaction.legalHoldStatus, .unknown)

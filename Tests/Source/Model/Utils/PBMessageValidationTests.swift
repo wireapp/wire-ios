@@ -483,7 +483,7 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesReactionWithValidFields() {
         
-        let reaction = WireProtos.Reaction(emoji: "🤩", messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
+        let reaction = WireProtos.Reaction.createReaction(emoji: "🤩", messageID: UUID(uuidString: "8B496992-E74D-41D2-A2C4-C92EEE777DCE")!)
         let message = GenericMessage(content: reaction).validatingFields()
         XCTAssertNotNil(message)
     }

@@ -35,7 +35,7 @@ extension ZMMessage {
         guard message.isSent else { return nil }
         
         let emoji = unicodeValue ?? ""
-        let reaction = WireProtos.Reaction(emoji: emoji, messageID: messageID)
+        let reaction = WireProtos.Reaction.createReaction(emoji: emoji, messageID: messageID)
         let genericMessage = GenericMessage(content: reaction)
 
         guard let conversation = message.conversation else { return nil }

@@ -175,7 +175,7 @@ extension ZMClientMessage: ZMImageOwner {
             
             let text = Text.with {
                 $0.content = textMessageData.messageText ?? ""
-                $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention($0) }
+                $0.mentions = textMessageData.mentions.compactMap { WireProtos.Mention.createMention($0) }
                 $0.linkPreview = [linkPreview]
             }
             

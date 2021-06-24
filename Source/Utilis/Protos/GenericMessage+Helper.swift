@@ -358,7 +358,7 @@ extension Text {
     public init(content: String, mentions: [Mention] = [], linkPreviews: [LinkMetadata] = [], replyingTo: ZMOTRMessage? = nil) {
         self = Text.with {
             $0.content = content
-            $0.mentions = mentions.compactMap { WireProtos.Mention($0) }
+            $0.mentions = mentions.compactMap { WireProtos.Mention.createMention($0) }
             $0.linkPreview = linkPreviews.map { WireProtos.LinkPreview($0) }
             
             if let quotedMessage = replyingTo,
@@ -402,8 +402,8 @@ extension Text {
 // MARK: - Reaction
 
 extension WireProtos.Reaction {
-    public init(emoji: String, messageID: UUID) {
-        self = WireProtos.Reaction.with({
+    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
+        return WireProtos.Reaction.with({
             $0.emoji = emoji
             $0.messageID = messageID.transportString()
         })
@@ -513,12 +513,13 @@ extension External {
 }
 
 // MARK: - Mention
-
-public extension WireProtos.Mention {
-    init?(_ mention: WireDataModel.Mention) {
+///When other frameworks links to data modal XCFramework, the generated swift interface file omit the namespace and gives linker error. Added this typealias solves the issue.
+public typealias WireProtosMention = WireProtos.Mention
+public extension WireProtosMention {
+    static func createMention(_ mention: WireDataModel.Mention) -> WireProtos.Mention? {
         guard let userID = (mention.user as? ZMUser)?.remoteIdentifier.transportString() else { return nil }
         
-        self = WireProtos.Mention.with {
+        return WireProtos.Mention.with {
             $0.start = Int32(mention.range.location)
             $0.length = Int32(mention.range.length)
             $0.userID = userID
