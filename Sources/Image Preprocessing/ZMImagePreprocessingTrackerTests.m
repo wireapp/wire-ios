@@ -21,25 +21,10 @@
 @import WireDataModel;
 @import WireTesting;
 
+#import "ZMImagePreprocessingTrackerTests.h"
+
 #import <WireRequestStrategy/ZMImagePreprocessingTracker+Testing.h>
 #import "WireRequestStrategyTests-Swift.h"
-
-
-@interface ZMImagePreprocessingTrackerTests : ZMTBaseTest
-
-@property (nonatomic) id preprocessor;
-@property (nonatomic) CoreDataStack *coreDataStack;
-@property (nonatomic) NSOperationQueue *imagePreprocessingQueue;
-@property (nonatomic) ZMImagePreprocessingTracker *sut;
-@property (nonatomic) NSPredicate *fetchPredicate;
-@property (nonatomic) NSPredicate *needsProcessingPredicate;
-
-@property (nonatomic)  ZMClientMessage *linkPreviewMessage1;
-@property (nonatomic)  ZMClientMessage *linkPreviewMessage2;
-@property (nonatomic)  ZMClientMessage *linkPreviewMessage3;
-@property (nonatomic)  ZMClientMessage *linkPreviewMessageExcludedByPredicate;
-
-@end
 
 
 
@@ -51,22 +36,15 @@
     self.coreDataStack = [self createCoreDataStackWithUserIdentifier:[NSUUID UUID]
                                                        inMemoryStore:YES];
     [self setupCachesIn:self.coreDataStack];
-    
-    self.linkPreviewMessage1 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
-    self.linkPreviewMessage2 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
-    self.linkPreviewMessage3 = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
-    self.linkPreviewMessageExcludedByPredicate = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.coreDataStack.viewContext];
+
+    [self setUpLinkPreviewMessage];
     self.linkPreviewMessageExcludedByPredicate.nonce = nil;
     
     self.fetchPredicate = [NSPredicate predicateWithValue:NO];
     self.needsProcessingPredicate = [NSPredicate predicateWithFormat:@"nonce_data != nil"];
     self.preprocessor = [OCMockObject niceMockForClass:[ZMAssetsPreprocessor class]];
     self.imagePreprocessingQueue = [[NSOperationQueue alloc] init];
-    self.sut = [[ZMImagePreprocessingTracker alloc] initWithManagedObjectContext:self.coreDataStack.viewContext
-                                                            imageProcessingQueue:self.imagePreprocessingQueue
-                                                                  fetchPredicate:self.fetchPredicate
-                                                        needsProcessingPredicate:self.needsProcessingPredicate
-                                                                     entityClass:[ZMClientMessage class] preprocessor:self.preprocessor];
+    [self setupSut];
     
     [[[self.preprocessor stub] andReturn:@[[[NSOperation alloc] init]]] operationsForPreprocessingImageOwner:self.linkPreviewMessage1];
     [[[self.preprocessor stub] andReturn:@[[[NSOperation alloc] init]]] operationsForPreprocessingImageOwner:self.linkPreviewMessage2];
@@ -87,17 +65,6 @@
     self.coreDataStack = nil;
     [super tearDown];
 }
-
-- (void)testThatItReturnsTheCorrectFetchRequest
-{
-    // when
-    NSFetchRequest *request = [self.sut fetchRequestForTrackedObjects];
-    
-    // then
-    NSFetchRequest *expectedRequest = [ZMClientMessage sortedFetchRequestWithPredicate:self.fetchPredicate];
-    XCTAssertEqualObjects(request, expectedRequest);
-}
-
 
 - (void)testThatItAddsTrackedObjects
 {

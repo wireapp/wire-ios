@@ -19,5 +19,5 @@
 #import "MockEntity.h"
 #import "MockEntity2.h"
 #import "MockModelObjectContextFactory.h"
-
-
+#import "ZMImagePreprocessingTrackerTests.h"
+#import "ZMImagePreprocessingTracker.h"
