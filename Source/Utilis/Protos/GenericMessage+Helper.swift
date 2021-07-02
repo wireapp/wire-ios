@@ -410,6 +410,13 @@ extension WireProtos.Reaction {
     }
 }
 
+public enum ProtosReactionFactory {
+    public static func createReaction(emoji: String, messageID: UUID) -> WireProtos.Reaction {
+        return WireProtos.Reaction.createReaction(emoji: emoji,
+                                                  messageID: messageID)
+    }
+}
+
 // MARK: - LastRead
 
 extension LastRead {
