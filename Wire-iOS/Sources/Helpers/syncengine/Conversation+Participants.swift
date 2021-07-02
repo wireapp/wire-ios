@@ -83,8 +83,8 @@ extension ZMConversation {
             UIAlertController.showErrorAlert(message: ConversationError.tooManyMembers)
         case NetworkError.offline:
             UIAlertController.showErrorAlert(message: ConversationError.offline)
-        case ConversationAddParticipantsError.missingLegalHoldConsent:
-            UIAlertController.showErrorAlert(message: ConversationError.missingLegalholdConsent)
+//        case ConversationAddParticipantsError.missingLegalHoldConsent:
+//            UIAlertController.showErrorAlert(message: ConversationError.missingLegalholdConsent)
         default:
             UIAlertController.showErrorAlert(message: ConversationError.cannotAdd)
         }
