@@ -156,11 +156,10 @@ extension URLActionRouter: PresentationDelegate {
 
     func shouldPerformActionWithMessage(_ message: String, action: URLAction, decisionHandler: @escaping (_ shouldPerformAction: Bool) -> Void) {
         switch action {
-        ///TODO:
-//        case .joinConversation:
-//            presentConfirmationAlert(title: nil,
-//                                     message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
-//                                     decisionHandler: decisionHandler)
+        case .joinConversation:
+            presentConfirmationAlert(title: nil,
+                                     message: L10n.Localizable.UrlAction.JoinConversation.Confirmation.message(message),
+                                     decisionHandler: decisionHandler)
         default:
             decisionHandler(true)
         }
@@ -257,11 +256,11 @@ private extension URLActionRouter {
 
         init(from error: Error) {
             switch error {
-//            case ConversationJoinError.invalidCode:
-//                self = .conversationLinkIsInvalid
-//
-//            case ConversationJoinError.tooManyMembers:
-//                self = .conversationIsFull
+            case ConversationJoinError.invalidCode:
+                self = .conversationLinkIsInvalid
+
+            case ConversationJoinError.tooManyMembers:
+                self = .conversationIsFull
 
             default:
                 self = .unknown
