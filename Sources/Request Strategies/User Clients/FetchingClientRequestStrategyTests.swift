@@ -59,7 +59,6 @@ extension FetchClientRequestStrategyTests {
     func testThatItCreatesARequest_WhenUserClientNeedsToBeUpdatedFromBackend() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.otherUser.domain = nil
             let clientUUID = UUID()
             let client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             
@@ -76,7 +75,6 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.otherUser.domain = nil
             let clientUUID = UUID()
             let payload = [
                     "id" : clientUUID.transportString(),
@@ -102,7 +100,6 @@ extension FetchClientRequestStrategyTests {
         var client: UserClient!
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            self.otherUser.domain = nil
             let clientUUID = UUID()
             client = UserClient.fetchUserClient(withRemoteId: clientUUID.transportString(), forUser: self.otherUser, createIfNeeded: true)!
             
