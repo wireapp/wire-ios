@@ -167,6 +167,7 @@
 		F18401E22073C25900E9F4CC /* ClientMessageTranscoderTests+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401562073BE0800E9F4CC /* ClientMessageTranscoderTests+Ephemeral.swift */; };
 		F18401E42073C25E00E9F4CC /* GenericMessageRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015B2073BE0800E9F4CC /* GenericMessageRequestStrategyTests.swift */; };
 		F18401E52073C26200E9F4CC /* FetchingClientRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */; };
+		F18401E62073C26200E9F4CC /* MissingClientsMapTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F184015F2073BE0800E9F4CC /* MissingClientsMapTests.swift */; };
 		F18401E72073C26200E9F4CC /* MissingClientsRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */; };
 		F18401E82073C26700E9F4CC /* ZMOTRMessageMissingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401642073BE0800E9F4CC /* ZMOTRMessageMissingTests.swift */; };
 		F18401E92073C26700E9F4CC /* AvailabilityRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F18401672073BE0800E9F4CC /* AvailabilityRequestStrategyTests.swift */; };
@@ -386,6 +387,7 @@
 		F184015B2073BE0800E9F4CC /* GenericMessageRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GenericMessageRequestStrategyTests.swift; sourceTree = "<group>"; };
 		F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategy.swift; sourceTree = "<group>"; };
 		F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategyTests.swift; sourceTree = "<group>"; };
+		F184015F2073BE0800E9F4CC /* MissingClientsMapTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsMapTests.swift; sourceTree = "<group>"; };
 		F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestFactory.swift; sourceTree = "<group>"; };
 		F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FetchingClientRequestStrategy.swift; sourceTree = "<group>"; };
 		F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MissingClientsRequestStrategyTests.swift; sourceTree = "<group>"; };
@@ -738,6 +740,7 @@
 				F18401632073BE0800E9F4CC /* Helpers */,
 				F184015D2073BE0800E9F4CC /* MissingClientsRequestStrategy.swift */,
 				F18401622073BE0800E9F4CC /* MissingClientsRequestStrategyTests.swift */,
+				F184015F2073BE0800E9F4CC /* MissingClientsMapTests.swift */,
 				F18401602073BE0800E9F4CC /* MissingClientsRequestFactory.swift */,
 				F18401612073BE0800E9F4CC /* FetchingClientRequestStrategy.swift */,
 				F184015E2073BE0800E9F4CC /* FetchingClientRequestStrategyTests.swift */,
@@ -1322,6 +1325,7 @@
 				F18401DF2073C25900E9F4CC /* ClientMessageTranscoderTests+MessageConfirmation.swift in Sources */,
 				F18401F02073C26C00E9F4CC /* LinkPreviewAssetDownloadRequestStrategyTests.swift in Sources */,
 				F18401FF2073C2EA00E9F4CC /* MessagingTestBase.swift in Sources */,
+				F18401E62073C26200E9F4CC /* MissingClientsMapTests.swift in Sources */,
 				F1956200202A141B005347C0 /* ZMDownstreamObjectSyncOrderingTests.m in Sources */,
 				5E9EA4E02243C6B200D401B2 /* LinkAttachmentsPreprocessorTests.swift in Sources */,
 				F18401EE2073C26C00E9F4CC /* LinkPreviewAssetUploadRequestStrategyTests.swift in Sources */,

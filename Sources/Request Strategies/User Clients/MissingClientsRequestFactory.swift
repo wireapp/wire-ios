@@ -19,84 +19,54 @@
 import Foundation
 import WireDataModel
 
-
-extension Collection where Element == UserClient {
-
-    var clientListByUserID: Payload.ClientListByUserID {
-
-        let initial: Payload.ClientListByUserID = [:]
-
-        return self.reduce(into: initial) { (result, client) in
-            guard let userID = client.user?.remoteIdentifier.transportString(),
-                  let clientID = client.remoteIdentifier
-            else {
-                return
-            }
-
-            result[userID, default: []].append(clientID)
-        }
-    }
-
-    var clientListByDomain: Payload.ClientListByQualifiedUserID {
-        let initial: Payload.ClientListByQualifiedUserID = [:]
-
-        return self.reduce(into: initial) { (result, client) in
-            guard let userID = client.user?.remoteIdentifier.transportString(),
-                  let clientID = client.remoteIdentifier,
-                  let domain = client.user?.domain
-            else {
-                return
-            }
-
-            result[domain, default: Payload.ClientListByUserID()][userID, default: []].append(clientID)
-        }
-    }
-
-}
-
 public final class MissingClientsRequestFactory {
     
     let pageSize : Int
-    let defaultEncoder = JSONEncoder.defaultEncoder
-
     public init(pageSize: Int = 128) {
         self.pageSize = pageSize
     }
-
-    public func fetchPrekeys(for missingClients: Set<UserClient>) -> ZMUpstreamRequest? {
-        guard
-            let payloadData = missingClients.prefix(pageSize).clientListByUserID.payloadData(encoder: defaultEncoder),
-            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
-        else {
-            return nil
-        }
-
-        let request = ZMTransportRequest(path: "/users/prekeys",
-                                         method: .methodPOST,
-                                         payload: payloadAsString as ZMTransportData?)
-        return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMUserClientMissingKey),
-                                 transportRequest: request,
-                                 userInfo: nil)
-    }
-
-    public func fetchPrekeysFederated(for missingClients: Set<UserClient>) -> ZMUpstreamRequest? {
-        guard
-            let payloadData = missingClients.prefix(pageSize).clientListByDomain.payloadData(encoder: defaultEncoder),
-            let payloadAsString = String(bytes: payloadData, encoding: .utf8)
-        else {
-            return nil
-        }
-
-        let request = ZMTransportRequest(path: "/users/list-prekeys",
-                                         method: .methodPOST,
-                                         payload: payloadAsString as ZMTransportData?)
-        return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMUserClientMissingKey),
-                                 transportRequest: request,
-                                 userInfo: nil)
+    
+    public func fetchMissingClientKeysRequest(_ missingClients: Set<UserClient>) -> ZMUpstreamRequest! {
+        let map = MissingClientsMap(Array(missingClients), pageSize: pageSize)
+        let request = ZMTransportRequest(path: "/users/prekeys", method: ZMTransportRequestMethod.methodPOST, payload: map.payload as ZMTransportData?)
+        return ZMUpstreamRequest(keys: Set(arrayLiteral: ZMUserClientMissingKey), transportRequest: request, userInfo: map.userInfo)
     }
     
 }
 
 public func identity<T>(value: T) -> T {
     return value
+}
+
+public struct MissingClientsMap {
+    
+    /// The mapping from user-id's to an array of missing clients for that user `{ <user-id>: [<client-id>] }`
+    let payload: [String: [String]]
+    /// The `MissingClientsRequestUserInfoKeys.clients` key holds all missing clients
+    let userInfo: [String: [String]]
+    
+    public init(_ missingClients: [UserClient], pageSize: Int) {
+        
+        let addClientIdToMap = { (clientsMap: [String : Set<String>], missingClient: UserClient) -> [String: Set<String>] in
+            var clientsMap = clientsMap
+            let missingUserId = missingClient.user!.remoteIdentifier!.transportString()
+            var clientSet = clientsMap[missingUserId] ?? Set<String>()
+            clientSet.insert(missingClient.remoteIdentifier!)
+            clientsMap[missingUserId] = clientSet
+            return clientsMap
+        }
+        
+        var users = Set<ZMUser>()
+        let missing = missingClients.filter {
+            guard let user = $0.user,
+                let _ = user.remoteIdentifier else { return false }
+            users.insert(user)
+            return users.count <= pageSize
+        }
+        
+        let setPayload = missing.reduce([String: Set<String>](), addClientIdToMap)
+        
+        payload = setPayload.mapKeysAndValues(keysMapping: identity, valueMapping: { return Array($1) })
+        userInfo = [MissingClientsRequestUserInfoKeys.clients: missing.map { $0.remoteIdentifier! }]
+    }
 }

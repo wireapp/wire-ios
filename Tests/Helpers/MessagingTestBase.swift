@@ -230,7 +230,6 @@ extension MessagingTestBase {
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
         let user = ZMUser.insertNewObject(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
-        user.domain = "example.com"
         if alsoCreateClient {
             _ = self.createClient(user: user)
         }
@@ -273,7 +272,6 @@ extension MessagingTestBase {
     fileprivate func createSelfClient() -> UserClient {
         let user = ZMUser.selfUser(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
-        user.domain = "example.com"
         
         let selfClient = UserClient.insertNewObject(in: self.syncMOC)
         selfClient.remoteIdentifier = "baddeed"
