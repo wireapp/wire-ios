@@ -27,6 +27,7 @@
 
 #import "ZMImageDownsampleOperation.h"
 #import "ZMImageLoadOperation.h"
+#import <WireImages/WireImages-Swift.h>
 
 static const NSUInteger MaximumGIFImageByteCount = 5 * 1024 * 1024;
 static const double DownsampleResizeThreshold = 1.2;
@@ -180,9 +181,9 @@ static void bitmapContextReleaseData(void *releaseInfo, void *data);
             self.downsampleImageData = [self createCompressImageDataFromImage:image format:self.loadOperation.computedImageProperties.mimeType];
         }
     }
-    self.properties = [ZMIImageProperties imagePropertiesWithSize:imageSize
-                                                           length:self.downsampleImageData.length
-                                                         mimeType:CFBridgingRelease(UTTypeCopyPreferredTagWithClass((__bridge CFStringRef)mimeType, kUTTagClassMIMEType))];
+    
+    self.properties = [self createImagePropertiesWithUti:mimeType imageSize:imageSize];
+
     CGImageRelease(image);
 }
 
