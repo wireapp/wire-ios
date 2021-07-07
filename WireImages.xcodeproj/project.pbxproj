@@ -84,6 +84,7 @@
 		87B91C4C1E5C7E5D00A5EC11 /* unsplash_preview.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C291E5C7E5D00A5EC11 /* unsplash_preview.jpg */; };
 		87B91C4D1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */; };
 		87B91C4E1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */; };
+		A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */; };
 		EFF7A4722271E47500F1AC33 /* Cartfile.resolved in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */; };
 		EFF7A4732271E47500F1AC33 /* Cartfile.private in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4702271E47400F1AC33 /* Cartfile.private */; };
 		EFF7A4742271E47500F1AC33 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4712271E47500F1AC33 /* Cartfile */; };
@@ -212,6 +213,7 @@
 		87B91C291E5C7E5D00A5EC11 /* unsplash_preview.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview.jpg; sourceTree = "<group>"; };
 		87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview_small_profile.jpg; sourceTree = "<group>"; };
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
+		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
 		EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		EFF7A4702271E47400F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		EFF7A4712271E47500F1AC33 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
@@ -295,6 +297,7 @@
 				098CB1341B5FAD5A00712DF9 /* ZMAssetsPreprocessor.m */,
 				098CB1351B5FAD5A00712DF9 /* ZMImageDownsampleOperation.h */,
 				098CB1361B5FAD5A00712DF9 /* ZMImageDownsampleOperation.m */,
+				A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */,
 				098CB1371B5FAD5A00712DF9 /* ZMImageLoadOperation.h */,
 				098CB1381B5FAD5A00712DF9 /* ZMImageLoadOperation.m */,
 				098CB1391B5FAD5A00712DF9 /* ZMImageOwner.h */,
@@ -637,6 +640,7 @@
 				096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */,
 				096960321B663EF0006DF53B /* ZMImageLoadOperation.m in Sources */,
 				0969602E1B663EF0006DF53B /* ZMAssetsPreprocessor.m in Sources */,
+				A9626B4B26932BEA0043CC31 /* ZMImageDownsampleOperation.swift in Sources */,
 				09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
