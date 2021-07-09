@@ -167,6 +167,10 @@ class NativePushChannel: NSObject, PushChannelType {
         consumerQueue?.performGroupedBlock {
             self.consumer?.pushChannelDidClose()
         }
+
+        if keepOpen {
+            scheduleOpen()
+        }
     }
 
     private func onOpen() {
@@ -228,7 +232,13 @@ extension NativePushChannel: URLSessionWebSocketDelegate {
 }
 
 @available(iOSApplicationExtension 13.0, iOS 13.0, *)
-extension NativePushChannel: URLSessionDelegate {
+extension NativePushChannel: URLSessionDataDelegate {
+
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        Logging.pushChannel.debug("Websocket open connection task did fail: \(error.map({ String(describing: $0)}) ?? "n/a" )")
+
+        websocketTask = nil
+    }
 
     func urlSession(_ session: URLSession,
                     task: URLSessionTask,
