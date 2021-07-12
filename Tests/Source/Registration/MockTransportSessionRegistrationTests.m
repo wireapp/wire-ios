@@ -60,7 +60,7 @@
     return user;
 }
 
-- (void)testThatRegistrationReturns404OnWrongMethod
+- (void)testThatRegistrationReturns400OnWrongMethod
 {
     // GIVEN
     ZMTransportRequestMethod methods[] = {ZMMethodHEAD, ZMMethodGET, ZMMethodDELETE, ZMMethodPUT};
@@ -75,7 +75,7 @@
         ZMTransportResponse *response = [self responseForPayload:payload path:@"/register" method:methods[i]];
         
         // THEN
-        XCTAssertEqual(response.HTTPStatus, 404);
+        XCTAssertEqual(response.HTTPStatus, 400);
         MockUser *user = [self userForEmail:payload[@"email"]];
         XCTAssertNil(user);
     }

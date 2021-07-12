@@ -86,7 +86,7 @@
         return [self getUserClientsForUser:[request RESTComponentAtIndex:1]];
     }
 
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
 
 - (ZMTransportResponse *)getUserClient:(NSString *)clientID forUser:(NSString *)userID {
@@ -238,7 +238,7 @@
     else if([request matchesWithPath:@"/self/handle" method:ZMMethodPUT]) {
         return [self putSelfHandleWithPayload:[request.payload asDictionary]];
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:400 reason:@"invalid method"];
 }
 
 - (ZMTransportResponse *)getSelfUser
@@ -385,30 +385,24 @@
 
 - (NSDictionary *)userClientsKeys:(MockUser *)user clientIds:(NSArray *)clientIds
 {
+    NSArray *userClients = [user.clients.allObjects filteredArrayUsingPredicate:[NSPredicate predicateWithFormat:@"identifier IN %@", clientIds]];
     NSMutableDictionary *userClientsKeys = [NSMutableDictionary new];
-
-    for (NSString *clientID in clientIds) {
-        MockUserClient *client = [user.clients.allObjects firstObjectMatchingWithBlock:^BOOL(MockUserClient *userClient) {
-            return [userClient.identifier isEqual:clientID];
-        }];
-
+    
+    for (MockUserClient *client in userClients) {
+        NSDictionary *keyPayload;
         MockPreKey *key = client.prekeys.anyObject;
         if (key == nil) {
             key = client.lastPrekey;
-        } else {
+        }
+        else {
             [[client mutableSetValueForKey:@"prekeys"] removeObject:key];
         }
-
-        if (key != nil) {
-            userClientsKeys[clientID] = @{
-                @"id": @(key.identifier),
-                @"key": key.value
-            };
-        } else {
-            userClientsKeys[clientID] = [NSNull null];
-        }
+        keyPayload = @{
+                       @"id": @(key.identifier),
+                       @"key": key.value
+                       };
+        userClientsKeys[client.identifier] = keyPayload;
     }
-
     return userClientsKeys;
 }
 
