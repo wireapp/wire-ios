@@ -28,7 +28,7 @@
         return [ZMTransportResponse responseWithPayload:nil HTTPStatus:200 transportSessionError:nil];
     }
     
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
 
 
@@ -76,7 +76,7 @@
         }
     }
     else {
-        return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+        return [self errorResponseWithCode:400 reason:@"invalid-method"];
     }
 }
 

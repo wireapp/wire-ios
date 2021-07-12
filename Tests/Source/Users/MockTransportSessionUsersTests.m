@@ -559,7 +559,7 @@
     ZMTransportResponse *response = [self responseForPayload:@{} path:@"/self/passwprd" method:ZMMethodPUT];
     
     // THEN
-    XCTAssertEqual(response.HTTPStatus, 404);
+    XCTAssertEqual(response.HTTPStatus, 400);
 }
 
 - (void)testThatItDoesNotPutThePasswordIfthePasswordIsAlreadyThereAndTheOldPasswordDoesNotMatch

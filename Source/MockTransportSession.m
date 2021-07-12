@@ -503,7 +503,7 @@ static NSString* ZMLogTag ZM_UNUSED = @"MockTransportRequests";
         }
     } else {
         LogNetwork(@"<--- Response to %@: 404 (request not handled)", request.path);
-        response = [self errorResponseWithCode:404 reason:@"no-endpoint"];
+        response = [self errorResponseWithCode:404 reason:@"not implemented"];
         if(completionHandler) {
             completionHandler(response);
         }

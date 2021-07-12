@@ -94,7 +94,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         NSDictionary *headers = @{ @"Set-Cookie": [NSString stringWithFormat:@"zuid=%@", cookiesValue] };
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil headers:headers];
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
 
 /// handles /login/send
@@ -120,7 +120,7 @@ static NSString * const HardcodedAccessToken = @"5hWQOipmcwJvw7BVwikKKN4glSue1Q7
         }
         
     }
-    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
+    return [self errorResponseWithCode:400 reason:@"invalid-method"];
 }
 
 
