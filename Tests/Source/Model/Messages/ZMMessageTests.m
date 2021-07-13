@@ -337,16 +337,6 @@ NSUInteger const ZMClientMessageByteSizeExternalThreshold = 128000;
     XCTAssertEqualObjects(message.keysTrackedForLocalModifications, expected);
 }
 
-- (void)testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForClientMessages
-{
-    // when
-    ZMClientMessage *message = [[ZMClientMessage alloc] initWithNonce:NSUUID.createUUID managedObjectContext:self.uiMOC];
-    
-    // then
-    NSSet *keysThatShouldBeTracked = [NSSet setWithArray:@[@"dataSet", @"linkPreviewState"]];
-    XCTAssertEqualObjects(message.keysTrackedForLocalModifications, keysThatShouldBeTracked);
-}
-
 - (void)testThat_doesEventGenerateMessage_returnsTrueForAllKnownTypes
 {
     NSArray *validTypes = @[
