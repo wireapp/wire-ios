@@ -10,6 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
+        token: ${{ secrets.DISPATCH_SECRET }}
         fetch-depth: '0'
 
     - name: guard for wire bot commit
@@ -29,8 +30,6 @@ jobs:
         VERBOSE: true
         
     - name: update version.xcconfig
-      env:
-        GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
       run: |
         echo "new tag: '${{steps.dry_run.outputs.new_tag}}'"
         echo "tag: '${{steps.dry_run.outputs.tag}}'"
