@@ -10,7 +10,7 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
-        persist-credentials: false
+        token: ${{ secrets.PUSH_TOKEN }}
         fetch-depth: '0'
 
     - name: guard for wire bot commit
