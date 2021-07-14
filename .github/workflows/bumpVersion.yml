@@ -31,7 +31,7 @@ jobs:
         
     - name: update version.xcconfig
       env:
-        GITHUB_TOKEN: ${{ secrets.DISPATCH_SECRET }}
+        GITHUB_TOKEN: ${{ secrets.PUSH_TOKEN }}
       run: |
         echo "new tag: '${{steps.dry_run.outputs.new_tag}}'"
         echo "tag: '${{steps.dry_run.outputs.tag}}'"
