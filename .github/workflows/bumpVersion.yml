@@ -1,4 +1,4 @@
-name: Bump version
+name: Bump version v0.1.1
 on:
   workflow_dispatch:
   push:
@@ -39,7 +39,7 @@ jobs:
         rm updateVersionXcconfig.swift
         
         git config --global user.email "iosx@wire.com"
-        git config --global user.name "Github action - Bump version"
+        git config --global user.name "zenkins"
         git add .
         git commit -m"update version.xcconfig for '${{steps.dry_run.outputs.new_tag}}'" || true
         git push || true
