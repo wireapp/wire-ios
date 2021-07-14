@@ -320,8 +320,8 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					3ECC350F1AD436750089FD4B = {
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 1000;
+						ProvisioningStyle = Manual;
 					};
 					54A3272B1B99A3190004EB95 = {
 						CreatedOnToolsVersion = 6.4;
@@ -455,8 +455,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 			};
 			name = Debug;
 		};
@@ -464,8 +468,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 092758691B70E68F00AD5A78 /* WireSystem.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(SRCROOT)/Resources/WireSystem-Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireSystem;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 			};
 			name = Release;
 		};
