@@ -44,12 +44,13 @@ FRAMEWORK_VERSION = A
 // Linking
 //
 OTHER_LDFLAGS = -ObjC
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @executable_path/Frameworks @loader_path/Frameworks @executable_path/../Frameworks @loader_path/../Frameworks
+
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PLATFORM_DIR)/Developer/Library/Frameworks
 
 // Swift
 //
-SWIFT_VERSION = 5.1
+SWIFT_VERSION = 5.2
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
 SWIFT_COMPILATION_MODE = wholemodule
 
