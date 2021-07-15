@@ -664,7 +664,6 @@
 				TargetAttributes = {
 					0928E2331BA0777A0057232E = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 1000;
 					};
 					5471A6541D24215B0092A9A9 = {
@@ -840,8 +839,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 			};
 			name = Debug;
 		};
@@ -849,8 +852,12 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0928E3751BA17E300057232E /* WireCryptobox.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = WireCryptobox/Info.plist;
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.cryptobox;
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 			};
 			name = Release;
 		};
@@ -902,9 +909,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 				VALIDATE_WORKSPACE = YES;
@@ -915,9 +926,13 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = F1E148D0207D06EF00F81833 /* ios-test-target.xcconfig */;
 			buildSettings = {
+				CODE_SIGN_STYLE = Manual;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = "$(PRODUCT_NAME)/Info.plist";
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.cryptobox.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "$(PRODUCT_NAME)/CryptoboxTests-Bridging-Header.h";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/WireCryptoboxTestHost.app/WireCryptoboxTestHost";
 				VALIDATE_WORKSPACE = YES;
