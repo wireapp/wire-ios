@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,14 +12,13 @@
 		165EA0D41DB67C3B008ECC60 /* Canvas.h in Headers */ = {isa = PBXBuildFile; fileRef = 165EA0C61DB67C3B008ECC60 /* Canvas.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		165EA0DE1DB67C6C008ECC60 /* Canvas.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165EA0DD1DB67C6C008ECC60 /* Canvas.swift */; };
 		1660DC661DBF8516009E360D /* UIImage+Trimmed.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */; };
-		166390D91DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 166390D81DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework */; };
 		166390E41DC8EFC200D7BF1C /* unsplash_burger.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390DE1DC8EFB600D7BF1C /* unsplash_burger.jpg */; };
 		166390E51DC8EFC600D7BF1C /* unsplash_matterhorn.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390DF1DC8EFB600D7BF1C /* unsplash_matterhorn.jpg */; };
 		166390E61DC8EFC600D7BF1C /* unsplash_small.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 166390E01DC8EFB600D7BF1C /* unsplash_small.jpg */; };
 		166390E81DC8F08400D7BF1C /* TestHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166390E71DC8F08400D7BF1C /* TestHelper.swift */; };
-		166390E91DC8FE1C00D7BF1C /* FBSnapshotTestCase.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 166390D81DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		16CB8A311DBA5B7300B5BC47 /* Stroke.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A301DBA5B7300B5BC47 /* Stroke.swift */; };
 		16CB8A331DBA5BB800B5BC47 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16CB8A321DBA5BB800B5BC47 /* Image.swift */; };
+		A99EE23526667FDE00E713FC /* FBSnapshotTestCase.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -39,7 +38,6 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				166390E91DC8FE1C00D7BF1C /* FBSnapshotTestCase.framework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -54,7 +52,6 @@
 		165EA0D31DB67C3B008ECC60 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		165EA0DD1DB67C6C008ECC60 /* Canvas.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Canvas.swift; sourceTree = "<group>"; };
 		1660DC651DBF8516009E360D /* UIImage+Trimmed.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIImage+Trimmed.swift"; sourceTree = "<group>"; };
-		166390D81DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = FBSnapshotTestCase.framework; path = Carthage/Build/iOS/FBSnapshotTestCase.framework; sourceTree = "<group>"; };
 		166390DE1DC8EFB600D7BF1C /* unsplash_burger.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_burger.jpg; sourceTree = "<group>"; };
 		166390DF1DC8EFB600D7BF1C /* unsplash_matterhorn.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_matterhorn.jpg; sourceTree = "<group>"; };
 		166390E01DC8EFB600D7BF1C /* unsplash_small.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small.jpg; sourceTree = "<group>"; };
@@ -72,6 +69,7 @@
 		16CB8A441DBA73B900B5BC47 /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		16CB8A451DBA73B900B5BC47 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		16CB8A461DBA73B900B5BC47 /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
+		A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = FBSnapshotTestCase.xcframework; path = Carthage/Build/FBSnapshotTestCase.xcframework; sourceTree = "<group>"; };
 		EFF7A46B2271BFAF00F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		EFF7A46C2271BFAF00F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -89,7 +87,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				165EA0CD1DB67C3B008ECC60 /* WireCanvas.framework in Frameworks */,
-				166390D91DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework in Frameworks */,
+				A99EE23526667FDE00E713FC /* FBSnapshotTestCase.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -145,7 +143,7 @@
 		166390D71DC8E5EF00D7BF1C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				166390D81DC8E5EF00D7BF1C /* FBSnapshotTestCase.framework */,
+				A99EE23026667EFB00E713FC /* FBSnapshotTestCase.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
