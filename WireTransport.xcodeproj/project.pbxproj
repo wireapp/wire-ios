@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -18,7 +18,6 @@
 		162F5806267150FC00337797 /* NativePushChannelTests+ServerTrust.swift in Sources */ = {isa = PBXBuildFile; fileRef = 162F5805267150FC00337797 /* NativePushChannelTests+ServerTrust.swift */; };
 		1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */; };
 		166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166D18BA230EE8A8001288CD /* TransportSession.swift */; };
-		16B685961EC0C2F80055BEA3 /* Security.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16B685951EC0C2F80055BEA3 /* Security.framework */; };
 		16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7D9F6265251620049FFCA /* NativePushChannel.swift */; };
 		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
@@ -44,8 +43,6 @@
 		546E8A011B33015000DD1042 /* ZMTransportRequestSchedulerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89D81B33015000DD1042 /* ZMTransportRequestSchedulerTests.m */; };
 		546E8A031B33015000DD1042 /* ZMTransportSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89D91B33015000DD1042 /* ZMTransportSessionTests.m */; };
 		546E8A071B33015000DD1042 /* ZMURLSessionTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 546E89DC1B33015000DD1042 /* ZMURLSessionTests.m */; };
-		547712251B751FA700223568 /* ocmock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; };
-		547712291B751FD000223568 /* ocmock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 547712191B751FA300223568 /* ocmock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		5499FFC61B31C66D00835C8B /* ZMPushChannelConnection+WebSocket.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF721B31C66C00835C8B /* ZMPushChannelConnection+WebSocket.h */; };
 		5499FFC81B31C66D00835C8B /* ZMPushChannelConnection.h in Headers */ = {isa = PBXBuildFile; fileRef = 5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */; };
 		5499FFCA1B31C66D00835C8B /* ZMPushChannelConnection.m in Sources */ = {isa = PBXBuildFile; fileRef = 5499FF741B31C66C00835C8B /* ZMPushChannelConnection.m */; };
@@ -116,11 +113,13 @@
 		87B2B79B20BC476E00799AB9 /* ZMTransportRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B2B79A20BC476E00799AB9 /* ZMTransportRequest.swift */; };
 		A93DCD7A23B6654100AD8575 /* AccessToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93DCD7923B6654100AD8575 /* AccessToken.swift */; };
 		A93DCD7C23B668A800AD8575 /* AccessTokenTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A93DCD7B23B668A800AD8575 /* AccessTokenTests.swift */; };
+		A96E0106265FF7D10034A057 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0104265FF7D10034A057 /* WireSystem.xcframework */; };
+		A96E0108265FF7D10034A057 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E0105265FF7D10034A057 /* WireUtilities.xcframework */; };
+		A96E010D265FF7D90034A057 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E010B265FF7D90034A057 /* WireTesting.xcframework */; };
+		A96E010F265FF7D90034A057 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A96E010C265FF7D90034A057 /* OCMock.xcframework */; };
 		AF9D8F9E1F20D9B700ABF225 /* TestTrustVerificator.swift in Sources */ = {isa = PBXBuildFile; fileRef = AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */; };
 		BF3A7A641D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */; };
-		BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */; };
 		BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
-		BF3A7A6D1D8C04550034FF40 /* WireTransport.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF3EDB251F2619820015D158 /* ZMPersistentCookieStorage+Label.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF3EDB241F2619820015D158 /* ZMPersistentCookieStorage+Label.swift */; };
 		BF453F1A1CC6377200403E1C /* ZMRequestCancellation.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F191CC6377200403E1C /* ZMRequestCancellation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		BF453F1D1CC63C4800403E1C /* ZMTaskIdentifier.h in Headers */ = {isa = PBXBuildFile; fileRef = BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -130,11 +129,6 @@
 		BF49E9461E929B9B0006C4F0 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = BF49E93F1E929B9B0006C4F0 /* Main.storyboard */; };
 		BF49E9471E929B9B0006C4F0 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BF49E9411E929B9B0006C4F0 /* Images.xcassets */; };
 		BF49E9481E929B9B0006C4F0 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BF49E9431E929B9B0006C4F0 /* ViewController.m */; };
-		BF73CCB01E9290D700FA3003 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */; };
-		BF73CCB21E9290FA00FA3003 /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BF73CCB31E9290FA00FA3003 /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCAF1E9290D700FA3003 /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		BF73CCB51E92910D00FA3003 /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BF73CCB41E92910D00FA3003 /* WireTesting.framework */; };
-		BF73CCB61E92911D00FA3003 /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = BF73CCB41E92910D00FA3003 /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BF8E457F1F1778E000CE6A0A /* UnauthenticatedTransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF8E457E1F1778E000CE6A0A /* UnauthenticatedTransportSession.swift */; };
 		BF9D0AFD1F1CAACC005D4C31 /* UnauthenticatedTransportSessionTests .swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0AFB1F1CAAA4005D4C31 /* UnauthenticatedTransportSessionTests .swift */; };
 		BF9D0AFF1F1CC0C5005D4C31 /* SessionProtocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF9D0AFE1F1CC0C5005D4C31 /* SessionProtocols.swift */; };
@@ -196,22 +190,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BF73CCB61E92911D00FA3003 /* WireTesting.framework in CopyFiles */,
-				BF73CCB21E9290FA00FA3003 /* WireUtilities.framework in CopyFiles */,
-				BF73CCB31E9290FA00FA3003 /* WireSystem.framework in CopyFiles */,
-				547712291B751FD000223568 /* ocmock.framework in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		BF3A7A701D8C04550034FF40 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				BF3A7A6D1D8C04550034FF40 /* WireTransport.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
@@ -232,7 +211,6 @@
 		162F5805267150FC00337797 /* NativePushChannelTests+ServerTrust.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NativePushChannelTests+ServerTrust.swift"; sourceTree = "<group>"; };
 		1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLAuthenticationChallengeSender.swift; sourceTree = "<group>"; };
 		166D18BA230EE8A8001288CD /* TransportSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportSession.swift; sourceTree = "<group>"; };
-		16B685951EC0C2F80055BEA3 /* Security.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Security.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.3.sdk/System/Library/Frameworks/Security.framework; sourceTree = DEVELOPER_DIR; };
 		16D7D9F6265251620049FFCA /* NativePushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePushChannel.swift; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -262,17 +240,14 @@
 		546E89D81B33015000DD1042 /* ZMTransportRequestSchedulerTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTransportRequestSchedulerTests.m; sourceTree = "<group>"; };
 		546E89D91B33015000DD1042 /* ZMTransportSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTransportSessionTests.m; sourceTree = "<group>"; };
 		546E89DC1B33015000DD1042 /* ZMURLSessionTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMURLSessionTests.m; sourceTree = "<group>"; };
-		5477120A1B751F7900223568 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		5477120B1B751F7900223568 /* ios-test-host.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		5477120C1B751F7900223568 /* ios-test-target.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		5477120D1B751F7900223568 /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		547712101B751F7900223568 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		547712111B751F7900223568 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		547712121B751F7900223568 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
 		547712161B751F7900223568 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		547712171B751F7900223568 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		547712181B751F7900223568 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		547712191B751FA300223568 /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
 		5499FF721B31C66C00835C8B /* ZMPushChannelConnection+WebSocket.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMPushChannelConnection+WebSocket.h"; sourceTree = "<group>"; };
 		5499FF731B31C66C00835C8B /* ZMPushChannelConnection.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMPushChannelConnection.h; sourceTree = "<group>"; };
 		5499FF741B31C66C00835C8B /* ZMPushChannelConnection.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMPushChannelConnection.m; sourceTree = "<group>"; };
@@ -348,9 +323,13 @@
 		87B2B79A20BC476E00799AB9 /* ZMTransportRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMTransportRequest.swift; sourceTree = "<group>"; };
 		A93DCD7923B6654100AD8575 /* AccessToken.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessToken.swift; sourceTree = "<group>"; };
 		A93DCD7B23B668A800AD8575 /* AccessTokenTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccessTokenTests.swift; sourceTree = "<group>"; };
+		A96E0104265FF7D10034A057 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
+		A96E0105265FF7D10034A057 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
+		A96E010B265FF7D90034A057 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
+		A96E010C265FF7D90034A057 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
+		A9E6BE8026974B8900E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
 		AF9D8F9C1F20D99500ABF225 /* TestTrustVerificator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TestTrustVerificator.swift; sourceTree = "<group>"; };
 		BF3A7A631D8AD5430034FF40 /* SwiftStructs+TransportEncoding.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "SwiftStructs+TransportEncoding.swift"; sourceTree = "<group>"; };
-		BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreImage.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.0.sdk/System/Library/Frameworks/CoreImage.framework; sourceTree = DEVELOPER_DIR; };
 		BF3EDB241F2619820015D158 /* ZMPersistentCookieStorage+Label.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMPersistentCookieStorage+Label.swift"; sourceTree = "<group>"; };
 		BF453F191CC6377200403E1C /* ZMRequestCancellation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMRequestCancellation.h; sourceTree = "<group>"; };
 		BF453F1B1CC63C4800403E1C /* ZMTaskIdentifier.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTaskIdentifier.h; sourceTree = "<group>"; };
@@ -362,9 +341,6 @@
 		BF49E9411E929B9B0006C4F0 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		BF49E9421E929B9B0006C4F0 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		BF49E9431E929B9B0006C4F0 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
-		BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
-		BF73CCAF1E9290D700FA3003 /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
-		BF73CCB41E92910D00FA3003 /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		BF8E457E1F1778E000CE6A0A /* UnauthenticatedTransportSession.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UnauthenticatedTransportSession.swift; sourceTree = "<group>"; };
 		BF9D0AFB1F1CAAA4005D4C31 /* UnauthenticatedTransportSessionTests .swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UnauthenticatedTransportSessionTests .swift"; sourceTree = "<group>"; };
 		BF9D0AFE1F1CC0C5005D4C31 /* SessionProtocols.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SessionProtocols.swift; sourceTree = "<group>"; };
@@ -401,8 +377,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF3A7A6B1D8C01D30034FF40 /* CoreImage.framework in Frameworks */,
+				A96E010F265FF7D90034A057 /* OCMock.xcframework in Frameworks */,
 				BF3A7A6C1D8C04550034FF40 /* WireTransport.framework in Frameworks */,
+				A96E010D265FF7D90034A057 /* WireTesting.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -410,8 +387,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16B685961EC0C2F80055BEA3 /* Security.framework in Frameworks */,
-				BF73CCB01E9290D700FA3003 /* WireUtilities.framework in Frameworks */,
+				A96E0106265FF7D10034A057 /* WireSystem.xcframework in Frameworks */,
+				A96E0108265FF7D10034A057 /* WireUtilities.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,8 +396,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF73CCB51E92910D00FA3003 /* WireTesting.framework in Frameworks */,
-				547712251B751FA700223568 /* ocmock.framework in Frameworks */,
 				3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -501,12 +476,10 @@
 		3E88BDE01B1F44FB00232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				16B685951EC0C2F80055BEA3 /* Security.framework */,
-				BF73CCB41E92910D00FA3003 /* WireTesting.framework */,
-				BF73CCAE1E9290D700FA3003 /* WireUtilities.framework */,
-				BF73CCAF1E9290D700FA3003 /* WireSystem.framework */,
-				BF3A7A6A1D8C01D30034FF40 /* CoreImage.framework */,
-				547712191B751FA300223568 /* ocmock.framework */,
+				A96E010C265FF7D90034A057 /* OCMock.xcframework */,
+				A96E010B265FF7D90034A057 /* WireTesting.xcframework */,
+				A96E0104265FF7D10034A057 /* WireSystem.xcframework */,
+				A96E0105265FF7D10034A057 /* WireUtilities.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -625,10 +598,9 @@
 		547712091B751F7900223568 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
-				5477120A1B751F7900223568 /* .gitignore */,
+				A9E6BE8026974B8900E410ED /* ios.xcconfig */,
 				5477120B1B751F7900223568 /* ios-test-host.xcconfig */,
 				5477120C1B751F7900223568 /* ios-test-target.xcconfig */,
-				5477120D1B751F7900223568 /* ios.xcconfig */,
 				547712101B751F7900223568 /* project-common.xcconfig */,
 				547712111B751F7900223568 /* project-debug.xcconfig */,
 				547712121B751F7900223568 /* project.xcconfig */,
@@ -911,8 +883,6 @@
 				09A218621B790D330076547A /* Sources */,
 				09A218631B790D330076547A /* Frameworks */,
 				09A218641B790D330076547A /* Resources */,
-				BF3A7A701D8C04550034FF40 /* Embed Frameworks */,
-				87F180FE1D8698B200A6A2CB /* Install frameworks */,
 			);
 			buildRules = (
 			);
@@ -973,12 +943,10 @@
 				TargetAttributes = {
 					09A218651B790D330076547A = {
 						CreatedOnToolsVersion = 6.4;
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0930;
 					};
 					3E88BCA61B1F35DF00232589 = {
 						CreatedOnToolsVersion = 6.3.2;
-						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 0930;
 					};
 					3E88BCB11B1F35DF00232589 = {
@@ -1037,26 +1005,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		87F180FE1D8698B200A6A2CB /* Install frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
-			);
-			name = "Install frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		09A218621B790D330076547A /* Sources */ = {
@@ -1224,6 +1172,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1237,6 +1189,10 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				INFOPLIST_FILE = "WireTransport-tests-host/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				MTL_ENABLE_DEBUG_INFO = NO;
 				PRODUCT_BUNDLE_IDENTIFIER = "com.wire.$(PRODUCT_NAME:rfc1034identifier)";
 				PRODUCT_NAME = "$(TARGET_NAME)";
