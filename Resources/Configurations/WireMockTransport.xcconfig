@@ -1,5 +1,2 @@
-
-#include "zmc-config/ios.xcconfig"
-
 APPLICATION_EXTENSION_API_ONLY = NO
 PRODUCT_NAME = WireMockTransport
