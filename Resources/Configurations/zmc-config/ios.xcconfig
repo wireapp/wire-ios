@@ -26,7 +26,7 @@
 // Architectures
 //
 VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64
+VALID_ARCHS[sdk=iphonesimulator*] = x86_64 arm64
 
 
 // Deployment
@@ -40,4 +40,4 @@ FRAMEWORK_VERSION = A
 // Linking
 //
 OTHER_LDFLAGS = -ObjC
-FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build/iOS $(PLATFORM_DIR)/Developer/Library/Frameworks
+FRAMEWORK_SEARCH_PATHS = $(inherited) $(PROJECT_DIR)/Carthage/Build $(PLATFORM_DIR)/Developer/Library/Frameworks
