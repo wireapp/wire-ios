@@ -18,6 +18,6 @@ The wire-ios-mocktransport framework helps us mock the requests to our backend d
 
 ### How to build
 
-This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --platform ios`.
+This framework is using Carthage to manage its dependencies. To pull the dependencies binaries, `run carthage bootstrap --use-xcframeworks --platform ios`.
 
 You can now open the Xcode project and build.
