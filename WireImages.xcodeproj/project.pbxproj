@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -19,26 +19,20 @@
 		096960341B663EF0006DF53B /* ZMImagePreprocessor.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB13A1B5FAD5A00712DF9 /* ZMImagePreprocessor.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		096960351B663EF0006DF53B /* ZMImagePreprocessor.m in Sources */ = {isa = PBXBuildFile; fileRef = 098CB13B1B5FAD5A00712DF9 /* ZMImagePreprocessor.m */; };
 		096960361B663EFC006DF53B /* WireImages.h in Headers */ = {isa = PBXBuildFile; fileRef = 098CB13C1B5FAD5A00712DF9 /* WireImages.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		09A218061B78F34E0076547A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 09A218051B78F34E0076547A /* CoreGraphics.framework */; };
-		09A218081B78F3530076547A /* libz.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 09A218071B78F3530076547A /* libz.dylib */; };
 		09B976CB1B6693D700A30B38 /* ZMImagePreprocessorTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */; };
 		09B977381B669B6C00A30B38 /* ZMImageLoadOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */; };
 		09B977411B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */; };
 		09B977451B669CEC00A30B38 /* NSOperationQueue+Helpers.m in Sources */ = {isa = PBXBuildFile; fileRef = 09B977431B669CEC00A30B38 /* NSOperationQueue+Helpers.m */; };
 		09BCDB591BC664DA0020DCC7 /* ImageOwner.swift in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB581BC664DA0020DCC7 /* ImageOwner.swift */; };
 		09BCDB5D1BC68F720020DCC7 /* ZMImageOwner.m in Sources */ = {isa = PBXBuildFile; fileRef = 09BCDB5C1BC68F410020DCC7 /* ZMImageOwner.m */; };
+		304C01E74556BFF56EB372D2 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = D599521BDA7B163A187C42C4 /* WireTesting.xcframework */; };
+		41FFE97A7A1BE7CA6D4FB591 /* WireTesting.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = D599521BDA7B163A187C42C4 /* WireTesting.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		4E531B50FB39CECCC2E21105 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */; };
 		5405B0091BCEBDBF00C0C3BD /* ZMIImageProperties.h in Headers */ = {isa = PBXBuildFile; fileRef = 5405B0071BCEBDBF00C0C3BD /* ZMIImageProperties.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		5405B00A1BCEBDBF00C0C3BD /* ZMIImageProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 5405B0081BCEBDBF00C0C3BD /* ZMIImageProperties.m */; };
-		54A5A60A1E929C4600D56F2E /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A5A6081E929C4600D56F2E /* WireSystem.framework */; };
-		54A5A60B1E929C4600D56F2E /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A5A6091E929C4600D56F2E /* WireUtilities.framework */; };
-		54A5A6111E929CB700D56F2E /* WireTesting.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54A5A60C1E929C6100D56F2E /* WireTesting.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		54A5A6161E92A01100D56F2E /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		54A5A6191E92A08900D56F2E /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A5A6091E929C4600D56F2E /* WireUtilities.framework */; };
-		54A5A61A1E92A09000D56F2E /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A5A60C1E929C6100D56F2E /* WireTesting.framework */; };
-		54A5A61B1E92A09300D56F2E /* WireSystem.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54A5A6081E929C4600D56F2E /* WireSystem.framework */; };
-		54A5A61E1E92A11500D56F2E /* WireSystem.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54A5A6081E929C4600D56F2E /* WireSystem.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		54A5A61F1E92A12A00D56F2E /* WireUtilities.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 54A5A6091E929C4600D56F2E /* WireUtilities.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		71BC271B1B3C0759721FAFF1 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */; };
 		870253E41DAB7AA00095D272 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E31DAB7AA00095D272 /* main.m */; };
 		870253E71DAB7AA00095D272 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E61DAB7AA00095D272 /* AppDelegate.m */; };
 		870253EA1DAB7AA00095D272 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 870253E91DAB7AA00095D272 /* ViewController.m */; };
@@ -46,9 +40,6 @@
 		870253EF1DAB7AA00095D272 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 870253EE1DAB7AA00095D272 /* Assets.xcassets */; };
 		870253F21DAB7AA00095D272 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 870253F01DAB7AA00095D272 /* LaunchScreen.storyboard */; };
 		870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0969600C1B663E7B006DF53B /* WireImages.framework */; };
-		870253FD1DAB7B250095D272 /* OCMock.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 096AD6FF1B67FBDB00E007A8 /* OCMock.framework */; };
-		870254021DAB7B5E0095D272 /* OCMock.framework in CopyFiles */ = {isa = PBXBuildFile; fileRef = 096AD6FF1B67FBDB00E007A8 /* OCMock.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		878D7C6E1E641EB100770E84 /* ImageIO.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878D7C6D1E641EB100770E84 /* ImageIO.framework */; };
 		87B91C041E5C586D00A5EC11 /* NSData+MediaMetadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C031E5C586D00A5EC11 /* NSData+MediaMetadata.swift */; };
 		87B91C061E5C5D8600A5EC11 /* NSDataMetadataTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */; };
 		87B91C2C1E5C7E5D00A5EC11 /* ceiling_recompressed_unrotated.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C091E5C7E5D00A5EC11 /* ceiling_recompressed_unrotated.jpg */; };
@@ -89,6 +80,8 @@
 		EFF7A4732271E47500F1AC33 /* Cartfile.private in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4702271E47400F1AC33 /* Cartfile.private */; };
 		EFF7A4742271E47500F1AC33 /* Cartfile in Resources */ = {isa = PBXBuildFile; fileRef = EFF7A4712271E47500F1AC33 /* Cartfile */; };
 		F1E148CF207CE68100F81833 /* ceiling_rotated_1.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 87B91C0C1E5C7E5D00A5EC11 /* ceiling_rotated_1.jpg */; };
+		FB1057E02A25A171F05761DF /* OCMock.xcframework in CopyFiles */ = {isa = PBXBuildFile; fileRef = A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		FCCA36E967810F6C9069B7AE /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -115,11 +108,9 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				54A5A61F1E92A12A00D56F2E /* WireUtilities.framework in CopyFiles */,
-				54A5A61E1E92A11500D56F2E /* WireSystem.framework in CopyFiles */,
 				54A5A6141E929FC400D56F2E /* WireImages.framework in CopyFiles */,
-				54A5A6111E929CB700D56F2E /* WireTesting.framework in CopyFiles */,
-				870254021DAB7B5E0095D272 /* OCMock.framework in CopyFiles */,
+				41FFE97A7A1BE7CA6D4FB591 /* WireTesting.xcframework in CopyFiles */,
+				FB1057E02A25A171F05761DF /* OCMock.xcframework in CopyFiles */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -130,7 +121,6 @@
 		092758591B70D7A200AD5A78 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		0969600C1B663E7B006DF53B /* WireImages.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireImages.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		096960161B663E7C006DF53B /* WireImages-iosTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireImages-iosTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
-		096AD6FF1B67FBDB00E007A8 /* OCMock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = OCMock.framework; path = Carthage/Build/iOS/OCMock.framework; sourceTree = "<group>"; };
 		098CB1311B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetMetaDataEncoder.h; sourceTree = "<group>"; };
 		098CB1321B5FAD5A00712DF9 /* ZMAssetMetaDataEncoder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMAssetMetaDataEncoder.m; sourceTree = "<group>"; };
 		098CB1331B5FAD5A00712DF9 /* ZMAssetsPreprocessor.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAssetsPreprocessor.h; sourceTree = "<group>"; };
@@ -145,8 +135,6 @@
 		098CB13C1B5FAD5A00712DF9 /* WireImages.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireImages.h; sourceTree = "<group>"; };
 		098CB1621B5FAD6300712DF9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		098CB1661B5FAD6900712DF9 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		09A218051B78F34E0076547A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/System/Library/Frameworks/CoreGraphics.framework; sourceTree = DEVELOPER_DIR; };
-		09A218071B78F3530076547A /* libz.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libz.dylib; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS8.4.sdk/usr/lib/libz.dylib; sourceTree = DEVELOPER_DIR; };
 		09B976C91B6693D700A30B38 /* ZMImagePreprocessorTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImagePreprocessorTests.m; sourceTree = "<group>"; };
 		09B977361B669B6C00A30B38 /* ZMImageLoadOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageLoadOperationTests.m; sourceTree = "<group>"; };
 		09B9773F1B669C8E00A30B38 /* ZMImageDownsampleOperationTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMImageDownsampleOperationTests.m; sourceTree = "<group>"; };
@@ -159,13 +147,9 @@
 		5471F81F1B73E6E000460C35 /* project-common.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		5471F8201B73E6E000460C35 /* project-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		5471F8211B73E6E000460C35 /* project.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		5471F8241B73E6E000460C35 /* swift.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		5471F8251B73E6E000460C35 /* tests.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		5471F8261B73E6E000460C35 /* warnings-debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		5471F8271B73E6E000460C35 /* warnings.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
-		54A5A6081E929C4600D56F2E /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
-		54A5A6091E929C4600D56F2E /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
-		54A5A60C1E929C6100D56F2E /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		870253E01DAB7A9F0095D272 /* WireImages-iosTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "WireImages-iosTestHost.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		870253E31DAB7AA00095D272 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		870253E51DAB7AA00095D272 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -176,7 +160,6 @@
 		870253EE1DAB7AA00095D272 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		870253F11DAB7AA00095D272 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		870253F31DAB7AA00095D272 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		878D7C6D1E641EB100770E84 /* ImageIO.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ImageIO.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS10.2.sdk/System/Library/Frameworks/ImageIO.framework; sourceTree = DEVELOPER_DIR; };
 		87B91C031E5C586D00A5EC11 /* NSData+MediaMetadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSData+MediaMetadata.swift"; sourceTree = "<group>"; };
 		87B91C051E5C5D8600A5EC11 /* NSDataMetadataTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NSDataMetadataTests.swift; sourceTree = "<group>"; };
 		87B91C091E5C7E5D00A5EC11 /* ceiling_recompressed_unrotated.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = ceiling_recompressed_unrotated.jpg; sourceTree = "<group>"; };
@@ -213,10 +196,15 @@
 		87B91C291E5C7E5D00A5EC11 /* unsplash_preview.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview.jpg; sourceTree = "<group>"; };
 		87B91C2A1E5C7E5D00A5EC11 /* unsplash_preview_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_preview_small_profile.jpg; sourceTree = "<group>"; };
 		87B91C2B1E5C7E5D00A5EC11 /* unsplash_small_profile.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = unsplash_small_profile.jpg; sourceTree = "<group>"; };
+		A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		A9626B4A26932BE90043CC31 /* ZMImageDownsampleOperation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMImageDownsampleOperation.swift; sourceTree = "<group>"; };
+		A9E6BE752697417700E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
+		CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
+		D599521BDA7B163A187C42C4 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
 		EFF7A46F2271E47400F1AC33 /* Cartfile.resolved */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.resolved; sourceTree = "<group>"; };
 		EFF7A4702271E47400F1AC33 /* Cartfile.private */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
 		EFF7A4712271E47500F1AC33 /* Cartfile */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
+		F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -224,11 +212,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				54A5A60B1E929C4600D56F2E /* WireUtilities.framework in Frameworks */,
-				54A5A60A1E929C4600D56F2E /* WireSystem.framework in Frameworks */,
-				878D7C6E1E641EB100770E84 /* ImageIO.framework in Frameworks */,
-				09A218081B78F3530076547A /* libz.dylib in Frameworks */,
-				09A218061B78F34E0076547A /* CoreGraphics.framework in Frameworks */,
+				71BC271B1B3C0759721FAFF1 /* WireSystem.xcframework in Frameworks */,
+				4E531B50FB39CECCC2E21105 /* WireUtilities.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,10 +230,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				870253F91DAB7B190095D272 /* WireImages.framework in Frameworks */,
-				870253FD1DAB7B250095D272 /* OCMock.framework in Frameworks */,
-				54A5A61B1E92A09300D56F2E /* WireSystem.framework in Frameworks */,
-				54A5A61A1E92A09000D56F2E /* WireTesting.framework in Frameworks */,
-				54A5A6191E92A08900D56F2E /* WireUtilities.framework in Frameworks */,
+				304C01E74556BFF56EB372D2 /* WireTesting.xcframework in Frameworks */,
+				FCCA36E967810F6C9069B7AE /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,13 +251,10 @@
 		098CB1191B5FA6E100712DF9 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				54A5A60C1E929C6100D56F2E /* WireTesting.framework */,
-				54A5A6081E929C4600D56F2E /* WireSystem.framework */,
-				54A5A6091E929C4600D56F2E /* WireUtilities.framework */,
-				878D7C6D1E641EB100770E84 /* ImageIO.framework */,
-				09A218071B78F3530076547A /* libz.dylib */,
-				09A218051B78F34E0076547A /* CoreGraphics.framework */,
-				096AD6FF1B67FBDB00E007A8 /* OCMock.framework */,
+				A831A9FCA505EEF5AE570F4E /* OCMock.xcframework */,
+				D599521BDA7B163A187C42C4 /* WireTesting.xcframework */,
+				CFE318EA7BB6A318C6CF551E /* WireSystem.xcframework */,
+				F8A911E8D5612F418FB865E4 /* WireUtilities.xcframework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -364,10 +344,10 @@
 		5471F8181B73E6E000460C35 /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
+				A9E6BE752697417700E410ED /* ios.xcconfig */,
 				5471F81F1B73E6E000460C35 /* project-common.xcconfig */,
 				5471F8201B73E6E000460C35 /* project-debug.xcconfig */,
 				5471F8211B73E6E000460C35 /* project.xcconfig */,
-				5471F8241B73E6E000460C35 /* swift.xcconfig */,
 				5471F8251B73E6E000460C35 /* tests.xcconfig */,
 				5471F8261B73E6E000460C35 /* warnings-debug.xcconfig */,
 				5471F8271B73E6E000460C35 /* warnings.xcconfig */,
