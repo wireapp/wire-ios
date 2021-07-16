@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 46;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -201,8 +201,6 @@
 		54BAB40B24A4FA0800EBC400 /* store2-82-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 54BAB40A24A4FA0800EBC400 /* store2-82-0.wiredatabase */; };
 		54CB3FEA24A3994400BA86DD /* FeatureFlag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CB3FE924A3994400BA86DD /* FeatureFlag.swift */; };
 		54CD460A1DEDA55C00BA3429 /* AddressBookEntry.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54CD46091DEDA55C00BA3429 /* AddressBookEntry.swift */; };
-		54CF1D9E1E939F84003D18E8 /* WireCryptobox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CF1D9C1E939F84003D18E8 /* WireCryptobox.framework */; };
-		54CF1D9F1E939F84003D18E8 /* WireLinkPreview.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 54CF1D9D1E939F84003D18E8 /* WireLinkPreview.framework */; };
 		54D7B83F1E12774600C1B347 /* NSPersistentStore+Metadata.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D7B83E1E12774600C1B347 /* NSPersistentStore+Metadata.swift */; };
 		54D809FC1F681D6400B2CCB4 /* ZMClientMessage+LinkPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54D809FB1F681D6400B2CCB4 /* ZMClientMessage+LinkPreview.swift */; };
 		54DE05DD1CF8711F00C35253 /* ProtobufUtilitiesTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 54DE05DC1CF8711F00C35253 /* ProtobufUtilitiesTests.swift */; };
@@ -288,9 +286,6 @@
 		8767E85B216391DF00390F75 /* ZMConversation+Mute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8767E85A216391DF00390F75 /* ZMConversation+Mute.swift */; };
 		8767E8642163B2C200390F75 /* store2-53-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 8767E8622163B2C000390F75 /* store2-53-0.wiredatabase */; };
 		8767E8682163B9EE00390F75 /* ZMConversationTests+Mute.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8767E8672163B9EE00390F75 /* ZMConversationTests+Mute.swift */; };
-		878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
-		878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; };
-		878B823220A1C7D1007455CA /* HTMLString.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 878B822F20A1C7AF007455CA /* HTMLString.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		87A7FA25203DD1CC00AA066C /* ZMConversationTests+AccessMode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87A7FA23203DD11100AA066C /* ZMConversationTests+AccessMode.swift */; };
 		87C125F71EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */; };
 		87C125F91EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87C125F81EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift */; };
@@ -329,6 +324,18 @@
 		A995F05C23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */; };
 		A995F05E239690B300FAC3CF /* ParticipantRoleObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */; };
 		A99B8A72268221A6006B4D29 /* ZMImageMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */; };
+		A99B8A8E26824BD5006B4D29 /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8426824BD5006B4D29 /* WireTransport.xcframework */; };
+		A99B8A9026824BD5006B4D29 /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8526824BD5006B4D29 /* WireImages.xcframework */; };
+		A99B8A9226824BD5006B4D29 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8626824BD5006B4D29 /* HTMLString.xcframework */; };
+		A99B8A9426824BD5006B4D29 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8726824BD5006B4D29 /* SwiftProtobuf.xcframework */; };
+		A99B8A9626824BD5006B4D29 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8826824BD5006B4D29 /* WireUtilities.xcframework */; };
+		A99B8A9826824BD5006B4D29 /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8926824BD5006B4D29 /* WireProtos.xcframework */; };
+		A99B8A9A26824BD5006B4D29 /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8A26824BD5006B4D29 /* WireLinkPreview.xcframework */; };
+		A99B8A9C26824BD5006B4D29 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8B26824BD5006B4D29 /* WireSystem.xcframework */; };
+		A99B8A9E26824BD5006B4D29 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */; };
+		A99B8AA026824BD5006B4D29 /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8A8D26824BD5006B4D29 /* WireCryptobox.xcframework */; };
+		A99B8AA826824BFA006B4D29 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8AA626824BFA006B4D29 /* OCMock.xcframework */; };
+		A99B8AAA26824BFA006B4D29 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99B8AA726824BFA006B4D29 /* WireTesting.xcframework */; };
 		A9EEFEFA23A6D0CB0007828A /* RolesMigrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */; };
 		A9FA524823A14E2B003AD4C6 /* RoleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524723A14E2B003AD4C6 /* RoleTests.swift */; };
 		A9FA524A23A1598B003AD4C6 /* ActionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9FA524923A1598B003AD4C6 /* ActionTests.swift */; };
@@ -491,8 +498,6 @@
 		F1FDF2FA21B1555A00E037A1 /* ZMClientMessage+Location.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1FDF2F921B1555A00E037A1 /* ZMClientMessage+Location.swift */; };
 		F1FDF2FE21B1572500E037A1 /* ZMGenericMessageData.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1FDF2FD21B1572500E037A1 /* ZMGenericMessageData.swift */; };
 		F1FDF30021B1580400E037A1 /* GenericMessage+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1FDF2FF21B1580400E037A1 /* GenericMessage+Utils.swift */; };
-		F1FDF30221B17AD700E037A1 /* SwiftProtobuf.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FDF30121B17AD700E037A1 /* SwiftProtobuf.framework */; };
-		F1FDF30321B17AE100E037A1 /* SwiftProtobuf.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FDF30121B17AD700E037A1 /* SwiftProtobuf.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		F90D99A51E02DC6B00034070 /* AssetCollectionBatched.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90D99A41E02DC6B00034070 /* AssetCollectionBatched.swift */; };
 		F90D99A81E02E22900034070 /* AssetCollectionBatchedTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F90D99A61E02E22400034070 /* AssetCollectionBatchedTests.swift */; };
 		F91EAAC61D885D7B0010ACBE /* video.mp4 in Resources */ = {isa = PBXBuildFile; fileRef = F91EAAC41D885D720010ACBE /* video.mp4 */; };
@@ -505,8 +510,6 @@
 		F92C992A1DAFBC910034AFDD /* ZMConversation+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92C99291DAFBC910034AFDD /* ZMConversation+Ephemeral.swift */; };
 		F92C992D1DAFC5AC0034AFDD /* ZMConversationTests+Ephemeral.swift in Sources */ = {isa = PBXBuildFile; fileRef = F92C992B1DAFC58A0034AFDD /* ZMConversationTests+Ephemeral.swift */; };
 		F93265211D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93265201D8950F10076AAD6 /* NSManagedObjectContext+FetchRequest.swift */; };
-		F93265271D895A910076AAD6 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6B71CAD80BC0039E10C /* WireTransport.framework */; };
-		F93265281D895C1C0076AAD6 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6731CAD78160039E10C /* WireUtilities.framework */; };
 		F93265291D89648B0076AAD6 /* ZMAssetClientMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F5D1CB2BC85001DB03F /* ZMAssetClientMessageTests.swift */; };
 		F9331C521CB3BC6800139ECC /* CryptoBoxTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C501CB3BC6800139ECC /* CryptoBoxTests.swift */; };
 		F9331C561CB3BCF300139ECC /* OtrBaseTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9331C541CB3BCDA00139ECC /* OtrBaseTest.swift */; };
@@ -588,13 +591,11 @@
 		F9A706FD1CAEE32A00C2F5FE /* medium.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D31CAEE30700C2F5FE /* medium.jpg */; };
 		F9A706FE1CAEE32A00C2F5FE /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D41CAEE30700C2F5FE /* not_animated.gif */; };
 		F9A707031CAEE32E00C2F5FE /* tiny.jpg in Resources */ = {isa = PBXBuildFile; fileRef = F9A706D91CAEE30700C2F5FE /* tiny.jpg */; };
-		F9A7070B1CAEE38500C2F5FE /* WireProtos.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */; };
 		F9A7073D1CAEE8FC00C2F5FE /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A81D1CAEDA330039E10C /* AppDelegate.m */; };
 		F9A7073E1CAEE8FC00C2F5FE /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = F9C9A8241CAEDA330039E10C /* main.m */; };
 		F9A708341CAEEB7500C2F5FE /* ManagedObjectContextSaveNotificationTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708041CAEEB7400C2F5FE /* ManagedObjectContextSaveNotificationTests.m */; };
 		F9A708351CAEEB7500C2F5FE /* ManagedObjectContextTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708051CAEEB7400C2F5FE /* ManagedObjectContextTests.m */; };
 		F9A708361CAEEB7500C2F5FE /* NSManagedObjectContext+TestHelpers.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708071CAEEB7400C2F5FE /* NSManagedObjectContext+TestHelpers.m */; };
-		F9A708391CAEEB7500C2F5FE /* CoreDataRelationshipsTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A7080B1CAEEB7400C2F5FE /* CoreDataRelationshipsTests.m */; };
 		F9A7083A1CAEEB7500C2F5FE /* MockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A7080E1CAEEB7400C2F5FE /* MockEntity.m */; };
 		F9A7083B1CAEEB7500C2F5FE /* MockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708101CAEEB7400C2F5FE /* MockEntity2.m */; };
 		F9A7083C1CAEEB7500C2F5FE /* MockModelObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = F9A708121CAEEB7400C2F5FE /* MockModelObjectContextFactory.m */; };
@@ -620,7 +621,6 @@
 		F9B71F2C1CB264EF001DB03F /* ZMConversation+UnreadCount.h in Headers */ = {isa = PBXBuildFile; fileRef = F9B71F1A1CB264EF001DB03F /* ZMConversation+UnreadCount.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9B71F2D1CB264EF001DB03F /* ZMConversation+UnreadCount.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F1B1CB264EF001DB03F /* ZMConversation+UnreadCount.m */; };
 		F9B71F301CB264EF001DB03F /* ZMConversationSecurityLevel.h in Headers */ = {isa = PBXBuildFile; fileRef = F9B71F1E1CB264EF001DB03F /* ZMConversationSecurityLevel.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		F9B71F911CB2BEEF001DB03F /* ZMClientMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F5E1CB2BC85001DB03F /* ZMClientMessageTests.m */; };
 		F9B71F921CB2BEF4001DB03F /* BaseClientMessageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F5F1CB2BC85001DB03F /* BaseClientMessageTests.swift */; };
 		F9B71F931CB2BF00001DB03F /* ZMMessageTests.m in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F611CB2BC85001DB03F /* ZMMessageTests.m */; };
 		F9B71F941CB2BF08001DB03F /* UserImageLocalCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9B71F631CB2BC85001DB03F /* UserImageLocalCacheTests.swift */; };
@@ -646,8 +646,6 @@
 		F9C9A65F1CAD76A50039E10C /* WireDataModel.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A60C1CAD76A50039E10C /* WireDataModel.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A66C1CAD778C0039E10C /* Foundation.framework */; };
 		F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A66E1CAD77930039E10C /* CoreData.framework */; };
-		F9C9A6741CAD78160039E10C /* PINCache.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6711CAD78160039E10C /* PINCache.framework */; };
-		F9C9A6751CAD78160039E10C /* WireImages.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A6721CAD78160039E10C /* WireImages.framework */; };
 		F9C9A6AA1CAD7C7F0039E10C /* ZMConversation.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A31CAD7C7F0039E10C /* ZMConversation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6AB1CAD7C7F0039E10C /* ZMConversationList.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A41CAD7C7F0039E10C /* ZMConversationList.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A6AC1CAD7C7F0039E10C /* ZMEditableUser.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6A51CAD7C7F0039E10C /* ZMEditableUser.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -656,8 +654,6 @@
 		F9C9A6B01CAD7D1F0039E10C /* ZMManagedObject.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A6AF1CAD7D1F0039E10C /* ZMManagedObject.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A7661CAE8DFC0039E10C /* ZMAddressBookContact.h in Headers */ = {isa = PBXBuildFile; fileRef = F9C9A7641CAE8DFC0039E10C /* ZMAddressBookContact.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; };
-		F9C9A80D1CAED9A00039E10C /* WireDataModel.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A4FC1CAD5DF10039E10C /* WireDataModel.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		F9C9A8101CAED9A00039E10C /* WireTesting.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9C9A79D1CAEAAF20039E10C /* WireTesting.framework */; };
 		F9DBA5201E28EA8B00BE23C0 /* DependencyKeyStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBA51F1E28EA8B00BE23C0 /* DependencyKeyStore.swift */; };
 		F9DBA5221E28EB4000BE23C0 /* SideEffectSources.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBA5211E28EB4000BE23C0 /* SideEffectSources.swift */; };
 		F9DBA5251E28EE1500BE23C0 /* ConversationObserverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9DBA5231E28EE0A00BE23C0 /* ConversationObserverTests.swift */; };
@@ -686,22 +682,6 @@
 			remoteInfo = WireDataModel;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		F9C9A81A1CAED9A00039E10C /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				F1FDF30321B17AE100E037A1 /* SwiftProtobuf.framework in Embed Frameworks */,
-				878B823220A1C7D1007455CA /* HTMLString.framework in Embed Frameworks */,
-				F9C9A80D1CAED9A00039E10C /* WireDataModel.framework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+ParticipantsRemovedReason.swift"; sourceTree = "<group>"; };
@@ -923,8 +903,6 @@
 		54BAB40A24A4FA0800EBC400 /* store2-82-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-82-0.wiredatabase"; sourceTree = "<group>"; };
 		54CB3FE924A3994400BA86DD /* FeatureFlag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureFlag.swift; sourceTree = "<group>"; };
 		54CD46091DEDA55C00BA3429 /* AddressBookEntry.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AddressBookEntry.swift; sourceTree = "<group>"; };
-		54CF1D9C1E939F84003D18E8 /* WireCryptobox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireCryptobox.framework; path = Carthage/Build/iOS/WireCryptobox.framework; sourceTree = "<group>"; };
-		54CF1D9D1E939F84003D18E8 /* WireLinkPreview.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireLinkPreview.framework; path = Carthage/Build/iOS/WireLinkPreview.framework; sourceTree = "<group>"; };
 		54D7B83E1E12774600C1B347 /* NSPersistentStore+Metadata.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "NSPersistentStore+Metadata.swift"; sourceTree = "<group>"; };
 		54D809FB1F681D6400B2CCB4 /* ZMClientMessage+LinkPreview.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+LinkPreview.swift"; sourceTree = "<group>"; };
 		54DE05DC1CF8711F00C35253 /* ProtobufUtilitiesTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProtobufUtilitiesTests.swift; sourceTree = "<group>"; };
@@ -1027,7 +1005,6 @@
 		8767E8672163B9EE00390F75 /* ZMConversationTests+Mute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+Mute.swift"; sourceTree = "<group>"; };
 		8768679221B97C770002633C /* zmessaging2.59.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.59.0.xcdatamodel; sourceTree = "<group>"; };
 		87890A1821E348F500E19A42 /* zmessaging2.60.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.60.0.xcdatamodel; sourceTree = "<group>"; };
-		878B822F20A1C7AF007455CA /* HTMLString.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HTMLString.framework; path = Carthage/Build/iOS/HTMLString.framework; sourceTree = "<group>"; };
 		87A7FA23203DD11100AA066C /* ZMConversationTests+AccessMode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMConversationTests+AccessMode.swift"; sourceTree = "<group>"; };
 		87C125F61EF94EE800D28DC1 /* ZMManagedObject+Grouping.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMManagedObject+Grouping.swift"; sourceTree = "<group>"; };
 		87C125F81EF94F2E00D28DC1 /* ZMManagedObjectGroupingTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMManagedObjectGroupingTests.swift; sourceTree = "<group>"; };
@@ -1068,6 +1045,19 @@
 		A995F05B23968D8500FAC3CF /* ParticipantRoleChangeInfo.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleChangeInfo.swift; sourceTree = "<group>"; };
 		A995F05D239690B300FAC3CF /* ParticipantRoleObserverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ParticipantRoleObserverTests.swift; sourceTree = "<group>"; };
 		A99B8A71268221A6006B4D29 /* ZMImageMessage.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMImageMessage.swift; sourceTree = "<group>"; };
+		A99B8A8426824BD5006B4D29 /* WireTransport.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTransport.xcframework; path = Carthage/Build/WireTransport.xcframework; sourceTree = "<group>"; };
+		A99B8A8526824BD5006B4D29 /* WireImages.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireImages.xcframework; path = Carthage/Build/WireImages.xcframework; sourceTree = "<group>"; };
+		A99B8A8626824BD5006B4D29 /* HTMLString.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = HTMLString.xcframework; path = Carthage/Build/HTMLString.xcframework; sourceTree = "<group>"; };
+		A99B8A8726824BD5006B4D29 /* SwiftProtobuf.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = SwiftProtobuf.xcframework; path = Carthage/Build/SwiftProtobuf.xcframework; sourceTree = "<group>"; };
+		A99B8A8826824BD5006B4D29 /* WireUtilities.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireUtilities.xcframework; path = Carthage/Build/WireUtilities.xcframework; sourceTree = "<group>"; };
+		A99B8A8926824BD5006B4D29 /* WireProtos.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireProtos.xcframework; path = Carthage/Build/WireProtos.xcframework; sourceTree = "<group>"; };
+		A99B8A8A26824BD5006B4D29 /* WireLinkPreview.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireLinkPreview.xcframework; path = Carthage/Build/WireLinkPreview.xcframework; sourceTree = "<group>"; };
+		A99B8A8B26824BD5006B4D29 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
+		A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = PINCache.xcframework; path = Carthage/Build/PINCache.xcframework; sourceTree = "<group>"; };
+		A99B8A8D26824BD5006B4D29 /* WireCryptobox.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireCryptobox.xcframework; path = Carthage/Build/WireCryptobox.xcframework; sourceTree = "<group>"; };
+		A99B8AA626824BFA006B4D29 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
+		A99B8AA726824BFA006B4D29 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
+		A9E6BE8F26975C2D00E410ED /* ios.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = ios.xcconfig; path = "Carthage/Checkouts/wire-ios-system/Resources/Configurations/zmc-config/ios.xcconfig"; sourceTree = SOURCE_ROOT; };
 		A9EEFEF923A6D0CB0007828A /* RolesMigrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RolesMigrationTests.swift; sourceTree = "<group>"; };
 		A9FA524723A14E2B003AD4C6 /* RoleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RoleTests.swift; sourceTree = "<group>"; };
 		A9FA524923A1598B003AD4C6 /* ActionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionTests.swift; sourceTree = "<group>"; };
@@ -1272,7 +1262,6 @@
 		F1FDF2F921B1555A00E037A1 /* ZMClientMessage+Location.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMClientMessage+Location.swift"; sourceTree = "<group>"; };
 		F1FDF2FD21B1572500E037A1 /* ZMGenericMessageData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ZMGenericMessageData.swift; sourceTree = "<group>"; };
 		F1FDF2FF21B1580400E037A1 /* GenericMessage+Utils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "GenericMessage+Utils.swift"; sourceTree = "<group>"; };
-		F1FDF30121B17AD700E037A1 /* SwiftProtobuf.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftProtobuf.framework; path = Carthage/Build/iOS/SwiftProtobuf.framework; sourceTree = "<group>"; };
 		F90D99A41E02DC6B00034070 /* AssetCollectionBatched.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetCollectionBatched.swift; sourceTree = "<group>"; };
 		F90D99A61E02E22400034070 /* AssetCollectionBatchedTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AssetCollectionBatchedTests.swift; sourceTree = "<group>"; };
 		F91EAAC41D885D720010ACBE /* video.mp4 */ = {isa = PBXFileReference; lastKnownFileType = file; name = video.mp4; path = Tests/Resources/video.mp4; sourceTree = SOURCE_ROOT; };
@@ -1416,7 +1405,6 @@
 		F9B71F5A1CB2BC85001DB03F /* ZMConversationListDirectoryTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMConversationListDirectoryTests.m; sourceTree = "<group>"; };
 		F9B71F5B1CB2BC85001DB03F /* ZMConversationListTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMConversationListTests.m; sourceTree = "<group>"; };
 		F9B71F5D1CB2BC85001DB03F /* ZMAssetClientMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ZMAssetClientMessageTests.swift; sourceTree = "<group>"; };
-		F9B71F5E1CB2BC85001DB03F /* ZMClientMessageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMClientMessageTests.m; sourceTree = "<group>"; };
 		F9B71F5F1CB2BC85001DB03F /* BaseClientMessageTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseClientMessageTests.swift; sourceTree = "<group>"; };
 		F9B71F601CB2BC85001DB03F /* ZMMessageTests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMessageTests.h; sourceTree = "<group>"; };
 		F9B71F611CB2BC85001DB03F /* ZMMessageTests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMMessageTests.m; sourceTree = "<group>"; };
@@ -1439,17 +1427,12 @@
 		F9C9A60C1CAD76A50039E10C /* WireDataModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = WireDataModel.h; path = Source/WireDataModel.h; sourceTree = SOURCE_ROOT; };
 		F9C9A66C1CAD778C0039E10C /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		F9C9A66E1CAD77930039E10C /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
-		F9C9A6711CAD78160039E10C /* PINCache.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PINCache.framework; path = Carthage/Build/iOS/PINCache.framework; sourceTree = "<group>"; };
-		F9C9A6721CAD78160039E10C /* WireImages.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireImages.framework; path = Carthage/Build/iOS/WireImages.framework; sourceTree = "<group>"; };
-		F9C9A6731CAD78160039E10C /* WireUtilities.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireUtilities.framework; path = Carthage/Build/iOS/WireUtilities.framework; sourceTree = "<group>"; };
 		F9C9A6791CAD7A790039E10C /* version.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		F9C9A67C1CAD7A790039E10C /* ios-test-host.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-host.xcconfig"; sourceTree = "<group>"; };
 		F9C9A67D1CAD7A790039E10C /* ios-test-target.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "ios-test-target.xcconfig"; sourceTree = "<group>"; };
-		F9C9A67E1CAD7A790039E10C /* ios.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = ios.xcconfig; sourceTree = "<group>"; };
 		F9C9A67F1CAD7A790039E10C /* project-common.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-common.xcconfig"; sourceTree = "<group>"; };
 		F9C9A6801CAD7A790039E10C /* project-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "project-debug.xcconfig"; sourceTree = "<group>"; };
 		F9C9A6811CAD7A790039E10C /* project.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = project.xcconfig; sourceTree = "<group>"; };
-		F9C9A6831CAD7A790039E10C /* swift.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = swift.xcconfig; sourceTree = "<group>"; };
 		F9C9A6841CAD7A790039E10C /* tests.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = tests.xcconfig; sourceTree = "<group>"; };
 		F9C9A6851CAD7A790039E10C /* warnings-debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = "warnings-debug.xcconfig"; sourceTree = "<group>"; };
 		F9C9A6861CAD7A790039E10C /* warnings.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; path = warnings.xcconfig; sourceTree = "<group>"; };
@@ -1460,17 +1443,12 @@
 		F9C9A6A61CAD7C7F0039E10C /* ZMMessage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMMessage.h; sourceTree = "<group>"; };
 		F9C9A6A71CAD7C7F0039E10C /* ZMUser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMUser.h; sourceTree = "<group>"; };
 		F9C9A6AF1CAD7D1F0039E10C /* ZMManagedObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMManagedObject.h; sourceTree = "<group>"; };
-		F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireProtos.framework; path = Carthage/Build/iOS/WireProtos.framework; sourceTree = "<group>"; };
-		F9C9A6B71CAD80BC0039E10C /* WireTransport.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTransport.framework; path = Carthage/Build/iOS/WireTransport.framework; sourceTree = "<group>"; };
 		F9C9A7641CAE8DFC0039E10C /* ZMAddressBookContact.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMAddressBookContact.h; sourceTree = "<group>"; };
-		F9C9A79D1CAEAAF20039E10C /* WireTesting.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireTesting.framework; path = Carthage/Build/iOS/WireTesting.framework; sourceTree = "<group>"; };
 		F9C9A7F31CAED9510039E10C /* WireDataModelTestHost.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WireDataModelTestHost.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F9C9A81C1CAEDA330039E10C /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		F9C9A81D1CAEDA330039E10C /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		F9C9A8231CAEDA330039E10C /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F9C9A8241CAEDA330039E10C /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		F9C9A8381CAEDABF0039E10C /* ocmock.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ocmock.framework; path = Carthage/Build/iOS/ocmock.framework; sourceTree = "<group>"; };
-		F9C9A8391CAEDABF0039E10C /* WireSystem.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WireSystem.framework; path = Carthage/Build/iOS/WireSystem.framework; sourceTree = "<group>"; };
 		F9DBA51F1E28EA8B00BE23C0 /* DependencyKeyStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyKeyStore.swift; sourceTree = "<group>"; };
 		F9DBA5211E28EB4000BE23C0 /* SideEffectSources.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SideEffectSources.swift; sourceTree = "<group>"; };
 		F9DBA5231E28EE0A00BE23C0 /* ConversationObserverTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = ConversationObserverTests.swift; path = ../ConversationObserverTests.swift; sourceTree = "<group>"; };
@@ -1488,15 +1466,18 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F93265281D895C1C0076AAD6 /* WireUtilities.framework in Frameworks */,
-				F93265271D895A910076AAD6 /* WireTransport.framework in Frameworks */,
-				F9C9A6741CAD78160039E10C /* PINCache.framework in Frameworks */,
-				878B823020A1C7AF007455CA /* HTMLString.framework in Frameworks */,
-				54CF1D9E1E939F84003D18E8 /* WireCryptobox.framework in Frameworks */,
-				F9C9A6751CAD78160039E10C /* WireImages.framework in Frameworks */,
 				F9C9A66F1CAD77930039E10C /* CoreData.framework in Frameworks */,
+				A99B8A8E26824BD5006B4D29 /* WireTransport.xcframework in Frameworks */,
+				A99B8A9426824BD5006B4D29 /* SwiftProtobuf.xcframework in Frameworks */,
+				A99B8A9826824BD5006B4D29 /* WireProtos.xcframework in Frameworks */,
+				A99B8A9026824BD5006B4D29 /* WireImages.xcframework in Frameworks */,
+				A99B8AA026824BD5006B4D29 /* WireCryptobox.xcframework in Frameworks */,
+				A99B8A9626824BD5006B4D29 /* WireUtilities.xcframework in Frameworks */,
+				A99B8A9A26824BD5006B4D29 /* WireLinkPreview.xcframework in Frameworks */,
+				A99B8A9C26824BD5006B4D29 /* WireSystem.xcframework in Frameworks */,
+				A99B8A9E26824BD5006B4D29 /* PINCache.xcframework in Frameworks */,
+				A99B8A9226824BD5006B4D29 /* HTMLString.xcframework in Frameworks */,
 				F9C9A66D1CAD778C0039E10C /* Foundation.framework in Frameworks */,
-				54CF1D9F1E939F84003D18E8 /* WireLinkPreview.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -1512,11 +1493,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1FDF30221B17AD700E037A1 /* SwiftProtobuf.framework in Frameworks */,
-				F9A7070B1CAEE38500C2F5FE /* WireProtos.framework in Frameworks */,
-				F9C9A8101CAED9A00039E10C /* WireTesting.framework in Frameworks */,
 				F9C9A80C1CAED99F0039E10C /* WireDataModel.framework in Frameworks */,
-				878B823120A1C7C7007455CA /* HTMLString.framework in Frameworks */,
+				A99B8AAA26824BFA006B4D29 /* WireTesting.xcframework in Frameworks */,
+				A99B8AA826824BFA006B4D29 /* OCMock.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -2570,18 +2549,18 @@
 		F9C9A6701CAD779E0039E10C /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				F1FDF30121B17AD700E037A1 /* SwiftProtobuf.framework */,
-				878B822F20A1C7AF007455CA /* HTMLString.framework */,
-				54CF1D9C1E939F84003D18E8 /* WireCryptobox.framework */,
-				54CF1D9D1E939F84003D18E8 /* WireLinkPreview.framework */,
-				F9C9A8381CAEDABF0039E10C /* ocmock.framework */,
-				F9C9A8391CAEDABF0039E10C /* WireSystem.framework */,
-				F9C9A79D1CAEAAF20039E10C /* WireTesting.framework */,
-				F9C9A6B61CAD80BC0039E10C /* WireProtos.framework */,
-				F9C9A6B71CAD80BC0039E10C /* WireTransport.framework */,
-				F9C9A6711CAD78160039E10C /* PINCache.framework */,
-				F9C9A6721CAD78160039E10C /* WireImages.framework */,
-				F9C9A6731CAD78160039E10C /* WireUtilities.framework */,
+				A99B8AA626824BFA006B4D29 /* OCMock.xcframework */,
+				A99B8AA726824BFA006B4D29 /* WireTesting.xcframework */,
+				A99B8A8626824BD5006B4D29 /* HTMLString.xcframework */,
+				A99B8A8C26824BD5006B4D29 /* PINCache.xcframework */,
+				A99B8A8726824BD5006B4D29 /* SwiftProtobuf.xcframework */,
+				A99B8A8D26824BD5006B4D29 /* WireCryptobox.xcframework */,
+				A99B8A8526824BD5006B4D29 /* WireImages.xcframework */,
+				A99B8A8A26824BD5006B4D29 /* WireLinkPreview.xcframework */,
+				A99B8A8926824BD5006B4D29 /* WireProtos.xcframework */,
+				A99B8A8B26824BD5006B4D29 /* WireSystem.xcframework */,
+				A99B8A8426824BD5006B4D29 /* WireTransport.xcframework */,
+				A99B8A8826824BD5006B4D29 /* WireUtilities.xcframework */,
 				F9C9A66E1CAD77930039E10C /* CoreData.framework */,
 				F9C9A66C1CAD778C0039E10C /* Foundation.framework */,
 			);
@@ -2612,13 +2591,12 @@
 		F9C9A67A1CAD7A790039E10C /* zmc-config */ = {
 			isa = PBXGroup;
 			children = (
+				A9E6BE8F26975C2D00E410ED /* ios.xcconfig */,
 				F9C9A67C1CAD7A790039E10C /* ios-test-host.xcconfig */,
 				F9C9A67D1CAD7A790039E10C /* ios-test-target.xcconfig */,
-				F9C9A67E1CAD7A790039E10C /* ios.xcconfig */,
 				F9C9A67F1CAD7A790039E10C /* project-common.xcconfig */,
 				F9C9A6801CAD7A790039E10C /* project-debug.xcconfig */,
 				F9C9A6811CAD7A790039E10C /* project.xcconfig */,
-				F9C9A6831CAD7A790039E10C /* swift.xcconfig */,
 				F9C9A6841CAD7A790039E10C /* tests.xcconfig */,
 				F9C9A6851CAD7A790039E10C /* warnings-debug.xcconfig */,
 				F9C9A6861CAD7A790039E10C /* warnings.xcconfig */,
@@ -2864,8 +2842,6 @@
 				F9C9A7EF1CAED9510039E10C /* Sources */,
 				F9C9A7F01CAED9510039E10C /* Frameworks */,
 				F9C9A7F11CAED9510039E10C /* Resources */,
-				F9C9A81A1CAED9A00039E10C /* Embed Frameworks */,
-				F9A7073C1CAEE72200C2F5FE /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -3030,32 +3006,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
-
-/* Begin PBXShellScriptBuildPhase section */
-		F9A7073C1CAEE72200C2F5FE /* ShellScript */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"$(SRCROOT)/Carthage/Build/iOS/WireImages.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/OCMock.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireSystem.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireTesting.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireTransport.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireProtos.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireCryptobox.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireUtilities.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/PINCache.framework",
-				"$(SRCROOT)/Carthage/Build/iOS/WireLinkPreview.framework",
-			);
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "/usr/local/bin/carthage copy-frameworks\n";
-		};
-/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F9C9A4F71CAD5DF10039E10C /* Sources */ = {
@@ -3695,6 +3645,10 @@
 			baseConfigurationReference = F9C9A67C1CAD7A790039E10C /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/WireDataModelTestTarget/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTestTarget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
@@ -3706,6 +3660,10 @@
 			baseConfigurationReference = F9C9A67C1CAD7A790039E10C /* ios-test-host.xcconfig */;
 			buildSettings = {
 				INFOPLIST_FILE = "$(SRCROOT)/Tests/WireDataModelTestTarget/Info.plist";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.wire.WireDataModelTestTarget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				VALIDATE_WORKSPACE = YES;
