@@ -1,4 +1,2 @@
-#include "zmc-config/ios.xcconfig"
-
 APPLICATION_EXTENSION_API_ONLY = YES
 PRODUCT_NAME = WireRequestStrategy
