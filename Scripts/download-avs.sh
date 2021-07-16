@@ -24,7 +24,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 cd $DIR/..
 
 source avs-versions
-AVS_FRAMEWORK_NAME="avs.framework"
+AVS_FRAMEWORK_NAME="avs.xcframework"
 
 
 ##################################
