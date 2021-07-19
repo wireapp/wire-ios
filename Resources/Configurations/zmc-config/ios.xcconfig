@@ -107,9 +107,6 @@ ENABLE_BITCODE = NO
 //
 VERSIONING_SYSTEM = apple-generic
 
-// Code Signing
-//
-CODE_SIGN_IDENTITY[sdk=iphoneos*] = iPhone Developer
 
 // Swift
 //
