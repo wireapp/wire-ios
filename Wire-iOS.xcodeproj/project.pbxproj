@@ -7229,7 +7229,6 @@
 				8F42C536199244A700288E4D /* Resources */,
 				160EABBA1D47BD7200F83CA7 /* Copy Extra Audio Notifications */,
 				5E055B28228AAF1500E91314 /* Embed Internal Resources */,
-				873AA0501D05A74B0038343B /* Strip BitCode */,
 				1EE9DC6B1B5F983600E347DF /* Embed App Extensions */,
 				8795A5D21D34D1A50024101B /* EmbedBuildInfo */,
 				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
@@ -7502,20 +7501,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"$PROJECT_DIR/Scripts/embed-internal-resources\"\n";
-		};
-		873AA0501D05A74B0038343B /* Strip BitCode */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Strip BitCode";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "$SRCROOT/Scripts/remove-bitcode.sh $BUILT_PRODUCTS_DIR/$FRAMEWORKS_FOLDER_PATH $EXPANDED_CODE_SIGN_IDENTITY\n";
 		};
 		8795A5D21D34D1A50024101B /* EmbedBuildInfo */ = {
 			isa = PBXShellScriptBuildPhase;
