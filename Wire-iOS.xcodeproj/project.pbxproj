@@ -585,7 +585,7 @@
 		872C823C214A9B8500236A76 /* TextMessageMentionsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C823B214A9B8500236A76 /* TextMessageMentionsTests.swift */; };
 		872C823E214AA12100236A76 /* NSAttributedString+Mentions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C823D214AA12100236A76 /* NSAttributedString+Mentions.swift */; };
 		872C8242214BFA8700236A76 /* UITextView+Range.swift in Sources */ = {isa = PBXBuildFile; fileRef = 872C8241214BFA8700236A76 /* UITextView+Range.swift */; };
-		872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 872C99111DB0EA54006A3BDE /* Intents.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
+		872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 872C99111DB0EA54006A3BDE /* Intents.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		8732670E1D2D0C5C005A62C1 /* AudioRecordKeyboardViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8732670C1D2D0C49005A62C1 /* AudioRecordKeyboardViewControllerTests.swift */; };
 		8735AE722036CBF900DCE66E /* huge.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8735AE702036C88800DCE66E /* huge.pdf */; };
 		87372F5121E3678000405D12 /* ConversationTableViewDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87633B6C21145B640030DB65 /* ConversationTableViewDataSource.swift */; };
@@ -872,6 +872,8 @@
 		A96867FD26A5ECA700679D95 /* avs.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE199266657AE00E713FC /* avs.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867FE26A5ED1B00679D95 /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
 		A96867FF26A5ED1B00679D95 /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A968680426A5F73400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
+		A968680526A5F73400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96A21EF23D5AE6D005B5579 /* UIApplication+Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1693D9661CEDB26200D1F13C /* UIApplication+Permissions.swift */; };
 		A96A21F123D5B865005B5579 /* ConversationInputBarViewController+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F023D5B865005B5579 /* ConversationInputBarViewController+Files.swift */; };
 		A96A21F323D5BC25005B5579 /* UIResponder+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F223D5BC25005B5579 /* UIResponder+FirstResponder.swift */; };
@@ -1574,7 +1576,6 @@
 		F12CDAEB1E43886A00CEFCEB /* DecriptionHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12CDAEA1E43886A00CEFCEB /* DecriptionHeaderView.swift */; };
 		F12EAF73214FB6FF00B00AD9 /* MentionsHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = F12EAF72214FB6FE00B00AD9 /* MentionsHandler.swift */; };
 		F14FB864214941160012A131 /* MentionsTextAttachment.swift in Sources */ = {isa = PBXBuildFile; fileRef = F14FB863214941160012A131 /* MentionsTextAttachment.swift */; };
-		F156509C21DCEE4600210504 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		F156509E21DCF1DA00210504 /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = F156509D21DCF1DA00210504 /* Dummy.swift */; };
 		F15650A121DCF3E700210504 /* ExtensionSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = BFB332671E3A2D95003B0CD2 /* ExtensionSettings.swift */; };
 		F15650A221DCF60E00210504 /* FileMetaDataGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8E4FA91DF066750009F437 /* FileMetaDataGenerator.swift */; };
@@ -1733,6 +1734,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
+				A968680526A5F73400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
 				A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */,
 				A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */,
 				A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */,
@@ -3473,8 +3475,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A968680426A5F73400679D95 /* WireCommonComponents.framework in Frameworks */,
 				A96867F026A5E94900679D95 /* WireRequestStrategy.xcframework in Frameworks */,
-				F156509C21DCEE4600210504 /* WireCommonComponents.framework in Frameworks */,
 				A96867F226A5E94C00679D95 /* WireShareEngine.xcframework in Frameworks */,
 				A96867ED26A5E94700679D95 /* Cartography.xcframework in Frameworks */,
 			);
