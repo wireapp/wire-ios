@@ -927,13 +927,9 @@
 		A99EE1FE266659CB00E713FC /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; };
 		A99EE1FF266659CB00E713FC /* HTMLString.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE205266660D300E713FC /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE202266660D200E713FC /* AppCenter.xcframework */; };
-		A99EE206266660D300E713FC /* AppCenter.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE202266660D200E713FC /* AppCenter.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE207266660D300E713FC /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE203266660D300E713FC /* AppCenterAnalytics.xcframework */; };
-		A99EE208266660D300E713FC /* AppCenterAnalytics.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE203266660D300E713FC /* AppCenterAnalytics.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE209266660D300E713FC /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE204266660D300E713FC /* AppCenterCrashes.xcframework */; };
-		A99EE20A266660D300E713FC /* AppCenterCrashes.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE204266660D300E713FC /* AppCenterCrashes.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE20D266660DF00E713FC /* AppCenterDistribute.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE20C266660DF00E713FC /* AppCenterDistribute.xcframework */; };
-		A99EE20E266660DF00E713FC /* AppCenterDistribute.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE20C266660DF00E713FC /* AppCenterDistribute.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE2132666666400E713FC /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
 		A99EE2142666666400E713FC /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1E824D823CB001AF38E /* UnlockViewController.swift */; };
@@ -1749,20 +1745,16 @@
 			dstSubfolderSpec = 10;
 			files = (
 				A99EE1E9266658D500E713FC /* WireCryptobox.xcframework in Embed Frameworks */,
-				A99EE206266660D300E713FC /* AppCenter.xcframework in Embed Frameworks */,
 				A96867EB26A5E93900679D95 /* WireDataModel.xcframework in Embed Frameworks */,
 				A99EE1FF266659CB00E713FC /* HTMLString.xcframework in Embed Frameworks */,
-				A99EE20E266660DF00E713FC /* AppCenterDistribute.xcframework in Embed Frameworks */,
 				A99EE1F62666590E00E713FC /* WireImages.xcframework in Embed Frameworks */,
 				A99EE1F32666590000E713FC /* WireLinkPreview.xcframework in Embed Frameworks */,
 				A99EE2142666666400E713FC /* DifferenceKit.xcframework in Embed Frameworks */,
 				A99EE1ED266658E000E713FC /* WireSystem.xcframework in Embed Frameworks */,
 				A99EE1F0266658F600E713FC /* WireUtilities.xcframework in Embed Frameworks */,
-				A99EE208266660D300E713FC /* AppCenterAnalytics.xcframework in Embed Frameworks */,
 				A96867E526A5E93400679D95 /* PINCache.xcframework in Embed Frameworks */,
 				A96867E826A5E93700679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				A99EE1FC266659BF00E713FC /* WireTransport.xcframework in Embed Frameworks */,
-				A99EE20A266660D300E713FC /* AppCenterCrashes.xcframework in Embed Frameworks */,
 				A99EE1F92666591A00E713FC /* WireProtos.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
