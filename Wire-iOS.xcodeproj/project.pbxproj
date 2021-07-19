@@ -685,7 +685,6 @@
 		87AC33CD2182064F00069C79 /* ReplyComposingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AC33CC2182064F00069C79 /* ReplyComposingView.swift */; };
 		87AC77DB1DE48C01009F6D56 /* Copyable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AC77DA1DE48C01009F6D56 /* Copyable.swift */; };
 		87AC9F561C0749FB00E1ED6F /* TailEditingTextField.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AC9F551C0749FB00E1ED6F /* TailEditingTextField.swift */; };
-		87ADCE4E1DA68FA400CC06DC /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87ADCE4D1DA68FA400CC06DC /* CallKit.framework */; settings = {ATTRIBUTES = (Weak, ); }; };
 		87AE8BDC207B99540058715E /* BackupPasswordViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87AE8BDB207B99540058715E /* BackupPasswordViewControllerTests.swift */; };
 		87B48EBE20A050AA00DBAD9D /* ViewControllerDismisser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B48EBD20A050AA00DBAD9D /* ViewControllerDismisser.swift */; };
 		87B8C33F1DF9788B0015EC89 /* BrowserOpening.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B8C33B1DF9788B0015EC89 /* BrowserOpening.swift */; };
@@ -806,6 +805,73 @@
 		A965F89E23DB3359005209E1 /* ConversationInputBarViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A965F89D23DB3359005209E1 /* ConversationInputBarViewController.swift */; };
 		A9681D8123883877004FE917 /* IconToggleSubtitleCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9681D8023883877004FE917 /* IconToggleSubtitleCell.swift */; };
 		A9681D8623884FF1004FE917 /* Message+DateFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9681D8523884FF1004FE917 /* Message+DateFormatter.swift */; };
+		A96867A626A5E52F00679D95 /* WireCanvas.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19E266657AF00E713FC /* WireCanvas.xcframework */; };
+		A96867A726A5E52F00679D95 /* WireCanvas.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19E266657AF00E713FC /* WireCanvas.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867AA26A5E59F00679D95 /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; };
+		A96867AB26A5E59F00679D95 /* WireCryptobox.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867AC26A5E59F00679D95 /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
+		A96867AD26A5E59F00679D95 /* WireDataModel.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867AE26A5E59F00679D95 /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE193266657AE00E713FC /* WireImages.xcframework */; };
+		A96867AF26A5E59F00679D95 /* WireImages.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE193266657AE00E713FC /* WireImages.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867B026A5E5A000679D95 /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE196266657AE00E713FC /* WireLinkPreview.xcframework */; };
+		A96867B126A5E5A000679D95 /* WireLinkPreview.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE196266657AE00E713FC /* WireLinkPreview.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867B226A5E5A000679D95 /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A1266657AF00E713FC /* WireProtos.xcframework */; };
+		A96867B326A5E5A000679D95 /* WireProtos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A1266657AF00E713FC /* WireProtos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867B426A5E5A000679D95 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
+		A96867B526A5E5A000679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867B626A5E5A000679D95 /* WireShareEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; };
+		A96867B726A5E5A000679D95 /* WireShareEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867B826A5E5A000679D95 /* WireSyncEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19D266657AF00E713FC /* WireSyncEngine.xcframework */; };
+		A96867B926A5E5A000679D95 /* WireSyncEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19D266657AF00E713FC /* WireSyncEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867BA26A5E5A000679D95 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; };
+		A96867BB26A5E5A000679D95 /* WireSystem.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867BC26A5E5A000679D95 /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE195266657AE00E713FC /* WireTransport.xcframework */; };
+		A96867BD26A5E5A000679D95 /* WireTransport.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE195266657AE00E713FC /* WireTransport.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867BE26A5E5A000679D95 /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE198266657AE00E713FC /* WireUtilities.xcframework */; };
+		A96867BF26A5E5A000679D95 /* WireUtilities.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE198266657AE00E713FC /* WireUtilities.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867C126A5E61A00679D95 /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; };
+		A96867C226A5E61A00679D95 /* HTMLString.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867C426A5E65000679D95 /* Ziphy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19C266657AF00E713FC /* Ziphy.xcframework */; };
+		A96867C526A5E65000679D95 /* Ziphy.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19C266657AF00E713FC /* Ziphy.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867C726A5E68100679D95 /* FormatterKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22126666A9600E713FC /* FormatterKit.xcframework */; };
+		A96867C826A5E68100679D95 /* FormatterKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22126666A9600E713FC /* FormatterKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867CA26A5E68400679D95 /* FLAnimatedImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2172666682200E713FC /* FLAnimatedImage.xcframework */; };
+		A96867CB26A5E68400679D95 /* FLAnimatedImage.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2172666682200E713FC /* FLAnimatedImage.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867CD26A5E68600679D95 /* Down.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22626666FC700E713FC /* Down.xcframework */; };
+		A96867CE26A5E68600679D95 /* Down.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22626666FC700E713FC /* Down.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867D026A5E6C100679D95 /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
+		A96867D126A5E6C100679D95 /* Cartography.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867D326A5E6E100679D95 /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19B266657AF00E713FC /* ZipArchive.xcframework */; };
+		A96867D426A5E6E100679D95 /* ZipArchive.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19B266657AF00E713FC /* ZipArchive.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867D626A5E70D00679D95 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
+		A96867D726A5E70D00679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867D926A5E71000679D95 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; };
+		A96867DA26A5E71000679D95 /* PINCache.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87ADCE4D1DA68FA400CC06DC /* CallKit.framework */; };
+		A96867E426A5E93400679D95 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; };
+		A96867E526A5E93400679D95 /* PINCache.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867E726A5E93700679D95 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
+		A96867E826A5E93700679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867EA26A5E93900679D95 /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
+		A96867EB26A5E93900679D95 /* WireDataModel.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867ED26A5E94700679D95 /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
+		A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867F026A5E94900679D95 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
+		A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867F226A5E94C00679D95 /* WireShareEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; };
+		A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867F426A5E9C500679D95 /* Countly.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98682862666E64E0064581B /* Countly.xcframework */; };
+		A96867F526A5E9C500679D95 /* Countly.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A98682862666E64E0064581B /* Countly.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867F626A5EAE600679D95 /* libcmark.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE237266680FE00E713FC /* libcmark.xcframework */; };
+		A96867F726A5EAE600679D95 /* libcmark.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE237266680FE00E713FC /* libcmark.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867F826A5EAEB00679D95 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CCBA8A269601CF00122380 /* libPhoneNumberiOS.xcframework */; };
+		A96867F926A5EAEB00679D95 /* libPhoneNumberiOS.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A9CCBA8A269601CF00122380 /* libPhoneNumberiOS.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
+		A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867FC26A5ECA700679D95 /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE199266657AE00E713FC /* avs.xcframework */; };
+		A96867FD26A5ECA700679D95 /* avs.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE199266657AE00E713FC /* avs.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A96867FE26A5ED1B00679D95 /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
+		A96867FF26A5ED1B00679D95 /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96A21EF23D5AE6D005B5579 /* UIApplication+Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1693D9661CEDB26200D1F13C /* UIApplication+Permissions.swift */; };
 		A96A21F123D5B865005B5579 /* ConversationInputBarViewController+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F023D5B865005B5579 /* ConversationInputBarViewController+Files.swift */; };
 		A96A21F323D5BC25005B5579 /* UIResponder+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F223D5BC25005B5579 /* UIResponder+FirstResponder.swift */; };
@@ -834,9 +900,6 @@
 		A984AAE924099A9B002CFF2E /* SettingsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A984AAE824099A9A002CFF2E /* SettingsTests.swift */; };
 		A9859D6823FE955000DC3F36 /* LoadingSpinner.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9859D6723FE955000DC3F36 /* LoadingSpinner.swift */; };
 		A9859D6A23FEDD7400DC3F36 /* FullscreenImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9859D6923FEDD7400DC3F36 /* FullscreenImageViewController.swift */; };
-		A98682822666E40D0064581B /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
-		A98682872666E64E0064581B /* Countly.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98682862666E64E0064581B /* Countly.xcframework */; };
-		A986828E2667813F0064581B /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
 		A98CD44E24C74C9F00EAC484 /* UIColor+Const.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98CD44D24C74C9F00EAC484 /* UIColor+Const.swift */; };
 		A98CF97425A47295008818D8 /* ConversationProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98CF97325A47295008818D8 /* ConversationProtocol.swift */; };
 		A98ECDF1232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98ECDF0232A94DD006A57FD /* ConversationListViewControllerViewModelSnapshotTests.swift */; };
@@ -845,28 +908,6 @@
 		A993719123F7461600881564 /* UIView+ExtendedBlockAnimations.swift in Sources */ = {isa = PBXBuildFile; fileRef = A993719023F7461600881564 /* UIView+ExtendedBlockAnimations.swift */; };
 		A99E3E912519F3A300E4FD3E /* AnalyticsCountlyProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99E3E8E2519F2B800E4FD3E /* AnalyticsCountlyProviderTests.swift */; };
 		A99E3E922519F41500E4FD3E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0ACA91FA20D7C001B2B9D /* AnalyticsTests.swift */; };
-		A99EE1A8266657B000E713FC /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE193266657AE00E713FC /* WireImages.xcframework */; };
-		A99EE1AA266657B000E713FC /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; };
-		A99EE1AC266657B000E713FC /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE195266657AE00E713FC /* WireTransport.xcframework */; };
-		A99EE1AE266657B000E713FC /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE196266657AE00E713FC /* WireLinkPreview.xcframework */; };
-		A99EE1B0266657B000E713FC /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
-		A99EE1B2266657B000E713FC /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE198266657AE00E713FC /* WireUtilities.xcframework */; };
-		A99EE1B4266657B000E713FC /* avs.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE199266657AE00E713FC /* avs.xcframework */; };
-		A99EE1B6266657B100E713FC /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; };
-		A99EE1B8266657B100E713FC /* ZipArchive.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19B266657AF00E713FC /* ZipArchive.xcframework */; };
-		A99EE1BA266657B100E713FC /* Ziphy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19C266657AF00E713FC /* Ziphy.xcframework */; };
-		A99EE1BC266657B100E713FC /* WireSyncEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19D266657AF00E713FC /* WireSyncEngine.xcframework */; };
-		A99EE1BE266657B100E713FC /* WireCanvas.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19E266657AF00E713FC /* WireCanvas.xcframework */; };
-		A99EE1C2266657B100E713FC /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; };
-		A99EE1C4266657B200E713FC /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A1266657AF00E713FC /* WireProtos.xcframework */; };
-		A99EE1C6266657B200E713FC /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; };
-		A99EE1C8266657B200E713FC /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
-		A99EE1CA266657B200E713FC /* WireShareEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; };
-		A99EE1CC266657B200E713FC /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
-		A99EE1CE266657B300E713FC /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
-		A99EE1D62666587D00E713FC /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
-		A99EE1DC2666589D00E713FC /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; };
-		A99EE1E2266658AB00E713FC /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
 		A99EE1E8266658D500E713FC /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; };
 		A99EE1E9266658D500E713FC /* WireCryptobox.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1EC266658E000E713FC /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; };
@@ -893,11 +934,6 @@
 		A99EE20E266660DF00E713FC /* AppCenterDistribute.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE20C266660DF00E713FC /* AppCenterDistribute.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE2132666666400E713FC /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
 		A99EE2142666666400E713FC /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
-		A99EE21C2666684600E713FC /* FLAnimatedImage.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2172666682200E713FC /* FLAnimatedImage.xcframework */; };
-		A99EE22226666A9600E713FC /* FormatterKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22126666A9600E713FC /* FormatterKit.xcframework */; };
-		A99EE22726666FC700E713FC /* Down.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE22626666FC700E713FC /* Down.xcframework */; };
-		A99EE238266680FE00E713FC /* libcmark.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE237266680FE00E713FC /* libcmark.xcframework */; };
-		A99EE23B2666824200E713FC /* WireShareEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; };
 		A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1E824D823CB001AF38E /* UnlockViewController.swift */; };
 		A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1F224D9A009001AF38E /* WipeCompletionViewController.swift */; };
 		A9A3B1FC24D9B1E2001AF38E /* WireLogoInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1FB24D9B1E1001AF38E /* WireLogoInfoView.swift */; };
@@ -928,7 +964,6 @@
 		A9CBBEC124CF31E8006543D4 /* PasscodeSetupViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CBBEBF24CF31DC006543D4 /* PasscodeSetupViewControllerTests.swift */; };
 		A9CBBEC324CF7FF9006543D4 /* AccessoryTextField+factory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CBBEC224CF7FF9006543D4 /* AccessoryTextField+factory.swift */; };
 		A9CBBEC524CF81EE006543D4 /* UIView+ConstraintFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CBBEC424CF81EE006543D4 /* UIView+ConstraintFactory.swift */; };
-		A9CCBA8B269601CF00122380 /* libPhoneNumberiOS.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A9CCBA8A269601CF00122380 /* libPhoneNumberiOS.xcframework */; };
 		A9CF5F58242B98B300920877 /* NetworkStatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CF5F57242B98B300920877 /* NetworkStatus.swift */; };
 		A9CF740E24891498007A11DC /* Settings+Reset.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CF740D24891498007A11DC /* Settings+Reset.swift */; };
 		A9D19B16238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9D19B15238441B500F6E14A /* ConversationViewController+ProfileViewControllerDelegate.swift */; };
@@ -1609,7 +1644,6 @@
 		F1F5E57E216CC94A006BF3D5 /* ConversationStatusLineTests+Muting.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F5E57D216CC94A006BF3D5 /* ConversationStatusLineTests+Muting.swift */; };
 		F1FDF2C421ADA3A600E037A1 /* OtherImages.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C321ADA3A600E037A1 /* OtherImages.xcassets */; };
 		F1FDF2C621ADA3FA00E037A1 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F1FDF2C521ADA3F000E037A1 /* Images.xcassets */; };
-		F1FEA15121DCEB1700790A54 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
 		F93D58451D7DA865003AE972 /* ZMConversation+Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = F93D58441D7DA865003AE972 /* ZMConversation+Analytics.swift */; };
 /* End PBXBuildFile section */
 
@@ -1656,6 +1690,56 @@
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		A96867A826A5E52F00679D95 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A96867AD26A5E59F00679D95 /* WireDataModel.xcframework in Embed Frameworks */,
+				A96867CE26A5E68600679D95 /* Down.xcframework in Embed Frameworks */,
+				A96867A726A5E52F00679D95 /* WireCanvas.xcframework in Embed Frameworks */,
+				A96867BD26A5E5A000679D95 /* WireTransport.xcframework in Embed Frameworks */,
+				A96867C826A5E68100679D95 /* FormatterKit.xcframework in Embed Frameworks */,
+				A96867FF26A5ED1B00679D95 /* DifferenceKit.xcframework in Embed Frameworks */,
+				A96867C226A5E61A00679D95 /* HTMLString.xcframework in Embed Frameworks */,
+				A96867D726A5E70D00679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */,
+				A96867D126A5E6C100679D95 /* Cartography.xcframework in Embed Frameworks */,
+				A96867B926A5E5A000679D95 /* WireSyncEngine.xcframework in Embed Frameworks */,
+				A96867F926A5EAEB00679D95 /* libPhoneNumberiOS.xcframework in Embed Frameworks */,
+				A96867B726A5E5A000679D95 /* WireShareEngine.xcframework in Embed Frameworks */,
+				A96867DA26A5E71000679D95 /* PINCache.xcframework in Embed Frameworks */,
+				A96867C526A5E65000679D95 /* Ziphy.xcframework in Embed Frameworks */,
+				A96867B126A5E5A000679D95 /* WireLinkPreview.xcframework in Embed Frameworks */,
+				A96867AF26A5E59F00679D95 /* WireImages.xcframework in Embed Frameworks */,
+				A96867CB26A5E68400679D95 /* FLAnimatedImage.xcframework in Embed Frameworks */,
+				A96867D426A5E6E100679D95 /* ZipArchive.xcframework in Embed Frameworks */,
+				A96867F526A5E9C500679D95 /* Countly.xcframework in Embed Frameworks */,
+				A96867B526A5E5A000679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */,
+				A96867F726A5EAE600679D95 /* libcmark.xcframework in Embed Frameworks */,
+				A96867FB26A5EB8400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
+				A96867BB26A5E5A000679D95 /* WireSystem.xcframework in Embed Frameworks */,
+				A96867FD26A5ECA700679D95 /* avs.xcframework in Embed Frameworks */,
+				A96867AB26A5E59F00679D95 /* WireCryptobox.xcframework in Embed Frameworks */,
+				A96867B326A5E5A000679D95 /* WireProtos.xcframework in Embed Frameworks */,
+				A96867BF26A5E5A000679D95 /* WireUtilities.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		A96867EF26A5E94700679D95 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */,
+				A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */,
+				A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		A99EE1EA266658D500E713FC /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -1664,6 +1748,7 @@
 			files = (
 				A99EE1E9266658D500E713FC /* WireCryptobox.xcframework in Embed Frameworks */,
 				A99EE206266660D300E713FC /* AppCenter.xcframework in Embed Frameworks */,
+				A96867EB26A5E93900679D95 /* WireDataModel.xcframework in Embed Frameworks */,
 				A99EE1FF266659CB00E713FC /* HTMLString.xcframework in Embed Frameworks */,
 				A99EE20E266660DF00E713FC /* AppCenterDistribute.xcframework in Embed Frameworks */,
 				A99EE1F62666590E00E713FC /* WireImages.xcframework in Embed Frameworks */,
@@ -1672,6 +1757,8 @@
 				A99EE1ED266658E000E713FC /* WireSystem.xcframework in Embed Frameworks */,
 				A99EE1F0266658F600E713FC /* WireUtilities.xcframework in Embed Frameworks */,
 				A99EE208266660D300E713FC /* AppCenterAnalytics.xcframework in Embed Frameworks */,
+				A96867E526A5E93400679D95 /* PINCache.xcframework in Embed Frameworks */,
+				A96867E826A5E93700679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */,
 				A99EE1FC266659BF00E713FC /* WireTransport.xcframework in Embed Frameworks */,
 				A99EE20A266660D300E713FC /* AppCenterCrashes.xcframework in Embed Frameworks */,
 				A99EE1F92666591A00E713FC /* WireProtos.xcframework in Embed Frameworks */,
@@ -3386,10 +3473,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A99EE23B2666824200E713FC /* WireShareEngine.xcframework in Frameworks */,
+				A96867F026A5E94900679D95 /* WireRequestStrategy.xcframework in Frameworks */,
 				F156509C21DCEE4600210504 /* WireCommonComponents.framework in Frameworks */,
-				A986828E2667813F0064581B /* Cartography.xcframework in Frameworks */,
-				A98682822666E40D0064581B /* WireRequestStrategy.xcframework in Frameworks */,
+				A96867F226A5E94C00679D95 /* WireShareEngine.xcframework in Frameworks */,
+				A96867ED26A5E94700679D95 /* Cartography.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3397,38 +3484,39 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A99EE1BE266657B100E713FC /* WireCanvas.xcframework in Frameworks */,
-				A99EE1B0266657B000E713FC /* WireRequestStrategy.xcframework in Frameworks */,
-				A99EE1C4266657B200E713FC /* WireProtos.xcframework in Frameworks */,
-				A99EE1B6266657B100E713FC /* WireCryptobox.xcframework in Frameworks */,
-				A99EE1A8266657B000E713FC /* WireImages.xcframework in Frameworks */,
-				A99EE1C6266657B200E713FC /* HTMLString.xcframework in Frameworks */,
+				A96867FA26A5EB8400679D95 /* WireCommonComponents.framework in Frameworks */,
+				A96867A626A5E52F00679D95 /* WireCanvas.xcframework in Frameworks */,
 				87AAE4291E43682E00E1D13A /* LocalAuthentication.framework in Frameworks */,
-				A99EE1BA266657B100E713FC /* Ziphy.xcframework in Frameworks */,
-				A99EE22226666A9600E713FC /* FormatterKit.xcframework in Frameworks */,
-				A99EE1C8266657B200E713FC /* Cartography.xcframework in Frameworks */,
+				A96867D326A5E6E100679D95 /* ZipArchive.xcframework in Frameworks */,
+				A96867BE26A5E5A000679D95 /* WireUtilities.xcframework in Frameworks */,
 				872C99121DB0EA54006A3BDE /* Intents.framework in Frameworks */,
-				87ADCE4E1DA68FA400CC06DC /* CallKit.framework in Frameworks */,
-				A99EE1B8266657B100E713FC /* ZipArchive.xcframework in Frameworks */,
-				A99EE1CE266657B300E713FC /* SwiftProtobuf.xcframework in Frameworks */,
+				A96867D926A5E71000679D95 /* PINCache.xcframework in Frameworks */,
+				A96867BA26A5E5A000679D95 /* WireSystem.xcframework in Frameworks */,
+				A96867B426A5E5A000679D95 /* WireRequestStrategy.xcframework in Frameworks */,
+				A96867CA26A5E68400679D95 /* FLAnimatedImage.xcframework in Frameworks */,
+				A96867B226A5E5A000679D95 /* WireProtos.xcframework in Frameworks */,
+				A96867C726A5E68100679D95 /* FormatterKit.xcframework in Frameworks */,
 				874D0EB11D3E575E003DF418 /* Photos.framework in Frameworks */,
-				A98682872666E64E0064581B /* Countly.xcframework in Frameworks */,
-				A99EE238266680FE00E713FC /* libcmark.xcframework in Frameworks */,
-				A99EE1AA266657B000E713FC /* WireSystem.xcframework in Frameworks */,
+				A96867D626A5E70D00679D95 /* SwiftProtobuf.xcframework in Frameworks */,
+				A96867AA26A5E59F00679D95 /* WireCryptobox.xcframework in Frameworks */,
+				A96867AC26A5E59F00679D95 /* WireDataModel.xcframework in Frameworks */,
+				A96867FC26A5ECA700679D95 /* avs.xcframework in Frameworks */,
+				A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */,
+				A96867F626A5EAE600679D95 /* libcmark.xcframework in Frameworks */,
+				A96867B626A5E5A000679D95 /* WireShareEngine.xcframework in Frameworks */,
+				A96867D026A5E6C100679D95 /* Cartography.xcframework in Frameworks */,
 				87E0D6D51CD3978900C54196 /* AVKit.framework in Frameworks */,
-				A99EE1AE266657B000E713FC /* WireLinkPreview.xcframework in Frameworks */,
-				A99EE1BC266657B100E713FC /* WireSyncEngine.xcframework in Frameworks */,
-				A99EE1B2266657B000E713FC /* WireUtilities.xcframework in Frameworks */,
+				A96867BC26A5E5A000679D95 /* WireTransport.xcframework in Frameworks */,
 				169FF9331C57CB2100C5BF90 /* VideoToolbox.framework in Frameworks */,
-				A99EE1C2266657B100E713FC /* PINCache.xcframework in Frameworks */,
-				A99EE1CC266657B200E713FC /* WireDataModel.xcframework in Frameworks */,
-				A9CCBA8B269601CF00122380 /* libPhoneNumberiOS.xcframework in Frameworks */,
-				F1FEA15121DCEB1700790A54 /* WireCommonComponents.framework in Frameworks */,
-				A99EE1CA266657B200E713FC /* WireShareEngine.xcframework in Frameworks */,
-				A99EE1AC266657B000E713FC /* WireTransport.xcframework in Frameworks */,
-				A99EE21C2666684600E713FC /* FLAnimatedImage.xcframework in Frameworks */,
-				A99EE1B4266657B000E713FC /* avs.xcframework in Frameworks */,
-				A99EE22726666FC700E713FC /* Down.xcframework in Frameworks */,
+				A96867F426A5E9C500679D95 /* Countly.xcframework in Frameworks */,
+				A96867C126A5E61A00679D95 /* HTMLString.xcframework in Frameworks */,
+				A96867F826A5EAEB00679D95 /* libPhoneNumberiOS.xcframework in Frameworks */,
+				A96867B026A5E5A000679D95 /* WireLinkPreview.xcframework in Frameworks */,
+				A96867AE26A5E59F00679D95 /* WireImages.xcframework in Frameworks */,
+				A96867B826A5E5A000679D95 /* WireSyncEngine.xcframework in Frameworks */,
+				A96867C426A5E65000679D95 /* Ziphy.xcframework in Frameworks */,
+				A96867CD26A5E68600679D95 /* Down.xcframework in Frameworks */,
+				A96867FE26A5ED1B00679D95 /* DifferenceKit.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -3449,20 +3537,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				A99EE1F22666590000E713FC /* WireLinkPreview.xcframework in Frameworks */,
-				A99EE1D62666587D00E713FC /* WireDataModel.xcframework in Frameworks */,
 				A99EE1E8266658D500E713FC /* WireCryptobox.xcframework in Frameworks */,
+				A96867EA26A5E93900679D95 /* WireDataModel.xcframework in Frameworks */,
 				A99EE2132666666400E713FC /* DifferenceKit.xcframework in Frameworks */,
-				A99EE1E2266658AB00E713FC /* SwiftProtobuf.xcframework in Frameworks */,
 				A99EE1EC266658E000E713FC /* WireSystem.xcframework in Frameworks */,
+				A96867E426A5E93400679D95 /* PINCache.xcframework in Frameworks */,
 				A99EE1EF266658F600E713FC /* WireUtilities.xcframework in Frameworks */,
 				A99EE20D266660DF00E713FC /* AppCenterDistribute.xcframework in Frameworks */,
 				A99EE209266660D300E713FC /* AppCenterCrashes.xcframework in Frameworks */,
-				A99EE1DC2666589D00E713FC /* PINCache.xcframework in Frameworks */,
 				A99EE207266660D300E713FC /* AppCenterAnalytics.xcframework in Frameworks */,
 				A99EE1F52666590E00E713FC /* WireImages.xcframework in Frameworks */,
 				A99EE1F82666591A00E713FC /* WireProtos.xcframework in Frameworks */,
 				A99EE1FB266659BF00E713FC /* WireTransport.xcframework in Frameworks */,
 				A99EE205266660D300E713FC /* AppCenter.xcframework in Frameworks */,
+				A96867E726A5E93700679D95 /* SwiftProtobuf.xcframework in Frameworks */,
 				A99EE1FE266659CB00E713FC /* HTMLString.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7209,6 +7297,7 @@
 				168A16A51D9597C2005CFA6C /* Sources */,
 				168A16A61D9597C2005CFA6C /* Frameworks */,
 				168A16A71D9597C2005CFA6C /* Resources */,
+				A96867EF26A5E94700679D95 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -7233,6 +7322,7 @@
 				8795A5D21D34D1A50024101B /* EmbedBuildInfo */,
 				EEF9786E25D2923A00F7333E /* Run SwiftGen */,
 				EE00ACE125E43FA2005FEC14 /* Run SwiftLint */,
+				A96867A826A5E52F00679D95 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
