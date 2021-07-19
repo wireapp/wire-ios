@@ -7330,7 +7330,6 @@
 						CreatedOnToolsVersion = 10.0;
 						DevelopmentTeam = W5KEQBF9B5;
 						LastSwiftMigration = 1000;
-						ProvisioningStyle = Manual;
 					};
 				};
 			};
@@ -9330,6 +9329,12 @@
 			baseConfigurationReference = F156509721DCED3000210504 /* CommonComponents-Debug.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				VALIDATE_WORKSPACE = YES;
 			};
 			name = Debug;
@@ -9339,7 +9344,12 @@
 			baseConfigurationReference = F156509621DCED3000210504 /* CommonComponents-Release.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = NO;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = "";
+				PROVISIONING_PROFILE_SPECIFIER = "";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=macosx*]" = "";
 				VALIDATE_WORKSPACE = NO;
 			};
 			name = Release;
