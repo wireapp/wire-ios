@@ -850,11 +850,8 @@
 		A96867E726A5E93700679D95 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
 		A96867EA26A5E93900679D95 /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
 		A96867ED26A5E94700679D95 /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
-		A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867F026A5E94900679D95 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
-		A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867F226A5E94C00679D95 /* WireShareEngine.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; };
-		A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A4266657AF00E713FC /* WireShareEngine.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867F426A5E9C500679D95 /* Countly.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A98682862666E64E0064581B /* Countly.xcframework */; };
 		A96867F526A5E9C500679D95 /* Countly.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A98682862666E64E0064581B /* Countly.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867F626A5EAE600679D95 /* libcmark.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE237266680FE00E713FC /* libcmark.xcframework */; };
@@ -868,7 +865,6 @@
 		A96867FE26A5ED1B00679D95 /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
 		A96867FF26A5ED1B00679D95 /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A968680426A5F73400679D95 /* WireCommonComponents.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; };
-		A968680526A5F73400679D95 /* WireCommonComponents.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = F1FEA14A21DCEB1700790A54 /* WireCommonComponents.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96A21EF23D5AE6D005B5579 /* UIApplication+Permissions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1693D9661CEDB26200D1F13C /* UIApplication+Permissions.swift */; };
 		A96A21F123D5B865005B5579 /* ConversationInputBarViewController+Files.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F023D5B865005B5579 /* ConversationInputBarViewController+Files.swift */; };
 		A96A21F323D5BC25005B5579 /* UIResponder+FirstResponder.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96A21F223D5BC25005B5579 /* UIResponder+FirstResponder.swift */; };
@@ -1708,20 +1704,6 @@
 				A96867AB26A5E59F00679D95 /* WireCryptobox.xcframework in Embed Frameworks */,
 				A96867B326A5E5A000679D95 /* WireProtos.xcframework in Embed Frameworks */,
 				A96867BF26A5E5A000679D95 /* WireUtilities.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A96867EF26A5E94700679D95 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A968680526A5F73400679D95 /* WireCommonComponents.framework in Embed Frameworks */,
-				A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */,
-				A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */,
-				A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7259,7 +7241,6 @@
 				168A16A51D9597C2005CFA6C /* Sources */,
 				168A16A61D9597C2005CFA6C /* Frameworks */,
 				168A16A71D9597C2005CFA6C /* Resources */,
-				A96867EF26A5E94700679D95 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
