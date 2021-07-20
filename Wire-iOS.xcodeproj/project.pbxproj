@@ -849,11 +849,8 @@
 		A96867DA26A5E71000679D95 /* PINCache.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867DC26A5E71900679D95 /* CallKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 87ADCE4D1DA68FA400CC06DC /* CallKit.framework */; };
 		A96867E426A5E93400679D95 /* PINCache.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; };
-		A96867E526A5E93400679D95 /* PINCache.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A0266657AF00E713FC /* PINCache.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867E726A5E93700679D95 /* SwiftProtobuf.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; };
-		A96867E826A5E93700679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A6266657B000E713FC /* SwiftProtobuf.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867EA26A5E93900679D95 /* WireDataModel.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; };
-		A96867EB26A5E93900679D95 /* WireDataModel.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A5266657B000E713FC /* WireDataModel.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867ED26A5E94700679D95 /* Cartography.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; };
 		A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A3266657AF00E713FC /* Cartography.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A96867F026A5E94900679D95 /* WireRequestStrategy.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE197266657AE00E713FC /* WireRequestStrategy.xcframework */; };
@@ -911,27 +908,18 @@
 		A99E3E912519F3A300E4FD3E /* AnalyticsCountlyProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A99E3E8E2519F2B800E4FD3E /* AnalyticsCountlyProviderTests.swift */; };
 		A99E3E922519F41500E4FD3E /* AnalyticsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B0ACA91FA20D7C001B2B9D /* AnalyticsTests.swift */; };
 		A99EE1E8266658D500E713FC /* WireCryptobox.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; };
-		A99EE1E9266658D500E713FC /* WireCryptobox.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE19A266657AE00E713FC /* WireCryptobox.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1EC266658E000E713FC /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; };
-		A99EE1ED266658E000E713FC /* WireSystem.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE194266657AE00E713FC /* WireSystem.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1EF266658F600E713FC /* WireUtilities.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE198266657AE00E713FC /* WireUtilities.xcframework */; };
-		A99EE1F0266658F600E713FC /* WireUtilities.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE198266657AE00E713FC /* WireUtilities.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1F22666590000E713FC /* WireLinkPreview.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE196266657AE00E713FC /* WireLinkPreview.xcframework */; };
-		A99EE1F32666590000E713FC /* WireLinkPreview.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE196266657AE00E713FC /* WireLinkPreview.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1F52666590E00E713FC /* WireImages.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE193266657AE00E713FC /* WireImages.xcframework */; };
-		A99EE1F62666590E00E713FC /* WireImages.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE193266657AE00E713FC /* WireImages.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1F82666591A00E713FC /* WireProtos.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A1266657AF00E713FC /* WireProtos.xcframework */; };
-		A99EE1F92666591A00E713FC /* WireProtos.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A1266657AF00E713FC /* WireProtos.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1FB266659BF00E713FC /* WireTransport.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE195266657AE00E713FC /* WireTransport.xcframework */; };
-		A99EE1FC266659BF00E713FC /* WireTransport.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE195266657AE00E713FC /* WireTransport.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE1FE266659CB00E713FC /* HTMLString.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; };
-		A99EE1FF266659CB00E713FC /* HTMLString.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE1A2266657AF00E713FC /* HTMLString.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A99EE205266660D300E713FC /* AppCenter.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE202266660D200E713FC /* AppCenter.xcframework */; };
 		A99EE207266660D300E713FC /* AppCenterAnalytics.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE203266660D300E713FC /* AppCenterAnalytics.xcframework */; };
 		A99EE209266660D300E713FC /* AppCenterCrashes.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE204266660D300E713FC /* AppCenterCrashes.xcframework */; };
 		A99EE20D266660DF00E713FC /* AppCenterDistribute.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE20C266660DF00E713FC /* AppCenterDistribute.xcframework */; };
 		A99EE2132666666400E713FC /* DifferenceKit.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; };
-		A99EE2142666666400E713FC /* DifferenceKit.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A99EE2122666666400E713FC /* DifferenceKit.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		A9A3B1EB24D823CC001AF38E /* UnlockViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1E824D823CB001AF38E /* UnlockViewController.swift */; };
 		A9A3B1F324D9A009001AF38E /* WipeCompletionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1F224D9A009001AF38E /* WipeCompletionViewController.swift */; };
 		A9A3B1FC24D9B1E2001AF38E /* WireLogoInfoView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1FB24D9B1E1001AF38E /* WireLogoInfoView.swift */; };
@@ -1734,28 +1722,6 @@
 				A96867EE26A5E94700679D95 /* Cartography.xcframework in Embed Frameworks */,
 				A96867F126A5E94900679D95 /* WireRequestStrategy.xcframework in Embed Frameworks */,
 				A96867F326A5E94C00679D95 /* WireShareEngine.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		A99EE1EA266658D500E713FC /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				A99EE1E9266658D500E713FC /* WireCryptobox.xcframework in Embed Frameworks */,
-				A96867EB26A5E93900679D95 /* WireDataModel.xcframework in Embed Frameworks */,
-				A99EE1FF266659CB00E713FC /* HTMLString.xcframework in Embed Frameworks */,
-				A99EE1F62666590E00E713FC /* WireImages.xcframework in Embed Frameworks */,
-				A99EE1F32666590000E713FC /* WireLinkPreview.xcframework in Embed Frameworks */,
-				A99EE2142666666400E713FC /* DifferenceKit.xcframework in Embed Frameworks */,
-				A99EE1ED266658E000E713FC /* WireSystem.xcframework in Embed Frameworks */,
-				A99EE1F0266658F600E713FC /* WireUtilities.xcframework in Embed Frameworks */,
-				A96867E526A5E93400679D95 /* PINCache.xcframework in Embed Frameworks */,
-				A96867E826A5E93700679D95 /* SwiftProtobuf.xcframework in Embed Frameworks */,
-				A99EE1FC266659BF00E713FC /* WireTransport.xcframework in Embed Frameworks */,
-				A99EE1F92666591A00E713FC /* WireProtos.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -7358,7 +7324,6 @@
 				F1FEA14521DCEB1700790A54 /* Headers */,
 				F1FEA14621DCEB1700790A54 /* Sources */,
 				F1FEA14721DCEB1700790A54 /* Frameworks */,
-				A99EE1EA266658D500E713FC /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
