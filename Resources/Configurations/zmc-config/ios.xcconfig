@@ -27,8 +27,6 @@
 SDKROOT = iphoneos
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator
 
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-
 ARCHS[sdk=iphoneos*] = arm64 armv7
 ARCHS[sdk=iphonesimulator*] = x86_64
 
