@@ -24,7 +24,6 @@
 SDKROOT = iphoneos
 ARCHS[sdk=iphoneos*] = arm64 armv7
 ARCHS[sdk=iphonesimulator*] = x86_64
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator
 
 
@@ -54,7 +53,7 @@ DYLIB_CURRENT_VERSION = $(CURRENT_PROJECT_VERSION)
 // Swift
 //
 SWIFT_VERSION = 5.1
-ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES
+ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
 SWIFT_COMPILATION_MODE = wholemodule
 LD_RUNPATH_SEARCH_PATHS = $(inherited) @loader_path/Frameworks @loader_path/../Frameworks @executable_path/Frameworks @executable_path/../Frameworks
 DEFINES_MODULE = YES
