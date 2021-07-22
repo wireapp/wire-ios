@@ -22,13 +22,6 @@
 //
 
 
-
-// Architectures
-//
-VALID_ARCHS[sdk=iphoneos*] = arm64 armv7
-VALID_ARCHS[sdk=iphonesimulator*] = x86_64
-
-
 // Deployment
 //
 IPHONEOS_DEPLOYMENT_TARGET = 10.0
