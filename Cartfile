@@ -1,6 +1,6 @@
-github "wireapp/wire-ios-cryptobox" ~> 27.0.4
+github "wireapp/wire-ios-cryptobox" ~> 27.0.6
 github "wireapp/wire-ios-protos" ~> 28.0.1
-github "wireapp/wire-ios-images" ~> 35.0.1
+github "wireapp/wire-ios-images" ~> 35.0.3
 github "wireapp/PINCache" "2.3-xcframework"
-github "wireapp/wire-ios-transport" ~> 77.0.1
-github "wireapp/wire-ios-link-preview" ~> 31.0.2
+github "wireapp/wire-ios-transport" ~> 77.0.4
+github "wireapp/wire-ios-link-preview" ~> 31.0.4
