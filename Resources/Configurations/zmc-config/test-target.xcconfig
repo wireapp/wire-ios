@@ -17,3 +17,9 @@
 // 
 
 GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
+
+// for ignore the compiler error:
+//❌  OCMock.framework/Headers/OCMLocation.h:18:9: double-quoted include "OCMFunctions.h" in framework header, expected angle-bracketed instead [-Werror,-Wquoted-include-in-framework-header]
+//
+//#import "OCMFunctions.h"
+CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO

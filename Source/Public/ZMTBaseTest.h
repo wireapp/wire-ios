@@ -18,7 +18,7 @@
 
 
 #import <XCTest/XCTest.h>
-#import "ZMTFailureRecorder.h"
+#import <WireTesting/ZMTFailureRecorder.h>
 @import WireSystem;
 
 extern void PrintTimeoutWarning(XCTestCase *_Nonnull test, NSTimeInterval const maxTimeout, NSTimeInterval const actualTimeout);
