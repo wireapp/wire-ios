@@ -212,7 +212,7 @@ public class SharingSession {
                             accountIdentifier: UUID,
                             hostBundleIdentifier: String,
                             environment: BackendEnvironmentProvider,
-                            appLockConfig: AppLockController.Config) throws {
+                            appLockConfig: AppLockController.LegacyConfig?) throws {
 
         let sharedContainerURL = FileManager.sharedContainerDirectory(for: applicationGroupIdentifier)
 
@@ -266,7 +266,7 @@ public class SharingSession {
                   applicationStatusDirectory: ApplicationStatusDirectory,
                   operationLoop: RequestGeneratingOperationLoop,
                   strategyFactory: StrategyFactory,
-                  appLockConfig: AppLockController.Config
+                  appLockConfig: AppLockController.LegacyConfig?
         ) throws {
         
         self.coreDataStack = coreDataStack
@@ -278,7 +278,7 @@ public class SharingSession {
         self.strategyFactory = strategyFactory
         
         let selfUser = ZMUser.selfUser(in: coreDataStack.viewContext)
-        self.appLockController = AppLockController(userId: accountIdentifier, config: appLockConfig, selfUser: selfUser)
+        self.appLockController = AppLockController(userId: accountIdentifier, selfUser: selfUser, legacyConfig: appLockConfig)
         
         guard applicationStatusDirectory.authenticationStatus.state == .authenticated else { throw InitializationError.loggedOut }
         
@@ -291,7 +291,7 @@ public class SharingSession {
                             transportSession: ZMTransportSession,
                             cachesDirectory: URL,
                             accountContainer: URL,
-                            appLockConfig: AppLockController.Config) throws {
+                            appLockConfig: AppLockController.LegacyConfig?) throws {
         
         let applicationStatusDirectory = ApplicationStatusDirectory(syncContext: coreDataStack.syncContext, transportSession: transportSession)
         let linkPreviewPreprocessor = LinkPreviewPreprocessor(linkPreviewDetector: applicationStatusDirectory.linkPreviewDetector, managedObjectContext: coreDataStack.syncContext)
