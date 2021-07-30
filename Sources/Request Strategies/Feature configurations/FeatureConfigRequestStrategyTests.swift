@@ -38,85 +38,91 @@ class FeatureConfigRequestStrategyTests: MessagingTestBase {
         sut = nil
         super.tearDown()
     }
+
+    private func setUpTeam(in context: NSManagedObjectContext) -> UUID {
+        let team = self.createTeam(for: .selfUser(in: context))
+        return team.remoteIdentifier!
+    }
     
     // MARK: Single configuration
 
     func test_ItGeneratesARequest_ToFetchASingleConfig() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let feature = self.createFeature(.appLock, in: moc)
+        syncMOC.performGroupedAndWait { context -> Void in
+            // Given
+            let teamId = self.setUpTeam(in: context)
+
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
             feature.needsToBeUpdatedFromBackend = true
 
-            // when
+            // When
             self.boostrapChangeTrackers(with: feature)
             guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail() }
 
-            // then
-            XCTAssertEqual(request.path, "/teams/\(feature.team!.remoteIdentifier!.transportString())/features/appLock")
-            return
+            // Then
+            XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/features/appLock")
         }
     }
 
     func test_ItDoesNotGenerateARequest_ToFetchASingleConfig_WhenNotNeeded() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let feature = self.createFeature(.appLock, in: moc)
+        syncMOC.performGroupedAndWait { context -> Void in
+            // Given
+            let _ = self.setUpTeam(in: context)
+
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
             feature.needsToBeUpdatedFromBackend = false
 
-            // when
+            // When
             self.boostrapChangeTrackers(with: feature)
             let request = self.sut.nextRequestIfAllowed()
 
-            // then
+            // Then
             XCTAssertNil(request)
-            return
         }
     }
     
     func test_ItDoesNotGenerateARequest_ToFetchASingleConfig_WithoutATeam() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let feature = self.createFeature(.appLock, in: moc)
-            feature.team = nil
+        syncMOC.performGroupedAndWait { context -> Void in
+            // Given
+            XCTAssertNil(ZMUser.selfUser(in: context).team)
+
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
             feature.needsToBeUpdatedFromBackend = true
 
-            // when
+            // When
             self.boostrapChangeTrackers(with: feature)
             let request = self.sut.nextRequestIfAllowed()
 
-            // then
+            // Then
             XCTAssertNil(request)
-            return
         }
     }
 
     // MARK: - All configurations
 
     func test_ItGeneratesARequest_ToFetchAllConfigs() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            let teamId = self.createTeam(for: .selfUser(in: moc)).remoteIdentifier!
+        syncMOC.performGroupedAndWait { context -> Void in
+            // Given
+            let teamId = self.setUpTeam(in: context)
 
-            // when
+            // When
             Feature.triggerBackendRefreshForAllConfigs()
             guard let request = self.sut.nextRequestIfAllowed() else { return XCTFail() }
 
-            // then
+            // Then
             XCTAssertEqual(request.path, "/teams/\(teamId.transportString())/features")
-            return
         }
     }
 
     func test_ItDoesNotGenerateARequest_ToFetchAllConfigs_WithoutATeam() {
-        self.syncMOC.performGroupedAndWait { moc in
-            // given
-            XCTAssertNil(ZMUser.selfUser(in: moc).team)
+        syncMOC.performGroupedAndWait { context -> Void in
+            // Given
+            XCTAssertNil(ZMUser.selfUser(in: context).team)
 
-            // when
+            // When
             Feature.triggerBackendRefreshForAllConfigs()
             let request = self.sut.nextRequestIfAllowed()
 
-            // then
+            // Then
             XCTAssertNil(request)
         }
     }
@@ -147,7 +153,6 @@ private extension FeatureConfigRequestStrategyTests {
         feature.name = name
         feature.status = .enabled
         feature.config = nil
-        feature.team = createTeam(for: .selfUser(in: context))
         return feature
     }
 
