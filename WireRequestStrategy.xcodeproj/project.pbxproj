@@ -9,8 +9,6 @@
 /* Begin PBXBuildFile section */
 		068084962563B6940047899C /* FeatureConfigRequestStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068084952563B6940047899C /* FeatureConfigRequestStrategy.swift */; };
 		068084982563B7310047899C /* FeatureConfigRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 068084972563B7310047899C /* FeatureConfigRequestStrategyTests.swift */; };
-		069D07BA2562793E00DBA592 /* FeatureController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 069D07B92562793E00DBA592 /* FeatureController.swift */; };
-		06D0651A256340470057836B /* FeatureControllerTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06D06519256340470057836B /* FeatureControllerTest.swift */; };
 		1621D2281D75AB2D007108C2 /* MockEntity.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2231D75AB2D007108C2 /* MockEntity.m */; };
 		1621D2291D75AB2D007108C2 /* MockEntity2.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2251D75AB2D007108C2 /* MockEntity2.m */; };
 		1621D22A1D75AB2D007108C2 /* MockModelObjectContextFactory.m in Sources */ = {isa = PBXBuildFile; fileRef = 1621D2271D75AB2D007108C2 /* MockModelObjectContextFactory.m */; };
@@ -224,8 +222,6 @@
 /* Begin PBXFileReference section */
 		068084952563B6940047899C /* FeatureConfigRequestStrategy.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FeatureConfigRequestStrategy.swift; sourceTree = "<group>"; };
 		068084972563B7310047899C /* FeatureConfigRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureConfigRequestStrategyTests.swift; sourceTree = "<group>"; };
-		069D07B92562793E00DBA592 /* FeatureController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureController.swift; sourceTree = "<group>"; };
-		06D06519256340470057836B /* FeatureControllerTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeatureControllerTest.swift; sourceTree = "<group>"; };
 		1621D2221D75AB2D007108C2 /* MockEntity.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity.h; sourceTree = "<group>"; };
 		1621D2231D75AB2D007108C2 /* MockEntity.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MockEntity.m; sourceTree = "<group>"; };
 		1621D2241D75AB2D007108C2 /* MockEntity2.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MockEntity2.h; sourceTree = "<group>"; };
@@ -470,14 +466,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		0630670B2566763900A9942E /* FeatureConfiguration */ = {
-			isa = PBXGroup;
-			children = (
-				069D07B92562793E00DBA592 /* FeatureController.swift */,
-			);
-			path = FeatureConfiguration;
-			sourceTree = "<group>";
-		};
 		068084942563B6940047899C /* Feature configurations */ = {
 			isa = PBXGroup;
 			children = (
@@ -492,7 +480,6 @@
 			children = (
 				A90C56EB2685C23400F1007B /* ZMImagePreprocessingTrackerTests.h */,
 				F18401F82073C2E600E9F4CC /* MessagingTest+Encryption.swift */,
-				06D06519256340470057836B /* FeatureControllerTest.swift */,
 				F18401F62073C2E500E9F4CC /* MessagingTestBase.swift */,
 				F18401F92073C2E600E9F4CC /* MockObjects.swift */,
 				F18401F72073C2E600E9F4CC /* RequestStrategyTestBase.swift */,
@@ -972,7 +959,6 @@
 		F963E8D81D955D4600098AD3 /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
-				0630670B2566763900A9942E /* FeatureConfiguration */,
 				F18401962073BE0800E9F4CC /* ZMStrategyConfigurationOption.h */,
 				F18401942073BE0800E9F4CC /* MessageExpirationTimer.swift */,
 				F18401972073BE0800E9F4CC /* MessageExpirationTimerTests.swift */,
@@ -1173,7 +1159,6 @@
 			files = (
 				F18401C12073BE0800E9F4CC /* ImageV2DownloadRequestStrategy.swift in Sources */,
 				F18401CD2073BE0800E9F4CC /* LinkPreviewPreprocessor.swift in Sources */,
-				069D07BA2562793E00DBA592 /* FeatureController.swift in Sources */,
 				169BA1CB25E9507600374343 /* Payload+Decoding.swift in Sources */,
 				166901DB1D7081C7000FE4AF /* ZMLocallyModifiedObjectSet.m in Sources */,
 				8792F55721AD944100795027 /* UserPropertyRequestStrategy.swift in Sources */,
@@ -1247,7 +1232,6 @@
 			files = (
 				F18401E12073C25900E9F4CC /* ClientMessageTranscoderTests+Depedency.swift in Sources */,
 				547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */,
-				06D0651A256340470057836B /* FeatureControllerTest.swift in Sources */,
 				F19561F5202A1361005347C0 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */,
 				16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */,
 				164D007622256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift in Sources */,

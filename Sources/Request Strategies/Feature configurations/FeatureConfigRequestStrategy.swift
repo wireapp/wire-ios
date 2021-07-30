@@ -37,8 +37,6 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
     private var fetchSingleConfigSync: ZMDownstreamObjectSync!
     private var fetchAllConfigsSync: ZMSingleRequestSync!
 
-    private var featureController: FeatureController!
-
     private var team: Team? {
         return ZMUser.selfUser(in: managedObjectContext).team
     }
@@ -62,8 +60,6 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
             .allowsRequestsWhileWaitingForWebsocket,
             .allowsRequestsWhileInBackground
         ]
-        
-        featureController = FeatureController(managedObjectContext: managedObjectContext)
 
         fetchSingleConfigSync = ZMDownstreamObjectSync(
             transcoder: self,
@@ -100,7 +96,7 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
     }
 
     private func requestToFetchConfig(for feature: Feature) -> ZMTransportRequest? {
-        guard let teamId = feature.team?.remoteIdentifier?.transportString() else { return nil }
+        guard let teamId = team?.remoteIdentifier?.transportString() else { return nil }
         return ZMTransportRequest(getFromPath: "/teams/\(teamId)/features/\(feature.transportName)")
     }
 
@@ -120,7 +116,7 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
 
             switch feature.name {
             case .appLock:
-                let config = try decoder.decode(ConfigResponse<Feature.AppLock>.self, from: responseData)
+                let config = try decoder.decode(DynamicConfigResponse<Feature.AppLock.Config>.self, from: responseData)
                 feature.status = config.status
                 feature.config = try encoder.encode(config.config)
             }
@@ -155,7 +151,6 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
     public func didReceive(_ response: ZMTransportResponse, forSingleRequest sync: ZMSingleRequestSync) {
         guard
             sync == fetchAllConfigsSync,
-            let team = team,
             response.result == .success,
             let responseData = response.rawData
         else {
@@ -164,7 +159,10 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
 
         do {
             let allConfigs = try JSONDecoder().decode(AllConfigsResponse.self, from: responseData)
-            featureController.store(feature: allConfigs.applock.asFeature, in: team)
+
+            let featureService = FeatureService(context: managedObjectContext)
+            featureService.storeAppLock(.init(configResponse: allConfigs.applock))
+
         } catch {
             zmLog.error("Failed to decode feature config response: \(error)")
         }
@@ -174,23 +172,29 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
 
 // MARK: - Response models
 
-private extension FeatureConfigRequestStrategy {
+private struct AllConfigsResponse: Decodable {
 
-    struct ConfigResponse<T: FeatureLike>: Decodable {
+    var applock: DynamicConfigResponse<Feature.AppLock.Config>
 
-        let status: Feature.Status
-        let config: T.Config
+}
 
-        var asFeature: T {
-            return T(status: status, config: config)
-        }
+private struct ConfigResponse: Decodable {
 
-    }
+    let status: Feature.Status
 
-    struct AllConfigsResponse: Decodable {
+}
 
-        var applock: ConfigResponse<Feature.AppLock>
+private struct DynamicConfigResponse<Config: Decodable>: Decodable {
 
+    let status: Feature.Status
+    let config: Config
+
+}
+
+private extension Feature.AppLock {
+
+    init(configResponse: DynamicConfigResponse<Config>) {
+        self.init(status: configResponse.status, config: configResponse.config)
     }
 
 }
