@@ -22,17 +22,34 @@ public extension AppLockController {
 
     struct Config {
 
-        public var isAvailable: Bool
-        public var isForced: Bool
-        public var timeout: UInt
+        public let isAvailable: Bool
+        public let isForced: Bool
+        public let timeout: UInt
+
+        public init(isAvailable: Bool, isForced: Bool, timeout: UInt) {
+            self.isAvailable = isAvailable
+            self.isForced = isForced
+            self.timeout = timeout
+        }
+
+    }
+
+    /// The legacy config is determined at compile time through the SessionManagerConfiguration, which
+    /// is only used by whitelabel custom builds. The new config is retrieved from the backend using
+    /// the 'features' endpoint.
+
+    struct LegacyConfig: Codable {
+
+        public let isForced: Bool
+        public let timeout: UInt
         public let requireCustomPasscode: Bool
 
-        public init(isAvailable: Bool, isForced: Bool, timeout: UInt, requireCustomPasscode: Bool) {
-            self.isAvailable = isAvailable
+        public init(isForced: Bool = false, timeout: UInt = 10, requireCustomPasscode: Bool = false) {
             self.isForced = isForced
             self.timeout = timeout
             self.requireCustomPasscode = requireCustomPasscode
         }
+
     }
 
 }

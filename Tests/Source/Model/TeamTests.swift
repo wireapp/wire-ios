@@ -213,29 +213,4 @@ final class TeamTests: ZMConversationTestsBase {
         XCTAssertEqual(result, [membership])
     }
 
-    // MARK: - Features
-
-    func testItEnqueuesBackendRefreshForFeature_WhenFeatureExistsInCoreData() {
-        syncMOC.performGroupedAndWait { context in
-            // Given
-            let sut = self.createTeam(in: context)
-
-            let feature = Feature.insert(
-                name: .appLock,
-                status: .enabled,
-                config: nil,
-                team: sut,
-                context: context
-            )
-
-            XCTAssertFalse(feature.needsToBeUpdatedFromBackend)
-
-            // When
-            sut.enqueueBackendRefresh(for: .appLock)
-
-            // Then
-            XCTAssertTrue(feature.needsToBeUpdatedFromBackend)
-        }
-    }
-    
 }

@@ -23,163 +23,111 @@ final class FeatureTests: ZMBaseManagedObjectTest {
 
     // MARK: - Tests
 
-    func testThatItCreatesFeature() {
-        syncMOC.performGroupedAndWait { context in
-            // given
-            let team = self.createTeam(in: context)
-
-            // when
-            let feature = Feature.insert(name: .appLock,
-                                         status: .enabled,
-                                         config: self.configData(enforced: false),
-                                         team: team,
-                                         context: context)
-            // then
-            let fetchedFeature = Feature.fetch(name: .appLock, context: context)
-            XCTAssertEqual(feature, fetchedFeature)
-            XCTAssertEqual(feature.team?.remoteIdentifier, team.remoteIdentifier!)
-        }
-    }
-    
     func testThatItUpdatesFeature() {
+        // given
         syncMOC.performGroupedAndWait { context in
-            // given
-            let team = self.createTeam(in: context)
+            guard let defaultAppLock = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            XCTAssertEqual(defaultAppLock.status, .enabled)
+            return
+        }
 
-            let feature = Feature.insert(name: .appLock,
-                                         status: .enabled,
-                                         config: self.configData(enforced: false),
-                                         team: team,
-                                         context: context)
-            XCTAssertEqual(feature.status, .enabled)
-
-            // when
-            Feature.update(havingName: .appLock, in: context) {
+        // when
+        syncMOC.performGroupedAndWait { context in
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.status = .disabled
             }
+        }
 
-            // then
-            XCTAssertEqual(feature.status, .disabled)
+        // then
+        syncMOC.performGroupedAndWait { context in
+            let updatedAppLock = Feature.fetch(name: .appLock, context: context)
+            XCTAssertEqual(updatedAppLock?.status, .disabled)
+            return
         }
     }
     
     func testThatItFetchesFeature() {
         syncMOC.performGroupedAndWait { context in
-            // given
-            let team = self.createTeam(in: context)
-
-            let _ = Feature.insert(name: .appLock,
-                                   status: .enabled,
-                                   config: self.configData(enforced: false),
-                                   team: team,
-                                   context: context)
-
-
             // when
-            let fetchedFeature = Feature.fetch(name: .appLock, context: context)
+            let defaultAppLock = Feature.fetch(name: .appLock, context: context)
 
             // then
-            XCTAssertNotNil(fetchedFeature)
+            XCTAssertNotNil(defaultAppLock)
         }
     }
 
-    func testItCreatesADefaultInstance() {
-        syncMOC.performGroupedAndWait { context in
-            // Given
-            let team = self.createTeam(in: context)
-
-            XCTAssertNil(Feature.fetch(name: .appLock, context: context))
-
-            // When
-            Feature.createDefaultInstanceIfNeeded(name: .appLock, team: team, context: context)
-
-            // Then
-            XCTAssertNotNil(Feature.fetch(name: .appLock, context: context))
-        }
-    }
-    
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameForced() {
+        // given
         syncMOC.performGroupedAndWait { context in
-            // given
-            let team = self.createTeam(in: context)
-            let oldConfigData = self.configData(enforced: false)
-            let decoder = JSONDecoder()
-            let feature = Feature.insert(name: .appLock,
-                                         status: .enabled,
-                                         config: oldConfigData,
-                                         team: team,
-                                         context: context)
-
-            let oldConfig = try? decoder.decode(Feature.AppLock.Config.self, from: oldConfigData)
-            XCTAssertFalse(oldConfig!.enforceAppLock)
-
-            XCTAssertFalse(feature.needsToNotifyUser)
-
-            // when
-            let newConfigData = self.configData(enforced: true)
-
-            Feature.update(havingName: .appLock, in: context) {
-                $0.config = newConfigData
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
+                $0.config = self.configData(enforced: false)
             }
+        }
 
-            let newConfig = try? decoder.decode(Feature.AppLock.Config.self, from: newConfigData)
-            XCTAssertTrue(newConfig!.enforceAppLock)
+        syncMOC.performGroupedAndWait { context in
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            XCTAssertFalse(feature.needsToNotifyUser)
+            return
+        }
 
-            let fetchedFeature = Feature.fetch(name: .appLock, context: context)
+        // when
+        syncMOC.performGroupedAndWait { context in
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
+                $0.config = self.configData(enforced: true)
+            }
+        }
 
-            // then
-            XCTAssertTrue(fetchedFeature!.needsToNotifyUser)
+        // then
+        syncMOC.performGroupedAndWait { context in
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            XCTAssertTrue(feature.needsToNotifyUser)
+            return
         }
     }
     
     func testThatItUpdatesNeedsToNotifyUserFlag_IfAppLockBecameNonForced() {
+        // given
         syncMOC.performGroupedAndWait { context in
-            // given
-            let team = self.createTeam(in: context)
-            let oldConfigData = self.configData(enforced: true)
-            let decoder = JSONDecoder()
-            let feature = Feature.insert(name: .appLock,
-                                         status: .enabled,
-                                         config: oldConfigData,
-                                         team: team,
-                                         context: context)
-
-            let oldConfig = try? decoder.decode(Feature.AppLock.Config.self, from: oldConfigData)
-            XCTAssertTrue(oldConfig!.enforceAppLock)
-
-            XCTAssertFalse(feature.needsToNotifyUser)
-
-            // when
-            let newConfigData = self.configData(enforced: false)
-
-            Feature.update(havingName: .appLock, in: context) {
-                $0.config = newConfigData
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
+                $0.config = self.configData(enforced: true)
+                $0.needsToNotifyUser = false
             }
+        }
 
-            let newConfig = try? decoder.decode(Feature.AppLock.Config.self, from: newConfigData)
-            XCTAssertFalse(newConfig!.enforceAppLock)
+        syncMOC.performGroupedAndWait { context in
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            XCTAssertFalse(feature.needsToNotifyUser)
+            return
+        }
 
-            let fetchedFeature = Feature.fetch(name: .appLock, context: context)
+        // when
+        syncMOC.performGroupedAndWait { context in
+            Feature.updateOrCreate(havingName: .appLock, in: context) {
+                $0.config = self.configData(enforced: false)
+            }
+        }
 
-            // then
-            XCTAssertTrue(fetchedFeature!.needsToNotifyUser)
+        // then
+        syncMOC.performGroupedAndWait { context in
+            guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
+            XCTAssertTrue(feature.needsToNotifyUser)
+            return
         }
     }
 }
 
 // MARK: - Helpers
 extension FeatureTests {
+
     func configData(enforced: Bool) -> Data {
-        return {
-          let json = """
+        let json = """
           {
             "enforceAppLock": \(enforced),
             "inactivityTimeoutSecs": 30
           }
           """
 
-          return json.data(using: .utf8)!
-        }()
+        return json.data(using: .utf8)!
     }
 }
 
@@ -189,14 +137,12 @@ extension Feature {
     static func insert(name: Name,
                        status: Status,
                        config: Data?,
-                       team: Team,
                        context: NSManagedObjectContext) -> Feature {
 
         let feature = Feature.insertNewObject(in: context)
         feature.name = name
         feature.status = status
         feature.config = config
-        feature.team = team
         return feature
     }
 

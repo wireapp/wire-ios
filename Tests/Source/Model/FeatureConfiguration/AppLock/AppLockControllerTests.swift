@@ -40,7 +40,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItCantBeTurnedOff_WhenItIsForced() {
         // Given
-        let sut = createAppLockController(isForced: true)
+        let sut = createSut(forceAppLock: true)
         XCTAssertTrue(sut.isActive)
 
         // When
@@ -52,7 +52,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
     
     func test_ItCanBeTurnedOff_WhenItIsNotForced() {
         // Given
-        let sut = createAppLockController(isForced: false)
+        let sut = createSut(forceAppLock: false)
 
         sut.isActive = true
         XCTAssertTrue(sut.isActive)
@@ -64,31 +64,33 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
         XCTAssertFalse(sut.isActive)
     }
 
-    func test_ItHonorsTheTeamConfiguration_WhenSelfUserIsATeamUser() {
+    func test_ItUsesTheLegacyConfiguration_WhenItExists() {
         // Given
-        let sut = createAppLockController(isAvailable: true, isForced: false, timeout: 10)
-        createTeamConfiguration(isAvailable: false, isForced: true, timeout: 30)
+        let sut = createSut(legacyConfig: .init(isForced: true, timeout: 123, requireCustomPasscode: true))
 
         // Then
-        XCTAssertFalse(sut.isAvailable)
+        XCTAssertTrue(sut.isAvailable)
         XCTAssertTrue(sut.isForced)
-        XCTAssertEqual(sut.timeout, 30)
+        XCTAssertEqual(sut.timeout, 123)
+        XCTAssertTrue(sut.requireCustomPasscode)
     }
 
-    func test_ItCanBeForced_EvenIfTheTeamConfigurationDoesntEnforceIt() {
+    func test_ItUsesTheStandardConfiguration_WhenNoLegacyConfigurationExists() {
         // Given
-        let sut = createAppLockController(isForced: true)
-        createTeamConfiguration(isForced: false)
+        let sut = createSut(legacyConfig: nil)
 
         // Then
-        XCTAssertTrue(sut.isForced)
+        XCTAssertTrue(sut.isAvailable)
+        XCTAssertFalse(sut.isForced)
+        XCTAssertEqual(sut.timeout, 60)
+        XCTAssertFalse(sut.requireCustomPasscode)
     }
 
     // MARK: - Is locked
 
     func test_ItIsLocked_IfStateIsAlreadyLocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.locked)
 
         // Then
@@ -97,7 +99,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItIsNotLocked_IfStateIsAlreadyUnlocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.unlocked)
 
         // Then
@@ -106,7 +108,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItIsLocked_WhenTimeoutIsExceeded() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.needsChecking)
         sut._setLastCheckpoint(Date(timeIntervalSinceNow: -15))
 
@@ -116,7 +118,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItIsNotLocked_WhenTimeoutIsExceeded_ButNotActive() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.needsChecking)
         sut._setLastCheckpoint(Date(timeIntervalSinceNow: -15))
         sut.isActive = false
@@ -127,7 +129,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItIsNotLocked_WhenTimeoutIsNotExceeded() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.needsChecking)
         sut._setLastCheckpoint(Date(timeIntervalSinceNow: -5))
 
@@ -139,7 +141,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItBeginsTheTimer_IfUnlocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.unlocked)
 
         // When
@@ -152,7 +154,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItDoesNotBeginTheTimer_IfNotLocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.locked)
 
         let lastCheckpoint = sut.lastCheckpoint
@@ -167,7 +169,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItDoesNotBeginTheTimer_IfAlreadyBegan() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.needsChecking)
 
         let lastCheckpoint = sut.lastCheckpoint
@@ -184,7 +186,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItOpens_IfNotLocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.unlocked)
 
         let delegate = Delegate()
@@ -199,7 +201,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItDoesNotOpen_IfLocked() {
         // Given
-        let sut = createAppLockController(timeout: 10)
+        let sut = createSut(timeout: 10)
         sut._setState(.locked)
 
         let delegate = Delegate()
@@ -303,7 +305,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItEvaluatesAuthentication_WithCorrectCustomPasscode() throws {
         // Given
-        let sut = createAppLockController()
+        let sut = createSut()
         try sut.updatePasscode("boo!")
 
         let mockBiometricsState = MockBiometricsState()
@@ -323,7 +325,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItEvaluatesAuthentication_WithInCorrectCustomPasscode() throws {
         // Given
-        let sut = createAppLockController()
+        let sut = createSut()
         try sut.updatePasscode("boo!")
 
         let mockBiometricsState = MockBiometricsState()
@@ -345,7 +347,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItUpdatesThePasscode() throws {
         // Given
-        let sut = createAppLockController()
+        let sut = createSut()
 
         // When
         XCTAssertNoThrow(try sut.updatePasscode("boo!"))
@@ -359,7 +361,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_ItOverwritesExistingPasscode_WhenUpdatingThePasscode() throws {
         // Given
-        let sut = createAppLockController()
+        let sut = createSut()
         try sut.updatePasscode("boo!")
 
         // When
@@ -374,7 +376,7 @@ final class AppLockControllerTests: ZMBaseManagedObjectTest {
 
     func test_IsCustomPasscodeSet() throws {
         // Given
-        let sut = createAppLockController()
+        let sut = createSut()
         XCTAssertFalse(sut.isCustomPasscodeSet)
 
         // When
@@ -397,7 +399,7 @@ extension AppLockControllerTests {
     typealias Output = AppLockAuthenticationResult
     
     private func assert(input: Input, output: Output, file: StaticString = #file, line: UInt = #line) {
-        let sut = createAppLockController()
+        let sut = createSut()
 
         let mockBiometricsState = MockBiometricsState()
         mockBiometricsState._biometricsChanged = input.biometricsChanged
@@ -421,32 +423,16 @@ extension AppLockControllerTests {
                                    callback: assertion)
     }
     
-    private func createAppLockController(isAvailable: Bool = true,
-                                         isForced: Bool = false,
-                                         timeout: UInt = 900,
-                                         requireCustomPasscode: Bool = false) -> AppLockController {
-
-        let config = AppLockController.Config(isAvailable: isAvailable,
-                                              isForced: isForced,
-                                              timeout: timeout,
-                                              requireCustomPasscode: requireCustomPasscode
-        )
-
-        return AppLockController(userId: selfUser.remoteIdentifier, config: config, selfUser: selfUser)
+    private func createSut(legacyConfig: AppLockController.LegacyConfig? = nil) -> AppLockController {
+        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: legacyConfig)
     }
 
-    private func createTeamConfiguration(isAvailable: Bool = true, isForced: Bool = false, timeout: UInt = 30) {
-        let team = createTeam(in: uiMOC)
-        _ = createMembership(in: uiMOC, user: selfUser, team: team)
+    private func createSut(forceAppLock: Bool = false, timeout: UInt = 10) -> AppLockController {
+        let config = Feature.AppLock.Config(enforceAppLock: forceAppLock, inactivityTimeoutSecs: timeout)
+        let appLock = Feature.fetch(name: .appLock, context: uiMOC)!
+        appLock.config = try! JSONEncoder().encode(config)
 
-        let config = Feature.AppLock.Config.init(enforceAppLock: isForced, inactivityTimeoutSecs: timeout)
-        let configData = try? JSONEncoder().encode(config)
-
-        _ = Feature.insert(name: .appLock,
-                           status: isAvailable ? .enabled : .disabled,
-                           config: configData,
-                           team: team,
-                           context: uiMOC)
+        return AppLockController(userId: selfUser.remoteIdentifier, selfUser: selfUser, legacyConfig: nil)
     }
 
     class Delegate: AppLockDelegate {
@@ -460,3 +446,4 @@ extension AppLockControllerTests {
     }
 
 }
+
