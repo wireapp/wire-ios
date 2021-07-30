@@ -28,6 +28,7 @@ public final class AppLockController: AppLockType {
     public weak var delegate: AppLockDelegate?
 
     public var isAvailable: Bool {
+        guard legacyConfig == nil else { return true }
         return config.isAvailable
     }
 
@@ -43,11 +44,11 @@ public final class AppLockController: AppLockType {
     }
 
     public var isForced: Bool {
-        return config.isForced
+        return legacyConfig?.isForced ?? config.isForced
     }
 
     public var timeout: UInt {
-        return config.timeout
+        return legacyConfig?.timeout ?? config.timeout
     }
 
     public var isLocked: Bool {
@@ -67,7 +68,7 @@ public final class AppLockController: AppLockType {
     }
 
     public var requireCustomPasscode: Bool {
-        return config.requireCustomPasscode
+        return legacyConfig?.requireCustomPasscode ?? false
     }
 
     public var isCustomPasscodeSet: Bool {
@@ -76,19 +77,18 @@ public final class AppLockController: AppLockType {
 
     public var needsToNotifyUser: Bool {
         get {
-            guard let feature = selfUser.team?.feature(for: .appLock) else { return false }
-            return feature.needsToNotifyUser
+            featureService.needsToNotifyUser(for: .appLock)
         }
 
         set {
-            guard let feature = selfUser.team?.feature(for: .appLock) else { return }
-            feature.needsToNotifyUser =  newValue
+            featureService.setNeedsToNotifyUser(newValue, for: .appLock)
         }
     }
 
     // MARK: - Private properties
 
     private let selfUser: ZMUser
+    private let featureService: FeatureService
 
     private(set) var state = State.locked
 
@@ -104,34 +104,27 @@ public final class AppLockController: AppLockType {
 
     var biometricsState: BiometricsStateProtocol = BiometricsState()
 
-    private let baseConfig: Config
+    private let legacyConfig: LegacyConfig?
 
     private var config: Config {
-        guard
-            let team = selfUser.team,
-            let feature = team.feature(for: .appLock),
-            let appLock = Feature.AppLock(feature: feature)
-        else {
-            return baseConfig
-        }
+        let appLock = featureService.fetchAppLock()
 
-        var result = baseConfig
-        result.isForced = baseConfig.isForced || appLock.config.enforceAppLock
-        result.timeout = appLock.config.inactivityTimeoutSecs
-        result.isAvailable = (appLock.status == .enabled)
-
-        return result
+        return Config(isAvailable: appLock.status == .enabled,
+                      isForced: appLock.config.enforceAppLock,
+                      timeout: appLock.config.inactivityTimeoutSecs)
     }
 
     // MARK: - Life cycle
     
-    public init(userId: UUID, config: Config, selfUser: ZMUser) {
+    public init(userId: UUID, selfUser: ZMUser, legacyConfig: LegacyConfig? = nil) {
         precondition(selfUser.isSelfUser, "AppLockController initialized with non-self user")
 
         // It's safer use userId rather than selfUser.remoteIdentifier!
         self.keychainItem = PasscodeKeychainItem(userId: userId)
-        self.baseConfig = config
         self.selfUser = selfUser
+        self.legacyConfig = legacyConfig
+
+        featureService = FeatureService(context: selfUser.managedObjectContext!)
     }
     
     // MARK: - Methods

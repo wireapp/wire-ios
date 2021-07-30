@@ -20,34 +20,16 @@ import Foundation
 
 public extension Feature {
 
-    struct AppLock: FeatureLike, Codable {
+    struct AppLock: Codable {
 
         // MARK: - Properties
-
-        public static let name: Feature.Name = .appLock
 
         public let status: Status
         public let config: Config
 
         // MARK: - Life cycle
 
-        public init?(feature: Feature) {
-            guard
-                feature.name == Self.name,
-                let data = feature.config,
-                let config = try? JSONDecoder().decode(Config.self, from: data)
-            else {
-                return nil
-            }
-            
-            self.init(status: feature.status, config: config)
-        }
-
-        public init() {
-            self.init(status: .enabled, config: .init())
-        }
-
-        public init(status: Feature.Status, config: Config) {
+        public init(status: Feature.Status = .enabled, config: Config = .init()) {
             self.status = status
             self.config = config
         }
