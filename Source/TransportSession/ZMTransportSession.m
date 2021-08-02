@@ -449,8 +449,9 @@ static NSInteger const DefaultMaximumRequests = 6;
     [request setTimeoutIntervalOnRequestIfNeeded:URLRequest
                        applicationIsBackgrounded:self.applicationIsBackgrounded
                           usingBackgroundSession:session.isBackgroundSession];
-    
+
     [self.accessTokenHandler checkIfRequest:request needsToFetchAccessTokenInURLRequest:URLRequest];
+    [self.accessTokenHandler checkIfRequest:request needsToAttachCookieInURLRequest:URLRequest];
     
     NSData *bodyData = URLRequest.HTTPBody;
     URLRequest.HTTPBody = nil;

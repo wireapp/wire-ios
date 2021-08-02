@@ -51,6 +51,7 @@
 
 
 - (void)checkIfRequest:(ZMTransportRequest *)request needsToFetchAccessTokenInURLRequest:(NSMutableURLRequest *)URLRequest;
+- (void)checkIfRequest:(ZMTransportRequest *)request needsToAttachCookieInURLRequest:(NSMutableURLRequest *)URLRequest;
 
 /// Returns YES if another request should be generated (e.g. it was a temporary error)
 - (BOOL)processAccessTokenResponse:(ZMTransportResponse *)response;
