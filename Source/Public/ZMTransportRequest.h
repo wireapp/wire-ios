@@ -73,6 +73,7 @@ typedef NS_ENUM(uint8_t, ZMTransportRequestAuth) {
     ZMTransportRequestAuthNone, ///< Does not needs an access token and does not generate one
     ZMTransportRequestAuthNeedsAccess, ///< Needs an access token
     ZMTransportRequestAuthCreatesCookieAndAccessToken, ///< Does not need an access token, but the response will contain one
+    ZMTransportRequestAuthNeedsCookieAndAccessToken, /// < Needs both the cookie and access token
 };
 
 typedef NS_ENUM(int8_t, ZMTransportAccept) {
@@ -117,6 +118,7 @@ typedef NS_ENUM(int8_t, ZMTransportAccept) {
 @property (nonatomic, readonly, nullable) NSURL *fileUploadURL;
 @property (nonatomic, readonly, copy, nullable) NSString *binaryDataType; ///< Uniform type identifier (UTI) of the binary data
 @property (nonatomic, readonly) BOOL needsAuthentication;
+@property (nonatomic, readonly) BOOL needsCookie;
 @property (nonatomic, readonly) BOOL responseWillContainAccessToken;
 @property (nonatomic, readonly) BOOL responseWillContainCookie;
 @property (nonatomic, readonly, nullable) NSDate *expirationDate;

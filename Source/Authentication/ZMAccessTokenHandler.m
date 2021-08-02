@@ -153,6 +153,12 @@ static NSTimeInterval const GraceperiodToRenewAccessToken = 40;
     }
 }
 
+- (void)checkIfRequest:(ZMTransportRequest *)request needsToAttachCookieInURLRequest:(NSMutableURLRequest *)URLRequest;
+{
+    if (request.needsCookie) {
+        [self.cookieStorage setRequestHeaderFieldsOnRequest:URLRequest];
+    }
+}
 
 - (BOOL)canStartRequestWithAccessToken;
 {

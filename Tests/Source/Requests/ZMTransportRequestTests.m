@@ -69,6 +69,15 @@
     XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].needsAuthentication);
     XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].needsAuthentication);
     XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].needsAuthentication);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken].needsAuthentication);
+}
+
+- (void)testThatNeedsCookieIsSet
+{
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNone].needsCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthCreatesCookieAndAccessToken].needsCookie);
+    XCTAssertFalse([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsAccess].needsCookie);
+    XCTAssertTrue([[ZMTransportRequest alloc] initWithPath:@"/bar" method:ZMMethodPOST payload:@{} authentication:ZMTransportRequestAuthNeedsCookieAndAccessToken].needsCookie);
 }
 
 - (void)testThatCreatesAccessTokenIsSet

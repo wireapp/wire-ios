@@ -253,7 +253,7 @@
     XCTAssertFalse(canStartRequestWithAccessToken);
 }
 
-- (void)testThatItSetsTheHeaderFromAnURLRequest
+- (void)testThatItSetsTheAccessTokenHeaderFromAnURLRequest
 {
     // given
     id transportRequest = [OCMockObject niceMockForClass:[ZMTransportRequest class]];
@@ -269,6 +269,24 @@
     // then
     NSDictionary *expectedHeader = self.sut.accessToken.httpHeaders;
     XCTAssertNotNil(expectedHeader);
+    XCTAssertEqualObjects(urlRequest.allHTTPHeaderFields, expectedHeader);
+}
+
+
+- (void)testThatItSetsTheCookieTokenHeaderFromAnURLRequest
+{
+    // given
+    id transportRequest = [OCMockObject niceMockForClass:[ZMTransportRequest class]];
+    [[[transportRequest expect] andReturnValue:OCMOCK_VALUE(YES)] needsCookie];
+
+    NSMutableURLRequest *urlRequest = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:@""]];
+    XCTAssertNil(urlRequest.allHTTPHeaderFields);
+
+    // when
+    [self.sut checkIfRequest:transportRequest needsToAttachCookieInURLRequest:urlRequest];
+
+    // then
+    NSDictionary *expectedHeader = @{@"Cookie": @"zuid=bar"};
     XCTAssertEqualObjects(urlRequest.allHTTPHeaderFields, expectedHeader);
 }
 
