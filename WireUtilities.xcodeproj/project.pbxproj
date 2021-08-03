@@ -123,7 +123,9 @@
 		A96755D9265FE98A0062EDC5 /* WireTesting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A96E00E0265FEF070034A057 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE8265E4D9C00164C79 /* OCMock.xcframework */; };
 		A96E00E1265FEF070034A057 /* OCMock.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE8265E4D9C00164C79 /* OCMock.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		A98EC2A726B8169700D10C80 /* UTIHelperTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */; };
 		A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9A3B1EF24D9814D001AF38E /* Keychain.swift */; };
+		A9C6EDE426B32E9D007F61C5 /* UTIHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */; };
 		A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC1237D9927008A9BC6 /* UIColor+Hex.swift */; };
 		A9CDCDC4237D9A14008A9BC6 /* UIColor+Mixing.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC3237D9A14008A9BC6 /* UIColor+Mixing.swift */; };
 		A9CDCDC6237D9A6E008A9BC6 /* UIColor+Equatable.swift in Sources */ = {isa = PBXBuildFile; fileRef = A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */; };
@@ -356,7 +358,9 @@
 		A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
 		A944AEE8265E4D9C00164C79 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
+		A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTIHelperTests.swift; sourceTree = "<group>"; };
 		A9A3B1EF24D9814D001AF38E /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
+		A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTIHelper.swift; sourceTree = "<group>"; };
 		A9CDCDC1237D9927008A9BC6 /* UIColor+Hex.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = "UIColor+Hex.swift"; path = "Source/Public/UIColor+Hex.swift"; sourceTree = SOURCE_ROOT; };
 		A9CDCDC3237D9A14008A9BC6 /* UIColor+Mixing.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Mixing.swift"; sourceTree = "<group>"; };
 		A9CDCDC5237D9A6E008A9BC6 /* UIColor+Equatable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIColor+Equatable.swift"; sourceTree = "<group>"; };
@@ -574,6 +578,7 @@
 				5E9EA4C022423E0300D401B2 /* Array+SafeIndex.swift */,
 				632378692508D34D00AD4346 /* Array+Shift.swift */,
 				EE16270F250BA12900D35062 /* VolatileData.swift */,
+				A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */,
 			);
 			path = Source;
 			sourceTree = "<group>";
@@ -804,6 +809,7 @@
 				5E9EA4C222423EA600D401B2 /* ArraySafeIndexTests.swift */,
 				EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */,
 				6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */,
+				A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -1031,6 +1037,7 @@
 				A9A3B1F024D9814D001AF38E /* Keychain.swift in Sources */,
 				7C8BFFE522FD611700B3C8A5 /* ZMEmailAddressValidator.swift in Sources */,
 				7C8BFFE322FD5D9600B3C8A5 /* ZMAccentColorValidator.swift in Sources */,
+				A9C6EDE426B32E9D007F61C5 /* UTIHelper.swift in Sources */,
 				097E36C31B7B62150039CC4C /* NSLocale+Internal.m in Sources */,
 				F19E55A822B3AAF3005C792D /* Data+ReadableHash.swift in Sources */,
 				BF3A7A601D8AA9B30034FF40 /* OptionalComparison.swift in Sources */,
@@ -1120,6 +1127,7 @@
 				F9D381B01B70B94300E6E4EB /* ZMFunctionalTests.m in Sources */,
 				BFA2F03920C9490500EBE97C /* FunctionOperatorTests.swift in Sources */,
 				54A3430E1E4B7DFB00B48A0F /* NSOrderedSetTests.swift in Sources */,
+				A98EC2A726B8169700D10C80 /* UTIHelperTests.swift in Sources */,
 				54FA8E821BC6CC3400E42980 /* NSData+ZMSCryptoTests.swift in Sources */,
 				BF9D0B061F1CF39A005D4C31 /* Optional+ApplyTests.swift in Sources */,
 				EE162712250BA6E600D35062 /* VolatileDataTests.swift in Sources */,
