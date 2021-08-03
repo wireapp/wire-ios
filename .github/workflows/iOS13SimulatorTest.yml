@@ -1,0 +1,19 @@
+name: iOS 13 Simulator Test
+
+on: 
+  workflow_dispatch:
+  push:
+    branches:
+      - develop
+  pull_request:
+    branches:
+      - develop
+jobs:
+  Run_workspace_Tests:
+    runs-on: macOS-latest
+    steps:
+    - uses: actions/checkout@v1
+    - name: Select Xcode
+      run: sudo xcode-select -switch /Applications/Xcode_11.7.app && /usr/bin/xcodebuild -version
+    - name: Run tests
+      run: xcodebuild test -scheme WireUtilities -workspace WireUtilities.xcworkspace -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.7' | xcpretty && exit ${PIPESTATUS[0]}
