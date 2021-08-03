@@ -9,7 +9,7 @@ on:
     branches:
       - develop
 jobs:
-  Run_Tests_Xcode_12.4_iOS_13.7:
+  Run_Tests_Xcode_12_4_iOS_13_7:
     runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v1
