@@ -211,14 +211,13 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
     }
     
     NSString *contentType = self.allHeaderFields[@"Content-Type"];
-    NSString *type = CFBridgingRelease(UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, (__bridge CFStringRef) contentType, kUTTypeContent));
+    
+    NSString *type = [UTIHelper convertToUtiWithMime:contentType];
     if (type != nil) {
-        if (UTTypeConformsTo((__bridge CFStringRef) type, kUTTypeImage)) {
+        if ([UTIHelper conformsToImageTypeWithUti:type]) {
             return ZMTransportResponseContentTypeImage;
-        }
-        BOOL hasJSONSupport = (&UTTypeIsDynamic != NULL);
-        if (hasJSONSupport && UTTypeConformsTo((__bridge CFStringRef) type, kUTTypeJSON)) {
-            return ZMTransportResponseContentTypeJSON;
+        } else if ([UTIHelper conformsToJsonTypeWithUti:type]) {
+             return ZMTransportResponseContentTypeJSON;
         }
     }
     // UTI / Core Services couldn't help us.
@@ -235,7 +234,7 @@ static NSString* ZMLogTag ZM_UNUSED = ZMT_LOG_TAG_NETWORK;
             type = [(__bridge id) CGImageSourceGetType(source) copy];
             CFRelease(source);
         }
-        if (UTTypeConformsTo((__bridge CFStringRef) type, kUTTypeImage)) {
+        if ([UTIHelper conformsToImageTypeWithUti:type]) {
             return ZMTransportResponseContentTypeImage;
         }
     }
