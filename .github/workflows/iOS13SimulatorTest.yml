@@ -16,8 +16,8 @@ jobs:
     - name: Select Xcode
       run: sudo xcode-select -switch /Applications/Xcode_11.7.app && /usr/bin/xcodebuild -version
     - name: Carthage
-        env:
-            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: carthage bootstrap --platform ios --use-xcframeworks
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      run: carthage bootstrap --platform ios --use-xcframeworks
     - name: Run tests
       run: xcodebuild test -scheme WireUtilities -project WireUtilities.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 8,OS=13.7' | xcpretty && exit ${PIPESTATUS[0]}
