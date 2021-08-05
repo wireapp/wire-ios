@@ -28,8 +28,6 @@
 		16B75F66222EDC5000DCAFF2 /* String+Stripping.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */; };
 		16B75F68222EE3A000DCAFF2 /* String+StrippingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */; };
 		16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */; };
-		16EB9B361CE0D5A000883FCF /* UTType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B351CE0D5A000883FCF /* UTType.swift */; };
-		16EB9B381CE0D7D800883FCF /* UTTypeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16EB9B371CE0D7D800883FCF /* UTTypeTests.swift */; };
 		3E88BD441B1F3EA300232589 /* WireUtilities.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BD381B1F3EA300232589 /* WireUtilities.framework */; };
 		3E88BE1B1B1F478200232589 /* NSOrderedSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF51B1F478200232589 /* NSOrderedSet+Zeta.m */; };
 		3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */ = {isa = PBXBuildFile; fileRef = 3E88BDF71B1F478200232589 /* NSSet+Zeta.m */; };
@@ -259,8 +257,6 @@
 		16B75F65222EDC5000DCAFF2 /* String+Stripping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+Stripping.swift"; sourceTree = "<group>"; };
 		16B75F67222EE3A000DCAFF2 /* String+StrippingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "String+StrippingTests.swift"; sourceTree = "<group>"; };
 		16D964DB1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SelfUnregisteringNotificationCenterToken.swift; sourceTree = "<group>"; };
-		16EB9B351CE0D5A000883FCF /* UTType.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UTType.swift; sourceTree = "<group>"; };
-		16EB9B371CE0D7D800883FCF /* UTTypeTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UTTypeTests.swift; sourceTree = "<group>"; };
 		3E88BD381B1F3EA300232589 /* WireUtilities.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireUtilities.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD431B1F3EA300232589 /* WireUtilities-Tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireUtilities-Tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD7E1B1F3F8000232589 /* WireUtilities-Test-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireUtilities-Test-Info.plist"; sourceTree = "<group>"; };
@@ -677,7 +673,6 @@
 				54CA311F1B74F36B00B820C0 /* SwiftDebugging.swift */,
 				54CA31201B74F36B00B820C0 /* UnownedObject.swift */,
 				54C388A71C4D5A3A00A55C79 /* NSUUID+Type1.swift */,
-				16EB9B351CE0D5A000883FCF /* UTType.swift */,
 				BF9D0B071F1CF3F5005D4C31 /* Optional+Apply.swift */,
 				D504CD322090C2F200A78DAA /* Curry.swift */,
 				BFA2F03520C9480A00EBE97C /* FunctionOperators.swift */,
@@ -790,7 +785,6 @@
 				D504CD3A2090D00500A78DAA /* FlipTests.swift */,
 				BF9D0B051F1CF39A005D4C31 /* Optional+ApplyTests.swift */,
 				54C388A91C4D5AF600A55C79 /* NSUUID+Type1Tests.swift */,
-				16EB9B371CE0D7D800883FCF /* UTTypeTests.swift */,
 				F9FCE0A41C7DBD180092BA68 /* ZMSwiftExceptionHandlerTests.m */,
 				54024FE71DF81CC6009BF6A0 /* DictionaryTests.swift */,
 				BFBAE9DC1E01A930003FCE49 /* String+EmojiTests.swift */,
@@ -1076,7 +1070,6 @@
 				3E88BE1F1B1F478200232589 /* NSSet+Zeta.m in Sources */,
 				54181A561F594FD800155ABC /* FileManager+FileProtectionLock.swift in Sources */,
 				16D964DC1F79454000390417 /* SelfUnregisteringNotificationCenterToken.swift in Sources */,
-				16EB9B361CE0D5A000883FCF /* UTType.swift in Sources */,
 				870FFA821D82B73B007E9806 /* Data+ZMSCrypto.swift in Sources */,
 				D53DB99F203ED59C00655CB4 /* Result.swift in Sources */,
 				A9CDCDC2237D9928008A9BC6 /* UIColor+Hex.swift in Sources */,
@@ -1091,7 +1084,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16EB9B381CE0D7D800883FCF /* UTTypeTests.swift in Sources */,
 				F9D381B41B70B95100E6E4EB /* NSOrderedSet+ZMUTests.m in Sources */,
 				54024FE81DF81CC6009BF6A0 /* DictionaryTests.swift in Sources */,
 				BF3493F61EC36A6400B0C314 /* Iterator+ContainmentTests.swift in Sources */,
