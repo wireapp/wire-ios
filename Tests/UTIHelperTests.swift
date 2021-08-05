@@ -23,7 +23,7 @@ import CoreServices
 
 final class UTIHelperTests: XCTestCase {
 
-    func testThatconformsToVectorTypeIdentifiesSVG() {
+    func testThatConformsToVectorTypeIdentifiesSVG() {
         // given, when, then
         XCTAssert(UTIHelper.conformsToVectorType(uti: "public.svg-image"))
     }
@@ -37,6 +37,17 @@ final class UTIHelperTests: XCTestCase {
         XCTAssertFalse(UTIHelper.conformsToVectorType(uti: sut))
 
         XCTAssert(UTIHelper.conformsToJsonType(uti: sut))
+    }
+
+    func testThatConformsMovieType() {
+        // given
+        let sut = "video/mp4"
+
+        // when & then
+        XCTAssertFalse(UTIHelper.conformsToImageType(uti: sut))
+        XCTAssertFalse(UTIHelper.conformsToVectorType(uti: sut))
+
+        XCTAssert(UTIHelper.conformsToMovieType(mime: sut))
     }
 
     func testThatConformsToImageTypeIdentifiesCommonImageTypes() {
@@ -59,6 +70,7 @@ final class UTIHelperTests: XCTestCase {
         XCTAssertEqual(UTIHelper.convertToUti(mime: "image/gif"), "com.compuserve.gif")
         XCTAssertEqual(UTIHelper.convertToUti(mime: "image/png"), "public.png")
         XCTAssertEqual(UTIHelper.convertToUti(mime: "image/svg+xml"), "public.svg-image")
+        XCTAssertEqual(UTIHelper.convertToUti(mime: "video/mp4"), "public.mpeg-4")
     }
 
     func testThatConvertToMimeConvertsCommonImageTypes() {
@@ -67,6 +79,19 @@ final class UTIHelperTests: XCTestCase {
         XCTAssertEqual(UTIHelper.convertToMime(uti: "com.compuserve.gif"), "image/gif")
         XCTAssertEqual(UTIHelper.convertToMime(uti: "public.png"), "image/png")
         XCTAssertEqual(UTIHelper.convertToMime(uti: "public.svg-image"), "image/svg+xml")
+        XCTAssertEqual(UTIHelper.convertToMime(uti: "public.mpeg-4"), "video/mp4")
 
+    }
+
+    func testThatConvertToMimeConvertsFileExtensions() {
+        XCTAssertEqual(UTIHelper.convertToMime(fileExtension: "pkpass"), "application/vnd.apple.pkpass")
+        XCTAssertEqual(UTIHelper.convertToMime(fileExtension: "txt"), "text/plain")
+        XCTAssertEqual(UTIHelper.convertToMime(fileExtension: "mp4"), "video/mp4")
+    }
+
+    func testThatConvertToFileExtensionHandlesCommonTypes() {
+        XCTAssertEqual(UTIHelper.convertToFileExtension(mime: "application/vnd.apple.pkpass"), "pkpass")
+        XCTAssertEqual(UTIHelper.convertToFileExtension(mime: "video/mp4"), "mp4")
+        XCTAssertEqual(UTIHelper.convertToFileExtension(mime: "text/plain"), "txt")
     }
 }
