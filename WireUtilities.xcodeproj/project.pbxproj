@@ -117,6 +117,10 @@
 		87B6489C2076078A002FC9E7 /* Composition.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87B6489B2076078A002FC9E7 /* Composition.swift */; };
 		87ECBDD51E78457C00596836 /* ExtremeCombiningCharactersValidator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 87ECBDD41E78457C00596836 /* ExtremeCombiningCharactersValidator.swift */; };
 		A944AEEA265E4D9C00164C79 /* WireSystem.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */; };
+		A94DA30826BC239400CC626C /* Data+Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94DA30726BC239400CC626C /* Data+Image.swift */; };
+		A94DA31626BC256E00CC626C /* NSData+ImageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */; };
+		A94DA32726BC5DE700CC626C /* animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = A94DA32526BC5DE700CC626C /* animated.gif */; };
+		A94DA32826BC5DE700CC626C /* not_animated.gif in Resources */ = {isa = PBXBuildFile; fileRef = A94DA32626BC5DE700CC626C /* not_animated.gif */; };
 		A96755D8265FE98A0062EDC5 /* WireTesting.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */; };
 		A96755D9265FE98A0062EDC5 /* WireTesting.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		A96E00E0265FEF070034A057 /* OCMock.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = A944AEE8265E4D9C00164C79 /* OCMock.xcframework */; };
@@ -354,6 +358,10 @@
 		A944AEE7265E4D9B00164C79 /* WireSystem.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireSystem.xcframework; path = Carthage/Build/WireSystem.xcframework; sourceTree = "<group>"; };
 		A944AEE8265E4D9C00164C79 /* OCMock.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = OCMock.xcframework; path = Carthage/Build/OCMock.xcframework; sourceTree = "<group>"; };
 		A944AEE9265E4D9C00164C79 /* WireTesting.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = WireTesting.xcframework; path = Carthage/Build/WireTesting.xcframework; sourceTree = "<group>"; };
+		A94DA30726BC239400CC626C /* Data+Image.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Image.swift"; sourceTree = "<group>"; };
+		A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "NSData+ImageTests.swift"; sourceTree = "<group>"; };
+		A94DA32526BC5DE700CC626C /* animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = animated.gif; sourceTree = "<group>"; };
+		A94DA32626BC5DE700CC626C /* not_animated.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = not_animated.gif; sourceTree = "<group>"; };
 		A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTIHelperTests.swift; sourceTree = "<group>"; };
 		A9A3B1EF24D9814D001AF38E /* Keychain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Keychain.swift; sourceTree = "<group>"; };
 		A9C6EDE326B32E9D007F61C5 /* UTIHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UTIHelper.swift; sourceTree = "<group>"; };
@@ -467,6 +475,8 @@
 		091799791B7E2F0300E60DD9 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				A94DA32526BC5DE700CC626C /* animated.gif */,
+				A94DA32626BC5DE700CC626C /* not_animated.gif */,
 				544B2FFC1C1FF2DD00384477 /* data_to_hash.enc */,
 				54D06C581BC81976005F0FBB /* android_image.encrypted */,
 				54D06C5A1BC81983005F0FBB /* android_image.decrypted */,
@@ -682,6 +692,7 @@
 				BFBAE9DA1E01A8F2003FCE49 /* String+Emoji.swift */,
 				5E4BC1C5218C830500A8682E /* String+Spaces.swift */,
 				F19E554C22AFDC8D005C792D /* String+ReadableHash.swift */,
+				A94DA30726BC239400CC626C /* Data+Image.swift */,
 				F19E55A722B3AAF3005C792D /* Data+ReadableHash.swift */,
 				870FFA811D82B73B007E9806 /* Data+ZMSCrypto.swift */,
 				877F501C1E719B2B00894C90 /* String+ExtremeCombiningCharacters.swift */,
@@ -804,6 +815,7 @@
 				EF2AFC9E228179C2008C921A /* UUID+DataTests.swift */,
 				6323786B2508D51C00AD4346 /* ArrayShiftTests.swift */,
 				A98EC2A626B8169700D10C80 /* UTIHelperTests.swift */,
+				A94DA31526BC256E00CC626C /* NSData+ImageTests.swift */,
 			);
 			name = Source;
 			sourceTree = "<group>";
@@ -977,7 +989,9 @@
 				BF4A15CE1D47BECC0051E8BA /* appstore-sandbox.xml in Resources */,
 				BF4A15D01D47BF360051E8BA /* enterprise-sandbox.xml in Resources */,
 				54D06C5C1BC81AFF005F0FBB /* android_image.encrypted in Resources */,
+				A94DA32726BC5DE700CC626C /* animated.gif in Resources */,
 				544B2FFE1C1FF79500384477 /* data_to_hash.enc in Resources */,
+				A94DA32826BC5DE700CC626C /* not_animated.gif in Resources */,
 				877F50211E729CCF00894C90 /* excessive_diacritics.txt in Resources */,
 				BF4A15CC1D47B8860051E8BA /* enterprise-production.xml in Resources */,
 				54D06C5D1BC81B03005F0FBB /* android_image.decrypted in Resources */,
@@ -1043,6 +1057,7 @@
 				BF9D0B091F1CF3F8005D4C31 /* Optional+Apply.swift in Sources */,
 				16A5FDF7215A746B00AEEBBD /* IndexSet+Helpers.swift in Sources */,
 				BF3C1B0D20DA7270001CE126 /* Equatable+OneOf.swift in Sources */,
+				A94DA30826BC239400CC626C /* Data+Image.swift in Sources */,
 				F9FCE0A31C7DBBD00092BA68 /* ZMSwiftExceptionHandler.m in Sources */,
 				3E88BF631B1F68DC00232589 /* NSOperationQueue+Helpers.m in Sources */,
 				546B178224192FB70091F4B3 /* ZMObjectValidationError.m in Sources */,
@@ -1126,6 +1141,7 @@
 				877F501F1E71B69C00894C90 /* String+ExtremeCombiningCharactersTests.swift in Sources */,
 				54181A521F594E6F00155ABC /* FileManager+MoveTests.swift in Sources */,
 				546E8A501B750146009EBA02 /* NSOperationQueue+HelpersTests.m in Sources */,
+				A94DA31626BC256E00CC626C /* NSData+ImageTests.swift in Sources */,
 				A9CDCDCB237D9AE3008A9BC6 /* UIColor+MixingTests.swift in Sources */,
 				F9C9A7991CAEA8400039E10C /* ZMEncodedNSUUIDWithTimestampTests.m in Sources */,
 				5E4BC1BE2189EA3900A8682E /* AnyPropertyTests.swift in Sources */,

@@ -77,6 +77,14 @@ public final class UTIHelper: NSObject {
     }
         
     //MARK: - UTI conformation
+    
+    public class func conformsToGifType(uti: String) -> Bool {
+        if #available(iOS 14, *) {
+            return conformsTo(uti: uti, type: .gif)
+        } else {
+            return UTTypeConformsTo(uti as CFString, kUTTypeGIF)
+        }
+    }
 
     @objc
     public class func conformsToImageType(uti: String) -> Bool {
@@ -123,11 +131,7 @@ public final class UTIHelper: NSObject {
     public class func conformsToGifType(mime: String) -> Bool {
         guard let uti = convertToUti(mime: mime) else { return false }
         
-        if #available(iOS 14, *) {
-            return conformsTo(uti: uti, type: .gif)
-        } else {
-            return UTTypeConformsTo(uti as CFString, kUTTypeGIF)
-        }
+        return conformsToGifType(uti: uti)
     }
     
     public class func conformsToAudioType(mime: String) -> Bool {
