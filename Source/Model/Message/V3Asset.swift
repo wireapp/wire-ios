@@ -111,7 +111,7 @@ private let zmLog = ZMSLog(tag: "AssetV3")
         guard let mimeType = assetClientMessage.underlyingMessage?.assetData?.original.mimeType else {
             return false
         }
-        return UTType(mimeType: mimeType)?.isGIF == true
+        return UTIHelper.conformsToGifType(mime: mimeType)
     }
 
     public var imageType: String? {

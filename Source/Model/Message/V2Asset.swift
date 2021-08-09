@@ -20,19 +20,8 @@
 import Foundation
 import MobileCoreServices
 
-
-extension UTType {
-    var isGIF: Bool {
-        return self == kUTTypeGIF
-    }
-
-    var isSVG: Bool {
-        return self == kUTTypeScalableVectorGraphics
-    }
-}
-
-
-@objcMembers public class V2Asset: NSObject, ZMImageMessageData {
+@objcMembers
+public class V2Asset: NSObject, ZMImageMessageData {
     
     public var isDownloaded: Bool {
         return moc.zm_fileAssetCache.hasDataOnDisk(assetClientMessage, format: .medium, encrypted: false) ||
@@ -100,7 +89,7 @@ extension UTType {
         guard let mimeType = assetClientMessage.mediumGenericMessage?.imageAssetData?.mimeType else {
             return false
         }
-        return UTType.init(mimeType: mimeType)?.isGIF == true
+        return UTIHelper.conformsToGifType(mime: mimeType)
     }
 
     public var imageType: String? {

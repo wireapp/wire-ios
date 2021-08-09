@@ -382,7 +382,7 @@ class AssetColletionBatchedTests : ModelObjectsTests {
         XCTAssertEqual(receivedMessages.first, includedMessage)
     }
     
-    func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized(){
+    func testThatItDoesNotReturnFailedToUploadAssets_PreCategorized() {
         // given
         let includedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
         let excludedMessage = try! self.conversation.appendFile(with: ZMVideoMetadata(fileURL: self.fileURL(forResource: "video", extension: "mp4"), thumbnail: self.verySmallJPEGData())) as! ZMAssetClientMessage
