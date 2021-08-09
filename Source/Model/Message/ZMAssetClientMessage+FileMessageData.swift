@@ -151,7 +151,8 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         let secureFilename = (filename as NSString).lastPathComponent
         var temporaryFileURL = temporaryDirectoryURL.appendingPathComponent(secureFilename)
         
-        if let fileExtension = fileExtension,
+        if let mime = mimeType,
+           let fileExtension = UTIHelper.convertToFileExtension(mime: mime),
             richAssetType == .audio,
             temporaryFileURL.pathExtension != fileExtension {
             temporaryFileURL.appendPathExtension(fileExtension)
@@ -170,16 +171,7 @@ extension ZMAssetClientMessage: ZMFileMessageData {
         
         return temporaryFileURL
     }
-    
-    private var fileExtension: String? {
-        guard let mime = mimeType,
-            let uti = UTTypeCreatePreferredIdentifierForTag(kUTTagClassMIMEType, mime as CFString, nil),
-            let extensionUTI = UTTypeCopyPreferredTagWithClass(uti.takeRetainedValue(), kUTTagClassFilenameExtension) else {
-                return nil
-        }
-        return String(extensionUTI.takeRetainedValue())
-    }
-    
+        
     public var temporaryDirectoryURL: URL? {
         guard let cacheKey = FileAssetCache.cacheKeyForAsset(self) else { return nil }
         var temporaryURL = URL(fileURLWithPath: NSTemporaryDirectory(), isDirectory: true)

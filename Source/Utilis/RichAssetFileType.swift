@@ -50,14 +50,10 @@ public enum RichAssetFileType: Int, Equatable {
             return nil
         }
 
-        guard let typeID = UTType(mimeType: mimeType) else {
-            return nil
-        }
-
-        if typeID.conformsTo(kUTTypeAudio) {
+        if UTIHelper.conformsToAudioType(mime: mimeType) {
             // Match playable audio files
             self = .audio
-        } else if typeID.conformsTo(kUTTypeMovie) {
+        } else if UTIHelper.conformsToMovieType(mime: mimeType) {
             // Match playable video files
             self = .video
         } else {

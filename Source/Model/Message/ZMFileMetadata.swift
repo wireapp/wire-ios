@@ -25,7 +25,8 @@ import WireUtilities
 private let zmLog = ZMSLog(tag: "ZMFileMetadata")
 
 
-@objcMembers open class ZMFileMetadata : NSObject {
+@objcMembers
+open class ZMFileMetadata : NSObject {
     
     public let fileURL : URL
     public let thumbnail : Data?
@@ -100,13 +101,9 @@ open class ZMVideoMetadata : ZMFileMetadata {
 }
 
 extension ZMFileMetadata {
-
-    var fileType: UTType? {
-        return UTType(fileExtension: fileURL.pathExtension)
-    }
     
     var mimeType: String {
-        return fileType?.mimeType ?? "application/octet-stream"
+        return UTIHelper.convertToMime(fileExtension: fileURL.pathExtension) ?? "application/octet-stream"
     }
     
     var size: UInt64 {

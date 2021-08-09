@@ -89,7 +89,7 @@ class BaseZMAssetClientMessageTests : BaseZMClientMessageTests {
     
 }
 
-class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
+final class ZMAssetClientMessageTests : BaseZMAssetClientMessageTests {
     
     func testThatItDeletesCopiesOfDownloadedFilesIntoTemporaryFolder() {
         // given
@@ -215,7 +215,6 @@ extension ZMAssetClientMessageTests {
     func testThatItSetsTheGenericAssetMessageWhenCreatingMessage()
     {
         // given
-        let nonce = UUID.create()
         let mimeType = "text/plain"
         let filename = "document.txt"
         let url = testURLWithFilename(filename)
@@ -1427,7 +1426,7 @@ extension ZMAssetClientMessageTests {
         // GIVEN
         let gifMIME = "image/gif"
         // WHEN
-        let isGif = UTType(mimeType: gifMIME)?.isGIF
+        let isGif = UTIHelper.conformsToGifType(mime: gifMIME)
         // THEN
         XCTAssertEqual(isGif, true)
     }
@@ -1437,7 +1436,7 @@ extension ZMAssetClientMessageTests {
         
         ["text/plain", "application/pdf", "image/jpeg", "video/mp4"].forEach {
             // WHEN
-            let isGif = UTType(mimeType: $0)?.isGIF
+            let isGif = UTIHelper.conformsToGifType(mime: $0)
             
             // THEN
             XCTAssertEqual(isGif, false)
