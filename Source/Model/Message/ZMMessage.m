@@ -157,22 +157,6 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     return message;
 }
 
-+ (BOOL)isDataAnimatedGIF:(NSData *)data
-{
-    if(data.length == 0) {
-        return NO;
-    }
-    BOOL isAnimated = NO;
-    CGImageSourceRef source = CGImageSourceCreateWithData((__bridge CFDataRef) data, NULL);
-    VerifyReturnValue(source != NULL, NO);
-    NSString *type = CFBridgingRelease(CGImageSourceGetType(source));
-    if(UTTypeConformsTo((__bridge CFStringRef) type, kUTTypeGIF)) {
-        isAnimated = CGImageSourceGetCount(source) > 1;
-    }
-    CFRelease(source);
-    return isAnimated;
-}
-
 - (BOOL)isUnreadMessage
 {
     NSDate *lastReadTimeStamp = self.conversation.lastReadServerTimeStamp;
