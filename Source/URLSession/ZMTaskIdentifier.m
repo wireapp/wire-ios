@@ -49,6 +49,8 @@ static NSString * const SessionIdentifierKey = @"sessionIdentifier";
     return self;
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 + (instancetype)identifierFromData:(NSData *)data
 {
     if (nil == data) {
@@ -67,7 +69,7 @@ static NSString * const SessionIdentifierKey = @"sessionIdentifier";
 {
     return [NSKeyedArchiver archivedDataWithRootObject:self];
 }
-
+#pragma clang diagnostic pop
 #pragma mark - Equality
 
 - (BOOL)isEqual:(id)other
