@@ -194,6 +194,8 @@ static dispatch_queue_t isolationQueue()
         NSData *secretKey = [NSUserDefaults cookiesKey];
         data = [data zmDecryptPrefixedIVWithKey:secretKey];
     }
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSKeyedUnarchiver *unarchiver;
     @try {
         unarchiver = [[NSKeyedUnarchiver alloc] initForReadingWithData:data];
@@ -203,6 +205,7 @@ static dispatch_queue_t isolationQueue()
         self.authenticationCookieData = nil;
         return nil;
     }
+#pragma clang diagnostic pop
     if (unarchiver == nil) {
         ZMLogError(@"Unable to parse stored cookie data.");
         self.authenticationCookieData = nil;
@@ -381,7 +384,10 @@ static dispatch_queue_t isolationQueue()
     }
     
     NSMutableData *data = [NSMutableData data];
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
     NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
+#pragma clang diagnostic pop
     archiver.requiresSecureCoding = YES;
     [archiver encodeObject:properties forKey:@"properties"];
     [archiver finishEncoding];

@@ -18,7 +18,7 @@
 
 
 @import Foundation;
-#import "ZMTaskIdentifier.h"
+#import <WireTransport/ZMTaskIdentifier.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -59,6 +59,8 @@
     XCTAssertNotEqualObjects(second, third);
 }
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)testThatItCanBeSerializedAndDeserializedFromAndToNSData {
     // given
     ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
@@ -73,6 +75,7 @@
     XCTAssertNotNil(deserializedSut);
     XCTAssertEqualObjects(deserializedSut, sut);
 }
+#pragma clang diagnostic pop
 
 - (void)testThatItCanBeInitializedFromDataAndReturnsTheCorrectData {
     // given
