@@ -202,14 +202,14 @@
         switch (format) {
             case ZMImageFormatMedium:
                 self.mediumDataLoaded = YES;
-                self.isAnimatedGIF = [ZMImageMessage isDataAnimatedGIF:imageData];
+                self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 self.imageType = [ZMImageMessage imageTypeForData:imageData];
                 
                 break;
             case ZMImageFormatPreview:
                 break;
             case ZMImageFormatOriginal:
-                self.isAnimatedGIF = [ZMImageMessage isDataAnimatedGIF:imageData];
+                self.isAnimatedGIF = [imageData isDataAnimatedGIF];
                 break;
             default:
                 RequireString(NO, "Invalid image format in ZMMessage: %ld", (long)format);

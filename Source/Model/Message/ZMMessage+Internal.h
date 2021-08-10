@@ -213,9 +213,6 @@ extern NSString * _Nonnull const ZMMessageNeedsLinkAttachmentsUpdateKey;
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent * _Nonnull)updateEvent forConversation:(ZMConversation * _Nonnull)conversation;
 
-/// Returns whether the data represents animated GIF
-+ (BOOL)isDataAnimatedGIF:(NSData * _Nonnull)data;
-
 /// Predicate to select messages that are part of a conversation
 + (NSPredicate * _Nonnull)predicateForMessageInConversation:(ZMConversation * _Nonnull)conversation withNonces:(NSSet <NSUUID *>*  _Nonnull)nonces;
 
