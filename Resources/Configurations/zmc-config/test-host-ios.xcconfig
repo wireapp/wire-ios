@@ -17,5 +17,6 @@
 // 
 
 GCC_PREPROCESSOR_DEFINITIONS_shared = TEST_TARGET=1
-ARCHS = arm64 armv7 armv7s
 
+ARCHS[sdk=iphoneos*] = arm64
+ARCHS[sdk=iphonesimulator*] = x86_64

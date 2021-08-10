@@ -27,13 +27,13 @@
 SDKROOT = iphoneos
 SUPPORTED_PLATFORMS = iphoneos iphonesimulator
 
-ARCHS[sdk=iphoneos*] = arm64 armv7
+ARCHS[sdk=iphoneos*] = arm64
 ARCHS[sdk=iphonesimulator*] = x86_64
 
 
 // Deployment
 //
-IPHONEOS_DEPLOYMENT_TARGET = 10.0
+IPHONEOS_DEPLOYMENT_TARGET = 12.1
 TARGETED_DEVICE_FAMILY = 1,2
 DYLIB_INSTALL_NAME_BASE = @rpath
 FRAMEWORK_VERSION = A
@@ -50,7 +50,7 @@ FRAMEWORK_SEARCH_PATHS = $(inherited) $(PLATFORM_DIR)/Developer/Library/Framewor
 
 // Swift
 //
-SWIFT_VERSION = 5.2
+SWIFT_VERSION = 5.0
 ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = NO
 SWIFT_COMPILATION_MODE = wholemodule
 
