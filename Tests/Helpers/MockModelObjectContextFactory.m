@@ -87,8 +87,6 @@
     [testUUIDDataAttribute setName:@"testUUID_data"];
     [testUUIDDataAttribute setAttributeType:NSBinaryDataAttributeType];
     [testUUIDDataAttribute setOptional:YES];
-    [testUUIDDataAttribute setIndexed:YES];
-    
     
     NSAttributeDescription *needsToBeUpdatedFromBackendAttribute = [[NSAttributeDescription alloc] init];
     [needsToBeUpdatedFromBackendAttribute setName:@"needsToBeUpdatedFromBackend"];
@@ -106,6 +104,12 @@
     [mockEntity2 setManagedObjectClassName:NSStringFromClass([MockEntity2 class])];
 
     [mockEntity2 setProperties:@[fieldAttribute, modifiedDataFieldsAttribute, needsToBeUpdatedFromBackendAttribute, testUUIDAttribute, testUUIDDataAttribute]];
+    
+    NSFetchIndexElementDescription * indexDescription = [[NSFetchIndexElementDescription alloc] initWithProperty:testUUIDDataAttribute collationType:NSFetchIndexElementTypeBinary];
+
+     NSFetchIndexDescription* index = [[NSFetchIndexDescription alloc] initWithName:@"testUUID_data" elements:@[indexDescription]];
+
+     [mockEntity2 setIndexes:@[index]];
     return mockEntity2;
 }
 
@@ -146,7 +150,6 @@
     [remoteIdentifierDataAttribute setName:@"remoteIdentifier_data"];
     [remoteIdentifierDataAttribute setAttributeType:NSBinaryDataAttributeType];
     [remoteIdentifierDataAttribute setOptional:YES];
-    [remoteIdentifierDataAttribute setIndexed:YES];
     
     NSAttributeDescription *testUUIDAttribute = [[NSAttributeDescription alloc] init];
     [testUUIDAttribute setName:@"testUUID"];
@@ -158,7 +161,6 @@
     [testUUIDDataAttribute setName:@"testUUID_data"];
     [testUUIDDataAttribute setAttributeType:NSBinaryDataAttributeType];
     [testUUIDDataAttribute setOptional:YES];
-    [testUUIDDataAttribute setIndexed:YES];
 
     NSAttributeDescription *needsToBeUpdatedFromBackendAttribute = [[NSAttributeDescription alloc] init];
     [needsToBeUpdatedFromBackendAttribute setName:@"needsToBeUpdatedFromBackend"];
@@ -173,6 +175,17 @@
 
     [mockEntity setProperties:@[fieldAttribute, field2Attribute, field3Attribute, testUUIDAttribute,
         testUUIDDataAttribute, needsToBeUpdatedFromBackendAttribute, modifiedDataFieldsAttribute, mockEntityRelationship, remoteIdentifierAttribute, remoteIdentifierDataAttribute]];
+    
+    NSFetchIndexElementDescription * indexDescription = [[NSFetchIndexElementDescription alloc] initWithProperty:testUUIDDataAttribute collationType:NSFetchIndexElementTypeBinary];
+
+     NSFetchIndexDescription* index = [[NSFetchIndexDescription alloc] initWithName:@"testUUID_data" elements:@[indexDescription]];
+
+    NSFetchIndexElementDescription * indexDescriptionRemoteIdentifierDataAttribute = [[NSFetchIndexElementDescription alloc] initWithProperty:remoteIdentifierDataAttribute collationType:NSFetchIndexElementTypeBinary];
+
+     NSFetchIndexDescription* indexRemoteIdentifierDataAttribute = [[NSFetchIndexDescription alloc] initWithName:@"remoteIdentifier_data" elements:@[indexDescriptionRemoteIdentifierDataAttribute]];
+
+     [mockEntity setIndexes:@[index, indexRemoteIdentifierDataAttribute]];
+    
     return mockEntity;
 }
 
