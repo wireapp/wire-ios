@@ -59,23 +59,20 @@
     XCTAssertNotEqualObjects(second, third);
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
 - (void)testThatItCanBeSerializedAndDeserializedFromAndToNSData {
     // given
     ZMTaskIdentifier *sut = [ZMTaskIdentifier identifierWithIdentifier:46 sessionIdentifier:@"foreground-session"];
     XCTAssertNotNil(sut);
     
     // when
-    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:sut];
+    NSData *data = [NSKeyedArchiver archivedDataWithRootObject:sut requiringSecureCoding:NO error:nil];
     XCTAssertNotNil(data);
     
     // then
-    ZMTaskIdentifier *deserializedSut = [NSKeyedUnarchiver unarchiveObjectWithData:data];
+    ZMTaskIdentifier *deserializedSut = [NSKeyedUnarchiver unarchivedObjectOfClass:ZMTaskIdentifier.class fromData:data error:nil];
     XCTAssertNotNil(deserializedSut);
     XCTAssertEqualObjects(deserializedSut, sut);
 }
-#pragma clang diagnostic pop
 
 - (void)testThatItCanBeInitializedFromDataAndReturnsTheCorrectData {
     // given
