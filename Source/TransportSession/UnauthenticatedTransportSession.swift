@@ -270,13 +270,12 @@ extension HTTPCookie {
         let properties = cookies.compactMap(\.properties)
         guard let name = properties.first?[.name] as? String, name == CookieKey.zetaId.rawValue else { return nil }
         
-        let data = NSMutableData()
-        let archiver = NSKeyedArchiver(forWritingWith: data)
-        archiver.requiresSecureCoding = true
+        let archiver = NSKeyedArchiver(requiringSecureCoding: true)
         archiver.encode(properties, forKey: CookieKey.properties.rawValue)
         archiver.finishEncoding()
-        let key = UserDefaults.cookiesKey()
-        return data.zmEncryptPrefixingIV(withKey: key).base64EncodedData()
+        let data = archiver.encodedData
+        let key = UserDefaults.cookiesKey()!
+        return data.zmEncryptPrefixingIV(key: key).base64EncodedData()
     }
 
 }
