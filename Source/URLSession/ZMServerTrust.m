@@ -76,14 +76,6 @@ static SecKeyRef publicKeyAssociatedWithServerTrust(SecTrustRef const serverTrus
     return key;
 }
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-__nullable SecKeyRef _SecCertificateCopyPublicKey(__nonnull SecCertificateRef certificate)
-{
-    return SecCertificateCopyPublicKey(certificate);
-}
-#pragma clang diagnostic pop
-
 BOOL verifyServerTrustWithPinnedKeys(SecTrustRef const serverTrust, NSArray *pinnedKeys)
 {    
     SecTrustResultType result;
