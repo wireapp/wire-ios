@@ -383,15 +383,12 @@ static dispatch_queue_t isolationQueue()
         return;
     }
     
-    NSMutableData *data = [NSMutableData data];
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdeprecated-declarations"
-    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initForWritingWithMutableData:data];
-#pragma clang diagnostic pop
-    archiver.requiresSecureCoding = YES;
+    NSKeyedArchiver *archiver = [[NSKeyedArchiver alloc] initRequiringSecureCoding:YES];
     [archiver encodeObject:properties forKey:@"properties"];
     [archiver finishEncoding];
-    
+
+    NSData *data = [archiver encodedData];
+
     if (TARGET_OS_IPHONE) {
         NSData *secretKey = [NSUserDefaults cookiesKey];
         data = [[data zmEncryptPrefixingIVWithKey:secretKey] mutableCopy];
