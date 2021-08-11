@@ -56,7 +56,7 @@ final class HTTPCookieHelperTests: XCTestCase {
         
         // then
         guard let decryptedData = Data(base64Encoded: data)?.zmDecryptPrefixedIV(key: UserDefaults.cookiesKey()) else { return XCTFail("failed to decrypt") }
-        let unarchiver = NSKeyedUnarchiver(forReadingWith: decryptedData)
+        let unarchiver = try! NSKeyedUnarchiver(forReadingFrom: decryptedData)
         unarchiver.requiresSecureCoding = true
         
         guard let propertiesArray = unarchiver.decodePropertyList(forKey: "properties") as? [[String: Any]] else { return XCTFail("no properties") }
