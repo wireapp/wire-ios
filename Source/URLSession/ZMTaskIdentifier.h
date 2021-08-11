@@ -19,7 +19,7 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ZMTaskIdentifier : NSObject <NSCoding>
+@interface ZMTaskIdentifier : NSObject <NSCoding, NSSecureCoding>
 
 @property (nonatomic, readonly) NSUInteger identifier;
 @property (nonatomic, readonly) NSString *sessionIdentifier;
