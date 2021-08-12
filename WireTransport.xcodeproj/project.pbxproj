@@ -19,6 +19,8 @@
 		1650EBDD21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */; };
 		166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166D18BA230EE8A8001288CD /* TransportSession.swift */; };
 		16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16D7D9F6265251620049FFCA /* NativePushChannel.swift */; };
+		16F900DB26C2CBA4002794B5 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 16F900DA26C2CBA4002794B5 /* Starscream.xcframework */; };
+		16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */; };
 		3E88BCB31B1F35DF00232589 /* WireTransport.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3E88BCA71B1F35DF00232589 /* WireTransport.framework */; };
 		5431ABFF1DB4C35B0040343C /* RequestLoopDetection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431ABFE1DB4C35B0040343C /* RequestLoopDetection.swift */; };
 		5431AC011DB4C8330040343C /* RequestLoopDetectionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5431AC001DB4C8330040343C /* RequestLoopDetectionTests.swift */; };
@@ -212,6 +214,8 @@
 		1650EBDC21CBFE9C00186075 /* MockURLAuthenticationChallengeSender.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockURLAuthenticationChallengeSender.swift; sourceTree = "<group>"; };
 		166D18BA230EE8A8001288CD /* TransportSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransportSession.swift; sourceTree = "<group>"; };
 		16D7D9F6265251620049FFCA /* NativePushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NativePushChannel.swift; sourceTree = "<group>"; };
+		16F900DA26C2CBA4002794B5 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
+		16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StarscreamPushChannel.swift; sourceTree = "<group>"; };
 		3E88BCA71B1F35DF00232589 /* WireTransport.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireTransport.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BCB21B1F35DF00232589 /* WireTransport-ios-tests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "WireTransport-ios-tests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3E88BD211B1F383000232589 /* WireTransport-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "WireTransport-Info.plist"; sourceTree = "<group>"; };
@@ -388,6 +392,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				A96E0106265FF7D10034A057 /* WireSystem.xcframework in Frameworks */,
+				16F900DB26C2CBA4002794B5 /* Starscream.xcframework in Frameworks */,
 				A96E0108265FF7D10034A057 /* WireUtilities.xcframework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -476,6 +481,7 @@
 		3E88BDE01B1F44FB00232589 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				16F900DA26C2CBA4002794B5 /* Starscream.xcframework */,
 				A96E010C265FF7D90034A057 /* OCMock.xcframework */,
 				A96E010B265FF7D90034A057 /* WireTesting.xcframework */,
 				A96E0104265FF7D10034A057 /* WireSystem.xcframework */,
@@ -644,6 +650,7 @@
 				5499FF7D1B31C66C00835C8B /* ZMWebSocketHandshake.h */,
 				5499FF7E1B31C66C00835C8B /* ZMWebSocketHandshake.m */,
 				16D7D9F6265251620049FFCA /* NativePushChannel.swift */,
+				16F900E126C2CBE6002794B5 /* StarscreamPushChannel.swift */,
 			);
 			path = PushChannel;
 			sourceTree = "<group>";
@@ -1047,6 +1054,7 @@
 				54B4D9E11E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift in Sources */,
 				54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */,
 				F19E555D22B27915005C792D /* ZMTransportResponse.swift in Sources */,
+				16F900E226C2CBE6002794B5 /* StarscreamPushChannel.swift in Sources */,
 				16D7D9F7265251620049FFCA /* NativePushChannel.swift in Sources */,
 				5451EFA01B7A138B002F503B /* Collections+ZMTSafeTypes.m in Sources */,
 				F1D1281821C1556E0090045E /* BackendEnvironmentProvider.swift in Sources */,

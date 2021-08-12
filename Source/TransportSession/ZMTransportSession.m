@@ -263,7 +263,7 @@ static NSInteger const DefaultMaximumRequests = 6;
 
         if (pushChannelClass == nil) {
             if (@available(iOS 13.0, *)) {
-                pushChannelClass = NativePushChannel.class;
+                pushChannelClass = StarscreamPushChannel.class;
             } else {
                 pushChannelClass = ZMTransportPushChannel.class;
             }
