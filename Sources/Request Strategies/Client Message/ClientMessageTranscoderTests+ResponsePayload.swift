@@ -199,3 +199,38 @@ extension ClientMessageTranscoderTests {
         }
     }
 }
+
+// MARK: - Missing legalhold consent
+extension ClientMessageTranscoderTests {
+
+    func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() {
+
+        // GIVEN
+        var confirmationMessage: ZMMessage!
+        var token: Any? = nil
+        self.syncMOC.performGroupedBlockAndWait {
+
+            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            self.syncMOC.saveOrRollback()
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
+
+            let expectation = self.expectation(description: "Notification fired")
+            token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
+                                                      context: self.uiMOC.notificationContext,
+                                                      object: nil) {_ in
+                expectation.fulfill()
+            }
+
+            // WHEN
+            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            let payload = ["label": "missing-legalhold-consent"] as NSDictionary
+            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil))
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        withExtendedLifetime(token) { () -> () in
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
+}

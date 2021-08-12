@@ -21,4 +21,7 @@ import Foundation
     
     public static let failedToDecryptMessageNotificationName = Notification.Name(rawValue: "ZMConversationFailedToDecryptMessageNotificationName")
 
+    public static let failedToSendMessageNotificationName = Notification.Name(rawValue: "ZMConversationFailedToSendMessageNotificationName")
+
+
 }
