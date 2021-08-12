@@ -16,3 +16,8 @@ jobs:
           -H "Accept: application/vnd.github.v3+json" \
           -u ${{ secrets.DISPATCH_SECRET }} \
           --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
+          
+          curl -X POST https://api.github.com/repos/wireapp/wire-ios-mocktransport/dispatches \
+          -H "Accept: application/vnd.github.v3+json" \
+          -u ${{ secrets.DISPATCH_SECRET }} \
+          --data '{"event_type": "newRelease", "client_payload": { "repository": "'"$GITHUB_REPOSITORY"'" }}'
