@@ -19,6 +19,7 @@
 		09E393F81BB0339200F3EA1B /* MockPreKey.m in Sources */ = {isa = PBXBuildFile; fileRef = 09E393F71BB0339200F3EA1B /* MockPreKey.m */; };
 		163EB0CE1FD1A658005B8D8D /* MockTransportSession+Broadcast.h in Headers */ = {isa = PBXBuildFile; fileRef = 163EB0CC1FD1A658005B8D8D /* MockTransportSession+Broadcast.h */; };
 		163EB0CF1FD1A658005B8D8D /* MockTransportSession+Broadcast.m in Sources */ = {isa = PBXBuildFile; fileRef = 163EB0CD1FD1A658005B8D8D /* MockTransportSession+Broadcast.m */; };
+		1658E90F26C5294E003D0090 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E90E26C5294E003D0090 /* Starscream.xcframework */; };
 		5406F3D01E1D4A3900541E7F /* ZMTransportRequest+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */; };
 		541797651CE1F86500C7646D /* MockTransportSessionCancelationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */; };
 		541797671CE1FC0C00C7646D /* CustomResponseGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 541797661CE1FC0C00C7646D /* CustomResponseGenerator.swift */; };
@@ -158,6 +159,7 @@
 		163EB0CC1FD1A658005B8D8D /* MockTransportSession+Broadcast.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MockTransportSession+Broadcast.h"; sourceTree = "<group>"; };
 		163EB0CD1FD1A658005B8D8D /* MockTransportSession+Broadcast.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = "MockTransportSession+Broadcast.m"; sourceTree = "<group>"; };
 		163EB0D01FD1BDD4005B8D8D /* MockTransportSessionBroadcastTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockTransportSessionBroadcastTests.swift; sourceTree = "<group>"; };
+		1658E90E26C5294E003D0090 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		5406F3CF1E1D4A3900541E7F /* ZMTransportRequest+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "ZMTransportRequest+Utils.swift"; sourceTree = "<group>"; };
 		541797631CE1F86500C7646D /* Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Bridging-Header.h"; sourceTree = "<group>"; };
 		541797641CE1F86500C7646D /* MockTransportSessionCancelationTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MockTransportSessionCancelationTests.swift; sourceTree = "<group>"; };
@@ -278,6 +280,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1658E90F26C5294E003D0090 /* Starscream.xcframework in Frameworks */,
 				A9DABBB52661208900D07588 /* WireSystem.xcframework in Frameworks */,
 				A9DABBBD2661208900D07588 /* WireCryptobox.xcframework in Frameworks */,
 				A9DABBBF2661208900D07588 /* SwiftProtobuf.xcframework in Frameworks */,
@@ -574,6 +577,7 @@
 		54C902651B753419007162A8 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1658E90E26C5294E003D0090 /* Starscream.xcframework */,
 				A9DABBC4266120E500D07588 /* OCMock.xcframework */,
 				A9DABBC3266120E500D07588 /* WireTesting.xcframework */,
 				A9DABBB42661208900D07588 /* SwiftProtobuf.xcframework */,
