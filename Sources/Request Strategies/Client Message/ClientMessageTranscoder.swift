@@ -25,7 +25,7 @@ fileprivate let zmLog = ZMSLog(tag: "Network")
 /// and parses received client messages
 public class ClientMessageTranscoder: AbstractRequestStrategy {
 
-    
+
     fileprivate let requestFactory: ClientMessageRequestFactory
     private(set) fileprivate var upstreamObjectSync: ZMUpstreamInsertedObjectSync!
     fileprivate let messageExpirationTimer: MessageExpirationTimer
@@ -230,6 +230,14 @@ extension ClientMessageTranscoder {
             !managedObject.isZombieObject else {
                 return false
         }
+
+        if response.httpStatus == 403 && response.payloadLabel() == "missing-legalhold-consent" {
+            managedObjectContext.zm_userInterface.performGroupedBlock { [weak self] in
+                guard let context = self?.managedObjectContext.notificationContext else { return }
+                NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
+            }
+        }
+
         return message.parseMissingClientsResponse(response, clientRegistrationDelegate: self.applicationStatus!.clientRegistrationDelegate)
     }
     
