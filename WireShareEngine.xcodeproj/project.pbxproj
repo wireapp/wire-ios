@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1658E92426C54074003D0090 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E92326C54074003D0090 /* Starscream.xcframework */; };
+		1658E92526C54074003D0090 /* Starscream.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E92326C54074003D0090 /* Starscream.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		165C55F62551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */; };
 		166DCD9E2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */; };
 		5470D3F31D76E1B000FDE440 /* WireShareEngine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */; };
@@ -61,6 +63,17 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
+		1658E92626C54074003D0090 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				1658E92526C54074003D0090 /* Starscream.xcframework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		54B04A611D77359000CED57C /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
@@ -73,6 +86,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		1658E92326C54074003D0090 /* Starscream.xcframework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcframework; name = Starscream.xcframework; path = Carthage/Build/Starscream.xcframework; sourceTree = "<group>"; };
 		165C55F52551AF1300731CA9 /* SharingSession+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSession+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		166DCD9D2552969B004F4F59 /* SharingSessionTests+EncryptionAtRest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SharingSessionTests+EncryptionAtRest.swift"; sourceTree = "<group>"; };
 		5470D3E81D76E1B000FDE440 /* WireShareEngine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = WireShareEngine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -138,6 +152,7 @@
 				A958DBB3266576B900FB8D26 /* HTMLString.xcframework in Frameworks */,
 				A958DBB1266576B900FB8D26 /* SwiftProtobuf.xcframework in Frameworks */,
 				A958DBA5266576B900FB8D26 /* WireRequestStrategy.xcframework in Frameworks */,
+				1658E92426C54074003D0090 /* Starscream.xcframework in Frameworks */,
 				A958DBBB266576BA00FB8D26 /* WireTransport.xcframework in Frameworks */,
 				A958DBA7266576B900FB8D26 /* WireUtilities.xcframework in Frameworks */,
 				A958DBA9266576B900FB8D26 /* WireCryptobox.xcframework in Frameworks */,
@@ -247,6 +262,7 @@
 		5470D4331D77165E00FDE440 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				1658E92326C54074003D0090 /* Starscream.xcframework */,
 				A958DBC42665830900FB8D26 /* OCMock.xcframework */,
 				A958DBC32665830900FB8D26 /* WireTesting.xcframework */,
 				A958DB9F266576B900FB8D26 /* HTMLString.xcframework */,
@@ -316,6 +332,7 @@
 				5470D3E41D76E1B000FDE440 /* Frameworks */,
 				5470D3E51D76E1B000FDE440 /* Headers */,
 				5470D3E61D76E1B000FDE440 /* Resources */,
+				1658E92626C54074003D0090 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
