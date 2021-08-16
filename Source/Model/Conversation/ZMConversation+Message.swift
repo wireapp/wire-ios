@@ -213,12 +213,14 @@ extension ZMConversation {
         }
 
         // mimeType is assigned first, to make sure UI can handle animated GIF file correctly.
-        let mimeType = ZMAssetMetaDataEncoder.contentType(forImageData: imageData) ?? ""
+        let mimeType = imageData.mimeType ?? ""
 
         // We update the size again when the the preprocessing is done.
         let imageSize = ZMImagePreprocessor.sizeOfPrerotatedImage(with: imageData)
 
-        let asset = WireProtos.Asset(imageSize: imageSize, mimeType: mimeType, size: UInt64(imageData.count))
+        let asset = WireProtos.Asset(imageSize: imageSize,
+                                     mimeType: mimeType,
+                                     size: UInt64(imageData.count))
 
         return try append(asset: asset, nonce: nonce, expires: true, prepareMessage: { message in
             moc.zm_fileAssetCache.storeAssetData(message, format: .original, encrypted: false, data: imageData)
