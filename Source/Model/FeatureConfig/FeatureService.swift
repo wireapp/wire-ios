@@ -43,6 +43,7 @@ public class FeatureService {
 
     // MARK: - Accessors
 
+    /// The app lock
     public func fetchAppLock() -> Feature.AppLock {
         let feature = Feature.fetch(name: .appLock, context: context)!
         let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: feature.config!)
@@ -57,6 +58,18 @@ public class FeatureService {
         }
     }
 
+    /// The file sharing
+    public func fetchFileSharing() -> Feature.FileSharing {
+        let feature = Feature.fetch(name: .fileSharing, context: context)!
+        return .init(status: feature.status)
+    }
+
+    public func storeFileSharing(_ fileSharing: Feature.FileSharing) {
+        Feature.updateOrCreate(havingName: .fileSharing, in: context) {
+            $0.status = fileSharing.status
+        }
+    }
+
     // MARK: - Helpers
 
     func createDefaultConfigsIfNeeded() {
@@ -64,6 +77,8 @@ public class FeatureService {
             switch name {
             case .appLock:
                 storeAppLock(.init())
+            case .fileSharing:
+                storeFileSharing(.init())
             }
         }
     }
