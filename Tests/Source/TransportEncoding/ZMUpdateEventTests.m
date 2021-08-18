@@ -69,7 +69,8 @@
              @"team.member-leave" : @(ZMUpdateEventTypeTeamMemberLeave),
              @"team.member-update" : @(ZMUpdateEventTypeTeamMemberUpdate),
              @"team.conversation-create" : @(ZMUpdateEventTypeTeamConversationCreate),
-             @"team.conversation-delete" : @(ZMUpdateEventTypeTeamConversationDelete)
+             @"team.conversation-delete" : @(ZMUpdateEventTypeTeamConversationDelete),
+             @"feature-config.update" : @(ZMUpdateEventTypeFeatureConfigUpdate)
              };
 }
 
