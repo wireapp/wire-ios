@@ -20,6 +20,13 @@ import Foundation
 
 private let zmLog = ZMSLog(tag: "feature configurations")
 
+public extension Notification.Name {
+    static let fetchAllConfigsTriggerNotification = Notification.Name("fetchAllConfigsTriggerNotification")
+
+    /// Notification to be fired when the feature configuration is changed.
+    /// When firing this notification the event has to be included as object in the notification.
+    static let featureConfigDidChangeNotification = Notification.Name("featureConfigDidChangeNotification")
+}
 
 @objcMembers
 public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
@@ -71,7 +78,7 @@ public final class FeatureConfigRequestStrategy: AbstractRequestStrategy, ZMCont
         fetchAllConfigsSync = ZMSingleRequestSync(singleRequestTranscoder: self, groupQueue: managedObjectContext)
 
         observerToken = NotificationCenter.default.addObserver(
-            forName: Self.fetchAllConfigsTriggerNotification,
+            forName: .fetchAllConfigsTriggerNotification,
             object: nil,
             queue: nil,
             using: { [weak self] _ in self?.needsToFetchAllConfigs = true }
@@ -119,6 +126,9 @@ extension FeatureConfigRequestStrategy: ZMDownstreamTranscoder {
                 let config = try decoder.decode(DynamicConfigResponse<Feature.AppLock.Config>.self, from: responseData)
                 feature.status = config.status
                 feature.config = try encoder.encode(config.config)
+            case .fileSharing:
+                let config = try decoder.decode(ConfigResponse.self, from: responseData)
+                feature.status = config.status
             }
 
             feature.needsToBeUpdatedFromBackend = false
@@ -169,6 +179,65 @@ extension FeatureConfigRequestStrategy: ZMSingleRequestTranscoder {
     }
 }
 
+//MARK: - ZMEventConsumer
+
+extension FeatureConfigRequestStrategy: ZMEventConsumer {
+
+    public func processEvents(_ events: [ZMUpdateEvent], liveEvents: Bool, prefetchResult: ZMFetchRequestBatchResult?) {
+        events.forEach(process)
+    }
+
+    private func process(_ event: ZMUpdateEvent) {
+        switch event.type {
+        case .featureConfigUpdate:
+            guard let jsonPayload = try? JSONSerialization.data(withJSONObject: event.payload, options: []),
+                  let featurePayload = FeatureUpdateEventPayload(jsonPayload) else {
+                return
+            }
+
+            Feature.updateOrCreate(havingName: featurePayload.name, in: managedObjectContext) { feature in
+                feature.status = featurePayload.status
+                feature.config = featurePayload.config
+                self.managedObjectContext.saveOrRollback()
+                NotificationCenter.default.post(name: .featureConfigDidChangeNotification, object: featurePayload)
+            }
+
+        default: break
+        }
+    }
+}
+
+// MARK: - Update event models
+
+public struct FeatureUpdateEventPayload: Decodable {
+    public var name: Feature.Name
+    public var status: Feature.Status
+    public var config: Data?
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let nestedContainer = try container.nestedContainer(keyedBy: ConfigKeys.self, forKey: .data)
+
+        name = try container.decode(Feature.Name.self, forKey: .name)
+        status = try nestedContainer.decode(Feature.Status.self, forKey: .status)
+        switch name {
+        case .appLock:
+            config = try nestedContainer.decodeIfPresent(Feature.AppLock.Config.self, forKey: .config).payloadData()
+        default:
+            return
+        }
+    }
+
+    enum CodingKeys: String, CodingKey {
+        case name
+        case data
+    }
+
+    enum ConfigKeys: String, CodingKey {
+        case status
+        case config
+    }
+}
 
 // MARK: - Response models
 
@@ -209,6 +278,8 @@ private extension Feature {
         switch name {
         case .appLock:
             return "appLock"
+        case .fileSharing:
+            return "fileSharing"
         }
     }
 
@@ -218,15 +289,9 @@ public extension Feature {
 
     static func triggerBackendRefreshForAllConfigs() {
         NotificationCenter.default.post(
-            name: FeatureConfigRequestStrategy.fetchAllConfigsTriggerNotification,
+            name: .fetchAllConfigsTriggerNotification,
             object: nil
         )
     }
-
-}
-
-private extension FeatureConfigRequestStrategy {
-
-    static let fetchAllConfigsTriggerNotification = Notification.Name("fetchAlLConfigsTriggerNotification")
 
 }
