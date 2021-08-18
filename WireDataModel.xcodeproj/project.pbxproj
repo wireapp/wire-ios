@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */; };
 		0604F7C8265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */; };
 		0604F8002651CAFE0016A71E /* store2-91-0.wiredatabase in Resources */ = {isa = PBXBuildFile; fileRef = 0604F7FF2651CAFD0016A71E /* store2-91-0.wiredatabase */; };
 		060D194F2462A9EC00623376 /* ZMMessageTests+GenericMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 060D194D2462A9D000623376 /* ZMMessageTests+GenericMessage.swift */; };
@@ -700,6 +701,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.FileSharing.swift; sourceTree = "<group>"; };
 		0604F7C7265184B70016A71E /* ZMSystemMessage+ParticipantsRemovedReason.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ZMSystemMessage+ParticipantsRemovedReason.swift"; sourceTree = "<group>"; };
 		0604F7FC2651C9220016A71E /* zmessaging2.91.0.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = zmessaging2.91.0.xcdatamodel; sourceTree = "<group>"; };
 		0604F7FF2651CAFD0016A71E /* store2-91-0.wiredatabase */ = {isa = PBXFileReference; lastKnownFileType = file; path = "store2-91-0.wiredatabase"; sourceTree = "<group>"; };
@@ -1521,6 +1523,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		06034B6B26A8D31F003624B4 /* FileSharing */ = {
+			isa = PBXGroup;
+			children = (
+				06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */,
+			);
+			path = FileSharing;
+			sourceTree = "<group>";
+		};
 		0686649D256FB087001C8747 /* AppLock */ = {
 			isa = PBXGroup;
 			children = (
@@ -1633,6 +1643,7 @@
 		54CB3FE824A3993400BA86DD /* FeatureConfig */ = {
 			isa = PBXGroup;
 			children = (
+				06034B6B26A8D31F003624B4 /* FileSharing */,
 				0686649D256FB087001C8747 /* AppLock */,
 				EE9AD9152696F01700DD5F51 /* FeatureService.swift */,
 				54CB3FE924A3994400BA86DD /* FeatureFlag.swift */,
@@ -3137,6 +3148,7 @@
 				F125BAD71EE9849B0018C2F8 /* ZMConversation+SystemMessages.swift in Sources */,
 				54F84CFD1F9950B300ABD7D5 /* DuplicatedEntityRemoval.swift in Sources */,
 				A90B3E2D23A255D5003EFED4 /* ZMConversation+Creation.swift in Sources */,
+				06034B6D26A8D36E003624B4 /* Feature.FileSharing.swift in Sources */,
 				87C1C25F207F7DA80083BF6B /* InvalidGenericMessageDataRemoval.swift in Sources */,
 				544E8C111E2F76B400F9B8B8 /* NSManagedObjectContext+UserInfoMerge.swift in Sources */,
 				EEBACDA725B9C2C6000210AC /* AppLockType.swift in Sources */,

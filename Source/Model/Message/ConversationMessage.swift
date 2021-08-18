@@ -154,6 +154,9 @@ public protocol ZMConversationMessage : NSObjectProtocol {
     var needsLinkAttachmentsUpdate: Bool { get set }
     
     var isSilenced: Bool { get }
+
+    /// Whether the asset message can not be received or shared.
+    var isRestricted: Bool { get }
 }
 
 public protocol ConversationCompositeMessage {
@@ -270,6 +273,18 @@ extension ZMMessage : ZMConversationMessage {
     
     public var isSilenced: Bool {
         return conversation?.isMessageSilenced(nil, senderID: sender?.remoteIdentifier) ?? true
+    }
+
+    public var isRestricted: Bool {
+        guard 
+            (self.isFile || self.isImage),
+            let managedObjectContext = self.managedObjectContext 
+        else { return false }
+
+        let featureService = FeatureService(context: managedObjectContext)
+        let fileSharingFeature = featureService.fetchFileSharing()
+
+        return fileSharingFeature.status == .disabled
     }
 }
 
