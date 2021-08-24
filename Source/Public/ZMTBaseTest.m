@@ -138,14 +138,6 @@
     [super tearDown];
 }
 
-+ (void)checkForMemoryLeaksAfterTestClassCompletes
-{
-    if ([MemoryReferenceDebugger aliveObjects].count > 0) {
-        NSLog(@"Leaked: %@", [MemoryReferenceDebugger aliveObjectsDescription]);
-        assert(false);
-    }
-}
-
 - (id<ZMSGroupQueue>)fakeUIContext {
     return self.innerFakeUIContext;
 }
