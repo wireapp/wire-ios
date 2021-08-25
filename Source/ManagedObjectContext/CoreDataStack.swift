@@ -232,12 +232,6 @@ public class CoreDataStack: NSObject, ContextProvider {
             self.configureSyncContext(self.syncContext)
             self.configureSearchContext(self.searchContext)
 
-            #if DEBUG
-            MemoryReferenceDebugger.register(self.viewContext)
-            MemoryReferenceDebugger.register(self.syncContext)
-            MemoryReferenceDebugger.register(self.searchContext)
-            #endif
-
             completionHandler(nil)
         }
     }
