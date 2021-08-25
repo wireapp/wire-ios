@@ -50,6 +50,26 @@ final class UTIHelperTests: XCTestCase {
         XCTAssert(UTIHelper.conformsToMovieType(mime: sut))
     }
 
+    func testThatQuickTimeMovieConformsMovieType() {
+        // given
+        let sut = "video/quicktime"
+
+        // when & then
+        XCTAssert(UTIHelper.conformsToMovieType(mime: sut))
+    }
+
+    func testThatCommonFilesConformsAudioType() {
+        // given
+        let suts = ["audio/mp4",
+                    "audio/mpeg",
+                    "audio/x-m4a"]
+
+        suts.forEach { sut in
+            // when & then
+            XCTAssert(UTIHelper.conformsToAudioType(mime: sut), "\(sut) does not conform to audio type")
+        }
+    }
+
     func testThatConformsToImageTypeIdentifiesCommonImageTypes() {
         // given
         let suts = ["public.jpeg",
@@ -59,7 +79,7 @@ final class UTIHelperTests: XCTestCase {
 
         suts.forEach { sut in
             // when & then
-            XCTAssert(UTIHelper.conformsToImageType(uti: sut), "\(sut) does not conorms to image type")
+            XCTAssert(UTIHelper.conformsToImageType(uti: sut), "\(sut) does not conform to image type")
         }
     }
 
