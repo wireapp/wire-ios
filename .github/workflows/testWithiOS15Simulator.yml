@@ -31,5 +31,5 @@ jobs:
     - name: Archive production artifacts
       uses: actions/upload-artifact@v2
       with:
-          name: save build artifact for speed up next run
-          path: .
+          name: save Carthage artifact for speed up next run
+          path: Carthage/
