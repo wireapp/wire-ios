@@ -6,7 +6,9 @@ jobs:
   Run_Tests_Xcode_12_4_iOS_15:
     runs-on: macos-11
     steps:
-    - uses: actions/checkout@v1
+    - uses: actions/checkout@v2
+      with:
+        fetch-depth: 1
     - name: Select Xcode
       run: sudo xcode-select -switch /Applications/Xcode_12.4.app && /usr/bin/xcodebuild -version
 
