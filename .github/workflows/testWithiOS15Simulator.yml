@@ -10,6 +10,9 @@ jobs:
     - name: Select Xcode
       run: sudo xcode-select -switch /Applications/Xcode_12.4.app && /usr/bin/xcodebuild -version
 
+    - name: Download all workflow run artifacts
+      uses: actions/download-artifact@v2
+      
     - name: Carthage
       env:
         GITHUB_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -24,3 +27,8 @@ jobs:
 
     - name: Run tests
       run: xcodebuild test -scheme Wire-iOS -project Wire-iOS.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty && exit ${PIPESTATUS[0]}
+      
+    - name: Archive production artifacts
+      uses: actions/upload-artifact@v2
+      with:
+          name: save build artifact for speed up next run
