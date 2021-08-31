@@ -23,6 +23,6 @@ jobs:
         echo "ls Xcode path"
         ls -n /Applications/ | grep Xcode*
         sudo ln -s /Applications/Xcode_13.0.app/Contents/Developer/Platforms/iPhoneOS.platform/Library/Developer/CoreSimulator/Profiles/Runtimes/iOS.simruntime /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 15.0.simruntime
-        sudo ln -s /Applications/Xcode_13.0.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport/15.0 /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
+        sudo ln -s /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 15.0.simruntime/Contents/Resources/RuntimeRoot/System/Library/PrivateFrameworks/Swift/libswiftXCTest.dylib /Library/Developer/CoreSimulator/Profiles/Runtimes/iOS\ 15.0.simruntime/Contents/Resources/RuntimeRoot/usr/lib/swift
     - name: Run tests
       run: xcodebuild test -scheme Wire-iOS -project Wire-iOS.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty && exit ${PIPESTATUS[0]}
