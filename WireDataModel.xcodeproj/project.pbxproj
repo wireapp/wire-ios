@@ -90,7 +90,6 @@
 		16519D54231D6F8200C9D76D /* ZMConversationTests+Deletion.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16519D53231D6F8200C9D76D /* ZMConversationTests+Deletion.swift */; };
 		1651F9BE1D3554C800A9FAE8 /* ZMClientMessageTests+TextMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1651F9BD1D3554C800A9FAE8 /* ZMClientMessageTests+TextMessage.swift */; };
 		1658E90826C525A3003D0090 /* Starscream.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E90726C525A3003D0090 /* Starscream.xcframework */; };
-		1658E90926C525A3003D0090 /* Starscream.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 1658E90726C525A3003D0090 /* Starscream.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		165911551DF054AD007FA847 /* ZMConversation+Predicates.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165911541DF054AD007FA847 /* ZMConversation+Predicates.swift */; };
 		165D3A2D1E1D47AB0052E654 /* ZMCallState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165D3A2B1E1D47AB0052E654 /* ZMCallState.swift */; };
 		165DC51F21491C0400090B7B /* Mention.swift in Sources */ = {isa = PBXBuildFile; fileRef = 165DC51E21491C0400090B7B /* Mention.swift */; };
@@ -685,20 +684,6 @@
 			remoteInfo = WireDataModel;
 		};
 /* End PBXContainerItemProxy section */
-
-/* Begin PBXCopyFilesBuildPhase section */
-		1658E90A26C525A3003D0090 /* Embed Frameworks */ = {
-			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = "";
-			dstSubfolderSpec = 10;
-			files = (
-				1658E90926C525A3003D0090 /* Starscream.xcframework in Embed Frameworks */,
-			);
-			name = "Embed Frameworks";
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		06034B6C26A8D36E003624B4 /* Feature.FileSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Feature.FileSharing.swift; sourceTree = "<group>"; };
@@ -2837,7 +2822,6 @@
 				F9C9A4F81CAD5DF10039E10C /* Frameworks */,
 				F9C9A4F91CAD5DF10039E10C /* Headers */,
 				F9C9A4FA1CAD5DF10039E10C /* Resources */,
-				1658E90A26C525A3003D0090 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
