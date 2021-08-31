@@ -10,11 +10,11 @@ jobs:
     - name: Select Xcode
       run: sudo xcode-select -switch /Applications/Xcode_12.4.app && /usr/bin/xcodebuild -version
 
-    - name: Download all workflow run artifacts
-      uses: actions/download-artifact@v2
-      with:
-        name: carthage-artifact
-        path: Carthage/Build
+#     - name: Download all workflow run artifacts
+#       uses: actions/download-artifact@v2
+#       with:
+#         name: carthage-artifact
+#         path: Carthage/Build
       
     - name: Carthage
       env:
