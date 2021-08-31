@@ -2,12 +2,6 @@ name: iOS 15 Simulator Test
 
 on: 
   workflow_dispatch:
-  push:
-    branches:
-      - develop
-  pull_request:
-    branches:
-      - develop
 jobs:
   Run_Tests_Xcode_12_4_iOS_15:
     runs-on: macos-11
