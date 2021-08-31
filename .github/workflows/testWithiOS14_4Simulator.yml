@@ -1,4 +1,4 @@
-name: iOS 15 Simulator Test
+name: iOS 14.4 Simulator Test
 
 on: 
   workflow_dispatch:
