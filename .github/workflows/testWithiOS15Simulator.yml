@@ -28,7 +28,7 @@ jobs:
     - name: Run tests
       run: xcodebuild test -scheme Wire-iOS -project Wire-iOS.xcodeproj -destination 'platform=iOS Simulator,name=iPhone 8,OS=15.0' | xcpretty && exit ${PIPESTATUS[0]}
       
-    - name: Archive production artifacts
+    - name: Archive Carthage artifacts
       uses: actions/upload-artifact@v2
       with:
           name: save Carthage artifact for speed up next run
