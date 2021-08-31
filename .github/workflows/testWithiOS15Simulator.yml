@@ -12,6 +12,9 @@ jobs:
 
     - name: Download all workflow run artifacts
       uses: actions/download-artifact@v2
+      with:
+        name: carthage-artifact
+        path: Carthage/
       
     - name: Carthage
       env:
@@ -33,5 +36,5 @@ jobs:
     - name: Archive Carthage artifacts
       uses: actions/upload-artifact@v2
       with:
-          name: save Carthage artifact for speed up next run
+          name: carthage-artifact
           path: Carthage/
