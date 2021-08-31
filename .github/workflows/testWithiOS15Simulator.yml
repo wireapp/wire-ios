@@ -22,11 +22,11 @@ jobs:
       run: bash setup.sh
 
       
-    - name: Archive Carthage artifacts
-      uses: actions/upload-artifact@v2
-      with:
-          name: carthage-artifact
-          path: Carthage/Build
+#     - name: Archive Carthage artifacts
+#       uses: actions/upload-artifact@v2
+#       with:
+#           name: carthage-artifact
+#           path: Carthage/Build
 
     - name: Link to 15.0 Simulators
       run: |
