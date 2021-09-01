@@ -46,7 +46,7 @@ extension MockTransportSession {
         return missedClients
     }
     
-    func otrMessageSender(fromClientId sender: ClientId) -> MockUserClient? {
+    func otrMessageSender(fromClientId sender: Proteus_ClientId) -> MockUserClient? {
         let senderClientId = String(format: "%llx", CLongLong(sender.client))
         
         let request = NSFetchRequest<NSFetchRequestResult>(entityName: "UserClient")
@@ -55,12 +55,12 @@ extension MockTransportSession {
         return client
     }
     
-    func missedClients(fromRecipients recipients: [UserEntry], conversation: MockConversation, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
+    func missedClients(fromRecipients recipients: [Proteus_UserEntry], conversation: MockConversation, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
         let users = conversation.activeUsers.set as! Set<MockUser>
         return missedClients(fromRecipients: recipients, users: users, sender: sender, onlyForUserId: onlyForUserId)
     }
     
-    func missedClients(fromRecipients recipients: [UserEntry], sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
+    func missedClients(fromRecipients recipients: [Proteus_UserEntry], sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
         return missedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers, sender: sender, onlyForUserId: onlyForUserId)
     }
     
@@ -71,7 +71,7 @@ extension MockTransportSession {
     ///   - sender: will be excluded from list
     ///   - onlyForUserId: if not nil, only return missing recipients matching this user ID
     /// - Returns: missing clients
-    func missedClients(fromRecipients recipients: [UserEntry], users: Set<MockUser>, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
+    func missedClients(fromRecipients recipients: [Proteus_UserEntry], users: Set<MockUser>, sender: MockUserClient, onlyForUserId: String?) -> [String: [String]] {
         var missedClients = [String: [String]]()
     
         for user in users {
@@ -110,12 +110,12 @@ extension MockTransportSession {
         return missedClients
     }
     
-    func deletedClients(fromRecipients recipients: [UserEntry], conversation: MockConversation) -> [String: [String]] {
+    func deletedClients(fromRecipients recipients: [Proteus_UserEntry], conversation: MockConversation) -> [String: [String]] {
         let users = conversation.activeUsers.set as! Set<MockUser>
         return deletedClients(fromRecipients: recipients, users: users)
     }
     
-    func deletedClients(fromRecipients recipients: [UserEntry]) -> [String: [String]] {
+    func deletedClients(fromRecipients recipients: [Proteus_UserEntry]) -> [String: [String]] {
         return deletedClients(fromRecipients: recipients, users: selfUser.connectionsAndTeamMembers)
     }
     
@@ -124,7 +124,7 @@ extension MockTransportSession {
     ///   - recipients: list of intended recipients
     ///   - users: set of users to get clients from
     /// - Returns: deleted clients
-    func deletedClients(fromRecipients recipients: [UserEntry], users: Set<MockUser>) -> [String: [String]] {
+    func deletedClients(fromRecipients recipients: [Proteus_UserEntry], users: Set<MockUser>) -> [String: [String]] {
         var deletedClients = [String: [String]]()
         
         for user in users {
@@ -159,7 +159,7 @@ extension MockTransportSession {
     }
     
     func insertOTRMessageEvents(toConversation conversation: MockConversation,
-                                recipients: [UserEntry],
+                                recipients: [Proteus_UserEntry],
                                 senderClient: MockUserClient,
                                 createEventBlock: (MockUserClient, Data, Data) -> MockEvent) {
         
