@@ -24,9 +24,9 @@ if __name__ == "__main__":
     cwd = os.path.normpath(os.getcwd())
     paths = [find_in_path(cwd), find_in_subfolder(cwd)]
     for found_path in [x for x in paths if x != None]:
-        print found_path,
+        print(found_path)
         sys.exit(0)
-
-    print >> sys.stderr, "No Carthage folder found"
+    
+    print("No Carthage folder found", file=sys.stderr)
     sys.exit(1)
     

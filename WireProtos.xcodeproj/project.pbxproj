@@ -48,7 +48,7 @@
 		090838241B87347900629095 /* messages.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = messages.proto; path = "Carthage/Checkouts/generic-message-proto/proto/messages.proto"; sourceTree = SOURCE_ROOT; };
 		099223A01BECF63800668091 /* Cartfile */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile; sourceTree = "<group>"; };
 		099223A11BECF65A00668091 /* Cartfile.private */ = {isa = PBXFileReference; lastKnownFileType = text; path = Cartfile.private; sourceTree = "<group>"; };
-		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = text; name = otr.proto; path = "Carthage/Checkouts/backend-api-protobuf/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
+		099223A61BED06E400668091 /* otr.proto */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.protobuf; name = otr.proto; path = "Carthage/Checkouts/generic-message-proto/proto/otr.proto"; sourceTree = SOURCE_ROOT; };
 		09B70B4D1B874390002667A6 /* version.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = version.xcconfig; sourceTree = "<group>"; };
 		09B70B601B874390002667A6 /* WireProtos.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = WireProtos.xcconfig; sourceTree = "<group>"; };
 		09BCDB6D1BCBE08D0020DCC7 /* medium.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = medium.jpg; sourceTree = "<group>"; };

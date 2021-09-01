@@ -1,3 +1,2 @@
-github "wireapp/backend-api-protobuf" "2.3"
-github "wireapp/generic-message-proto" "v1.27.1"
+github "wireapp/generic-message-proto" "v1.35.0"
 github "wireapp/swift-protobuf" "1.15.0_xcframework"
