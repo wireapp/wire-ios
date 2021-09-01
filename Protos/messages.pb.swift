@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2020 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -24,6 +24,23 @@
 //
 // For information on using the generated types, please see the documentation:
 //   https://github.com/apple/swift-protobuf/
+
+//
+// Wire
+// Copyright (C) 2021 Wire Swiss GmbH
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program. If not, see http://www.gnu.org/licenses/.
 
 import Foundation
 import SwiftProtobuf
@@ -542,6 +559,68 @@ public struct GenericMessage {
   public init() {}
 
   fileprivate var _messageID: String? = nil
+}
+
+public struct QualifiedUserId {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var id: String {
+    get {return _id ?? String()}
+    set {_id = newValue}
+  }
+  /// Returns true if `id` has been explicitly set.
+  public var hasID: Bool {return self._id != nil}
+  /// Clears the value of `id`. Subsequent reads from it will return its default value.
+  public mutating func clearID() {self._id = nil}
+
+  public var domain: String {
+    get {return _domain ?? String()}
+    set {_domain = newValue}
+  }
+  /// Returns true if `domain` has been explicitly set.
+  public var hasDomain: Bool {return self._domain != nil}
+  /// Clears the value of `domain`. Subsequent reads from it will return its default value.
+  public mutating func clearDomain() {self._domain = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _id: String? = nil
+  fileprivate var _domain: String? = nil
+}
+
+public struct QualifiedConversationId {
+  // SwiftProtobuf.Message conformance is added in an extension below. See the
+  // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
+  // methods supported on all messages.
+
+  public var id: String {
+    get {return _id ?? String()}
+    set {_id = newValue}
+  }
+  /// Returns true if `id` has been explicitly set.
+  public var hasID: Bool {return self._id != nil}
+  /// Clears the value of `id`. Subsequent reads from it will return its default value.
+  public mutating func clearID() {self._id = nil}
+
+  public var domain: String {
+    get {return _domain ?? String()}
+    set {_domain = newValue}
+  }
+  /// Returns true if `domain` has been explicitly set.
+  public var hasDomain: Bool {return self._domain != nil}
+  /// Clears the value of `domain`. Subsequent reads from it will return its default value.
+  public mutating func clearDomain() {self._domain = nil}
+
+  public var unknownFields = SwiftProtobuf.UnknownStorage()
+
+  public init() {}
+
+  fileprivate var _id: String? = nil
+  fileprivate var _domain: String? = nil
 }
 
 public struct Composite {
@@ -1278,6 +1357,9 @@ public struct Mention {
 
   public var mentionType: Mention.OneOf_MentionType? = nil
 
+  /// deprecated. Should be set such that old clients always fail when looking
+  /// up the user. Ideally, this should not be a problem, as a non-federation
+  /// aware user should never be part of a federated conversation.
   public var userID: String {
     get {
       if case .userID(let v)? = mentionType {return v}
@@ -1286,9 +1368,22 @@ public struct Mention {
     set {mentionType = .userID(newValue)}
   }
 
+  /// only optional to maintain backwards compatibility.
+  public var qualifiedUserID: QualifiedUserId {
+    get {return _qualifiedUserID ?? QualifiedUserId()}
+    set {_qualifiedUserID = newValue}
+  }
+  /// Returns true if `qualifiedUserID` has been explicitly set.
+  public var hasQualifiedUserID: Bool {return self._qualifiedUserID != nil}
+  /// Clears the value of `qualifiedUserID`. Subsequent reads from it will return its default value.
+  public mutating func clearQualifiedUserID() {self._qualifiedUserID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public enum OneOf_MentionType: Equatable {
+    /// deprecated. Should be set such that old clients always fail when looking
+    /// up the user. Ideally, this should not be a problem, as a non-federation
+    /// aware user should never be part of a federated conversation.
     case userID(String)
 
   #if !swift(>=4.1)
@@ -1310,6 +1405,7 @@ public struct Mention {
 
   fileprivate var _start: Int32? = nil
   fileprivate var _length: Int32? = nil
+  fileprivate var _qualifiedUserID: QualifiedUserId? = nil
 }
 
 public struct LastRead {
@@ -1317,6 +1413,8 @@ public struct LastRead {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// deprecated. Should be set such that old clients always fail when looking up
+  /// the conversation.
   public var conversationID: String {
     get {return _conversationID ?? String()}
     set {_conversationID = newValue}
@@ -1335,12 +1433,23 @@ public struct LastRead {
   /// Clears the value of `lastReadTimestamp`. Subsequent reads from it will return its default value.
   public mutating func clearLastReadTimestamp() {self._lastReadTimestamp = nil}
 
+  /// only optional to maintain backwards compatibility
+  public var qualifiedConversationID: QualifiedConversationId {
+    get {return _qualifiedConversationID ?? QualifiedConversationId()}
+    set {_qualifiedConversationID = newValue}
+  }
+  /// Returns true if `qualifiedConversationID` has been explicitly set.
+  public var hasQualifiedConversationID: Bool {return self._qualifiedConversationID != nil}
+  /// Clears the value of `qualifiedConversationID`. Subsequent reads from it will return its default value.
+  public mutating func clearQualifiedConversationID() {self._qualifiedConversationID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _conversationID: String? = nil
   fileprivate var _lastReadTimestamp: Int64? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct Cleared {
@@ -1348,6 +1457,8 @@ public struct Cleared {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// deprecated. Should be set such that old clients always fail when looking up
+  /// the conversation.
   public var conversationID: String {
     get {return _conversationID ?? String()}
     set {_conversationID = newValue}
@@ -1366,12 +1477,23 @@ public struct Cleared {
   /// Clears the value of `clearedTimestamp`. Subsequent reads from it will return its default value.
   public mutating func clearClearedTimestamp() {self._clearedTimestamp = nil}
 
+  /// only optional to maintain backwards compatibility
+  public var qualifiedConversationID: QualifiedConversationId {
+    get {return _qualifiedConversationID ?? QualifiedConversationId()}
+    set {_qualifiedConversationID = newValue}
+  }
+  /// Returns true if `qualifiedConversationID` has been explicitly set.
+  public var hasQualifiedConversationID: Bool {return self._qualifiedConversationID != nil}
+  /// Clears the value of `qualifiedConversationID`. Subsequent reads from it will return its default value.
+  public mutating func clearQualifiedConversationID() {self._qualifiedConversationID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _conversationID: String? = nil
   fileprivate var _clearedTimestamp: Int64? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct MessageHide {
@@ -1379,6 +1501,8 @@ public struct MessageHide {
   // `Message` and `Message+*Additions` files in the SwiftProtobuf library for
   // methods supported on all messages.
 
+  /// deprecated. Should be set such that old clients always fail when looking up
+  /// the conversation.
   public var conversationID: String {
     get {return _conversationID ?? String()}
     set {_conversationID = newValue}
@@ -1397,12 +1521,23 @@ public struct MessageHide {
   /// Clears the value of `messageID`. Subsequent reads from it will return its default value.
   public mutating func clearMessageID() {self._messageID = nil}
 
+  /// only optional to maintain backwards compatibility
+  public var qualifiedConversationID: QualifiedConversationId {
+    get {return _qualifiedConversationID ?? QualifiedConversationId()}
+    set {_qualifiedConversationID = newValue}
+  }
+  /// Returns true if `qualifiedConversationID` has been explicitly set.
+  public var hasQualifiedConversationID: Bool {return self._qualifiedConversationID != nil}
+  /// Clears the value of `qualifiedConversationID`. Subsequent reads from it will return its default value.
+  public mutating func clearQualifiedConversationID() {self._qualifiedConversationID = nil}
+
   public var unknownFields = SwiftProtobuf.UnknownStorage()
 
   public init() {}
 
   fileprivate var _conversationID: String? = nil
   fileprivate var _messageID: String? = nil
+  fileprivate var _qualifiedConversationID: QualifiedConversationId? = nil
 }
 
 public struct MessageDelete {
@@ -2823,6 +2958,94 @@ extension GenericMessage: SwiftProtobuf.Message, SwiftProtobuf._MessageImplement
   }
 }
 
+extension QualifiedUserId: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "QualifiedUserId"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+    2: .same(proto: "domain"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._id == nil {return false}
+    if self._domain == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._domain) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._id {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    }
+    if let v = self._domain {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: QualifiedUserId, rhs: QualifiedUserId) -> Bool {
+    if lhs._id != rhs._id {return false}
+    if lhs._domain != rhs._domain {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
+extension QualifiedConversationId: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
+  public static let protoMessageName: String = "QualifiedConversationId"
+  public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
+    1: .same(proto: "id"),
+    2: .same(proto: "domain"),
+  ]
+
+  public var isInitialized: Bool {
+    if self._id == nil {return false}
+    if self._domain == nil {return false}
+    return true
+  }
+
+  public mutating func decodeMessage<D: SwiftProtobuf.Decoder>(decoder: inout D) throws {
+    while let fieldNumber = try decoder.nextFieldNumber() {
+      // The use of inline closures is to circumvent an issue where the compiler
+      // allocates stack space for every case branch when no optimizations are
+      // enabled. https://github.com/apple/swift-protobuf/issues/1034
+      switch fieldNumber {
+      case 1: try { try decoder.decodeSingularStringField(value: &self._id) }()
+      case 2: try { try decoder.decodeSingularStringField(value: &self._domain) }()
+      default: break
+      }
+    }
+  }
+
+  public func traverse<V: SwiftProtobuf.Visitor>(visitor: inout V) throws {
+    if let v = self._id {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 1)
+    }
+    if let v = self._domain {
+      try visitor.visitSingularStringField(value: v, fieldNumber: 2)
+    }
+    try unknownFields.traverse(visitor: &visitor)
+  }
+
+  public static func ==(lhs: QualifiedConversationId, rhs: QualifiedConversationId) -> Bool {
+    if lhs._id != rhs._id {return false}
+    if lhs._domain != rhs._domain {return false}
+    if lhs.unknownFields != rhs.unknownFields {return false}
+    return true
+  }
+}
+
 extension Composite: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBase, SwiftProtobuf._ProtoNameProviding {
   public static let protoMessageName: String = "Composite"
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
@@ -3547,11 +3770,13 @@ extension Mention: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     1: .same(proto: "start"),
     2: .same(proto: "length"),
     3: .standard(proto: "user_id"),
+    4: .standard(proto: "qualified_user_id"),
   ]
 
   public var isInitialized: Bool {
     if self._start == nil {return false}
     if self._length == nil {return false}
+    if let v = self._qualifiedUserID, !v.isInitialized {return false}
     return true
   }
 
@@ -3569,6 +3794,7 @@ extension Mention: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
         try decoder.decodeSingularStringField(value: &v)
         if let v = v {self.mentionType = .userID(v)}
       }()
+      case 4: try { try decoder.decodeSingularMessageField(value: &self._qualifiedUserID) }()
       default: break
       }
     }
@@ -3584,6 +3810,9 @@ extension Mention: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if case .userID(let v)? = self.mentionType {
       try visitor.visitSingularStringField(value: v, fieldNumber: 3)
     }
+    if let v = self._qualifiedUserID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 4)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
@@ -3591,6 +3820,7 @@ extension Mention: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if lhs._start != rhs._start {return false}
     if lhs._length != rhs._length {return false}
     if lhs.mentionType != rhs.mentionType {return false}
+    if lhs._qualifiedUserID != rhs._qualifiedUserID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -3601,11 +3831,13 @@ extension LastRead: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "last_read_timestamp"),
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
     if self._conversationID == nil {return false}
     if self._lastReadTimestamp == nil {return false}
+    if let v = self._qualifiedConversationID, !v.isInitialized {return false}
     return true
   }
 
@@ -3617,6 +3849,7 @@ extension LastRead: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self._conversationID) }()
       case 2: try { try decoder.decodeSingularInt64Field(value: &self._lastReadTimestamp) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._qualifiedConversationID) }()
       default: break
       }
     }
@@ -3629,12 +3862,16 @@ extension LastRead: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationB
     if let v = self._lastReadTimestamp {
       try visitor.visitSingularInt64Field(value: v, fieldNumber: 2)
     }
+    if let v = self._qualifiedConversationID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: LastRead, rhs: LastRead) -> Bool {
     if lhs._conversationID != rhs._conversationID {return false}
     if lhs._lastReadTimestamp != rhs._lastReadTimestamp {return false}
+    if lhs._qualifiedConversationID != rhs._qualifiedConversationID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -3645,11 +3882,13 @@ extension Cleared: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "cleared_timestamp"),
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
     if self._conversationID == nil {return false}
     if self._clearedTimestamp == nil {return false}
+    if let v = self._qualifiedConversationID, !v.isInitialized {return false}
     return true
   }
 
@@ -3661,6 +3900,7 @@ extension Cleared: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self._conversationID) }()
       case 2: try { try decoder.decodeSingularInt64Field(value: &self._clearedTimestamp) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._qualifiedConversationID) }()
       default: break
       }
     }
@@ -3673,12 +3913,16 @@ extension Cleared: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementationBa
     if let v = self._clearedTimestamp {
       try visitor.visitSingularInt64Field(value: v, fieldNumber: 2)
     }
+    if let v = self._qualifiedConversationID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: Cleared, rhs: Cleared) -> Bool {
     if lhs._conversationID != rhs._conversationID {return false}
     if lhs._clearedTimestamp != rhs._clearedTimestamp {return false}
+    if lhs._qualifiedConversationID != rhs._qualifiedConversationID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
@@ -3689,11 +3933,13 @@ extension MessageHide: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
   public static let _protobuf_nameMap: SwiftProtobuf._NameMap = [
     1: .standard(proto: "conversation_id"),
     2: .standard(proto: "message_id"),
+    3: .standard(proto: "qualified_conversation_id"),
   ]
 
   public var isInitialized: Bool {
     if self._conversationID == nil {return false}
     if self._messageID == nil {return false}
+    if let v = self._qualifiedConversationID, !v.isInitialized {return false}
     return true
   }
 
@@ -3705,6 +3951,7 @@ extension MessageHide: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
       switch fieldNumber {
       case 1: try { try decoder.decodeSingularStringField(value: &self._conversationID) }()
       case 2: try { try decoder.decodeSingularStringField(value: &self._messageID) }()
+      case 3: try { try decoder.decodeSingularMessageField(value: &self._qualifiedConversationID) }()
       default: break
       }
     }
@@ -3717,12 +3964,16 @@ extension MessageHide: SwiftProtobuf.Message, SwiftProtobuf._MessageImplementati
     if let v = self._messageID {
       try visitor.visitSingularStringField(value: v, fieldNumber: 2)
     }
+    if let v = self._qualifiedConversationID {
+      try visitor.visitSingularMessageField(value: v, fieldNumber: 3)
+    }
     try unknownFields.traverse(visitor: &visitor)
   }
 
   public static func ==(lhs: MessageHide, rhs: MessageHide) -> Bool {
     if lhs._conversationID != rhs._conversationID {return false}
     if lhs._messageID != rhs._messageID {return false}
+    if lhs._qualifiedConversationID != rhs._qualifiedConversationID {return false}
     if lhs.unknownFields != rhs.unknownFields {return false}
     return true
   }
