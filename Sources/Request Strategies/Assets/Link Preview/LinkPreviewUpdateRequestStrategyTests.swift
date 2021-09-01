@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -17,24 +17,23 @@
 //
 
 import XCTest
-import WireRequestStrategy
-import WireDataModel
-import WireTransport
+@testable import WireRequestStrategy
 
-class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
+class LinkPreviewUpdateRequestStrategyTests: MessagingTestBase {
 
-    private var sut: LinkPreviewUploadRequestStrategy!
+    private var sut: LinkPreviewUpdateRequestStrategy!
     private var applicationStatus: MockApplicationStatus!
 
     override func setUp() {
         super.setUp()
         self.syncMOC.performGroupedAndWait { syncMOC in
+            self.groupConversation.domain = "example.com"
             self.applicationStatus = MockApplicationStatus()
             self.applicationStatus.mockSynchronizationState = .online
-            self.sut = LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
+            self.sut = LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncMOC, applicationStatus: self.applicationStatus)
         }
     }
-    
+
     override func tearDown() {
         applicationStatus = nil
         sut = nil
@@ -56,18 +55,18 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     func testThatItDoesNotCreateARequestInState_Processed() {
         self.verifyThatItDoesNotCreateARequest(for: .processed)
     }
-    
+
     func testThatItDoesNotCreateARequestInState_Uploaded_ForOtherUser() {
         self.syncMOC.performGroupedAndWait { moc in
             // Given
             let message = self.insertMessage(with: .uploaded)
             message.sender = self.otherUser
-            
+
             // When
             self.process(message)
         }
         self.syncMOC.performGroupedAndWait { moc in
-            
+
             // Then
             XCTAssertNil(self.sut.nextRequest())
         }
@@ -84,6 +83,21 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { moc in
             // Then
             self.verifyItCreatesARequest(in: self.groupConversation)
+        }
+    }
+
+    func testThatItDoesCreateARequestInState_Uploaded_WhenFederationEndpointIsDisabled() {
+        self.syncMOC.performGroupedAndWait { moc in
+            // Given
+            self.sut.useFederationEndpoint = false
+            let message = self.insertMessage(with: .uploaded)
+
+            // When
+            self.process(message)
+        }
+        self.syncMOC.performGroupedAndWait { moc in
+            // Then
+            self.verifyItCreatesALegacyRequest(in: self.groupConversation)
         }
     }
 
@@ -113,23 +127,6 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
             self.verifyItCreatesARequest(in: self.groupConversation)
         }
     }
-    
-    func testThatItReturnsSelfClientAsDependentObjectForMessageIfItHasMissingClients() {
-        var message: ZMClientMessage!
-        self.syncMOC.performGroupedAndWait { moc in
-            // Given
-            message = self.insertMessage(with: .uploaded)
-            self.selfClient.missesClient(self.otherClient)
-
-            // When
-            self.process(message)
-        }
-        self.syncMOC.performGroupedAndWait { moc in
-            // Then
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
-            XCTAssertEqual(dependency as? UserClient, self.selfClient)
-        }
-    }
 
     func testThatItDoesNotCreateARequestAfterGettingsAResponseForIt() {
         var message: ZMClientMessage!
@@ -143,7 +140,15 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
             guard let request = self.verifyItCreatesARequest(in: self.groupConversation) else { return }
 
             // When
-            let response = ZMTransportResponse(payload: nil, httpStatus: 200, transportSessionError: nil)
+            let payload = Payload.MessageSendingStatus(time: Date(),
+                                                       missing: [:],
+                                                       redundant: [:],
+                                                       deleted: [:],
+                                                       failedToSend: [:])
+            let payloadAsString = String(bytes: payload.payloadData()!, encoding: .utf8)!
+            let response = ZMTransportResponse(payload: payloadAsString as ZMTransportData,
+                                               httpStatus: 201,
+                                               transportSessionError: nil)
             request.complete(with: response)
         }
         self.syncMOC.performGroupedAndWait { moc in
@@ -181,9 +186,21 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
     @discardableResult
     func verifyItCreatesARequest(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> ZMTransportRequest? {
         let request = sut.nextRequest()
+        let conversationID = conversation.remoteIdentifier!.transportString()
+        let domain = conversation.domain!
         XCTAssertNotNil(request, "No request generated", file: file, line: line)
         XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
-        XCTAssertEqual(request?.path, "/conversations/\(conversation.remoteIdentifier!.transportString())/otr/messages", file: file, line: line)
+        XCTAssertEqual(request?.path, "/conversations/\(domain)/\(conversationID)/proteus/messages", file: file, line: line)
+        return request
+    }
+
+    @discardableResult
+    func verifyItCreatesALegacyRequest(in conversation: ZMConversation, file: StaticString = #file, line: UInt = #line) -> ZMTransportRequest? {
+        let request = sut.nextRequest()
+        let conversationID = conversation.remoteIdentifier!.transportString()
+        XCTAssertNotNil(request, "No request generated", file: file, line: line)
+        XCTAssertEqual(request?.method, .methodPOST, file: file, line: line)
+        XCTAssertEqual(request?.path, "/conversations/\(conversationID)/otr/messages", file: file, line: line)
         return request
     }
 
@@ -192,4 +209,5 @@ class LinkPreviewUploadRequestStrategyTests: MessagingTestBase {
             $0.objectsDidChange([message])
         }
     }
+
 }

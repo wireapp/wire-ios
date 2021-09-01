@@ -46,7 +46,7 @@ static NSPredicate *_predicateForObjectsThatNeedToBeUpdatedUpstream = nil;
 }
 
 +(NSString *)remoteIdentifierDataKey {
-    return @"testUUID_data";
+    return @"remoteIdentifier_data";
 }
 
 - (NSUUID *)testUUID;

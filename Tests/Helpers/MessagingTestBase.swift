@@ -31,6 +31,8 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var coreDataStack: CoreDataStack!
     fileprivate(set) var accountIdentifier: UUID!
 
+    let owningDomain = "example.com"
+
     var useInMemoryStore: Bool {
         true
     }
@@ -169,12 +171,12 @@ extension MessagingTestBase {
     /// Extract the outgoing message wrapper (non-encrypted) protobuf
     func outgoingMessageWrapper(from request: ZMTransportRequest,
                                 file: StaticString = #file,
-                                line: UInt = #line) -> NewOtrMessage? {
+                                line: UInt = #line) -> Proteus_NewOtrMessage? {
         guard let data = request.binaryData else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
-        return try? NewOtrMessage(serializedData: data)
+        return try? Proteus_NewOtrMessage(serializedData: data)
     }
     
     /// Extract encrypted payload from a request
@@ -184,7 +186,7 @@ extension MessagingTestBase {
                                   file: StaticString = #file
         ) -> GenericMessage? {
         
-        guard let data = request.binaryData, let protobuf = try? NewOtrMessage(serializedData: data) else {
+        guard let data = request.binaryData, let protobuf = try? Proteus_NewOtrMessage(serializedData: data) else {
             XCTFail("No binary data", file: file, line: line)
             return nil
         }
@@ -216,6 +218,7 @@ extension MessagingTestBase {
     
     func setupOneToOneConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: self.syncMOC)
+        conversation.domain = owningDomain
         conversation.conversationType = .oneOnOne
         conversation.remoteIdentifier = UUID.create()
         conversation.connection = ZMConnection.insertNewObject(in: self.syncMOC)
@@ -230,6 +233,7 @@ extension MessagingTestBase {
     func createUser(alsoCreateClient: Bool = false) -> ZMUser {
         let user = ZMUser.insertNewObject(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
+        user.domain = owningDomain
         if alsoCreateClient {
             _ = self.createClient(user: user)
         }
@@ -249,6 +253,7 @@ extension MessagingTestBase {
     func createGroupConversation(with user: ZMUser) -> ZMConversation {
         let conversation = ZMConversation.insertNewObject(in: syncMOC)
         conversation.conversationType = .group
+        conversation.domain = owningDomain
         conversation.remoteIdentifier = UUID.create()
         conversation.addParticipantAndUpdateConversationState(user: user, role: nil)
         conversation.addParticipantAndUpdateConversationState(user: ZMUser.selfUser(in: syncMOC), role: nil)
@@ -272,6 +277,7 @@ extension MessagingTestBase {
     fileprivate func createSelfClient() -> UserClient {
         let user = ZMUser.selfUser(in: self.syncMOC)
         user.remoteIdentifier = UUID.create()
+        user.domain = owningDomain
         
         let selfClient = UserClient.insertNewObject(in: self.syncMOC)
         selfClient.remoteIdentifier = "baddeed"

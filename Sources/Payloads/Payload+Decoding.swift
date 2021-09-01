@@ -66,6 +66,18 @@ extension Decodable {
         }
     }
 
+    /// Initialize object from a transport response
+    ///
+    /// - parameter response: ZMTransportResponse with a JSON payload
+
+    init?(_ response: ZMTransportResponse, decoder: JSONDecoder = .defaultDecoder) {
+        guard let rawData = response.rawData else {
+            return nil
+        }
+
+        self.init(rawData, decoder: decoder)
+    }
+
 }
 
 extension Encodable {

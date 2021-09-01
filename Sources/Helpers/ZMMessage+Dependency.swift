@@ -40,6 +40,10 @@ extension ZMOTRMessage: OTREntity {
     public func detectedRedundantUsers(_ users: [ZMUser]) {
         // no-op
     }
+
+    public func delivered(with response: ZMTransportResponse) {
+        update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: nil)
+    }
     
 }
 

@@ -45,7 +45,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let userID = UUID()
-            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMOC)!
+            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
             
@@ -62,7 +62,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let userID = UUID()
-            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMOC)!
+            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
             let request = self.sut.nextRequest()
@@ -89,7 +89,7 @@ class UserRichProfileRequestStrategyTests: MessagingTestBase {
         self.syncMOC.performGroupedAndWait { moc in
             // given
             let userID = UUID()
-            let user = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMOC)!
+            let user = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMOC)
             user.needsRichProfileUpdate = true
             self.sut.contextChangeTrackers.forEach({ $0.addTrackedObjects(Set<NSManagedObject>(arrayLiteral: user)) })
             let request = self.sut.nextRequest()

@@ -31,7 +31,7 @@ public final class ClientMessageRequestFactory: NSObject {
     
     public func upstreamRequestForFetchingClients(conversationId: UUID, selfClient: UserClient) -> ZMTransportRequest? {
         let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
-        let newOtrMessage = NewOtrMessage(withSender: selfClient, nativePush: false, recipients: [])
+        let newOtrMessage = Proteus_NewOtrMessage(withSender: selfClient, nativePush: false, recipients: [])
         
         let path = originalPath.pathWithMissingClientStrategy(strategy: .doNotIgnoreAnyMissingClient)
         guard let data = try? newOtrMessage.serializedData() else {
@@ -42,18 +42,40 @@ public final class ClientMessageRequestFactory: NSObject {
         return request
     }
 
-    public func upstreamRequestForMessage(_ message: ZMClientMessage) -> ZMTransportRequest? {
-        return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: message.conversation!.remoteIdentifier!);
-    }
-
-    public func upstreamRequestForMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        return upstreamRequestForEncryptedClientMessage(message, forConversationWithId: conversationId);
+    public func upstreamRequestForMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation, useFederationEndpoint: Bool) -> ZMTransportRequest? {
+        if useFederationEndpoint {
+            return upstreamRequestForQualifiedEncryptedMessage(message, in: conversation)
+        } else {
+            return upstreamRequestForEncryptedMessage(message, in: conversation)
+        }
     }
     
-    fileprivate func upstreamRequestForEncryptedClientMessage(_ message: EncryptedPayloadGenerator, forConversationWithId conversationId: UUID) -> ZMTransportRequest? {
-        let originalPath = "/" + ["conversations", conversationId.transportString(), "otr", "messages"].joined(separator: "/")
+    fileprivate func upstreamRequestForEncryptedMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation) -> ZMTransportRequest? {
+        guard
+            let conversationID = conversation.remoteIdentifier?.transportString()
+        else {
+            return nil
+        }
+
+        let originalPath = "/" + ["conversations", conversationID, "otr", "messages"].joined(separator: "/")
         guard let encryptedPayload = message.encryptForTransport() else { return nil }
         let path = originalPath.pathWithMissingClientStrategy(strategy: encryptedPayload.strategy)
+        let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil)
+        request.addContentDebugInformation(message.debugInfo)
+        return request
+    }
+
+    fileprivate func upstreamRequestForQualifiedEncryptedMessage(_ message: EncryptedPayloadGenerator, in conversation: ZMConversation) -> ZMTransportRequest? {
+        guard
+            let context = conversation.managedObjectContext,
+            let conversationID = conversation.remoteIdentifier?.transportString(),
+            let domain = conversation.domain ?? ZMUser.selfUser(in: context).domain
+        else {
+            return nil
+        }
+
+        let path = "/" + ["conversations", domain, conversationID, "proteus", "messages"].joined(separator: "/")
+        guard let encryptedPayload = message.encryptForTransportQualified() else { return nil }
         let request = ZMTransportRequest(path: path, method: .methodPOST, binaryData: encryptedPayload.data, type: protobufContentType, contentDisposition: nil)
         request.addContentDebugInformation(message.debugInfo)
         return request

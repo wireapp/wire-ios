@@ -22,6 +22,7 @@ import WireTesting
 @testable import WireRequestStrategy
 
 class MockDependencyEntity : DependencyEntity, Hashable {
+    public var expirationDate: Date?
     public var isExpired: Bool = false
     fileprivate let uuid = UUID()
     

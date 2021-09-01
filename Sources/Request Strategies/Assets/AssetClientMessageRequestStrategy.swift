@@ -19,167 +19,80 @@
 
 import Foundation
 
-/// The `AssetClientMessageRequestStrategy` for creating requests to insert the genericMessage of a `ZMAssetClientMessage`
-/// remotely. This is only necessary for the `/assets/v3' endpoint as we upload the asset, receive the asset ID in the response,
-/// manually add it to the genericMessage and send it using the `/otr/messages` endpoint like any other message.
-/// This is an additional step required as the fan-out was previously done by the backend when uploading a v2 asset.
-/// There are mutliple occasions where we might want to send the genericMessage of a `ZMAssetClientMessage` again:
-///
-/// * We just inserted the message and want to upload the `Asset.Original` containing the metadata about the asset.
-/// * (Optional) If the asset has data that can be used to show a preview of it, we want to upload the `Asset.Preview` as soon as the preview data has been preprocessed and uploaded using the `/assets/v3` endpoint.
-/// * When the actual asset data has been preprocessed (encrypted) and uploaded we want to insert the `Asset.Uploaded` message.
-/// * If we fail to upload the preview or uploaded message we will upload an `Asset.NOTUploaded` genericMessage.
-public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource {
+/// The `AssetClientMessageRequestStrategy` for creating requests to insert the genericMessage of a
+/// `ZMAssetClientMessage` remotely. This is only necessary for the `/assets/v3' endpoint as we
+/// upload the asset, receive the asset ID in the response, manually add it to the genericMessage and
+/// send it using the `/messages` endpoint like any other message. This is an additional step required
+/// as the fan-out was previously done by the backend when uploading a v2 asset.
+public final class AssetClientMessageRequestStrategy: AbstractRequestStrategy, ZMContextChangeTrackerSource, FederationAware {
 
-    fileprivate let requestFactory = ClientMessageRequestFactory()
-    fileprivate var upstreamSync: ZMUpstreamModifiedObjectSync! // TODO jacob this can be a insertion sync now
+    let insertedObjectSync: InsertedObjectSync<AssetClientMessageRequestStrategy>
+    let messageSync: ProteusMessageSync<ZMAssetClientMessage>
+
+    public var useFederationEndpoint: Bool {
+        set {
+            messageSync.isFederationEndpointAvailable = newValue
+        }
+        get {
+            messageSync.isFederationEndpointAvailable
+        }
+    }
 
     public override init(withManagedObjectContext managedObjectContext: NSManagedObjectContext, applicationStatus: ApplicationStatus) {
+
+        self.insertedObjectSync = InsertedObjectSync(insertPredicate: Self.shouldBeSentPredicate(context: managedObjectContext))
+        self.messageSync = ProteusMessageSync(context: managedObjectContext, applicationStatus: applicationStatus)
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
-        
+
+        insertedObjectSync.transcoder = self
         configuration = [.allowsRequestsWhileOnline,
                          .allowsRequestsWhileInBackground]
-
-        upstreamSync = ZMUpstreamModifiedObjectSync(
-            transcoder: self,
-            entityName: ZMAssetClientMessage.entityName(),
-            update: AssetClientMessageRequestStrategy.updatePredicate,
-            filter: AssetClientMessageRequestStrategy.updateFilter,
-            keysToSync: [#keyPath(ZMAssetClientMessage.transferState)],
-            managedObjectContext: managedObjectContext
-        )
     }
 
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return upstreamSync.nextRequest()
-    }
-
-    public func shouldProcessUpdatesBeforeInserts() -> Bool {
-        return false
+        return messageSync.nextRequest()
     }
 
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [upstreamSync]
+        return [insertedObjectSync] + messageSync.contextChangeTrackers
     }
-    
-    static var updatePredicate: NSPredicate {
-        return NSPredicate(format: "delivered == NO && isExpired == NO && version == 3 && transferState == \(AssetTransferState.uploaded.rawValue)")
-    }
-    
-    static var updateFilter: NSPredicate {
-        return NSPredicate { object, _ in
-            guard let message = object as? ZMMessage, let sender = message.sender  else { return false }
-                        
-            return sender.isSelfUser
-        }
+
+    static func shouldBeSentPredicate(context: NSManagedObjectContext) -> NSPredicate {
+        let notDelivered = NSPredicate(format: "%K == FALSE", DeliveredKey)
+        let notExpired = NSPredicate(format: "%K == 0", ZMMessageIsExpiredKey)
+        let isUploaded = NSPredicate(format: "%K == \(AssetTransferState.uploaded.rawValue)", "transferState")
+        let isAssetV3 = NSPredicate(format: "version == 3")
+        let fromSelf = NSPredicate(format: "%K == %@", ZMMessageSenderKey, ZMUser.selfUser(in: context))
+        return NSCompoundPredicate(andPredicateWithSubpredicates: [notDelivered, notExpired, isAssetV3, isUploaded, fromSelf])
     }
 
 }
 
+extension AssetClientMessageRequestStrategy: InsertedObjectSyncTranscoder {
 
-// MARK: - ZMUpstreamTranscoder
+    typealias Object = ZMAssetClientMessage
 
+    func insert(object: ZMAssetClientMessage, completion: @escaping () -> Void) {
+        messageSync.sync(object) { [weak self] (result, response) in
+            switch result {
+            case .success:
+                object.markAsSent()
+            case .failure(let error):
+                switch error {
+                case .expired, .gaveUpRetrying:
+                    object.expire()
 
-extension AssetClientMessageRequestStrategy: ZMUpstreamTranscoder {
-
-    public func request(forInserting managedObject: ZMManagedObject, forKeys keys: Set<String>?) -> ZMUpstreamRequest? {
-        return nil
-    }
-
-    public func updateInsertedObject(_ managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse) {
-        // no-op
-    }
-
-    public func dependentObjectNeedingUpdate(beforeProcessingObject dependant: ZMManagedObject) -> Any? {
-        return (dependant as? ZMMessage)?.dependentObjectNeedingUpdateBeforeProcessing
-    }
-
-    public func request(forUpdating managedObject: ZMManagedObject, forKeys keys: Set<String>) -> ZMUpstreamRequest? {
-        guard let message = managedObject as? ZMAssetClientMessage, let conversation = message.conversation else { return nil }
-        
-        if message.conversation?.conversationType == .oneOnOne {
-            // Update expectsReadReceipt flag to reflect the current user setting
-            if var updatedGenericMessage = message.underlyingMessage {
-                updatedGenericMessage.setExpectsReadConfirmation(ZMUser.selfUser(in: managedObjectContext).readReceiptsEnabled)
-
-                do {
-                    try message.setUnderlyingMessage(updatedGenericMessage)
-                } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
-                    return nil
+                    let payload = Payload.ResponseFailure(response, decoder: .defaultDecoder)
+                    if response.httpStatus == 403 && payload?.label == .missingLegalholdConsent {
+                        self?.managedObjectContext.zm_userInterface.performGroupedBlock {
+                            guard let context = self?.managedObjectContext.notificationContext else { return }
+                            NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
+                        }
+                    }
                 }
             }
         }
-        
-        if let legalHoldStatus = message.conversation?.legalHoldStatus {
-            if var updatedGenericMessage = message.underlyingMessage {
-                updatedGenericMessage.setLegalHoldStatus(legalHoldStatus.denotesEnabledComplianceDevice ? .enabled : .disabled)
-
-                do {
-                    try message.setUnderlyingMessage(updatedGenericMessage)
-                } catch {
-                    Logging.messageProcessing.warn("Failed to update generic message. Reason: \(error.localizedDescription)")
-                    return nil
-                }
-            }
-        }
-        
-        guard let request = requestFactory.upstreamRequestForMessage(message, forConversationWithId: conversation.remoteIdentifier!) else { fatal("Unable to generate request for \(message.safeForLoggingDescription)") }
-        requireInternal(true == message.sender?.isSelfUser, "Trying to send message from sender other than self: \(message.nonce?.uuidString ?? "nil nonce")")
-        
-        // We need to flush the encrypted payloads cache, since the client is online now (request succeeded).
-        let completionHandler = ZMCompletionHandler(on: self.managedObjectContext) { response in
-            guard let selfClient = ZMUser.selfUser(in: self.managedObjectContext).selfClient(),
-                response.result == .success else {
-                return
-            }
-            selfClient.keysStore.encryptionContext.perform { (session) in
-                session.purgeEncryptedPayloadCache()
-            }
-        }
-        
-        request.add(completionHandler)
-        
-        return ZMUpstreamRequest(keys: [#keyPath(ZMAssetClientMessage.transferState)], transportRequest: request)
-    }
-
-    public func updateUpdatedObject(_ managedObject: ZMManagedObject, requestUserInfo: [AnyHashable : Any]? = nil, response: ZMTransportResponse, keysToParse: Set<String>) -> Bool {
-        guard let message = managedObject as? ZMAssetClientMessage else { return false }
-        message.update(withPostPayload: response.payload?.asDictionary() ?? [:], updatedKeys: keysToParse)
-        if let delegate = applicationStatus?.clientRegistrationDelegate{
-            _ = message.parseUploadResponse(response, clientRegistrationDelegate: delegate)
-        }
-
-        if response.result == .success {
-            message.markAsSent()
-        }
-
-        return false
-    }
-
-    public func objectToRefetchForFailedUpdate(of managedObject: ZMManagedObject) -> ZMManagedObject? {
-        return nil
-    }
-
-    public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject, request upstreamRequest: ZMUpstreamRequest, response: ZMTransportResponse, keysToParse keys: Set<String>) -> Bool {
-        guard let message = managedObject as? ZMAssetClientMessage else { return false }
-        var failedBecauseOfMissingClients = false
-        if let delegate = applicationStatus?.clientRegistrationDelegate {
-            failedBecauseOfMissingClients = message.parseUploadResponse(response, clientRegistrationDelegate: delegate).contains(.missing)
-        }
-        
-        if !failedBecauseOfMissingClients {
-            message.expire()
-        }
-
-        if response.httpStatus == 403 && response.payloadLabel() == "missing-legalhold-consent" {
-            managedObjectContext.zm_userInterface.performGroupedBlock { [weak self] in
-                guard let context = self?.managedObjectContext.notificationContext else { return }
-                NotificationInContext(name: ZMConversation.failedToSendMessageNotificationName, context: context).post()
-            }
-        }
-
-        return failedBecauseOfMissingClients
     }
     
 }

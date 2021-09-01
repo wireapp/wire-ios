@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -19,33 +19,39 @@
 import XCTest
 @testable import WireRequestStrategy
 
-class ClientMessageTranscoderTests: MessagingTestBase {
+class ClientMessageRequestStrategyTests: MessagingTestBase {
 
     var localNotificationDispatcher: MockPushMessageHandler!
-    var sut: ClientMessageTranscoder!
+    var sut: ClientMessageRequestStrategy!
     var mockApplicationStatus : MockApplicationStatus!
     var mockAttachmentsDetector: MockAttachmentDetector!
 
     override func setUp() {
         super.setUp()
-        self.localNotificationDispatcher = MockPushMessageHandler()
-        mockApplicationStatus = MockApplicationStatus()
-        mockApplicationStatus.mockSynchronizationState = .online
-        mockAttachmentsDetector = MockAttachmentDetector()
-        LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
-        sut = ClientMessageTranscoder(in: syncMOC, localNotificationDispatcher: localNotificationDispatcher, applicationStatus: mockApplicationStatus)
+
+        syncMOC.performAndWait { [self] in
+            localNotificationDispatcher = MockPushMessageHandler()
+            mockApplicationStatus = MockApplicationStatus()
+            mockApplicationStatus.mockSynchronizationState = .online
+            mockAttachmentsDetector = MockAttachmentDetector()
+            LinkAttachmentDetectorHelper.setTest_debug_linkAttachmentDetector(mockAttachmentsDetector)
+            sut = ClientMessageRequestStrategy(withManagedObjectContext: syncMOC,
+                                               localNotificationDispatcher: localNotificationDispatcher,
+                                               applicationStatus: mockApplicationStatus)
+        }
+
     }
-    
+
     override func tearDown() {
         self.localNotificationDispatcher = nil
         self.mockApplicationStatus = nil
         self.mockAttachmentsDetector = nil
         LinkAttachmentDetectorHelper.tearDown()
         self.sut = nil
-        
+
         super.tearDown()
     }
-    
+
     /// Makes a conversation secure
     func set(conversation: ZMConversation, securityLevel: ZMConversationSecurityLevel) {
         conversation.setValue(NSNumber(value: securityLevel.rawValue), forKey: #keyPath(ZMConversation.securityLevel))
@@ -53,99 +59,47 @@ class ClientMessageTranscoderTests: MessagingTestBase {
             fatalError()
         }
     }
-}
 
-
-// MARK: - Processing events
-
-extension ClientMessageTranscoderTests {
-
-    func testThatANewOtrMessageIsCreatedFromAnEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            // GIVEN
-            let text = "Everything"
-            let base64Text = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
-            let payload = [
-                "recipient": self.selfClient.remoteIdentifier,
-                "sender": self.otherClient.remoteIdentifier,
-                "text": base64Text
-            ]
-            let eventPayload = [
-                "type": "conversation.otr-message-add",
-                "data": payload,
-                "conversation": self.groupConversation.remoteIdentifier!.transportString(),
-                "time": Date().transportString(),
-                "from": self.otherUser.remoteIdentifier.transportString()
-                ] as NSDictionary
-            guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
-                XCTFail()
-                return
-            }
-            
-            // WHEN
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
-            
-            // THEN
-            XCTAssertEqual(self.groupConversation.lastMessage?.textMessageData?.messageText, text)
-        }
-    }
-    
-    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() {
-        self.syncMOC.performGroupedBlockAndWait {
-            
-            // GIVEN
-            let text = "Everything"
-            let event = self.decryptedUpdateEventFromOtherClient(text: text)
-            
-            // WHEN
-            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
-            
-            // THEN
-            XCTAssertEqual((self.groupConversation.lastMessage as? ZMClientMessage)?.textMessageData?.messageText, text)
-        }
-    }
-    
 }
 
 // MARK: - Request generation
 
-extension ClientMessageTranscoderTests {
-    
+extension ClientMessageRequestStrategyTests {
+
     func testThatItDoesNotGenerateARequestIfSenderIsNotSelfUser() {
-        
+
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             message.sender = self.otherUser
             self.syncMOC.saveOrRollback()
-            
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
-            
+
             // THEN
             XCTAssertNil(self.sut.nextRequest())
         }
     }
-    
+
     func testThatItUpdatesExpectsReadConfirmationFlagWhenSendingMessageInOneToOne() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
             let message = try! self.oneToOneConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
-            
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
                 XCTFail()
                 return
             }
-            
+
             // THEN
             switch message.underlyingMessage?.content {
             case .text(let data)?:
@@ -155,23 +109,23 @@ extension ClientMessageTranscoderTests {
             }
         }
     }
-    
+
     func testThatItDoesntUpdateExpectsReadConfirmationFlagWhenSendingMessageInGroup() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = true
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
-            
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
                 XCTFail()
                 return
             }
-            
+
             // THEN
             switch message.underlyingMessage?.content {
             case .text(let data)?:
@@ -181,10 +135,10 @@ extension ClientMessageTranscoderTests {
             }
         }
     }
-    
+
     func testThatItUpdateExpectsReadConfirmationFlagWhenReadReceiptsAreDisabled() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             ZMUser.selfUser(in: self.syncMOC).readReceiptsEnabled = false
             let text = "Lorem ipsum"
@@ -197,14 +151,14 @@ extension ClientMessageTranscoderTests {
                 XCTFail("Error in adding data: \(error)")
             }
             self.syncMOC.saveOrRollback()
-            
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             if self.sut.nextRequest() == nil {
                 XCTFail()
                 return
             }
-            
+
             // THEN
             XCTAssertFalse(message.underlyingMessage!.text.expectsReadConfirmation)
         }
@@ -245,7 +199,7 @@ extension ClientMessageTranscoderTests {
             XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .enabled)
         }
     }
-    
+
     func testThatItUpdatesLegalHoldStatusFlagWhenLegalHoldIsDisabled() {
         self.syncMOC.performGroupedBlockAndWait {
 
@@ -275,64 +229,92 @@ extension ClientMessageTranscoderTests {
            XCTAssertEqual(message.underlyingMessage!.text.legalHoldStatus, .disabled)
         }
     }
-    
+
     func testThatItGeneratesARequestToSendAClientMessage() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
             let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             self.syncMOC.saveOrRollback()
-            
+            self.sut.useFederationEndpoint = false
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else {
                 XCTFail()
                 return
             }
-            
+
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
-            
+
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
                 return XCTFail("Invalid message")
             }
             XCTAssertEqual(receivedMessage.textData?.content, text)
         }
     }
-    
-    func testThatItGeneratesARequestToSendAClientMessageExternalWithExternalBlob() {
+
+    func testThatItGeneratesARequestToSendAClientMessage_WithFederationEndpointEnabled() {
         self.syncMOC.performGroupedBlockAndWait {
-            
+
             // GIVEN
-            let text = String(repeating: "Hi", count: 100000)
+            let text = "Lorem ipsum"
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            let conversationID = self.groupConversation.remoteIdentifier!.transportString()
+            let conversationDomain = self.groupConversation.domain!
             self.syncMOC.saveOrRollback()
-            
+            self.sut.useFederationEndpoint = true
+
             // WHEN
             self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
             guard let request = self.sut.nextRequest() else {
                 XCTFail()
                 return
             }
-            
+
+            // THEN
+            XCTAssertEqual(request.path, "/conversations/\(conversationDomain)/\(conversationID)/proteus/messages")
+            XCTAssertEqual(request.method, .methodPOST)
+            XCTAssertNotNil(request.binaryData)
+            XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
+        }
+    }
+
+    func testThatItGeneratesARequestToSendAClientMessageExternalWithExternalBlob() {
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let text = String(repeating: "Hi", count: 100000)
+            let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
+            self.syncMOC.saveOrRollback()
+            self.sut.useFederationEndpoint = false
+
+            // WHEN
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([message])) }
+            guard let request = self.sut.nextRequest() else {
+                XCTFail()
+                return
+            }
+
             // THEN
             XCTAssertEqual(request.path, "/conversations/\(self.groupConversation.remoteIdentifier!.transportString())/otr/messages")
             XCTAssertEqual(request.method, .methodPOST)
             XCTAssertNotNil(request.binaryData)
             XCTAssertEqual(request.binaryDataType, "application/x-protobuf")
-            
+
             guard let receivedMessage = self.outgoingEncryptedMessage(from: request, for: self.otherClient) else {
                 return XCTFail("Invalid message")
             }
             XCTAssertTrue(receivedMessage.hasExternal)
-            
+
             let key = receivedMessage.external.otrKey
             let sha = receivedMessage.external.sha256
-            
+
             guard let protobuf = self.outgoingMessageWrapper(from: request) else {
                 return XCTFail()
             }
@@ -340,7 +322,7 @@ extension ClientMessageTranscoderTests {
             XCTAssertEqual(protobuf.blob.zmSHA256Digest(), sha)
             guard let decryptedBlob = protobuf.blob.zmDecryptPrefixedPlainTextIV(key: key) else { return XCTFail("Failed to decrypt blob") }
             let externalMessage = try? GenericMessage.init(serializedData: decryptedBlob)
-            XCTAssertTrue(externalMessage?.textData?.content == text) // here I use == instead of XCTAssertEqual because the 
+            XCTAssertTrue(externalMessage?.textData?.content == text) // here I use == instead of XCTAssertEqual because the
             // warning generated by a failed comparison of a 200000-chars string almost freezes XCode
         }
     }
@@ -359,4 +341,110 @@ extension ClientMessageTranscoderTests {
             XCTAssertEqual(self.mockAttachmentsDetector.downloadCount, 1)
         }
     }
+
+    func testThatItDeletesTheConfirmationMessageWhenSentSuccessfully() {
+
+        // GIVEN
+        var confirmationMessage: ZMMessage!
+        self.syncMOC.performGroupedBlockAndWait {
+
+            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            self.syncMOC.saveOrRollback()
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
+
+            // WHEN
+            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            request.complete(with: ZMTransportResponse(payload: NSDictionary(), httpStatus: 200, transportSessionError: nil))
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        self.syncMOC.performGroupedBlockAndWait {
+            XCTAssertTrue(confirmationMessage.isZombieObject)
+        }
+    }
+
+    func testThatItNotifiesWhenMessageCannotBeSent_MissingLegalholdConsent() {
+
+        // GIVEN
+        var confirmationMessage: ZMMessage!
+        var token: Any? = nil
+        self.syncMOC.performGroupedBlockAndWait {
+
+            confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: Confirmation(messageId: UUID(), type: .delivered)))
+            self.syncMOC.saveOrRollback()
+            self.sut.contextChangeTrackers.forEach { $0.objectsDidChange(Set([confirmationMessage])) }
+
+            let expectation = self.expectation(description: "Notification fired")
+            token = NotificationInContext.addObserver(name: ZMConversation.failedToSendMessageNotificationName,
+                                                      context: self.uiMOC.notificationContext,
+                                                      object: nil) {_ in
+                expectation.fulfill()
+            }
+
+            // WHEN
+            guard let request = self.sut.nextRequest() else { return XCTFail() }
+            let payload = ["label": "missing-legalhold-consent", "code": 403, "message": ""] as NSDictionary
+            request.complete(with: ZMTransportResponse(payload: payload, httpStatus: 403, transportSessionError: nil))
+        }
+        XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+
+        // THEN
+        withExtendedLifetime(token) { () -> () in
+            XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+        }
+    }
 }
+
+// MARK: - Processing events
+
+extension ClientMessageRequestStrategyTests {
+
+    func testThatANewOtrMessageIsCreatedFromAnEvent() {
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let text = "Everything"
+            let base64Text = "CiQ5ZTU2NTQwOS0xODZiLTRlN2YtYTE4NC05NzE4MGE0MDAwMDQSDAoKRXZlcnl0aGluZw=="
+            let payload = [
+                "recipient": self.selfClient.remoteIdentifier,
+                "sender": self.otherClient.remoteIdentifier,
+                "text": base64Text
+            ]
+            let eventPayload = [
+                "type": "conversation.otr-message-add",
+                "data": payload,
+                "conversation": self.groupConversation.remoteIdentifier!.transportString(),
+                "time": Date().transportString(),
+                "from": self.otherUser.remoteIdentifier.transportString()
+                ] as NSDictionary
+            guard let event = ZMUpdateEvent.decryptedUpdateEvent(fromEventStreamPayload: eventPayload, uuid: nil, transient: false, source: .webSocket) else {
+                XCTFail()
+                return
+            }
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+
+            // THEN
+            XCTAssertEqual(self.groupConversation.lastMessage?.textMessageData?.messageText, text)
+        }
+    }
+
+    func testThatANewOtrMessageIsCreatedFromADecryptedAPNSEvent() {
+        self.syncMOC.performGroupedBlockAndWait {
+
+            // GIVEN
+            let text = "Everything"
+            let event = self.decryptedUpdateEventFromOtherClient(text: text)
+
+            // WHEN
+            self.sut.processEvents([event], liveEvents: false, prefetchResult: nil)
+
+            // THEN
+            XCTAssertEqual((self.groupConversation.lastMessage as? ZMClientMessage)?.textMessageData?.messageText, text)
+        }
+    }
+
+}
+

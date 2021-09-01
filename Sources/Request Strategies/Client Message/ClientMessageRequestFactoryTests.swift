@@ -38,7 +38,7 @@ extension ClientMessageRequestFactoryTests {
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, useFederationEndpoint: false) else {
                 return XCTFail("No request")
             }
             
@@ -68,7 +68,7 @@ extension ClientMessageRequestFactoryTests {
             let confirmationMessage = try! self.oneToOneConversation.appendClientMessage(with: GenericMessage(content: confirmation), expires: false, hidden: true)
             
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, forConversationWithId: self.oneToOneConversation.remoteIdentifier!) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(confirmationMessage, in: self.oneToOneConversation, useFederationEndpoint: false) else {
                 return XCTFail("No request")
             }
             
@@ -94,7 +94,7 @@ extension ClientMessageRequestFactoryTests {
             let message = try! self.groupConversation.appendText(content: text) as! ZMClientMessage
             
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(message, in: self.groupConversation, useFederationEndpoint: false) else {
                 return XCTFail()
             }
             
@@ -125,7 +125,7 @@ extension ClientMessageRequestFactoryTests {
                                               completionHandler: nil)
 
             // WHEN
-            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(entity, forConversationWithId: self.groupConversation.remoteIdentifier!) else {
+            guard let request = ClientMessageRequestFactory().upstreamRequestForMessage(entity, in: self.groupConversation, useFederationEndpoint: false) else {
                 return XCTFail("No request")
             }
 
