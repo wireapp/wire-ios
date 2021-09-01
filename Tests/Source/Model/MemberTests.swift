@@ -191,34 +191,6 @@ extension MemberTests {
         }
     }
 
-    func testThatItMergesDuplicateUsersWhenUpdatingMemberFromTransportData() {
-        syncMOC.performAndWait {
-            // given
-            let team = Team.insertNewObject(in: self.syncMOC)
-            team.remoteIdentifier = .create()
-            let userId = UUID.create()
-            let user1 = ZMUser.insert(in: self.syncMOC, name: "Creator")
-            user1.remoteIdentifier = userId
-            let user2 = ZMUser.insert(in: self.syncMOC, name: "Creator")
-            user2.remoteIdentifier = userId
-
-            let payload: [String: Any] = [
-                "user": userId.transportString(),
-                "permissions": ["self": 5951, "copy": 0]
-            ]
-
-            // when
-            guard let member = Member.createOrUpdate(with: payload, in: team, context: self.syncMOC) else { return XCTFail("No member created") }
-
-            // then
-            XCTAssertEqual(member.user?.remoteIdentifier, userId)
-            XCTAssertEqual(member.permissions, .admin)
-            XCTAssertEqual(member.team, team)
-            let afterMerge = ZMUser.fetchAll(with: userId, in: self.syncMOC)
-            XCTAssertEqual(afterMerge.count, 1)
-        }
-    }
-
     func testThatItCreatesAndUpdatesAMemberFromTransportData() {
         syncMOC.performAndWait {
             // given

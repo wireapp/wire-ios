@@ -445,10 +445,10 @@ public class ZMSearchUser: NSObject, UserType {
     public static func searchUser(from payload: [String : Any], contextProvider: ContextProvider) -> ZMSearchUser? {
         guard let uuidString = payload["id"] as? String,
               let remoteIdentifier = UUID(uuidString: uuidString) else { return nil }
-                
-        let localUser = ZMUser(remoteID: remoteIdentifier,
-                               createIfNeeded: false,
-                               in: contextProvider.viewContext)
+
+        let localUser = ZMUser.fetch(with: remoteIdentifier,
+                                     domain: nil,
+                                     in: contextProvider.viewContext)
         
         if let searchUser = contextProvider.viewContext.zm_searchUserCache?.object(forKey: remoteIdentifier as NSUUID) {
             searchUser.user = localUser
@@ -615,8 +615,7 @@ public class ZMSearchUser: NSObject, UserType {
             let accentColorValue = self.accentColorValue
             
             syncManagedObjectContext.performGroupedBlock {
-                guard let user = ZMUser(remoteID: remoteIdentifier, createIfNeeded: true, in: syncManagedObjectContext) else { return }
-                
+                let user = ZMUser.fetchOrCreate(with: remoteIdentifier, domain: nil, in: syncManagedObjectContext)
                 user.name = name
                 user.accentColorValue = accentColorValue
                 user.needsToBeUpdatedFromBackend = true

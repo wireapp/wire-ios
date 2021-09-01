@@ -149,7 +149,7 @@ static NSString *const DomainKey = @"domain";
 @property (nonatomic, copy) NSString *emailAddress;
 @property (nonatomic, copy) NSString *phoneNumber;
 @property (nonatomic, copy) NSString *normalizedEmailAddress;
-@property (nullable, nonatomic) NSString *managedBy;
+@property (nonatomic, copy) NSString *managedBy;
 @property (nonatomic, readonly) UserClient *selfClient;
 
 @end
@@ -414,28 +414,6 @@ static NSString *const DomainKey = @"domain";
         keys = [ignoredKeys copy];
     });
     return keys;
-}
-
-+ (instancetype)userWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
-{
-    // We must only ever call this on the sync context. Otherwise, there's a race condition
-    // where the UI and sync contexts could both insert the same user (same UUID) and we'd end up
-    // having two duplicates of that user, and we'd have a really hard time recovering from that.
-    //
-    RequireString(! create || moc.zm_isSyncContext, "Race condition!");
-    
-    ZMUser *result = [self fetchObjectWithRemoteIdentifier:UUID inManagedObjectContext:moc];
-    
-    if (result != nil) {
-        return result;
-    } else if(create) {
-        ZMUser *user = [ZMUser insertNewObjectInManagedObjectContext:moc];
-        user.remoteIdentifier = UUID;
-        return user;
-    }
-    else {
-        return nil;
-    }
 }
 
 + (nullable instancetype)userWithEmailAddress:(NSString *)emailAddress inContext:(NSManagedObjectContext *)context

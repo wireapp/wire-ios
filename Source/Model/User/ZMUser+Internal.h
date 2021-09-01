@@ -38,6 +38,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nullable, nonatomic) ZMConnection *connection;
 
 @property (nullable, nonatomic) NSUUID *teamIdentifier;
+@property (nullable, nonatomic, copy) NSString *managedBy;
 
 @property (nonnull, nonatomic) NSSet *showingUserAdded;
 @property (nonnull, nonatomic) NSSet *showingUserRemoved;
@@ -52,7 +53,6 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 
 - (void)updateWithTransportData:(nonnull NSDictionary *)transportData authoritative:(BOOL)authoritative;
 
-+ (nullable instancetype)userWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
 + (nullable instancetype)userWithEmailAddress:(nonnull NSString *)emailAddress inContext:(nonnull NSManagedObjectContext *)context;
 + (nullable instancetype)userWithPhoneNumber:(nonnull NSString *)phoneNumber inContext:(nonnull NSManagedObjectContext *)context;
 
@@ -63,6 +63,8 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 /// @method Updates the user with a name or handle received through a search
 /// Should be called when creating a @c ZMSearchUser to ensure it's underlying user is updated.
 - (void)updateWithSearchResultName:(nullable NSString *)name handle:(nullable NSString *)handle;
+
+- (void)updatePotentialGapSystemMessagesIfNeeded;
 
 
 @end
@@ -81,6 +83,7 @@ extern NSString * __nonnull const ReadReceiptsEnabledKey;
 @property (nullable, nonatomic, copy) NSString *emailAddress;
 @property (nullable, nonatomic, copy) NSString *phoneNumber;
 @property (nullable, nonatomic, copy) NSString *name;
+@property (nullable, nonatomic, copy) NSString *handle;
 @property (nonatomic) ZMAccentColor accentColorValue;
 
 - (void)setHandle:(NSString * __nullable)handle;

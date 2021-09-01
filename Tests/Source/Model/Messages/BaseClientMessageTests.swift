@@ -169,7 +169,7 @@ class BaseZMClientMessageTests : BaseZMMessageTests {
         super.tearDown()
     }
     
-    func assertRecipients(_ recipients: [UserEntry], file: StaticString = #file, line: UInt = #line) {
+    func assertRecipients(_ recipients: [Proteus_UserEntry], file: StaticString = #file, line: UInt = #line) {
         XCTAssertEqual(recipients.count, expectedRecipients.count, file: file, line: line)
         
         for recipientEntry in recipients {

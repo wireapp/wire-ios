@@ -29,8 +29,8 @@ extension UserClient {
         return UInt64(pointer.pointee)
     }
     
-    public var clientId: ClientId {
-        return ClientId.with {
+    public var clientId: Proteus_ClientId {
+        return Proteus_ClientId.with {
             $0.client = self.hexRemoteIdentifier
         }
     }

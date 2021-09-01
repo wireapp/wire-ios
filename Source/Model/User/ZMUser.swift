@@ -195,8 +195,8 @@ public extension Notification.Name {
 
 extension ZMUser {
     
-    @objc static let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
-    @objc static let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
+    @objc static public let previewProfileAssetIdentifierKey = #keyPath(ZMUser.previewProfileAssetIdentifier)
+    @objc static public let completeProfileAssetIdentifierKey = #keyPath(ZMUser.completeProfileAssetIdentifier)
 
     @NSManaged public var previewProfileAssetIdentifier: String?
     @NSManaged public var completeProfileAssetIdentifier: String?
@@ -213,7 +213,7 @@ extension ZMUser {
     /// System messages referencing this user
     @NSManaged var systemMessages: Set<ZMSystemMessage>
     
-    @NSManaged var expiresAt: Date?
+    @NSManaged public var expiresAt: Date?
     
     /// `accountIsDeleted` is true if this account has been deleted on the backend
     @NSManaged public internal(set) var isAccountDeleted: Bool

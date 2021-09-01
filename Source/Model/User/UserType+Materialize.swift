@@ -50,7 +50,7 @@ extension UserType {
             if let user = searchUser.user {
                 return user
             } else if let remoteIdentifier = searchUser.remoteIdentifier {
-                return ZMUser(remoteID: remoteIdentifier, createIfNeeded: false, in: context)
+                return ZMUser.fetch(with: remoteIdentifier, domain: searchUser.domain, in: context)
             }
         }
         
@@ -62,18 +62,17 @@ extension UserType {
 extension Sequence where Element: ZMSearchUser {
     
     fileprivate func createLocalUsers(in context: NSManagedObjectContext) {
-        let nonExistingUsers = filter({ $0.user == nil }).map { (userID: $0.remoteIdentifier, teamID: $0.teamIdentifier) }
-        
+        let nonExistingUsers = filter({ $0.user == nil }).map { (userID: $0.remoteIdentifier,
+                                                                 teamID: $0.teamIdentifier,
+                                                                 domain: $0.domain) }
+
         context.performGroupedBlockAndWait {
             nonExistingUsers.forEach {
                 guard let remoteIdentifier = $0.userID else { return }
-                
-                let user = ZMUser(remoteID: remoteIdentifier,
-                                  createIfNeeded: true,
-                                  in: context)
-                
-                user?.teamIdentifier = $0.teamID
-                user?.createOrDeleteMembershipIfBelongingToTeam()
+
+                let user = ZMUser.fetchOrCreate(with: remoteIdentifier, domain: $0.domain, in: context)
+                user.teamIdentifier = $0.teamID
+                user.createOrDeleteMembershipIfBelongingToTeam()
             }
             context.saveOrRollback()
         }

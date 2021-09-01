@@ -133,7 +133,7 @@ public extension ZMConversation {
 
         let selfUser = ZMUser.selfUser(in: managedObjectContext)
         if let senderID = senderID,
-            let sender = ZMUser.fetch(withRemoteIdentifier: senderID, in: managedObjectContext), sender.isSelfUser {
+            let sender = ZMUser.fetch(with: senderID, in: managedObjectContext), sender.isSelfUser {
             return true
         }
 

@@ -292,7 +292,7 @@
         conversation.remoteIdentifier = uuid;
         
         // when
-        ZMConversation *found = [ZMConversation conversationWithRemoteID:uuid createIfNeeded:NO inContext:self.syncMOC];
+        ZMConversation *found = [ZMConversation fetchWith:uuid in:self.syncMOC];
         
         // then
         XCTAssertEqualObjects(found.remoteIdentifier, uuid);
@@ -309,7 +309,8 @@
         [self.syncMOC saveOrRollback];
         
         // when
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:uuid createIfNeeded:YES inContext:self.syncMOC];
+
+        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
         
         // then
         XCTAssertNotNil(conversation);
@@ -332,7 +333,7 @@
     }];
     
     // when
-    ZMConversation *found = [ZMConversation conversationWithRemoteID:uuid createIfNeeded:NO inContext:self.uiMOC];
+    ZMConversation *found = [ZMConversation fetchWith:uuid in:self.uiMOC];
     
     // then
     XCTAssertEqualObjects(found.remoteIdentifier, uuid);
@@ -350,7 +351,7 @@
         conversation.remoteIdentifier = uuid;
         
         // when
-        ZMConversation *found = [ZMConversation conversationWithRemoteID:secondUUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMConversation *found = [ZMConversation fetchWith:secondUUID in:self.syncMOC];
         
         // then
         XCTAssertNil(found);
@@ -364,10 +365,9 @@
         NSUUID *uuid = NSUUID.createUUID;
         
         // when
-        ZMConversation *found = [ZMConversation conversationWithRemoteID:uuid createIfNeeded:YES inContext:self.syncMOC];
+        ZMConversation *found = [ZMConversation fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
         
         // then
-        XCTAssertNotNil(found);
         XCTAssertEqualObjects(uuid, found.remoteIdentifier);
     }];
 }
@@ -422,7 +422,7 @@
     invalidConversation.remoteIdentifier = [NSUUID createUUID];
     
     // when
-    ZMConversation *fetchedConversation = [ZMConversation conversationWithRemoteID:invalidConversation.remoteIdentifier createIfNeeded:NO inContext:self.uiMOC];
+    ZMConversation *fetchedConversation = [ZMConversation fetchWith:invalidConversation.remoteIdentifier in:self.uiMOC];
     
     // then
     XCTAssertEqual(fetchedConversation, invalidConversation);
@@ -1478,7 +1478,7 @@
     __block NSManagedObjectID *moid;
     [self.syncMOC performGroupedBlockAndWait:^{
         // when
-        ZMUser *user = [ZMUser userWithRemoteID:NSUUID.createUUID createIfNeeded:YES inContext:self.syncMOC];
+        ZMUser *user = [ZMUser fetchOrCreateWith:NSUUID.createUUID domain:nil in:self.syncMOC];
         user.name = @"Skyler Saša";
         user.needsToBeUpdatedFromBackend = YES;
         ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];
@@ -1499,7 +1499,7 @@
     __block NSManagedObjectID *moid;
     [self.syncMOC performGroupedBlockAndWait:^{
         // when
-        ZMUser *user = [ZMUser userWithRemoteID:NSUUID.createUUID createIfNeeded:YES inContext:self.syncMOC];
+        ZMUser *user = [ZMUser fetchOrCreateWith:NSUUID.createUUID domain:nil in:self.syncMOC];
         user.name = @"";
         user.needsToBeUpdatedFromBackend = YES;
         ZMConnection *connection = [ZMConnection insertNewSentConnectionToUser:user];

@@ -27,7 +27,7 @@ public class Mention: NSObject {
     init?(_ protobuf: WireProtos.Mention, context: NSManagedObjectContext) {
         guard let userId = UUID(uuidString: protobuf.userID),
               protobuf.length > 0, protobuf.start >= 0,
-              let user = ZMUser(remoteID: userId, createIfNeeded: false, in: context) else { return nil }
+              let user = ZMUser.fetch(with: userId, domain: nil, in: context) else { return nil }
         
         self.user = user
         self.range = NSRange(location: Int(protobuf.start), length: Int(protobuf.length))

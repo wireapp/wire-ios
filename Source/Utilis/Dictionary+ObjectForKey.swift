@@ -30,4 +30,8 @@ public extension Dictionary {
     func dictionary(forKey key: String) -> [String: AnyObject]? {
         return (self as NSDictionary).dictionary(forKey: key)
     }
+
+    func optionalDictionary(forKey key: String) -> [String: AnyObject]? {
+        return (self as NSDictionary).optionalDictionary(forKey: key)
+    }
 }

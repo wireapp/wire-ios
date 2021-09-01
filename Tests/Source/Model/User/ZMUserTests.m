@@ -137,7 +137,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = uuid;
 
     // when
-    ZMUser *found = [ZMUser userWithRemoteID:uuid createIfNeeded:false inContext:self.uiMOC];
+    ZMUser *found = [ZMUser fetchWith:uuid in:self.uiMOC];
 
     // then
     XCTAssertEqualObjects(found.remoteIdentifier, uuid);
@@ -154,7 +154,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
     user.remoteIdentifier = uuid;
 
     // when
-    ZMUser *found = [ZMUser userWithRemoteID:secondUUID createIfNeeded:NO inContext:self.uiMOC];
+    ZMUser *found = [ZMUser fetchWith:secondUUID in:self.uiMOC];
 
     // then
     XCTAssertNil(found);
@@ -167,7 +167,7 @@ static NSString *const ImageSmallProfileDataKey = @"imageSmallProfileData";
 
     [self.syncMOC performBlockAndWait:^{
         // when
-        ZMUser *found = [ZMUser userWithRemoteID:uuid createIfNeeded:YES inContext:self.syncMOC];
+        ZMUser *found = [ZMUser fetchOrCreateWith:uuid domain:nil in:self.syncMOC];
         
         // then
         XCTAssertNotNil(found);

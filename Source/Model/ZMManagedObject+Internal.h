@@ -32,6 +32,7 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 + (nonnull NSString *)entityName; ///< subclasses must implement this
 + (nullable NSString *)sortKey; ///< subclasses must implement this or @c +defaultSortDescriptors
 + (nullable NSString *)remoteIdentifierDataKey; ///< subclasses must implement this
++ (nullable NSString *)domainKey; ///< subclasses must implement this
 
 + (nonnull instancetype)insertNewObjectInManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
@@ -64,8 +65,16 @@ extern NSString * _Nonnull const ZMManagedObjectLocallyModifiedKeysKey;
 
 + (void)enumerateObjectsInContext:(nonnull NSManagedObjectContext *)moc withBlock:(nonnull ObjectsEnumerationBlock)block;
 
-+ (nullable instancetype)fetchObjectWithRemoteIdentifier:(nonnull NSUUID *)uuid inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
-+ (nullable NSSet *)fetchObjectsWithRemoteIdentifiers:(nonnull NSSet <NSUUID *> *)uuids inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
++ (nullable instancetype)internalFetchObjectWithRemoteIdentifier:(nonnull NSUUID *)uuid
+                                          inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
+
++ (nullable instancetype)internalFetchObjectWithRemoteIdentifier:(nonnull NSUUID *)uuid
+                                                          domain:(nullable NSString *)domain
+                                            searchingLocalDomain:(BOOL)searchingLocalDomain
+                                          inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
+
++ (nullable NSSet *)fetchObjectsWithRemoteIdentifiers:(nonnull NSSet <NSUUID *> *)uuids
+                               inManagedObjectContext:(nonnull NSManagedObjectContext *)moc;
 
 @end
 

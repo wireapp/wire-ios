@@ -113,8 +113,8 @@ extension ZMConversation {
         guard let conversationID = UUID(uuidString: lastRead.conversationID) else {
             return
         }
-        let conversation = ZMConversation(remoteID: conversationID, createIfNeeded: true, in: moc)
-        conversation?.updateLastRead(timestamp, synchronize: false)
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: nil, in: moc)
+        conversation.updateLastRead(timestamp, synchronize: false)
     }
 
     static func updateConversation(withClearedFromSelfConversation cleared: Cleared, inContext moc: NSManagedObjectContext) {
@@ -123,8 +123,8 @@ extension ZMConversation {
         guard let conversationID = UUID(uuidString: cleared.conversationID) else {
             return
         }
-        let conversation = ZMConversation(remoteID: conversationID, createIfNeeded: true, in: moc)
-        conversation?.updateCleared(timestamp, synchronize: false)
+        let conversation = ZMConversation.fetchOrCreate(with: conversationID, domain: nil, in: moc)
+        conversation.updateCleared(timestamp, synchronize: false)
 
     }
 

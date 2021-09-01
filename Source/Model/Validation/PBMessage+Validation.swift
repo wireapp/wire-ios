@@ -208,8 +208,8 @@ extension WireProtos.Reaction {
 
 // MARK: User ID
 
-extension WireProtos.UserId {
-    public func validatingFields() -> WireProtos.UserId? {
+extension WireProtos.Proteus_UserId {
+    public func validatingFields() -> WireProtos.Proteus_UserId? {
         return UUID.isValid(bytes: uuid) ? self : nil
     }
 }

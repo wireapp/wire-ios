@@ -49,13 +49,13 @@ extension ClientMessageTests_OTR {
             else { return XCTFail() }
             
             // then
-            let createdMessage = NewOtrMessage.with {
+            let createdMessage = Proteus_NewOtrMessage.with {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
            
             XCTAssertEqual(createdMessage.hasBlob, true)
-            let clientIds = createdMessage.recipients.flatMap { userEntry -> [ClientId] in
-                return (userEntry.clients).map { clientEntry -> ClientId in
+            let clientIds = createdMessage.recipients.flatMap { userEntry -> [Proteus_ClientId] in
+                return (userEntry.clients).map { clientEntry -> Proteus_ClientId in
                     return clientEntry.client
                 }
             }
@@ -85,7 +85,7 @@ extension ClientMessageTests_OTR {
             }
             
             // then
-            let createdMessage = NewOtrMessage.with {
+            let createdMessage = Proteus_NewOtrMessage.with {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
@@ -111,7 +111,7 @@ extension ClientMessageTests_OTR {
             }
             
             //then
-            let createdMessage = NewOtrMessage.with {
+            let createdMessage = Proteus_NewOtrMessage.with {
                 try? $0.merge(serializedData: dataAndStrategy.data)
             }
             guard let userEntry = createdMessage.recipients.first(where: { self.syncUser3.userId == $0.user }) else { return XCTFail() }
@@ -334,7 +334,7 @@ extension ClientMessageTests_OTR {
             default:
                 XCTFail()
             }
-            let messageMetadata = NewOtrMessage.with {
+            let messageMetadata = Proteus_NewOtrMessage.with {
                 try? $0.merge(serializedData: payloadAndStrategy.data)
             }
             
@@ -472,7 +472,7 @@ extension ClientMessageTests_OTR {
     
     /// Asserts that the message metadata is as expected
     fileprivate func assertMessageMetadata(_ payload: Data!, file: StaticString = #file, line: UInt = #line) {
-        let messageMetadata = NewOtrMessage.with {
+        let messageMetadata = Proteus_NewOtrMessage.with {
             try? $0.merge(serializedData: payload)
         }
         
@@ -495,10 +495,9 @@ extension DatabaseBaseTest {
     func createSelfUser(in moc: NSManagedObjectContext) -> (ZMUser, ZMConversation) {
         let selfUser = ZMUser.selfUser(in: moc)
         selfUser.remoteIdentifier = UUID()
-
-        let conversation = ZMConversation(remoteID: selfUser.remoteIdentifier,
-                                          createIfNeeded: true,
-                                          in: moc)!
+        let conversation = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier,
+                                                        domain: nil,
+                                                        in: moc)
         moc.saveOrRollback()
         return (selfUser, conversation)
     }

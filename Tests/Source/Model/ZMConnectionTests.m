@@ -609,7 +609,7 @@
         
         // when
         (void) [ZMConnection connectionFromTransportData:payload managedObjectContext:self.syncMOC];
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.syncMOC];
+        ZMConversation *conversation = [ZMConversation fetchWith:remoteID in:self.syncMOC];
         
         // then
         XCTAssertNotNil(conversation);
@@ -1106,7 +1106,7 @@
         
         // when
         (void) [ZMConnection connectionFromTransportData:payload managedObjectContext:self.syncMOC];
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.syncMOC];
+        ZMConversation *conversation = [ZMConversation fetchWith:remoteID in:self.syncMOC];
         
         // then
         XCTAssertNotNil(conversation);

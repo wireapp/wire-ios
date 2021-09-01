@@ -93,13 +93,12 @@ extension ZMOTRMessage {
             return ZMClientMessage.editMessage(withEdit: message.edited, forConversation: conversation, updateEvent: updateEvent, inContext: moc, prefetchResult: prefetchResult)
             
         case .clientAction(.resetSession):
+            let sender = ZMUser.fetchOrCreate(with: senderID, domain: nil, in: moc)
             guard
-                let sender = ZMUser(remoteID: senderID, createIfNeeded: true, in: moc),
                 let senderClientID = updateEvent.senderClientID,
                 let senderClient = UserClient.fetchUserClient(withRemoteId: senderClientID, forUser: sender, createIfNeeded: true),
                 let timestamp = updateEvent.timestamp
             else { return nil }
-            
             conversation.appendSessionResetSystemMessage(user: sender, client: senderClient, at: timestamp)
         case .calling, .availability:
             return nil
@@ -186,8 +185,8 @@ extension ZMOTRMessage {
     
     private static func appendInvalidSystemMessage(forUpdateEvent event: ZMUpdateEvent, toConversation conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
         guard let remoteId = event.senderUUID,
-            let sender = ZMUser(remoteID: remoteId, createIfNeeded: false, in: moc) else {
-                return
+              let sender = ZMUser.fetch(with: remoteId, domain: nil, in: moc) else {
+            return
         }
         conversation.appendInvalidSystemMessage(at: event.timestamp ?? Date(), sender: sender)
     }
