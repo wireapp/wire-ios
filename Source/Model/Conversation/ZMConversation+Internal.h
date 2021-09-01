@@ -82,13 +82,11 @@ extern NSString *const ZMConversationLegalHoldStatusKey;
 
 extern NSString *const SecurityLevelKey;
 extern NSString *const ZMConversationLabelsKey;
+extern NSString *const ZMConversationDomainKey;
 
 NS_ASSUME_NONNULL_END
 
 @interface ZMConversation (Internal)
-
-+ (nullable instancetype)conversationWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc;
-+ (nullable instancetype)conversationWithRemoteID:(nonnull NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(nonnull NSManagedObjectContext *)moc created:(nullable BOOL *)created;
 
 + (nonnull ZMConversationList *)conversationsIncludingArchivedInContext:(nonnull NSManagedObjectContext *)moc;
 + (nonnull ZMConversationList *)archivedConversationsInContext:(nonnull NSManagedObjectContext *)moc;

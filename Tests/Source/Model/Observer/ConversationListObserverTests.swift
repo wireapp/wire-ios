@@ -973,7 +973,7 @@ class ConversationListObserverTests: NotificationDispatcherTestBase {
 
         // when
         syncMOC.performGroupedBlockAndWait {
-            let team = Team.fetch(withRemoteIdentifier: teamId, in: self.syncMOC)
+            let team = Team.fetch(with: teamId, in: self.syncMOC)
             let conversation = ZMConversation.insertNewObject(in:self.syncMOC)
             conversation.conversationType = .group
             conversation.team = team

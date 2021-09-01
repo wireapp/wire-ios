@@ -64,7 +64,7 @@
         if let existing = user.membership {
             return existing
         }
-        else if let userId = user.remoteIdentifier, let existing = Member.fetch(withRemoteIdentifier: userId, in: context) {
+        else if let userId = user.remoteIdentifier, let existing = Member.fetch(with: userId, in: context) {
             return existing
         }
 
@@ -95,17 +95,16 @@ extension Member {
 
     @discardableResult
     public static func createOrUpdate(with payload: [String: Any], in team: Team, context: NSManagedObjectContext) -> Member? {
-        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init),
-            let user = ZMUser.fetchAndMerge(with: id, createIfNeeded: true, in: context) else { return nil }
+        guard let id = (payload[ResponseKey.user.rawValue] as? String).flatMap(UUID.init) else { return nil }
 
-        
+        let user = ZMUser.fetchOrCreate(with: id, domain: nil, in: context)
         let createdAt = (payload[ResponseKey.createdAt.rawValue] as? String).flatMap(NSDate.init(transport:)) as Date?
         let createdBy = (payload[ResponseKey.createdBy.rawValue] as? String).flatMap(UUID.init)
         let member = getOrCreateMember(for: user, in: team, context: context)
         
         member.updatePermissions(with: payload)
         member.createdAt = createdAt
-        member.createdBy = createdBy.flatMap({ ZMUser.fetchAndMerge(with: $0, createIfNeeded: true, in: context) })
+        member.createdBy = createdBy.flatMap({ ZMUser.fetchOrCreate(with: $0, domain: nil, in: context) })
         
         return member
     }

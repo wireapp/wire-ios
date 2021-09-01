@@ -51,7 +51,7 @@ class GenericMessageTests_NativePush: BaseZMMessageTests {
 
             // when
             let (data, _) = message.encryptForTransport(for: conversation)!
-            let otrMessage = NewOtrMessage.with {
+            let otrMessage = Proteus_NewOtrMessage.with {
                try? $0.merge(serializedData: data)
             }
 

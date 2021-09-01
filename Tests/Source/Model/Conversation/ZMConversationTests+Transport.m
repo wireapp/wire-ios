@@ -367,11 +367,12 @@
         XCTAssertEqual(conversation.conversationType, ZMConversationTypeSelf);
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
-        
-        ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
+
+
+        ZMUser *user1 = [ZMUser fetchWith:user1UUID in:self.syncMOC];
         XCTAssertNotNil(user1);
         
-        ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user2 = [ZMUser fetchWith:user2UUID in:self.syncMOC];
         XCTAssertNotNil(user2);
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
         
@@ -443,10 +444,10 @@
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
-        ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user1 = [ZMUser fetchWith:user1UUID in:self.syncMOC];
         XCTAssertNotNil(user1);
 
-        ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user2 = [ZMUser fetchWith:user2UUID in:self.syncMOC];
         XCTAssertNotNil(user2);
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
 
@@ -497,10 +498,10 @@
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
 
-        ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user1 = [ZMUser fetchWith:user1UUID in:self.syncMOC];
         XCTAssertNotNil(user1);
 
-        ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user2 = [ZMUser fetchWith:user2UUID in:self.syncMOC];
         XCTAssertNotNil(user2);
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
 
@@ -551,10 +552,10 @@
         XCTAssertEqualObjects(conversation.lastServerTimeStamp, serverTimestamp);
         XCTAssertEqualObjects(conversation.creator.remoteIdentifier, [payload[@"creator"] UUID]);
 
-        ZMUser *user1 = [ZMUser userWithRemoteID:user1UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user1 = [ZMUser fetchWith:user1UUID in:self.syncMOC];
         XCTAssertNotNil(user1);
 
-        ZMUser *user2 = [ZMUser userWithRemoteID:user2UUID createIfNeeded:NO inContext:self.syncMOC];
+        ZMUser *user2 = [ZMUser fetchWith:user2UUID in:self.syncMOC];
         XCTAssertNotNil(user2);
         ZMUser *selfUser = [ZMUser selfUserInContext:self.syncMOC];
 

@@ -117,41 +117,41 @@ extension ZMUserTests_Swift {
     func testThatItRemovesRemoteIdentifiersWhenWeGetEmptyAssets() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = "some"
-            user?.completeProfileAssetIdentifier = "other"
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = "some"
+            user.completeProfileAssetIdentifier = "other"
             
             // WHEN
-            user?.updateAssetData(with: NSArray(), authoritative: true)
+            user.updateAssetData(with: NSArray(), authoritative: true)
             
             // THEN
-            XCTAssertNil(user?.previewProfileAssetIdentifier)
-            XCTAssertNil(user?.completeProfileAssetIdentifier)
+            XCTAssertNil(user.previewProfileAssetIdentifier)
+            XCTAssertNil(user.completeProfileAssetIdentifier)
         }
     }
     
     func testThatItUpdatesIdentifiersAndRemovesCachedImagesWhenWeGetRemoteIdentifiers() {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = "123"
-            user?.completeProfileAssetIdentifier = "456"
-            user?.setImage(data: "some".data(using: .utf8), size: .preview)
-            user?.setImage(data: "other".data(using: .utf8), size: .complete)
-            XCTAssertNotNil(user?.imageData(for: .preview))
-            XCTAssertNotNil(user?.imageData(for: .complete))
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = "123"
+            user.completeProfileAssetIdentifier = "456"
+            user.setImage(data: "some".data(using: .utf8), size: .preview)
+            user.setImage(data: "other".data(using: .utf8), size: .complete)
+            XCTAssertNotNil(user.imageData(for: .preview))
+            XCTAssertNotNil(user.imageData(for: .complete))
             let previewId = "some"
             let completeId = "other"
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
             
             // WHEN
-            user?.updateAssetData(with: payload, authoritative: true)
+            user.updateAssetData(with: payload, authoritative: true)
             
             // THEN
-            XCTAssertEqual(user?.previewProfileAssetIdentifier, previewId)
-            XCTAssertNil(user?.imageData(for: .preview))
-            XCTAssertEqual(user?.completeProfileAssetIdentifier, completeId)
-            XCTAssertNil(user?.imageData(for: .complete))
+            XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
+            XCTAssertNil(user.imageData(for: .preview))
+            XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
+            XCTAssertNil(user.imageData(for: .complete))
         }
     }
     
@@ -162,23 +162,23 @@ extension ZMUserTests_Swift {
             let previewData = "some".data(using: .utf8)
             let completeId = "other"
             let completeData = "other".data(using: .utf8)
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = previewId
-            user?.completeProfileAssetIdentifier = completeId
-            user?.setImage(data: previewData, size: .preview)
-            user?.setImage(data: completeData, size: .complete)
-            XCTAssertNotNil(user?.imageData(for: .preview))
-            XCTAssertNotNil(user?.imageData(for: .complete))
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = previewId
+            user.completeProfileAssetIdentifier = completeId
+            user.setImage(data: previewData, size: .preview)
+            user.setImage(data: completeData, size: .complete)
+            XCTAssertNotNil(user.imageData(for: .preview))
+            XCTAssertNotNil(user.imageData(for: .complete))
             let payload = self.assetPayload(previewId: previewId, completeId: completeId)
             
             // WHEN
-            user?.updateAssetData(with: payload, authoritative: true)
+            user.updateAssetData(with: payload, authoritative: true)
             
             // THEN
-            XCTAssertEqual(user?.previewProfileAssetIdentifier, previewId)
-            XCTAssertEqual(user?.completeProfileAssetIdentifier, completeId)
-            XCTAssertEqual(user?.imageData(for: .preview), previewData)
-            XCTAssertEqual(user?.imageData(for: .complete), completeData)
+            XCTAssertEqual(user.previewProfileAssetIdentifier, previewId)
+            XCTAssertEqual(user.completeProfileAssetIdentifier, completeId)
+            XCTAssertEqual(user.imageData(for: .preview), previewData)
+            XCTAssertEqual(user.imageData(for: .complete), completeData)
         }
     }
 
@@ -190,8 +190,8 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.previewImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = "some-identifier"
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = "some-identifier"
             
             // THEN
             XCTAssert(predicate.evaluate(with: user))
@@ -202,9 +202,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.completeProfileAssetIdentifier = "some-identifier"
-            user?.setImage(data: nil, size: .complete)
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = "some-identifier"
+            user.setImage(data: nil, size: .complete)
             
             // THEN
             XCTAssert(predicate.evaluate(with: user))
@@ -215,9 +215,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.completeProfileAssetIdentifier = nil
-            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = nil
+            user.setImage(data: "foo".data(using: .utf8), size: .complete)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -228,9 +228,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.completeProfileAssetIdentifier = "not+valid+id"
-            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = "not+valid+id"
+            user.setImage(data: "foo".data(using: .utf8), size: .complete)
 
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -241,9 +241,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.previewProfileAssetIdentifier = "1234"
-            user?.setImage(data: "foo".data(using: .utf8), size: .preview)
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.previewProfileAssetIdentifier = "1234"
+            user.setImage(data: "foo".data(using: .utf8), size: .preview)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -254,9 +254,9 @@ extension ZMUserTests_Swift {
         syncMOC.performGroupedBlockAndWait {
             // GIVEN
             let predicate = ZMUser.completeImageDownloadFilter
-            let user = ZMUser(remoteID: UUID.create(), createIfNeeded: true, in: self.syncMOC)
-            user?.completeProfileAssetIdentifier = "1234"
-            user?.setImage(data: "foo".data(using: .utf8), size: .complete)
+            let user = ZMUser.fetchOrCreate(with: UUID.create(), domain: nil, in: self.syncMOC)
+            user.completeProfileAssetIdentifier = "1234"
+            user.setImage(data: "foo".data(using: .utf8), size: .complete)
             
             // THEN
             XCTAssertFalse(predicate.evaluate(with: user))
@@ -323,7 +323,7 @@ extension ZMUser {
         let user = ZMUser.insertNewObject(in: moc)
         user.remoteIdentifier = id
         user.name = name
-        user.setHandle(handle)
+        user.handle = handle
         let connection = ZMConnection.insertNewSentConnection(to: user)
         connection?.status = connectionStatus
 
@@ -835,7 +835,7 @@ extension ZMUserTests_Swift {
         let sut = ZMUser.selfUser(in: uiMOC)
         let conversation = ZMConversation.insertNewObject(in: uiMOC)
         conversation.addParticipantAndUpdateConversationState(user: sut, role: nil)
-        let selfConversation = ZMConversation.fetch(withRemoteIdentifier: self.selfUser.remoteIdentifier, in: uiMOC)
+        let selfConversation = ZMConversation.fetch(with: self.selfUser.remoteIdentifier, in: uiMOC)
         
         // then
         XCTAssertEqual(sut.activeConversations, [conversation, selfConversation])

@@ -53,7 +53,7 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
         }
 
         // then
-        XCTAssertNil(Team.fetch(withRemoteIdentifier: teamId, in: uiMOC))
+        XCTAssertNil(Team.fetch(with: teamId, in: uiMOC))
         XCTAssertNotNil(conversation.teamRemoteIdentifier)
         XCTAssertEqual(conversation.teamRemoteIdentifier, teamId)
         XCTAssert(ZMUser.selfUser(in: uiMOC).isGuest(in: conversation))

@@ -74,6 +74,7 @@ NSString *const ZMConversationEstimatedUnreadCountKey = @"estimatedUnreadCount";
 NSString *const ZMConversationRemoteIdentifierDataKey = @"remoteIdentifier_data";
 NSString *const SecurityLevelKey = @"securityLevel";
 NSString *const ZMConversationLabelsKey = @"labels";
+NSString *const ZMConversationDomainKey = @"domain";
 
 static NSString *const ConnectedUserKey = @"connectedUser";
 static NSString *const CreatorKey = @"creator";
@@ -162,6 +163,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 @dynamic labels;
 @dynamic participantRoles;
 @dynamic nonTeamRoles;
+@dynamic domain;
 
 @synthesize pendingLastReadServerTimestamp;
 @synthesize previousLastReadServerTimestamp;
@@ -344,7 +346,8 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
             ZMConversationLabelsKey,
             ZMConversationNeedsToDownloadRolesKey,
             @"isSelfAnActiveMember", // DEPRECATED
-            @"lastServerSyncedActiveParticipants" // DEPRECATED
+            @"lastServerSyncedActiveParticipants", // DEPRECATED
+            ZMConversationDomainKey
         };
         
         NSSet *additionalKeys = [NSSet setWithObjects:KeysIgnoredForTrackingModifications count:(sizeof(KeysIgnoredForTrackingModifications) / sizeof(*KeysIgnoredForTrackingModifications))];
@@ -632,9 +635,11 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
     return conversationType;
 }
 
+// Used to merge a local 1:1 conversation with the remote conversation after a connection
+// request has been accepted.
 - (void)mergeWithExistingConversationWithRemoteID:(NSUUID *)remoteID;
 {
-    ZMConversation *existingConversation = [ZMConversation conversationWithRemoteID:remoteID createIfNeeded:NO inContext:self.managedObjectContext];
+    ZMConversation *existingConversation = [ZMConversation internalFetchObjectWithRemoteIdentifier:remoteID inManagedObjectContext:self.managedObjectContext];
     if ((existingConversation != nil) && ![existingConversation isEqual:self]) {
         Require(self.remoteIdentifier == nil);
         [self.mutableMessages unionSet:existingConversation.allMessages];
@@ -644,40 +649,6 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
         [self.managedObjectContext deleteObject:existingConversation];
     }
     self.remoteIdentifier = remoteID;
-}
-
-+ (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc
-{
-    return [self conversationWithRemoteID:UUID createIfNeeded:create inContext:moc created:NULL];
-}
-
-+ (instancetype)conversationWithRemoteID:(NSUUID *)UUID createIfNeeded:(BOOL)create inContext:(NSManagedObjectContext *)moc created:(BOOL *)created
-{
-    VerifyReturnNil(UUID != nil);
-    
-    // We must only ever call this on the sync context. Otherwise, there's a race condition
-    // where the UI and sync contexts could both insert the same conversation (same UUID) and we'd end up
-    // having two duplicates of that conversation, and we'd have a really hard time recovering from that.
-    //
-    RequireString(! create || moc.zm_isSyncContext, "Race condition!");
-    
-    ZMConversation *result = [self fetchObjectWithRemoteIdentifier:UUID inManagedObjectContext:moc];
-    
-    if (result != nil) {
-        if (nil != created) {
-            *created = NO;
-        }
-        return result;
-    } else if (create) {
-        ZMConversation *conversation = [ZMConversation insertNewObjectInManagedObjectContext:moc];
-        conversation.remoteIdentifier = UUID;
-        conversation.lastServerTimeStamp = [NSDate dateWithTimeIntervalSince1970:0];
-        if (nil != created) {
-            *created = YES;
-        }
-        return conversation;
-    }
-    return nil;
 }
 
 + (NSPredicate *)predicateForSearchQuery:(NSString *)searchQuery team:(Team *)team moc:(NSManagedObjectContext *)moc
@@ -705,7 +676,7 @@ const NSUInteger ZMConversationMaxTextMessageLength = ZMConversationMaxEncodedTe
 + (ZMConversation *)selfConversationInContext:(NSManagedObjectContext *)managedObjectContext
 {
     NSUUID *selfUserID = [ZMConversation selfConversationIdentifierInContext:managedObjectContext];
-    return [ZMConversation conversationWithRemoteID:selfUserID createIfNeeded:NO inContext:managedObjectContext];
+    return [ZMConversation fetchWith:selfUserID in:managedObjectContext];
 }
 
 - (void)appendMessage:(ZMMessage *)message;

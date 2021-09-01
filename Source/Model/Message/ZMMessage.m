@@ -292,13 +292,9 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
 }
 
 - (void)updateWithUpdateEvent:(ZMUpdateEvent *)event forConversation:(ZMConversation *)conversation
-{
-    if (self.managedObjectContext != conversation.managedObjectContext) {
-        conversation = [ZMConversation conversationWithRemoteID:conversation.remoteIdentifier createIfNeeded:NO inContext:self.managedObjectContext];
-    }
-    
+{    
     self.visibleInConversation = conversation;
-    ZMUser *sender = [ZMUser userWithRemoteID:event.senderUUID createIfNeeded:YES inContext:self.managedObjectContext];
+    ZMUser *sender = [ZMUser fetchOrCreateWith:event.senderUUID domain:event.senderDomain in:self.managedObjectContext];
     if (sender != nil && !sender.isZombieObject && self.managedObjectContext == sender.managedObjectContext) {
         self.sender = sender;
     } else {
@@ -318,8 +314,8 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     if (nil != prefetchResult.conversationsByRemoteIdentifier[conversationUUID]) {
         return prefetchResult.conversationsByRemoteIdentifier[conversationUUID];
     }
-    
-    return [ZMConversation conversationWithRemoteID:conversationUUID createIfNeeded:YES inContext:moc];
+
+    return [ZMConversation fetchOrCreateWith:conversationUUID domain:event.senderDomain in:moc];
 }
 
 - (void)removeMessageClearingSender:(BOOL)clearingSender
@@ -808,7 +804,9 @@ NSString * const ZMMessageDecryptionErrorCodeKey = @"decryptionErrorCode";
     
     NSMutableSet *usersSet = [NSMutableSet set];
     for(NSString *userId in [[updateEvent.payload dictionaryForKey:@"data"] optionalArrayForKey:@"user_ids"]) {
-        ZMUser *user = [ZMUser userWithRemoteID:[NSUUID uuidWithTransportString:userId] createIfNeeded:YES inContext:moc];
+        ZMUser *user = [ZMUser fetchOrCreateWith:[NSUUID uuidWithTransportString:userId]
+                                          domain:nil
+                                              in:moc];
         [usersSet addObject:user];
     }
     

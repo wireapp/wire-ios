@@ -185,9 +185,9 @@ final class TeamTests: ZMConversationTestsBase {
         let (user2, _) = createUserAndAddMember(to: team)
         
         user1.name = "UserA"
-        user1.setHandle("098")
+        user1.handle = "098"
         user2.name = "UserB"
-        user2.setHandle("another")
+        user2.handle = "another"
         
         // when
         let result = team.members(matchingQuery: "098")

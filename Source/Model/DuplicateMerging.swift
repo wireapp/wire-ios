@@ -39,5 +39,3 @@ extension DuplicateMerging {
         return result
     }
 }
-
-extension ZMUser: DuplicateMerging {}

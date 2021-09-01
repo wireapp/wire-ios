@@ -219,13 +219,13 @@ class PBMessageValidationTests: XCTestCase {
     // MARK: User ID
     
     func testThatItCreatesUserIDWithValidFields() {
-        let userId = UserId.with({$0.uuid = NSUUID().data()})
+        let userId = Proteus_UserId.with({$0.uuid = NSUUID().data()})
         
         XCTAssertNotNil(userId.validatingFields())
     }
     
     func testThatItDoesNotCreateUserIDWithInvalidFields() {
-        let userId = UserId.with({$0.uuid = Data() })
+        let userId = Proteus_UserId.with({$0.uuid = Data() })
         
         XCTAssertNil(userId.validatingFields())
     }
@@ -502,14 +502,14 @@ class ModelValidationTests: XCTestCase {
 
     func testThatItCreatesUserIDWithValidFields() {
 
-        let userId = UserId.with { $0.uuid = NSUUID().data() }
+        let userId = Proteus_UserId.with { $0.uuid = NSUUID().data() }
         
         XCTAssertNotNil(userId.validatingFields())
     }
 
     func testThatItDoesNotCreateUserIDWithInvalidFields() {
 
-        let userId = UserId.with { $0.uuid = Data() }
+        let userId = Proteus_UserId.with { $0.uuid = Data() }
                
         XCTAssertNil(userId.validatingFields())
     }

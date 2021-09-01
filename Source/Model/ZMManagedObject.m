@@ -161,6 +161,11 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     return nil;
 }
 
++ (NSString *)domainKey
+{
+    return @"domain";
+}
+
 + (NSString *)remoteIdentifierDataKey
 {
     return @"remoteIdentifier_data";
@@ -321,10 +326,10 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     }
 }
 
-+ (instancetype)fetchObjectWithRemoteIdentifier:(NSUUID *)uuid inManagedObjectContext:(NSManagedObjectContext *)moc;
++ (instancetype)internalFetchObjectWithRemoteIdentifier:(NSUUID *)uuid inManagedObjectContext:(NSManagedObjectContext *)moc;
 {
     // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through
-    // (1) the persistent store coordinator and the SQLite engine, and (2) touch the file system.
+    // the persistent store coordinator and the SQLite engine, and (2) touch the file system.
     // Looping through all objects in the context is way cheaper, because it does not involve (1)
     // taking any locks, nor (2) touching the file system.
     
@@ -343,6 +348,53 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
     fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
     NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
     RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s", uuid.transportString.UTF8String);
+    return fetchResult.firstObject;
+}
+
++ (instancetype)internalFetchObjectWithRemoteIdentifier:(NSUUID *)uuid
+                                                 domain:(NSString *)domain
+                                   searchingLocalDomain:(BOOL)searchingLocalDomain
+                                 inManagedObjectContext:(NSManagedObjectContext *)moc;
+{
+    // Executing a fetch request is quite expensive, because it will _always_ (1) round trip through
+    // the persistent store coordinator and the SQLite engine, and (2) touch the file system.
+    // Looping through all objects in the context is way cheaper, because it does not involve (1)
+    // taking any locks, nor (2) touching the file system.
+
+    NSEntityDescription *entity = moc.persistentStoreCoordinator.managedObjectModel.entitiesByName[self.entityName];
+    Require(entity != nil);
+
+    NSString *key = [self remoteIdentifierDataKey];
+    NSString *domainKey = [self remoteIdentifierDataKey];
+    NSData *data = uuid.data;
+    for (NSManagedObject *mo in moc.registeredObjects) {
+        if (!mo.isFault && mo.entity == entity &&
+            [data isEqual:[mo valueForKey:key]] &&
+            [domain isEqual:[mo valueForKey:domainKey]]) {
+            return (id) mo;
+        }
+    }
+    NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] initWithEntityName:self.entityName];
+
+    if (searchingLocalDomain) {
+        if (domain != nil) {
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@ AND (%K == %@ OR %K == NULL)",
+                                      [self remoteIdentifierDataKey], uuid.data,
+                                      [self domainKey], domain,
+                                      [self domainKey]];
+        } else {
+            fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@",
+                                      [self remoteIdentifierDataKey], uuid.data];
+        }
+    } else {
+        fetchRequest.predicate = [NSPredicate predicateWithFormat:@"%K == %@ AND %K == %@",
+                                  [self remoteIdentifierDataKey], uuid.data,
+                                  [self domainKey], domain];
+    }
+
+    fetchRequest.fetchLimit = 2; // We only want 1, but want to check if there are too many.
+    NSArray *fetchResult = [moc executeFetchRequestOrAssert:fetchRequest];
+    RequireString([fetchResult count] <= 1, "More than one object with the same UUID: %s and domain: %s", uuid.transportString.UTF8String, domain.UTF8String);
     return fetchResult.firstObject;
 }
 
@@ -403,7 +455,7 @@ static NSString * const KeysForCachedValuesKey = @"ZMKeysForCachedValues";
 
 + (NSPredicate *)predicateForObjectsThatNeedToBeInsertedUpstream;
 {
-    return [NSPredicate predicateWithFormat:@"%K == NULL", RemoteIdentifierDataKey];
+    return [NSPredicate predicateWithFormat:@"%K == NULL", self.remoteIdentifierDataKey];
 }
 
 - (NSSet *)ignoredKeys;

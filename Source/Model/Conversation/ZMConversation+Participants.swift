@@ -314,7 +314,7 @@ extension ZMConversation {
     }
     
     // MARK: - Utils
-    func has(participantWithId userId: UserId?) -> Bool {
+    func has(participantWithId userId: Proteus_UserId?) -> Bool {
         return localParticipants.contains { $0.userId == userId }
     }
 }

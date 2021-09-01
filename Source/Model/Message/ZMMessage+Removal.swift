@@ -54,7 +54,7 @@ extension ZMMessage {
         guard
             let conversationID = UUID(uuidString: hiddenMessage.conversationID),
             let messageID = UUID(uuidString: hiddenMessage.messageID),
-            let conversation = ZMConversation(remoteID: conversationID, createIfNeeded: false, in: moc),
+            let conversation = ZMConversation.fetch(with: conversationID, in: moc),
             let message = ZMMessage.fetch(withNonce: messageID, for: conversation, in: moc)
         else {
             return

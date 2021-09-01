@@ -55,7 +55,7 @@ public extension ZMUser {
         guard
             let teamIdentifier = self.teamIdentifier,
             let managedObjectContext = self.managedObjectContext,
-            let team = Team.fetch(withRemoteIdentifier: teamIdentifier, in: managedObjectContext)
+            let team = Team.fetch(with: teamIdentifier, in: managedObjectContext)
         else {
             return
         }

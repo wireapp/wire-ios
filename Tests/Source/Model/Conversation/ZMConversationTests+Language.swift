@@ -35,7 +35,7 @@ class ZMConversationTests_Language : BaseZMMessageTests {
 
 
         // when
-        let conversationFetched = ZMConversation.fetch(withRemoteIdentifier: uuid, in: uiMOC)
+        let conversationFetched = ZMConversation.fetch(with: uuid, in: uiMOC)
 
         // then
         XCTAssertEqual(conversationFetched?.language, germanLanguage)

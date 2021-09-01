@@ -223,14 +223,14 @@ struct stringAndStatus {
         if (self.conversation != nil) {
             if (! [self.conversation.remoteIdentifier isEqual:conversationID]) {
                 ZMLogError(@"Conversation UUID in connection doesn't match previous value.");
-                ZMConversation *realConversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
+                ZMConversation *realConversation = [ZMConversation fetchOrCreateWith:conversationID domain:nil in:self.managedObjectContext];
                 self.conversation = realConversation;
                 self.conversation.needsToBeUpdatedFromBackend = YES;
             }
             // The conversation will not have any modified date until the first message, use connection date in the meantime
             self.conversation.lastModifiedDate = lastUpdateDate;
         } else {
-            self.conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:self.managedObjectContext];
+            self.conversation = [ZMConversation fetchOrCreateWith:conversationID domain:nil in:self.managedObjectContext];
             self.conversation.needsToBeUpdatedFromBackend = YES;
         }
     }
@@ -260,14 +260,7 @@ struct stringAndStatus {
         return result;
     } else {
         ZMConnection *connection = [ZMConnection insertNewObjectInManagedObjectContext:moc];
-        ZMUser *user = [ZMUser userWithRemoteID:UUID createIfNeeded:NO inContext:moc];
-        
-        if (user == nil) {
-            user = [ZMUser userWithRemoteID:UUID createIfNeeded:YES inContext:moc];
-            user.needsToBeUpdatedFromBackend = YES;
-        }
-        
-        connection.to = user;
+        connection.to = [ZMUser fetchOrCreateWith:UUID domain:nil in:moc];;
         connection.existsOnBackend = YES;
         return connection;
     }
@@ -287,7 +280,7 @@ struct stringAndStatus {
 
     if (!cancelled) {
         // Make sure this conversation has its type set to 'connection' in stead of 'invalid' in case it was just created.
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:moc];
+        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:conversationID domain:nil in:moc];
         if (conversation.conversationType == ZMConversationTypeInvalid) {
             conversation.conversationType = ZMConversationTypeConnection;
         }
@@ -333,12 +326,12 @@ struct stringAndStatus {
     }
     
     if (!cancelled) {
-        connection.to = [ZMUser userWithRemoteID:toUUID createIfNeeded:YES inContext:moc];
+        connection.to = [ZMUser fetchOrCreateWith:toUUID domain:nil in:moc];
         if (connection.to.isInserted || status == ZMConnectionStatusPending) {
             connection.to.needsToBeUpdatedFromBackend = YES;
         }
-        
-        ZMConversation *conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:moc];
+
+        ZMConversation *conversation = [ZMConversation fetchOrCreateWith:conversationID domain:nil in:moc];
         [conversation addParticipantAndUpdateConversationStateWithUser:connection.to role:nil];
     }
 
@@ -388,7 +381,7 @@ struct stringAndStatus {
 + (void)createOrMergeConversationWithRemoteIdentifier:(NSUUID *)conversationID forConnection:(ZMConnection *)connection inContext:(NSManagedObjectContext *)moc
 {
     if (connection.conversation == nil) {
-        connection.conversation = [ZMConversation conversationWithRemoteID:conversationID createIfNeeded:YES inContext:moc];
+        connection.conversation = [ZMConversation fetchOrCreateWith:conversationID domain:nil in:moc];
         connection.conversation.conversationType = [self conversationTypeForConnectionStatus:connection.status];
         if (connection.status == ZMConnectionStatusPending) {
             connection.conversation.creator = connection.to;

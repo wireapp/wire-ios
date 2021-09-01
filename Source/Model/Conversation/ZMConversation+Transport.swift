@@ -56,7 +56,9 @@ extension ZMConversation {
         public static let nameKey = "name";
         public static let typeKey = "type";
         public static let IDKey = "id";
+        public static let qualifiedIDKey = "qualified_id";
         public static let targetKey = "target";
+        public static let domainKey = "domain";
         
         public static let othersKey = "others";
         public static let membersKey = "members";
@@ -121,7 +123,8 @@ extension ZMConversation {
         }
     
         if let creatorId = transportData.UUID(fromKey: PayloadKeys.creatorKey) {
-            self.creator = ZMUser(remoteID: creatorId, createIfNeeded: true, in: moc)!
+            let creatorDomain = transportData.domain(fromKey: PayloadKeys.qualifiedIDKey)
+            self.creator = ZMUser.fetchOrCreate(with: creatorId, domain: creatorDomain, in: moc)
         }
         
         if let members = transportData[PayloadKeys.membersKey] as? [String: Any] {
@@ -267,25 +270,18 @@ extension ZMConversation {
         payload: [[String: Any]],
         userIdKey: String
     ) -> [(ZMUser, Role?)] {
-        
-        let uuidsToRoles = payload.reduce([UUID:String?]()) { (prev, payload) in
-            guard let id = payload.UUID(fromKey: userIdKey) else { return prev }
-            let role = payload[ZMConversation.PayloadKeys.conversationRoleKey] as? String
-            return prev.updated(other: [id: role])
-        }
-        let users = self.fetchOrCreateAllUsers(
-            uuids: Set(uuidsToRoles.keys)
-        )
-        return users.map {
-            user -> (ZMUser, Role?) in
-            if let roleEntry = uuidsToRoles[user.remoteIdentifier!],
-                let roleName = roleEntry
-            {
-                let role = self.fetchOrCreateRoleForConversation(name: roleName)
-                return (user, role)
-            } else {
-                return (user, nil)
-            }
+
+        return payload.compactMap { userRoleEntry in
+            guard
+                let userID = userRoleEntry.UUID(fromKey: userIdKey)
+            else { return nil }
+
+            let domain = userRoleEntry.domain(fromKey: PayloadKeys.qualifiedIDKey)
+            let roleName = userRoleEntry[PayloadKeys.conversationRoleKey] as? String
+            let user = ZMUser.fetchOrCreate(with: userID, domain: domain, in: managedObjectContext!)
+            let role = roleName.map({ self.fetchOrCreateRoleForConversation(name: $0) })
+
+            return (user, role)
         }
     }
     
@@ -296,21 +292,6 @@ extension ZMConversation {
             in: self.managedObjectContext!)
     }
     
-    /// Fetch or create all users in the list
-    private func fetchOrCreateAllUsers(uuids: Set<UUID>) -> Set<ZMUser> {
-        var users = ZMUser.users(withRemoteIDs: uuids, in: self.managedObjectContext!)
-        if users.count != uuids.count {
-            
-            // Some users didn't exist so we need create the missing users
-            let missingUsers = uuids.subtracting(
-                users.map { $0.remoteIdentifier! }
-            )
-            users.formUnion(missingUsers.map {
-                ZMUser(remoteID: $0, createIfNeeded: true, in: self.managedObjectContext!)!
-            })
-        }
-        return Set(users)
-    }
 }
 
 
@@ -323,6 +304,10 @@ extension Dictionary where Key == String, Value == Any {
     func date(fromKey key: String) -> Date? {
         return (self as NSDictionary).optionalDate(forKey: key)
     }
+
+    func domain(fromKey key: String) -> String? {
+        return optionalDictionary(forKey: key)?.optionalString(forKey: ZMConversation.PayloadKeys.domainKey)
+    }
 }
 
 extension Dictionary where Key == String, Value == Any? {
@@ -334,4 +319,5 @@ extension Dictionary where Key == String, Value == Any? {
     func date(fromKey key: String) -> Date? {
         return (self as NSDictionary).optionalDate(forKey: key)
     }
+
 }

@@ -145,7 +145,7 @@ public class Label: ZMManagedObject, LabelType {
     }
     
     public static func fetchOrCreate(remoteIdentifier: UUID, create: Bool, in context: NSManagedObjectContext, created: inout Bool) -> Label? {
-        if let existing = fetch(withRemoteIdentifier: remoteIdentifier, in: context) {
+        if let existing = fetch(with: remoteIdentifier, in: context) {
             created = false
             return existing
         } else if create {

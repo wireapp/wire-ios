@@ -21,7 +21,7 @@ import Foundation
 extension ZMMessage {
     static func add(reaction: WireProtos.Reaction, senderID: UUID, conversation: ZMConversation, inContext moc: NSManagedObjectContext) {
         guard
-            let user = ZMUser.fetch(withRemoteIdentifier: senderID, in: moc),
+            let user = ZMUser.fetch(with: senderID, in: moc),
             let nonce = UUID(uuidString: reaction.messageID),
             let localMessage = ZMMessage.fetch(withNonce: nonce, for: conversation, in: moc)
         else {
