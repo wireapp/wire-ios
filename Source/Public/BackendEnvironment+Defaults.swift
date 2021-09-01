@@ -25,7 +25,7 @@ extension BackendEnvironment {
     public convenience init?(userDefaults: UserDefaults, configurationBundle: Bundle, environmentType type: EnvironmentType? = nil) {
         let environmentType = type ?? EnvironmentType(userDefaults: userDefaults)
         switch environmentType {
-        case .production, .staging, .qaDemo, .qaDemo2:
+        case .production, .staging, .qaDemo, .qaDemo2, .anta, .bella, .chala:
             guard let path = configurationBundle.path(forResource: environmentType.stringValue, ofType: "json") else {
                 Logging.backendEnvironment.error("Could not find configuration for \(environmentType.stringValue)")
                 return nil

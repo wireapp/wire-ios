@@ -23,6 +23,9 @@ public enum EnvironmentType: Equatable {
     case staging
     case qaDemo
     case qaDemo2
+    case anta
+    case bella
+    case chala
     case custom(url: URL)
 
     var stringValue: String {
@@ -35,6 +38,12 @@ public enum EnvironmentType: Equatable {
             return "qa-demo"
         case .qaDemo2:
             return "qa-demo-2"
+        case .anta:
+            return "anta"
+        case .bella:
+            return "bella"
+        case .chala:
+            return "chala"
         case .custom(url: let url):
             return "custom-\(url.absoluteString)"
         }
@@ -48,6 +57,12 @@ public enum EnvironmentType: Equatable {
             self = .qaDemo
         case EnvironmentType.qaDemo2.stringValue:
             self = .qaDemo2
+        case EnvironmentType.anta.stringValue:
+            self = .anta
+        case EnvironmentType.bella.stringValue:
+            self = .bella
+        case EnvironmentType.chala.stringValue:
+            self = .chala
         case let value where value.hasPrefix("custom-"):
             let urlString = value.dropFirst("custom-".count)
             if let url = URL(string: String(urlString)) {
