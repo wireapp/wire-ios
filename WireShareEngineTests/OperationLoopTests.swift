@@ -71,7 +71,7 @@ extension OperationLoopTests {
         
         var syncUser : ZMUser! = nil
         syncMoc.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMoc)!
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -80,7 +80,7 @@ extension OperationLoopTests {
         XCTAssertNil(syncUser.name)
         
         uiMoc.performGroupedBlock {
-            let uiUser = ZMUser(remoteID: userID, createIfNeeded: false, in: self.uiMoc)!
+            let uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             uiUser.name = "Jean Claude YouKnowWho"
             XCTAssertNotNil(uiUser)
             self.uiMoc.saveOrRollback()
@@ -95,7 +95,7 @@ extension OperationLoopTests {
         
         var syncUser : ZMUser! = nil
         coreDataStack.syncContext.performGroupedBlock { [unowned self] in
-            syncUser = ZMUser(remoteID: userID, createIfNeeded: true, in: self.syncMoc)!
+            syncUser = ZMUser.fetchOrCreate(with: userID, domain: nil, in: self.syncMoc)
             self.syncMoc.saveOrRollback()
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
@@ -105,7 +105,7 @@ extension OperationLoopTests {
         
         var uiUser : ZMUser! = nil
         uiMoc.performGroupedBlock {
-            uiUser = ZMUser(remoteID: userID, createIfNeeded: false, in: self.uiMoc)!
+            uiUser = ZMUser.fetch(with: userID, domain: nil, in: self.uiMoc)!
             XCTAssertNotNil(uiUser)
         }
         XCTAssertTrue(self.waitForAllGroupsToBeEmpty(withTimeout: 0.5))
