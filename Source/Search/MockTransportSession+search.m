@@ -62,7 +62,7 @@
         return [ZMTransportResponse responseWithPayload:responsePayload HTTPStatus:200 transportSessionError:nil];
     }
     
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 // handles /onboarding
@@ -95,7 +95,7 @@
         return [ZMTransportResponse responseWithPayload:@{@"results" : results} HTTPStatus:200 transportSessionError:nil];
         
     }
-    return [self errorResponseWithCode:400 reason:@"invalid-method"];
+    return [self errorResponseWithCode:404 reason:@"no-endpoint"];
 }
 
 

@@ -20,7 +20,7 @@ import Foundation
 import WireProtos
 
 public protocol OtrMessage {
-    var sender: ClientId { get }
+    var sender: Proteus_ClientId { get }
 }
 
 extension MockUserClient {
@@ -30,11 +30,11 @@ extension MockUserClient {
     ///   - clients: clients needed to create recipients
     ///   - plainText: plain text
     /// - Returns: OTR message
-    public func newOtrMessageWithRecipients(for clients: [MockUserClient], plainText: Data) -> NewOtrMessage {
-        let sender = ClientId.with {
+    public func newOtrMessageWithRecipients(for clients: [MockUserClient], plainText: Data) -> Proteus_NewOtrMessage {
+        let sender = Proteus_ClientId.with {
             $0.client = identifier!.asHexEncodedUInt
         }
-        let message = NewOtrMessage.with {
+        let message = Proteus_NewOtrMessage.with {
             $0.sender = sender
             $0.recipients = userEntries(for: clients, plainText: plainText)
         }
@@ -46,10 +46,10 @@ extension MockUserClient {
     ///   - clients: clients needed to create recipients
     ///   - plainText: plain text
     /// - Returns: OTR asset message
-    public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> OtrAssetMeta {
+    public func otrAssetMessageBuilderWithRecipients(for clients: [MockUserClient], plainText: Data) -> Proteus_OtrAssetMeta {
         
-        var message = OtrAssetMeta()
-        var sender = ClientId()
+        var message = Proteus_OtrAssetMeta()
+        var sender = Proteus_ClientId()
         
         sender.client = identifier!.asHexEncodedUInt
         message.sender = sender
@@ -59,24 +59,24 @@ extension MockUserClient {
     }
     
     /// Create user entries for all received of a message
-    private func userEntries(for clients: [MockUserClient], plainText: Data) -> [UserEntry] {
-        return MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> UserEntry in
+    private func userEntries(for clients: [MockUserClient], plainText: Data) -> [Proteus_UserEntry] {
+        return MockUserClient.createUserToClientMapping(for: clients).map { (user: MockUser, clients: [MockUserClient]) -> Proteus_UserEntry in
             
-            let clientEntries = clients.map { client -> ClientEntry in
-                let clientId = ClientId.with {
+            let clientEntries = clients.map { client -> Proteus_ClientEntry in
+                let clientId = Proteus_ClientId.with {
                     $0.client = client.identifier!.asHexEncodedUInt
                 }
-                return ClientEntry.with {
+                return Proteus_ClientEntry.with {
                     $0.client = clientId
                     $0.text = MockUserClient.encrypted(data: plainText, from: self, to: client)
                 }
             }
             
-            let userId = UserId.with {
+            let userId = Proteus_UserId.with {
                 $0.uuid = UUID(uuidString: user.identifier)!.uuidData
             }
             
-            return UserEntry.with {
+            return Proteus_UserEntry.with {
                 $0.user = userId
                 $0.clients = clientEntries
             }
@@ -106,6 +106,6 @@ extension String {
     }
 }
 
-extension NewOtrMessage: OtrMessage {}
+extension Proteus_NewOtrMessage: OtrMessage {}
 
-extension OtrAssetMeta: OtrMessage {}
+extension Proteus_OtrAssetMeta: OtrMessage {}

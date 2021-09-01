@@ -257,7 +257,7 @@ extension MockTransportSession {
                                      query: [String: Any]) -> ZMTransportResponse {
         guard
             let conversation = fetchConversation(with: conversationID),
-            let otrMetaData = try? NewOtrMessage(serializedData: data),
+            let otrMetaData = try? Proteus_NewOtrMessage(serializedData: data),
             let senderClient = otrMessageSender(fromClientId: otrMetaData.sender) else {
                 return ZMTransportResponse(payload: nil, httpStatus: 404, transportSessionError: nil)
         }
