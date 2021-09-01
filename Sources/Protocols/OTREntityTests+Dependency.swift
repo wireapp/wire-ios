@@ -1,6 +1,6 @@
 //
 // Wire
-// Copyright (C) 2017 Wire Swiss GmbH
+// Copyright (C) 2021 Wire Swiss GmbH
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -21,8 +21,17 @@ import XCTest
 import WireDataModel
 
 
-// MARK: - Dependency
-extension ClientMessageTranscoderTests {
+// Tests that an OTREntity returns the correct objects as dependencies
+// which must be resolved before the message can be sent.
+class OTREntityTests_Dependency: MessagingTestBase {
+
+    /// Makes a conversation secure
+    func set(conversation: ZMConversation, securityLevel: ZMConversationSecurityLevel) {
+        conversation.setValue(NSNumber(value: securityLevel.rawValue), forKey: #keyPath(ZMConversation.securityLevel))
+        if conversation.securityLevel != securityLevel {
+            fatalError()
+        }
+    }
     
     func testThatItReturnsNewClientAsDependentObjectForMessageIfItHasNotBeenFetched() {
         self.syncMOC.performGroupedBlockAndWait {
@@ -34,7 +43,7 @@ extension ClientMessageTranscoderTests {
             self.otherClient.needsToBeUpdatedFromBackend = true
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? UserClient, self.otherClient)
         }
     }
@@ -49,7 +58,7 @@ extension ClientMessageTranscoderTests {
             self.selfClient.missesClient(self.otherClient)
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? UserClient, self.selfClient)
         }
     }
@@ -65,7 +74,7 @@ extension ClientMessageTranscoderTests {
             self.groupConversation.needsToBeUpdatedFromBackend = true
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? ZMConversation, self.groupConversation)
         }
     }
@@ -81,7 +90,7 @@ extension ClientMessageTranscoderTests {
             self.oneToOneConversation.connection?.needsToBeUpdatedFromBackend = true
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? ZMConnection, self.oneToOneConversation.connection)
         }
     }
@@ -98,7 +107,7 @@ extension ClientMessageTranscoderTests {
             self.selfClient.missesClient(self.otherClient)
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertNil(dependency)
         }
     }
@@ -110,7 +119,7 @@ extension ClientMessageTranscoderTests {
             let message = try! self.groupConversation.appendText(content: "foo") as! ZMClientMessage
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertNil(dependency)
         }
     }
@@ -131,7 +140,7 @@ extension ClientMessageTranscoderTests {
             let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: lastMessage)
+            let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? ZMClientMessage, nextMessage)
         }
     }
@@ -149,7 +158,7 @@ extension ClientMessageTranscoderTests {
             let lastMessage = try! self.groupConversation.appendText(content: "zoo") as! ZMClientMessage
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: lastMessage)
+            let dependency = lastMessage.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertNil(dependency)
         }
     }
@@ -164,7 +173,7 @@ extension ClientMessageTranscoderTests {
             self.set(conversation: self.groupConversation, securityLevel: .secureWithIgnored)
             
             // THEN
-            let dependency = self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message)
+            let dependency = message.dependentObjectNeedingUpdateBeforeProcessing
             XCTAssertEqual(dependency as? ZMConversation, self.groupConversation)
         }
     }
@@ -179,7 +188,7 @@ extension ClientMessageTranscoderTests {
             self.set(conversation: self.groupConversation, securityLevel: .notSecure)
             
             // THEN
-            XCTAssertNil(self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message))
+            XCTAssertNil(message.dependentObjectNeedingUpdateBeforeProcessing)
         }
     }
     
@@ -193,7 +202,7 @@ extension ClientMessageTranscoderTests {
             self.set(conversation: self.groupConversation, securityLevel: .secure)
             
             // THEN
-            XCTAssertNil(self.sut.dependentObjectNeedingUpdate(beforeProcessingObject: message))
+            XCTAssertNil(message.dependentObjectNeedingUpdateBeforeProcessing)
         }
     }
 }

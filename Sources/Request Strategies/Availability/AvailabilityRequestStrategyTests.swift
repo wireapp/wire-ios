@@ -104,7 +104,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
 
             // given
             let selfUser = ZMUser.selfUser(in: moc)
-            _ = ZMConversation(remoteID: selfUser.remoteIdentifier!, createIfNeeded: true, in: moc) // create self conversation
+            _ = ZMConversation.fetchOrCreate(with: selfUser.remoteIdentifier!, domain: nil, in: moc) // create self conversation
 
             let message = GenericMessage(content: WireProtos.Availability(.away))
             let messageData = try? message.serializedData()
@@ -130,7 +130,7 @@ class AvailabilityRequestStrategyTests: MessagingTestBase {
     func testThatItRequestSlowSyncIfWeAreSendingToRedudantClients() {
         self.syncMOC.performGroupedAndWait { moc in
             // given
-            let redundantUser = ZMUser(remoteID: UUID(), createIfNeeded: true, in: moc)!
+            let redundantUser = ZMUser.fetchOrCreate(with: UUID(), domain: nil, in: moc)
             
             // when
             self.sut.detectedRedundantUsers([redundantUser])

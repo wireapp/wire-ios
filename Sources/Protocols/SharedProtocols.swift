@@ -20,13 +20,22 @@
 import Foundation
 
 
-@objc public protocol ClientRegistrationDelegate : NSObjectProtocol  {
+@objc public protocol ClientRegistrationDelegate: NSObjectProtocol  {
 
     /// Returns true if the client is registered
     var clientIsReadyForRequests : Bool { get }
     
     /// Notify that the current client was deleted remotely
     func didDetectCurrentClientDeletion()
+
+}
+
+/// Request strategies which adopt this protocol declare that they can talk to federation aware endpoints.
+@objc public protocol FederationAware: NSObjectProtocol {
+
+    /// If `true` the request strategy will talk to federation aware endpoints, otherwise it will
+    // fallback to legacy endpoints.
+    var useFederationEndpoint: Bool { get set }
 
 }
 

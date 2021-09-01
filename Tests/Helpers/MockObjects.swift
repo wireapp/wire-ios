@@ -92,3 +92,19 @@ class MockPushMessageHandler: NSObject, PushMessageHandler {
         
     fileprivate(set) var failedToSend: [ZMMessage] = []
 }
+
+class MockSyncProgress: NSObject, SyncProgress {
+
+    var currentSyncPhase: SyncPhase = .done
+
+    var didFinishCurrentSyncPhase: SyncPhase?
+    func finishCurrentSyncPhase(phase: SyncPhase) {
+        didFinishCurrentSyncPhase = phase
+    }
+
+    var didFailCurrentSyncPhase: SyncPhase?
+    func failCurrentSyncPhase(phase: SyncPhase) {
+        didFailCurrentSyncPhase = phase
+    }
+
+}

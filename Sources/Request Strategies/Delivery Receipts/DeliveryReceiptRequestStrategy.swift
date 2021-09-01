@@ -29,7 +29,7 @@ extension ZMUpdateEvent {
             let message = GenericMessage(from: self),
             message.needsDeliveryConfirmation,
             let conversationID = conversationUUID,
-            let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID, in: managedObjectContext),
+            let conversation = ZMConversation.fetch(with: conversationID, in: managedObjectContext),
             conversation.conversationType == .oneOnOne,
             let senderUUID = senderUUID,
             senderUUID != ZMUser.selfUser(in: managedObjectContext).remoteIdentifier,
@@ -44,18 +44,28 @@ extension ZMUpdateEvent {
 }
 
 @objcMembers
-public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
+public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy, FederationAware {
     
-    private let genericMessageStrategy: GenericMessageRequestStrategy
+    private let messageSync: ProteusMessageSync<GenericMessageEntity>
+
+    public var useFederationEndpoint: Bool {
+        set {
+            messageSync.isFederationEndpointAvailable = newValue
+        }
+        get {
+            messageSync.isFederationEndpointAvailable
+        }
+    }
     
     // MARK: - Init
     
     public init(managedObjectContext: NSManagedObjectContext,
                 applicationStatus: ApplicationStatus,
                 clientRegistrationDelegate: ClientRegistrationDelegate) {
-        
-        self.genericMessageStrategy = GenericMessageRequestStrategy(context: managedObjectContext, clientRegistrationDelegate: clientRegistrationDelegate)
-        
+
+        self.messageSync = ProteusMessageSync(context: managedObjectContext,
+                                              applicationStatus: applicationStatus)
+
         super.init(withManagedObjectContext: managedObjectContext, applicationStatus: applicationStatus)
         
         self.configuration = [.allowsRequestsWhileInBackground,
@@ -66,16 +76,17 @@ public final class DeliveryReceiptRequestStrategy: AbstractRequestStrategy {
     // MARK: - Methods
     
     public override func nextRequestIfAllowed() -> ZMTransportRequest? {
-        return genericMessageStrategy.nextRequest()
+        return messageSync.nextRequest()
     }
 }
+
 
 // MARK: - Context Change Tracker
 
 extension DeliveryReceiptRequestStrategy: ZMContextChangeTrackerSource {
     
     public var contextChangeTrackers: [ZMContextChangeTracker] {
-        return [self.genericMessageStrategy]
+        return messageSync.contextChangeTrackers
     }
     
 }
@@ -101,12 +112,12 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
     func sendDeliveryReceipt(_ deliveryReceipt: DeliveryReceipt) {
         guard let confirmation = Confirmation.init(messageIds: deliveryReceipt.messageIDs,
                                                    type: .delivered) else { return }
-        
-        genericMessageStrategy.schedule(message: GenericMessage(content: confirmation),
-                                        inConversation: deliveryReceipt.conversation,
-                                        targetRecipients: .users(Set(arrayLiteral: deliveryReceipt.sender)),
-                                        completionHandler: nil)
-        
+
+        messageSync.sync(GenericMessageEntity(conversation: deliveryReceipt.conversation,
+                                              message: GenericMessage(content: confirmation),
+                                              targetRecipients: .users(Set(arrayLiteral: deliveryReceipt.sender)),
+                                              completionHandler:nil),
+                         completion: {_,_ in })
     }
     
     func deliveryReceipts(for events: [ZMUpdateEvent]) -> [DeliveryReceipt] {
@@ -115,7 +126,7 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
         var deliveryReceipts: [DeliveryReceipt] = []
         
         eventsByConversation.forEach { (conversationID: UUID, events: [ZMUpdateEvent]) in
-            guard let conversation = ZMConversation.fetch(withRemoteIdentifier: conversationID,
+            guard let conversation = ZMConversation.fetch(with: conversationID,
                                                           in: managedObjectContext) else { return }
             
             let eventsBySender = events
@@ -123,10 +134,9 @@ extension DeliveryReceiptRequestStrategy: ZMEventConsumer {
                 .partition(by: \.senderUUID)
             
             eventsBySender.forEach { (senderID: UUID, events: [ZMUpdateEvent]) in
-                guard let sender = ZMUser.fetchAndMerge(with: senderID,
-                                                        createIfNeeded: true,
-                                                        in: managedObjectContext) else { return }
-                
+                let sender = ZMUser.fetchOrCreate(with: senderID,
+                                                  domain: nil,
+                                                  in: managedObjectContext)
                 let deliveryReceipt = DeliveryReceipt(sender: sender,
                                                       conversation: conversation,
                                                       messageIDs: events.compactMap(\.messageNonce))

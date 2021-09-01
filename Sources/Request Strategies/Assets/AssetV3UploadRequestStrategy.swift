@@ -147,10 +147,12 @@ extension AssetV3UploadRequestStrategy: ZMUpstreamTranscoder {
         asset.updateWithAssetId(assetId, token: token)
         
         if message.processingState == .done {
-            message.updateTransferState(.uploaded, synchronize: true)
+            message.updateTransferState(.uploaded, synchronize: false)
+            return false
+        } else {
+            // There are more assets to upload
+            return true
         }
-        
-        return true // We always need to make one more request to send OTR message in the conversation
     }
     
     public func shouldRetryToSyncAfterFailed(toUpdate managedObject: ZMManagedObject,

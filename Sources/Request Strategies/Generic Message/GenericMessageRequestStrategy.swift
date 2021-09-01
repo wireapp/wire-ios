@@ -18,7 +18,7 @@
 
 import Foundation
 
-@objcMembers public class GenericMessageEntity : NSObject, OTREntity {
+@objcMembers public class GenericMessageEntity : NSObject, ProteusMessage {
 
     public enum Recipients {
         case conversationParticipants
@@ -30,10 +30,11 @@ import Foundation
     public var conversation: ZMConversation?
     public var completionHandler: ((_ response: ZMTransportResponse) -> Void)?
     public var isExpired: Bool = false
+    public var expirationDate: Date? = nil
 
     private let targetRecipients: Recipients
     
-    init(conversation: ZMConversation, message: GenericMessage, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
+    public init(conversation: ZMConversation, message: GenericMessage, targetRecipients: Recipients = .conversationParticipants, completionHandler: ((_ response: ZMTransportResponse) -> Void)?) {
         self.conversation = conversation
         self.message = message
         self.targetRecipients = targetRecipients
@@ -55,6 +56,10 @@ import Foundation
     }
     
     public func detectedRedundantUsers(_ users: [ZMUser]) {
+        // no-op
+    }
+
+    public func delivered(with response: ZMTransportResponse) {
         // no-op
     }
         
@@ -88,6 +93,24 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
             return message.encryptForTransport(forBroadcastRecipients: users, in: managedObjectContext)
         case .clients(let clientsByUser):
             return message.encryptForTransport(for: clientsByUser, in: managedObjectContext)
+        }
+    }
+
+    public func encryptForTransportQualified() -> EncryptedPayloadGenerator.Payload? {
+        guard
+            let conversation = conversation,
+            let managedObjectContext = conversation.managedObjectContext
+        else {
+            return nil
+        }
+
+        switch targetRecipients {
+        case .conversationParticipants:
+            return message.encryptForTransport(for: conversation, useQualifiedIdentifiers: true)
+        case .users(let users):
+            return message.encryptForTransport(forBroadcastRecipients: users, useQualifiedIdentifiers: true, in: managedObjectContext)
+        case .clients(let clientsByUser):
+            return message.encryptForTransport(for: clientsByUser, useQualifiedIdentifiers: true, in: managedObjectContext)
         }
     }
 
@@ -134,7 +157,7 @@ extension GenericMessageEntity: EncryptedPayloadGenerator {
     }
     
     public override func request(forEntity entity: GenericMessageEntity) -> ZMTransportRequest? {
-        return requestFactory.upstreamRequestForMessage(entity, forConversationWithId: entity.conversation!.remoteIdentifier!)
+        return requestFactory.upstreamRequestForMessage(entity, in: entity.conversation!, useFederationEndpoint: false)
     }
     
     public override func shouldTryToResend(entity: GenericMessageEntity, afterFailureWithResponse response: ZMTransportResponse) -> Bool {
