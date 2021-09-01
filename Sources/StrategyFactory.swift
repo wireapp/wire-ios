@@ -59,11 +59,11 @@ class StrategyFactory {
             createVerifyLegalHoldStrategy(),
             
             // Client Messages
-            createClientMessageTranscoder(),
+            createClientMessageRequestStrategy(),
 
             // Link Previews
             createLinkPreviewAssetUploadRequestStrategy(linkPreviewPreprocessor: linkPreviewPreprocessor),
-            createLinkPreviewUploadRequestStrategy(),
+            createLinkPreviewUpdateRequestStrategy(),
 
             // Assets V3
             createAssetClientMessageRequestStrategy(),
@@ -83,9 +83,9 @@ class StrategyFactory {
         return MissingClientsRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
-    private func createClientMessageTranscoder() -> ClientMessageTranscoder {
-        return ClientMessageTranscoder(
-            in: syncContext,
+    private func createClientMessageRequestStrategy() -> ClientMessageRequestStrategy {
+        return ClientMessageRequestStrategy(
+            withManagedObjectContext: syncContext,
             localNotificationDispatcher: PushMessageHandlerDummy(),
             applicationStatus: applicationStatus
         )
@@ -103,8 +103,8 @@ class StrategyFactory {
         )
     }
 
-    private func createLinkPreviewUploadRequestStrategy() -> LinkPreviewUploadRequestStrategy {
-        return LinkPreviewUploadRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
+    private func createLinkPreviewUpdateRequestStrategy() -> LinkPreviewUpdateRequestStrategy {
+        return LinkPreviewUpdateRequestStrategy(withManagedObjectContext: syncContext, applicationStatus: applicationStatus)
     }
 
     // MARK: - Asset V3
