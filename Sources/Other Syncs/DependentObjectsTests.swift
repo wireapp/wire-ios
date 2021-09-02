@@ -128,6 +128,18 @@ class DependentObjectsTests: ZMTBaseTest {
         }
         XCTAssertEqual(Set([self.messageB!, self.messageC!]), Set(result))
     }
+
+    func testThatItRemovesAllObjects() {
+        // GIVEN
+        self.sut.add(dependency: self.conversation1!, for: self.messageA!)
+        self.sut.add(dependency: self.conversation2!, for: self.messageA!)
+
+        // WHEN
+        sut.removeAllDependencies(for: messageA)
+
+        // THEN
+        XCTAssertTrue(sut.dependencies(for: messageA).isEmpty)
+    }
     
     func testThatItEnumeratesObjectsForTheCorrectDependency() {
         // GIVEN
