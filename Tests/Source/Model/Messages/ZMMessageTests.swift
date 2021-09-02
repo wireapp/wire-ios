@@ -19,6 +19,33 @@
 import Foundation
 
 extension ZMMessageTests {
+    @objc(mockEventOfType:forConversation:sender:data:)
+    func mockEvent(of type: ZMUpdateEventType,
+                   for conversation: ZMConversation?,
+                   sender senderID: UUID?,
+                   data: [AnyHashable: Any]?) -> ZMUpdateEvent {
+        let updateEvent = ZMUpdateEvent()
+        updateEvent.type = type
+        
+        let serverTimeStamp : Date = conversation?.lastServerTimeStamp?.addingTimeInterval(5) ??
+            Date()
+        
+        let from = senderID ?? UUID()
+        
+        if let remoteIdentifier = conversation?.remoteIdentifier?.transportString(),
+           let data = data {
+            
+            updateEvent.payload = [
+                "conversation": remoteIdentifier,
+                "time": serverTimeStamp.transportString(),
+                "from": from.transportString(),
+                "data": data
+            ]
+        }
+        
+        return updateEvent
+    }
+    
     func testThatSpecialKeysAreNotPartOfTheLocallyModifiedKeysForClientMessages() {
         // when
         let message = ZMClientMessage(nonce: NSUUID.create(), managedObjectContext: uiMOC)
