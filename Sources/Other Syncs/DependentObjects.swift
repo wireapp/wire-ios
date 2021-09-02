@@ -68,6 +68,14 @@ public class DependentObjects<Object: Hashable, Dependency: Hashable> {
         self.updateDependents(dependent: dependent, removing: dependency)
         self.updateDependencies(dependency: dependency, removing: dependent)
     }
+
+    public func removeAllDependencies(for dependent: Object) {
+        guard let dependencies = dependentsToDependencies[dependent] else { return }
+
+        for dependency in dependencies {
+            remove(dependency: dependency, for: dependent)
+        }
+    }
     
     private func updateDependencies(dependency: Dependency, removing dependent: Object) {
         guard let currentSet = dependenciesToDependents[dependency] else { return }

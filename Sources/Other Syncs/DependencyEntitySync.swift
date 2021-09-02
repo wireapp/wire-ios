@@ -69,7 +69,7 @@ class DependencyEntitySync<Transcoder : EntityTranscoder> : NSObject, ZMContextC
                 if let newDependency = newDependency, newDependency != object {
                     entitiesWithDependencies.add(dependency: newDependency, for: entity)
                 } else if newDependency == nil {
-                    entitiesWithDependencies.remove(dependency: object, for: entity)
+                    entitiesWithDependencies.removeAllDependencies(for: entity)
                     entitiesWithoutDependencies.append(entity)
                 }
             }
