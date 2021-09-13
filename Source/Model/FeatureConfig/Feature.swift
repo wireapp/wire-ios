@@ -18,6 +18,10 @@
 
 import Foundation
 
+extension Notification.Name {
+    public static let featureDidChangeNotification = Notification.Name("FeatureDidChangeNotification")
+}
+
 private let zmLog = ZMSLog(tag: "Feature")
 
 @objcMembers
@@ -32,6 +36,7 @@ public class Feature: ZMManagedObject {
 
     public enum Name: String, Codable, CaseIterable {
         case appLock
+        case conferenceCalling
         case fileSharing
     }
 
@@ -46,6 +51,7 @@ public class Feature: ZMManagedObject {
     @NSManaged private var statusValue: String
     @NSManaged private var configData: Data?
     @NSManaged public var needsToNotifyUser: Bool
+    @NSManaged var hasInitialDefault: Bool
     
     public var config: Data? {
         get {
@@ -53,8 +59,11 @@ public class Feature: ZMManagedObject {
         }
 
         set {
-            updateNeedsToNotifyUser(oldData: configData, newData: newValue)
+            if hasBeenUpdatedFromBackend {
+                updateNeedsToNotifyUser(oldData: configData, newData: newValue)
+            }
             configData = newValue
+            hasInitialDefault = false
         }
     }
     
@@ -82,8 +91,20 @@ public class Feature: ZMManagedObject {
         }
 
         set {
+            if hasBeenUpdatedFromBackend {
+                updateNeedsToNotifyUser(oldStatus: status, newStatus: newValue)
+            }
             statusValue = newValue.rawValue
+            if needsToNotifyUser {
+                NotificationCenter.default.post(name: .featureDidChangeNotification, object: change(from: self))
+            }
+            hasInitialDefault = false
         }
+    }
+
+    /// Whether the feature has been updated from backend
+    private var hasBeenUpdatedFromBackend: Bool {
+        return !statusValue.isEmpty && !hasInitialDefault
     }
 
     // MARK: - Methods
@@ -141,12 +162,23 @@ public class Feature: ZMManagedObject {
                 let feature = Feature.insertNewObject(in: context)
                 feature.name = name
                 changes(feature)
+                feature.hasInitialDefault = true
             }
             context.saveOrRollback()
         }
     }
 
-    public func updateNeedsToNotifyUser(oldData: Data?, newData: Data?) {
+    private func updateNeedsToNotifyUser(oldStatus: Status, newStatus: Status) {
+        switch name {
+        case .conferenceCalling:
+            needsToNotifyUser = (oldStatus != newStatus) && newStatus == .enabled
+
+        default:
+            break
+        }
+    }
+
+    private func updateNeedsToNotifyUser(oldData: Data?, newData: Data?) {
         switch name {
         case .appLock:
             let decoder = JSONDecoder()
@@ -162,8 +194,27 @@ public class Feature: ZMManagedObject {
             }
 
             needsToNotifyUser = oldConfig.enforceAppLock != newConfig.enforceAppLock
-        case .fileSharing:
+
+        case .conferenceCalling, .fileSharing:
             return
         }
     }
+}
+
+extension Feature {
+
+    public enum FeatureChange {
+        case conferenceCallingIsAvailable
+    }
+
+    private func change(from feature: Feature) -> FeatureChange? {
+        switch feature.name {
+        case .conferenceCalling where feature.status == .enabled:
+            return .conferenceCallingIsAvailable
+
+        default:
+            return nil
+        }
+    }
+
 }
