@@ -45,16 +45,43 @@ public class FeatureService {
 
     /// The app lock
     public func fetchAppLock() -> Feature.AppLock {
-        let feature = Feature.fetch(name: .appLock, context: context)!
-        let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: feature.config!)
-        return .init(status: feature.status, config: config)
+        var result: Feature.AppLock!
+
+        context.performGroupedAndWait {
+            let feature = Feature.fetch(name: .appLock, context: $0)!
+            let config = try! JSONDecoder().decode(Feature.AppLock.Config.self, from: feature.config!)
+            result = .init(status: feature.status, config: config)
+        }
+
+        return result
     }
 
     public func storeAppLock(_ appLock: Feature.AppLock) {
-        let config = try! JSONEncoder().encode(appLock.config)
-        Feature.updateOrCreate(havingName: .appLock, in: context) {
-            $0.status = appLock.status
-            $0.config = config
+        context.performGroupedAndWait {
+            let config = try! JSONEncoder().encode(appLock.config)
+            Feature.updateOrCreate(havingName: .appLock, in: $0) {
+                $0.status = appLock.status
+                $0.config = config
+            }
+        }
+    }
+
+    public func fetchConferenceCalling() -> Feature.ConferenceCalling {
+        var result: Feature.ConferenceCalling!
+
+        context.performGroupedAndWait {
+            let feature = Feature.fetch(name: .conferenceCalling, context: $0)!
+            result = .init(status: feature.status)
+        }
+
+        return result
+    }
+
+    public func storeConferenceCalling(_ conferenceCalling: Feature.ConferenceCalling) {
+        context.performGroupedAndWait {
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: $0) {
+                $0.status = conferenceCalling.status
+            }
         }
     }
 
@@ -77,6 +104,10 @@ public class FeatureService {
             switch name {
             case .appLock:
                 storeAppLock(.init())
+
+            case .conferenceCalling:
+                storeConferenceCalling(.init())
+                
             case .fileSharing:
                 storeFileSharing(.init())
             }
@@ -96,7 +127,7 @@ public class FeatureService {
         }
     }
 
-    func needsToNotifyUser(for featureName: Feature.Name) -> Bool {
+    public func needsToNotifyUser(for featureName: Feature.Name) -> Bool {
         var result = false
 
         context.performGroupedAndWait {
@@ -107,7 +138,7 @@ public class FeatureService {
         return result
     }
 
-    func setNeedsToNotifyUser(_ notifyUser: Bool, for featureName: Feature.Name) {
+    public func setNeedsToNotifyUser(_ notifyUser: Bool, for featureName: Feature.Name) {
         context.performGroupedAndWait {
             let feature = Feature.fetch(name: featureName, context: $0)
             feature?.needsToNotifyUser = notifyUser

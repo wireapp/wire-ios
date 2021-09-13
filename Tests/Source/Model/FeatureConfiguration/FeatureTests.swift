@@ -61,6 +61,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
         syncMOC.performGroupedAndWait { context in
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: false)
+                $0.hasInitialDefault = false
             }
         }
 
@@ -91,6 +92,7 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             Feature.updateOrCreate(havingName: .appLock, in: context) {
                 $0.config = self.configData(enforced: true)
                 $0.needsToNotifyUser = false
+                $0.hasInitialDefault = false
             }
         }
 
@@ -112,6 +114,68 @@ final class FeatureTests: ZMBaseManagedObjectTest {
             guard let feature = Feature.fetch(name: .appLock, context: context) else { return XCTFail() }
             XCTAssertTrue(feature.needsToNotifyUser)
             return
+        }
+    }
+
+    func testThatItNotifiesAboutFeatureChanges() {
+        // given
+        syncMOC.performGroupedAndWait { context in
+            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.syncMOC)
+            defaultConferenceCalling?.hasInitialDefault = false
+            XCTAssertNotNil(defaultConferenceCalling)
+        }
+
+        // expect
+        let expectation = self.expectation(description: "Notification fired")
+        NotificationCenter.default.addObserver(forName: .featureDidChangeNotification, object: nil, queue: nil) { (note) in
+            guard let object = note.object as? Feature.FeatureChange else { return }
+            XCTAssertEqual(object, .conferenceCallingIsAvailable)
+            expectation.fulfill()
+        }
+
+        // when
+        syncMOC.performGroupedAndWait { context in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+                feature.needsToNotifyUser = false
+                feature.status = .enabled
+            }
+        }
+
+        // then
+        XCTAssert(waitForCustomExpectations(withTimeout: 0.5))
+    }
+
+    func testThatItDoesNotNotifyAboutFeatureChanges_IfThePreviousValueIsDefault() {
+        // given
+        let testObserver = TestObserver(for: .featureDidChangeNotification)
+        syncMOC.performGroupedAndWait { context in
+            let defaultConferenceCalling = Feature.fetch(name: .conferenceCalling, context: self.syncMOC)
+            XCTAssertNotNil(defaultConferenceCalling)
+            XCTAssertTrue(defaultConferenceCalling!.hasInitialDefault)
+        }
+
+        // when
+        syncMOC.performGroupedAndWait { context in
+            Feature.updateOrCreate(havingName: .conferenceCalling, in: self.syncMOC) { (feature) in
+                feature.status = .enabled
+            }
+        }
+
+        // then
+        XCTAssert(waitForAllGroupsToBeEmpty(withTimeout: 0.5))
+        XCTAssertTrue(testObserver.changes.isEmpty)
+    }
+
+    private class TestObserver: NSObject {
+        var changes : [Feature.FeatureChange] = []
+        
+        init(for notificationName: Notification.Name) {
+            super.init()
+
+            NotificationCenter.default.addObserver(forName: notificationName, object: nil, queue: nil) { [weak self] (note) in
+                guard let object = note.object as? Feature.FeatureChange else { return }
+                self?.changes.append(object)
+            }
         }
     }
 }
