@@ -52,5 +52,4 @@ FOUNDATION_EXPORT const unsigned char TransportVersionString[];
 // Private
 
 #import <WireTransport/ZMTransportRequest+Internal.h>
-#import <WireTransport/ZMServerTrust.h>
 #import <WireTransport/ZMPushChannelType.h>

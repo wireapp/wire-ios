@@ -23,7 +23,6 @@
 
 #import "NSError+ZMTransportSession.h"
 #import "ZMTaskIdentifierMap.h"
-#import "ZMServerTrust.h"
 #import "ZMTemporaryFileListForBackgroundRequests.h"
 #import "ZMTransportRequest+Internal.h"
 #import "ZMTLogging.h"
