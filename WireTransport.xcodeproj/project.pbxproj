@@ -95,8 +95,6 @@
 		54CA15CB1B32F2C1008D3787 /* ZMTransportSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15441B32F2C1008D3787 /* ZMTransportSession.m */; };
 		54CA15CD1B32F2C1008D3787 /* ZMTransportSessionErrorCode.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15451B32F2C1008D3787 /* ZMTransportSessionErrorCode.h */; };
 		54CA15CF1B32F2C1008D3787 /* ZMReachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15471B32F2C1008D3787 /* ZMReachability.m */; };
-		54CA15D11B32F2C1008D3787 /* ZMServerTrust.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15481B32F2C1008D3787 /* ZMServerTrust.h */; settings = {ATTRIBUTES = (Public, ); }; };
-		54CA15D31B32F2C1008D3787 /* ZMServerTrust.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA15491B32F2C1008D3787 /* ZMServerTrust.m */; };
 		54CA15D51B32F2C1008D3787 /* ZMURLSession+Internal.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA154A1B32F2C1008D3787 /* ZMURLSession+Internal.h */; };
 		54CA15D71B32F2C1008D3787 /* ZMURLSession.m in Sources */ = {isa = PBXBuildFile; fileRef = 54CA154B1B32F2C1008D3787 /* ZMURLSession.m */; };
 		54CA15DF1B32F791008D3787 /* WireTransport.h in Headers */ = {isa = PBXBuildFile; fileRef = 54CA15DE1B32F791008D3787 /* WireTransport.h */; settings = {ATTRIBUTES = (Public, ); }; };
@@ -306,8 +304,6 @@
 		54CA15441B32F2C1008D3787 /* ZMTransportSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMTransportSession.m; sourceTree = "<group>"; };
 		54CA15451B32F2C1008D3787 /* ZMTransportSessionErrorCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMTransportSessionErrorCode.h; sourceTree = "<group>"; };
 		54CA15471B32F2C1008D3787 /* ZMReachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMReachability.m; sourceTree = "<group>"; };
-		54CA15481B32F2C1008D3787 /* ZMServerTrust.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ZMServerTrust.h; sourceTree = "<group>"; };
-		54CA15491B32F2C1008D3787 /* ZMServerTrust.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMServerTrust.m; sourceTree = "<group>"; };
 		54CA154A1B32F2C1008D3787 /* ZMURLSession+Internal.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ZMURLSession+Internal.h"; sourceTree = "<group>"; };
 		54CA154B1B32F2C1008D3787 /* ZMURLSession.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ZMURLSession.m; sourceTree = "<group>"; };
 		54CA15DE1B32F791008D3787 /* WireTransport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = WireTransport.h; sourceTree = "<group>"; };
@@ -779,8 +775,6 @@
 			isa = PBXGroup;
 			children = (
 				54CA15471B32F2C1008D3787 /* ZMReachability.m */,
-				54CA15481B32F2C1008D3787 /* ZMServerTrust.h */,
-				54CA15491B32F2C1008D3787 /* ZMServerTrust.m */,
 				54CA154A1B32F2C1008D3787 /* ZMURLSession+Internal.h */,
 				54CA154B1B32F2C1008D3787 /* ZMURLSession.m */,
 				54B4D9E01E840C7E00F2892B /* NSURLSessionConfiguration+Debugging.swift */,
@@ -849,7 +843,6 @@
 				5499FFC81B31C66D00835C8B /* ZMPushChannelConnection.h in Headers */,
 				54CA15CD1B32F2C1008D3787 /* ZMTransportSessionErrorCode.h in Headers */,
 				5499FFD81B31C66D00835C8B /* ZMWebSocketFrame.h in Headers */,
-				54CA15D11B32F2C1008D3787 /* ZMServerTrust.h in Headers */,
 				54CA156D1B32F2C1008D3787 /* ZMBackgroundable.h in Headers */,
 				5451EF9E1B7A1359002F503B /* Collections+ZMTSafeTypes.h in Headers */,
 				54CA15B51B32F2C1008D3787 /* ZMTransportRequest+Internal.h in Headers */,
@@ -1063,7 +1056,6 @@
 				F1A522F62040264D009414E7 /* ZMUpdateEvent.swift in Sources */,
 				5499FFDA1B31C66D00835C8B /* ZMWebSocketFrame.m in Sources */,
 				54CA15C31B32F2C1008D3787 /* ZMTransportData.m in Sources */,
-				54CA15D31B32F2C1008D3787 /* ZMServerTrust.m in Sources */,
 				54CA15C51B32F2C1008D3787 /* NSError+ZMTransportSession.m in Sources */,
 				166D18BB230EE8A8001288CD /* TransportSession.swift in Sources */,
 				87B2B79B20BC476E00799AB9 /* ZMTransportRequest.swift in Sources */,
