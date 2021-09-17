@@ -1100,7 +1100,6 @@
           @"from": @"3bc5750a-b965-40f8-aff2-831e9b5ac2e9",
           @"to": @"c3308f1d-82ee-49cd-897f-2a32ed9ae1d9",
           @"last_update": @"2014-04-16T15:01:45.762Z",
-          @"conversation": @"fef60427-3c53-4ac5-b971-ad5088f5a4c2",
           @"message": @"Hi Marco C,\n\nLet's connect in Zeta.\n\nJohn"
           };
         
