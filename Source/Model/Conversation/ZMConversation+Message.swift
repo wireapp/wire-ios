@@ -24,7 +24,7 @@ extension ZMConversation {
 
     /// An error describing why a message couldn't be appended to the conversation.
 
-    public enum AppendMessageError: LocalizedError {
+    public enum AppendMessageError: LocalizedError, Equatable {
 
         case missingManagedObjectContext
         case malformedNonce
@@ -33,6 +33,7 @@ extension ZMConversation {
         case failedToRemoveImageMetadata
         case invalidImageUrl
         case invalidFileUrl
+        case fileSharingIsRestricted
 
         public var errorDescription: String? {
             switch self {
@@ -50,6 +51,8 @@ extension ZMConversation {
                 return "Invalid image url."
             case .invalidFileUrl:
                 return "Invalid file url."
+            case .fileSharingIsRestricted:
+                return "File sharing is restricted."
             }
         }
 
@@ -277,6 +280,10 @@ extension ZMConversation {
                                                expiresAfter: messageDestructionTimeoutValue)
         } catch {
             throw AppendMessageError.failedToProcessMessageData(reason: error.localizedDescription)
+        }
+
+        guard !message.isRestricted else {
+            throw AppendMessageError.fileSharingIsRestricted
         }
 
         message.sender = ZMUser.selfUser(in: moc)
