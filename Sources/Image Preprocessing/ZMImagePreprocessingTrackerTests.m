@@ -101,12 +101,6 @@
 
 @implementation ZMImagePreprocessingTrackerTests (OutstandingItems)
 
-- (void)testThatItHasNoOutstandingItems;
-{
-    XCTAssertFalse(self.sut.hasOutstandingItems, @"%u / %u",
-                   (unsigned) self.sut.imageOwnersThatNeedPreprocessing, (unsigned) self.sut.imageOwnersBeingPreprocessed);
-}
-
 - (void)testThatItHasOutstandingItemsWhenItemsAreAdded
 {
     // given
@@ -161,8 +155,7 @@
     XCTAssert([self waitForAllGroupsToBeEmptyWithTimeout:0.3]);
     
     // then
-    XCTAssertFalse(self.sut.hasOutstandingItems, @"%u / %u",
-                   (unsigned) self.sut.imageOwnersThatNeedPreprocessing, (unsigned) self.sut.imageOwnersBeingPreprocessed);
+    [self assertHasOutstandingItems];
 }
 
 - (void)testThatItHasNoOutstandingItemsWhenItemsNotMatchingThePredicateChange

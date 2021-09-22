@@ -46,4 +46,16 @@ extension ZMImagePreprocessingTrackerTests {
         let expectedRequest = ZMClientMessage.sortedFetchRequest(with: fetchPredicate)
         XCTAssertEqual(request, expectedRequest)
     }
+    
+    @objc
+    func assertHasOutstandingItems() {
+        XCTAssertFalse(
+            sut.hasOutstandingItems,
+            "\(sut.imageOwnersThatNeedPreprocessing.description) / \(sut.imageOwnersBeingPreprocessed.description)")
+
+    }
+    
+    func testThatItHasNoOutstandingItems() {
+        assertHasOutstandingItems()
+    }
 }
