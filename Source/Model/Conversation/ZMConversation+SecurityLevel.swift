@@ -104,6 +104,10 @@ extension ZMConversation {
         managedObjectContext?.saveOrRollback()
     }
 
+    public func notifyMissingLegalHoldConsent() {
+        notifyOnUI(name: ZMConversation.missingLegalHoldConsentNotificationName)
+    }
+
     // MARK: - Events
 
     /// Should be called when a message is received.

@@ -29,7 +29,6 @@
 #import "NSString+RandomString.h"
 #import "ZMConversationTests.h"
 #import "ZMUserTests.h"
-#import "ZMConversationTests+Transport.h"
 #import "MockModelObjectContextFactory.h"
 #import "MockEntity.h"
 #import "MockEntity2.h"

@@ -40,17 +40,14 @@ class ZMConversationTests_Teams: ZMConversationTestsBase {
         super.tearDown()
     }
 
-    func testThatItSetsTheConversationTeamRemoteIdentifierWhenUpdatingWithTransportData() {
+    func testThatItSetsTheConversationTeamRemoteIdentifier_WhenUpdatingTeam() {
         // given
         let user = ZMUser.insertNewObject(in: uiMOC)
         user.remoteIdentifier = .create()
         let teamId = UUID.create()
-        let payload = payloadForConversationMetaData(conversation, activeUsers: [user], teamId: teamId)
 
         // when
-        performPretendingUiMocIsSyncMoc {
-            self.conversation.update(transportData: payload, serverTimeStamp: nil)
-        }
+        conversation.updateTeam(identifier: teamId)
 
         // then
         XCTAssertNil(Team.fetch(with: teamId, in: uiMOC))
