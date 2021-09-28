@@ -36,6 +36,7 @@ public protocol IdentifierObjectSyncTranscoder: class {
 public protocol IdentifierObjectSyncDelegate: class {
 
     func didFinishSyncingAllObjects()
+    func didFailToSyncAllObjects()
 
 }
 
@@ -77,7 +78,23 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
     /// If the identifiers have already been added this method has no effect.
     
     public func sync<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
-        pending.formUnion(Set(identifiers).subtracting(downloading))
+        let newIdentifiers = Set(identifiers)
+
+        if newIdentifiers.isEmpty && downloading.isEmpty && pending.isEmpty {
+            delegate?.didFinishSyncingAllObjects()
+        } else {
+            pending.formUnion(Set(identifiers).subtracting(downloading))
+        }
+    }
+
+    /// Remove identifiers from the list of objects to be fetched
+    ///
+    /// - parameter identifiers: Set of identifiers to remove
+    ///
+    /// If the identifiers have been or are currently being downloaded this method has no effect.
+    
+    public func cancel<S: Sequence>(identifiers: S) where S.Element == Transcoder.T {
+        pending.subtract(identifiers)
     }
     
     public func nextRequest() -> ZMTransportRequest? {
@@ -97,6 +114,10 @@ public class IdentifierObjectSync<Transcoder: IdentifierObjectSyncTranscoder>: N
             case .permanentError, .success:
                 strongSelf.downloading.subtract(scheduled)
                 strongSelf.transcoder?.didReceive(response: response, for: scheduled)
+
+                if case .permanentError = response.result {
+                    self?.delegate?.didFailToSyncAllObjects()
+                }
             default:
                 strongSelf.downloading.subtract(scheduled)
                 strongSelf.pending.formUnion(scheduled)

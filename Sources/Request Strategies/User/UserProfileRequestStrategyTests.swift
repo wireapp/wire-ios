@@ -74,6 +74,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
     func testThatLegacyRequestToFetchUserIsGenerated_WhenDomainIsNotSet() {
         syncMOC.performGroupedBlockAndWait {
             // given
+            ZMUser.selfUser(in: self.syncMOC).domain = nil
             self.otherUser.domain = nil
             self.otherUser.needsToBeUpdatedFromBackend = true
             self.sut.objectsDidChange(Set([self.otherUser]))
@@ -248,7 +249,7 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
             let request = self.sut.nextRequest()!
 
             // when
-            let qualifiedID = Payload.QualifiedUserID(uuid: self.otherUser.remoteIdentifier, domain: "example.com")
+            let qualifiedID = Payload.QualifiedID(uuid: self.otherUser.remoteIdentifier, domain: "example.com")
             let qualifiedIDs = Payload.QualifiedUserIDList(qualifiedIDs: [qualifiedID])
             request.complete(with: self.successfulResponse(for: qualifiedIDs))
         }
@@ -438,17 +439,6 @@ class UserProfileRequestStrategyTests: MessagingTestBase {
         return response
     }
 
-    func responseFailure(code: Int, label: Payload.ResponseFailure.Label, message: String = "") -> ZMTransportResponse {
-        let responseFailure = Payload.ResponseFailure(code: code, label: label, message: message)
-        let payloadData = responseFailure.payloadData()!
-        let payloadString = String(bytes: payloadData, encoding: .utf8)!
-        let response = ZMTransportResponse(payload: payloadString as ZMTransportData,
-                                           httpStatus: code,
-                                           transportSessionError: nil)
-
-        return response
-
-    }
     func userProfile(for uuid: UUID, domain: String?) -> Payload.UserProfile {
         return Payload.UserProfile(id: uuid,
                                    qualifiedID: nil,
