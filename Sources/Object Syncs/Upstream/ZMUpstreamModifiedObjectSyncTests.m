@@ -148,7 +148,7 @@ static NSString *foo = @"foo";
 {
     id fake = [OCMockObject mockForClass:ZMObjectWithKeys.class];
     (void)[(ZMObjectWithKeys *)[[fake stub] andReturn:object] object];
-    [[[fake stub] andReturn:keys] keysToSync];
+    [(ZMObjectWithKeys *)[[fake stub] andReturn:keys] keysToSync];
     return fake;
 }
 

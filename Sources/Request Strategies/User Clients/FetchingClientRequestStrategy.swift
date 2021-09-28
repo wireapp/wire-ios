@@ -75,7 +75,7 @@ public final class FetchingClientRequestStrategy: AbstractRequestStrategy {
 
 
                 if let domain = user.domain, self.userClientsByQualifiedUserID.isAvailable {
-                    let qualifiedID = Payload.QualifiedUserID(uuid: userID, domain: domain)
+                    let qualifiedID = Payload.QualifiedID(uuid: userID, domain: domain)
                     self.userClientsByQualifiedUserID.sync(identifiers: [qualifiedID])
                 } else {
                     self.userClientsByUserID.sync(identifiers: Set(arrayLiteral: userID))
@@ -119,7 +119,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
     }
     
     private func fetch(userClients: [UserClient]) {
-        let initialResult: ([Payload.QualifiedUserID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
+        let initialResult: ([Payload.QualifiedID], [UserClientByUserClientIDTranscoder.UserClientID]) = ([], [])
         let result = userClients.reduce(into: initialResult) { (result, userClient) in
 
             // We prefer to by qualifiedUserID since can be done in batches and is more efficent, but if the server
@@ -127,7 +127,7 @@ extension FetchingClientRequestStrategy: ZMContextChangeTracker, ZMContextChange
             if userClientsByQualifiedUserID.isAvailable,
                let userID = userClient.user?.remoteIdentifier,
                let domain = userClient.user?.domain {
-                result.0.append(Payload.QualifiedUserID(uuid: userID, domain: domain))
+                result.0.append(Payload.QualifiedID(uuid: userID, domain: domain))
             } else if let userID = userClient.user?.remoteIdentifier,
                       let clientID = userClient.remoteIdentifier {
                 result.1.append(UserClientByUserClientIDTranscoder.UserClientID(userId: userID, clientId: clientID))
@@ -198,7 +198,7 @@ final class UserClientByUserClientIDTranscoder: IdentifierObjectSyncTranscoder {
 
 final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscoder {
                 
-    public typealias T = Payload.QualifiedUserID
+    public typealias T = Payload.QualifiedID
 
     weak var contextChangedTracker: ZMContextChangeTracker?
     var managedObjectContext: NSManagedObjectContext
@@ -215,7 +215,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         return 100
     }
     
-    public func request(for identifiers: Set<Payload.QualifiedUserID>) -> ZMTransportRequest? {
+    public func request(for identifiers: Set<Payload.QualifiedID>) -> ZMTransportRequest? {
 
         guard
             let payloadData = identifiers.payloadData(encoder: encoder),
@@ -229,7 +229,7 @@ final class UserClientByQualifiedUserIDTranscoder: IdentifierObjectSyncTranscode
         return ZMTransportRequest(path: path, method: .methodPOST, payload: payloadAsString as ZMTransportData?)
     }
     
-    public func didReceive(response: ZMTransportResponse, for identifiers: Set<Payload.QualifiedUserID>) {
+    public func didReceive(response: ZMTransportResponse, for identifiers: Set<Payload.QualifiedID>) {
 
         // NOTE should be removed or replaced once the BE exposes a version number.
         guard response.httpStatus != 404 else {

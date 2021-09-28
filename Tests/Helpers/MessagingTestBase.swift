@@ -26,6 +26,7 @@ class MessagingTestBase: ZMTBaseTest {
     fileprivate(set) var oneToOneConversation: ZMConversation!
     fileprivate(set) var selfClient: UserClient!
     fileprivate(set) var otherUser: ZMUser!
+    fileprivate(set) var thirdUser: ZMUser!
     fileprivate(set) var otherClient: UserClient!
     fileprivate(set) var otherEncryptionContext: EncryptionContext!
     fileprivate(set) var coreDataStack: CoreDataStack!
@@ -266,6 +267,7 @@ extension MessagingTestBase {
         
         self.otherUser = self.createUser(alsoCreateClient: true)
         self.otherClient = self.otherUser.clients.first!
+        self.thirdUser = self.createUser(alsoCreateClient: true)
         self.selfClient = self.createSelfClient()
         
         self.syncMOC.saveOrRollback()

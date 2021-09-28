@@ -25,11 +25,16 @@ class MockKeyPathObjectSyncTranscoder: KeyPathObjectSyncTranscoder {
     typealias T = MockEntity
     
     var objectsAskedToBeSynchronized: Set<MockEntity> = Set()
+    var objectsAskedToBeCancelled: Set<MockEntity> = Set()
     
     var completionBlock: (() -> Void)?
     func synchronize(_ object: MockEntity, completion: @escaping () -> Void) {
         objectsAskedToBeSynchronized.insert(object)
         completionBlock = completion
+    }
+
+    func cancel(_ object: MockEntity) {
+        objectsAskedToBeCancelled.insert(object)
     }
     
     func completeSynchronization() {
@@ -93,6 +98,20 @@ class KeyPathObjectSyncTests: ZMTBaseTest {
         
         // then
         XCTAssertTrue(transcoder.objectsAskedToBeSynchronized.contains(mockEntity))
+    }
+
+    func testSyncAsksToCancelObject_WhenObjectNoLongerMatchesKeyPath() {
+        // given
+        let mockEntity = MockEntity.insertNewObject(in: moc)
+        mockEntity.needsToBeUpdatedFromBackend = true
+        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+
+        // when
+        mockEntity.needsToBeUpdatedFromBackend = false
+        sut.objectsDidChange(Set(arrayLiteral: mockEntity))
+
+        // then
+        XCTAssertTrue(transcoder.objectsAskedToBeCancelled.contains(mockEntity))
     }
     
     func testSyncDoesNotAsksoSynchronizeObject_WhenSynchronizationIsAlreadyInProgress() {

@@ -28,6 +28,13 @@ protocol KeyPathObjectSyncTranscoder: class {
     ///   - object: Object which should be synchronized
     ///   - completion: called when the object as been synchronized
     func synchronize(_ object: T, completion: @escaping () -> Void)
+
+
+    /// Called when a object was previously requested to be synchronized but the the condition for synchronizing stop being fulfilled before the object finished synchronizing.
+    ///
+    /// - parameters:
+    ///   - object: Object which no longer needs be synchronized.
+    func cancel(_ object: T)
     
 }
 
@@ -70,7 +77,8 @@ class KeyPathObjectSync<Transcoder: KeyPathObjectSyncTranscoder>: NSObject, ZMCo
                     }
                 }
             } else if pending.contains(object) {
-                 pending.remove(object)
+                pending.remove(object)
+                transcoder?.cancel(object)
             }
         }
     }
