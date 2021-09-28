@@ -179,7 +179,7 @@
 
     NSMutableDictionary *members = [NSMutableDictionary dictionary];
     data[@"members"] = members;
-    members[@"self"] = [self selfInfoDictionary];
+    members[@"self"] = [self selfInfoDictionaryForEvent:NO];
     
     NSMutableArray *others = [NSMutableArray array];
     
@@ -199,10 +199,14 @@
 }
 
 
-- (NSDictionary *)selfInfoDictionary
+- (NSDictionary *)selfInfoDictionaryForEvent:(BOOL)forEvent
 {
     NSMutableDictionary *selfInfo = [NSMutableDictionary dictionary];
-    selfInfo[@"id"] = self.selfIdentifier;
+    if (forEvent) {
+        selfInfo[@"target"] = self.selfIdentifier;
+    } else {
+        selfInfo[@"id"] = self.selfIdentifier;
+    }
     selfInfo[@"conversation_role"] = self.selfRole;
     selfInfo[@"otr_muted_ref"] = self.otrMutedRef ?: [NSNull null];
     selfInfo[@"otr_muted"] = @(self.otrMuted);
@@ -287,14 +291,14 @@
 {
     self.otrArchivedRef = referenceDate.transportString;
     self.otrArchived = YES;
-    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)[self selfInfoDictionaryForEvent:YES]];
 }
 
 - (MockEvent *)remotelyClearHistoryFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
 {
     self.otrArchivedRef = referenceDate.transportString;
     self.otrArchived = YES;
-    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)self.selfInfoDictionary];
+    return [self eventIfNeededByUser:fromUser type:ZMUpdateEventTypeConversationMemberUpdate data:(id<ZMTransportData>)[self selfInfoDictionaryForEvent:YES]];
 }
 
 - (MockEvent *)remotelyDeleteFromUser:(MockUser *)fromUser referenceDate:(NSDate *)referenceDate
