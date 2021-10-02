@@ -64,6 +64,7 @@ public class ProteusMessageSync<Message: ProteusMessage>: NSObject, EntityTransc
 
     public func sync(_ message: Message, completion: @escaping EntitySyncHandler) {
         dependencySync.synchronize(entity: message, completion: completion)
+        RequestAvailableNotification.notifyNewRequestsAvailable(nil)
     }
 
     public func expireMessages(withDependency dependency: NSObject) {

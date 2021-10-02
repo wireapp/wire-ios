@@ -40,6 +40,22 @@ class ProteusMessageSyncTests: MessagingTestBase {
         }
     }
 
+    func testThatItNotifiesThatNewRequestsAreAvailable_WhenSynchronizingMessage() {
+        // given
+        let message = MockOTREntity(conversation: self.groupConversation, context: self.syncMOC)
+
+        // expect
+        expectation(forNotification: Notification.Name("RequestAvailableNotification"),
+                    object: nil,
+                    handler: nil)
+
+        // when
+        sut.sync(message) { (_, _) in }
+
+        // then
+        XCTAssertTrue(self.waitForCustomExpectations(withTimeout: 0.5))
+    }
+
     func testThatItCallsSyncCompletionHandler_WhenResponseIsSuccessfull() throws {
         syncMOC.performGroupedBlockAndWait { [self] in
             // given
