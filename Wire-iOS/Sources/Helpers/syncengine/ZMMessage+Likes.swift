@@ -22,7 +22,8 @@ import WireDataModel
 extension ZMConversationMessage {
 
     var canBeLiked: Bool {
-        guard let conversation = conversationLike else {
+        ///TODO: [Bill] fix why SelfUser.current is nil when open a notif
+        guard let conversation = conversationLike, SelfUser.provider != nil else {
             return false
         }
 
