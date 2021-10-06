@@ -19,8 +19,54 @@
 import Foundation
 import WireProtos
 
+public enum ConversationRemoveParticipantError: Error {
+   case unknown,
+        invalidOperation,
+        conversationNotFound
+}
+
+public enum ConversationAddParticipantsError: Error {
+   case unknown,
+        invalidOperation,
+        accessDenied,
+        notConnectedToUser,
+        conversationNotFound,
+        tooManyMembers,
+        missingLegalHoldConsent
+}
+
+public class AddParticipantAction: EntityAction {
+    public var resultHandler: ResultHandler?
+
+    public typealias Result = Void
+    public typealias Failure = ConversationAddParticipantsError
+
+    public let userIDs: [NSManagedObjectID]
+    public let conversationID: NSManagedObjectID
+
+    public required init(users: [ZMUser], conversation: ZMConversation) {
+        userIDs = users.map(\.objectID)
+        conversationID = conversation.objectID
+    }
+}
+
+public class RemoveParticipantAction: EntityAction {
+    public var resultHandler: ResultHandler?
+
+    public typealias Result = Void
+    public typealias Failure = ConversationRemoveParticipantError
+
+    public let userID: NSManagedObjectID
+    public let conversationID: NSManagedObjectID
+
+    public required init(user: ZMUser, conversation: ZMConversation) {
+        userID = user.objectID
+        conversationID = conversation.objectID
+    }
+}
+
 extension ZMConversation {
-        
+
     func sortedUsers(_ users: Set<ZMUser>) -> [ZMUser] {
         let nameDescriptor = NSSortDescriptor(key: "normalizedName", ascending: true)
         let sortedUser = (users as NSSet?)?.sortedArray(using: [nameDescriptor]) as? [ZMUser]
@@ -77,7 +123,52 @@ extension ZMConversation {
     public class func keyPathsForValuesAffectingLocalParticipantsExcludingSelf() -> Set<String> {
         return Set(ZMConversation.participantRolesKeys)
     }
-    
+
+    // MARK: - Participant actions
+
+    public func addParticipants(_ participants: [UserType],
+                                completion: @escaping AddParticipantAction.ResultHandler) {
+        guard
+            let context = managedObjectContext
+        else {
+            return completion(.failure(ConversationAddParticipantsError.unknown))
+        }
+
+        let users = participants.materialize(in: context)
+
+        guard
+            conversationType == .group,
+            !users.isEmpty,
+            !users.contains(ZMUser.selfUser(in: context))
+        else {
+            return completion(.failure(ConversationAddParticipantsError.invalidOperation))
+        }
+
+        var action = AddParticipantAction(users: users, conversation: self)
+        action.onResult(resultHandler: completion)
+        action.send(in: context.notificationContext)
+    }
+
+    public func removeParticipant(_ participant: UserType,
+                                  completion: @escaping RemoveParticipantAction.ResultHandler) {
+        guard
+            let context = managedObjectContext
+        else {
+            return completion(.failure(ConversationRemoveParticipantError.unknown))
+        }
+
+        guard
+            conversationType == .group,
+            let user = participant as? ZMUser
+        else {
+            return completion(.failure(ConversationRemoveParticipantError.invalidOperation))
+        }
+
+        var action = RemoveParticipantAction(user: user, conversation: self)
+        action.onResult(resultHandler: completion)
+        action.send(in: context.notificationContext)
+    }
+
     //MARK: - Participants methods
     
     /// Participants that are in the conversation, according to the local state,
