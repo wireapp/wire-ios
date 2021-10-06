@@ -55,7 +55,7 @@ class PayloadTests_Conversation: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_CreatesConversation() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: self.owningDomain)
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.group.rawValue)
 
             // when
@@ -69,7 +69,7 @@ class PayloadTests_Conversation: MessagingTestBase {
     func testUpdateOrCreateConversation_Group_AddSystemMessageWhenCreatingGroup() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: self.owningDomain)
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.group.rawValue)
 
             // when
@@ -268,7 +268,7 @@ class PayloadTests_Conversation: MessagingTestBase {
             let selfMember = Payload.ConversationMember(qualifiedID: selfUser.qualifiedID!)
             let otherMember = Payload.ConversationMember(qualifiedID: self.otherUser.qualifiedID!)
             let members = Payload.ConversationMembers(selfMember: selfMember, others: [otherMember])
-            let qualifiedID = Payload.QualifiedID(uuid: conversationID, domain: self.owningDomain)
+            let qualifiedID = QualifiedID(uuid: conversationID, domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID,
                                                            type: BackendConversationType.oneOnOne.rawValue,
                                                            members: members)
@@ -402,7 +402,7 @@ class PayloadTests_Conversation: MessagingTestBase {
     func testUpdateOrCreateConversation_Self_CreatesConversation() throws {
         try syncMOC.performGroupedAndWait { syncMOC in
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: self.owningDomain)
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: self.owningDomain)
             let conversationPayload = Payload.Conversation(qualifiedID: qualifiedID, type: BackendConversationType.`self`.rawValue)
 
             // when

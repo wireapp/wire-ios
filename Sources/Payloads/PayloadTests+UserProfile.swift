@@ -45,7 +45,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesQualifiedUserID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID)
 
             // when
@@ -60,7 +60,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesTeamID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, teamID: UUID())
 
             // when
@@ -74,7 +74,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_TeamIDCanBeDeleted_ByNonAuthoritativeUpdate() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .teamID))
 
             // when
@@ -91,7 +91,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             let teamID = UUID()
             let team = Team.insertNewObject(in: self.syncMOC)
             team.remoteIdentifier = teamID
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, teamID: teamID)
 
             // when
@@ -105,7 +105,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesServiceID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let serviceID = Payload.ServiceID(id: UUID(), provider: UUID())
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, serviceID: serviceID)
 
@@ -121,7 +121,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesSSOID() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let SSOID = Payload.SSOID(tenant: "a", subject: "b", scimExternalID: "c")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, SSOID: SSOID)
 
@@ -136,7 +136,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesName() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let name = "John Doe"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, name: name)
 
@@ -155,7 +155,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             let newName = "Nhoj Eod"
             self.otherUser.name = oldName
             self.otherUser.markAccountAsDeleted(at: Date())
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, name: newName)
 
             // when
@@ -169,7 +169,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesHandle() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let handle = "johndoe"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, handle: handle)
 
@@ -188,7 +188,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             let newhandle = "eodnhoj"
             self.otherUser.handle = oldHandle
             self.otherUser.markAccountAsDeleted(at: Date())
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, handle: newhandle)
 
             // when
@@ -202,7 +202,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesPhone() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let phone = "+123456789"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: phone)
 
@@ -217,7 +217,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_PhoneCanBeDeleted_ByNonAuthoritativeUpdate() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .phone))
             self.otherUser.phoneNumber = "+123456789"
 
@@ -236,7 +236,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             let newPhone = "+987654321"
             self.otherUser.phoneNumber = oldPhone
             self.otherUser.markAccountAsDeleted(at: Date())
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, phone: newPhone)
 
             // when
@@ -250,7 +250,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesEmail() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let email = "john.doe@example.com"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, email: email)
 
@@ -265,7 +265,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_EmailCanBeDeleted_ByNonAuthoritativeUpdate() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, updatedKeys: Set(arrayLiteral: .email))
             self.otherUser.emailAddress = "john.doe@example.com"
 
@@ -284,7 +284,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             let newEmail = "john.eod@example.com"
             self.otherUser.emailAddress = oldEmail
             self.otherUser.markAccountAsDeleted(at: Date())
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, email: newEmail)
 
             // when
@@ -298,7 +298,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesAssets() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let previewAsset = Payload.Asset(key: "1", size: .preview, type: .image)
             let completeAsset = Payload.Asset(key: "2", size: .complete, type: .image)
             let assets = [previewAsset, completeAsset]
@@ -325,7 +325,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             selfUser.previewProfileAssetIdentifier = oldPreviewAssetKey
             selfUser.completeProfileAssetIdentifier = oldCompleteAssetKey
             selfUser.setLocallyModifiedKeys(Set(assetsModifiedKeys))
-            let qualifiedID = Payload.QualifiedID(uuid: selfUser.remoteIdentifier, domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: selfUser.remoteIdentifier, domain: "example.com")
             let previewAsset = Payload.Asset(key: "1", size: .preview, type: .image)
             let completeAsset = Payload.Asset(key: "2", size: .complete, type: .image)
             let assets = [previewAsset, completeAsset]
@@ -346,7 +346,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
             // given
             self.otherUser.previewProfileAssetIdentifier = "a"
             self.otherUser.completeProfileAssetIdentifier = "b"
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let previewAsset = Payload.Asset(key: "1<", size: .preview, type: .image)
             let completeAsset = Payload.Asset(key: "2\"", size: .complete, type: .image)
             let assets = [previewAsset, completeAsset]
@@ -364,7 +364,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesManagedBy() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let managedBy = "wire"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, managedBy: managedBy)
 
@@ -379,7 +379,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesAccentColor() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let accentColor = ZMAccentColor(rawValue: 3)
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, accentColor: Int(accentColor!.rawValue))
 
@@ -394,7 +394,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesIsDeleted() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, isDeleted: true)
 
             // when
@@ -408,7 +408,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfile_UpdatesExpiresAt() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let expiresAt = Date()
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, expiresAt: expiresAt)
 
@@ -423,7 +423,7 @@ class PayloadTests_UserProfile: MessagingTestBase {
     func testUpdateUserProfiles_AppliesUpdateOnUserProfileList() throws {
         syncMOC.performGroupedBlockAndWait {
             // given
-            let qualifiedID = Payload.QualifiedID(uuid: UUID(), domain: "example.com")
+            let qualifiedID = QualifiedID(uuid: UUID(), domain: "example.com")
             let name = "John Doe"
             let userProfile = Payload.UserProfile(qualifiedID: qualifiedID, name: name)
             self.otherUser.remoteIdentifier = qualifiedID.uuid

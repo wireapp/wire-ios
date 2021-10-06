@@ -83,6 +83,13 @@
 		16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */; };
 		168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */; };
 		168D7BBC26F330DE00789960 /* MessagingTest+Payloads.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7BBB26F330DE00789960 /* MessagingTest+Payloads.swift */; };
+		168D7CA526FB0CFD00789960 /* ActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CA426FB0CFD00789960 /* ActionHandler.swift */; };
+		168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CB126FB0E3F00789960 /* EntityActionSync.swift */; };
+		168D7CB726FB0E9200789960 /* AddParticipantActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CB626FB0E9200789960 /* AddParticipantActionHandler.swift */; };
+		168D7CBB26FB21D900789960 /* RemoveParticipantActionHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CBA26FB21D900789960 /* RemoveParticipantActionHandler.swift */; };
+		168D7CCE26FB303A00789960 /* AddParticipantActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CCD26FB303A00789960 /* AddParticipantActionHandlerTests.swift */; };
+		168D7CF626FC6D3400789960 /* RemoveParticipantActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */; };
+		168D7D0C26FC81AD00789960 /* ActionHandlerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */; };
 		16972DED2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */; };
 		169BA1CB25E9507600374343 /* Payload+Decoding.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CA25E9507600374343 /* Payload+Decoding.swift */; };
 		169BA1CD25E95DC900374343 /* Payload+Processing.swift in Sources */ = {isa = PBXBuildFile; fileRef = 169BA1CC25E95DC900374343 /* Payload+Processing.swift */; };
@@ -102,7 +109,6 @@
 		16E5F6DD26EF1E3200F35FBA /* Payload+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */; };
 		16E5F71826EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */; };
 		16E5F71C26F09E5B00F35FBA /* PayloadTests+Conversation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71B26F09E5B00F35FBA /* PayloadTests+Conversation.swift */; };
-		16E5F72026F1FA8400F35FBA /* Payload+Helpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16E5F71F26F1FA8300F35FBA /* Payload+Helpers.swift */; };
 		16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */ = {isa = PBXBuildFile; fileRef = 16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */; };
 		547D47171E7C1B0D002EEA15 /* DependentObjects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547D47161E7C1B0D002EEA15 /* DependentObjects.swift */; };
 		547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 547D47181E7C2F6C002EEA15 /* DependentObjectsTests.swift */; };
@@ -329,6 +335,13 @@
 		16824632257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResetSessionRequestStrategyTests.swift; sourceTree = "<group>"; };
 		168414182228365D00FCB9BC /* AssetsPreprocessorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssetsPreprocessorTests.swift; sourceTree = "<group>"; };
 		168D7BBB26F330DE00789960 /* MessagingTest+Payloads.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "MessagingTest+Payloads.swift"; sourceTree = "<group>"; };
+		168D7CA426FB0CFD00789960 /* ActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandler.swift; sourceTree = "<group>"; };
+		168D7CB126FB0E3F00789960 /* EntityActionSync.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EntityActionSync.swift; sourceTree = "<group>"; };
+		168D7CB626FB0E9200789960 /* AddParticipantActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipantActionHandler.swift; sourceTree = "<group>"; };
+		168D7CBA26FB21D900789960 /* RemoveParticipantActionHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveParticipantActionHandler.swift; sourceTree = "<group>"; };
+		168D7CCD26FB303A00789960 /* AddParticipantActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddParticipantActionHandlerTests.swift; sourceTree = "<group>"; };
+		168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoveParticipantActionHandlerTests.swift; sourceTree = "<group>"; };
+		168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActionHandlerTests.swift; sourceTree = "<group>"; };
 		16972DEC2668E699008AF3A2 /* UserProfileRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileRequestStrategyTests.swift; sourceTree = "<group>"; };
 		169BA1CA25E9507600374343 /* Payload+Decoding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Decoding.swift"; sourceTree = "<group>"; };
 		169BA1CC25E95DC900374343 /* Payload+Processing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Processing.swift"; sourceTree = "<group>"; };
@@ -349,7 +362,6 @@
 		16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Conversation.swift"; sourceTree = "<group>"; };
 		16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationRequestStrategyTests.swift; sourceTree = "<group>"; };
 		16E5F71B26F09E5B00F35FBA /* PayloadTests+Conversation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "PayloadTests+Conversation.swift"; sourceTree = "<group>"; };
-		16E5F71F26F1FA8300F35FBA /* Payload+Helpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Payload+Helpers.swift"; sourceTree = "<group>"; };
 		16FFDE431DF6C668003494D6 /* DependencyEntitySync.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependencyEntitySync.swift; sourceTree = "<group>"; };
 		547D47161E7C1B0D002EEA15 /* DependentObjects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependentObjects.swift; sourceTree = "<group>"; };
 		547D47181E7C2F6C002EEA15 /* DependentObjectsTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DependentObjectsTests.swift; sourceTree = "<group>"; };
@@ -542,6 +554,7 @@
 		1658EA6026DE2287003D0090 /* Conversation */ = {
 			isa = PBXGroup;
 			children = (
+				168D7CB526FB0E7000789960 /* Actions */,
 				1658EA6126DE22C0003D0090 /* ConversationRequestStrategy.swift */,
 				16E5F71726EF4DBF00F35FBA /* ConversationRequestStrategyTests.swift */,
 			);
@@ -582,6 +595,7 @@
 				F963E8D81D955D4600098AD3 /* Helpers */,
 				F1CD5D842024C259008C574E /* Protocols */,
 				F184014D2073BE0800E9F4CC /* Request Strategies */,
+				168D7CA326FB0CCF00789960 /* Entity Actions */,
 				F1CD5D862024C363008C574E /* Other Syncs */,
 				F1CD5D822024C1A0008C574E /* Request Syncs */,
 				F1CD5D812024C16B008C574E /* Object Syncs */,
@@ -649,11 +663,30 @@
 			path = "Delivery Receipts";
 			sourceTree = "<group>";
 		};
+		168D7CA326FB0CCF00789960 /* Entity Actions */ = {
+			isa = PBXGroup;
+			children = (
+				168D7CA426FB0CFD00789960 /* ActionHandler.swift */,
+				168D7D0B26FC81AD00789960 /* ActionHandlerTests.swift */,
+			);
+			path = "Entity Actions";
+			sourceTree = "<group>";
+		};
+		168D7CB526FB0E7000789960 /* Actions */ = {
+			isa = PBXGroup;
+			children = (
+				168D7CB626FB0E9200789960 /* AddParticipantActionHandler.swift */,
+				168D7CCD26FB303A00789960 /* AddParticipantActionHandlerTests.swift */,
+				168D7CBA26FB21D900789960 /* RemoveParticipantActionHandler.swift */,
+				168D7CF526FC6D3300789960 /* RemoveParticipantActionHandlerTests.swift */,
+			);
+			path = Actions;
+			sourceTree = "<group>";
+		};
 		16DABDA025D69306005F4C3A /* Payloads */ = {
 			isa = PBXGroup;
 			children = (
 				16DABDA125D69335005F4C3A /* Payload.swift */,
-				16E5F71F26F1FA8300F35FBA /* Payload+Helpers.swift */,
 				16E5F6DC26EF1E3200F35FBA /* Payload+Conversation.swift */,
 				169BA1CC25E95DC900374343 /* Payload+Processing.swift */,
 				169BA1CA25E9507600374343 /* Payload+Decoding.swift */,
@@ -931,6 +964,7 @@
 				16D0E07C1DF872FD0075DF8F /* DependencyEntitySyncTests.swift */,
 				547D47161E7C1B0D002EEA15 /* DependentObjects.swift */,
 				547D47181E7C2F6C002EEA15 /* DependentObjectsTests.swift */,
+				168D7CB126FB0E3F00789960 /* EntityActionSync.swift */,
 			);
 			path = "Other Syncs";
 			sourceTree = "<group>";
@@ -1231,8 +1265,9 @@
 				1622946B221C18BE00A98679 /* AssetV3UploadRequestStrategy.swift in Sources */,
 				1662ADB322B0E8B300D84071 /* VerifyLegalHoldRequestStrategy.swift in Sources */,
 				166901EC1D7081C7000FE4AF /* ZMTimedSingleRequestSync.m in Sources */,
-				16E5F72026F1FA8400F35FBA /* Payload+Helpers.swift in Sources */,
 				F184019A2073BE0800E9F4CC /* ClientMessageRequestFactory.swift in Sources */,
+				168D7CB226FB0E3F00789960 /* EntityActionSync.swift in Sources */,
+				168D7CBB26FB21D900789960 /* RemoveParticipantActionHandler.swift in Sources */,
 				F963E8E11D955D5500098AD3 /* SharedProtocols.swift in Sources */,
 				166901F21D7081C7000FE4AF /* ZMUpstreamModifiedObjectSync.m in Sources */,
 				16FFDE441DF6C668003494D6 /* DependencyEntitySync.swift in Sources */,
@@ -1269,8 +1304,10 @@
 				16A4891A2685CECD001F9127 /* ProteusMessageSync.swift in Sources */,
 				F18401D32073BE0800E9F4CC /* ZMMessage+Dependency.swift in Sources */,
 				D5D65A072074C23D00D7F3C3 /* AssetRequestFactory.swift in Sources */,
+				168D7CA526FB0CFD00789960 /* ActionHandler.swift in Sources */,
 				166901E61D7081C7000FE4AF /* ZMSyncOperationSet.m in Sources */,
 				16DABDA225D69335005F4C3A /* Payload.swift in Sources */,
+				168D7CB726FB0E9200789960 /* AddParticipantActionHandler.swift in Sources */,
 				166901D91D7081C7000FE4AF /* ZMLocallyInsertedObjectSet.m in Sources */,
 				F18401B02073BE0800E9F4CC /* AbstractRequestStrategy.swift in Sources */,
 				F18401C22073BE0800E9F4CC /* AssetV2DownloadRequestStrategy.swift in Sources */,
@@ -1295,15 +1332,18 @@
 			files = (
 				F18401E12073C25900E9F4CC /* OTREntityTests+Dependency.swift in Sources */,
 				547D47191E7C2F6C002EEA15 /* DependentObjectsTests.swift in Sources */,
+				168D7CCE26FB303A00789960 /* AddParticipantActionHandlerTests.swift in Sources */,
 				16CC083B268E075100C0613C /* ClientMessageRequestStrategyTests.swift in Sources */,
 				F19561F5202A1361005347C0 /* ZMUpstreamModifiedObjectSyncTests.m in Sources */,
 				16824633257A2B47002AF17B /* ResetSessionRequestStrategyTests.swift in Sources */,
+				168D7CF626FC6D3400789960 /* RemoveParticipantActionHandlerTests.swift in Sources */,
 				164D007622256C6E00A8F264 /* AssetV3UploadRequestStrategyTests.swift in Sources */,
 				BFF9446620F5F79F00531BC3 /* ImageV2DownloadRequestStrategyTests.swift in Sources */,
 				16189D06268B214E004831BE /* InsertedObjectSyncTests.swift in Sources */,
 				168414192228365D00FCB9BC /* AssetsPreprocessorTests.swift in Sources */,
 				F19561F1202A1325005347C0 /* ZMSingleRequestSyncTests.m in Sources */,
 				F19561F7202A1389005347C0 /* ZMLocallyInsertedObjectSetTests.m in Sources */,
+				168D7D0C26FC81AD00789960 /* ActionHandlerTests.swift in Sources */,
 				F1956201202A141E005347C0 /* ZMDownstreamObjectSyncTests.m in Sources */,
 				F18401F32073C26C00E9F4CC /* AssetClientMessageRequestStrategyTests.swift in Sources */,
 				1621D2621D75C745007108C2 /* ZMDownstreamObjectSyncWithWhitelistTests.m in Sources */,

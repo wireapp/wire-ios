@@ -33,4 +33,35 @@ extension MessagingTestBase {
 
     }
 
+    func updateEvent<Event: EventData>(from data: Event,
+                                     conversationID: QualifiedID? = nil,
+                                     senderID: QualifiedID? = nil,
+                                     timestamp: Date? = nil) -> ZMUpdateEvent {
+
+        let event  = conversationEventPayload(from: data,
+                                              conversationID: conversationID,
+                                              senderID: senderID,
+                                              timestamp: timestamp)
+
+        let payload = try! JSONSerialization.jsonObject(with: event, options: []) as? [String: Any]
+
+        return ZMUpdateEvent(fromEventStreamPayload: payload! as ZMTransportData, uuid: UUID())!
+    }
+
+    func conversationEventPayload<Event: EventData>(from data: Event,
+                                                    conversationID: QualifiedID? = nil,
+                                                    senderID: QualifiedID? = nil,
+                                                    timestamp: Date? = nil) -> Data {
+
+        let event = Payload.ConversationEvent<Event>(id: conversationID?.uuid,
+                                                     qualifiedID: conversationID,
+                                                     from: senderID?.uuid,
+                                                     qualifiedFrom: senderID,
+                                                     timestamp: timestamp,
+                                                     type: ZMUpdateEvent.eventTypeString(for: Event.eventType),
+                                                     data: data)
+
+        return event.payloadData()!
+    }
+
 }
